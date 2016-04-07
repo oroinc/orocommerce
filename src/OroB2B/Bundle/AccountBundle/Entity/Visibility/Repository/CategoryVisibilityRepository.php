@@ -8,9 +8,9 @@ use Doctrine\ORM\Query\Expr\Join;
 class CategoryVisibilityRepository extends EntityRepository
 {
     /**
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return array [['category_id' => <int>, 'category_parent_id' => <int>, 'visibility' => <string>], ...]
      */
-    public function getCategoriesVisibilitiesQueryBuilder()
+    public function getCategoriesVisibilities()
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $queryBuilder
@@ -26,8 +26,9 @@ class CategoryVisibilityRepository extends EntityRepository
                 Join::WITH,
                 $queryBuilder->expr()->eq('categoryVisibility.category', 'c')
             )
-            ->orderBy('c.level', 'ASC');
+            ->addOrderBy('c.level', 'ASC')
+            ->addOrderBy('c.left', 'ASC');
 
-        return $queryBuilder;
+        return $queryBuilder->getQuery()->getScalarResult();
     }
 }

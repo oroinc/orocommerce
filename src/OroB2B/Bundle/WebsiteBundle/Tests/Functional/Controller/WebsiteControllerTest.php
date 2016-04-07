@@ -15,12 +15,12 @@ class WebsiteControllerTest extends WebTestCase
 {
     const WEBSITE_TEST_NAME = 'OroCRM';
     const WEBSITE_UPDATED_TEST_NAME = 'OroCommerce';
-    
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
     }
-    
+
     public function testIndex()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_website_index'));
@@ -35,7 +35,7 @@ class WebsiteControllerTest extends WebTestCase
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_website_create'));
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Form $form */
@@ -46,8 +46,9 @@ class WebsiteControllerTest extends WebTestCase
             'orob2b_website_type' => [
                 '_token' => $form['orob2b_website_type[_token]']->getValue(),
                 'owner' => $this->getCurrentUser()->getId(),
-                'name' => self::WEBSITE_TEST_NAME
-            ]
+                'name' => self::WEBSITE_TEST_NAME,
+                'fallback' => true,
+            ],
         ];
 
         $this->client->followRedirects(true);
@@ -75,7 +76,7 @@ class WebsiteControllerTest extends WebTestCase
 
         $this->assertContains(self::WEBSITE_TEST_NAME, $html);
 
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Form $form */
@@ -86,8 +87,9 @@ class WebsiteControllerTest extends WebTestCase
             'orob2b_website_type' => [
                 '_token' => $form['orob2b_website_type[_token]']->getValue(),
                 'owner' => $this->getCurrentUser()->getId(),
-                'name' => self::WEBSITE_UPDATED_TEST_NAME
-            ]
+                'name' => self::WEBSITE_UPDATED_TEST_NAME,
+                'fallback' => true,
+            ],
         ];
 
         $this->client->followRedirects(true);
@@ -122,7 +124,7 @@ class WebsiteControllerTest extends WebTestCase
         $response = $this->client->requestGrid(
             'websites-grid',
             [
-                'websites-grid[_filter][name][value]' => $name
+                'websites-grid[_filter][name][value]' => $name,
             ]
         );
 

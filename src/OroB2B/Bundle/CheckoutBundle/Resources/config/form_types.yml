@@ -1,0 +1,9 @@
+parameters:
+    orob2b_checkout.form.type.checkout_address.class: OroB2B\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
+
+services:
+    orob2b_checkout.form.type.checkout_address:
+        class: %orob2b_checkout.form.type.checkout_address.class%
+        parent: orob2b_order.form.type.order_address
+        tags:
+            - { name: form.type, alias: orob2b_checkout_address }

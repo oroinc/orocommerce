@@ -1,0 +1,90 @@
+parameters:
+    orob2b_payment.paypal.payflow.nvp_encoder.class: OroB2B\Bundle\PaymentBundle\PayPal\Payflow\NVP\Encoder
+    orob2b_payment.event_listener.callback.payflow.class: OroB2B\Bundle\PaymentBundle\EventListener\Callback\PayflowListener
+
+    orob2b_payment.paypal.payflow.gateway.class: OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway
+
+    # client
+    orob2b_payment.paypal.payflow.client.nvp.class: OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Client\NVPClient
+    orob2b_payment.paypal.payflow.client.http.class: Guzzle\Http\Client
+
+    # requests
+    orob2b_payment.paypal.payflow.request.registry.class: OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestRegistry
+    orob2b_payment.paypal.payflow.request.authorize.class: OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\AuthorizationRequest
+    orob2b_payment.paypal.payflow.request.delayed_capture.class: OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\DelayedCaptureRequest
+    orob2b_payment.paypal.payflow.request.sale.class: OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\SaleRequest
+    orob2b_payment.paypal.payflow.request.void.class: OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\VoidRequest
+
+    # processors
+    orob2b_payment.paypal.payflow.processor.registry.class: OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Processor\ProcessorRegistry
+    orob2b_payment.paypal.payflow.processor.paypal.class: OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Processor\PayPal
+
+services:
+    orob2b_payment.paypal.payflow.nvp_encoder:
+        class: '%orob2b_payment.paypal.payflow.nvp_encoder.class%'
+        public: false
+
+    orob2b_payment.event_listener.callback.payflow:
+        class: '%orob2b_payment.event_listener.callback.payflow.class%'
+        lazy: true
+        arguments:
+            - '@session'
+        tags:
+            - { name: kernel.event_listener, event: orob2b_payment.callback.return.payflow_gateway, method: onCallback }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow_gateway, method: onError }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.return.paypal_payments_pro, method: onCallback }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.error.paypal_payments_pro, method: onError }
+
+    orob2b_payment.paypal.payflow.request.registry:
+        class: '%orob2b_payment.paypal.payflow.request.registry.class%'
+        public: false
+        calls:
+            - ['addRequest', ['@orob2b_payment.paypal.payflow.request.authorize']]
+            - ['addRequest', ['@orob2b_payment.paypal.payflow.request.delayed_capture']]
+            - ['addRequest', ['@orob2b_payment.paypal.payflow.request.sale']]
+            - ['addRequest', ['@orob2b_payment.paypal.payflow.request.void']]
+
+    orob2b_payment.paypal.payflow.request.authorize:
+        class: '%orob2b_payment.paypal.payflow.request.authorize.class%'
+        public: false
+
+    orob2b_payment.paypal.payflow.request.delayed_capture:
+        class: '%orob2b_payment.paypal.payflow.request.delayed_capture.class%'
+        public: false
+
+    orob2b_payment.paypal.payflow.request.sale:
+        class: '%orob2b_payment.paypal.payflow.request.sale.class%'
+        public: false
+
+    orob2b_payment.paypal.payflow.request.void:
+        class: '%orob2b_payment.paypal.payflow.request.void.class%'
+        public: false
+
+    orob2b_payment.paypal.payflow.processor.registry:
+        class: '%orob2b_payment.paypal.payflow.processor.registry.class%'
+        public: false
+        calls:
+            - ['addProcessor', ['@orob2b_payment.paypal.payflow.processor.paypal']]
+
+    orob2b_payment.paypal.payflow.processor.paypal:
+        class: '%orob2b_payment.paypal.payflow.processor.paypal.class%'
+        public: false
+
+    orob2b_payment.paypal.payflow.gateway:
+        class: '%orob2b_payment.paypal.payflow.gateway.class%'
+        public: false
+        arguments:
+            - '@orob2b_payment.paypal.payflow.client.nvp'
+            - '@orob2b_payment.paypal.payflow.request.registry'
+            - '@orob2b_payment.paypal.payflow.processor.registry'
+
+    orob2b_payment.paypal.payflow.client.nvp:
+        class: '%orob2b_payment.paypal.payflow.client.nvp.class%'
+        public: false
+        arguments:
+            - '@orob2b_payment.paypal.payflow.client.http'
+            - '@orob2b_payment.paypal.payflow.nvp_encoder'
+
+    orob2b_payment.paypal.payflow.client.http:
+        class: '%orob2b_payment.paypal.payflow.client.http.class%'
+        lazy: true

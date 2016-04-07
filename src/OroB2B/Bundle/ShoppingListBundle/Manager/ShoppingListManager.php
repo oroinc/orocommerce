@@ -9,12 +9,17 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class ShoppingListManager
 {
@@ -44,21 +49,71 @@ class ShoppingListManager
     protected $rounding;
 
     /**
+     * @var TotalProcessorProvider
+     */
+    protected $totalProvider;
+
+    /**
+     * @var LineItemNotPricedSubtotalProvider
+     */
+    protected $lineItemNotPricedSubtotalProvider;
+
+    /**
+     * @var LocaleSettings
+     */
+    protected $localeSettings;
+
+    /**
+     * @var WebsiteManager
+     */
+    protected $websiteManager;
+
+    /**
      * @param ManagerRegistry $managerRegistry
      * @param TokenStorageInterface $tokenStorage
      * @param TranslatorInterface $translator
      * @param QuantityRoundingService $rounding
+     * @param TotalProcessorProvider $totalProvider
+     * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
+     * @param LocaleSettings $localeSettings
+     * @param WebsiteManager $websiteManager
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         TokenStorageInterface $tokenStorage,
         TranslatorInterface $translator,
-        QuantityRoundingService $rounding
+        QuantityRoundingService $rounding,
+        TotalProcessorProvider $totalProvider,
+        LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider,
+        LocaleSettings $localeSettings,
+        WebsiteManager $websiteManager
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
         $this->rounding = $rounding;
+        $this->totalProvider = $totalProvider;
+        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
+        $this->localeSettings = $localeSettings;
+        $this->websiteManager = $websiteManager;
+    }
+
+    /**
+     * Creates new shopping list
+     *
+     * @return ShoppingList
+     */
+    public function create()
+    {
+        $shoppingList = new ShoppingList();
+        $shoppingList
+            ->setOrganization($this->getAccountUser()->getOrganization())
+            ->setAccount($this->getAccountUser()->getAccount())
+            ->setAccountUser($this->getAccountUser())
+            ->setCurrency($this->localeSettings->getCurrency())
+            ->setWebsite($this->websiteManager->getCurrentWebsite());
+
+        return $shoppingList;
     }
 
     /**
@@ -70,14 +125,8 @@ class ShoppingListManager
      */
     public function createCurrent($label = '')
     {
-        $label = $label !== '' ? $label : $this->translator->trans('orob2b.shoppinglist.default.label');
-
-        $shoppingList = new ShoppingList();
-        $shoppingList
-            ->setOrganization($this->getAccountUser()->getOrganization())
-            ->setAccount($this->getAccountUser()->getAccount())
-            ->setAccountUser($this->getAccountUser())
-            ->setLabel($label);
+        $shoppingList = $this->create();
+        $shoppingList->setLabel($label !== '' ? $label : $this->translator->trans('orob2b.shoppinglist.default.label'));
 
         $this->setCurrent($this->getAccountUser(), $shoppingList);
 
@@ -140,6 +189,29 @@ class ShoppingListManager
     }
 
     /**
+     * @param ShoppingList $shoppingList
+     * @param bool|true $flush
+     */
+    public function recalculateSubtotals(ShoppingList $shoppingList, $flush = true)
+    {
+        $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotal($shoppingList);
+        $total = $this->totalProvider->getTotal($shoppingList);
+
+        if ($subtotal) {
+            $shoppingList->setSubtotal($subtotal->getAmount());
+        }
+        if ($total) {
+            $shoppingList->setTotal($total->getAmount());
+        }
+        $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
+        $em->persist($shoppingList);
+
+        if ($flush) {
+            $em->flush();
+        }
+    }
+
+    /**
      * @param array        $lineItems
      * @param ShoppingList $shoppingList
      * @param int          $batchSize
@@ -179,19 +251,36 @@ class ShoppingListManager
     }
 
     /**
+     * @param bool $create
+     * @param string $label
+     * @return ShoppingList
+     */
+    public function getCurrent($create = false, $label = '')
+    {
+        /* @var $repository ShoppingListRepository */
+        $repository = $this->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        $shoppingList = $repository->findCurrentForAccountUser($this->getAccountUser());
+
+        if ($create && !$shoppingList instanceof ShoppingList) {
+            $label = $this->translator->trans($label ?: 'orob2b.shoppinglist.default.label');
+
+            $shoppingList = $this->create();
+            $shoppingList->setLabel($label);
+        }
+
+        return $shoppingList;
+    }
+
+    /**
      * @return array
      */
     public function getShoppingLists()
     {
         $accountUser = $this->getAccountUser();
-
         /* @var $repository ShoppingListRepository */
         $repository = $this->getRepository('OroB2BShoppingListBundle:ShoppingList');
 
-        return [
-            'shoppingLists' => $repository->findAllExceptCurrentForAccountUser($accountUser),
-            'currentShoppingList' => $repository->findCurrentForAccountUser($accountUser)
-        ];
+        return $repository->findByUser($accountUser);
     }
 
     /**

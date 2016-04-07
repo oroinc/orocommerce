@@ -6,42 +6,31 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class AccountGroupCategoryVisibilityRepository extends EntityRepository
 {
     /**
      * @param AccountGroup $accountGroup
-     * @return \Doctrine\ORM\QueryBuilder
+     * @param Category $category
+     * @return string|null
      */
-    public function getCategoryWithVisibilitiesForAccountGroup(AccountGroup $accountGroup)
+    public function getAccountGroupCategoryVisibility(AccountGroup $accountGroup, Category $category)
     {
-        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
-        $queryBuilder
-            ->select(
-                'c.id as category_id',
-                'IDENTITY(c.parentCategory) as category_parent_id',
-                'categoryVisibility.visibility',
-                'accountGroupCategoryVisibility.visibility as account_group_visibility'
-            )
-            ->from('OroB2BCatalogBundle:Category', 'c')
-            ->leftJoin(
-                'OroB2BAccountBundle:Visibility\CategoryVisibility',
-                'categoryVisibility',
-                Join::WITH,
-                $queryBuilder->expr()->eq('categoryVisibility.category', 'c')
-            )
-            ->leftJoin(
-                'OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility',
-                'accountGroupCategoryVisibility',
-                Join::WITH,
-                $queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->eq('accountGroupCategoryVisibility.category', 'c'),
-                    $queryBuilder->expr()->eq('accountGroupCategoryVisibility.accountGroup', ':accountGroup')
-                )
-            )
+        $result = $this->createQueryBuilder('accountGroupCategoryVisibility')
+            ->select('accountGroupCategoryVisibility.visibility')
+            ->andWhere('accountGroupCategoryVisibility.accountGroup = :accountGroup')
+            ->andWhere('accountGroupCategoryVisibility.category = :category')
             ->setParameter('accountGroup', $accountGroup)
-            ->orderBy('c.level', 'ASC');
+            ->setParameter('category', $category)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
 
-        return $queryBuilder;
+        if ($result) {
+            return $result['visibility'];
+        } else {
+            return null;
+        }
     }
 }

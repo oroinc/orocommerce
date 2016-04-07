@@ -2,10 +2,12 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -116,6 +118,7 @@ class ProductPriceRepository extends EntityRepository
      * @param bool $getTierPrices
      * @param string|null $currency
      * @param string|null $productUnitCode
+     * @param array $orderBy
      *
      * @return ProductPrice[]
      */
@@ -124,7 +127,8 @@ class ProductPriceRepository extends EntityRepository
         array $productIds,
         $getTierPrices = true,
         $currency = null,
-        $productUnitCode = null
+        $productUnitCode = null,
+        array $orderBy = ['unit' => 'ASC', 'quantity' => 'ASC']
     ) {
         if (!$productIds) {
             return [];
@@ -137,9 +141,7 @@ class ProductPriceRepository extends EntityRepository
                 $qb->expr()->in('IDENTITY(price.product)', ':productIds')
             )
             ->setParameter('priceListId', $priceListId)
-            ->setParameter('productIds', $productIds)
-            ->addOrderBy('price.unit')
-            ->addOrderBy('price.quantity');
+            ->setParameter('productIds', $productIds);
 
         if ($currency) {
             $qb
@@ -157,6 +159,10 @@ class ProductPriceRepository extends EntityRepository
             $qb
                 ->andWhere($qb->expr()->eq('IDENTITY(price.unit)', ':productUnitCode'))
                 ->setParameter('productUnitCode', $productUnitCode);
+        }
+
+        foreach ($orderBy as $fieldName => $orderDirection) {
+            $qb->addOrderBy('price.' . $fieldName, $orderDirection);
         }
 
         return $qb->getQuery()->getResult();
@@ -202,13 +208,13 @@ class ProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @param PriceList $priceList
+     * @param BasePriceList $priceList
      * @param Product $product
      * @param string|null $currency
      *
      * @return ProductUnit[]
      */
-    public function getProductUnitsByPriceList(PriceList $priceList, Product $product, $currency = null)
+    public function getProductUnitsByPriceList(BasePriceList $priceList, Product $product, $currency = null)
     {
         $qb = $this->getProductUnitsByPriceListQueryBuilder($priceList, $product, $currency);
 
@@ -216,13 +222,13 @@ class ProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @param PriceList $priceList
+     * @param BasePriceList $priceList
      * @param Product $product
      * @param string|null $currency
      *
      * @return QueryBuilder
      */
-    public function getProductUnitsByPriceListQueryBuilder(PriceList $priceList, Product $product, $currency = null)
+    public function getProductUnitsByPriceListQueryBuilder(BasePriceList $priceList, Product $product, $currency = null)
     {
         $qb = $this->_em->createQueryBuilder();
         $qb->select('partial unit.{code}')
@@ -241,5 +247,38 @@ class ProductPriceRepository extends EntityRepository
         }
 
         return $qb;
+    }
+
+    /**
+     * @param BasePriceList $priceList
+     * @param Collection $products
+     * @param string $currency
+     *
+     * @return array
+     */
+    public function getProductsUnitsByPriceList(BasePriceList $priceList, Collection $products, $currency)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('DISTINCT IDENTITY(price.product) AS productId, unit.code AS code')
+            ->from('OroB2BProductBundle:ProductUnit', 'unit')
+            ->join($this->_entityName, 'price', Join::WITH, 'price.unit = unit')
+            ->where($qb->expr()->in('price.product', ':products'))
+            ->andWhere($qb->expr()->eq('price.priceList', ':priceList'))
+            ->andWhere($qb->expr()->eq('price.currency', ':currency'))
+            ->addOrderBy('unit.code')
+            ->setParameters([
+                'products' => $products,
+                'priceList' => $priceList,
+                'currency' => $currency,
+            ]);
+
+        $productsUnits = $qb->getQuery()->getResult();
+
+        $result = [];
+        foreach ($productsUnits as $unit) {
+            $result[$unit['productId']][] = $unit['code'];
+        }
+
+        return $result;
     }
 }

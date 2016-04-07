@@ -2,11 +2,37 @@
   position: relative;
 
   &.open {
-  
     .oq-pseudo-selectbox_sales-mode {
       box-shadow: inset .1rem .1rem .3rem 0 rgba(0,0,0,.2);
     }
   }
+
+  &.oq-pseudo-selectbox-container_autocomplete {
+
+     &.open {
+      .oq-pseudo-selectbox_sales-mode {
+        box-shadow: none;
+      }
+    }
+    
+    .oq-pseudo-selectbox__popup {
+      margin: 0;
+      width: 100%;
+      top: 3.6rem;
+
+      .btn_close {
+        opacity: 1;
+      }
+
+      .oq-autocomplete-widget__list {
+        position: static;
+      }
+    }
+  }
+}
+
+.oq-pseudo-selectbox__popup__autocomplete-input {
+  padding: 1.5rem 3rem 1rem 1rem;
 }
 
 .oq-pseudo-selectbox {
@@ -35,13 +61,14 @@
 
   &.active {
 
-    + .account-oq__filter__popup {
+    + .oro-oq__filter__popup {
       display: block;
     }
   }
   
-  span {
+  > span {
     display: block;
+    font-size: 1.4rem;
     overflow: hidden;
     margin-right: 3rem;
     text-overflow: ellipsis;
@@ -108,6 +135,7 @@
   
   > .oq-pseudo-selectbox__popup-list {
     display: none;
+    min-width: 18.5rem;
     border-radius: .3rem;
     box-shadow: 0 .1rem .3rem 0 rgba(0,0,0,.2);
     background: @base-background-color;

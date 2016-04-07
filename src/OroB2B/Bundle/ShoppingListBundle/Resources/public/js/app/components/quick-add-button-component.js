@@ -12,7 +12,8 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, {
-                mediatorPrefix: 'shoppinglist:quick-add'
+                quickAddComponentPrefix: options.quickAddComponentPrefix,
+                mediatorPrefix: 'shoppinglist:' + options.quickAddComponentPrefix
             });
 
             QuickAddButtonComponent.__super__.initialize.apply(this, arguments);
@@ -25,7 +26,11 @@ define(function(require) {
          */
         selectShoppingList: function(shoppingListId) {
             QuickAddButtonComponent.__super__.selectShoppingList.apply(this, arguments);
-            mediator.trigger('quick-add:submit', 'orob2b_shopping_list_quick_add_processor', shoppingListId);
+            mediator.trigger(
+                this.options.quickAddComponentPrefix + ':submit',
+                'orob2b_shopping_list_quick_add_processor',
+                shoppingListId
+            );
         },
 
         triggerWidget: function() {

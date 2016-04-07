@@ -30,7 +30,7 @@ class WebsiteControllerTest extends WebTestCase
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations']);
         $this->website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $this->priceLists = [
             $this->getReference('price_list_1'),
@@ -46,7 +46,7 @@ class WebsiteControllerTest extends WebTestCase
 
     public function testDelete()
     {
-        $this->assertCount(1, $this->getPriceListsByWebsite());
+        $this->assertCount(2, $this->getPriceListsByWebsite());
         $form = $this->getUpdateForm();
         $this->assertTrue(isset($form[$this->formExtensionPath]));
         $form->remove($this->formExtensionPath);
@@ -75,13 +75,15 @@ class WebsiteControllerTest extends WebTestCase
         );
         $form = $this->getUpdateForm();
         $formValues = $form->getValues();
-        $i = 0;
+        $elementsCount = count($this->priceLists);
+        $i = $elementsCount - 1;
         foreach ($this->priceLists as $priceList) {
             $collectionElementPath = sprintf('%s[%d]', $this->formExtensionPath, $i);
             $this->assertTrue(isset($formValues[sprintf('%s[priceList]', $collectionElementPath)]));
             $this->assertTrue(isset($formValues[sprintf('%s[priority]', $collectionElementPath)]));
             $this->assertEquals($formValues[sprintf('%s[priceList]', $collectionElementPath)], $priceList->getId());
-            $this->assertEquals($formValues[sprintf('%s[priority]', $collectionElementPath)], ++$i);
+            $this->assertEquals($formValues[sprintf('%s[priority]', $collectionElementPath)], $elementsCount - $i);
+            $i--;
         }
     }
 
@@ -126,7 +128,7 @@ class WebsiteControllerTest extends WebTestCase
 
     /**
      * @param array $formValues
-     * @param $message
+     * @param string $message
      */
     protected function checkValidationMessage(array $formValues, $message)
     {

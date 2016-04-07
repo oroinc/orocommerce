@@ -22,57 +22,68 @@ abstract class AbstractRoundingService implements RoundingServiceInterface
     }
 
     /**
-     * @param float|integer $value
+     * @param float|int $value
      * @param int $precision
-     * @param string $roundType
+     * @param int $roundType
      * @return float|int
      * @throws InvalidRoundingTypeException
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function round($value, $precision = null, $roundType = null)
     {
         if (null === $roundType) {
-            $roundType = (string)$this->getRoundType();
+            $roundType = (int)$this->getRoundType();
         }
 
         if (null === $precision) {
-            $precision = (int)$this->getFallbackPrecision();
+            $precision = (int)$this->getPrecision();
         }
 
-        $multiplier = pow(10, $precision);
+        // shift number to maintain the correct scale during rounding
+        /** @var int $roundingCoef */
+        $roundingCoef = pow(10, $precision);
+        $value *= $roundingCoef;
 
         switch ($roundType) {
-            case self::HALF_UP:
-                $value = round($value, $precision, PHP_ROUND_HALF_UP);
+            case self::ROUND_CEILING:
+                $value = ceil($value);
                 break;
-            case self::HALF_DOWN:
-                $value = round($value, $precision, PHP_ROUND_HALF_DOWN);
+            case self::ROUND_FLOOR:
+                $value = floor($value);
                 break;
-            case self::CEIL:
-                $value = ceil($value * $multiplier) / $multiplier;
+            case self::ROUND_UP:
+                $value = $value > 0 ? ceil($value) : floor($value);
                 break;
-            case self::FLOOR:
-                $value = floor($value * $multiplier) / $multiplier;
+            case self::ROUND_DOWN:
+                $value = $value > 0 ? floor($value) : ceil($value);
+                break;
+            case self::ROUND_HALF_EVEN:
+                $value = round($value, 0, PHP_ROUND_HALF_EVEN);
+                break;
+            case self::ROUND_HALF_UP:
+                $value = round($value, 0, PHP_ROUND_HALF_UP);
+                break;
+            case self::ROUND_HALF_DOWN:
+                $value = round($value, 0, PHP_ROUND_HALF_DOWN);
                 break;
             default:
-                throw new InvalidRoundingTypeException(
-                    sprintf(
-                        'The type of the rounding is not valid. Allowed the following types: %s.',
-                        implode(', ', [self::HALF_UP, self::HALF_DOWN, self::CEIL, self::FLOOR])
-                    )
-                );
+                throw new InvalidRoundingTypeException('The type of the rounding is not valid "intl" rounding mode.');
                 break;
         }
+
+        $value /= $roundingCoef;
 
         return $value;
     }
 
     /**
-     * @return string
+     * @return int
      */
-    abstract protected function getRoundType();
+    abstract public function getRoundType();
 
     /**
      * @return int
      */
-    abstract protected function getFallbackPrecision();
+    abstract public function getPrecision();
 }

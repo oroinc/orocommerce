@@ -15,6 +15,7 @@ orob2b.account:
     form.choose_parent: 'Choose parent account...'
     address_book.label: 'Address Book'
     owner.label: 'Owner'
+    sales_representatives.label: 'Assigned Sales Representatives'
 
     address:
         add: 'Add Address'
@@ -66,6 +67,7 @@ orob2b.account:
         addresses.label:             'Addresses'
         address_book.label:          'Address Book'
         owner.label:                 'Owner'
+        sales_representatives.label: 'Assigned Sales Representatives'
 
         profile:
             company_name: 'Company Name'
@@ -136,6 +138,7 @@ orob2b.account:
         street2.label:              Street 2
         types.label:                Types
         addresses_to_types.label:   Addresses to address types
+        phone.label:                Phone
 
         country_name.label:         Country name
         country_iso2_code.label:    Country ISO2 code
@@ -149,6 +152,17 @@ orob2b.account:
             disable: 'Disable'
             confirm: 'Confirm'
             send_confirmation: 'Resend Confirmation Email'
+            create: 'Create Account'
+            edit: 'Edit'
+            delete: 'Delete'
+
+        account_user_role:
+            create: 'Create Account User Role'
+            edit: 'Edit'
+            delete: 'Delete'
+            create_label: 'Create'
+            save_label: 'Save'
+            cancel_label: 'Cancel'
 
     sections:
         general: 'General Information'
@@ -185,6 +199,7 @@ orob2b.account:
         street2.label:       Street 2
         types.label:         Types
         addresses_to_types.label:   Addresses to address types
+        phone.label:         Phone
 
         country_name.label:      Country name
         country_iso2_code.label: Country ISO2 code
@@ -305,6 +320,7 @@ orob2b.account:
         shortcut_list_account_user_roles.label: 'Show account user roles'
         shortcut_list_account_user_roles.description: 'View list of account user roles'
 
+        account_user.label: My Account
         account_user_profile.label: My Profile
         account_user_login.label: Login
         account_user_logout.label: Logout
@@ -355,6 +371,7 @@ orob2b.account:
             send_password_in_welcome_email.label: 'Send plain text password in welcome emails'
 
     security:
+        permissions: 'Action Permissions'
         permission:
             register_account_user: 'Register Account User'
         access-level:
@@ -366,18 +383,55 @@ orob2b.account:
             NONE: 'None'
 
     frontend:
+        privileges:
+            entity.label: Access
+            action.label: Capabillities
         security:
             access-level:
-                BASIC: 'Own'
+                BASIC: 'Individual'
                 LOCAL: 'All'
                 DEEP: 'Not supported'
                 GLOBAL: 'Not supported'
                 SYSTEM: 'System'
                 NONE: 'None'
+        account_user:
+            role.entity_plural_label: Account User Roles
+            entity_plural_label: Account Users
+            profile.label: Account Information
+            full_name.label: Name
+            email.label: Email Address
+            status.label: Status
+            status_active.label: Active
+            status_inactive.label: Inactive
+        title:
+            account_user_role.create: Create Account User Role
+            account_user_role.edit: Edit Account User Role
+            account_user.view: 'Account User - %identifier%'
+            account_user.profile: 'Account information'
+            page:
+                account_user_role.create: Create Role
+                account_user_role.edit: Edit Role
+        section:
+            account_user.user_profile: 'User profile'
+            account_user.my_profile: 'My profile'
+            account_user.address_book: 'Address book'
+        account_user_link.text: '< Back to Account User List'
+        sections:
+            account_user_role:
+                label: Role Title
+                users.label: Role Users
+        action:
+            back.label: "< Back"
+            account_user_role.edit: "Edit Role"
+        table:
+            entity:
+                section.label: Section
+                action.label: Action
+                permission.label: Permission
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'
 
     dataaudit:
         administrator: Administrator
-        module_label: Audig history for Account User
+        module_label: Audit history for Account User

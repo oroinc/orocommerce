@@ -112,7 +112,7 @@ class ProductPriceCriteriaTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return Product
      */
     protected function getProduct($id)

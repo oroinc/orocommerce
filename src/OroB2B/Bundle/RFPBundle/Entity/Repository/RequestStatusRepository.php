@@ -25,7 +25,7 @@ class RequestStatusRepository extends EntityRepository
     }
 
     /**
-     * Returns all statuses that are not deleted and deleted statuse that have requests
+     * Returns all statuses that are not deleted and deleted statuses that have requests
      *
      * @return QueryBuilder
      */

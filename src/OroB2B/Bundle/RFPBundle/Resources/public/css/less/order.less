@@ -1,16 +1,21 @@
 .order-line-item-offers {
-    td.order-line-item-offers-radio {
-        min-width: 20px;
+  td {
+    &.order-line-item-offers-radio {
+      min-width: 20px;
     }
-    [type=radio] {
-        vertical-align: top !important;
+
+    &.order-line-item-offers-quantity,
+    &.order-line-item-offers-price {
+      min-width: 120px;
+      text-align: center;
     }
-    label {
-        margin-bottom: 0;
-    }
-    td.order-line-item-offers-quantity,
-    td.order-line-item-offers-price {
-        min-width: 120px;
-        text-align: center;
-    }
+  }
+
+  input[type="radio"] {
+    vertical-align: top !important;
+  }
+
+  label {
+    margin-bottom: 0;
+  }
 }

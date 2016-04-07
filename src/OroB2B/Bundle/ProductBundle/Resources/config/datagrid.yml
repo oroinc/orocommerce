@@ -93,7 +93,7 @@ datagrid:
         extends: products-select-grid-base
 
     products-select-grid-frontend:
-        acl_resource: orob2b_product_view_products
+        acl_resource: orob2b_product_frontend_view
         extends: products-select-grid-base
         source:
             skip_acl_apply: true
@@ -142,6 +142,10 @@ datagrid:
         options:
             entityHint:        product
             entity_pagination: true
+            displayOptions:
+                selector: '.catalog__filter-controls__item_display-options'
+            requireJSModules:
+                - orob2bproduct/js/app/datagrid/frontend-product-display-options-builder
         source:
             type:         orm
             query:
@@ -167,8 +171,6 @@ datagrid:
                 label: orob2b.product.sku.label
             name:
                 label: orob2b.product.names.label
-            inventoryStatusName:
-                label: orob2b.product.inventory_status.label
         properties:
             id: ~
             view_link:
@@ -179,8 +181,10 @@ datagrid:
             columns:
                 sku:
                     data_name: product.sku
+                    type: string
             default:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+            toolbar_sorting: true
         filters:
             columns:
                 sku:
@@ -189,10 +193,6 @@ datagrid:
                 name:
                     type:      string
                     data_name: name
-                inventoryStatusName:
-                    type:      enum
-                    data_name: inventoryStatusId
-                    enum_code: prod_inventory_status
         actions:
             view:
                 type:          navigate

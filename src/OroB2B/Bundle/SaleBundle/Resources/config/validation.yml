@@ -72,3 +72,20 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer:
         price:
             - NotBlank: ~
             - Valid: ~
+
+OroB2B\Bundle\SaleBundle\Entity\QuoteAddress:
+    properties:
+        phone:
+            - Length:
+                max: 255
+
+OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand:
+    constraints:
+        - OroB2B\Bundle\SaleBundle\Validator\Constraints\AllowedQuoteDemandQuantity: ~
+    properties:
+        quantity:
+            - NotBlank: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        quoteProductOffer:
+            - NotBlank: ~

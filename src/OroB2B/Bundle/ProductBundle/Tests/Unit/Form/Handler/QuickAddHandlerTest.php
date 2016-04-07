@@ -2,13 +2,12 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-
-use Symfony\Component\Form\FormFactoryInterface;
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
+use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -17,8 +16,15 @@ use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider;
+use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 {
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
@@ -31,9 +37,29 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormFactoryInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
      */
-    protected $formFactory;
+    protected $router;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|QuickAddFormProvider
+     */
+    protected $quickAddFormProvider;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|QuickAddImportFormProvider
+     */
+    protected $quickAddImportFormProvider;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|QuickAddCopyPasteFormProvider
+     */
+    protected $quickAddCopyPasteFormProvider;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|QuickAddRowCollectionBuilder
+     */
+    protected $quickAddRowCollectionBuilder;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ComponentProcessorRegistry
@@ -44,16 +70,6 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
      * @var QuickAddHandler
      */
     protected $handler;
-
-    /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $managerRegistry;
-
-    /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $manager;
 
     /**
      * @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject
@@ -67,11 +83,31 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('trans')
             ->willReturnCallback(
                 function ($message) {
-                    return $message . '.trans';
+                    return $message.'.trans';
                 }
             );
 
-        $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
+        $this->quickAddFormProvider = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->quickAddImportFormProvider = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->quickAddCopyPasteFormProvider = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->quickAddRowCollectionBuilder = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
         $this->componentRegistry = $this
             ->getMockBuilder('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry')
@@ -79,43 +115,14 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->handler = new QuickAddHandler(
-            $this->translator,
-            $this->formFactory,
+            $this->quickAddFormProvider,
+            $this->quickAddImportFormProvider,
+            $this->quickAddCopyPasteFormProvider,
+            $this->quickAddRowCollectionBuilder,
             $this->componentRegistry,
-            $this->getManagerRegistry()
+            $this->router,
+            $this->translator
         );
-
-        $this->handler->setProductClass(self::PRODUCT_CLASS);
-    }
-
-    /**
-     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getManagerRegistry()
-    {
-        if (!$this->managerRegistry) {
-            $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-            $this->managerRegistry->expects($this->any())
-                ->method('getManagerForClass')
-                ->with(self::PRODUCT_CLASS)
-                ->willReturn($this->getManager());
-        }
-        return $this->managerRegistry;
-    }
-
-    /**
-     * @return ObjectManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getManager()
-    {
-        if (!$this->manager) {
-            $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-            $this->manager->expects($this->any())
-                ->method('getRepository')
-                ->with(self::PRODUCT_CLASS)
-                ->willReturn($this->getProductRepository());
-        }
-        return $this->manager;
     }
 
     /**
@@ -129,6 +136,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
         }
+
         return $this->productRepository;
     }
 
@@ -138,12 +146,12 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
-        $this->formFactory->expects($this->once())
-            ->method('create')
-            ->with(QuickAddType::NAME, null, [])
+        $this->quickAddFormProvider->expects($this->never())
+            ->method('getForm')
+            ->with([])
             ->willReturn($form);
 
-        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request));
+        $this->assertEquals(null, $this->handler->process($request, 'reload'));
     }
 
     public function testProcessNoProcessor()
@@ -156,12 +164,18 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('submit')
             ->with($request);
 
-        $this->formFactory->expects($this->once())
-            ->method('create')
-            ->with(QuickAddType::NAME, null, ['products' => []])
+        $this->quickAddFormProvider->expects($this->once())
+            ->method('getForm')
+            ->with([], ['products' => []])
             ->willReturn($form);
 
-        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request));
+        $collection = new QuickAddRowCollection();
+        $this->quickAddRowCollectionBuilder->expects($this->once())
+            ->method('buildFromRequest')
+            ->with($request)
+            ->willReturn($collection);
+
+        $this->assertEquals(null, $this->handler->process($request, 'reload'));
     }
 
     public function testProcessNotAllowedProcessor()
@@ -175,16 +189,22 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('submit')
             ->with($request);
 
-        $this->formFactory->expects($this->once())
-            ->method('create')
-            ->with(QuickAddType::NAME, null, ['validation_required' => false, 'products' => []])
+        $this->quickAddFormProvider->expects($this->once())
+            ->method('getForm')
+            ->with([], ['validation_required' => false, 'products' => []])
             ->willReturn($form);
+
+        $collection = new QuickAddRowCollection();
+        $this->quickAddRowCollectionBuilder->expects($this->once())
+            ->method('buildFromRequest')
+            ->with($request)
+            ->willReturn($collection);
 
         $processor = $this->getProcessor(false, false);
         $processor->expects($this->never())
             ->method('process');
 
-        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request));
+        $this->assertEquals(null, $this->handler->process($request, 'reload'));
     }
 
     public function testProcessInvalidForm()
@@ -194,8 +214,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             QuickAddType::NAME,
             [
                 QuickAddType::PRODUCTS_FIELD_NAME => [
-                    ['productSku' => 'sku1'],
-                    ['productSku' => 'sku2'],
+                    [ProductDataStorage::PRODUCT_SKU_KEY => 'sku1'],
+                    [ProductDataStorage::PRODUCT_SKU_KEY => 'sku2'],
                 ],
                 QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME,
             ]
@@ -203,11 +223,6 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $product = new Product();
         $product->setSku('SKU1');
-
-        $this->getProductRepository()->expects($this->once())
-            ->method('getProductWithNamesBySku')
-            ->with(['sku1', 'sku2'])
-            ->willReturn([$product]);
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
@@ -217,16 +232,25 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->willReturn(false);
 
-        $this->formFactory->expects($this->once())
-            ->method('create')
-            ->with(QuickAddType::NAME, null, ['validation_required' => true, 'products' => ['SKU1' => $product]])
+        $this->quickAddFormProvider->expects($this->once())
+            ->method('getForm')
+            ->with([], ['validation_required' => true, 'products' => ['SKU1' => $product]])
             ->willReturn($form);
+
+        $collection = $this->getMock('OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection');
+        $collection->expects($this->once())
+            ->method('getProducts')
+            ->willReturn(['SKU1' => $product]);
+        $this->quickAddRowCollectionBuilder->expects($this->once())
+            ->method('buildFromRequest')
+            ->with($request)
+            ->willReturn($collection);
 
         $processor = $this->getProcessor();
         $processor->expects($this->never())
             ->method('process');
 
-        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request));
+        $this->assertEquals(null, $this->handler->process($request, 'reload', 'reload'));
     }
 
     public function testProcessValidDataWithoutResponse()
@@ -234,12 +258,19 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/post/valid-without-response', 'POST');
         $request->request->set(QuickAddType::NAME, [QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME]);
 
-        $products = [['sku' => '111', 'qty' => 123], ['sku' => '222', 'qty' => 234]];
+        $productRows = [
+            $this->createProductRow('111', 123),
+            $this->createProductRow('222', 234)
+        ];
+        $products = [
+            [ProductDataStorage::PRODUCT_SKU_KEY => '111', ProductDataStorage::PRODUCT_QUANTITY_KEY => 123],
+            [ProductDataStorage::PRODUCT_SKU_KEY => '222', ProductDataStorage::PRODUCT_QUANTITY_KEY => 234]
+        ];
 
         $productsForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $productsForm->expects($this->once())
             ->method('getData')
-            ->willReturn($products);
+            ->willReturn($productRows);
 
         $mainForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->once())
@@ -253,23 +284,30 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(QuickAddType::PRODUCTS_FIELD_NAME)
             ->willReturn($productsForm);
 
-        $clearForm = $this->getMock('Symfony\Component\Form\FormInterface');
-
-        $this->formFactory->expects($this->at(0))
-            ->method('create')
-            ->with(QuickAddType::NAME, null, ['validation_required' => true, 'products' => []])
+        $this->quickAddFormProvider->expects($this->at(0))
+            ->method('getForm')
+            ->with([], ['validation_required' => true, 'products' => []])
             ->willReturn($mainForm);
-        $this->formFactory->expects($this->at(1))
-            ->method('create')
-            ->with(QuickAddType::NAME, null, ['validation_required' => true, 'products' => []])
-            ->willReturn($clearForm);
+
+        $collection = new QuickAddRowCollection();
+        $this->quickAddRowCollectionBuilder->expects($this->once())
+            ->method('buildFromRequest')
+            ->with($request)
+            ->willReturn($collection);
 
         $processor = $this->getProcessor();
         $processor->expects($this->once())
             ->method('process')
-            ->with([ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products], $request);
+            ->with(
+                [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => null
+                ],
+                $request
+            );
 
-        $this->assertEquals(['form' => $clearForm, 'response' => null], $this->handler->process($request));
+        $this->router->expects($this->once())->method('generate')->with('reload')->willReturn('/reload');
+        $this->assertEquals(new RedirectResponse('/reload'), $this->handler->process($request, 'reload'));
     }
 
     public function testProcessValidDataWithResponse()
@@ -279,12 +317,19 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $response = new RedirectResponse('/processor-redirect');
 
-        $products = [['sku' => '111', 'qty' => 123], ['sku' => '222', 'qty' => 234]];
+        $productRows = [
+            $this->createProductRow('111', 123),
+            $this->createProductRow('222', 234)
+        ];
+        $products = [
+            [ProductDataStorage::PRODUCT_SKU_KEY => '111', ProductDataStorage::PRODUCT_QUANTITY_KEY => 123],
+            [ProductDataStorage::PRODUCT_SKU_KEY => '222', ProductDataStorage::PRODUCT_QUANTITY_KEY => 234]
+        ];
 
         $productsForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $productsForm->expects($this->once())
             ->method('getData')
-            ->willReturn($products);
+            ->willReturn($productRows);
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
@@ -298,18 +343,147 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(QuickAddType::PRODUCTS_FIELD_NAME)
             ->willReturn($productsForm);
 
-        $this->formFactory->expects($this->once())
-            ->method('create')
-            ->with(QuickAddType::NAME, null, ['validation_required' => true, 'products' => []])
+        $this->quickAddFormProvider->expects($this->once())
+            ->method('getForm')
+            ->with([], ['validation_required' => true, 'products' => []])
             ->willReturn($form);
+        $collection = new QuickAddRowCollection();
+        $this->quickAddRowCollectionBuilder->expects($this->once())
+            ->method('buildFromRequest')
+            ->with($request)
+            ->willReturn($collection);
 
         $processor = $this->getProcessor();
         $processor->expects($this->once())
             ->method('process')
-            ->with([ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products], $request)
+            ->with(
+                [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => null
+                ],
+                $request
+            )
             ->willReturn($response);
 
-        $this->assertEquals(['form' => $form, 'response' => $response], $this->handler->process($request));
+        $this->assertEquals($response, $this->handler->process($request, 'reload'));
+    }
+
+    public function testProcessImport()
+    {
+        $request = Request::create('/post/valid-without-response', 'POST');
+        $form = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
+
+        $this->quickAddImportFormProvider->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form);
+        $form->expects($this->once())
+            ->method('handleRequest')
+            ->with($request)
+            ->willReturn($form);
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
+
+        $fileForm = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
+        $file = $this->getMockBuilder('Symfony\Component\HttpFoundation\File\UploadedFile')
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([tempnam(sys_get_temp_dir(), ''), 'dummy'])
+            ->getMock();
+        $form->expects($this->once())
+            ->method('get')
+            ->with('file')
+            ->willReturn($fileForm);
+        $fileForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($file);
+
+        $collection = new QuickAddRowCollection();
+        $this->quickAddRowCollectionBuilder->expects($this->once())
+            ->method('buildFromFile')
+            ->with($file)
+            ->willReturn($collection);
+
+        $actual = $this->handler->processImport($request);
+        $this->assertEquals($collection, $actual);
+    }
+
+    public function testProcessImportNotValid()
+    {
+        $request = Request::create('/post/valid-without-response', 'POST');
+        $form = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
+        $this->quickAddImportFormProvider->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form);
+
+        $form->expects($this->once())
+            ->method('handleRequest')
+            ->with($request)
+            ->willReturn($form);
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(false);
+        $form->expects($this->never())
+            ->method('get')
+            ->with('file');
+        $this->handler->processImport($request);
+    }
+
+    public function testProcessCopyPaste()
+    {
+        $request = Request::create('/post/valid-without-response', 'POST');
+        $form = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
+
+        $this->quickAddCopyPasteFormProvider->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form);
+        $form->expects($this->once())
+            ->method('handleRequest')
+            ->with($request)
+            ->willReturn($form);
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
+
+        $text = 'SKU1, 1';
+        $copyPasteForm = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
+        $form->expects($this->once())
+            ->method('get')
+            ->with('copyPaste')
+            ->willReturn($copyPasteForm);
+        $copyPasteForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($text);
+
+        $collection = new QuickAddRowCollection();
+        $this->quickAddRowCollectionBuilder->expects($this->once())
+            ->method('buildFromCopyPasteText')
+            ->with($text)
+            ->willReturn($collection);
+        $this->quickAddFormProvider->expects($this->once())
+            ->method('getForm');
+
+        $actula = $this->handler->processCopyPaste($request);
+        $this->assertEquals($collection, $actula);
+    }
+
+    public function testProcessCopyPasteNotValid()
+    {
+        $request = Request::create('/post/valid-without-response', 'POST');
+        $form = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
+
+        $this->quickAddCopyPasteFormProvider->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form);
+        $form->expects($this->once())
+            ->method('handleRequest')
+            ->with($request)
+            ->willReturn($form);
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(false);
+
+        $result = $this->handler->processCopyPaste($request);
+        $this->assertNull($result);
     }
 
     /**
@@ -320,7 +494,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBag');
         $flashBag->expects($this->once())
             ->method('add')
-            ->with('error', 'orob2b.product.frontend.component_not_accessible.message.trans');
+            ->with('error', 'orob2b.product.frontend.quick_add.messages.component_not_accessible.trans');
 
         $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
             ->disableOriginalConstructor()
@@ -353,5 +527,19 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($processor);
 
         return $processor;
+    }
+
+    /**
+     * @param string $sku
+     * @param string $qty
+     * @return ProductRow
+     */
+    protected function createProductRow($sku, $qty)
+    {
+        $row = new ProductRow();
+        $row->productSku = $sku;
+        $row->productQuantity = $qty;
+
+        return $row;
     }
 }

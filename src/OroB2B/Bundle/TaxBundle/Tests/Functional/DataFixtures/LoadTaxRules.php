@@ -14,7 +14,11 @@ use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 
 class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
 {
-    const TAX_RULE_NAME = 'TAX_RULE_1';
+    const TAX_RULE_1 = 'TAX_RULE_1';
+    const TAX_RULE_2 = 'TAX_RULE_2';
+    const TAX_RULE_3 = 'TAX_RULE_3';
+    const TAX_RULE_4 = 'TAX_RULE_4';
+
     const DESCRIPTION = 'Tax rule description 1';
 
     const REFERENCE_PREFIX = 'tax_rule';
@@ -48,21 +52,75 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
 
         /** @var TaxJurisdiction $taxJurisdiction */
         $taxJurisdiction = $this->getReference(
-            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxJurisdictions::TAX_1
+            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_1
         );
 
-        $this->createTaxRule($manager, $accountTaxCode, $productTaxCode, $tax, $taxJurisdiction, self::DESCRIPTION);
+        /** @var TaxJurisdiction $taxJurisdiction2 */
+        $taxJurisdiction2 = $this->getReference(
+            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_2
+        );
+
+        /** @var TaxJurisdiction $taxJurisdiction3 */
+        $taxJurisdiction3 = $this->getReference(
+            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_3
+        );
+
+        /** @var TaxJurisdiction $taxJurisdiction4 */
+        $taxJurisdiction4 = $this->getReference(
+            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_4
+        );
+
+        $this->createTaxRule(
+            $manager,
+            $accountTaxCode,
+            $productTaxCode,
+            $tax,
+            $taxJurisdiction,
+            self::DESCRIPTION,
+            self::TAX_RULE_1
+        );
+
+        $this->createTaxRule(
+            $manager,
+            $accountTaxCode,
+            $productTaxCode,
+            $tax,
+            $taxJurisdiction2,
+            self::DESCRIPTION,
+            self::TAX_RULE_2
+        );
+
+        $this->createTaxRule(
+            $manager,
+            $accountTaxCode,
+            $productTaxCode,
+            $tax,
+            $taxJurisdiction3,
+            self::DESCRIPTION,
+            self::TAX_RULE_3
+        );
+
+        $this->createTaxRule(
+            $manager,
+            $accountTaxCode,
+            $productTaxCode,
+            $tax,
+            $taxJurisdiction4,
+            self::DESCRIPTION,
+            self::TAX_RULE_4
+        );
 
         $manager->flush();
     }
 
     /**
-     * @param ObjectManager   $manager
-     * @param AccountTaxCode  $accountTaxCode
-     * @param ProductTaxCode  $productTaxCode
-     * @param Tax             $tax
+     * @param ObjectManager $manager
+     * @param AccountTaxCode $accountTaxCode
+     * @param ProductTaxCode $productTaxCode
+     * @param Tax $tax
      * @param TaxJurisdiction $taxJurisdiction
-     * @param string          $description
+     * @param string $description
+     * @param string $reference
      * @return TaxRule
      */
     protected function createTaxRule(
@@ -71,7 +129,8 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
         ProductTaxCode $productTaxCode,
         Tax $tax,
         TaxJurisdiction $taxJurisdiction,
-        $description
+        $description,
+        $reference
     ) {
         $taxRule = new TaxRule();
         $taxRule
@@ -82,7 +141,7 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
             ->setDescription($description);
 
         $manager->persist($taxRule);
-        $this->addReference(self::REFERENCE_PREFIX . '.' . self::TAX_RULE_NAME, $taxRule);
+        $this->addReference(static::REFERENCE_PREFIX . '.' . $reference, $taxRule);
 
         return $taxRule;
     }

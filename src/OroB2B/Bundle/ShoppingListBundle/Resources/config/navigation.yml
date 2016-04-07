@@ -16,10 +16,9 @@ oro_menu_config:
 
         frontend_shopping_list:
             label:           'orob2b.shoppinglist.entity_plural_label'
-            route:           'orob2b_shopping_list_frontend_index'
+            route:           'orob2b_shopping_list_frontend_view'
             extras:
                 position:    200
-                routes:      ['/^orob2b_shopping_list_frontend_/']
                 description: 'orob2b.shoppinglist.menu.shopping_list.description'
 
     tree:
@@ -38,7 +37,5 @@ oro_menu_config:
 oro_titles:
     orob2b_shopping_list_index: ~
     orob2b_shopping_list_view:  '%%label%%'
-    orob2b_shopping_list_frontend_index: orob2b.shoppinglist.entity_plural_label
+    # TODO: join this somehow with index
     orob2b_shopping_list_frontend_view:  '%%label%% - orob2b.shoppinglist.entity_plural_label'
-    orob2b_shopping_list_frontend_create: oro.ui.create_entity
-    orob2b_shopping_list_frontend_update:  '%%title%% - oro.ui.edit'

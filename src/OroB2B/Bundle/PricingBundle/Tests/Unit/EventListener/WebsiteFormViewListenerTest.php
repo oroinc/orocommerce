@@ -6,6 +6,7 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\PricingBundle\EventListener\WebsiteFormViewListener;
 
 class WebsiteFormViewListenerTest extends FormViewListenerTestCase
@@ -33,9 +34,15 @@ class WebsiteFormViewListenerTest extends FormViewListenerTestCase
         );
     }
 
-    public function testOnWebsiteView()
+    /**
+     * @dataProvider testOnWebsiteViewDataProvider
+     *
+     * @param PriceListWebsiteFallback|null $fallbackEntity
+     * @param string $expectedFallbackValue
+     */
+    public function testOnWebsiteView($fallbackEntity, $expectedFallbackValue)
     {
-        $renderedHtml = 'rendered_html';
+        $renderedHtml = $expectedFallbackValue;
         $event = $this->createEvent($renderedHtml);
 
         $requestStack = $this->getRequestStack();
@@ -57,6 +64,13 @@ class WebsiteFormViewListenerTest extends FormViewListenerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $fallbackRepository = $this
+            ->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $fallbackRepository->expects($this->once())->method('findOneBy')->willReturn($fallbackEntity);
+
         $manager->expects($this->once())
             ->method('getRepository')
             ->willReturn($repository);
@@ -64,7 +78,10 @@ class WebsiteFormViewListenerTest extends FormViewListenerTestCase
         $doctrineHelper->expects($this->once())
             ->method('getEntityManager')
             ->willReturn($manager);
-
+        $doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with('OroB2BPricingBundle:PriceListWebsiteFallback')
+            ->willReturn($fallbackRepository);
         $listener = new WebsiteFormViewListener(
             $requestStack,
             $doctrineHelper,
@@ -82,6 +99,24 @@ class WebsiteFormViewListenerTest extends FormViewListenerTestCase
             'orob2b.pricing.pricelist.entity_plural_label.trans',
             $event->getScrollData()->getData()[ScrollData::DATA_BLOCKS][1][ScrollData::TITLE]
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function testOnWebsiteViewDataProvider()
+    {
+        return [
+            'notExistingFallback' => [
+                'fallbackEntity' => null,
+                'expectedFallbackValue' => 'orob2b.pricing.fallback.config.label',
+            ],
+            'existingDefaultFallback' => [
+                'fallbackEntity' => (new PriceListWebsiteFallback())
+                    ->setFallback(PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY),
+                'expectedFallbackValue' => 'orob2b.pricing.fallback.current_website_only.label',
+            ],
+        ];
     }
 
     public function testOnWebsiteViewWhenRequestIsNull()

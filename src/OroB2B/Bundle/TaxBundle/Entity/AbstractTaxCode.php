@@ -6,11 +6,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
+
 /**
  * @ORM\MappedSuperclass
  * @ORM\HasLifecycleCallbacks
  */
-abstract class AbstractTaxCode
+abstract class AbstractTaxCode implements TaxCodeInterface
 {
     /**
      * @ORM\Id
@@ -36,7 +38,9 @@ abstract class AbstractTaxCode
     protected $code;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string
+     *
+     * @ORM\Column(name="description", type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -44,8 +48,6 @@ abstract class AbstractTaxCode
      *          }
      *      }
      * )
-     *
-     * @var string
      */
     protected $description;
 
@@ -101,11 +103,7 @@ abstract class AbstractTaxCode
         return $this;
     }
 
-    /**
-     * Get code
-     *
-     * @return string
-     */
+    /** {@inheritdoc} */
     public function getCode()
     {
         return $this->code;

@@ -12,7 +12,7 @@ Product visibility edit page allows setting of the following values:
 
 ####Product Visibility (Visibility to All):
 * **Category (Visibility to All)** - `Default value`. Value is taken from the category of this product
-* **Config** - The value is taken from the system configuration
+* **Config** - The value is taken from the system configuration parameter "Product Visibility to Accounts"
 * **Hidden** - Specific static value
 * **Visible** - Specific static value
 
@@ -108,9 +108,9 @@ There are cache builder classes for each listed levels: `ProductResolvedCacheBui
 `AccountProductResolvedCacheBuilder`, `AccountGroupProductResolvedCacheBuilder` each of which implements 
 `CacheBuilderInterface` (these are leaves).
 
-Composite is `CacheBuilder` class that aggregates all desribed leaves.
+Composite is `CacheBuilder` class that aggregates all described leaves.
 To update the cache for all product visibility levels developer can run command: 
-`orob2b:account:product_visibility:cache:build`.
+`product:visibility:cache:build`.
 
 To build a cache for all levels of visibility categories, there are also the corresponding cache Builder.
 
@@ -132,7 +132,8 @@ There are following constant options to store this information:
 
 * VISIBLE = 1
 * HIDDEN = -1
-* VISIBILITY_FALLBACK_TO_ALL = 0
+* VISIBILITY_FALLBACK_TO_CONFIG = 0
+* VISIBILITY_FALLBACK_TO_ALL = 2
 * null
 
 After all this information is stored in DB visibility calculation can be performed. It uses following formula to 
@@ -143,8 +144,10 @@ PRODUCT_VISIBILITY + ACCOUNT_GROUP_VISIBILITY * 10 + ACCOUNT_VISIBILITY * 100 > 
 ```
 
 So, value on each level might affect result calculation, and higher level is more important. 
-If visibility is not defined (null) then zero value is used. The only exception is value VISIBILITY_FALLBACK_TO_ALL - 
-it used to distinguish fallback from `Account` value to `Visibility to All` value, 
-and it means that `Visibility to All` value should be used as `Account` value.
+If visibility is not defined (null) then zero value is used. The only exceptions are values VISIBILITY_FALLBACK_TO_ALL and VISIBILITY_FALLBACK_TO_CONFIG.
+VISIBILITY_FALLBACK_TO_ALL - it used to distinguish fallback from `Account` value to `Visibility to All` value, 
+and it means that `Visibility to All` value should be used instead of `Account` value.
+VISIBILITY_FALLBACK_TO_CONFIG - it used to distinguish fallback from `Visibility to All`, `Account` or `Account Group` value to category `Config` value,
+and it means that Category Visibility value from System Configuration should be used instead of `Visibility to All`, `Account` or `Account Group` value respectively.
 
 For more information about calculation logic see `ProductVisibilityQueryBuilderModifier` class.

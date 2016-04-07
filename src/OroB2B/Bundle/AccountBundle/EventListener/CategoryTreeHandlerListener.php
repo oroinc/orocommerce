@@ -40,33 +40,39 @@ class CategoryTreeHandlerListener
     }
 
     /**
-     * @param array|Category[] $categories
+     * @param Category[] $categories
      * @param Account|null $account
      * @return array
      */
     protected function filterCategories(array $categories, Account $account = null)
     {
+        if ($account) {
+            $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIdsForAccount($account);
+        } else {
+            $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIds();
+        }
+
         // copy categories array to another variable to prevent loop break on removed elements
         $filteredCategories = $categories;
-        foreach ($categories as &$category) {
-            if (!$this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account)) {
+        foreach ($categories as $category) {
+            if (in_array($category->getId(), $hiddenCategoryIds)) {
                 $this->removeTreeNode($filteredCategories, $category);
             }
-            $category->getChildCategories()->clear();
         }
 
         return $filteredCategories;
     }
 
     /**
-     * @param array $tree
+     * @param Category[] $filteredCategories
      * @param Category $category
      */
-    protected function removeTreeNode(array &$tree, Category $category)
+    protected function removeTreeNode(array &$filteredCategories, Category $category)
     {
-        foreach ($tree as $id => $item) {
-            if ($item === $category) {
-                unset($tree[$id]);
+        foreach ($filteredCategories as $id => $item) {
+            if ($item->getId() === $category->getId()) {
+                unset($filteredCategories[$id]);
+                break;
             }
         }
 
@@ -74,7 +80,7 @@ class CategoryTreeHandlerListener
 
         if (!$children->isEmpty()) {
             foreach ($children as $child) {
-                $this->removeTreeNode($tree, $child);
+                $this->removeTreeNode($filteredCategories, $child);
             }
         }
     }

@@ -2,12 +2,11 @@
 
 namespace OroB2B\Bundle\TaxBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
-
 use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 
-class ProductTaxCodeRepository extends EntityRepository
+class ProductTaxCodeRepository extends AbstractTaxCodeRepository
 {
     /**
      * @param Product $product
@@ -20,11 +19,6 @@ class ProductTaxCodeRepository extends EntityRepository
             return null;
         }
 
-        return $this->createQueryBuilder('productTaxCode')
-            ->where(':product MEMBER OF productTaxCode.products')
-            ->setParameter('product', $product)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+        return $this->findOneByEntity(TaxCodeInterface::TYPE_PRODUCT, $product);
     }
 }

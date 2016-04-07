@@ -165,9 +165,9 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_api_action_execute_actions',
+                'oro_api_action_execute_operations',
                 [
-                    'actionName' => 'orob2b_product_duplicate_action',
+                    'operationName' => 'orob2b_product_duplicate',
                     'route' => 'orob2b_product_view',
                     'entityId' => $this->product->getId(),
                     'entityClass' => 'OroB2B\Bundle\ProductBundle\Entity\Product'
@@ -226,7 +226,14 @@ class ProductVisibilityControllerTest extends WebTestCase
         $em = $this->client->getContainer()->get('doctrine')->getManager();
 
         foreach ($this->visibilityClassNames as $className) {
-            $this->assertCount($count, $em->getRepository($className)->findBy(['product' => $product]));
+            $actualCount = (int)$em->getRepository($className)
+                ->createQueryBuilder('entity')
+                ->select('COUNT(entity.id)')
+                ->where('entity.product = :product')
+                ->setParameter('product', $product)
+                ->getQuery()
+                ->getSingleScalarResult();
+            $this->assertEquals($count, $actualCount);
         }
     }
 
@@ -241,6 +248,7 @@ class ProductVisibilityControllerTest extends WebTestCase
             LoadWebsiteData::DEFAULT_WEBSITE_NAME,
             TestFixturesLoadWebsiteData::WEBSITE1,
             TestFixturesLoadWebsiteData::WEBSITE2,
+            TestFixturesLoadWebsiteData::WEBSITE3
         ];
         $counter = 0;
 

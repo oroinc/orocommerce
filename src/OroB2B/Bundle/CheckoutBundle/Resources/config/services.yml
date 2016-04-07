@@ -1,0 +1,131 @@
+parameters:
+    orob2b_checkout.data_provider.manager.checkout_line_items.class: OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager
+    orob2b_checkout.data_provider.converter.checkout_line_items.class: OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter
+    orob2b_checkout.entity.checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
+    orob2b_checkout.entity.checkout_source.class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
+
+    orob2b_checkout.layout.data_provider.summary.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\SummaryDataProvider
+    orob2b_checkout.layout.data_provider.abstract_transition.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\AbstractTransitionDataProvider
+    orob2b_checkout.layout.data_provider.transition_form.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider
+    orob2b_checkout.layout.data_provider.continue_transition.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ContinueTransitionDataProvider
+    orob2b_checkout.layout.data_provider.checkout_steps.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsDataProvider
+    orob2b_checkout.layout.data_provider.back_transitions.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\BackTransitionsDataProvider
+    orob2b_checkout.layout.data_provider.back_transition.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\BackTransitionDataProvider
+    orob2b_checkout.model.action.start_checkout.class: OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout
+
+    orob2b_checkout.model.action.get_order_line_items.class: OroB2B\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems
+    orob2b_checkout.layout.block.type.transition_button.class: OroB2B\Bundle\CheckoutBundle\Layout\Block\Type\TransitionButtonType
+services:
+    # Data Providers
+    orob2b_checkout.layout.data_provider.abstract_transition:
+        class: %orob2b_checkout.layout.data_provider.abstract_transition.class%
+        arguments:
+            - @oro_workflow.manager
+
+    orob2b_checkout.data_provider.converter.checkout_line_items:
+        class: %orob2b_checkout.data_provider.converter.checkout_line_items.class%
+        arguments:
+            - @property_accessor
+
+    orob2b_checkout.data_provider.manager.checkout_line_items:
+        class: %orob2b_checkout.data_provider.manager.checkout_line_items.class%
+        arguments:
+            - @orob2b_checkout.data_provider.converter.checkout_line_items
+
+    orob2b_checkout.layout.data_provider.summary:
+        class: %orob2b_checkout.layout.data_provider.summary.class%
+        arguments:
+            - @orob2b_checkout.data_provider.manager.checkout_line_items
+            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
+            - @orob2b_pricing.subtotal_processor.total_processor_provider
+        tags:
+            - { name: layout.data_provider, alias: orob2b_checkout_summary }
+
+    orob2b_checkout.layout.data_provider.transition_form:
+        class: %orob2b_checkout.layout.data_provider.transition_form.class%
+        arguments:
+            - @form.factory
+        calls:
+            - [setContinueTransitionDataProvider, [@orob2b_checkout.layout.data_provider.continue_transition]]
+        tags:
+            - { name: layout.data_provider, alias: orob2b_checkout_transition_form }
+
+    orob2b_checkout.layout.data_provider.continue_transition:
+        class: %orob2b_checkout.layout.data_provider.continue_transition.class%
+        parent: orob2b_checkout.layout.data_provider.abstract_transition
+        tags:
+            - { name: layout.data_provider, alias: orob2b_checkout_continue_transition }
+
+    orob2b_checkout.layout.data_provider.checkout_steps:
+        class: %orob2b_checkout.layout.data_provider.checkout_steps.class%
+        arguments:
+            - @oro_workflow.manager
+        tags:
+            - { name: layout.data_provider, alias: orob2b_checkout_steps }
+
+    orob2b_checkout.layout.data_provider.back_transitions:
+        class: %orob2b_checkout.layout.data_provider.back_transitions.class%
+        parent: orob2b_checkout.layout.data_provider.abstract_transition
+        tags:
+            - { name: layout.data_provider, alias: orob2b_checkout_back_transitions }
+
+    orob2b_checkout.layout.data_provider.back_transition:
+        class: %orob2b_checkout.layout.data_provider.back_transition.class%
+        calls:
+            - [setBackTransitionsDataProvider, [@orob2b_checkout.layout.data_provider.back_transitions]]
+        tags:
+            - { name: layout.data_provider, alias: orob2b_checkout_back_transition }
+
+    # Layout Block types
+    orob2b_checkout.layout.block.type.transition_button.back:
+        class: %orob2b_checkout.layout.block.type.transition_button.class%
+        calls:
+            - [setName, ['checkout_transition_back']]
+        tags:
+            - { name: layout.block_type, alias: checkout_transition_back }
+
+    orob2b_checkout.layout.block.type.transition_button.continue:
+        class: %orob2b_checkout.layout.block.type.transition_button.class%
+        calls:
+            - [setName, ['checkout_transition_continue']]
+        tags:
+            - { name: layout.block_type, alias: checkout_transition_continue }
+
+    orob2b_checkout.layout.block.type.transition_button.edit:
+        class: %orob2b_checkout.layout.block.type.transition_button.class%
+        calls:
+            - [setName, ['checkout_transition_step_edit']]
+        tags:
+            - { name: layout.block_type, alias: checkout_transition_step_edit }
+
+    orob2b_checkout.model.action.get_order_line_items:
+        class: %orob2b_checkout.model.action.get_order_line_items.class%
+        arguments:
+            - @oro_action.context_accessor
+            - @orob2b_checkout.data_provider.manager.checkout_line_items
+        tags:
+            - { name: oro_workflow.action, alias: get_order_line_items }
+
+    orob2b_checkout.model.action.start_checkout:
+        class: %orob2b_checkout.model.action.start_checkout.class%
+        calls:
+            - [setCheckoutClass, [%orob2b_checkout.entity.checkout.class%]]
+            - [setCheckoutRoute, ['orob2b_checkout_frontend_checkout']]
+        arguments:
+            - @oro_action.context_accessor
+            - @doctrine
+            - @orob2b_website.manager
+            - @orob2b_pricing.provider.user_currency
+            - @security.token_storage
+            - @property_accessor
+            - @oro_action.action.redirect
+            - @event_dispatcher
+        tags:
+            - { name: oro_action.action, alias: start_checkout }
+
+    orob2b_checkout..expression.acl_granted:
+        class: OroB2B\Bundle\CheckoutBundle\Expression\CheckRequest
+        arguments:
+            - '@request_stack'
+        tags:
+            - { name: oro_workflow.condition, alias: check_request }

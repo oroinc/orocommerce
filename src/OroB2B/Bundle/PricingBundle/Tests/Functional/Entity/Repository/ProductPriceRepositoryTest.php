@@ -2,7 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Doctrine\Common\Collections\ArrayCollection;
+
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -13,6 +15,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ProductPriceRepositoryTest extends WebTestCase
 {
@@ -79,6 +82,73 @@ class ProductPriceRepositoryTest extends WebTestCase
     }
 
     /**
+     * @dataProvider getProductsUnitsByPriceListDataProvider
+     * @param string $priceList
+     * @param array $products
+     * @param null|string $currency
+     * @param array $expected
+     */
+    public function testGetProductsUnitsByPriceList($priceList, array $products, $currency = null, array $expected = [])
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference($priceList);
+
+        $productsCollection = new ArrayCollection();
+
+        foreach ($products as $productName) {
+            /** @var Product $product */
+            $product = $this->getReference($productName);
+            $productsCollection->add($product);
+        }
+
+        $actual = $this->repository->getProductsUnitsByPriceList($priceList, $productsCollection, $currency);
+
+        $expectedData = [];
+        foreach ($expected as $productName => $units) {
+            $product = $this->getReference($productName);
+            $expectedData[$product->getId()] = $units;
+        }
+
+        $this->assertEquals($expectedData, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductsUnitsByPriceListDataProvider()
+    {
+        return [
+            [
+                'priceList' => 'price_list_1',
+                'products' => [
+                    'product.1',
+                    'product.2',
+                    'product.3'
+                ],
+                'currency' => 'USD',
+                'expected' => [
+                    'product.1' => ['liter'],
+                    'product.2' => ['liter'],
+                    'product.3' => ['liter'],
+                ]
+            ],
+            [
+                'priceList' => 'price_list_1',
+                'products' => [
+                    'product.1',
+                    'product.2',
+                    'product.3'
+                ],
+                'currency' => 'EUR',
+                'expected' => [
+                    'product.1' => ['bottle'],
+                    'product.2' => ['liter']
+                ]
+            ]
+        ];
+    }
+
+    /**
      * @param string $productReference
      * @param array $priceReferences
      * @dataProvider getPricesByProductDataProvider
@@ -136,6 +206,7 @@ class ProductPriceRepositoryTest extends WebTestCase
      * @param array $expectedPrices
      * @param bool $getTierPrices
      * @param string $currency
+     * @param array $orderBy
      *
      * @dataProvider findByPriceListIdAndProductIdsDataProvider
      */
@@ -144,7 +215,8 @@ class ProductPriceRepositoryTest extends WebTestCase
         array $products,
         array $expectedPrices,
         $getTierPrices = true,
-        $currency = null
+        $currency = null,
+        array $orderBy = ['unit' => 'ASC', 'quantity' => 'ASC']
     ) {
         $priceListId = -1;
         if ($priceList) {
@@ -171,7 +243,9 @@ class ProductPriceRepositoryTest extends WebTestCase
             $priceListId,
             $productIds,
             $getTierPrices,
-            $currency
+            $currency,
+            null,
+            $orderBy
         );
 
         $actualPriceIds = $this->getPriceIds($actualPrices);
@@ -240,6 +314,14 @@ class ProductPriceRepositoryTest extends WebTestCase
                 'expectedPrices' => ['product_price.5', 'product_price.4', 'product_price.6'],
                 'getTierPrices' => true,
                 'currency' => 'USD'
+            ],
+            'first valid set with order by currency, unit and quantity' => [
+                'priceList' => 'price_list_2',
+                'products' => ['product.1', 'product.2'],
+                'expectedPrices' => ['product_price.5', 'product_price.4', 'product_price.6', 'product_price.12'],
+                'getTierPrices' => true,
+                'currency' => null,
+                ['currency' => 'DESC', 'unit' => 'ASC', 'quantity' => 'ASC']
             ],
         ];
     }

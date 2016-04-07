@@ -5,8 +5,8 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -18,6 +18,7 @@ use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 class LoadRequestData extends AbstractFixture implements DependentFixtureInterface
 {
     const FIRST_NAME = 'Grzegorz';
+    const FIRST_NAME_DELETED = 'John';
     const LAST_NAME = 'Brzeczyszczykiewicz';
     const EMAIL = 'test_request@example.com';
     const PO_NUMBER = 'CA1234USD';
@@ -30,6 +31,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     const REQUEST6 = 'rfp.request.6';
     const REQUEST7 = 'rfp.request.7';
     const REQUEST8 = 'rfp.request.8';
+    const REQUEST9 = 'rfp.request.9';
 
     /**
      * @var array
@@ -127,6 +129,20 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'po_number' => self::PO_NUMBER,
             'ship_until' => true,
         ],
+        self::REQUEST9 => [
+            'first_name' => self::FIRST_NAME_DELETED,
+            'last_name' => self::LAST_NAME,
+            'email' => self::EMAIL,
+            'phone' => '2-(999)507-4625',
+            'company' => 'Google',
+            'role' => 'CEO',
+            'note' => self::REQUEST8,
+            'account' => LoadUserData::ACCOUNT1,
+            'accountUser' => LoadUserData::ACCOUNT1_USER3,
+            'po_number' => self::PO_NUMBER,
+            'ship_until' => true,
+            'deleted' => '-1 day'
+        ],
     ];
 
     /**
@@ -189,6 +205,10 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 $request->setPoNumber($rawRequest['po_number']);
             }
 
+            if (isset($rawRequest['deleted'])) {
+                $request->setDeletedAt(new \DateTime($rawRequest['deleted']));
+            }
+
             $manager->persist($request);
             $this->addReference($key, $request);
         }
@@ -225,7 +245,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 $currency = $currencies[rand(0, count($currencies) - 1)];
                 $requestProductItem = new RequestProductItem();
                 $requestProductItem
-                    ->setPrice(OptionalPrice::create(rand(1, 100), $currency))
+                    ->setPrice(Price::create(rand(1, 100), $currency))
                     ->setQuantity(rand(1, 100))
                     ->setProductUnit($productUnit);
                 $requestProduct->addRequestProductItem($requestProductItem);

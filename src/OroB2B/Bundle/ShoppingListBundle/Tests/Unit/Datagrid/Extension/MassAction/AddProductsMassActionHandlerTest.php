@@ -7,8 +7,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassAction;
-use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionHandler;
+use OroB2B\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassAction;
+use OroB2B\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassActionHandler;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;

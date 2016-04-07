@@ -93,7 +93,7 @@ class OroB2BTaxBundle implements Migration
         $table = $schema->createTable('orob2b_tax_account_tax_code');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
-        $table->addColumn('description', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('description', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
@@ -144,7 +144,7 @@ class OroB2BTaxBundle implements Migration
         $table = $schema->createTable('orob2b_tax_product_tax_code');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
-        $table->addColumn('description', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('description', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);

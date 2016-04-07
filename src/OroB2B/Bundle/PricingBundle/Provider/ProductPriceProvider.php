@@ -4,11 +4,11 @@ namespace OroB2B\Bundle\PricingBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 
 class ProductPriceProvider
@@ -19,7 +19,7 @@ class ProductPriceProvider
     protected $registry;
 
     /**
-     * @var FrontendPriceListRequestHandler
+     * @var PriceListRequestHandler
      */
     protected $requestHandler;
 
@@ -30,14 +30,12 @@ class ProductPriceProvider
 
     /**
      * @param ManagerRegistry $registry
-     * @param FrontendPriceListRequestHandler $requestHandler
-     * @param string $className
+     * @param PriceListRequestHandler $requestHandler
      */
-    public function __construct(ManagerRegistry $registry, FrontendPriceListRequestHandler $requestHandler, $className)
+    public function __construct(ManagerRegistry $registry, PriceListRequestHandler $requestHandler)
     {
         $this->registry = $registry;
         $this->requestHandler = $requestHandler;
-        $this->className = $className;
     }
 
     /**
@@ -65,20 +63,19 @@ class ProductPriceProvider
     }
 
     /**
-     * @param array $productsPriceCriteria
-     * @param PriceList|null $priceList
+     * @param ProductPriceCriteria[] $productsPriceCriteria
+     * @param BasePriceList|null $priceList
      * @return array|Price[]
      */
-    public function getMatchedPrices(array $productsPriceCriteria, PriceList $priceList = null)
+    public function getMatchedPrices(array $productsPriceCriteria, BasePriceList $priceList = null)
     {
         if (!$priceList) {
-            $priceList = $this->requestHandler->getPriceList();
+            $priceList = $this->requestHandler->getPriceListByAccount();
         }
 
         $productIds = [];
         $productUnitCodes = [];
 
-        /** @var ProductPriceCriteria[] $productsPriceCriteria */
         foreach ($productsPriceCriteria as $productPriceCriteria) {
             $productIds[] = $productPriceCriteria->getProduct()->getId();
             $productUnitCodes[] = $productPriceCriteria->getProductUnit()->getCode();
@@ -146,5 +143,13 @@ class ProductPriceProvider
     protected function getRepository()
     {
         return $this->registry->getManagerForClass($this->className)->getRepository($this->className);
+    }
+
+    /**
+     * @param string $className
+     */
+    public function setClassName($className)
+    {
+        $this->className = $className;
     }
 }

@@ -1,0 +1,39 @@
+{% block _product_prices_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ "product__qnty"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {% set shownUnit = '' %}
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th style="width: 40%" class="text-center text-uppercase">qty</th>
+                <th style="width: 60%" class="text-center">Unit Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for key, price in prices %}
+                {% if shownUnit != price.unit.code %}
+                    {% set shownUnit = price.unit.code %}
+                    <tr>
+                        <td colspan="2" class="text-center">
+                            {% if key != 0 %}<br/>{% endif %}
+                            <strong>{{ shownUnit|orob2b_format_product_unit_label|capitalize }}</strong>
+                        </td>
+                    </tr>
+                {% endif %}
+
+                <tr>
+                    <td class="text-center">
+                        {{ price.quantity }}
+                    </td>
+                    <td class="text-center">
+                        {{ price.price|oro_format_price }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

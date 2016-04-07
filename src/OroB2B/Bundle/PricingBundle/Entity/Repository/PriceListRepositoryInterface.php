@@ -10,7 +10,8 @@ interface PriceListRepositoryInterface
     /**
      * @param object $entity
      * @param Website $website
+     * @param string $sortOrder
      * @return BasePriceListRelation[]
      */
-    public function getPriceLists($entity, Website $website);
+    public function getPriceLists($entity, Website $website, $sortOrder);
 }

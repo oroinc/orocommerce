@@ -6,6 +6,7 @@ parameters:
     orob2b_account.form.type.account_group_select.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupSelectType
     orob2b_account.form.type.account_parent_select.class: OroB2B\Bundle\AccountBundle\Form\Type\ParentAccountSelectType
     orob2b_account.form.type.account_user_select.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType
+    orob2b_account.form.type.account_user_multiselect.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType
 
     orob2b_account.form.type.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType
     orob2b_account.form.type.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType
@@ -18,6 +19,8 @@ parameters:
     orob2b_account.form.type.frontend.account_user.register.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType
     orob2b_account.form.type.frontend.account_user.password_request.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType
     orob2b_account.form.type.frontend.account_user.password_reset.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType
+
+    orob2b_account.form.type.frontend.account_user_multiselect_type.class: OroB2B\Bundle\AccountBundle\Form\Type\Frontend\AccountUserMultiSelectType
 
     orob2b_account.form.handler.update_account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler
     orob2b_account.form.handler.update_account_user_role_frontend.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler
@@ -48,6 +51,8 @@ parameters:
 services:
     orob2b_account.form.type.account:
         class: %orob2b_account.form.type.account.class%
+        arguments:
+          - @event_dispatcher
         calls:
             - [setAddressClass, [%orob2b_account.entity.account_address.class%]]
         tags:
@@ -80,6 +85,16 @@ services:
         class: %orob2b_account.form.type.account_user_select.class%
         tags:
             - { name: form.type, alias: orob2b_account_account_user_select }
+
+    orob2b_account.form.type.account_user_multiselect_type:
+        class: %orob2b_account.form.type.account_user_multiselect.class%
+        tags:
+            - { name: form.type, alias: orob2b_account_account_user_multiselect }
+
+    orob2b_account.form.type.frontend.account_user_multiselect_type:
+        class: %orob2b_account.form.type.frontend.account_user_multiselect_type.class%
+        tags:
+            - { name: form.type, alias: orob2b_account_frontend_account_user_multiselect }
 
     orob2b_account.form.type.account_user:
         class: %orob2b_account.form.type.account_user.class%

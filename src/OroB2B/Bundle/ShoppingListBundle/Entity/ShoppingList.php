@@ -5,15 +5,21 @@ namespace OroB2B\Bundle\ShoppingListBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Table(
@@ -48,7 +54,13 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterface
+class ShoppingList extends ExtendShoppingList implements
+    OrganizationAwareInterface,
+    LineItemsNotPricedAwareInterface,
+    CurrencyAwareInterface,
+    AccountOwnerAwareInterface,
+    WebsiteAwareInterface,
+    CheckoutSourceEntityInterface
 {
     /**
      * @var int
@@ -140,6 +152,21 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     protected $account;
 
     /**
+     * @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $website;
+
+    /**
      * @var ArrayCollection|LineItem[]
      *
      * @ORM\OneToMany(
@@ -159,6 +186,48 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     protected $current = false;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="subtotal", type="money", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $subtotal;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="total", type="money", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $total;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $currency;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -173,7 +242,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      */
     public function __toString()
     {
-        return (string) $this->label;
+        return (string)$this->label;
     }
 
     /**
@@ -334,7 +403,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      */
     public function setCurrent($current)
     {
-        $this->current = (bool) $current;
+        $this->current = (bool)$current;
 
         return $this;
     }
@@ -398,5 +467,121 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
         $this->accountUser = $accountUser;
 
         return $this;
+    }
+
+    /**
+     * @param Website $website
+     *
+     * @return $this
+     */
+    public function setWebsite(Website $website)
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return Website
+     */
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    /**
+     * Set currency
+     *
+     * @param string $currency
+     *
+     * @return $this
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * Get currency
+     *
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * Set subtotal
+     *
+     * @param float $subtotal
+     *
+     * @return $this
+     */
+    public function setSubtotal($subtotal)
+    {
+        $this->subtotal = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * Get subtotal
+     *
+     * @return float
+     */
+    public function getSubtotal()
+    {
+        return $this->subtotal;
+    }
+
+    /**
+     * Set total
+     *
+     * @param float $total
+     *
+     * @return $this
+     */
+    public function setTotal($total)
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    /**
+     * Get total
+     *
+     * @return float
+     */
+    public function getTotal()
+    {
+        return $this->total;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->getId();
+    }
+
+    /**
+     * @return $this
+     */
+    public function getSourceDocument()
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSourceDocumentIdentifier()
+    {
+        return $this->label;
     }
 }

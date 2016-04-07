@@ -34,7 +34,7 @@ class AjaxOrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertSubtotals($crawler);
+        $this->assertTotals($crawler);
     }
 
     public function testSubtotals()
@@ -48,18 +48,18 @@ class AjaxOrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertSubtotals($crawler, $order->getId());
+        $this->assertTotals($crawler, $order->getId());
     }
 
     /**
      * @param Crawler $crawler
      * @param null|int $id
      */
-    protected function assertSubtotals(Crawler $crawler, $id = null)
+    protected function assertTotals(Crawler $crawler, $id = null)
     {
         $form = $crawler->selectButton('Save and Close')->form();
 
-        $form->getFormNode()->setAttribute('action', $this->getUrl('orob2b_order_frontend_subtotals', ['id' => $id]));
+        $form->getFormNode()->setAttribute('action', $this->getUrl('orob2b_order_frontend_entry_point', ['id' => $id]));
 
         $this->client->submit($form);
 
@@ -69,7 +69,9 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $data = json_decode($result->getContent(), true);
 
-        $this->assertArrayHasKey('subtotals', $data);
-        $this->assertArrayHasKey('subtotal', $data['subtotals']);
+        $this->assertArrayHasKey('totals', $data);
+        $this->assertArrayHasKey('subtotals', $data['totals']);
+        $this->assertArrayHasKey(0, $data['totals']['subtotals']);
+        $this->assertArrayHasKey('total', $data['totals']);
     }
 }

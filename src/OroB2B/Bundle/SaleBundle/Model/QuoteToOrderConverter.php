@@ -3,16 +3,19 @@
 namespace OroB2B\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Util\ClassUtils;
 
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccess;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteToOrderConverter
@@ -23,24 +26,30 @@ class QuoteToOrderConverter
     /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
-    /** @var SubtotalsProvider */
-    protected $subtotalsProvider;
+    /** @var LineItemSubtotalProvider */
+    protected $lineItemSubtotalProvider;
 
     /** @var ManagerRegistry */
     protected $registry;
 
+    /** @var TotalProcessorProvider */
+    protected $totalProvider;
+
     /**
      * @param OrderCurrencyHandler $orderCurrencyHandler
-     * @param SubtotalsProvider $subtotalsProvider
+     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
+     * @param TotalProcessorProvider $totalProvider,
      * @param ManagerRegistry $registry
      */
     public function __construct(
         OrderCurrencyHandler $orderCurrencyHandler,
-        SubtotalsProvider $subtotalsProvider,
+        LineItemSubtotalProvider $lineItemSubtotalProvider,
+        TotalProcessorProvider $totalProvider,
         ManagerRegistry $registry
     ) {
         $this->orderCurrencyHandler = $orderCurrencyHandler;
-        $this->subtotalsProvider = $subtotalsProvider;
+        $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
+        $this->totalProvider = $totalProvider;
         $this->registry = $registry;
     }
 
@@ -74,6 +83,9 @@ class QuoteToOrderConverter
         }
 
         $this->orderCurrencyHandler->setOrderCurrency($order);
+        if ($quote->getShippingEstimate() !== null) {
+            $this->fillShippingCost($quote->getShippingEstimate(), $order);
+        }
         $this->fillSubtotals($order);
 
         if ($needFlush) {
@@ -94,6 +106,7 @@ class QuoteToOrderConverter
     {
         $accountUser = $user ?: $quote->getAccountUser();
         $account = $user ? $user->getAccount() : $quote->getAccount();
+        $orderShippingAddress = $this->createOrderAddress($quote->getShippingAddress());
 
         $order = new Order();
         $order
@@ -102,9 +115,48 @@ class QuoteToOrderConverter
             ->setOwner($quote->getOwner())
             ->setOrganization($quote->getOrganization())
             ->setPoNumber($quote->getPoNumber())
-            ->setShipUntil($quote->getShipUntil());
+            ->setShipUntil($quote->getShipUntil())
+            ->setShippingAddress($orderShippingAddress)
+            ->setSourceEntityClass(ClassUtils::getClass($quote))
+            ->setSourceEntityId($quote->getId())
+            ->setSourceEntityIdentifier($quote->getPoNumber());
 
         return $order;
+    }
+
+    /**
+     * @param QuoteAddress|null $quoteAddress
+     *
+     * @return null|OrderAddress
+     */
+    protected function createOrderAddress(QuoteAddress $quoteAddress = null)
+    {
+        $orderAddress = null;
+
+        if ($quoteAddress) {
+            $orderAddress = new OrderAddress();
+
+            $orderAddress->setAccountAddress($quoteAddress->getAccountAddress());
+            $orderAddress->setAccountUserAddress($quoteAddress->getAccountUserAddress());
+            $orderAddress->setLabel($quoteAddress->getLabel());
+            $orderAddress->setStreet($quoteAddress->getStreet());
+            $orderAddress->setStreet2($quoteAddress->getStreet2());
+            $orderAddress->setCity($quoteAddress->getCity());
+            $orderAddress->setPostalCode($quoteAddress->getPostalCode());
+            $orderAddress->setOrganization($quoteAddress->getOrganization());
+            $orderAddress->setRegionText($quoteAddress->getRegionText());
+            $orderAddress->setNamePrefix($quoteAddress->getNamePrefix());
+            $orderAddress->setFirstName($quoteAddress->getFirstName());
+            $orderAddress->setMiddleName($quoteAddress->getMiddleName());
+            $orderAddress->setLastName($quoteAddress->getLastName());
+            $orderAddress->setNameSuffix($quoteAddress->getNameSuffix());
+            $orderAddress->setRegion($quoteAddress->getRegion());
+            $orderAddress->setCountry($quoteAddress->getCountry());
+            $orderAddress->setPhone($quoteAddress->getPhone());
+            $orderAddress->setFromExternalSource(true);
+        }
+
+        return $orderAddress;
     }
 
     /**
@@ -151,14 +203,40 @@ class QuoteToOrderConverter
      */
     protected function fillSubtotals(Order $order)
     {
-        $subtotals = $this->subtotalsProvider->getSubtotals($order);
+        $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
+        $total = $this->totalProvider->getTotal($order);
 
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        foreach ($subtotals as $subtotal) {
-            try {
-                $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
-            } catch (NoSuchPropertyException $e) {
-            }
+        if ($subtotal) {
+            $order->setSubtotal($subtotal->getAmount());
         }
+        if ($total) {
+            $order->setTotal($total->getAmount());
+        }
+    }
+
+    /**
+     * @param Price $shippingEstimate
+     * @param Order $order
+     */
+    protected function fillShippingCost(Price $shippingEstimate, Order $order)
+    {
+        $shippingCostAmount = $shippingEstimate->getValue();
+        $shippingEstimateCurrency = $shippingEstimate->getCurrency();
+        $orderCurrency = $order->getCurrency();
+        if ($orderCurrency !== $shippingEstimateCurrency) {
+            $shippingCostAmount *= $this->getExchangeRate($shippingEstimateCurrency, $orderCurrency);
+        }
+
+        $order->setShippingCost(Price::create($shippingCostAmount, $orderCurrency));
+    }
+
+    /**
+     * @param string $fromCurrency
+     * @param string $toCurrency
+     * @return float
+     */
+    protected function getExchangeRate($fromCurrency, $toCurrency)
+    {
+        return 1.0;
     }
 }

@@ -21,6 +21,11 @@ orob2b:
             po_number.label: 'PO Number'
             ship_until.label: 'Do Not Ship Later Than'
             request_products.label: 'Request Products'
+            assigned_users.label: 'Assigned To'
+            assigned_account_users.label: 'Assigned Customers'
+            cancellation_reason.label: 'Cancelation reason'
+            cancellation_success.label: 'Cancellation was successful'
+            deleted_at.label: 'Deleted At'
 
             submit.label: 'Submit Request For Quote'
             cancel.label: 'Cancel'
@@ -106,6 +111,11 @@ orob2b:
             request:
                 saved.message: 'Request has been saved'
 
+        action:
+            request:
+                updated.message: 'Your Request For Quote has been successfully updated'
+                resubmited.message: 'Your Request For Quote has been successfully resubmited'
+
         btn:
             delete: 'Delete'
             restore: 'Restore'
@@ -113,9 +123,12 @@ orob2b:
             create_quote: 'Create Quote'
             add_to_rfp: 'Request A Quote'
             create_rfp: 'Submit'
+            edit: 'Edit'
+            resubmit: 'Resubmit'
 
         widget:
             change_status_title: 'Change RFQ Status'
+            cancel_title: 'Cancel RFQ'
 
         frontend:
             request:
@@ -132,11 +145,44 @@ orob2b:
     frontend:
         rfp:
             request:
+                create.label: 'Create Request For Quote'
                 entity_label: 'Request For Quote'
                 entity_label_short: 'Request'
                 entity_plural_label: 'Requests For Quote'
+                create_title.label: 'Create Requests For Quote'
+                edit_title.label: 'Request For Quote #%id%'
                 id.label: 'RFQ #'
-                submitted_to.label: 'Submitted To'
+                first_name.label: 'First Name'
+                last_name.label: 'Last Name'
+                email.label: 'Email Address'
+                phone.label: 'Phone Number'
+                company.label: 'Company'
+                role.label: 'Role'
+                status.label: 'Status'
+                account_user.label: 'Owner'
                 is_draft.label: 'Draft'
+                po_number.label: 'PO Number'
+                ship_until.label: 'Do Not Ship Later Than'
+                assigned_account_users.label: 'Assigned To'
+                create_form.back.label: 'Back'
+                create_form.submit.label: 'Submit Request For Quote'
+                page_title.label: 'RFQ #%id%: %firstName% %lastName%'
+                title.label: 'Request For Quote #%id%'
+                cancellation_reason.label: 'Cancelation Reason'
+                sections:
+                    general: 'RFQ Information'
+                    notes.label: 'Notes'
+                    back.label: '< Back to RFQ List'
+                    request_products:
+                        label: 'Line Items'
+                        columns:
+                            item.label: 'Item'
+                            quantity.label: 'Requested Quantity'
+                            price.label: 'Target Price'
+            requestproduct:
+                product_sku.label: 'Item #:'
+                comment.label: 'Notes'
+            action:
+                request.edit: 'Edit RFQ'
 
 orob2b.order.orderlineitem.offers.label: 'Requested QTY and price'

@@ -2,6 +2,10 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_register/layout.html.twig'
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue: 'orob2b.account.accountuser.profile.register'
         - @addTree:
             items:
                 registration_page:
@@ -32,6 +36,8 @@ layout:
                         type: input
                         action: submit
                         text: orob2b.account.accountuser.profile.create_an_account
+                        vars:
+                            style: auto
                 registration_form_end:
                     blockType: form_end
                     options:

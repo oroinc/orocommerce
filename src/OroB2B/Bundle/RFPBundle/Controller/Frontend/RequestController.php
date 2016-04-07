@@ -3,12 +3,15 @@
 namespace OroB2B\Bundle\RFPBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -23,7 +26,7 @@ class RequestController extends Controller
 {
     /**
      * @Route("/view/{id}", name="orob2b_rfp_frontend_request_view", requirements={"id"="\d+"})
-     * @Template("OroB2BRFPBundle:Request/Frontend:view.html.twig")
+     * @Layout
      * @Acl(
      *      id="orob2b_rfp_frontend_request_view",
      *      type="entity",
@@ -38,14 +41,16 @@ class RequestController extends Controller
     public function viewAction(RFPRequest $request)
     {
         return [
-            'entity' => $request,
+            'data' => [
+                'entity' => $request
+            ]
         ];
     }
 
     /**
      * @AclAncestor("orob2b_rfp_frontend_request_view")
      * @Route("/", name="orob2b_rfp_frontend_request_index")
-     * @Template("OroB2BRFPBundle:Request/Frontend:index.html.twig")
+     * @Layout(vars={"entity_class"})
      * @return array
      */
     public function indexAction()
@@ -64,21 +69,6 @@ class RequestController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_rfp_frontend_request_info", requirements={"id"="\d+"})
-     * @Template("OroB2BRFPBundle:Request/Frontend/widget:info.html.twig")
-     * @AclAncestor("orob2b_rfp_frontend_request_view")
-     *
-     * @param RFPRequest $request
-     * @return array
-     */
-    public function infoAction(RFPRequest $request)
-    {
-        return [
-            'entity' => $request
-        ];
-    }
-
-    /**
      * @Acl(
      *      id="orob2b_rfp_frontend_request_create",
      *      type="entity",
@@ -87,7 +77,7 @@ class RequestController extends Controller
      *      group_name="commerce"
      * )
      * @Route("/create", name="orob2b_rfp_frontend_request_create")
-     * @Template("OroB2BRFPBundle:Request/Frontend:update.html.twig")
+     * @Layout
      *
      * @return array
      */
@@ -106,12 +96,18 @@ class RequestController extends Controller
             ;
         }
 
-        return $this->update($rfpRequest);
+        $response = $this->update($rfpRequest);
+
+        if ($response instanceof Response) {
+            return $response;
+        }
+
+        return ['data' => $response];
     }
 
     /**
      * @Route("/update/{id}", name="orob2b_rfp_frontend_request_update", requirements={"id"="\d+"})
-     * @Template("OroB2BRFPBundle:Request/Frontend:update.html.twig")
+     * @Layout
      * @Acl(
      *      id="orob2b_rfp_frontend_request_update",
      *      type="entity",
@@ -125,7 +121,13 @@ class RequestController extends Controller
      */
     public function updateAction(RFPRequest $rfpRequest)
     {
-        return $this->update($rfpRequest);
+        $response = $this->update($rfpRequest);
+
+        if ($response instanceof Response) {
+            return $response;
+        }
+
+        return ['data' => $response];
     }
 
     /**
@@ -146,7 +148,7 @@ class RequestController extends Controller
 
         return $handler->handleUpdate(
             $rfpRequest,
-            $this->createForm(RequestType::NAME, $rfpRequest),
+            $this->get('orob2b_rfp.layout.data_provider.request_form')->getForm($rfpRequest),
             function (RFPRequest $rfpRequest) use ($securityFacade) {
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     $route = $securityFacade->isGranted('ACCOUNT_EDIT', $rfpRequest)
@@ -164,7 +166,6 @@ class RequestController extends Controller
                     'route'         => 'orob2b_rfp_frontend_request_create',
                     'parameters'    => [],
                 ];
-
             },
             function (RFPRequest $rfpRequest) use ($securityFacade) {
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
@@ -179,7 +180,19 @@ class RequestController extends Controller
                     'parameters'    => [],
                 ];
             },
-            $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message')
+            $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message'),
+            null,
+            function (RFPRequest $rfpRequest, FormInterface $form, Request $request) {
+                $url = $request->getUri();
+                if ($request->headers->get('referer')) {
+                    $url = $request->headers->get('referer');
+                }
+
+                return [
+                    'backToUrl' => $url,
+                    'form' => $form->createView()
+                ];
+            }
         );
     }
 

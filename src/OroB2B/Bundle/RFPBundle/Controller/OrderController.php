@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\RFPBundle\Controller;
 
+use Doctrine\Common\Util\ClassUtils;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -61,6 +63,10 @@ class OrderController extends Controller
         if ($request->getAccount()) {
             $data['account'] = $request->getAccount()->getId();
         }
+
+        $data['sourceEntityId'] = $request->getId();
+        $data['sourceEntityClass'] = ClassUtils::getClass($request);
+        $data['sourceEntityIdentifier'] = $request->getIdentifier();
 
         return $data;
     }

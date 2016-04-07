@@ -122,7 +122,7 @@ class AccountController extends Controller
     {
         return [
             'entity' => $account,
-            'treeData' => $this->get('orob2b_account.account_tree_handler')->createTree($account->getId()),
+            'treeData' => $this->get('orob2b_account.account_tree_handler')->createTree($account),
         ];
     }
 }

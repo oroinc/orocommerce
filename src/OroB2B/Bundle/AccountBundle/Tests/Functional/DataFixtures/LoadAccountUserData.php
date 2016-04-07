@@ -10,6 +10,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData as UserData;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -17,6 +18,8 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class LoadAccountUserData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
+    use UserUtilityTrait;
+
     const FIRST_NAME = 'Grzegorz';
     const LAST_NAME = 'Brzeczyszczykiewicz';
     const EMAIL = 'grzegorz.brzeczyszczykiewicz@example.com';
@@ -118,6 +121,7 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
     {
         /** @var BaseUserManager $userManager */
         $userManager = $this->container->get('orob2b_account_user.manager');
+        $owner = $this->getFirstUser($manager);
 
         foreach ($this->users as $user) {
             if (isset($user['account'])) {
@@ -132,6 +136,7 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
             $entity = new AccountUser();
             $entity
                 ->setAccount($account)
+                ->setOwner($owner)
                 ->setFirstName($user['first_name'])
                 ->setLastName($user['last_name'])
                 ->setEmail($user['email'])

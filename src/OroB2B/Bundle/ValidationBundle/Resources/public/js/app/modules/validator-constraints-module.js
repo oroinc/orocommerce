@@ -13,6 +13,7 @@ require([
         var constraints = [
             'orob2bvalidation/js/validator/letters',
             'orob2bvalidation/js/validator/alphanumeric',
+            'orob2bvalidation/js/validator/alphanumeric-dash-underscore',
             'orob2bvalidation/js/validator/url-safe',
             'orob2bvalidation/js/validator/decimal',
             'orob2bvalidation/js/validator/integer',

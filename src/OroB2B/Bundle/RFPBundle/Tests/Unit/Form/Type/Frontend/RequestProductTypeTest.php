@@ -17,7 +17,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTy
 
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
 use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
 
 class RequestProductTypeTest extends AbstractTest
@@ -153,7 +153,6 @@ class RequestProductTypeTest extends AbstractTest
 
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductSelectType();
-        $optionalPriceType          = $this->prepareOptionalPriceType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
@@ -164,12 +163,12 @@ class RequestProductTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
+
                     CollectionType::NAME                   => new CollectionType(),
                     RequestProductItemCollectionType::NAME => new RequestProductItemCollectionType(),
                     ProductUnitSelectionType::NAME         => new ProductUnitSelectionTypeStub(),
                     $priceType->getName()                  => $priceType,
                     $entityType->getName()                 => $entityType,
-                    $optionalPriceType->getName()          => $optionalPriceType,
                     $requestProductType->getName()         => $requestProductType,
                     $requestProductItemType->getName()     => $requestProductItemType,
                     $currencySelectionType->getName()      => $currencySelectionType,

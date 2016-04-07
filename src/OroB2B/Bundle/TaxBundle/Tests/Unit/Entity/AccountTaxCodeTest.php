@@ -7,6 +7,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 class AccountTaxCodeTest extends \PHPUnit_Framework_TestCase
 {
@@ -65,5 +66,10 @@ class AccountTaxCodeTest extends \PHPUnit_Framework_TestCase
     private function createAccountTaxCode()
     {
         return new AccountTaxCode();
+    }
+
+    public function testGetType()
+    {
+        $this->assertEquals(TaxCodeInterface::TYPE_ACCOUNT, $this->createAccountTaxCode()->getType());
     }
 }

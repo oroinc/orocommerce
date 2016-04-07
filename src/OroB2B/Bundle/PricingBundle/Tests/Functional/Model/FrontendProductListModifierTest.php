@@ -41,7 +41,7 @@ class FrontendProductListModifierTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices'
             ]
         );
 
@@ -84,12 +84,12 @@ class FrontendProductListModifierTest extends WebTestCase
             $priceList = $this->getReference($priceList);
             $this->priceListTreeHandler->expects($this->never())
                 ->method('getPriceList')
-                ->with($this->tokenStorage->getToken()->getUser());
+                ->with($this->tokenStorage->getToken()->getUser()->getAccount());
         } else {
             $this->priceListTreeHandler->expects($this->once())
                 ->method('getPriceList')
-                ->with($this->tokenStorage->getToken()->getUser())
-                ->will($this->returnValue($this->getReference('price_list_2')));
+                ->with($this->tokenStorage->getToken()->getUser()->getAccount())
+                ->will($this->returnValue($this->getReference('2f')));
         }
 
         $qb = $this->getManager()->createQueryBuilder()
@@ -103,9 +103,12 @@ class FrontendProductListModifierTest extends WebTestCase
         $result = $qb->getQuery()->getResult();
 
         $this->assertCount(count($expectedProductSku), $result);
-        $sku = array_map(function (Product $product) {
-            return $product->getSku();
-        }, $result);
+        $sku = array_map(
+            function (Product $product) {
+                return $product->getSku();
+            },
+            $result
+        );
         $this->assertEquals($expectedProductSku, $sku);
     }
 
@@ -129,7 +132,7 @@ class FrontendProductListModifierTest extends WebTestCase
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
                 ],
-                'priceList' => 'price_list_1'
+                'priceList' => '1f'
             ],
             'with USD' => [
                 'currency' => 'USD',
@@ -163,8 +166,8 @@ class FrontendProductListModifierTest extends WebTestCase
     {
         $this->priceListTreeHandler->expects($this->exactly(3))
             ->method('getPriceList')
-            ->with($this->tokenStorage->getToken()->getUser())
-            ->will($this->returnValue($this->getReference('price_list_2')));
+            ->with($this->tokenStorage->getToken()->getUser()->getAccount())
+            ->will($this->returnValue($this->getReference('2f')));
 
         $qb = $this->getManager()->createQueryBuilder()
             ->select('p')

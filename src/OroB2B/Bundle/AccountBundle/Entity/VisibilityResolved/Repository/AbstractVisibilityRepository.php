@@ -25,25 +25,4 @@ abstract class AbstractVisibilityRepository extends EntityRepository
         return $qb->getQuery()
             ->execute();
     }
-
-    /**
-     * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param integer $cacheVisibility
-     * @param integer[] $categories
-     * @param integer $accountId
-     * @param integer|null $websiteId
-     */
-    abstract public function insertByCategory(
-        InsertFromSelectQueryExecutor $insertFromSelect,
-        $cacheVisibility,
-        $categories,
-        $accountId,
-        $websiteId = null
-    );
-
-    /**
-     * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param integer|null $websiteId
-     */
-    abstract public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, $websiteId = null);
 }

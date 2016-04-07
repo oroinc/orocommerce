@@ -22,7 +22,7 @@ class PriceRoundingServiceTest extends AbstractRoundingServiceTest
             ->will(
                 $this->returnValueMap(
                     [
-                        ['oro_b2b_pricing.rounding_type', PriceRoundingService::HALF_UP, false, $roundingType],
+                        ['oro_b2b_pricing.rounding_type', PriceRoundingService::ROUND_HALF_UP, false, $roundingType],
                         ['oro_b2b_pricing.precision', PriceRoundingService::FALLBACK_PRECISION, false, $precision],
                     ]
                 )
@@ -31,7 +31,7 @@ class PriceRoundingServiceTest extends AbstractRoundingServiceTest
 
     public function testEmptyConfigValues()
     {
-        $this->prepareConfigManager(PriceRoundingService::HALF_UP, PriceRoundingService::FALLBACK_PRECISION);
+        $this->prepareConfigManager(PriceRoundingService::ROUND_HALF_UP, PriceRoundingService::FALLBACK_PRECISION);
 
         $this->assertEquals(15.1235, $this->service->round(15.123456));
     }

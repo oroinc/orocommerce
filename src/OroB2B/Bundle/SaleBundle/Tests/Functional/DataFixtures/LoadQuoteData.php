@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -82,6 +82,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER1,
             'products'      => [],
+            'shippingEstimate' => 10
         ],
         self::QUOTE4 => [
             'qid'           => self::QUOTE4,
@@ -115,6 +116,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     {
         return [
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
+            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses',
+            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
         ];
     }
@@ -139,6 +142,9 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                 ->setPoNumber($poNumber)
             ;
 
+            if (!empty($item['shippingEstimate'])) {
+                $quote->setShippingEstimate(Price::create($item['shippingEstimate'], 'USD'));
+            }
             if (!empty($item['account'])) {
                 $quote->setAccount($this->getReference($item['account']));
             }

@@ -20,18 +20,11 @@ define(function(require) {
             tierPrices: null,
             matchedPrices: {},
             tierPricesRoute: '',
-            matchedPricesRoute: ''
+            matchedPricesRoute: '',
+            currency: null,
+            account: null,
+            website: null
         },
-
-        /**
-         * @property {jQuery}
-         */
-        $form: null,
-
-        /**
-         * @property {jQuery}
-         */
-        $priceList: null,
 
         /**
          * @inheritDoc
@@ -39,15 +32,14 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            this.$form = this.$el.closest('form');
-            this.$priceList = this.$form.find(':input[name$="[priceList]"]');
-
             this.subview('productsPricesComponent', new ProductsPricesComponent({
-                $priceList: this.$priceList,
                 tierPrices: this.options.tierPrices,
                 matchedPrices: this.options.matchedPrices,
                 tierPricesRoute: this.options.tierPricesRoute,
-                matchedPricesRoute: this.options.matchedPricesRoute
+                matchedPricesRoute: this.options.matchedPricesRoute,
+                currency: this.options.currency,
+                account: this.options.account,
+                website: this.options.website
             }));
 
             this.initLayout().done(_.bind(this.handleLayoutInit, this));

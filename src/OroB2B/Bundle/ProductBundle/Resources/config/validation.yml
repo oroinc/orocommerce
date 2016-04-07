@@ -20,6 +20,8 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - Choice: { callback: getStatuses }
         names:
             - Valid: ~
+        shortDescriptions:
+            - Valid: ~
         descriptions:
             - Valid: ~
         organization:
@@ -65,3 +67,11 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
                 min: 0
                 max: 10
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+
+OroB2B\Bundle\ProductBundle\Model\ProductRow:
+    properties:
+        productSku:
+            - NotBlank: ~
+        productQuantity:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~

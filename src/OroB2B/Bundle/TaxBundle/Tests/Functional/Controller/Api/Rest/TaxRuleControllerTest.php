@@ -25,7 +25,7 @@ class TaxRuleControllerTest extends WebTestCase
     public function testDelete()
     {
         $taxRule = $this->getReference(
-            LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_NAME
+            LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_1
         );
         $taxRuleId = $taxRule->getId();
         $this->client->request(

@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\UnitOfWork;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -62,9 +61,6 @@ class ShoppingListListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getEntityManager()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|UnitOfWork $uow */
-        $uow = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')->disableOriginalConstructor()->getMock();
-
         /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $repository */
         $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
@@ -77,8 +73,7 @@ class ShoppingListListenerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManager $em */
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
         $em->expects($this->once())
-            ->method('getUnitOfWork')
-            ->willReturn($uow);
+            ->method('flush');
         $em->expects($this->once())
             ->method('getRepository')
             ->with('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')

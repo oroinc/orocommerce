@@ -9,12 +9,13 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
@@ -43,25 +44,31 @@ class FrontendOrderType extends AbstractType
     /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
+    /** @var SubtotalSubscriber */
+    protected $subtotalSubscriber;
+
     /**
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param SecurityFacade $securityFacade
      * @param PaymentTermProvider $paymentTermProvider
      * @param ProductPriceProvider $productPriceProvider
      * @param OrderCurrencyHandler $orderCurrencyHandler
+     * @param SubtotalSubscriber $subtotalSubscriber
      */
     public function __construct(
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         SecurityFacade $securityFacade,
         PaymentTermProvider $paymentTermProvider,
         ProductPriceProvider $productPriceProvider,
-        OrderCurrencyHandler $orderCurrencyHandler
+        OrderCurrencyHandler $orderCurrencyHandler,
+        SubtotalSubscriber $subtotalSubscriber
     ) {
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->securityFacade = $securityFacade;
         $this->paymentTermProvider = $paymentTermProvider;
         $this->productPriceProvider = $productPriceProvider;
         $this->orderCurrencyHandler = $orderCurrencyHandler;
+        $this->subtotalSubscriber = $subtotalSubscriber;
     }
 
     /**
@@ -90,7 +97,9 @@ class FrontendOrderType extends AbstractType
                     'cascade_validation' => true,
                     'options' => ['currency' => $order->getCurrency()]
                 ]
-            );
+            )
+            ->add('sourceEntityClass', 'hidden')
+            ->add('sourceEntityId', 'hidden');
 
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
             $builder->add(
@@ -98,7 +107,7 @@ class FrontendOrderType extends AbstractType
                 OrderAddressType::NAME,
                 [
                     'label' => 'orob2b.order.billing_address.label',
-                    'order' => $options['data'],
+                    'object' => $options['data'],
                     'required' => false,
                     'addressType' => AddressType::TYPE_BILLING,
                 ]
@@ -106,19 +115,27 @@ class FrontendOrderType extends AbstractType
         }
 
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_SHIPPING)) {
+            /** @var Order $object */
+            $object = $options['data'];
+            $isEditEnabled = true;
+            if ($object->getShippingAddress()) {
+                $isEditEnabled = !$object->getShippingAddress()->isFromExternalSource();
+            }
             $builder->add(
                 'shippingAddress',
                 OrderAddressType::NAME,
                 [
                     'label' => 'orob2b.order.shipping_address.label',
-                    'order' => $options['data'],
+                    'object' => $object,
                     'required' => false,
                     'addressType' => AddressType::TYPE_SHIPPING,
+                    'isEditEnabled' => $isEditEnabled
                 ]
             );
         }
 
         $builder->addEventListener(FormEvents::SUBMIT, [$this, 'updateLineItemPrices']);
+        $builder->addEventSubscriber($this->subtotalSubscriber);
     }
 
     /**

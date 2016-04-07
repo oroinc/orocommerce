@@ -8,8 +8,10 @@ use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 
 /**
  * @dbIsolation
@@ -36,136 +38,51 @@ class ShoppingListControllerTest extends WebTestCase
         );
     }
 
-    public function testIndex()
-    {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_shopping_list_frontend_index'));
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals('Shopping Lists', $crawler->filter('h1.oro-subtitle')->html());
-    }
-
-    public function testCreate()
-    {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_shopping_list_frontend_create'));
-        $result  = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $this->assertShoppingListSave($crawler, self::TEST_LABEL1);
-    }
-
-    public function testUpdate()
-    {
-        $response = $this->requestFrontendGrid(
-            'frontend-shopping-list-grid',
-            ['frontend-shopping-list-grid[_filter][label][value]' => self::TEST_LABEL1]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_shopping_list_frontend_update', ['id' => $result['id']])
-        );
-        $result  = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $this->assertShoppingListSave($crawler, self::TEST_LABEL2);
-    }
-
     public function testView()
     {
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        /** @var ShoppingList $selectedShoppingList */
+        $selectedShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        /** @var ShoppingList $currentShoppingList */
+        $currentShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
 
+        // assert current shopping list
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
+            $this->getUrl('orob2b_shopping_list_frontend_view')
         );
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertContains($currentShoppingList->getLabel(), $crawler->html());
 
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $html = $crawler->html();
-        $this->assertContains($shoppingList->getLabel(), $html);
-    }
-
-    public function testSetCurrent()
-    {
-        $this->client->followRedirects(true);
-        /** @var ShoppingList $list */
-        $list = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-        $this->assertFalse($list->isCurrent());
-        $this->client->request(
+        // assert selected shopping list
+        $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shopping_list_frontend_set_current', ['id' => $list->getId()])
+            $this->getUrl('orob2b_shopping_list_frontend_view', ['id' => $selectedShoppingList->getId()])
         );
-        $response = $this->client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        /** @var ShoppingList $updatedList */
-        $updatedList = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
-            ->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')->find($list->getId());
-        $this->assertTrue($updatedList->isCurrent());
-    }
-
-    /**
-     * @param Crawler $crawler
-     * @param string  $label
-     */
-    protected function assertShoppingListSave(Crawler $crawler, $label)
-    {
-        $form = $crawler->selectButton('Save and Close')->form(
-            [
-                'orob2b_shopping_list_type[label]' => $label,
-            ]
-        );
-
-        $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $html = $crawler->html();
-
-        $this->assertContains('Shopping List has been saved', $html);
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertContains($selectedShoppingList->getLabel(), $crawler->html());
     }
 
     public function testQuickAdd()
     {
-        $response = $this->requestFrontendGrid('frontend-shopping-list-grid');
-        $result = $this->getJsonResponseContent($response, 200);
-        $shoppingListsCount = count($result['data']);
-
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         /** @var Product $product */
-        $product = $this->getReference('product.3');
+        $product = $this->getReference(LoadProductData::PRODUCT_3);
         $products = [[
             'productSku' => $product->getSku(),
             'productQuantity' => 15
         ]];
 
-        $this->assertQuickAddFormSubmitted($crawler, $products);
+        /** @var ShoppingList $currentShoppingList */
+        $currentShoppingList = $this->getContainer()
+            ->get('orob2b_shopping_list.shopping_list.manager')
+            ->getForCurrentUser();
 
-        $response = $this->requestFrontendGrid([
-            'gridName' => 'frontend-shopping-list-grid',
-            'frontend-shopping-list-grid[_sort_by][createdAt]' => 'DESC',
-        ]);
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $this->assertCount($shoppingListsCount + 1, $result['data']);
-
-        // Get last added shopping list
-        $data = reset($result['data']);
-        $shoppingListId = $data['id'];
-
-        $this->assertShoppingListItemSaved($shoppingListId, $product->getSku(), 15);
-
-        $this->assertQuickAddFormSubmitted($crawler, $products, $shoppingListId);
-
-        $this->assertShoppingListItemSaved($shoppingListId, $product->getSku(), 30);
+        $this->assertQuickAddFormSubmitted($crawler, $products);//add to current
+        $this->assertShoppingListItemSaved($currentShoppingList, $product->getSku(), 15);
+        $this->assertQuickAddFormSubmitted($crawler, $products, $currentShoppingList->getId());//add to specific
+        $this->assertShoppingListItemSaved($currentShoppingList, $product->getSku(), 30);
     }
 
     /**
@@ -197,31 +114,32 @@ class ShoppingListControllerTest extends WebTestCase
             ]
         );
 
+        $expectedMessage = $this->getContainer()
+            ->get('translator')
+            ->transChoice('orob2b.shoppinglist.actions.add_success_message', count($products));
+
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertContains($expectedMessage, $crawler->html());
 
         return $crawler;
     }
 
     /**
-     * @param int $shoppingListId
+     * @param ShoppingList $shoppingList
      * @param string $sku
      * @param int $quantity
      */
-    protected function assertShoppingListItemSaved($shoppingListId, $sku, $quantity)
+    protected function assertShoppingListItemSaved(ShoppingList $shoppingList, $sku, $quantity)
     {
-        $response = $this->requestFrontendGrid(
-            [
-                'gridName' => 'frontend-shopping-list-line-items-grid',
-                'frontend-shopping-list-line-items-grid[shopping_list_id]' => $shoppingListId,
-            ]
-        );
+        /** @var LineItem[] $items */
+        $items = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BShoppingListBundle:LineItem')
+            ->getRepository('OroB2BShoppingListBundle:LineItem')
+            ->findBy(['shoppingList' => $shoppingList]);
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $this->assertCount(1, $result['data']);
+        $this->assertCount(1, $items);
+        $item = $items[0];
 
-        $data = reset($result['data']);
-
-        $this->assertEquals($sku, $data['productSku']);
-        $this->assertEquals($quantity, $data['quantity']);
+        $this->assertEquals($sku, $item->getProductSku());
+        $this->assertEquals($quantity, $item->getQuantity());
     }
 }

@@ -6,6 +6,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
@@ -24,7 +25,7 @@ class QuoteControllerTest extends WebTestCase
         $this->initClient();
 
         $this->loadFixtures([
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
+            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAddressData',
         ]);
     }
 
@@ -215,7 +216,7 @@ class QuoteControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $controls = $crawler->filter('.control-group');
+        $controls = $crawler->filter('.account-oq__order-info__control, .page-title');
 
         $this->assertSameSize($expectedData['columns'], $controls);
 
@@ -231,6 +232,8 @@ class QuoteControllerTest extends WebTestCase
             $property = $accessor->getValue($quote, $column['property']) ?: $translator->trans('N/A');
             if ($property instanceof \DateTime) {
                 $property = $property->format('M j, Y');
+            } elseif ($property instanceof Price) {
+                $property = round($property->getValue());
             } else {
                 $property = (string)$property;
             }
@@ -239,9 +242,9 @@ class QuoteControllerTest extends WebTestCase
             $this->assertContains($property, $control->textContent);
         }
 
-        $createOrderButton = (bool)$crawler->filterXPath('//a[contains(., \'Accept and Submit to Order\')]')->count();
-
-        $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
+        $createOrderButton = (bool)$crawler
+            ->filterXPath('//a[contains(., \'Accept and Submit to Order\')]')->count();
+         $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
     }
 
     /**
@@ -275,6 +278,14 @@ class QuoteControllerTest extends WebTestCase
                             'label' => 'orob2b.sale.quote.ship_until.label',
                             'property' => 'ship_until',
                         ],
+                        [
+                            'label' => 'orob2b.frontend.sale.quote.ship_estimate.label',
+                            'property' => 'shipping_estimate',
+                        ],
+                        [
+                            'label' => 'orob2b.sale.quote.sections.shipping_address',
+                            'property' => 'shippingAddress.street',
+                        ]
                     ],
                 ],
             ],
@@ -292,10 +303,6 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'orob2b.frontend.sale.quote.account_user.label',
-                            'property' => 'account_user',
-                        ],
-                        [
                             'label' => 'orob2b.frontend.sale.quote.valid_until.label',
                             'property' => 'valid_until',
                         ],
@@ -307,6 +314,14 @@ class QuoteControllerTest extends WebTestCase
                             'label' => 'orob2b.sale.quote.ship_until.label',
                             'property' => 'ship_until',
                         ],
+                        [
+                            'label' => 'orob2b.frontend.sale.quote.ship_estimate.label',
+                            'property' => 'shipping_estimate',
+                        ],
+                        [
+                            'label' => 'orob2b.sale.quote.sections.shipping_address',
+                            'property' => 'shippingAddress.street',
+                        ]
                     ],
                 ],
             ],

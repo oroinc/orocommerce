@@ -7,7 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Component\Testing\WebTestCase;
 
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 
 abstract class CategoryCacheTestCase extends WebTestCase
 {
@@ -20,22 +20,15 @@ abstract class CategoryCacheTestCase extends WebTestCase
         ]);
     }
 
-    public function tearDown()
-    {
-        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
-    }
-
-    /**
-     * @return string
-     */
-    abstract protected function getCacheBuilderContainerId();
-
     /**
      * @param array $expectedData
      */
     protected function assertProductVisibilityResolvedCorrect(array $expectedData)
     {
         $this->assertEquals($expectedData, [
+            'hiddenCategories' => $this->getHiddenCategories(),
+            'hiddenCategoriesByAccountGroups' => $this->getHiddenCategoriesByAccountGroups(),
+            'hiddenCategoriesByAccounts' => $this->getHiddenCategoriesByAccounts(),
             'hiddenProducts' => $this->getHiddenProducts(),
             'hiddenProductsByAccountGroups' => $this->getHiddenProductsByAccountGroups(),
             'hiddenProductsByAccounts' => $this->getHiddenProductsByAccounts(),
@@ -58,6 +51,25 @@ abstract class CategoryCacheTestCase extends WebTestCase
 
         return array_map(function ($row) {
             return $row['sku'];
+        }, $results);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getHiddenCategories()
+    {
+        /** @var EntityRepository $repository */
+        $repository = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
+        $queryBuilder = $repository->createQueryBuilder('cvr');
+        $this->selectHiddenCategoryTitles($queryBuilder, 'cvr');
+        $results = $queryBuilder->getQuery()
+            ->getScalarResult();
+
+        return array_map(function ($row) {
+            return $row['title'];
         }, $results);
     }
 
@@ -90,6 +102,32 @@ abstract class CategoryCacheTestCase extends WebTestCase
     /**
      * @return array
      */
+    protected function getHiddenCategoriesByAccountGroups()
+    {
+        /** @var EntityRepository $repository */
+        $repository = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
+        $queryBuilder = $repository->createQueryBuilder('agcvr')
+            ->select('accountGroup.name as account_group_name')
+            ->join('agcvr.accountGroup', 'accountGroup')
+            ->orderBy('accountGroup.name');
+        $this->selectHiddenCategoryTitles($queryBuilder, 'agcvr');
+        $results = $queryBuilder->getQuery()
+            ->getScalarResult();
+
+        return array_reduce($results, function ($results, $row) {
+            if (!isset($results[$row['account_group_name']])) {
+                $results[$row['account_group_name']] = [];
+            }
+            $results[$row['account_group_name']][] = $row['title'];
+            return $results;
+        }, []);
+    }
+
+    /**
+     * @return array
+     */
     protected function getHiddenProductsByAccounts()
     {
         /** @var EntityRepository $repository */
@@ -114,6 +152,32 @@ abstract class CategoryCacheTestCase extends WebTestCase
     }
 
     /**
+     * @return array
+     */
+    protected function getHiddenCategoriesByAccounts()
+    {
+        /** @var EntityRepository $repository */
+        $repository = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+        $queryBuilder = $repository->createQueryBuilder('acvr')
+            ->select('account.name as account_name')
+            ->join('acvr.account', 'account')
+            ->orderBy('account.name');
+        $this->selectHiddenCategoryTitles($queryBuilder, 'acvr');
+        $results = $queryBuilder->getQuery()
+            ->getScalarResult();
+
+        return array_reduce($results, function ($results, $row) {
+            if (!isset($results[$row['account_name']])) {
+                $results[$row['account_name']] = [];
+            }
+            $results[$row['account_name']][] = $row['title'];
+            return $results;
+        }, []);
+    }
+
+    /**
      * @param QueryBuilder $queryBuilder
      * @param string $alias
      */
@@ -123,9 +187,25 @@ abstract class CategoryCacheTestCase extends WebTestCase
             ->join($alias . '.product', 'product')
             ->andWhere($queryBuilder->expr()->eq(
                 $alias . '.visibility',
-                BaseProductVisibilityResolved::VISIBILITY_HIDDEN
+                BaseVisibilityResolved::VISIBILITY_HIDDEN
             ))
             ->addOrderBy($alias . '.category')
             ->addOrderBy('product.sku');
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param string $alias
+     */
+    protected function selectHiddenCategoryTitles(QueryBuilder $queryBuilder, $alias)
+    {
+        $queryBuilder->addSelect('categoryTitle.string as title')
+            ->join($alias . '.category', 'category')
+            ->join('category.titles', 'categoryTitle', 'WITH', 'categoryTitle.locale IS NULL')
+            ->andWhere($queryBuilder->expr()->eq(
+                $alias . '.visibility',
+                BaseVisibilityResolved::VISIBILITY_HIDDEN
+            ))
+            ->addOrderBy('categoryTitle.string');
     }
 }

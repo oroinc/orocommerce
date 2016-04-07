@@ -24,6 +24,11 @@ class TextTypeStub extends TextType
     {
         parent::configureOptions($resolver);
 
-        $resolver->setDefaults(['validation_groups' => ['Default']]);
+        $resolver->setDefaults(
+            [
+                'validation_groups' => ['Default'],
+                'constraints' => []
+            ]
+        );
     }
 }

@@ -1,7 +1,0 @@
-oro_api:
-    entities:
-        OroB2B\Bundle\RFPBundle\Entity\RequestStatus:
-            definition:
-                fields:
-                    translations:
-                        exclude: true

@@ -189,6 +189,22 @@ class Account extends ExtendAccount
     protected $organization;
 
     /**
+     * @var Collection|User[]
+     *
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinTable(
+     *      name="orob2b_account_sales_reps",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     **/
+    protected $salesRepresentatives;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -198,6 +214,7 @@ class Account extends ExtendAccount
         $this->children = new ArrayCollection();
         $this->addresses = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->salesRepresentatives = new ArrayCollection();
     }
 
     /**
@@ -502,6 +519,40 @@ class Account extends ExtendAccount
     public function setOrganization(Organization $organization = null)
     {
         $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getSalesRepresentatives()
+    {
+        return $this->salesRepresentatives;
+    }
+
+    /**
+     * @param User $salesRepresentative
+     * @return $this
+     */
+    public function addSalesRepresentative(User $salesRepresentative)
+    {
+        if (!$this->salesRepresentatives->contains($salesRepresentative)) {
+            $this->salesRepresentatives->add($salesRepresentative);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param User $salesRepresentative
+     * @return $this
+     */
+    public function removeSalesRepresentative(User $salesRepresentative)
+    {
+        if ($this->salesRepresentatives->contains($salesRepresentative)) {
+            $this->salesRepresentatives->removeElement($salesRepresentative);
+        }
 
         return $this;
     }

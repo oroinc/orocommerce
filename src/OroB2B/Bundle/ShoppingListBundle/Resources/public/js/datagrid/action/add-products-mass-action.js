@@ -1,12 +1,9 @@
 /*jslint nomen:true*/
 /*global define*/
 define([
-    'underscore',
-    'oroui/js/messenger',
-    'orotranslation/js/translator',
     'oro/datagrid/action/mass-action',
     'oroui/js/mediator'
-], function(_, messenger, __, MassAction, mediator) {
+], function(MassAction, mediator) {
     'use strict';
 
     var AddProductsAction;
@@ -19,18 +16,23 @@ define([
      * @extends oro.datagrid.action.MassAction
      */
     AddProductsAction = MassAction.extend({
-        initialize: function(options) {
-            AddProductsAction.__super__.initialize.apply(this, arguments);
-            mediator.on('frontend:shoppinglist:products-add', this._beforeProductsAdd, this);
-            mediator.on('frontend:shoppinglist:add-widget-requested', this._checkSelectionState, this);
-        },
+
         /**
-         * @param {object} eventArgs
+         * @inheritdoc
          */
-        _beforeProductsAdd: function(eventArgs) {
-            this.route_parameters.shoppingList = eventArgs.shoppingListId;
-            this.run();
+        initialize: function() {
+            AddProductsAction.__super__.initialize.apply(this, arguments);
+
+            this.listenTo(mediator, 'widget_success:add_products_to_new_shopping_list_mass_action', this._onSuccess, this);
         },
+
+        _onSuccess: function () {
+            mediator.trigger('datagrid:doRefresh:' + this.datagrid.name);
+        },
+
+        /**
+         * @private
+         */
         _checkSelectionState: function() {
             var selectionState = this.datagrid.getSelectionState();
             var models = selectionState.selectedModels;

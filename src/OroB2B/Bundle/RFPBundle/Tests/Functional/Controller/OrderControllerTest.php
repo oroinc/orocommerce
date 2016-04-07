@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
+use Doctrine\Common\Util\ClassUtils;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -24,6 +26,7 @@ class OrderControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
     }
@@ -65,5 +68,20 @@ class OrderControllerTest extends WebTestCase
                 $this->assertNotEmpty($nodes->count());
             }
         }
+
+        $this->assertEquals(
+            $request->getId(),
+            $crawler->filter('[data-ftid=orob2b_order_type_sourceEntityId]')->attr('value')
+        );
+
+        $this->assertEquals(
+            $request->getIdentifier(),
+            $crawler->filter('[data-ftid=orob2b_order_type_sourceEntityIdentifier]')->attr('value')
+        );
+
+        $this->assertEquals(
+            ClassUtils::getClass($request),
+            $crawler->filter('[data-ftid=orob2b_order_type_sourceEntityClass]')->attr('value')
+        );
     }
 }

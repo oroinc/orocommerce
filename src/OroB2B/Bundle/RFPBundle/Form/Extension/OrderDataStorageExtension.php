@@ -2,157 +2,129 @@
 
 namespace OroB2B\Bundle\RFPBundle\Form\Extension;
 
-use Doctrine\Common\Collections\Collection;
-
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\RFPBundle\Form\Type\OffersType;
-use OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\ProductBundle\Storage\DataStorageInterface;
 
 class OrderDataStorageExtension extends AbstractTypeExtension
 {
-    const OFFERS_DATA_KEY = 'offers';
-
-    /** @var RequestStack */
-    protected $requestStack;
-
-    /** @var DataStorageInterface */
-    protected $sessionStorage;
+    /**
+     * @var string
+     */
+    protected $extendedType;
 
     /**
-     * @var array|bool false if not initialized
+     * @var RequestStack
      */
-    private $offers = false;
+    protected $requestStack;
 
-    /** @var OffersFormStorage */
-    private $formStorage;
+    /**
+     * @var ProductPriceProvider
+     */
+    protected $productPriceProvider;
+
+    /**
+     * @var PriceListTreeHandler
+     */
+    protected $priceListTreeHandler;
+
+    /**
+     * @var array
+     */
+    protected $productPriceCriteriaCache = [];
 
     /**
      * @param RequestStack $requestStack
-     * @param DataStorageInterface $sessionStorage
-     * @param OffersFormStorage $formStorage
+     * @param ProductPriceProvider $productPriceProvider
+     * @param PriceListTreeHandler $priceListTreeHandler
      */
     public function __construct(
         RequestStack $requestStack,
-        DataStorageInterface $sessionStorage,
-        OffersFormStorage $formStorage
+        ProductPriceProvider $productPriceProvider,
+        PriceListTreeHandler $priceListTreeHandler
     ) {
         $this->requestStack = $requestStack;
-        $this->sessionStorage = $sessionStorage;
-        $this->formStorage = $formStorage;
+        $this->productPriceProvider = $productPriceProvider;
+        $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtendedType()
+    {
+        return $this->extendedType;
+    }
+
+    /**
+     * @param string $extendedType
+     */
+    public function setExtendedType($extendedType)
+    {
+        $this->extendedType = $extendedType;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->isApplicable()) {
             return;
         }
-
-        $builder->addEventListener(
-            FormEvents::POST_SET_DATA,
-            function (FormEvent $event) {
-                $form = $event->getForm();
-                $offers = $this->getOffers($form);
-                $form->add(
-                    OffersFormStorage::DATA_KEY,
-                    'hidden',
-                    ['data' => $this->formStorage->getRawData($offers), 'mapped' => false]
-                );
-                $form->add(self::OFFERS_DATA_KEY, OffersType::NAME, [OffersType::OFFERS_OPTION => $offers]);
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $entity = $event->getData();
+            if ($entity instanceof Order && !$entity->getId()) {
+                $this->fillData($entity);
             }
-        );
-
-        $builder->addEventListener(
-            FormEvents::PRE_SUBMIT,
-            function (FormEvent $event) {
-                $event->getForm()->add(
-                    self::OFFERS_DATA_KEY,
-                    OffersType::NAME,
-                    [OffersType::OFFERS_OPTION => $this->formStorage->getData($event->getData())]
-                );
-            }
-        );
+        });
     }
 
     /**
-     * @return array
+     * @param Order $order
      */
-    protected function getOffersStorageData()
+    protected function fillData($order)
     {
-        if (false !== $this->offers) {
-            return $this->offers;
+        /** @var array[] $lineItems */
+        $lineItems = [];
+        $productsPriceCriteria = [];
+        foreach ($order->getLineItems()->toArray() as $lineItem) {
+            /** @var OrderLineItem $lineItem */
+            try {
+                $criteria = new ProductPriceCriteria(
+                    $lineItem->getProduct(),
+                    $lineItem->getProductUnit(),
+                    $lineItem->getQuantity(),
+                    $order->getCurrency()
+                );
+            } catch (\InvalidArgumentException $e) {
+                continue;
+            }
+            $lineItems[$criteria->getIdentifier()][] = $lineItem;
+            $productsPriceCriteria[] = $criteria;
         }
-
-        $this->offers = $this->sessionStorage->get();
-        $this->sessionStorage->remove();
-
-        return $this->offers;
-    }
-
-    /**
-     * @param FormInterface $form
-     * @return array
-     */
-    protected function getOffers(FormInterface $form)
-    {
-        $lineItem = $form->getData();
-        if (!$lineItem) {
-            return [];
-        }
-
-        $parent = $form->getParent();
-        if (!$parent) {
-            return [];
-        }
-
-        $collection = $parent->getData();
-        if (!$collection instanceof Collection) {
-            return [];
-        }
-
-        $key = $collection->indexOf($lineItem);
-        if (false === $key) {
-            return [];
-        }
-
-        $offers = $this->getOffersStorageData();
-        if (!array_key_exists($key, $offers)) {
-            return [];
-        }
-
-        return (array)$offers[$key];
-    }
-
-    /** {@inheritdoc} */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        if (!$this->isApplicable()) {
+        if (count($productsPriceCriteria) === 0) {
             return;
         }
-
-        $resolver->setNormalizer(
-            'sections',
-            function (Options $options, array $sections) {
-                $sections[self::OFFERS_DATA_KEY] = [
-                    'data' => [
-                        self::OFFERS_DATA_KEY => [],
-                        OffersFormStorage::DATA_KEY => [],
-                    ],
-                    'order' => 5,
-                ];
-
-                return $sections;
-            }
+        $matchedPrices = $this->productPriceProvider->getMatchedPrices(
+            $productsPriceCriteria,
+            $this->getPriceList($order)
         );
+        foreach ($matchedPrices as $identifier => $price) {
+            foreach ($lineItems[$identifier] as $lineItem) {
+                $lineItem->setPrice($price);
+            }
+        }
     }
 
     /**
@@ -161,13 +133,15 @@ class OrderDataStorageExtension extends AbstractTypeExtension
     protected function isApplicable()
     {
         $request = $this->requestStack->getCurrentRequest();
-
         return $request && $request->get(DataStorageInterface::STORAGE_KEY);
     }
 
-    /** {@inheritdoc} */
-    public function getExtendedType()
+    /**
+     * @param Order $order
+     * @return BasePriceList
+     */
+    protected function getPriceList(Order $order)
     {
-        return 'orob2b_order_line_item';
+        return $this->priceListTreeHandler->getPriceList($order->getAccount(), $order->getWebsite());
     }
 }

@@ -9,15 +9,15 @@ class PriceListSystemConfigType extends AbstractType
 {
     const NAME = 'orob2b_pricing_price_list_system_config';
 
-    /** @var  string */
+    /** @var string */
     protected $priceListConfigClassName;
 
-    /** @var  string */
+    /** @var string */
     protected $priceListConfigBagClassName;
 
     /**
      * PriceListSystemConfigType constructor.
-     * @param $priceListConfigClassName
+     * @param string $priceListConfigClassName
      */
     public function __construct($priceListConfigClassName)
     {

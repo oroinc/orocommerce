@@ -10,9 +10,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 
 class AccountUserType extends AbstractType
 {
@@ -27,6 +28,11 @@ class AccountUserType extends AbstractType
      * @var string
      */
     protected $addressClass;
+
+    /**
+     * @var SecurityFacade
+     */
+    protected $securityFacade;
 
     /**
      * @param SecurityFacade $securityFacade
@@ -169,6 +175,13 @@ class AccountUserType extends AbstractType
                         'data_class' => $this->addressClass,
                         'single_form' => false
                     ]
+                ]
+            )
+            ->add(
+                'salesRepresentatives',
+                UserMultiSelectType::NAME,
+                [
+                    'label' => 'orob2b.account.sales_representatives.label',
                 ]
             );
 

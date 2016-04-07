@@ -10,17 +10,8 @@
 {% form_theme form with ['OroB2BOrderBundle:Form:fields.html.twig'] %}
 
 {% block navButtons %}
-    {% if entity.id and resource_granted('DELETE', entity) %}
-        {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_frontend_delete_order', {'id': entity.id}),
-            'dataRedirect': path('orob2b_order_frontend_index'),
-            'aCss': 'no-hash remove-button',
-            'dataId': entity.id,
-            'id': 'btn-remove-account',
-            'entity_label': 'orob2b.order.entity_label'|trans,
-        }) }}
-        {{ UI.buttonSeparator() }}
-    {% endif %}
+    {{ parent() }}
+
     {{ UI.cancelButton(path('orob2b_order_frontend_index')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_order_frontend_update') %}
@@ -44,15 +35,18 @@
     {% endif %}
 {% endblock pageHeader %}
 
+{% set pageComponent = {
+    module: 'orob2border/js/app/components/entry-point-component',
+    options: { route: 'orob2b_order_frontend_entry_point', routeParams: {id: entity.id} },
+} %}
+
 {% block content_data %}
     {% set id = 'frontend-order-edit' %}
 
     {% set subtotals %}
-        {% include 'OroB2BOrderBundle:Order:subtotals.html.twig' with {
-            options: {
-                url: path('orob2b_order_frontend_subtotals', {id: entity.id}),
-                selectors: {form: '#' ~ form.vars.id}
-                }
+        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
+            pageComponent: 'orob2border/js/app/components/totals-component',
+            options: {totals: totals}
         } only %}
     {% endset %}
 
@@ -63,8 +57,6 @@
                  view: 'orob2border/js/app/views/line-items-view',
                  tierPrices: tierPrices|default({}),
                  matchedPrices: matchedPrices|default({}),
-                 tierPricesRoute: 'orob2b_pricing_frontend_price_by_pricelist',
-                 matchedPricesRoute: 'orob2b_pricing_frontend_matching_price',
                  currency: form.vars.value.currency
              }|json_encode }}"
              data-layout="separate">
@@ -76,6 +68,7 @@
     {% set dataBlocks = [
         {
             'title': 'orob2b.order.sections.order_line_items'|trans,
+            'content_attr': {'class': 'order-line-items-content'},
             'subblocks': [{
             'title': '',
                 'data': [
@@ -117,13 +110,18 @@
 
     {% if isShippingAddressGranted %}
         {% set shippingAddress %}
+            {% if form.shippingAddress.accountAddress is defined %}
+                {% set idAddressBlock = '#' ~ form.shippingAddress.accountAddress.vars.id %}
+            {% else %}
+                {% set idAddressBlock = null %}
+            {% endif %}
             <div
                 data-page-component-module="oroui/js/app/components/view-component"
                 data-page-component-options="{{ {
                     view: 'orob2border/js/app/views/address-view',
                     type: 'shipping',
                     selectors: {
-                        address: '#' ~ form.shippingAddress.accountAddress.vars.id,
+                        address: idAddressBlock,
                         subtotalsFields: [
                         '#' ~ form.shippingAddress.country.vars.id,
                         '#' ~ form.shippingAddress.street.vars.id,

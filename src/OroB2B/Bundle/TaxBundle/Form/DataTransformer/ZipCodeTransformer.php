@@ -37,12 +37,12 @@ class ZipCodeTransformer implements DataTransformerInterface
             return null;
         }
 
-        if ($zipCode->getZipRangeStart() === $zipCode->getZipRangeEnd() ||
-            $zipCode->getZipRangeStart() && !$zipCode->getZipRangeEnd() ||
-            !$zipCode->getZipRangeStart() && $zipCode->getZipRangeEnd()
-        ) {
+        $zipRangeStart = $zipCode->getZipRangeStart();
+        $zipRangeEnd = $zipCode->getZipRangeEnd();
+
+        if ($zipRangeStart === $zipRangeEnd || ($zipRangeStart && !$zipRangeEnd) || (!$zipRangeStart && $zipRangeEnd)) {
             $zipCode
-                ->setZipCode($zipCode->getZipRangeStart() ?: $zipCode->getZipRangeEnd())
+                ->setZipCode($zipRangeStart ?: $zipRangeEnd)
                 ->setZipRangeStart(null)
                 ->setZipRangeEnd(null);
         }

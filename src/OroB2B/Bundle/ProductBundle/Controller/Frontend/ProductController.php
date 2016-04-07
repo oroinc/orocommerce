@@ -19,29 +19,15 @@ class ProductController extends Controller
      * View list of products
      *
      * @Route("/", name="orob2b_product_frontend_product_index")
-     * @Template("OroB2BProductBundle:Product\Frontend:index.html.twig")
-     * @Layout(vars={"entity_class", "widgetRouteParameters"})
+     * @Layout(vars={"entity_class"})
      * @AclAncestor("orob2b_product_frontend_view")
      *
      * @return array
      */
     public function indexAction()
     {
-        $widgetRouteParameters = [
-            'gridName' => 'frontend-products-grid',
-            'renderParams' => [
-                'enableFullScreenLayout' => 1,
-                'enableViews' => 0
-            ],
-            'renderParamsTypes' => [
-                'enableFullScreenLayout' => 'int',
-                'enableViews' => 'int'
-            ]
-        ];
-
         return [
             'entity_class' => $this->container->getParameter('orob2b_product.product.class'),
-            'widgetRouteParameters' => $widgetRouteParameters,
         ];
     }
 
@@ -49,7 +35,7 @@ class ProductController extends Controller
      * View list of products
      *
      * @Route("/view/{id}", name="orob2b_product_frontend_product_view", requirements={"id"="\d+"})
-     * @Template("OroB2BProductBundle:Product\Frontend:view.html.twig")
+     * @Layout()
      * @Acl(
      *      id="orob2b_product_frontend_view",
      *      type="entity",
@@ -65,7 +51,9 @@ class ProductController extends Controller
     public function viewAction(Product $product)
     {
         return [
-            'entity' => $product
+            'data' => [
+                'product' => $product,
+            ],
         ];
     }
 

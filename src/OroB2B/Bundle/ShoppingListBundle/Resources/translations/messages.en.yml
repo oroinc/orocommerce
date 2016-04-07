@@ -4,20 +4,26 @@ orob2b:
         entity_plural_label: Shopping Lists
         entity_description: Shows content of shopping lists of the account users.
         id.label: ID
-        label.label: Label
+        label:
+            label: Label
+            edit.tooltip: Edit Shoppping List Label
         notes.label: Notes
         account.label: Account
         account_user.label: Account User
         organization.label: Organization
         line_items.label: Line Items
         current.label: Current
-        default.label: Default
-
+        default.label: 'Shopping list'
+        items.label: 'Item|Items'
+        subtotal.label: Subtotal
+        total.label: Grand Total
+        currency.label: Currency
+        website.label: Website
         btn:
             create_order: 'Create Order'
 
         create_new_form:
-            input_label: Shopping List Label
+            input_label: Shopping List Name
             comment: Selected products will be added to this new shopping list.
             comment_cancel: Click "Cancel" to select a different list.
             submit_label: Create and Add
@@ -50,6 +56,7 @@ orob2b:
         sections:
             general: General
             additional: Additional
+            subtotals: Totals
 
         controller:
             shopping_list.saved.message: Shopping List has been saved
@@ -59,8 +66,12 @@ orob2b:
             entity_plural_label: Shopping List Line Items
             id.label: ID
             notes.label: Notes
-            product_sku.label: Product SKU
-            quantity.label: Quantity
+            product_sku.label: SKU
+            product_name.label: Product
+            quantity:
+                label: Quantity
+                enter: Enter a QTY
+                placeholder: 'QTY #'
             product.label: Product
             shopping_list.label: Shopping List
             unit.label: Unit
@@ -91,6 +102,40 @@ orob2b:
 
     frontend:
         shoppinglist:
+            quick_order:
+                default_label: Quick Order (%date%)
+            selector:
+                sort_by.label: 'Sort By:'
+                last_updated.label: 'Last Updated'
+                show_more.label: 'Show More'
+            view:
+                view_options.label: View Options for this Shopping List
+                add_note.label: Add a Note to This Shopping List
+                add_note.placeholder: Enter your note
+
+                item.lable: Item
+                availability.lable: Availability
+                quantity.lable: Quantity
+                price.lable: Price
+
+                sku.label: 'SKU #:'
+                qty.label: 'QTY #'
+                your_price.label: 'Your Price:'
+
+                add_item_note.label: 'Add a Note to This Item'
+                add_item_note.placeholder: 'Enter your note'
+
+                not_have_available: 'You do not have available Shopping Lists'
+                empty: 'Your Shopping List Is Empty'
+
+            messages:
+                line_item_delete_confirm: 'Are you sure you want to delete this Shopping list item?'
+                line_item_deleted: 'Shopping list item has been deleted'
+                delete_confirm: 'Are you sure you want to delete this Shopping list?'
+                deleted: 'Shopping list has been deleted'
             btn:
-                request_quote_create_rfp: 'Request a Quote'
+                request_quote_create_rfp: 'Request Quote'
                 create_order: 'Create Order'
+                delete: 'Delete'
+            workflow:
+                remove_source.label: Delete the shopping list

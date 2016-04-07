@@ -86,6 +86,14 @@ class ZipCode
     protected $updatedAt;
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->zipCode;
+    }
+
+    /**
      * Get id
      *
      * @return integer

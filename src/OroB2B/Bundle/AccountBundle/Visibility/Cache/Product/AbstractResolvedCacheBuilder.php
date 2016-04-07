@@ -3,38 +3,25 @@
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
-use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
-use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 
-abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
+abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
 {
     /**
      * @var ManagerRegistry
      */
     protected $registry;
-
-    /**
-     * @var CategoryVisibilityResolverInterface
-     */
-    protected $categoryVisibilityResolver;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
 
     /**
      * @var InsertFromSelectQueryExecutor
@@ -47,20 +34,19 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     protected $cacheClass;
 
     /**
+     * @var int
+     */
+    protected $visibilityFromConfig;
+
+    /**
      * @param ManagerRegistry $registry
-     * @param CategoryVisibilityResolver $categoryVisibilityResolver
-     * @param ConfigManager $configManager
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      */
     public function __construct(
         ManagerRegistry $registry,
-        CategoryVisibilityResolver $categoryVisibilityResolver,
-        ConfigManager $configManager,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
     ) {
         $this->registry = $registry;
-        $this->categoryVisibilityResolver = $categoryVisibilityResolver;
-        $this->configManager = $configManager;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
     }
 
@@ -86,26 +72,12 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
         ];
 
         if ($selectedVisibility === VisibilityInterface::VISIBLE) {
-            $updateData['visibility'] = BaseProductVisibilityResolved::VISIBILITY_VISIBLE;
+            $updateData['visibility'] = BaseVisibilityResolved::VISIBILITY_VISIBLE;
         } elseif ($selectedVisibility === VisibilityInterface::HIDDEN) {
-            $updateData['visibility'] = BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
+            $updateData['visibility'] = BaseVisibilityResolved::VISIBILITY_HIDDEN;
         }
 
         return $updateData;
-    }
-
-    /**
-     * @param VisibilityInterface|null $productVisibility
-     * @return array
-     */
-    protected function resolveConfigValue(VisibilityInterface $productVisibility = null)
-    {
-        return [
-            'sourceProductVisibility' => $productVisibility,
-            'visibility' => $this->getVisibilityFromConfig(),
-            'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
-            'category' => null,
-        ];
     }
 
     /**
@@ -127,23 +99,24 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     }
 
     /**
-     * @return int
-     */
-    protected function getVisibilityFromConfig()
-    {
-        $visibilityFromConfig = $this->configManager->get('oro_b2b_account.product_visibility');
-
-        return $this->convertVisibility($visibilityFromConfig === VisibilityInterface::VISIBLE);
-    }
-
-    /**
      * @param boolean $isVisible
      * @return integer
      */
     protected function convertVisibility($isVisible)
     {
-        return $isVisible ? BaseProductVisibilityResolved::VISIBILITY_VISIBLE
-            : BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
+        return $isVisible ? BaseVisibilityResolved::VISIBILITY_VISIBLE
+            : BaseVisibilityResolved::VISIBILITY_HIDDEN;
+    }
+
+    /**
+     * @param string $visibility
+     * @return int
+     */
+    protected function convertStaticVisibility($visibility)
+    {
+        return $visibility === VisibilityInterface::VISIBLE
+            ? BaseVisibilityResolved::VISIBILITY_VISIBLE
+            : BaseVisibilityResolved::VISIBILITY_HIDDEN;
     }
 
     /**
@@ -168,5 +141,23 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
         }
 
         return $entity;
+    }
+
+    /**
+     * Use category ID as array index
+     *
+     * @param array $visibilities
+     * @param string $fieldName
+     * @return array
+     */
+    protected function indexVisibilities(array $visibilities, $fieldName)
+    {
+        $indexedVisibilities = [];
+        foreach ($visibilities as $visibility) {
+            $index = $visibility[$fieldName];
+            $indexedVisibilities[$index] = $visibility;
+        }
+
+        return $indexedVisibilities;
     }
 }

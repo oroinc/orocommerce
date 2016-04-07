@@ -9,7 +9,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
-use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
+use Oro\Component\Action\Model\ContextAccessor;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;

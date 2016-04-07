@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
 
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -9,38 +11,39 @@ use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 /**
  * @dbIsolation
  */
-class CategoryVisibilityRepositoryTest extends CategoryVisibilityTestCase
+class CategoryVisibilityRepositoryTest extends WebTestCase
 {
+    const ROOT_CATEGORY = 'Master Catalog';
+
     /**
      * @var CategoryVisibilityRepository
      */
     protected $repository;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getRepositoryName()
+    protected function setUp()
     {
-        return 'OroB2BAccountBundle:Visibility\CategoryVisibility';
+        $this->initClient();
+
+        $this->repository = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository('OroB2BAccountBundle:Visibility\CategoryVisibility');
+
+        $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData']);
     }
 
     /**
-     * @dataProvider getCategoriesVisibilitiesQueryBuilderDataProvider
+     * @dataProvider getCategoriesVisibilitiesDataProvider
      * @param array $expectedData
      */
-    public function testGetCategoriesVisibilitiesQueryBuilder(array $expectedData)
+    public function testGetCategoriesVisibilities(array $expectedData)
     {
-        /** @var array $actualData */
-        $actualData = $this->repository->getCategoriesVisibilitiesQueryBuilder()->addOrderBy('c.left')
-            ->getQuery()->execute();
-
-        $this->assertVisibilities($expectedData, $actualData);
+        $this->assertVisibilities($expectedData, $this->repository->getCategoriesVisibilities());
     }
 
     /**
      * @return array
      */
-    public function getCategoriesVisibilitiesQueryBuilderDataProvider()
+    public function getCategoriesVisibilitiesDataProvider()
     {
         return [
             [
@@ -88,5 +91,56 @@ class CategoryVisibilityRepositoryTest extends CategoryVisibilityTestCase
                 ]
             ]
         ];
+    }
+
+    /**
+     * @param array $expectedData
+     * @param array $actualData
+     * @param array $fields
+     */
+    protected function assertVisibilities(array $expectedData, array $actualData, array $fields = [])
+    {
+        $expectedData = $this->prepareRawExpectedData($expectedData);
+        $this->assertCount(count($expectedData), $actualData);
+        foreach ($actualData as $i => $actual) {
+            $this->assertArrayHasKey($i, $expectedData);
+            $expected = $expectedData[$i];
+            $this->assertEquals($expected['category_id'], $actual['category_id']);
+            $this->assertEquals($expected['category_parent_id'], $actual['category_parent_id']);
+            $this->assertEquals($expected['visibility'], $actual['visibility']);
+            foreach ($fields as $field) {
+                $this->assertEquals($expected[$field], $actual[$field]);
+            }
+        }
+    }
+
+    /**
+     * @param array $expectedData
+     * @return array
+     */
+    protected function prepareRawExpectedData(array $expectedData)
+    {
+        foreach ($expectedData as &$item) {
+            $item['category_id'] = $this->getCategoryId($item['category']);
+            unset($item['category']);
+            $item['category_parent_id'] = $this->getCategoryId($item['category_parent']);
+            unset($item['category_parent']);
+        }
+
+        return $expectedData;
+    }
+
+    /**
+     * @param string $reference
+     * @return integer
+     */
+    protected function getCategoryId($reference)
+    {
+        if ($reference === self::ROOT_CATEGORY) {
+            return $this->getContainer()->get('doctrine')->getRepository('OroB2BCatalogBundle:Category')
+                ->getMasterCatalogRoot()->getId();
+        }
+
+        return $reference ? $this->getReference($reference)->getId() : null;
     }
 }

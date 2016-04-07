@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManager;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 
-class LoadPriceListToAccountGroupGroupDemoData extends LoadBasePriceListRelationDemoData
+class LoadPriceListToAccountGroupDemoData extends LoadBasePriceListRelationDemoData
 {
     /**
      * {@inheritdoc}
@@ -37,7 +37,8 @@ class LoadPriceListToAccountGroupGroupDemoData extends LoadBasePriceListRelation
             $priceListToAccountGroup->setAccountGroup($account)
                 ->setPriceList($priceList)
                 ->setWebsite($website)
-                ->setPriority($row['priority']);
+                ->setPriority($row['priority'])
+                ->setMergeAllowed((boolean)$row['mergeAllowed']);
 
             $manager->persist($priceListToAccountGroup);
         }
@@ -49,7 +50,7 @@ class LoadPriceListToAccountGroupGroupDemoData extends LoadBasePriceListRelation
 
     /**
      * @param EntityManager $manager
-     * @param $name
+     * @param string $name
      * @return AccountGroup
      */
     protected function getAccountGroupByName(EntityManager $manager, $name)

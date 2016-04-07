@@ -5,62 +5,13 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class AccountProductVisibilityRepository extends EntityRepository
 {
     const BATCH_SIZE = 1000;
     
-    /**
-     * Return categories list of products which has "category" fallback in AccountProductVisibility
-     *
-     * @return Category[]
-     */
-    public function getCategoriesByAccountProductVisibility()
-    {
-        $result = $this->getEntityManager()
-            ->getRepository('OroB2BCatalogBundle:Category')
-            ->createQueryBuilder('category')
-            ->select('partial category.{id}')
-            ->distinct()
-            ->innerJoin('category.products', 'product')
-            ->innerJoin(
-                'OroB2BAccountBundle:Visibility\AccountProductVisibility',
-                'apv',
-                Join::WITH,
-                'apv.product = product AND apv.visibility = :category'
-            )
-            ->setParameter('category', AccountProductVisibility::CATEGORY)
-            ->getQuery()
-            ->getResult();
-
-        return $result;
-    }
-
-    /**
-     * @return Account[]
-     */
-    public function getAccountsWithCategoryVisibility()
-    {
-        return $this->getEntityManager()
-            ->getRepository('OroB2BAccountBundle:Account')
-            ->createQueryBuilder('account')
-            ->select('partial account.{id}')
-            ->distinct()
-            ->innerJoin(
-                'OroB2BAccountBundle:Visibility\AccountProductVisibility',
-                'apv',
-                Join::WITH,
-                'apv.account = account AND apv.visibility = :category'
-            )
-            ->where('apv.visibility = :category')
-            ->setParameter('category', AccountProductVisibility::CATEGORY)
-            ->getQuery()
-            ->getResult();
-    }
-
     /**
      * Delete from AccountProductVisibility visibilities with fallback to 'category' when category is absent
      */
@@ -73,6 +24,21 @@ class AccountProductVisibilityRepository extends EntityRepository
         while ($accountProductVisibilityIds = $this->getVisibilityIdsForDelete()) {
             $qb->getQuery()->execute(['accountProductVisibilityIds' => $accountProductVisibilityIds]);
         }
+    }
+
+    /**
+     * @param Product $product
+     */
+    public function setToDefaultWithoutCategoryByProduct(Product $product)
+    {
+        $qb = $this->createQueryBuilder('entity');
+        $qb->delete()
+            ->andWhere('entity.product = :product')
+            ->andWhere('entity.visibility = :visibility')
+            ->setParameter('product', $product)
+            ->setParameter('visibility', AccountProductVisibility::CATEGORY)
+            ->getQuery()
+            ->execute();
     }
 
     /**

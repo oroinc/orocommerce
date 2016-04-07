@@ -55,10 +55,15 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
      */
     public function testClearTable($expectedRows)
     {
-        $this->assertCount($expectedRows, $this->getRepository()->findAll());
+        $countQuery = $this->getRepository()
+            ->createQueryBuilder('entity')
+            ->select('COUNT(entity.visibility)')
+            ->getQuery();
+
+        $this->assertEquals($expectedRows, $countQuery->getSingleScalarResult());
         $deletedCount = $this->getRepository()->clearTable();
 
-        $this->assertCount(0, $this->getRepository()->findAll());
+        $this->assertEquals(0, $countQuery->getSingleScalarResult());
         $this->assertEquals($expectedRows, $deletedCount);
     }
 
@@ -74,14 +79,10 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
     {
         $targetEntity = $this->getReference($targetEntityReference);
         $this->getRepository()->clearTable();
-        $websiteId = $websiteReference ? $this->getReference($websiteReference) : null;
-
+        $website = $websiteReference ? $this->getReference($websiteReference) : null;
         $this->getRepository()->insertByCategory(
             $this->getInsertFromSelectExecutor(),
-            $visibility,
-            $this->registry->getRepository('OroB2BCatalogBundle:Category')->findAll(),
-            $targetEntity->getId(),
-            $websiteId
+            $website
         );
         $resolvedEntities = $this->getResolvedValues();
         $this->assertCount(count($expectedData), $resolvedEntities);
@@ -92,7 +93,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
             $website = $this->getReference($data['website']);
             $resolvedVisibility = $this->getResolvedVisibility($resolvedEntities, $product, $targetEntity, $website);
             $this->assertEquals($this->getCategory($product)->getId(), $resolvedVisibility->getCategory()->getId());
-            $this->assertEquals($resolvedVisibility->getVisibility(), $visibility);
+            $this->assertEquals($visibility, $resolvedVisibility->getVisibility());
         }
     }
 

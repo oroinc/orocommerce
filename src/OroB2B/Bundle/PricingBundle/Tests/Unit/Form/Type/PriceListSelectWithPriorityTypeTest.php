@@ -16,8 +16,6 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStu
 
 class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
 {
-    const PRICE_LIST_ID = 42;
-
     /**
      * @var PriceListSelectWithPriorityType
      */
@@ -38,11 +36,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType(
-            [
-                self::PRICE_LIST_ID => $this->getPriceList(self::PRICE_LIST_ID)
-            ]
-        );
+        $entityType = new EntityType([]);
 
         return [
             new PreloadedExtension(
@@ -78,35 +72,70 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $existingPriceList = $this->getPriceList(123);
+        $existingPriceList = $this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_1);
 
         /** @var PriceList $expectedPriceList */
-        $expectedPriceList = $this->getPriceList(self::PRICE_LIST_ID);
+        $expectedPriceList = $this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_2);
 
         return [
             'without default data' => [
                 'defaultData'   => [],
                 'submittedData' => [
-                    'priceList' => self::PRICE_LIST_ID,
+                    'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
                     'priority'  => 100,
+                    'mergeAllowed'     => true
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
-                    'priority'  => 100
+                    'priority'  => 100,
+                    'mergeAllowed'     => true
+                ]
+            ],
+            'without default data merge off' => [
+                'defaultData'   => [],
+                'submittedData' => [
+                    'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
+                    'priority'  => 100,
+                    'mergeAllowed'     => false
+                ],
+                'expectedData' => [
+                    'priceList' => $expectedPriceList,
+                    'priority'  => 100,
+                    'mergeAllowed'     => false
                 ]
             ],
             'with default data' => [
                 'defaultData'   => [
                     'priceList' => $existingPriceList,
                     'priority'  => 50,
+                    'mergeAllowed'     => true
                 ],
                 'submittedData' => [
-                    'priceList' => self::PRICE_LIST_ID,
+                    'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
                     'priority'  => 100,
+                    'mergeAllowed'     => true
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
-                    'priority'  => 100
+                    'priority'  => 100,
+                    'mergeAllowed'     => true
+                ]
+            ],
+            'with default data merge off' => [
+                'defaultData'   => [
+                    'priceList' => $existingPriceList,
+                    'priority'  => 50,
+                    'mergeAllowed'     => false
+                ],
+                'submittedData' => [
+                    'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
+                    'priority'  => 100,
+                    'mergeAllowed'     => false
+                ],
+                'expectedData' => [
+                    'priceList' => $expectedPriceList,
+                    'priority'  => 100,
+                    'mergeAllowed'     => false
                 ]
             ],
         ];

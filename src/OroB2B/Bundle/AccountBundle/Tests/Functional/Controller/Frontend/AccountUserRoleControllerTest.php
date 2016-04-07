@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
+
 use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData as OroLoadAccountUserData;
 
@@ -82,13 +82,15 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         /** @var AclManager $aclManager */
         $aclManager = $this->getContainer()->get('oro_security.acl.manager');
+        $extension = $aclManager->getExtensionSelector()->select('entity:(root)');
+
         foreach ($classes as $class) {
             $aclManager->setPermission(
                 $aclManager->getSid(ObjectIdentityFactory::ROOT_IDENTITY_TYPE),
                 $aclManager->getOid(
                     'entity:' . $class
                 ),
-                EntityMaskBuilder::MASK_VIEW_SYSTEM
+                $extension->getMaskBuilder('VIEW')->getMask('MASK_VIEW_SYSTEM')
             );
         }
         $aclManager->flush();
@@ -98,7 +100,7 @@ class AccountUserRoleControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_role_create'));
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Create')->form();
         $form['orob2b_account_frontend_account_user_role[label]'] = self::ACCOUNT_ROLE;
         $form['orob2b_account_frontend_account_user_role[privileges]'] = json_encode($this->privileges);
 
@@ -155,7 +157,7 @@ class AccountUserRoleControllerTest extends WebTestCase
             $this->getUrl('orob2b_account_frontend_account_user_role_update', ['id' => $id])
         );
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $token = $this->getContainer()->get('security.csrf.token_manager')
             ->getToken('orob2b_account_frontend_account_user_role')->getValue();
@@ -218,9 +220,12 @@ class AccountUserRoleControllerTest extends WebTestCase
         $result = reset($result['data']);
 
         $this->assertEquals($this->currentUser->getId(), $result['id']);
-        $this->assertEquals($this->currentUser->getFirstName(), $result['firstName']);
-        $this->assertEquals($this->currentUser->getLastName(), $result['lastName']);
-        $this->assertEquals($this->currentUser->getEmail(), $result['email']);
+        $this->assertContains($this->currentUser->getFullName(), $result['fullName']);
+        $this->assertContains($this->currentUser->getEmail(), $result['email']);
+        $this->assertEquals(
+            $this->currentUser->isEnabled() && $this->currentUser->isConfirmed() ? 'Active' : 'Inactive',
+            trim($result['status'])
+        );
     }
 
     /**
@@ -236,7 +241,7 @@ class AccountUserRoleControllerTest extends WebTestCase
             $this->getUrl('orob2b_account_frontend_account_user_role_update', ['id' => $oldRoleId])
         );
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $token = $this->getContainer()->get('security.csrf.token_manager')
             ->getToken('orob2b_account_frontend_account_user_role')->getValue();
 

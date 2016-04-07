@@ -2,6 +2,10 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_account_user_security_login/layout.html.twig'
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue: 'orob2b.account.menu.account_user_login.label'
         - @addTree:
             items:
                 login_page:
@@ -60,6 +64,8 @@ layout:
                         type: input
                         action: submit
                         text: orob2b.account.accountuser.profile.login
+                        vars:
+                            style: auto
                 login_form_forgot:
                     blockType: link
                     options:

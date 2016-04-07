@@ -2,301 +2,250 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\ProductBundle\Storage\DataStorageInterface;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
-use OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage;
+use OroB2B\Bundle\ProductBundle\Storage\DataStorageInterface;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- */
 class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var OrderDataStorageExtension */
+    use EntityTrait;
+
+    /**
+     * @var OrderDataStorageExtension
+     */
     protected $extension;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|RequestStack */
+    /**
+     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $requestStack;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DataStorageInterface */
-    protected $sessionStorage;
+    /**
+     * @var ProductPriceProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $productPriceProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OffersFormStorage */
-    protected $formDataStorage;
+    /**
+     * @var PriceListTreeHandler|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $priceListTreeHandler;
 
+    /**
+     * {@inheritDoc}
+     */
     protected function setUp()
     {
         $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $this->sessionStorage = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Storage\DataStorageInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->formDataStorage = $this->getMock('OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage');
+        $this->productPriceProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider')
+            ->disableOriginalConstructor()->getMock();
+        $this->priceListTreeHandler = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler')
+            ->disableOriginalConstructor()->getMock();
 
         $this->extension = new OrderDataStorageExtension(
             $this->requestStack,
-            $this->sessionStorage,
-            $this->formDataStorage
+            $this->productPriceProvider,
+            $this->priceListTreeHandler
         );
     }
 
-    public function testGetExtendedType()
+    public function testExtendedTypeAccessors()
     {
-        $this->assertInternalType('string', $this->extension->getExtendedType());
-        $this->assertEquals('orob2b_order_line_item', $this->extension->getExtendedType());
-    }
-
-    public function testConfigureOptionsWithoutRequest()
-    {
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn(null);
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->never())->method('setNormalizer');
-        $this->extension->configureOptions($resolver);
-    }
-
-    public function testConfigureOptionsWithRequestParam()
-    {
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $request->expects($this->once())->method('get')->willReturn(null);
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->never())->method('setNormalizer');
-        $this->extension->configureOptions($resolver);
-    }
-
-    public function testConfigureOptions()
-    {
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $request->expects($this->once())->method('get')->willReturn(true);
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
-
-        $resolver = new OptionsResolver();
-        $resolver->setDefault('sections', []);
-        $this->extension->configureOptions($resolver);
-        $options = $resolver->resolve();
-
-        $this->assertArrayHasKey('sections', $options);
-        $this->assertArrayHasKey('offers', $options['sections']);
-        $this->assertArrayHasKey('data', $options['sections']['offers']);
-        $this->assertArrayHasKey('order', $options['sections']['offers']);
-    }
-
-    public function testBuildFormWithoutParent()
-    {
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $request->expects($this->once())->method('get')->willReturn(true);
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
-
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $data = new \stdClass();
-
-        $form->expects($this->any())->method('getData')->willReturn($data);
-        $form->expects($this->any())->method('getParent')->willReturn(null);
-
-        $this->sessionStorage->expects($this->never())->method('get');
-
-        $this->extension->buildForm($this->getBuilderMock(true, $form), []);
-    }
-
-    public function testBuildFormWithoutParentData()
-    {
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $request->expects($this->once())->method('get')->willReturn(true);
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
-
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $parent = $this->getMock('Symfony\Component\Form\FormInterface');
-        $data = new \stdClass();
-
-        $form->expects($this->any())->method('getData')->willReturn($data);
-        $parent->expects($this->any())->method('getData')->willReturn(null);
-        $form->expects($this->any())->method('getParent')->willReturn($parent);
-
-        $this->sessionStorage->expects($this->never())->method('get');
-
-        $this->extension->buildForm($this->getBuilderMock(true, $form), []);
-    }
-
-    public function testBuildFormMissingOffer()
-    {
-        $offer = ['quantity' => 1, 'unit' => 'kg'];
-        $this->setOffers([[$offer]]);
-
-        $entity = new \stdClass();
-        $entity->prop = 'value';
-
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $request->expects($this->once())->method('get')->willReturn(true);
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
-
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())->method('getParent')->willReturn($parentForm);
-        $form->expects($this->once())->method('getData')->willReturn($entity);
-        $parentForm->expects($this->once())->method('getData')->willReturn(
-            new ArrayCollection([new \stdClass(), $entity])
-        );
-
-        $this->sessionStorage->expects($this->never())->method('get');
-
-        $this->extension->buildForm($this->getBuilderMock(true, $form), []);
-    }
-
-    public function testBuildFormWithWrongKey()
-    {
-        $entity = new \stdClass();
-
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $request->expects($this->once())->method('get')->willReturn(true);
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
-
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())->method('getParent')->willReturn($parentForm);
-        $form->expects($this->once())->method('getData')->willReturn($entity);
-        $parentForm->expects($this->once())->method('getData')->willReturn(new ArrayCollection());
-
-        $this->sessionStorage->expects($this->never())->method('get');
-
-        $this->extension->buildForm($this->getBuilderMock(true, $form), []);
-    }
-
-    public function testBuildFormNotApplicable()
-    {
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn(null);
-
-        $this->sessionStorage->expects($this->never())->method($this->anything());
-
-        $this->extension->buildForm($this->getBuilderMock(), []);
-    }
-
-    public function testBuildFormMissingKey()
-    {
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $request->expects($this->once())->method('get')->willReturn(true);
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
-
-        $this->sessionStorage->expects($this->never())->method('get');
-
-        $this->extension->buildForm($this->getBuilderMock(true), []);
-
-        $this->assertEquals(false, $this->getOffers());
-    }
-
-
-    public function testBuildFormWrongType()
-    {
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $request->expects($this->once())->method('get')->willReturn(true);
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
-
-        $this->sessionStorage->expects($this->never())->method('get');
-
-        $this->extension->buildForm($this->getBuilderMock(true), []);
-
-        $this->assertEquals(false, $this->getOffers());
-    }
-
-
-    public function testBuildForm()
-    {
-        $offer = ['quantity' => 1, 'unit' => 'kg'];
-
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $request->expects($this->once())->method('get')->willReturn(true);
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
-
-        $this->sessionStorage->expects($this->once())->method('get')->willReturn([$offer]);
-
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $parent = $this->getMock('Symfony\Component\Form\FormInterface');
-        $data = new \stdClass();
-
-        $form->expects($this->any())->method('getData')->willReturn($data);
-        $parent->expects($this->any())->method('getData')->willReturn(new ArrayCollection([$data]));
-        $form->expects($this->any())->method('getParent')->willReturn($parent);
-
-        $this->extension->buildForm($this->getBuilderMock(true, $form), []);
-
-        $this->assertEquals([$offer], $this->getOffers());
+        $extensionType = 'TestExtensionType';
+        $this->assertNull($this->extension->getExtendedType());
+        $this->extension->setExtendedType($extensionType);
+        $this->assertEquals($extensionType, $this->extension->getExtendedType());
     }
 
     /**
-     * @param bool $expectsAddEventListener
-     * @param \PHPUnit_Framework_MockObject_MockObject|FormInterface $form
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface
+     * @dataProvider buildFormDataProvider
+     *
+     * @param array $lineItems
+     * @param array $lineItemToMatchedPrices
+     * @param array $matchedPrices
      */
-    protected function getBuilderMock($expectsAddEventListener = false, FormInterface $form = null)
+    public function testBuildForm(array $lineItems, array $lineItemToMatchedPrices, array $matchedPrices)
     {
-        if (!$form) {
-            $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        }
+        $order = $this->getOrder($lineItems);
+        $matchedPrices = $this->getMatchedPrices($matchedPrices);
 
-        if ($expectsAddEventListener) {
-            $form->expects($this->atLeastOnce())->method('add')->with(
-                $this->isType('string'),
-                $this->isType('string'),
-                $this->isType('array')
-            );
-        }
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request->expects($this->once())
+            ->method('get')
+            ->with(DataStorageInterface::STORAGE_KEY)
+            ->willReturn(true);
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
 
-        /** @var  $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        if ($expectsAddEventListener) {
-            $builder->expects($this->exactly(2))->method('addEventListener')->with(
-                $this->isType('string'),
+        $priceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\BasePriceList');
+
+        $this->priceListTreeHandler->expects($this->once())
+            ->method('getPriceList')
+            ->with($order->getAccount(), $order->getWebsite())
+            ->willReturn($priceList);
+
+        $this->productPriceProvider->expects($this->once())
+            ->method('getMatchedPrices')
+            ->with($this->isType('array'), $priceList)
+            ->willReturn($matchedPrices);
+
+        $builder = $this->getBuilderMock();
+        $builder->expects($this->any())
+            ->method('addEventListener')
+            ->with(
+                FormEvents::PRE_SET_DATA,
                 $this->logicalAnd(
                     $this->isInstanceOf('\Closure'),
-                    $this->callback(
-                        function (\Closure $closure) use ($form) {
-                            $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
-                                ->disableOriginalConstructor()
-                                ->getMock();
-
-                            $event->expects($this->once())->method('getForm')->willReturn($form);
-                            $event->expects($this->any())->method('getData')->willReturn([]);
-                            $closure($event);
-
-                            return true;
-                        }
-                    )
+                    $this->callback(function (\Closure $closure) use ($order) {
+                        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
+                            ->disableOriginalConstructor()
+                            ->getMock();
+                        $event->expects($this->once())->method('getData')->willReturn($order);
+                        $this->assertNull($closure($event));
+                        return true;
+                    })
                 )
             );
-        } else {
-            $builder->expects($this->never())->method('addEventListener');
-        }
+        $this->extension->buildForm($builder, []);
 
-        return $builder;
+        foreach ($order->getLineItems() as $lineItem) {
+            if (array_key_exists($lineItem->getId(), $lineItemToMatchedPrices)) {
+                $identifier = $lineItemToMatchedPrices[$lineItem->getId()];
+                $this->assertEquals($matchedPrices[$identifier], $lineItem->getPrice());
+            } else {
+                $this->assertNull($lineItem->getPrice());
+            }
+        }
     }
 
     /**
      * @return array
      */
-    protected function getOffers()
+    public function buildFormDataProvider()
     {
-        $property = new \ReflectionProperty(get_class($this->extension), 'offers');
-        $property->setAccessible(true);
-
-        return $property->getValue($this->extension);
+        return [
+            [
+                'data' => [
+                    'account' => ['id' => 1],
+                    'website' => ['id' => 1],
+                    'currency' => 'USD',
+                    'lineItems' => [
+                        [
+                            'id' => 1,
+                            'product' => ['id' => 1],
+                            'productUnit' => ['code' => 'piece'],
+                            'quantity' => 2,
+                        ],
+                        [
+                            'id' => 2,
+                            'product' => ['id' => 3],
+                            'productUnit' => ['code' => 'kg'],
+                            'quantity' => 20,
+                        ],
+                        [
+                            'id' => 3,
+                            'product' => ['id' => 5],
+                            'productUnit' => ['code' => 'box'],
+                            'quantity' => 200,
+                        ],
+                    ],
+                ],
+                'lineItemToMatchedPrices' => [
+                    1 => '1-piece-2-USD',
+                    2 => '3-kg-20-USD',
+                ],
+                'matchedPrices' => [
+                    '1-piece-2-USD' => [
+                        'value' => 10,
+                        'currency' => 'USD',
+                    ],
+                    '3-kg-20-USD' => [
+                        'value' => 100,
+                        'currency' => 'USD',
+                    ],
+                ],
+            ]
+        ];
     }
 
     /**
-     * @param array $offers
+     * @param array $data
+     * @return Order
      */
-    protected function setOffers(array $offers = [])
+    protected function getOrder(array $data)
     {
-        $property = new \ReflectionProperty(get_class($this->extension), 'offers');
-        $property->setAccessible(true);
-        $property->setValue($this->extension, $offers);
+        $lineItems = new ArrayCollection();
+        foreach ($data['lineItems'] as $lineItem) {
+            $lineItem['product'] = $this
+                ->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $lineItem['product']);
+            $lineItem['productUnit'] = $this
+                ->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', $lineItem['productUnit']);
+            $lineItems->add($this->getEntity('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', $lineItem));
+        }
+        $data['account'] = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $data['account']);
+        $data['website'] = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $data['website']);
+        $data['lineItems'] = $lineItems;
+        return $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\Order', $data);
+    }
+
+    /**
+     * @param array $matchedPrices
+     * @return array
+     */
+    protected function getMatchedPrices(array $matchedPrices)
+    {
+        foreach ($matchedPrices as &$matchedPrice) {
+            $matchedPrice = Price::create($matchedPrice['value'], $matchedPrice['currency']);
+        }
+        return $matchedPrices;
+    }
+
+    public function testBuildFormNotApplicableEmptyGetParameter()
+    {
+        $builder = $this->getBuilderMock();
+        $builder->expects($this->never())
+            ->method('addEventListener');
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request->expects($this->once())
+            ->method('get')
+            ->with(DataStorageInterface::STORAGE_KEY)
+            ->willReturn(null);
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+        $this->extension->buildForm($builder, []);
+    }
+
+    public function testBuildFormNotApplicableEmptyRequest()
+    {
+        $builder = $this->getBuilderMock();
+        $builder->expects($this->never())
+            ->method('addEventListener');
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn(null);
+        $this->extension->buildForm($builder, []);
+    }
+
+    /**
+     * @return FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getBuilderMock()
+    {
+        return $this->getMock('Symfony\Component\Form\FormBuilderInterface');
     }
 }

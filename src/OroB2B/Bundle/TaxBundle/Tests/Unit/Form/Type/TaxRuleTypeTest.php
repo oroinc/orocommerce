@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\TaxBundle\Form\Type\TaxRuleType;
 use OroB2B\Bundle\TaxBundle\Form\Type\TaxType;

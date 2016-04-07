@@ -4,8 +4,10 @@ namespace OroB2B\Bundle\TaxBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
 
 class ZipCodeFieldsValidator extends ConstraintValidator
 {
@@ -30,16 +32,48 @@ class ZipCodeFieldsValidator extends ConstraintValidator
             );
         }
 
+        /** @var ExecutionContextInterface $context */
+        $context = $this->context;
+
         if ($entity->getZipCode() && ($entity->getZipRangeStart() || $entity->getZipRangeEnd())) {
-            $this->context->addViolationAt('zipCode', $constraint->onlyOneTypeMessage);
+            $context->buildViolation($constraint->onlyOneTypeMessage)->atPath('zipCode')->addViolation();
         }
 
         if (!$entity->getZipRangeStart() && $entity->getZipRangeEnd()) {
-            $this->context->addViolationAt('zipRangeStart', $constraint->rangeShouldHaveBothFieldMessage);
+            $context->buildViolation($constraint->rangeShouldHaveBothFieldMessage)
+                ->atPath('zipRangeStart')
+                ->addViolation();
         }
 
         if ($entity->getZipRangeStart() && !$entity->getZipRangeEnd()) {
-            $this->context->addViolationAt('zipRangeEnd', $constraint->rangeShouldHaveBothFieldMessage);
+            $context->buildViolation($constraint->rangeShouldHaveBothFieldMessage)
+                ->atPath('zipRangeEnd')
+                ->addViolation();
         }
+
+        if ($entity->getZipRangeStart() && $entity->getZipRangeEnd() && (
+            !$this->isInteger($entity->getZipRangeStart()) ||
+            !$this->isInteger($entity->getZipRangeEnd()))
+        ) {
+            $context->buildViolation($constraint->onlyNumericRangesSupported)->atPath('zipRangeStart')->addViolation();
+        }
+
+        if (!$entity->getZipCode() && !$entity->getZipRangeStart() && !$entity->getZipRangeEnd()) {
+            $context->buildViolation($constraint->zipCodeCanNotBeEmpty)->atPath('zipRangeStart')->addViolation();
+        }
+    }
+
+    /**
+     * @param string $value
+     * @return bool
+     */
+    protected function isInteger($value)
+    {
+        /** @var ExecutionContextInterface $context */
+        $context = $this->context;
+
+        $violations = $context->getValidator()->validate($value, new Integer());
+
+        return $violations->count() === 0;
     }
 }

@@ -6,6 +6,7 @@ use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
@@ -19,11 +20,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::EMAIL, LoadAccountUserData::PASSWORD)
-        );
-
+        $this->initClient();
         $this->loadFixtures([
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
@@ -48,7 +45,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         return [
             [
                 'visibleCategories' => [
-                    'Product Catalog',
+                    'Master catalog',
                     'category_1',
                     'category_1_5',
                 ],
@@ -90,7 +87,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
             [
                 'categoryToHide' => 'category_1_5',
                 'visibleCategories' => [
-                    'Product Catalog',
+                    'Master catalog',
                     'category_1',
                 ],
                 'invisibleCategories' => [
@@ -134,7 +131,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
             [
                 'categoryToShow' => 'category_1_2',
                 'visibleCategories' => [
-                    'Product Catalog',
+                    'Master catalog',
                     'category_1',
                     'category_1_2',
                     'category_1_2_3',
@@ -177,7 +174,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
             [
                 'categoryToShow' => 'category_1',
                 'visibleCategories' => [
-                    'Product Catalog',
+                    'Master catalog',
                 ],
                 'invisibleCategories' => [
                     'category_1',
@@ -220,7 +217,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
             [
                 'categoryToShow' => 'category_1',
                 'visibleCategories' => [
-                    'Product Catalog',
+                    'Master catalog',
                     'category_1',
                     'category_1_2',
                     'category_1_2_3',
@@ -311,15 +308,33 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     }
 
     /**
-     * @return string
+     * @return AccountUser
      */
-    protected function getTreeData()
+    protected function getAccountUser()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_product_index'));
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        return $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:AccountUser')
+            ->getRepository('OroB2BAccountBundle:AccountUser')
+            ->findOneBy(['email' => LoadAccountUserData::EMAIL]);
+    }
 
-        return $crawler->filter('.category div')->attr('data-page-component-options');
+    /**
+     * @return array
+     */
+    protected function getActualCategories()
+    {
+        $accountUser = $this->getAccountUser();
+        $categories = $this->getContainer()
+            ->get('orob2b_catalog.provider.category_tree_provider')
+            ->getCategories($accountUser);
+
+        $categoryTitles = [];
+        foreach ($categories as $category) {
+            $categoryTitles[] = $category->getDefaultTitle()->getString();
+        }
+
+        return $categoryTitles;
     }
 
     /**
@@ -328,14 +343,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
      */
     protected function assertTreeCategories(array $visibleCategories, array $invisibleCategories)
     {
-        $treeData = $this->getTreeData();
-
-        $treeCategories = array_map(
-            function ($data) {
-                return $data->text;
-            },
-            json_decode($treeData)->data
-        );
+        $treeCategories = $this->getActualCategories();
 
         $this->assertCount(count($visibleCategories), $treeCategories);
 

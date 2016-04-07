@@ -20,6 +20,7 @@ define(function(require) {
         options: {
             accountSelect: '.account-account-select input[type="hidden"]',
             accountUserSelect: '.account-accountuser-select input[type="hidden"]',
+            accountUserMultiSelect: '.account-accountuser-multiselect input[type="hidden"]',
             accountRoute: 'orob2b_account_account_user_get_account',
             errorMessage: 'Sorry, unexpected error was occurred'
         },
@@ -33,6 +34,11 @@ define(function(require) {
          * @property {Object}
          */
         $accountUserSelect: null,
+
+        /**
+         * @property {Object}
+         */
+        $accountUserMultiSelect: null,
 
         /**
          * @property {LoadingMaskView|null}
@@ -49,27 +55,26 @@ define(function(require) {
 
             this.$accountSelect = this.$el.find(this.options.accountSelect);
             this.$accountUserSelect = this.$el.find(this.options.accountUserSelect);
+            this.$accountUserMultiSelect = this.$el.find(this.options.accountUserMultiSelect);
 
             this.$el
                 .on('change', this.options.accountSelect, _.bind(this.onAccountChanged, this))
                 .on('change', this.options.accountUserSelect, _.bind(this.onAccountUserChanged, this))
+                .on('change', this.options.accountUserMultiSelect, _.bind(this.onAccountUserChanged, this))
             ;
-            this.$accountUserSelect.data('select2_query_additional_params', {'account_id': this.$accountSelect.val()});
+
+            this.updateAccountUserSelectData({'account_id': this.$accountSelect.val()});
         },
 
         /**
          * Handle Account change
-         *
-         * @param {jQuery.Event} e
          */
-        onAccountChanged: function(e) {
+        onAccountChanged: function() {
             this.$accountUserSelect.select2('val', '');
-            this.$accountUserSelect.data('select2_query_additional_params', {'account_id': this.$accountSelect.val()});
+            this.$accountUserMultiSelect.select2('val', '');
 
-            mediator.trigger('account-account-user:change', {
-                accountId: this.$accountSelect.val(),
-                accountUserId: this.$accountUserSelect.val()
-            });
+            this.updateAccountUserSelectData({'account_id': this.$accountSelect.val()});
+            this.triggerChangeAccountUserEvent();
         },
 
         /**
@@ -78,12 +83,12 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         onAccountUserChanged: function(e) {
-            var accountUserId = this.$accountUserSelect.val();
-            if (!accountUserId) {
-                mediator.trigger('account-account-user:change', {
-                    accountId: this.$accountSelect.val(),
-                    accountUserId: accountUserId
-                });
+            var accountId = this.$accountSelect.val();
+            var accountUserId = _.first($(e.target).val());
+
+            if (accountId || !accountUserId) {
+                this.triggerChangeAccountUserEvent();
+
                 return;
             }
 
@@ -96,12 +101,9 @@ define(function(require) {
                 },
                 success: function(response) {
                     self.$accountSelect.select2('val', response.accountId || '');
-                    self.$accountUserSelect.data('select2_query_additional_params', {'account_id': response.accountId});
 
-                    mediator.trigger('account-account-user:change', {
-                        accountId: self.$accountSelect.val(),
-                        accountUserId: accountUserId
-                    });
+                    self.updateAccountUserSelectData({'account_id': response.accountId});
+                    self.triggerChangeAccountUserEvent();
                 },
                 complete: function() {
                     self.loadingMask.hide();
@@ -110,6 +112,21 @@ define(function(require) {
                     self.loadingMask.hide();
                     messenger.showErrorMessage(__(self.options.errorMessage), xhr.responseJSON);
                 }
+            });
+        },
+
+        /**
+         * @param {Object} data
+         */
+        updateAccountUserSelectData: function(data) {
+            this.$accountUserSelect.data('select2_query_additional_params', data);
+            this.$accountUserMultiSelect.data('select2_query_additional_params', data);
+        },
+
+        triggerChangeAccountUserEvent: function() {
+            mediator.trigger('account-account-user:change', {
+                accountId: this.$accountSelect.val(),
+                accountUserId: this.$accountUserSelect.val()
             });
         },
 

@@ -2,21 +2,31 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ */
 class OrderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
+    use EntityTrait;
 
     public function testProperties()
     {
@@ -35,15 +45,39 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['shipUntil', $now],
             ['currency', 'USD'],
             ['subtotal', 999.99],
+            ['total', 999.99],
             ['paymentTerm', new PaymentTerm()],
             ['account', new Account()],
             ['accountUser', new AccountUser()],
-            ['priceList', new PriceList()]
+            ['website', new Website()],
+            ['shippingCost', new Price()],
+            ['sourceEntityClass', 'EntityClass'],
+            ['sourceEntityIdentifier', 'source-identifier-test-01'],
+            ['sourceEntityId', 1],
+            ['shippingCost', new Price()],
+            ['totalDiscounts', new Price()],
         ];
 
         $order = new Order();
         $this->assertPropertyAccessors($order, $properties);
         $this->assertPropertyCollection($order, 'lineItems', new OrderLineItem());
+        $this->assertPropertyCollection($order, 'discounts', new OrderDiscount());
+    }
+
+    public function testLineItemsSetter()
+    {
+        $lineItems = new ArrayCollection([new OrderLineItem()]);
+
+        /** @var Order $order */
+        $order = $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\Order', ['id' => 42]);
+        $order->setLineItems($lineItems);
+
+        $result = $order->getLineItems();
+
+        $this->assertEquals($lineItems, $result);
+        foreach ($result as $lineItem) {
+            $this->assertEquals($lineItem->getOrder()->getId(), $order->getId());
+        }
     }
 
     public function testGetEmail()
@@ -87,5 +121,106 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
         $order->preUpdate();
         $this->assertInstanceOf('\DateTime', $order->getUpdatedAt());
+    }
+
+    public function testPostLoad()
+    {
+        $item = new Order();
+
+        $this->assertNull($item->getShippingCost());
+        $this->assertNull($item->getTotalDiscounts());
+
+        $value = 100;
+        $currency = 'EUR';
+        $this->setProperty($item, 'shippingCostAmount', $value);
+        $this->setProperty($item, 'totalDiscountsAmount', $value);
+        $this->setProperty($item, 'currency', $currency);
+
+        $item->postLoad();
+
+        $this->assertEquals(Price::create($value, $currency), $item->getShippingCost());
+        $this->assertEquals(Price::create($value, $currency), $item->getTotalDiscounts());
+    }
+
+    public function testUpdateShippingCost()
+    {
+        $item = new Order();
+        $value = 1000;
+        $currency = 'EUR';
+        $item->setShippingCost(Price::create($value, $currency));
+
+        $item->updateShippingCost();
+
+        $this->assertEquals($value, $this->getProperty($item, 'shippingCostAmount'));
+    }
+
+    public function testSetShippingEstimate()
+    {
+        $value = 10;
+        $currency = 'USD';
+        $price = Price::create($value, $currency);
+
+        $item = new Order();
+        $item->setShippingCost($price);
+
+        $this->assertEquals($price, $item->getShippingCost());
+
+        $this->assertEquals($value, $this->getProperty($item, 'shippingCostAmount'));
+    }
+
+    public function testUpdateTotalDiscounts()
+    {
+        $item = new Order();
+        $value = 1000;
+        $currency = 'EUR';
+        $item->setTotalDiscounts(Price::create($value, $currency));
+
+        $item->updateTotalDiscounts();
+
+        $this->assertEquals($value, $this->getProperty($item, 'totalDiscountsAmount'));
+    }
+
+    public function testSetTotalDiscounts()
+    {
+        $value = 99;
+        $currency = 'EUR';
+        $price = Price::create($value, $currency);
+
+        $item = new Order();
+        $item->setTotalDiscounts($price);
+
+        $this->assertEquals($price, $item->getTotalDiscounts());
+
+        $this->assertEquals($value, $this->getProperty($item, 'totalDiscountsAmount'));
+    }
+
+    /**
+     * @param object $object
+     * @param string $property
+     * @param mixed $value
+     *
+     * @return OrderTest
+     */
+    protected function setProperty($object, $property, $value)
+    {
+        $reflection = new \ReflectionProperty(get_class($object), $property);
+        $reflection->setAccessible(true);
+        $reflection->setValue($object, $value);
+
+        return $this;
+    }
+
+    /**
+     * @param object $object
+     * @param string $property
+     *
+     * @return mixed $value
+     */
+    protected function getProperty($object, $property)
+    {
+        $reflection = new \ReflectionProperty(get_class($object), $property);
+        $reflection->setAccessible(true);
+
+        return $reflection->getValue($object);
     }
 }

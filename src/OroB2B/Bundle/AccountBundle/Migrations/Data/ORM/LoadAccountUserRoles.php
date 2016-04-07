@@ -105,15 +105,22 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
     {
         foreach ($permissions as $permission => $acls) {
             $oid = $aclManager->getOid(str_replace('|', ':', $permission));
-            $builder = $aclManager->getMaskBuilder($oid);
-            $builder->reset();
-            if ($acls) {
-                foreach ($acls as $acl) {
-                    $builder->add($acl);
+            $extension = $aclManager->getExtensionSelector()->select($oid);
+            $maskBuilders = $extension->getAllMaskBuilders();
+
+            foreach ($maskBuilders as $maskBuilder) {
+                $maskBuilder->reset();
+
+                if ($acls) {
+                    foreach ($acls as $acl) {
+                        if ($maskBuilder->hasMask('MASK_' . $acl)) {
+                            $maskBuilder->add($acl);
+                        }
+                    }
                 }
+
+                $aclManager->setPermission($sid, $oid, $maskBuilder->get());
             }
-            $mask = $builder->get();
-            $aclManager->setPermission($sid, $oid, $mask);
         }
     }
 
@@ -156,9 +163,9 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
         foreach ($aclManager->getAllExtensions() as $extension) {
             $rootOid = $aclManager->getRootOid($extension->getExtensionKey());
             foreach ($extension->getAllMaskBuilders() as $maskBuilder) {
-                $fullAccessMask = $maskBuilder->hasConst('GROUP_SYSTEM')
-                    ? $maskBuilder->getConst('GROUP_SYSTEM')
-                    : $maskBuilder->getConst('GROUP_ALL');
+                $fullAccessMask = $maskBuilder->hasMask('GROUP_SYSTEM')
+                    ? $maskBuilder->getMask('GROUP_SYSTEM')
+                    : $maskBuilder->getMask('GROUP_ALL');
                 $aclManager->setPermission($sid, $rootOid, $fullAccessMask, true);
             }
         }

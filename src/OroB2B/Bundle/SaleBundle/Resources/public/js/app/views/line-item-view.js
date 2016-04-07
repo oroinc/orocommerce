@@ -75,7 +75,7 @@ define(function(require) {
         units: {},
 
         /**
-         * @property {array}
+         * @property {Array}
          */
         allUnits: {},
 
@@ -172,7 +172,6 @@ define(function(require) {
                 .on('content:changed', _.bind(this.onContentChanged, this))
             ;
 
-            this.$typeSelect.uniform();
             this.$typeSelect.trigger('change');
 
             this.checkAddButton();
@@ -252,7 +251,7 @@ define(function(require) {
                 var routeParams = {'id': productId};
 
                 if (this.options.compactUnits) {
-                    routeParams['short'] = true;
+                    routeParams.short = true;
                 }
 
                 $.ajax({
@@ -314,12 +313,12 @@ define(function(require) {
                 $(select).addClass(self.options.syncClass);
 
                 if (!force) {
-                    $(widget).find('select').uniform('update');
+                    $(widget).find('select').inputWidget('refresh');
                 }
             });
 
             if (force) {
-                this.$el.find('select').uniform('update');
+                this.$el.find('select').inputWidget('refresh');
             }
         },
 

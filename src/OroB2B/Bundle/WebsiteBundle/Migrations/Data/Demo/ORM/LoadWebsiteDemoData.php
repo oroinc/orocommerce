@@ -19,12 +19,13 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
 {
     use UserUtilityTrait;
 
+    const US = 'US';
     /**
      * @var array
      */
     protected $webSites = [
         [
-            'name' => 'US',
+            'name' => self::US,
             'url' => 'http://www.us.com',
             'locales' => ['en_US', 'es_MX'],
             'sharing' => ['Mexico', 'Canada'],
@@ -39,13 +40,13 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
             'name' => 'Mexico',
             'url' => 'http://www.mexico.com',
             'locales' => ['es_MX'],
-            'sharing' => ['US', 'Canada'],
+            'sharing' => [self::US, 'Canada'],
         ],
         [
             'name' => 'Canada',
             'url' => 'http://www.canada.com',
             'locales' => ['fr_CA', 'en_CA'],
-            'sharing' => ['US', 'Mexico'],
+            'sharing' => [self::US, 'Mexico'],
         ],
         [
             'name' => 'Europe',

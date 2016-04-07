@@ -24,7 +24,7 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                'unit_rounding_type' => ['value' => RoundingServiceInterface::HALF_UP],
+                'unit_rounding_type' => ['value' => RoundingServiceInterface::ROUND_HALF_UP],
                 'general_frontend_product_visibility' => [
                     'value' => [
                         Product::INVENTORY_STATUS_IN_STOCK,

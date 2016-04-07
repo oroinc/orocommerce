@@ -57,20 +57,20 @@ class QuantityRoundingServiceTest extends AbstractRoundingServiceTest
 
         return [
             'no round without unit' => [
-                'roundingType' => QuantityRoundingService::HALF_UP,
+                'roundingType' => QuantityRoundingService::ROUND_HALF_UP,
                 'value' => 5.5555,
                 'expectedValue' => 5.5555,
                 'precision' => 3,
             ],
             'default unit precision without product' => [
-                'roundingType' => QuantityRoundingService::HALF_UP,
+                'roundingType' => QuantityRoundingService::ROUND_HALF_UP,
                 'value' => 5.5555,
                 'expectedValue' => 5.56,
                 'precision' => 2,
                 'productUnit' => $unit,
             ],
             'no linked product unit' => [
-                'roundingType' => QuantityRoundingService::HALF_UP,
+                'roundingType' => QuantityRoundingService::ROUND_HALF_UP,
                 'value' => 5.5555,
                 'expectedValue' => 5.556,
                 'precision' => 3,

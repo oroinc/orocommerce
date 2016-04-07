@@ -16,7 +16,8 @@ use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserDat
  */
 class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {
-    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_b2b_account.product_visibility';
+    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_b2b_account.product_visibility';
+    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_b2b_account.category_visibility';
 
     /**
      * @var ProductVisibilityQueryBuilderModifier
@@ -80,12 +81,17 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
             ->select('p.sku')->orderBy('p.sku');
 
-        $this->configManager->expects($this->any())
+        $this->configManager->expects($this->at(0))
             ->method('get')
-            ->with(static::VISIBILITY_SYSTEM_CONFIGURATION_PATH)
+            ->with(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH)
+            ->willReturn($configValue);
+        $this->configManager->expects($this->at(1))
+            ->method('get')
+            ->with(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH)
             ->willReturn($configValue);
 
-        $this->modifier->setVisibilitySystemConfigurationPath(static::VISIBILITY_SYSTEM_CONFIGURATION_PATH);
+        $this->modifier->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
+        $this->modifier->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
 
         $this->modifier->modify($queryBuilder);
 
@@ -171,13 +177,24 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         ];
     }
 
-    public function testVisibilitySystemConfigurationPathNotSet()
+    public function testVisibilityProductSystemConfigurationPathNotSet()
     {
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
             ->select('p.sku')->orderBy('p.sku');
 
-        $message = sprintf('%s::visibilitySystemConfigurationPath not configured', get_class($this->modifier));
+        $message = sprintf('%s::productConfigPath not configured', get_class($this->modifier));
         $this->setExpectedException('\LogicException', $message);
+        $this->modifier->modify($queryBuilder);
+    }
+
+    public function testVisibilityProductCategoryConfigurationPathNotSet()
+    {
+        $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
+            ->select('p.sku')->orderBy('p.sku');
+
+        $message = sprintf('%s::categoryConfigPath not configured', get_class($this->modifier));
+        $this->setExpectedException('\LogicException', $message);
+        $this->modifier->setProductVisibilitySystemConfigurationPath(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
         $this->modifier->modify($queryBuilder);
     }
 

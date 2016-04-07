@@ -41,7 +41,7 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
         );
         $this->testPriceListConfigs = $this->createConfigs(2);
         foreach ($this->testPriceListConfigs as $config) {
-            $this->testPriceLists[$config->getPriceList()->getId()] = $config->getPriceList();
+            $this->testPriceLists[$config->getPriceList()->getId()] = $config->getPriceList()->setName('');
         }
 
         parent::setUp();
@@ -82,10 +82,12 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
             [
                 'priceList' => 1,
                 'priority' => 100,
+                'mergeAllowed' => true
             ],
             [
                 'priceList' => 2,
                 'priority' => 200,
+                'mergeAllowed' => false
             ]
         ]);
         $this->assertTrue($form->isValid());

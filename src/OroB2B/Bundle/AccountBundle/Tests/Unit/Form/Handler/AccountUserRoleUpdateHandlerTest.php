@@ -10,10 +10,12 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
+use Oro\Bundle\SecurityBundle\Acl\Extension\AclExtensionInterface;
+use Oro\Bundle\SecurityBundle\Acl\Extension\AclExtensionSelector;
+use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Model\AclPermission;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -329,7 +331,27 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
 
         $this->aclManager->expects($this->once())
             ->method('setPermission')
-            ->with($roleSecurityIdentity, $productObjectIdentity, EntityMaskBuilder::MASK_VIEW_SYSTEM);
+            ->with($roleSecurityIdentity, $productObjectIdentity, 16);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|AclExtensionInterface $aclExtension */
+        $aclExtension = $this->getMock('Oro\Bundle\SecurityBundle\Acl\Extension\AclExtensionInterface');
+        $aclExtension->expects($this->once())
+            ->method('getMaskBuilder')
+            ->with('VIEW')
+            ->willReturn(new EntityMaskBuilder(0, ['VIEW', 'CREATE', 'EDIT']));
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|AclExtensionSelector $aclExtension */
+        $aclExtensionSelector = $this->getMockBuilder('Oro\Bundle\SecurityBundle\Acl\Extension\AclExtensionSelector')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $aclExtensionSelector->expects($this->once())
+            ->method('select')
+            ->with('entity:OroB2B\Bundle\ProductBundle\Entity\Product')
+            ->willReturn($aclExtension);
+
+        $this->aclManager->expects($this->once())
+            ->method('getExtensionSelector')
+            ->willReturn($aclExtensionSelector);
 
         $this->chainMetadataProvider->expects($this->once())
             ->method('startProviderEmulation')

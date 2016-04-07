@@ -12,8 +12,7 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
@@ -35,9 +34,10 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
     const SHOPPING_LIST_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList';
 
-    /**
-     * @var FrontendLineItemWidgetType
-     */
+    /** @var TranslatorInterface */
+    protected $translator;
+
+    /** @var FrontendLineItemWidgetType */
     protected $type;
 
     /**
@@ -55,9 +55,12 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     {
         parent::setUp();
 
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
         $this->type = new FrontendLineItemWidgetType(
             $this->getRegistry(),
-            $this->getTokenStorage()
+            $this->getTokenStorage(),
+            $this->translator
         );
 
         $this->type->setShoppingListClass(self::SHOPPING_LIST_CLASS);
@@ -109,8 +112,9 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
      * @param mixed $defaultData
      * @param mixed $submittedData
      * @param mixed $expectedData
+     * @param ShoppingList $expectedShoppingList
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData)
+    public function testSubmit($defaultData, $submittedData, $expectedData, ShoppingList $expectedShoppingList)
     {
         $form = $this->factory->create($this->type, $defaultData, []);
 
@@ -131,6 +135,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
+        $this->assertEquals($expectedShoppingList, $form->get('shoppingList')->getData());
     }
 
     /**
@@ -142,13 +147,10 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         $defaultLineItem = new LineItem();
         $defaultLineItem->setProduct($product);
 
-        /** @var ShoppingList $expectedShoppingList */
-        $expectedShoppingList = $this->getShoppingList(1, 'Shopping List 1');
         $expectedLineItem = clone $defaultLineItem;
         $expectedLineItem
             ->setQuantity(15.112)
-            ->setUnit($product->getUnitPrecision('kg')->getUnit())
-            ->setShoppingList($expectedShoppingList);
+            ->setUnit($product->getUnitPrecision('kg')->getUnit());
 
         return [
             'New line item with existing shopping list' => [
@@ -159,31 +161,10 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
                     'unit'     => 'kg',
                     'shoppingListLabel' => null
                 ],
-                'expectedData'  => $expectedLineItem
+                'expectedData'  => $expectedLineItem,
+                'expectedShoppingList' => $this->getShoppingList(1, 'Shopping List 1')
             ],
         ];
-    }
-
-    public function testCheckShoppingListLabel()
-    {
-        /** @var ConstraintViolationBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $violationBuilder */
-        $violationBuilder = $this->getMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
-        $violationBuilder->expects($this->once())
-            ->method('atPath')
-            ->with('shoppingListLabel')
-            ->willReturn($violationBuilder);
-        $violationBuilder->expects($this->once())
-            ->method('addViolation');
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface $context */
-        $context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
-        $context
-            ->expects($this->once())
-            ->method('buildViolation')
-            ->willReturn($violationBuilder);
-
-        $lineItem = new LineItem();
-        $this->type->checkShoppingListLabel($lineItem, $context);
     }
 
     public function testFinishView()

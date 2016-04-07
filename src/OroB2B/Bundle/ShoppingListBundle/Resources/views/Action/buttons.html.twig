@@ -1,0 +1,29 @@
+{% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
+
+{% set componentOptions = {
+    'widgetAlias': 'action_buttons_widget'
+} %}
+
+{% set commonOptions = {
+    dataUrl: false,
+    dataAttributes: {}
+} %}
+
+{% set componentOptions = componentOptions|merge(params.buttonOptions.page_component_options|default({})) %}
+{% set commonOptions = commonOptions|merge(params.data.commonOptions|default({})) %}
+
+{% set options = {
+    new: commonOptions,
+    current: commonOptions,
+    existing: commonOptions,
+    shoppingLists: actionData.shoppingLists,
+    truncateLabelLength: 25
+} %}
+
+<div class="widget-content btn-group">
+    <div class="mass-action-controls"
+        data-page-component-module="{{ params.buttonOptions.page_component_module }}"
+        data-page-component-options="{{ componentOptions|json_encode }}">
+        {{ buttons.createAddToShoppingListButton(options) }}
+    </div>
+</div>

@@ -8,20 +8,20 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 
 class AccountUserTypeTest extends FormIntegrationTestCase
@@ -76,7 +76,18 @@ class AccountUserTypeTest extends FormIntegrationTestCase
             new AccountUserRoleSelectType($this->createTranslator())
         );
         $addressEntityType = new EntityType($this->getAddresses(), 'test_address_entity');
-        $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), AccountSelectType::NAME);
+        $accountSelectType = new EntityType($this->getAccounts(), AccountSelectType::NAME);
+
+        $userMultiSelectType = new EntityType(
+            [
+                1 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 1),
+                2 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2),
+            ],
+            UserMultiSelectType::NAME,
+            [
+                'multiple' => true,
+            ]
+        );
 
         return [
             new PreloadedExtension(
@@ -86,6 +97,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                     $accountSelectType->getName() => $accountSelectType,
                     AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),
                     $addressEntityType->getName() => $addressEntityType,
+                    $userMultiSelectType->getName() => $userMultiSelectType,
                 ],
                 []
             ),
@@ -138,9 +150,9 @@ class AccountUserTypeTest extends FormIntegrationTestCase
      */
     public function submitProvider()
     {
-        $newAccountUser = new AccountUser();
+        $newAccountUser = $this->createAccountUser();
 
-        $existingAccountUser = new AccountUser();
+        $existingAccountUser = clone $newAccountUser;
 
         $class = new \ReflectionClass($existingAccountUser);
         $prop = $class->getProperty('id');
@@ -154,6 +166,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $existingAccountUser->setAccount($this->getAccount(1));
         $existingAccountUser->addAddress($this->getAddresses()[1]);
         $existingAccountUser->setOrganization(new Organization());
+        $existingAccountUser->addSalesRepresentative($this->getEntity('Oro\Bundle\UserBundle\Entity\User', 1));
 
         $alteredExistingAccountUser = clone $existingAccountUser;
         $alteredExistingAccountUser->setAccount($this->getAccount(2));
@@ -164,6 +177,11 @@ class AccountUserTypeTest extends FormIntegrationTestCase
 
         $alteredExistingAccountUserWithAddresses = clone $alteredExistingAccountUser;
         $alteredExistingAccountUserWithAddresses->addAddress($this->getAddresses()[2]);
+
+        $alteredExistingAccountUserWithSalesRepresentatives = clone $alteredExistingAccountUser;
+        $alteredExistingAccountUserWithSalesRepresentatives->addSalesRepresentative(
+            $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2)
+        );
 
         return
             [
@@ -204,7 +222,18 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                         'addresses' => [1, 2]
                     ],
                     'expectedData' => $alteredExistingAccountUserWithAddresses,
-                ]
+                ],
+                'altered existing user with salesRepresentatives' => [
+                    'defaultData' => $existingAccountUser,
+                    'submittedData' => [
+                        'firstName' => 'Mary',
+                        'lastName' => 'Doe',
+                        'email' => 'john@example.com',
+                        'account' => 2,
+                        'salesRepresentatives' => [],
+                    ],
+                    'expectedData' => $alteredExistingAccountUserWithSalesRepresentatives,
+                ],
             ];
     }
 
@@ -351,5 +380,16 @@ class AccountUserTypeTest extends FormIntegrationTestCase
             );
 
         return $translator;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    private function createAccountUser()
+    {
+        $accountUser = new AccountUser();
+        $accountUser->setOrganization(new Organization());
+
+        return $accountUser;
     }
 }

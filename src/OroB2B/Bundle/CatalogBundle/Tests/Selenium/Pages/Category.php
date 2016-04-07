@@ -67,7 +67,7 @@ class Category extends AbstractPageEntity
      */
     public function saveCategory()
     {
-        $this->save();
+        $this->save('Save');
         $this->waitPageToLoad();
         $this->waitForAjax();
         sleep(1);

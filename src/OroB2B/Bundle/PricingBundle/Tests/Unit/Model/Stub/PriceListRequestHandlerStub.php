@@ -2,13 +2,15 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model\Stub;
 
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 
-class PriceListRequestHandlerStub extends AbstractPriceListRequestHandler
+class PriceListRequestHandlerStub implements PriceListRequestHandlerInterface
 {
     /**
-     * {@inheritDoc}
+     * @return PriceList
      */
     public function getPriceList()
     {
@@ -16,10 +18,27 @@ class PriceListRequestHandlerStub extends AbstractPriceListRequestHandler
     }
 
     /**
-     * {@inheritDoc}
+     * @param BasePriceList $priceList
+     * @return array
      */
-    public function getPriceListSelectedCurrencies()
+    public function getPriceListSelectedCurrencies(BasePriceList $priceList)
     {
         return [];
+    }
+
+    /**
+     * @return CombinedPriceList
+     */
+    public function getPriceListByAccount()
+    {
+        return new CombinedPriceList();
+    }
+
+    /**
+     * @return bool
+     */
+    public function getShowTierPrices()
+    {
+        return true;
     }
 }

@@ -72,15 +72,13 @@ class LocalizedFallbackValueAwareDataConverter extends PropertyPathTitleDataConv
      */
     protected function getRelatedEntityRulesAndBackendHeaders(
         $entityName,
-        $fullData,
         $singleRelationDeepLevel,
         $multipleRelationDeepLevel,
         $field,
         $fieldHeader,
-        $fieldOrder,
-        $isIdentifier = false
+        $fieldOrder
     ) {
-        if ($fullData && is_a($field['related_entity_name'], $this->localizedFallbackValueClassName, true)) {
+        if (is_a($field['related_entity_name'], $this->localizedFallbackValueClassName, true)) {
             $localeCodes = $this->getLocaleCodes();
             $targetField = $this->fieldHelper->getConfigValue($entityName, $field['name'], 'fallback_field', 'string');
             $fieldName = $field['name'];
@@ -134,7 +132,6 @@ class LocalizedFallbackValueAwareDataConverter extends PropertyPathTitleDataConv
 
         return parent::getRelatedEntityRulesAndBackendHeaders(
             $entityName,
-            $fullData,
             $singleRelationDeepLevel,
             $multipleRelationDeepLevel,
             $field,

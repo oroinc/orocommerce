@@ -2,25 +2,19 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\CurrencyBundle\Model\Price;
-use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
-class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class ProductPriceDatagridListenerTest extends AbstractProductPriceDatagridListenerTest
 {
     /**
      * @var ProductPriceDatagridListener
@@ -28,87 +22,34 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
      */
     protected $doctrineHelper;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AbstractPriceListRequestHandler
-     */
-    protected $priceListRequestHandler;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    public function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->with($this->isType('string'))
-            ->willReturnCallback(
-                function ($id, array $params = []) {
-                    $id = str_replace(array_keys($params), array_values($params), $id);
-
-                    return $id . '.trans';
-                }
-            );
-
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->priceListRequestHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler')
-            ->setMethods(['getShowTierPrices'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->listener = new ProductPriceDatagridListener(
-            $this->translator,
-            $this->doctrineHelper,
-            $this->priceListRequestHandler
-        );
-
-        $this->listener->setProductPriceClass('OroB2BPricingBundle:ProductPrice');
+        parent::setUp();
         $this->listener->setProductUnitClass('OroB2BProductBundle:ProductUnit');
     }
 
     /**
-     * {@inheritdoc}
+     * @return ProductPriceDatagridListener
      */
-    protected function tearDown()
+    protected function createListener()
     {
-        unset($this->doctrineHelper, $this->translator, $this->priceListRequestHandler, $this->listener);
-    }
-
-    public function testSetProductPriceClass()
-    {
-        $listener = new ProductPriceDatagridListener(
+        return new ProductPriceDatagridListener(
             $this->translator,
-            $this->doctrineHelper,
-            $this->priceListRequestHandler
-        );
-        $this->assertNull($this->getProperty($listener, 'productPriceClass'));
-        $listener->setProductPriceClass('OroB2BPricingBundle:ProductPrice');
-        $this->assertEquals(
-            'OroB2BPricingBundle:ProductPrice',
-            $this->getProperty($listener, 'productPriceClass')
+            $this->priceListRequestHandler,
+            $this->doctrineHelper
         );
     }
 
     public function testSetProductUnitClass()
     {
-        $listener = new ProductPriceDatagridListener(
-            $this->translator,
-            $this->doctrineHelper,
-            $this->priceListRequestHandler
-        );
+        $listener = $this->createListener();
         $this->assertNull($this->getProperty($listener, 'productUnitClass'));
         $listener->setProductUnitClass('OroB2BProductBundle:ProductUnit');
         $this->assertEquals(
@@ -118,41 +59,29 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int|null $priceListId
-     * @param array $priceCurrencies
-     * @param array $expectedConfig
+     * {@inheritDoc}
+     */
+    protected function setUpPriceListRequestHandler($priceListId = null, array $priceCurrencies = [])
+    {
+        $this->priceListRequestHandler
+            ->expects($this->any())
+            ->method('getPriceList')
+            ->willReturn($this->getPriceList($priceListId));
+
+        $this->priceListRequestHandler
+            ->expects($this->any())
+            ->method('getPriceListSelectedCurrencies')
+            ->willReturn($priceCurrencies);
+    }
+
+    /**
+     * {@inheritDoc}
      * @dataProvider onBuildBeforeDataProvider
      */
     public function testOnBuildBefore($priceListId = null, array $priceCurrencies = [], array $expectedConfig = [])
     {
-        $this->getRepository();
-
-        if ($priceListId && $priceCurrencies) {
-            $this->priceListRequestHandler
-                ->expects($this->any())
-                ->method('getPriceList')
-                ->willReturn($this->getPriceList($priceListId));
-
-            $this->priceListRequestHandler
-                ->expects($this->any())
-                ->method('getPriceListSelectedCurrencies')
-                ->will(
-                    $this->returnCallback(
-                        function () use ($priceCurrencies) {
-                            return array_intersect(['USD', 'EUR'], $priceCurrencies);
-                        }
-                    )
-                );
-        }
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $config = DatagridConfiguration::create([]);
-
-        $event = new BuildBefore($datagrid, $config);
-        $this->listener->onBuildBefore($event);
-
-        $this->assertEquals($expectedConfig, $config->toArray());
+        $this->setUpRepository();
+        parent::testOnBuildBefore($priceListId, $priceCurrencies, $expectedConfig);
     }
 
     /**
@@ -170,10 +99,6 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             'no currencies' => [
                 'priceListId' => 1,
             ],
-            'invalid currencies' => [
-                'priceListId' => 1,
-                'priceCurrencies' => ['@#$', '%^&'],
-            ],
             'valid currencies' => [
                 'priceListId' => 1,
                 'priceCurrencies' => ['USD', 'EUR'],
@@ -184,24 +109,26 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'type' => 'twig',
                             'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
+                            'renderable' => true,
                         ],
                         'price_column_eur' => [
                             'label' => 'orob2b.pricing.productprice.price_in_EUR.trans',
                             'type' => 'twig',
                             'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
+                            'renderable' => true,
                         ],
                         'price_column_usd_unit1' => [
                             'label' => 'orob2b.pricing.productprice.price_unit1_in_USD.trans',
                             'type' => 'twig',
-                            'template' => 'OroB2BPricingBundle:Datagrid:Column/productUnitPrice.html.twig',
+                            'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                             'renderable' => false,
                         ],
                         'price_column_eur_unit1' => [
                             'label' => 'orob2b.pricing.productprice.price_unit1_in_EUR.trans',
                             'type' => 'twig',
-                            'template' => 'OroB2BPricingBundle:Datagrid:Column/productUnitPrice.html.twig',
+                            'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                             'renderable' => false,
                         ],
@@ -231,16 +158,16 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'sorters' => [
                         'columns' => [
                             'price_column_usd' => [
-                                'data_name' => 'price_column_usd'
+                                'data_name' => 'price_column_usd',
                             ],
                             'price_column_eur' => [
-                                'data_name' => 'price_column_eur'
+                                'data_name' => 'price_column_eur',
                             ],
                             'price_column_usd_unit1' => [
-                                'data_name' => 'price_column_usd_unit1'
+                                'data_name' => 'price_column_usd_unit1',
                             ],
                             'price_column_eur_unit1' => [
-                                'data_name' => 'price_column_eur_unit1'
+                                'data_name' => 'price_column_eur_unit1',
                             ],
                         ]
                     ],
@@ -278,9 +205,9 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                         'conditionType' => 'WITH',
                                         'condition' => 'price_column_usd_unit1_table.product = product.id ' .
                                             'AND price_column_usd_unit1_table.currency = \'USD\' ' .
-                                            'AND price_column_usd_unit1_table.unit = \'unit1\' ' .
                                             'AND price_column_usd_unit1_table.priceList = 1 ' .
-                                            'AND price_column_usd_unit1_table.quantity = 1',
+                                            'AND price_column_usd_unit1_table.quantity = 1 ' .
+                                            'AND price_column_usd_unit1_table.unit = \'unit1\'' ,
                                     ],
                                     3 => [
                                         'join' => 'OroB2BPricingBundle:ProductPrice',
@@ -288,9 +215,9 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                         'conditionType' => 'WITH',
                                         'condition' => 'price_column_eur_unit1_table.product = product.id ' .
                                             'AND price_column_eur_unit1_table.currency = \'EUR\' ' .
-                                            'AND price_column_eur_unit1_table.unit = \'unit1\' ' .
                                             'AND price_column_eur_unit1_table.priceList = 1 ' .
-                                            'AND price_column_eur_unit1_table.quantity = 1',
+                                            'AND price_column_eur_unit1_table.quantity = 1 ' .
+                                            'AND price_column_eur_unit1_table.unit = \'unit1\'',
                                     ],
                                 ],
                             ],
@@ -323,26 +250,12 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $productIds[] = $sourceResult['id'];
         }
 
+        $this->setUpPriceListRequestHandler($priceListId, $priceCurrencies);
+
         if ($priceListId && $priceCurrencies) {
-            $this->priceListRequestHandler
-                ->expects($this->any())
-                ->method('getPriceList')
-                ->willReturn($this->getPriceList($priceListId));
-
-            $this->priceListRequestHandler
-                ->expects($this->any())
-                ->method('getPriceListSelectedCurrencies')
-                ->will(
-                    $this->returnCallback(
-                        function () use ($priceCurrencies) {
-                            return array_intersect(['USD', 'EUR'], $priceCurrencies);
-                        }
-                    )
-                );
-
             $this->priceListRequestHandler->expects($this->any())->method('getShowTierPrices')->willReturn(true);
 
-            $this->getRepository()
+            $this->setUpRepository()
                 ->expects($this->any())
                 ->method('findByPriceListIdAndProductIds')
                 ->with($priceListId, $productIds)
@@ -378,10 +291,6 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ],
             'no currencies' => [
                 'priceListId' => 1,
-            ],
-            'invalid currencies' => [
-                'priceListId' => 1,
-                'priceCurrencies' => ['@#$', '%^&'],
             ],
             'valid data' => [
                 'priceListId' => 1,
@@ -441,23 +350,30 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $id
-     * @return PriceList
+     * @return \PHPUnit_Framework_MockObject_MockObject|ProductPriceRepository
      */
-    protected function getPriceList($id)
+    protected function setUpRepository()
     {
-        $priceList = new PriceList();
-        $reflection = new \ReflectionProperty(get_class($priceList), 'id');
-        $reflection->setAccessible(true);
-        $reflection->setValue($priceList, $id);
+        $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->any())
+            ->method('findBy')
+            ->willReturn([$this->getUnit('unit1')]);
 
-        return $priceList;
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->withConsecutive(['OroB2BProductBundle:ProductUnit'], ['OroB2BPricingBundle:ProductPrice'])
+            ->willReturn($repository);
+
+        return $repository;
     }
 
     /**
      * @param int $productId
      * @param float $value
      * @param string $currency
+     * @param ProductUnit|null $unit
      * @return ProductPrice
      */
     protected function createPrice($productId, $value, $currency, $unit = null)
@@ -476,39 +392,6 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         }
 
         return $price;
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProductPriceRepository
-     */
-    protected function getRepository()
-    {
-        $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->any())
-            ->method('findBy')
-            ->willReturn([$this->getUnit('unit1')]);
-
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityRepository')
-            ->withConsecutive(['OroB2BProductBundle:ProductUnit'], ['OroB2BPricingBundle:ProductPrice'])
-            ->willReturn($repository);
-
-        return $repository;
-    }
-
-    /**
-     * @param object $object
-     * @param string $property
-     * @return mixed $value
-     */
-    protected function getProperty($object, $property)
-    {
-        $reflection = new \ReflectionProperty(get_class($object), $property);
-        $reflection->setAccessible(true);
-
-        return $reflection->getValue($object);
     }
 
     /**

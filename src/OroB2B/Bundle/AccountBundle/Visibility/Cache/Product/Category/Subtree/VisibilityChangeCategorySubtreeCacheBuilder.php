@@ -12,13 +12,17 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
 {
     /**
      * @param Category $category
+     * @param int $visibility
      */
-    public function resolveVisibilitySettings(Category $category)
+    public function resolveVisibilitySettings(Category $category, $visibility)
     {
-        $visibility = $this->categoryVisibilityResolver->isCategoryVisible($category);
-        $visibility = $this->convertVisibility($visibility);
+        $childCategoryIds = $this->getChildCategoryIdsForUpdate($category);
 
-        $categoryIds = $this->getCategoryIdsForUpdate($category, null);
+        $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->updateCategoryVisibilityByCategory($childCategoryIds, $visibility);
+
+        $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
         $this->updateProductVisibilityByCategory($categoryIds, $visibility);
 
         $this->updateProductVisibilitiesForCategoryRelatedEntities($category, $visibility);
@@ -37,6 +41,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
         }
 
         $this->updateAccountGroupsProductVisibility($category, $accountGroupIdsForUpdate, $visibility);
+        $this->updateAccountGroupsCategoryVisibility($category, $accountGroupIdsForUpdate, $visibility);
 
         return $accountGroupIdsForUpdate;
     }
@@ -69,6 +74,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
         $this->accountIdsWithChangedVisibility[$category->getId()] = $accountIdsForUpdate;
 
         $this->updateAccountsProductVisibility($category, $accountIdsForUpdate, $visibility);
+        $this->updateAccountsCategoryVisibility($category, $accountIdsForUpdate, $visibility);
 
         return $accountIdsForUpdate;
     }
@@ -162,6 +168,29 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
         $qb->update('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved', 'pvr')
             ->set('pvr.visibility', $visibility)
             ->andWhere($qb->expr()->in('IDENTITY(pvr.category)', ':categoryIds'))
+            ->setParameter('categoryIds', $categoryIds);
+
+        $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param array $categoryIds
+     * @param int $visibility
+     */
+    protected function updateCategoryVisibilityByCategory(array $categoryIds, $visibility)
+    {
+        if (!$categoryIds) {
+            return;
+        }
+
+        /** @var QueryBuilder $qb */
+        $qb = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->createQueryBuilder();
+
+        $qb->update('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved', 'cvr')
+            ->set('cvr.visibility', $visibility)
+            ->andWhere($qb->expr()->in('IDENTITY(cvr.category)', ':categoryIds'))
             ->setParameter('categoryIds', $categoryIds);
 
         $qb->getQuery()->execute();

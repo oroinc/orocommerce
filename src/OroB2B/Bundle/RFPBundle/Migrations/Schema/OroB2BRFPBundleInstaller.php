@@ -50,7 +50,7 @@ class OroB2BRFPBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_5';
     }
 
     /**
@@ -59,6 +59,8 @@ class OroB2BRFPBundleInstaller implements
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
+        $this->createOroRfpAssignedAccUsersTable($schema);
+        $this->createOroRfpAssignedUsersTable($schema);
         $this->createOroB2BRfpRequestTable($schema);
         $this->createOroB2BRfpStatusTable($schema);
         $this->createOroB2BRfpStatusTranslationTable($schema);
@@ -66,6 +68,8 @@ class OroB2BRFPBundleInstaller implements
         $this->createOrob2BRfpRequestProductItemTable($schema);
 
         /** Foreign keys generation **/
+        $this->addOroRfpAssignedAccUsersForeignKeys($schema);
+        $this->addOroRfpAssignedUsersForeignKeys($schema);
         $this->addOroB2BRfpRequestForeignKeys($schema);
         $this->addOroB2BRfpStatusForeignKeys($schema);
         $this->addOrob2BRfpRequestProductForeignKeys($schema);
@@ -73,6 +77,32 @@ class OroB2BRFPBundleInstaller implements
 
         $this->addNoteAssociations($schema, $this->noteExtension);
         $this->addActivityAssociations($schema, $this->activityExtension);
+    }
+
+    /**
+     * Create oro_rfp_assigned_acc_users table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroRfpAssignedAccUsersTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_rfp_assigned_acc_users');
+        $table->addColumn('quote_id', 'integer', []);
+        $table->addColumn('account_user_id', 'integer', []);
+        $table->setPrimaryKey(['quote_id', 'account_user_id']);
+    }
+
+    /**
+     * Create oro_rfp_assigned_users table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroRfpAssignedUsersTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_rfp_assigned_users');
+        $table->addColumn('quote_id', 'integer', []);
+        $table->addColumn('user_id', 'integer', []);
+        $table->setPrimaryKey(['quote_id', 'user_id']);
     }
 
     /**
@@ -88,17 +118,19 @@ class OroB2BRFPBundleInstaller implements
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('status_id', 'integer', ['notnull' => false]);
+        $table->addColumn('cancellation_reason', 'text', ['notnull' => false]);
         $table->addColumn('first_name', 'string', ['length' => 255]);
         $table->addColumn('last_name', 'string', ['length' => 255]);
         $table->addColumn('email', 'string', ['length' => 255]);
-        $table->addColumn('phone', 'string', ['length' => 255]);
+        $table->addColumn('phone', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('company', 'string', ['length' => 255]);
         $table->addColumn('role', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('note', 'text', []);
+        $table->addColumn('note', 'text', ['notnull' => false]);
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('ship_until', 'date', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('deleted_at', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
     }
 
@@ -177,6 +209,50 @@ class OroB2BRFPBundleInstaller implements
         );
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Add oro_rfp_assigned_acc_users foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroRfpAssignedAccUsersForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_rfp_assigned_acc_users');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_rfp_request'),
+            ['quote_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_rfp_assigned_users foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroRfpAssignedUsersForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_rfp_assigned_users');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['user_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_rfp_request'),
+            ['quote_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**

@@ -1,3 +1,3 @@
 css:
     'orob2bfallback':
-        - 'bundles/orob2bfallback/css/style.css'
+        - 'bundles/orob2bfallback/css/less/style.less'

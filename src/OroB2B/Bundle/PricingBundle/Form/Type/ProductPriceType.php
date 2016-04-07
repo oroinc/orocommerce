@@ -11,7 +11,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 
@@ -41,7 +40,7 @@ class ProductPriceType extends AbstractType
             )
             ->add(
                 'unit',
-                ProductUnitSelectionType::NAME,
+                ProductPriceUnitSelectorType::NAME,
                 [
                     'label' => 'orob2b.pricing.unit.label',
                     'empty_value' => 'orob2b.product.productunitprecision.unit_precision_required',
@@ -69,10 +68,6 @@ class ProductPriceType extends AbstractType
             );
 
         // make value not empty
-        $builder->get('price')
-            ->remove('value')
-            ->add('value', ProductPriceValueType::NAME, ['required' => true]);
-
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) {

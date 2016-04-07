@@ -11,6 +11,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteFormViewListener
@@ -80,12 +81,25 @@ class WebsiteFormViewListener
             ->getEntityManager($this->priceListToWebsiteClassName)
             ->getRepository($this->priceListToWebsiteClassName)
             ->findBy(['website' => $website], ['priority' => Criteria::DESC]);
+        /** @var  PriceListWebsiteFallback $fallbackEntity */
+        $fallbackEntity = $this->doctrineHelper
+            ->getEntityRepository('OroB2BPricingBundle:PriceListWebsiteFallback')
+            ->findOneBy(['website' => $website]);
+        $choices = [
+            PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY =>
+                'orob2b.pricing.fallback.current_website_only.label',
+            PriceListWebsiteFallback::CONFIG =>
+                'orob2b.pricing.fallback.config.label',
+        ];
+        $fallback = $fallbackEntity ? $choices[$fallbackEntity->getFallback()]
+            : $choices[PriceListWebsiteFallback::CONFIG];
 
         $template = $event->getEnvironment()->render(
             'OroB2BPricingBundle:PriceList/partial:list.html.twig',
             [
                 'entities' => $priceLists,
-                'website' => $website
+                'website' => $website,
+                'fallback' => $fallback,
             ]
         );
         $this->addPriceListsBlock($event->getScrollData(), $template);

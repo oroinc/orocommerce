@@ -18,13 +18,20 @@ class PriceListConfig implements PriceListAwareInterface
     protected $priority;
 
     /**
+     * @var boolean
+     */
+    protected $mergeAllowed;
+
+    /**
      * @param PriceList|null $priceList
      * @param int|string|null $priority
+     * @param null|boolean $mergeAllowed
      */
-    public function __construct(PriceList $priceList = null, $priority = null)
+    public function __construct(PriceList $priceList = null, $priority = null, $mergeAllowed = null)
     {
         $this->priceList = $priceList;
         $this->priority = $priority;
+        $this->mergeAllowed = $mergeAllowed;
     }
 
     /**
@@ -60,8 +67,24 @@ class PriceListConfig implements PriceListAwareInterface
      */
     public function setPriority($priority)
     {
-        $this->priority = (int) $priority;
+        $this->priority = (int)$priority;
 
         return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isMergeAllowed()
+    {
+        return $this->mergeAllowed;
+    }
+
+    /**
+     * @param boolean $mergeAllowed
+     */
+    public function setMergeAllowed($mergeAllowed)
+    {
+        $this->mergeAllowed = $mergeAllowed;
     }
 }

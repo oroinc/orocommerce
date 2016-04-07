@@ -19,7 +19,8 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -33,7 +34,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     protected $paymentTerms = [];
 
     /** @var array */
-    protected $priceLists = [];
+    protected $websites = [];
 
     /** @var ContainerInterface */
     protected $container;
@@ -55,7 +56,9 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
             'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
             'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData'
+            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
+            'OroB2B\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData',
+            'OroB2B\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData'
         ];
     }
 
@@ -70,6 +73,9 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         if (is_array($filePath)) {
             $filePath = current($filePath);
         }
+
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $manager->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')->findOneBy([]);
 
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
@@ -114,11 +120,17 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setBillingAddress($this->createOrderAddress($manager, $billingAddress))
                 ->setShippingAddress($this->createOrderAddress($manager, $shippingAddress))
                 ->setPaymentTerm($this->getPaymentTerm($manager, $row['paymentTerm']))
-                ->setPriceList($this->getPriceList($manager, $row['priceListName']))
+                ->setWebsite($this->getWebsite($manager, $row['websiteName']))
                 ->setShipUntil(new \DateTime())
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
-                ->setSubtotal($row['subtotal']);
+                ->setSubtotal($row['subtotal'])
+                ->setTotal($row['total']);
+
+            if ($row['sourceEntityClass'] === 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList') {
+                $order->setSourceEntityClass($row['sourceEntityClass']);
+                $order->setSourceEntityId($shoppingList->getId());
+            }
 
             if (!empty($row['customerNotes'])) {
                 $order->setCustomerNotes($row['customerNotes']);
@@ -147,6 +159,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             ->setRegion($this->getRegionByIso2Code($manager, $address['region']))
             ->setStreet($address['street'])
             ->setPostalCode($address['postalCode']);
+        $orderAddress->setPhone('1234567890');
 
         $manager->persist($orderAddress);
 
@@ -208,15 +221,15 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     /**
      * @param EntityManager $manager
      * @param string $name
-     * @return PriceList
+     * @return Website
      */
-    protected function getPriceList(EntityManager $manager, $name)
+    protected function getWebsite(EntityManager $manager, $name)
     {
-        if (!array_key_exists($name, $this->priceLists)) {
-            $this->priceLists[$name] = $manager->getRepository('OroB2BPricingBundle:PriceList')
+        if (!array_key_exists($name, $this->websites)) {
+            $this->websites[$name] = $manager->getRepository('OroB2BWebsiteBundle:Website')
                 ->findOneBy(['name' => $name]);
         }
 
-        return $this->priceLists[$name];
+        return $this->websites[$name];
     }
 }

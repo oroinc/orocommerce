@@ -3,25 +3,16 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Visibility\Cache\Product\Category;
 
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Visibility\Cache\Product\AbstractCacheBuilderTest;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\cacheBuilderInterface;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CacheBuilderTest extends AbstractCacheBuilderTest
 {
     /**
-     * @var cacheBuilderInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
-     */
-    protected $builders;
-
-    /**
      * @var CacheBuilder
      */
     protected $cacheBuilder;
-
-    /**
-     * @var string
-     */
-    protected $cacheBuilderInterface = 'OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface';
 
     /**
      * {@inheritdoc}
@@ -39,13 +30,16 @@ class CacheBuilderTest extends AbstractCacheBuilderTest
 
     public function testAddBuilder()
     {
-        foreach ($this->builders as $builder) {
-            $this->cacheBuilder->addBuilder($builder);
-        }
+        $category = new Category();
 
-        $this->assertCallAllBuilders(
-            'buildCache',
-            $this->getMock('OroB2B\Bundle\WebsiteBundle\Entity\Website')
-        );
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CategoryCaseCacheBuilderInterface $customBuilder */
+        $customBuilder
+            = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
+        $customBuilder->expects($this->once())
+            ->method('categoryPositionChanged')
+            ->with($category);
+
+        $this->cacheBuilder->addBuilder($customBuilder);
+        $this->cacheBuilder->categoryPositionChanged($category);
     }
 }

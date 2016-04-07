@@ -63,7 +63,7 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var $product Product */
         $repository->deleteByProduct($product);
-        $repository->insertByProduct($product, $this->getInsertFromSelectExecutor(), false, null);
+        $repository->insertByProduct($product, $this->getInsertFromSelectExecutor());
         $visibilities = $repository->findBy(['product' => $product]);
         $this->assertSame(1, count($visibilities));
     }
@@ -77,7 +77,7 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
             'withoutWebsite' => [
                 'websiteReference' => null,
                 'accountReference' => 'account.level_1',
-                'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+                'visibility' => BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                 'expectedData' => [
                     [
                         'product' => LoadProductData::PRODUCT_8,
@@ -88,7 +88,7 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
             'withWebsite1' => [
                 'websiteReference' => LoadWebsiteData::WEBSITE1,
                 'accountReference' => 'account.level_1',
-                'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+                'visibility' => BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                 'expectedData' => [
                     [
                         'product' => LoadProductData::PRODUCT_8,

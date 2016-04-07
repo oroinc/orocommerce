@@ -14,7 +14,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -66,7 +65,7 @@ class DefaultVisibilityListenerTest extends WebTestCase
         $this->website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
-        $this->account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
+        $this->account = $this->getReference('account.level_1');
         $this->accountGroup = $this->getReference(LoadGroups::GROUP1);
     }
 

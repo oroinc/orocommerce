@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\TaxBundle\Form\Type\AbstractTaxCodeType;
 

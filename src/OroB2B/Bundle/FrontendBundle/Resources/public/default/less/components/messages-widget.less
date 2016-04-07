@@ -6,7 +6,8 @@
     background: @base-sidebar-background-color;
   }
 
-  &.messages-widget__list-expanded {
+  &.messages-widget__list-expanded,
+  &.oro-mp-widget__list-expanded {
     .messages-widget__arrow {
       transform: rotate(0);
     }
@@ -26,11 +27,15 @@
     z-index: 10;
     text-align: left;
 
+    &.opened {
+      display: block;
+    }
+
     .btn_close {
       color: @base-link-color;
       opacity: 1;
 
-      .material-icons {
+      [class^="cf-"] {
         font-size: 2rem;
       }
 
@@ -56,7 +61,7 @@
       box-shadow: none;
       color: @base-link-color;
 
-      .material-icons {
+      [class^="cf-"] {
         font-size: 1.8rem;
       }
     }
@@ -80,7 +85,7 @@
       color: @base-link-color;
       opacity: 1;
 
-      .material-icons {
+      [class^="cf-"] {
         font-size: 2rem;
       }
 
@@ -102,7 +107,7 @@
       box-shadow: none;
       color: @base-link-color;
 
-      .material-icons {
+      [class^="cf-"] {
         font-size: 1.8rem;
       }
     }

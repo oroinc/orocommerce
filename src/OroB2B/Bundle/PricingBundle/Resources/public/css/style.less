@@ -1,11 +1,45 @@
 @import "oroui/css/less/mixins";
 
 .product-price-collection {
+  .small-row > div > div {
+    float: left;
+  }
+
+  .grouped-fields {
+    width: 100%;
+    padding-top: 7px;
+    display: inline-block;
+  }
+
+  .group-label {
+    width: 75px;
+  }
+
+  .col-widget {
+    width: 100px;
+    margin-right: 22px;
+  }
+
   input[type="text"].quantity,
   input[type="text"].price-value,
   .entity-create-or-select-container {
     margin-left: 4px;
-    width: 280px;
+    width: 100px;
+  }
+
+  .price-currency {
+    margin-left: 5px;
+    width: 100px;
+  }
+
+  .price-currency-div {
+    .selector, span {
+      width: 170px !important;
+    }
+  }
+
+  .unit {
+    width: 156px !important;
   }
 
   .select2-container {
@@ -43,13 +77,22 @@
       text-decoration: none;
     }
   }
+
+  div[data-validation-optional-group=""] {
+    padding-right: 20px;
+    display: inline-block;
+  }
+
+  .oro-multiselect-holder {
+    padding-right: 50px !important;
+  }
+
+  .form-horizontal {
+    max-width: none;
+  }
 }
 
 .product-container {
-  .show-tier-prices-choice label {
-    float: left;
-  }
-
   .show-tier-prices-choice {
     label {
       float: left;
@@ -60,42 +103,57 @@
     }
   }
 
-  .sidebar-item .control-label {
-    font-weight: bold;
+  .sidebar-item {
+    .control-label {
+      font-weight: 700;
+    }
   }
 
   .grid-container {
     .product-price-unit-with-margin {
       margin-top: 5px !important;
     }
-    .string-cell tbody td {
-      padding: 0 !important;
-      height: 10px !important;
-      border: 0 !important;
+
+    .string-cell {
+      tbody {
+        td {
+          padding: 0 !important;
+          height: 10px !important;
+          border: 0 !important;
+        }
+      }
     }
   }
 }
 
-.product-price-filter {
-  .choice-filter {
-    display: inline-block;
-    width: auto;
+.product-price-filter-criteria {
+  margin-bottom: 7px;
+  .btn-group {
+    margin-bottom: 0;
   }
+
   .filter-end {
-    input[type=text] {
+    input[type="text"] {
       border-right-width: 1px !important;
     }
   }
-  .value-field-frame {
-    margin-right: 0 !important;
+
+  .product-price-filter {
+    display: inline;
+    .product-price-unit-filter {
+      float: none !important;
+      .dropdown-toggle {
+        border-radius: 3px !important;
+      }
+    }
   }
-  .product-price-unit-filter {
-    display: inline-block;
-    margin-bottom: 0;
-  }
+
   .filter-update {
+    left: auto !important;
+    position: relative !important;
     float: right;
-    margin-bottom: 4px;
+    margin: 8px 0;
+    border-radius: 3px !important;
   }
 }
 
@@ -112,9 +170,13 @@
     vertical-align: top;
   }
 
-  td span.validation-failed {
-    white-space: nowrap;
-    width: 50px;
+  td {
+    span {
+      &.validation-failed {
+        white-space: nowrap;
+        width: 50px;
+      }
+    }
   }
 
   .entity-select-btn {
@@ -122,16 +184,20 @@
     float: none;
   }
 
-  input.priority {
-    width: 50px !important;
+  input {
+    &.priority {
+      width: 50px !important;
+    }
   }
 
   .select2-container.error {
     border-color: red;
   }
 
-  .removeRow:after{
-    text-indent: 6px;
+  .removeRow {
+    &:after {
+      text-indent: 6px;
+    }
   }
 
   .controls {
@@ -144,9 +210,44 @@
 }
 
 .price-list-collection-as-widget {
-  padding: 0 10px 10px 10px;
+  padding: 0 10px 10px;
 }
 
 .tab-content > .tab-pane.price-list-by-account-grid {
   padding: 0 20px;
+}
+
+@media screen and (min-width: 1470px) {
+  #product_prices {
+    .control-group {
+      max-width: none;
+    }
+  }
+
+  .group-label {
+    label {
+      line-height: 25px;
+      vertical-align: middle;
+    }
+  }
+
+  .product-price-collection {
+
+    .small-row {
+      display: inline-block;
+    }
+
+    .col-widget {
+      width: auto;
+      margin-right: 5px;
+    }
+
+    .group-label {
+      width: auto !important;
+    }
+
+    .grouped-fields {
+      margin-left: 25px;
+    }
+  }
 }

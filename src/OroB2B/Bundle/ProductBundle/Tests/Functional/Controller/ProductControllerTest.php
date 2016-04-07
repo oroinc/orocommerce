@@ -38,6 +38,7 @@ class ProductControllerTest extends WebTestCase
     const DEFAULT_NAME = 'default name';
     const DEFAULT_NAME_ALTERED = 'altered default name';
     const DEFAULT_DESCRIPTION = 'default description';
+    const DEFAULT_SHORT_DESCRIPTION = 'default short description';
 
     protected function setUp()
     {
@@ -65,6 +66,7 @@ class ProductControllerTest extends WebTestCase
         $form['orob2b_product[status]'] = Product::STATUS_DISABLED;
         $form['orob2b_product[names][values][default]'] = self::DEFAULT_NAME;
         $form['orob2b_product[descriptions][values][default]'] = self::DEFAULT_DESCRIPTION;
+        $form['orob2b_product[shortDescriptions][values][default]'] = self::DEFAULT_SHORT_DESCRIPTION;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -125,13 +127,19 @@ class ProductControllerTest extends WebTestCase
                     ],
                     'ids' => [$locale->getId() => $localizedName->getId()],
                 ],
+                'shortDescriptions' => [
+                    'values' => [
+                        'default' => self::DEFAULT_SHORT_DESCRIPTION,
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                    ],
+                    'ids' => [$locale->getId() => $localizedName->getId()],
+                ]
             ],
         ];
 
         $this->client->followRedirects(true);
-
-        $result = $this->client->getResponse();
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         // Check product unit precisions
@@ -167,7 +175,6 @@ class ProductControllerTest extends WebTestCase
     /**
      * @depends testUpdate
      * @param int $id
-     * @return int
      */
     public function testView($id)
     {
@@ -193,8 +200,48 @@ class ProductControllerTest extends WebTestCase
             ->getRepository('OroB2BProductBundle:ProductUnitPrecision')
             ->findOneBy(['product' => $id, 'unit' => self::SECOND_UNIT_CODE]);
         $this->assertEquals(self::SECOND_UNIT_PRECISION, $productUnitPrecision->getPrecision());
+    }
 
-        return $id;
+    /**
+     * @depends testView
+     * @return int
+     */
+    public function testDuplicate()
+    {
+        $this->client->followRedirects(true);
+
+        $crawler = $this->client->getCrawler();
+        $button = $crawler->filterXPath('//a[@title="Duplicate"]');
+        $this->assertEquals(1, $button->count());
+
+        $this->client->request('GET', $button->eq(0)->link()->getUri(), [], [], $this->generateWsseAuthHeader());
+        $response = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
+        $data = json_decode($response->getContent(), true);
+        $this->assertArrayHasKey('redirectUrl', $data);
+
+        $crawler = $this->client->request('GET', $data['redirectUrl']);
+        $html = $crawler->html();
+        $this->assertContains('Product has been duplicated', $html);
+        $this->assertContains(
+            self::FIRST_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Products',
+            $html
+        );
+        $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
+        $this->assertContains(self::STATUS, $html);
+
+        $this->assertContains(
+            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
+            $html
+        );
+        $this->assertContains(
+            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
+            $html
+        );
+
+        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
+
+        return $result['id'];
     }
 
     /**
@@ -235,6 +282,13 @@ class ProductControllerTest extends WebTestCase
                 'descriptions' => [
                     'values' => [
                         'default' => self::DEFAULT_DESCRIPTION,
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                    ],
+                    'ids' => [$locale->getId() => $localizedName->getId()],
+                ],
+                'shortDescriptions' => [
+                    'values' => [
+                        'default' => self::DEFAULT_SHORT_DESCRIPTION,
                         'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$locale->getId() => $localizedName->getId()],

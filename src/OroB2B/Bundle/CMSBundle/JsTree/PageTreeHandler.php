@@ -43,7 +43,7 @@ class PageTreeHandler extends AbstractTreeHandler
     {
         return [
             'id'     => $entity->getId(),
-            'parent' => $entity->getParentPage() ? $entity->getParentPage()->getId() : '#',
+            'parent' => $entity->getParentPage() ? $entity->getParentPage()->getId() : null,
             'text'   => $entity->getTitle(),
             'state'  => [
                 'opened' => $entity->getParentPage() === null
@@ -52,13 +52,11 @@ class PageTreeHandler extends AbstractTreeHandler
     }
 
     /**
-     * Need to sort root nodes by ID
-     *
-     * @param array $entities
-     * @return array
+     * {@inheritdoc}
      */
-    protected function formatTree(array $entities)
+    protected function getNodes($root, $includeRoot)
     {
+        $entities = parent::getNodes($root, $includeRoot);
         $rootNodes = [];
 
         /** @var Page $page */
@@ -73,9 +71,7 @@ class PageTreeHandler extends AbstractTreeHandler
             return $a->getId() > $b->getId() ? 1 : -1;
         });
 
-        $entities = array_merge($rootNodes, $entities);
-
-        return parent::formatTree($entities);
+        return array_merge($rootNodes, $entities);
     }
 
     /**

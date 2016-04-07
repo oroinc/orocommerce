@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
@@ -20,7 +21,7 @@ class AccountUserController extends Controller
 {
     /**
      * @Route("/view/{id}", name="orob2b_account_frontend_account_user_view", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:view.html.twig")
+     * @Layout
      * @Acl(
      *      id="orob2b_account_frontend_account_user_view",
      *      type="entity",
@@ -35,13 +36,15 @@ class AccountUserController extends Controller
     public function viewAction(AccountUser $accountUser)
     {
         return [
-            'entity' => $accountUser
+            'data' => [
+                'entity' => $accountUser
+            ]
         ];
     }
 
     /**
      * @Route("/", name="orob2b_account_frontend_account_user_index")
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:index.html.twig")
+     * @Layout(vars={"entity_class"})
      * @AclAncestor("orob2b_account_frontend_account_user_view")
      *
      * @return array

@@ -9,7 +9,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 class PriceTypeTest extends FormIntegrationTestCase
@@ -24,8 +24,8 @@ class PriceTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->formType = new PriceType();
-        $this->formType->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
+        $this->formType = PriceTypeGenerator::createPriceType();
+
         parent::setUp();
     }
 

@@ -41,24 +41,6 @@ class AccountGroupProductVisibilityRepositoryTest extends AbstractProductVisibil
 
     }
 
-    public function testGetCategoryByAccountGroupProductVisibility()
-    {
-        $accountGroupProductVisibility = $this->registry
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
-            ->findOneBy(['product' => $this->getReference(LoadProductData::PRODUCT_1)]);
-        $accountGroupProductVisibility->setVisibility(AccountGroupProductVisibility::CATEGORY);
-        $this->registry->getEntityManager()->remove($accountGroupProductVisibility);
-        $this->registry->getEntityManager()->flush();
-        $categories = $this->repository->getCategoryIdsByAccountGroupProductVisibility();
-        $this->assertCount(1, $categories);
-        $this->assertEquals($categories[0], $this->getReference('category_1_5_6_7')->getId());
-    }
-
-    public function testGetAccountGroupsForCategoryType()
-    {
-        $this->assertCount(1, $this->repository->getAccountGroupsWithCategoryVisibiliy());
-    }
-
     /**
      * @return array
      */

@@ -9,13 +9,13 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 class QuantityRoundingService extends AbstractRoundingService
 {
     /** {@inheritdoc} */
-    protected function getRoundType()
+    public function getRoundType()
     {
-        return $this->configManager->get('orob2b_product.unit_rounding_type', self::HALF_UP);
+        return $this->configManager->get('orob2b_product.unit_rounding_type', self::ROUND_HALF_UP);
     }
 
     /** {@inheritdoc} */
-    protected function getFallbackPrecision()
+    public function getPrecision()
     {
         throw new \BadMethodCallException('ProductUnit required to get a precision');
     }

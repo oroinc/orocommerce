@@ -11,10 +11,8 @@ use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 
 /**
  * @dbIsolation
@@ -44,7 +42,7 @@ class OrderControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
 
@@ -58,7 +56,7 @@ class OrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals('Orders', $crawler->filter('h1.oro-subtitle')->html());
+        $this->assertEquals('Orders', $crawler->filter('h1.orders-page-title')->html());
     }
 
     /**
@@ -66,8 +64,6 @@ class OrderControllerTest extends WebTestCase
      */
     public function testCreate()
     {
-        $this->setDefaultPriceList('price_list_1');
-
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -113,7 +109,7 @@ class OrderControllerTest extends WebTestCase
             $date,
         ]);
 
-        /** @var ProductPrice $productPrice */
+        /** @var CombinedProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.1');
         $expectedLineItems = [
             [
@@ -126,79 +122,6 @@ class OrderControllerTest extends WebTestCase
         ];
 
         $this->assertEquals($expectedLineItems, $this->getActualLineItems($crawler, count($lineItems)));
-    }
-
-    public function testQuickAdd()
-    {
-        $this->setDefaultPriceList('price_list_1');
-
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-
-        $form = $crawler->filter('form[name="orob2b_product_quick_add"]')->form();
-
-        /** @var Product $product */
-        $product = $this->getReference('product.3');
-
-        $products = [
-            [
-                'productSku' => $product->getSku(),
-                'productQuantity' => 15
-            ]
-        ];
-
-        /** @var DataStorageAwareComponentProcessor $processor */
-        $processor = $this->getContainer()->get('orob2b_order.processor.quick_add');
-
-        $this->client->followRedirects(true);
-        $crawler = $this->client->request(
-            $form->getMethod(),
-            $form->getUri(),
-            [
-                'orob2b_product_quick_add' => [
-                    '_token' => $form['orob2b_product_quick_add[_token]']->getValue(),
-                    'products' => $products,
-                    'component' => $processor->getName()
-                ]
-            ]
-        );
-
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-
-        $expectedQuickAddLineItems = [
-            [
-                'product' => $product->getId(),
-                'quantity' => 15,
-            ]
-        ];
-
-        $this->assertEquals($expectedQuickAddLineItems, $this->getActualLineItems($crawler, count($products), true));
-
-        $form = $crawler->selectButton('Save')->form();
-        $form['input_action'] = 'save_and_stay';
-        $form['orob2b_order_frontend_type[poNumber]'] = self::QUICK_ADD_ORDER_PO_NUMBER;
-
-        $crawler = $this->client->submit($form);
-
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Order has been saved', $crawler->html());
-
-        $this->assertViewPage($crawler, [self::QUICK_ADD_ORDER_PO_NUMBER]);
-
-        /** @var ProductPrice $productPrice */
-        $productPrice = $this->getReference('product_price.9');
-
-        $expectedLineItems = [
-            [
-                'product' => $product->getId(),
-                'quantity' => 15,
-                'productUnit' => 'orob2b.product_unit.liter.label.full',
-                'price' => $this->formatProductPrice($productPrice),
-                'shipBy' => null
-            ]
-        ];
-
-        $this->assertEquals($expectedLineItems, $this->getActualLineItems($crawler, count($products)));
     }
 
     /**
@@ -221,12 +144,6 @@ class OrderControllerTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
-
-        /** @var PriceList $defaultPriceList */
-        $defaultPriceList = $this->getReference('price_list_1');
-
-        $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceList')
-            ->getRepository('OroB2BPricingBundle:PriceList')->setDefault($defaultPriceList);
 
         /** @var Product $product */
         $product = $this->getReference('product.2');
@@ -268,7 +185,7 @@ class OrderControllerTest extends WebTestCase
                 ->extract('value')[0]
         );
 
-        /** @var ProductPrice $productPrice */
+        /** @var CombinedProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.1');
         $expectedLineItems = [
             [
@@ -296,7 +213,7 @@ class OrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertViewPage($crawler, ['Notes', self::ORDER_PO_NUMBER_UPDATED]);
+        $this->assertViewPage($crawler, ['Notes']);
     }
 
     /**
@@ -327,6 +244,7 @@ class OrderControllerTest extends WebTestCase
     }
 
     /**
+     * @param string $gridName
      * @param array $filters
      * @return array
      */
@@ -389,21 +307,10 @@ class OrderControllerTest extends WebTestCase
     }
 
     /**
-     * @param $name
-     */
-    protected function setDefaultPriceList($name)
-    {
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference($name);
-        $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceList')
-            ->getRepository('OroB2BPricingBundle:PriceList')->setDefault($priceList);
-    }
-
-    /**
-     * @param ProductPrice $productPrice
+     * @param CombinedProductPrice $productPrice
      * @return string
      */
-    protected function formatProductPrice(ProductPrice $productPrice)
+    protected function formatProductPrice(CombinedProductPrice $productPrice)
     {
         $price = $productPrice->getPrice();
 

@@ -48,6 +48,7 @@ class FrontendAccountUserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
+        $builder->remove('salesRepresentatives');
         $builder->add(
             'roles',
             FrontendAccountUserRoleSelectType::NAME,

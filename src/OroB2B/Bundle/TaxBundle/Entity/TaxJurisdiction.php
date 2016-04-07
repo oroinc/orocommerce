@@ -39,6 +39,13 @@ class TaxJurisdiction
      * @var string
      *
      * @ORM\Column(name="description", type="text", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $description;
 

@@ -13,6 +13,7 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
 
 /**
  * @dbIsolation
@@ -26,6 +27,16 @@ class OrderControllerTest extends WebTestCase
      * @var NameFormatter
      */
     protected $formatter;
+
+    /**
+     * @var string
+     */
+    public static $shippingCostAmount = '999.9900';
+
+    /**
+     * @var string
+     */
+    public static $shippingCostCurrency = 'USD';
 
     /**
      * @var array
@@ -80,6 +91,7 @@ class OrderControllerTest extends WebTestCase
 
         /** @var Account $orderAccount */
         $orderAccount = $this->getReference('account.level_1');
+        $website = $this->client->getContainer()->get('orob2b_website.manager')->getCurrentWebsite();
         /** @var Product $product */
         $product = $this->getReference('product.1');
 
@@ -97,6 +109,7 @@ class OrderControllerTest extends WebTestCase
                 'shipBy' => $date
             ],
         ];
+        $discountItems = $this->getDiscountItems();
         $submittedData = [
             'input_action' => 'save_and_stay',
             'orob2b_order_type' => [
@@ -104,7 +117,9 @@ class OrderControllerTest extends WebTestCase
                 'owner' => $this->getCurrentUser()->getId(),
                 'account' => $orderAccount->getId(),
                 'poNumber' => self::ORDER_PO_NUMBER,
-                'lineItems' => $lineItems
+                'website' => $website->getId(),
+                'lineItems' => $lineItems,
+                'discounts' => $discountItems,
             ]
         ];
 
@@ -115,14 +130,14 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
         $this->assertEquals(
             self::ORDER_PO_NUMBER,
             $crawler->filter('input[name="orob2b_order_type[poNumber]"]')->extract('value')[0]
         );
 
-        $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
+        $this->assertNotEquals('N/A', $crawler->filter('.user-name')->text());
 
+        $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
         $expectedLineItems = [
             [
                 'product' => $product->getId(),
@@ -137,15 +152,16 @@ class OrderControllerTest extends WebTestCase
                 'shipBy' => $date
             ]
         ];
-
         $this->assertEquals($expectedLineItems, $actualLineItems);
 
-        $response = $this->client->requestGrid(
-            'orders-grid',
-            [
-                'orders-grid[_filter][poNumber][value]' => self::ORDER_PO_NUMBER
-            ]
-        );
+        $actualDiscountItems = $this->getActualDiscountItems($crawler, count($discountItems));
+        $expectedDiscountItems = $this->getExpectedDiscountItems();
+        foreach ($actualDiscountItems as $item) {
+            $this->assertContains($item, $expectedDiscountItems);
+        }
+
+        $ordersGridFilter = ['orders-grid[_filter][poNumber][value]' => self::ORDER_PO_NUMBER];
+        $response = $this->client->requestGrid('orders-grid', $ordersGridFilter);
 
         $result = $this->getJsonResponseContent($response, 200);
         $result = reset($result['data']);
@@ -157,7 +173,7 @@ class OrderControllerTest extends WebTestCase
      * @depends testCreate
      * @param int $id
      */
-    public function testUpdateLineItems($id)
+    public function testUpdateDiscountAndLineItems($id)
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
 
@@ -169,34 +185,28 @@ class OrderControllerTest extends WebTestCase
 
         /** @var Account $orderAccount */
         $orderAccount = $this->getReference('account.level_1');
-        /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $website = $this->client->getContainer()->get('orob2b_website.manager')->getCurrentWebsite();
 
         $date = (new \DateTime('now'))->format('Y-m-d');
-        $lineItems = [
+        $lineItems = $this->getLineItemsToUpdate($date);
+
+        $discountItems = [
             [
-                'freeFormProduct' => 'Free form product',
-                'quantity' => 20,
-                'productUnit' => 'liter',
-                'price' => [
-                    'value' => 200,
-                    'currency' => 'USD'
-                ],
-                'priceType' => OrderLineItem::PRICE_TYPE_BUNDLED,
-                'shipBy' => $date
+                'value' => '33',
+                'percent' => '33',
+                'amount' => '33.33',
+                'type' => OrderDiscount::TYPE_PERCENT,
+                'description' => 'some test description 333'
             ],
             [
-                'product' => $product->getId(),
-                'quantity' => 1,
-                'productUnit' => 'bottle',
-                'price' => [
-                    'value' => 10,
-                    'currency' => 'USD'
-                ],
-                'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
-                'shipBy' => $date
+                'value' => '44.44',
+                'percent' => '44',
+                'amount' => '44.44',
+                'type' => OrderDiscount::TYPE_AMOUNT,
+                'description' => 'some other test description 444'
             ]
         ];
+
         $submittedData = [
             'input_action' => 'save_and_stay',
             'orob2b_order_type' => [
@@ -205,6 +215,8 @@ class OrderControllerTest extends WebTestCase
                 'account' => $orderAccount->getId(),
                 'poNumber' => self::ORDER_PO_NUMBER_UPDATED,
                 'lineItems' => $lineItems,
+                'discounts' => $discountItems,
+                'website' => $website->getId()
             ]
         ];
 
@@ -213,42 +225,33 @@ class OrderControllerTest extends WebTestCase
         // Submit form
         $result = $this->client->getResponse();
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
-
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         // Check updated line items
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
 
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
+        $expectedLineItems = $this->getExpectedLineItemsAfterUpdate($date);
+        $this->assertEquals($expectedLineItems, $actualLineItems);
 
-        $expectedLineItems = [
+        $actualDiscountItems = $this->getActualDiscountItems($crawler, count($discountItems));
+        $expectedDiscountItems = [
             [
-                'product' => '',
-                'freeFormProduct' => 'Free form product',
-                'quantity' => 20,
-                'productUnit' => 'orob2b.product_unit.liter.label.full',
-                'price' => [
-                    'value' => 200,
-                    'currency' => 'USD'
-                ],
-                'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
-                'shipBy' => $date
+                'value' => '33',
+                'percent' => '33',
+                'amount' => '33.3300',
+                'type' => '%',
+                'description' => 'some test description 333'
             ],
             [
-                'product' => $product->getId(),
-                'freeFormProduct' => '',
-                'quantity' => 1,
-                'productUnit' => 'orob2b.product_unit.bottle.label.full',
-                'price' => [
-                    'value' => 10,
-                    'currency' => 'USD'
-                ],
-                'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
-                'shipBy' => $date
+                'value' => '44.4400',
+                'percent' => '21.161904761905',
+                'amount' => '44.4400',
+                'type' => 'USD',
+                'description' => 'some other test description 444'
             ]
         ];
-
-        $this->assertEquals($expectedLineItems, $actualLineItems);
+        $this->assertEquals($expectedDiscountItems, $actualDiscountItems);
     }
 
     /**
@@ -335,6 +338,84 @@ class OrderControllerTest extends WebTestCase
 
     /**
      * @depends testCreate
+     * @param int $id
+     */
+    public function testUpdateShippingCost($id)
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+
+        /* @var $form Form */
+        $form = $crawler->selectButton('Save')->form();
+        $form['orob2b_order_type[shippingCost][value]'] = self::$shippingCostAmount;
+        $form['orob2b_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
+        self::assertEquals('Shipping Information', $titleBlock);
+
+        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
+        self::assertEquals('$999.99', $value);
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+    }
+
+    /**
+     * @depends testCreate
+     * @param int $id
+     */
+    public function testUpdateShippingCostEmpty($id)
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+
+        /* @var $form Form */
+        $form = $crawler->selectButton('Save')->form();
+        $form['orob2b_order_type[shippingCost][value]'] = '';
+        $form['orob2b_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
+        self::assertEquals('Shipping Information', $titleBlock);
+
+        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
+        self::assertEquals('N/A', $value);
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+    }
+
+    /**
+     * @depends testCreate
+     * @param int $id
+     */
+    public function testUpdateShippingCostZero($id)
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+
+        /* @var $form Form */
+        $form = $crawler->selectButton('Save')->form();
+        $form['orob2b_order_type[shippingCost][value]'] = '0';
+        $form['orob2b_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
+        self::assertEquals('Shipping Information', $titleBlock);
+
+        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
+        self::assertEquals('$0.00', $value);
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+    }
+
+    /**
+     * @depends testCreate
      *
      * @param int $id
      */
@@ -397,5 +478,152 @@ class OrderControllerTest extends WebTestCase
         }
 
         return $result;
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @param int $count
+     * @return array
+     */
+    protected function getActualDiscountItems(Crawler $crawler, $count)
+    {
+        $result = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $result[] = [
+                'value' => $crawler->filter('input[name="orob2b_order_type[discounts]['. $i .'][value]"]')
+                    ->extract('value')[0],
+                'percent' => $crawler
+                    ->filter('input[name="orob2b_order_type[discounts]['. $i .'][percent]"]')
+                    ->extract('value')[0],
+                'amount' => $crawler->filter('input[name="orob2b_order_type[discounts]['. $i .'][amount]"]')
+                    ->extract('value')[0],
+                'type' => $crawler
+                    ->filter('select[name="orob2b_order_type[discounts]['. $i .'][type]"] :selected')
+                    ->html(),
+                'description' => $crawler->filter('input[name="orob2b_order_type[discounts]['. $i .'][description]"]')
+                    ->extract('value')[0]
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDiscountItems()
+    {
+        return [
+            [
+                'value' => '11',
+                'percent' => '11',
+                'amount' => '11.11',
+                'type' => OrderDiscount::TYPE_PERCENT,
+                'description' => 'some test description'
+            ],
+            [
+                'value' => '22.22',
+                'percent' => '22',
+                'amount' => '22.22',
+                'type' => OrderDiscount::TYPE_AMOUNT,
+                'description' => 'some other test description'
+            ]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getExpectedDiscountItems()
+    {
+        return [
+            [
+                'value' => '11',
+                'percent' => '11',
+                'amount' => '11.1100',
+                'type' => '%',
+                'description' => 'some test description'
+            ],
+            [
+                'value' => '22.2200',
+                'percent' => '2.2220',
+                'amount' => '22.2200',
+                'type' => 'USD',
+                'description' => 'some other test description'
+            ]
+        ];
+    }
+
+    /**
+     * @param $date
+     * @return array
+     */
+    protected function getLineItemsToUpdate($date)
+    {
+        /** @var Product $product */
+        $product = $this->getReference('product.1');
+
+        return [
+            [
+                'freeFormProduct' => 'Free form product',
+                'quantity' => 20,
+                'productUnit' => 'liter',
+                'price' => [
+                    'value' => 200,
+                    'currency' => 'USD'
+                ],
+                'priceType' => OrderLineItem::PRICE_TYPE_BUNDLED,
+                'shipBy' => $date
+            ],
+            [
+                'product' => $product->getId(),
+                'quantity' => 1,
+                'productUnit' => 'bottle',
+                'price' => [
+                    'value' => 10,
+                    'currency' => 'USD'
+                ],
+                'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
+                'shipBy' => $date
+            ]
+        ];
+    }
+
+    /**
+     * @param $date
+     * @return array
+     */
+    protected function getExpectedLineItemsAfterUpdate($date)
+    {
+        /** @var Product $product */
+        $product = $this->getReference('product.1');
+
+        return [
+            [
+                'product' => '',
+                'freeFormProduct' => 'Free form product',
+                'quantity' => 20,
+                'productUnit' => 'orob2b.product_unit.liter.label.full',
+                'price' => [
+                    'value' => 200,
+                    'currency' => 'USD'
+                ],
+                'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
+                'shipBy' => $date
+            ],
+            [
+                'product' => $product->getId(),
+                'freeFormProduct' => '',
+                'quantity' => 1,
+                'productUnit' => 'orob2b.product_unit.bottle.label.full',
+                'price' => [
+                    'value' => 10,
+                    'currency' => 'USD'
+                ],
+                'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
+                'shipBy' => $date
+            ]
+        ];
     }
 }

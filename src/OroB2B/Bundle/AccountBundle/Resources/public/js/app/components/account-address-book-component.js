@@ -24,7 +24,8 @@ define(function(require) {
                             options.addressUpdateRouteName,
                             {'id': address.get('id'), 'entityId': options.entityId}
                         );
-                    }
+                    },
+                    addressMapOptions: {'phone': 'phone'}
                 });
                 widget.getAction('add_address', 'adopted', function(action) {
                     action.on('click', _.bind(addressBook.createAddress, addressBook));

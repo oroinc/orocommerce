@@ -90,8 +90,8 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider parseDataDataProvider
-     * @param $data
-     * @param $expected
+     * @param array $data
+     * @param array $expected
      */
     public function testParseData($data, $expected)
     {
