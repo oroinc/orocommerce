@@ -62,9 +62,9 @@ class ExceptionControllerTest extends WebTestCase
             $this->getUrl('orob2b_product_frontend_product_view', ['id' => $product->getId()])
         );
         $result = $this->client->getResponse();
-        $expectedCode = 401;
+        $expectedCode = 403;
         $this->assertHtmlResponseStatusCodeEquals($result, $expectedCode);
-        $this->assertContains($expectedCode, $crawler->html());
-        $this->assertContains('Unauthorized', $crawler->html());
+        $this->assertContains((string)$expectedCode, $crawler->html());
+        $this->assertContains('Forbidden', $crawler->html());
     }
 }
