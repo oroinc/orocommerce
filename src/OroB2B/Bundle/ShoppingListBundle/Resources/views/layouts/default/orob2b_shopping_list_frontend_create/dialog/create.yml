@@ -6,6 +6,10 @@ layout:
             id: widget_content
             optionName: 'vars.savedId'
             optionValue: { @value: $data.savedId }
+        - @setOption:
+            id: widget_content
+            optionName: 'vars.shoppingListLabel'
+            optionValue: { @value: $data.shoppingList.label }
         - @addTree:
             items:
                 form_errors:

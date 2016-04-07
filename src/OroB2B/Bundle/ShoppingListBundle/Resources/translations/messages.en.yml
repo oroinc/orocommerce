@@ -21,6 +21,8 @@ orob2b:
         website.label: Website
         btn:
             create_order: 'Create Order'
+        flash:
+            success: 'Shopping list "%shoppinglist%" was created successfully'
 
         create_new_form:
             input_label: Shopping List Name
@@ -32,7 +34,7 @@ orob2b:
         product:
             add_to_shopping_list.label: Add to Shopping List
             create_new_shopping_list.label: Create New Shopping List
-            added.label: Product has been added
+            added.label: 'Product has been added to "%shoppinglist%"'
 
         actions:
             set_current: Set as current
