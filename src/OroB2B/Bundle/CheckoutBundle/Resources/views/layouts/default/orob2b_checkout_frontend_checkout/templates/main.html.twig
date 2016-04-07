@@ -111,7 +111,7 @@
                                 {{ lineItem.freeFormProduct }}
                             {% endif %}
                         </h3>
-                        <div>{{ 'orob2b.checkout.order_summary.sku'|trans }} #: <span class="red">{{ productSku }}</span></div>
+                        <div>{{ 'orob2b.checkout.order_summary.item'|trans }} #: <span class="red">{{ productSku }}</span></div>
                     </td>
                     {% set quantity = lineItem.quantity %}
                     <td class="text-center va-t_md">{{ quantity ? quantity|orob2b_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
