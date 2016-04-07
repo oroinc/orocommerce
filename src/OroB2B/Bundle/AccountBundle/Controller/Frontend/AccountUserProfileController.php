@@ -2,10 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,9 +14,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
 use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
 
 class AccountUserProfileController extends Controller
 {
@@ -158,8 +153,8 @@ class AccountUserProfileController extends Controller
         }
 
         return [
-            'data' =>[
-                'entity'=>$accountUser
+            'data' => [
+                'entity' => $accountUser
             ]
         ];
     }
