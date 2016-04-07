@@ -96,6 +96,7 @@ class CreditCardTypeTest extends FormIntegrationTestCase
                             'constraints' => [
                                 new Integer(),
                                 new NotBlank(),
+                                new Length(['min' => '12', 'max' => '19'])
                             ],
                         ],
                     ],
