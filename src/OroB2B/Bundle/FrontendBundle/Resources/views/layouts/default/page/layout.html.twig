@@ -65,6 +65,10 @@
     </script>
 {% endblock %}
 
+{% block _favicon_widget %}
+    <link rel="shortcut icon" href="{{ asset('bundles/orob2bfrontend/default/images/favicon.ico', version='1.0') }}" />
+{% endblock %}
+
 {% block _wrapper_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " wrapper"

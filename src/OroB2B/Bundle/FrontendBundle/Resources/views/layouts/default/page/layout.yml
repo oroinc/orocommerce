@@ -52,3 +52,7 @@ layout:
             id: title
             optionName: reverse
             optionValue: true
+        - @add:
+            id: favicon
+            parentId: head
+            blockType: block
