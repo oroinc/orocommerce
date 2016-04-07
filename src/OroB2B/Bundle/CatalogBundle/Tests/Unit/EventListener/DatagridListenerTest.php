@@ -19,6 +19,8 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
     const QUERY_AND_PATH = '[source][query][where][and]';
+    const OPTIONS_CATEGORY = '[options][urlParams][categoryId]';
+    const OPTIONS_SUBCATEGORY = '[options][urlParams][includeSubcategories]';
     const CATEGORY_ID_ALIAS = 'productCategoryIds';
 
     /**
@@ -151,6 +153,15 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
             $event->getConfig()->offsetGetByPath(DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH)
         );
 
+        $this->assertEquals(
+            $catId,
+            $event->getConfig()->offsetGetByPath(self::OPTIONS_CATEGORY)
+        );
+        $this->assertEquals(
+            $includeSubcategoriesChoice,
+            $event->getConfig()->offsetGetByPath(self::OPTIONS_SUBCATEGORY)
+        );
+
         $this->listener->onPreBuildProducts($event);
         $this->assertCount(1, $event->getConfig()->offsetGetByPath('[source][query][join][left]'));
     }
@@ -178,6 +189,12 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                 'includeSubcategories' => false,
                 'childrenIds' => [],
                 'expectedParameters' => ['productCategoryIds' => [1]]
+            ],
+            [
+                'catId' => 2,
+                'includeSubcategories' => true,
+                'childrenIds' => [1],
+                'expectedParameters' => ['productCategoryIds' => [1, 2]]
             ],
         ];
     }
