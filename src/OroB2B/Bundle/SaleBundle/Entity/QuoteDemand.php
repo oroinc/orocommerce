@@ -162,7 +162,7 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
      */
     public function getSourceDocument()
     {
-        $this->quote;
+        return $this->quote;
     }
 
     /**
