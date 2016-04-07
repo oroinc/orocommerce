@@ -5,23 +5,8 @@ namespace OroB2B\Bundle\FrontendBundle\EventListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
-
-class DatagridBottomToolbarListener
+class DatagridBottomToolbarListener extends AbstractFrontendDatagridListener
 {
-    /**
-     * @var FrontendHelper
-     */
-    protected $frontendHelper;
-
-    /**
-     * @param FrontendHelper $frontendHelper
-     */
-    public function __construct(FrontendHelper $frontendHelper)
-    {
-        $this->frontendHelper = $frontendHelper;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -39,7 +24,7 @@ class DatagridBottomToolbarListener
      */
     protected function isApplicable(DatagridConfiguration $config)
     {
-        return $this->frontendHelper->isFrontendRequest() &&
+        return parent::isFrontendRequest($config) &&
             $config->offsetGetByPath('[options][toolbarOptions][placement][bottom]') === null;
     }
 }
