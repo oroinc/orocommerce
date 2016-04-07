@@ -96,9 +96,9 @@ class ThemeListener
 
         $request = $event->getRequest();
 
-//        if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
-//            return;
-//        }
+        if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
+            return;
+        }
 
         if (!$this->helper->isFrontendRequest($request)) {
             return;
