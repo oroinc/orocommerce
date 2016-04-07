@@ -129,7 +129,7 @@ class AccountUserProfileController extends Controller
      * Edit account user form
      *
      * @Route("/profile/update", name="orob2b_account_frontend_account_user_profile_update")
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:updateProfile.html.twig")
+     * @Layout()
      * @AclAncestor("orob2b_account_frontend_account_user_update")
      *
      * @param Request $request
@@ -138,13 +138,13 @@ class AccountUserProfileController extends Controller
     public function updateAction(Request $request)
     {
         $accountUser = $this->getUser();
-        $form = $this->createForm(FrontendAccountUserProfileType::NAME, $accountUser);
+        $form = $this->get('orob2b_account.provider.frontend_account_user_profile_form')->getForm($accountUser);
         $handler = new FrontendAccountUserHandler(
             $form,
             $request,
             $this->get('orob2b_account_user.manager')
         );
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        $resultHandler = $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
             ['route' => 'orob2b_account_frontend_account_user_profile_update'],
@@ -152,5 +152,15 @@ class AccountUserProfileController extends Controller
             $this->get('translator')->trans('orob2b.account.controller.accountuser.profile_updated.message'),
             $handler
         );
+
+        if ($resultHandler instanceof Response) {
+            return $resultHandler;
+        }
+
+        return [
+            'data' =>[
+                'entity'=>$accountUser
+            ]
+        ];
     }
 }
