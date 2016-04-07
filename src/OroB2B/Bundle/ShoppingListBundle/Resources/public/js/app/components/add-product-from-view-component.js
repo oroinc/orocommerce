@@ -140,7 +140,7 @@ define(function(require) {
         },
 
         transformCreateNewButton: function() {
-            var $button = this.options._sourceElement.find('[data-id=""]');
+            var $button = $('[data-url="orob2b_shopping_list_frontend_add_product"][data-id=""]');
             if ($button.length) {
                 $button.data('intention', this.options.intention.new);
                 $button.html('Create New Shopping List');
