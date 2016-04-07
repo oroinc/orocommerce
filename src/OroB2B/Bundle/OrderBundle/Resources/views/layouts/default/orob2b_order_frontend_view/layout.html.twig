@@ -103,15 +103,3 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
-
-{% block text_not_empty_widget %}
-    {% if text is defined and text is not empty %}
-        {{ block_widget(block) }}
-    {% endif %}
-{% endblock %}
-
-{% block date_not_empty_widget %}
-    {% if date is defined and date is not empty %}
-        {{ block_widget(block) }}
-    {% endif %}
-{% endblock %}

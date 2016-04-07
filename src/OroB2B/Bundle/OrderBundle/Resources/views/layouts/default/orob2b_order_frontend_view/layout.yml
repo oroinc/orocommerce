@@ -136,20 +136,23 @@ layout:
                     options:
                         text: {@value: $data.order.customerNotes}
                         label: 'orob2b.order.customer_notes.label'
-                        block_prefixes: ['order_body_column_element', 'text_not_empty']
+                        block_prefixes: ['order_body_column_element']
+                        visible: { @not_empty: $data.order.customerNotes }
                 order_ship_until:
                     blockType: date
                     options:
                         date: {@value: $data.order.shipUntil}
                         dateType: 3
                         label: 'orob2b.order.ship_until.label'
-                        block_prefixes: ['order_body_column_element', 'date_not_empty']
+                        block_prefixes: ['order_body_column_element']
+                        visible: { @not_empty: $data.order.shipUntil }
                 order_po_number:
                     blockType: text
                     options:
                         text: {@value: $data.order.poNumber }
                         label: 'orob2b.order.po_number.label'
-                        block_prefixes: ['order_body_column_element', 'text_not_empty']
+                        block_prefixes: ['order_body_column_element']
+                        visible: { @not_empty: $data.order.poNumber }
                 order_total:
                     blockType: order_total
                     options:
