@@ -129,7 +129,7 @@ class FrontendAccountUserProfileFormProviderTest extends \PHPUnit_Framework_Test
         $view = $this->getMock('Symfony\Component\Form\FormView');
         $view->vars = ['multipart' => null];
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')->disableOriginalConstructor()->getMock();
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
         $form->expects($this->any())
             ->method('getConfig')
