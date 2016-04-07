@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Method;
 
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -155,6 +157,18 @@ class PayflowGateway implements PaymentMethodInterface
         $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
 
         $response['formAction'] = $this->gateway->getFormAction();
+
+        if (!$paymentTransaction->isSuccessful()) {
+            $response['message'] = 'orob2b.payment.result.error';
+            $response['type'] = 'error';
+
+            $paymentTransactionResponse = new Response($paymentTransaction->getResponse());
+            $secureTokenErrors = [ResponseStatusMap::SECURE_TOKEN_EXPIRED];
+            if (in_array($paymentTransactionResponse->getResult(), $secureTokenErrors, true)) {
+                $response['message'] = 'orob2b.payment.result.token_expired';
+                $response['type'] = 'warning';
+            }
+        }
 
         return $response;
     }

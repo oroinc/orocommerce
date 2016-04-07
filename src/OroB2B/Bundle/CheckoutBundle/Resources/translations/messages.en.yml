@@ -25,6 +25,8 @@ orob2b:
         workflow_step.label: Workflow Step
         shipping_estimate_amount.label: Shipping Estimate Ammount
         shipping_estimate_currency.label: Shipping Estimate Currency
+        payment_method.label: Payment Method
+        order.label: Order
 
         checkoutsource:
             entity_label: Checkout Source

@@ -96,20 +96,15 @@ define(function(require) {
                 data.push({name: 'ERRORURL', value: resolvedEventData.errorUrl});
 
                 if (!resolvedEventData.formAction || !resolvedEventData.SECURETOKEN) {
-                    mediator.execute(
-                        'redirectTo',
-                        {url: resolvedEventData.errorUrl + '?' + $.param(data)}, {redirect: true}
-                    );
-
-                    return;
+                    return this.postUrl(resolvedEventData.errorUrl, data);
                 }
 
-                this.postUrl(resolvedEventData.formAction, data);
+                return this.postUrl(resolvedEventData.formAction, data);
             }
         },
 
         postUrl: function(formAction, data) {
-            var $form = $('<form action="' + formAction + '">');
+            var $form = $('<form action="' + formAction + '" method="POST">');
             _.each(data, function(field) {
                 var $field = $('<input>')
                     .prop('type', 'hidden')

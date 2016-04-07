@@ -101,3 +101,7 @@ orob2b:
             pending: Pending payment
             declined: Payment declined
             partially: Paid partially
+
+        result:
+            token_expired: Authorization token expired, please try one more time
+            error: Payment failed
