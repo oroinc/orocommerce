@@ -13,7 +13,6 @@ use Doctrine\Common\Collections\Collection;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use OroB2B\Component\Checkout\Entity\SourceDocumentAwareInterface;
 
 /**
  *
@@ -27,11 +26,7 @@ use OroB2B\Component\Checkout\Entity\SourceDocumentAwareInterface;
  *      }
  * )
  */
-class QuoteDemand implements
-    CheckoutSourceEntityInterface,
-    LineItemsAwareInterface,
-    ShippingAwareInterface,
-    SourceDocumentAwareInterface
+class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterface, ShippingAwareInterface
 {
     /**
      * @var int

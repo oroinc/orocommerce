@@ -20,7 +20,6 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use OroB2B\Component\Checkout\Entity\SourceDocumentAwareInterface;
 
 /**
  * @ORM\Table(
@@ -61,8 +60,7 @@ class ShoppingList extends ExtendShoppingList implements
     CurrencyAwareInterface,
     AccountOwnerAwareInterface,
     WebsiteAwareInterface,
-    CheckoutSourceEntityInterface,
-    SourceDocumentAwareInterface
+    CheckoutSourceEntityInterface
 {
     /**
      * @var int
