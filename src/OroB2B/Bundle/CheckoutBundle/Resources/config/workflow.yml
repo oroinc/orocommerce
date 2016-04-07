@@ -350,10 +350,10 @@ workflows:
                         parameters: [$.result.shippingAddress, $checkout.billingAddress]
 
                     # Place order
+                    - @get_class_name:
+                        object: $checkout.sourceEntity.sourceDocument
+                        attribute: $.result.sourceDocumentEntityClassName
                     - @create_entity:
-                        - @get_class_name:
-                            object: $checkout.sourceEntity.sourceDocument
-                            attribute: $.result.sourceDocumentEntityClassName
                         conditions:
                             @empty: $checkout.order
                         parameters:
