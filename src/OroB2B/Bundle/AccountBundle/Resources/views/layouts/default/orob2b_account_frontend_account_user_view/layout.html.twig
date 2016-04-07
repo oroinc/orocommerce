@@ -58,7 +58,7 @@
                     {{ UI.renderHtmlProperty('orob2b.account.accountuser.email.label'|trans, Email.email_address_simple(entity.email)) }}
 
                     {% if entity.account %}
-                        {{ UI.renderHtmlProperty('orob2b.account.accountuser.account.label'|trans, UI.entityViewLink(entity.account, entity.account.name)) }}
+                        {{ UI.renderHtmlProperty('orob2b.account.accountuser.profile.company_name'|trans, entity.account.name) }}
                     {% endif %}
 
                     {% if resource_granted('orob2b_account_account_user_role_view') %}
