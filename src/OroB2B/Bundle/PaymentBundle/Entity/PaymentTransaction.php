@@ -395,7 +395,7 @@ class PaymentTransaction
      */
     public function setSuccessful($successful)
     {
-        $this->successful = $successful;
+        $this->successful = (bool)$successful;
 
         return $this;
     }
@@ -433,7 +433,7 @@ class PaymentTransaction
      */
     public function setAccessIdentifier($accessIdentifier)
     {
-        $this->accessIdentifier = $accessIdentifier;
+        $this->accessIdentifier = (string)$accessIdentifier;
 
         return $this;
     }
@@ -452,7 +452,7 @@ class PaymentTransaction
      */
     public function setAccessToken($accessToken)
     {
-        $this->accessToken = $accessToken;
+        $this->accessToken = (string)$accessToken;
 
         return $this;
     }
