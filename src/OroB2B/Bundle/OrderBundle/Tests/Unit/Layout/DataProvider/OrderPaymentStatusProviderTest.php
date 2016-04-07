@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Layout\Provider;
+namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Component\Layout\ContextDataCollection;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\PaymentBundle\Layout\DataProvider\OrderPaymentStatusProvider;
+use OroB2B\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentStatusProvider;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 
 class OrderPaymentStatusProviderTest extends \PHPUnit_Framework_TestCase

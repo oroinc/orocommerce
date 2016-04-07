@@ -143,6 +143,12 @@ layout:
                         label: 'orob2b.order.customer_notes.frontend.label'
                         text: {@value: $data.order.customerNotes}
                         block_prefixes: ['order_body_column_element']
+                order_payment_status:
+                    blockType: text
+                    options:
+                        text: {@value: $data.orob2b_order_frontend_payment_status_provider }
+                        label: 'orob2b.payment.status.label'
+                        block_prefixes: ['order_body_column_element']
                 order_total:
                     blockType: order_total
                     options:
@@ -163,6 +169,7 @@ layout:
                                     order_body_column_right:
                                         order_po_number: ~
                                         order_shipping_method: ~
+                                        order_payment_status: ~
                                         order_notes: ~
                             order_line_items_grid_container:
                                 order_ine_items_grid_head_container:

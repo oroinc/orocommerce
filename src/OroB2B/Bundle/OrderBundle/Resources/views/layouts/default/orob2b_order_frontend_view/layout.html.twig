@@ -105,9 +105,17 @@
 {% endblock %}
 
 {% block _order_po_number_widget %}
-    {{ text ?: 'oro.ui.empty'|trans }}
+    {{ text|default('oro.ui.empty'|trans) }}
 {% endblock %}
 
 {% block _order_notes_widget %}
-    {{ text ?: 'oro.ui.empty'|trans }}
+    {{ text|default('oro.ui.empty'|trans) }}
+{% endblock %}
+
+{% block _order_payment_status_widget %}
+    {% if text is not empty %}
+        {{ 'orob2b.payment.status.%s'|format(text)|trans }}
+    {% else %}
+        {{ 'oro.ui.empty'|trans }}
+    {% endif %}
 {% endblock %}

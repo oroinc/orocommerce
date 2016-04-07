@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Layout\DataProvider;
+namespace OroB2B\Bundle\OrderBundle\Layout\DataProvider;
 
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
