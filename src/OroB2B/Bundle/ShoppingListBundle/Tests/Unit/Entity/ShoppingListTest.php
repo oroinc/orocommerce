@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -13,6 +14,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 class ShoppingListTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
+    use EntityTrait;
 
     public function testProperties()
     {
@@ -55,5 +57,19 @@ class ShoppingListTest extends \PHPUnit_Framework_TestCase
         $shoppingList = new ShoppingList();
         $shoppingList->preUpdate();
         $this->assertInstanceOf('\DateTime', $shoppingList->getUpdatedAt());
+    }
+
+    public function testSourceDocument()
+    {
+        $shoppingList = $this->getEntity(
+            'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList',
+            [
+                'id' => 1,
+                'label' => 'TEST'
+            ]
+        );
+
+        $this->assertSame($shoppingList, $shoppingList->getSourceDocument());
+        $this->assertEquals('TEST', $shoppingList->getSourceDocumentIdentifier());
     }
 }

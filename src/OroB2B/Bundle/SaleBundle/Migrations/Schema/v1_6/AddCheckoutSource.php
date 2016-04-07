@@ -87,7 +87,7 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
         $table = $schema->createTable('orob2b_quote_product_demand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('quote_demand_id', 'integer', ['notnull' => false]);
-        $table->addColumn('quote_product_offer', 'integer', ['notnull' => false]);
+        $table->addColumn('quote_product_offer_id', 'integer', ['notnull' => false]);
         $table->addColumn('quantity', 'float', []);
         $table->setPrimaryKey(['id']);
     }
@@ -103,6 +103,12 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_quote_demand'),
             ['quote_demand_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_sale_quote_prod_offer'),
+            ['quote_product_offer_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

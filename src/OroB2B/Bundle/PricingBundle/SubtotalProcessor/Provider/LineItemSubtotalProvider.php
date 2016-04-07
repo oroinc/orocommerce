@@ -95,6 +95,10 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements Subto
      */
     public function getRowTotal(PriceAwareInterface $lineItem, $baseCurrency)
     {
+        if (!$lineItem->getPrice()) {
+            return 0;
+        }
+
         $rowTotal = $lineItem->getPrice()->getValue();
         $rowCurrency = $lineItem->getPrice()->getCurrency();
 

@@ -33,10 +33,7 @@
                     placeholder: null,
                     labelPrefix: '{{ 'oro.ui.filter.by'|trans  }} '
                 },
-                'orofilter/js/filter-hint': {inline: false},
-                'orob2bshoppinglist/js/app/widget/shopping-list-widget': {
-                    routeParams: {_theme: 'default'}
-                }
+                'orofilter/js/filter-hint': {inline: false}
             }
         });
         require({
@@ -47,7 +44,8 @@
                 chosen: 'orob2bfrontend/default/js/vendors/chosen.jquery.min',
                 slick: 'orob2bfrontend/default/js/vendors/slick.min',
                 perfectScrollbar: 'orob2bfrontend/default/js/vendors/perfect-scrollbar.jquery.min',
-                fastclick: 'orob2bfrontend/default/js/vendors/fastclick'
+                fastclick: 'orob2bfrontend/default/js/vendors/fastclick',
+                elevatezoom: 'orob2bfrontend/default/vendors/elevatezoom/jquery.elevatezoom'
             },
             shim: {
                 raty: {deps: ['jquery']}

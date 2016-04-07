@@ -57,14 +57,18 @@ define(function(require) {
             data.url = url;
             $.ajax(data)
                 .done(_.bind(this.onSuccess, this))
-                .fail(_.bind(this.onFail, this))
-                .always(function() {
-                    mediator.execute('hideLoading');
-                });
+                .fail(_.bind(this.onFail, this));
         },
 
         onSuccess: function(response) {
             this.inProgress = false;
+
+            if (response.hasOwnProperty('responseData')) {
+                var eventData = {stopped: false, responseData: response.responseData};
+                mediator.trigger('checkout:place-order:response', eventData);
+                if (eventData.stopped) { return; }
+            }
+
             if (response.hasOwnProperty('redirectUrl')) {
                 mediator.execute('redirectTo', {url: response.redirectUrl}, {redirect: true});
             } else {
@@ -82,10 +86,13 @@ define(function(require) {
 
                 mediator.trigger('checkout-content:updated');
             }
+
+            mediator.execute('hideLoading');
         },
 
         onFail: function() {
             this.inProgress = false;
+            mediator.execute('hideLoading');
             mediator.execute('showFlashMessage', 'error', 'Could not perform transition');
         },
 
