@@ -5590,16 +5590,33 @@
           padding-left: 0;
         }
 
+        &:last-child {
+          padding-right: 0;
+        }
+
         padding: 1rem 1.2rem;
         border-top: .1rem solid @table-alt-border-color;
+
+        text-align: left;
+      }
+    }
+
+    .table {
+      td:first-child {
+        text-align: left;
+      }
+
+      td:last-child {
+        text-align: right;
       }
     }
   }
 }
 
 .checkout-order-summary__price-table {
-  max-width: 25rem;
-  display: inline-block;
+  max-width: 22.5rem;
+
+  margin-left: auto;
 
   .table {
     margin: 0;
