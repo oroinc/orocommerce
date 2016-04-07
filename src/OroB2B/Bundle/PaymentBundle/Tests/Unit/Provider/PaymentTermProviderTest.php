@@ -4,8 +4,11 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
@@ -15,6 +18,11 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
     protected $registry;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
+     */
+    protected $tokenStorage;
 
     /**
      * @var string
@@ -29,8 +37,10 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->tokenStorage = $this
+            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
 
-        $this->provider = new PaymentTermProvider($this->registry, $this->paymentTermClass);
+        $this->provider = new PaymentTermProvider($this->registry, $this->tokenStorage, $this->paymentTermClass);
     }
 
     protected function tearDown()
@@ -85,9 +95,9 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     'getOnePaymentTermByAccountGroup' => [
                         'expects' => $this->never(),
-                    ]
+                    ],
                 ],
-                'expected' => $paymentTerm
+                'expected' => $paymentTerm,
             ],
             [
                 'account' => $account,
@@ -98,10 +108,10 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
                         'willReturn' => null,
                     ],
                     'getOnePaymentTermByAccountGroup' => [
-                        'expects' => $this->never()
-                    ]
+                        'expects' => $this->never(),
+                    ],
                 ],
-                'expected' => null
+                'expected' => null,
             ],
             [
                 'account' => $accountWithGroup,
@@ -115,9 +125,9 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
                         'expects' => $this->once(),
                         'with' => $accountWithGroup->getGroup(),
                         'willReturn' => $paymentTerm,
-                    ]
+                    ],
                 ],
-                'expected' => $paymentTerm
+                'expected' => $paymentTerm,
             ],
             [
                 'account' => $accountWithGroup,
@@ -131,10 +141,10 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
                         'expects' => $this->once(),
                         'with' => $accountWithGroup->getGroup(),
                         'willReturn' => null,
-                    ]
+                    ],
                 ],
-                'expected' => null
-            ]
+                'expected' => null,
+            ],
         ];
     }
 
@@ -159,5 +169,36 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($manager);
 
         return $repository;
+    }
+
+    public function testGetCurrentWithoutToken()
+    {
+        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn(null);
+
+        $this->assertNull($this->provider->getCurrentPaymentTerm());
+    }
+
+    public function testGetCurrentWithoutUser()
+    {
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->once())->method('getUser')->willReturn(null);
+        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
+
+        $this->assertNull($this->provider->getCurrentPaymentTerm());
+    }
+
+    public function testGetCurrent()
+    {
+        $repository = $this->assertPaymentTermRepositoryCall();
+        $paymentTerm = new PaymentTerm();
+        $repository->expects($this->once())->method('getOnePaymentTermByAccount')->willReturn($paymentTerm);
+
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $accountUser = new AccountUser();
+        $accountUser->setAccount(new Account());
+        $token->expects($this->once())->method('getUser')->willReturn($accountUser);
+        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
+
+        $this->assertSame($paymentTerm, $this->provider->getCurrentPaymentTerm());
     }
 }

@@ -12,3 +12,10 @@ oro_organziation_api:
         _format:  json
     defaults:
         version:  latest
+
+orob2b_payment_callback:
+    resource:     "@OroB2BPaymentBundle/Controller/Frontend/CallbackController.php"
+    type:         annotation
+    prefix:       /payment/callback
+    options:
+        frontend: true
