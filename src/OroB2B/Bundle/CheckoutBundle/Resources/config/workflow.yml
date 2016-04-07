@@ -350,6 +350,9 @@ workflows:
                         parameters: [$.result.shippingAddress, $checkout.billingAddress]
 
                     # Place order
+                    - @get_class_name:
+                        object: $checkout.sourceEntity.sourceDocument
+                        attribute: $.result.sourceDocumentEntityClassName
                     - @create_entity:
                         conditions:
                             @empty: $checkout.order
@@ -363,12 +366,15 @@ workflows:
                                 organization: $checkout.organization
                                 account: $checkout.account
                                 accountUser: $checkout.accountUser
+                                sourceEntityClass: $.result.sourceDocumentEntityClassName
+                                sourceEntityId: $checkout.sourceEntity.sourceDocument.id
                     - @assign_value: [$checkout.order.billingAddress, $checkout.billingAddress]
                     - @assign_value: [$checkout.order.shippingAddress, $.result.shippingAddress]
                     - @assign_value: [$checkout.order.shippingCost, $checkout.shippingCost]
                     - @assign_value: [$checkout.order.poNumber, $checkout.poNumber]
                     - @assign_value: [$checkout.order.customerNotes, $checkout.customerNotes]
                     - @assign_value: [$checkout.order.shipUntil, $checkout.shipUntil]
+                    - @assign_value: [$checkout.order.sourceEntityIdentifier, $checkout.sourceEntity.sourceDocumentIdentifier]
                     - @get_order_line_items:
                         attribute: $.result.lineItems
                         checkout: $checkout
