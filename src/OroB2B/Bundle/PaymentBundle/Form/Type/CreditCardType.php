@@ -41,6 +41,7 @@ class CreditCardType extends AbstractType
                     'constraints' => [
                         new Integer(),
                         new NotBlank(),
+                        new Length(['min' => '12', 'max' => '19'])
                     ],
                 ]
             )
