@@ -105,6 +105,10 @@ define(function(require) {
             if (_.isObject(this.options.$currency)) {
                 this.options.$currency.change(_.bind(this.renderTierPrices, this));
             }
+            mediator.on('entry-point:order:load', _.bind(function(response) {
+                this.tierPrices = response.tierPrices;
+                this.updateTierPrices();
+            }, this));
 
             if (this.options.$priceValue.is(':input')) {
                 this.$tierButton.on('click', 'a[data-price]', _.bind(this.setPriceFromTier, this));
