@@ -144,7 +144,7 @@ class RequestControllerTest extends WebTestCase
             $this->assertContains($request->getShipUntil()->format('M j, Y'), $result->getContent());
         }
 
-        $controls = $crawler->filter('.control-group');
+        $controls = $crawler->filter('.account-oq__order-info__control');
         static::assertEquals($expectedData['columnsCount'], count($controls));
     }
 

@@ -169,7 +169,7 @@ orob2b:
                     account_user: Account User Address Book
 
         subtotals:
-            shipping_cost: Shipping Cost
+            shipping_cost: Shipping
             discount: Discount
 
         sales_orders.label: 'Sales Orders'
