@@ -2,10 +2,11 @@
 
 {%- block form_label -%}
     {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
+    {% set modifier = modifier|default("__form__label") %}
     {% set label_attr = label_attr|merge({
         class: [
             label_attr.class|default(''),
-            class_prefix ~ "__form__label"
+            class_prefix ~ modifier
         ]|join(' ')
     }) %}
 
