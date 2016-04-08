@@ -1,7 +1,7 @@
 orob2b:
     alternativecheckout:
-        entity_label: Checkout
-        entity_plural_label: Checkouts
+        entity_label: Alternative Checkout
+        entity_plural_label: Alternative Checkouts
         id.label: Id
         owner.label: Owner
         account.label: Account
