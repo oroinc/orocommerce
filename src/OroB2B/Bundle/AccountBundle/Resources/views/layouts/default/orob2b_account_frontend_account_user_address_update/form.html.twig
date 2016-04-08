@@ -1,71 +1,79 @@
-{% macro group(field, size, placeholder) %}
-    {% set attr = placeholder?{placeholder:placeholder}:{} %}
-    <div class="form-group col-md-{{ size|default(8) }}">
-        {% if placeholder is empty %}
-            {{ form_label(field) }}
-        {% endif %}
-        {{ form_widget(field, {attr: attr}) }}
-    </div>
-{% endmacro %}
+{% extends 'OroB2BFrontendBundle:layouts/default:form_theme.html.twig' %}
+
 {% block orob2b_account_typed_address_widget %}
     {% import _self as draw %}
     {% spaceless %}
 
-        <div class="row">
-            {{ draw.group(form.label, 6) }}
-        </div>
-        <div class="row">
-            <div class="form-group col-md-2">
-                {{ form_widget(form.primary, {label: "orob2b.account.accountaddress.primary.label"|trans}) }}
+        <fieldset class="checkout__form__row">
+            {{ form_row(form.label, {'attr': {'placeholder': 'orob2b.account.frontend.address.form.placeholder.label'|trans}, 'parentClass': 'form__col_x12'}) }}
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            {{ form_row(form.primary, {'label' : 'orob2b.account.frontend.address.form.label.primary'|trans }) }}
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            {{ form_row(form.namePrefix, {'attr': {'placeholder': 'orob2b.account.frontend.address.form.placeholder.name.prefix'|trans}, 'parentClass': 'form__col_x8'}) }}
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            {{ form_row(form.firstName, {'attr': {'placeholder': 'orob2b.account.frontend.address.form.placeholder.first_name'|trans}}) }}
+            {{ form_row(form.middleName, {'attr': {'placeholder': 'orob2b.account.frontend.address.form.placeholder.middle_name'|trans}}) }}
+        </fieldset>
+        <fieldset class="checkout__form__row">
+            {{ form_row(form.lastName, {'attr': {'placeholder': 'orob2b.account.frontend.address.form.placeholder.last_name'|trans}}) }}
+            {{ form_row(form.nameSuffix, {'attr': {'placeholder': 'orob2b.account.frontend.address.form.placeholder.name_suffix'|trans}}) }}
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            {{ form_row(form.organization, {'attr': {'placeholder': 'orob2b.account.frontend.address.form.placeholder.organization'|trans}, 'parentClass': 'form__col_x12'}) }}
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            {{ form_row(form.phone, {'attr': {'placeholder': 'orob2b.account.frontend.address.form.placeholder.phone'|trans}, 'parentClass': 'form__col_x6'}) }}
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            {{ form_row(form.street, {'attr': {'placeholder': 'orob2b.account.frontend.address.form.placeholder.street'|trans}}) }}
+            {{ form_row(form.street2, {'attr': {'placeholder': 'orob2b.account.frontend.address.form.placeholder.street2'|trans}}) }}
+        </fieldset>
+        <fieldset class="checkout__form__row">
+            {{ form_row(form.city, {'attr': {'placeholder': 'orob2b.account.frontend.address.form.placeholder.city'|trans}, 'parentClass': 'form__col_x12'}) }}
+        </fieldset>
+        <fieldset class="checkout__form__row">
+            {{ form_row(form.country, {'parentClass': 'col-country'}) }}
+            {{ form_row(form.region, {'parentClass': ' '}) }}
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col col-zip">
+                {{- form_label(form.postalCode) -}}
+                {{- form_widget(form.postalCode, {'attr' : {'placeholder': 'orob2b.account.frontend.address.form.placeholder.zip'|trans}}) -}}
             </div>
-        </div>
+            <div class="checkout__form__col form__col_x8 col-zip-error">
+                {{- form_errors(form.postalCode) -}}
+            </div>
+        </fieldset>
 
-        <div class="row">
-            {{ draw.group(form.namePrefix, 2) }}
-        </div>
-        <div class="row">
-            {{ draw.group(form.firstName, 3) }}
-            {{ draw.group(form.middleName, 3) }}
-        </div>
-        <div class="row">
-            {{ draw.group(form.lastName, 3) }}
-            {{ draw.group(form.nameSuffix, 2) }}
-        </div>
-        <div class="row">
-            {{ draw.group(form.phone) }}
-        </div>
-        <div class="row">
-            {{ draw.group(form.organization, 8) }}
-        </div>
-        <div class="row">
-            {{ draw.group(form.street, 8) }}
-            {{ draw.group(form.street2, 8, 'orob2b.account.frontend.address.form.street2.placeholder') }}
-        </div>
-        <div class="row">
-            {{ draw.group(form.city, 3) }}
-            {{ draw.group(form.postalCode, 2) }}
-        </div>
-        <div class="row">
-            {{ draw.group(form.country, 3) }}
-            {{ draw.group(form.region, 3) }}
-        </div>
+        <fieldset class="checkout__form__row">
+            <style scoped>
+                .input > legend {
+                    width: auto;
+                    padding: 0 10px;
+                    border-bottom: none
+                }
+            </style>
+            <legend>
+                <small>{{ "orob2b.account.frontend.address.form.label.address_types"|trans }}:</small>
+            </legend>
+            {{ form_widget(form.types) }}
+            {{ form_widget(form.defaults) }}
+        </fieldset>
 
-        <div class="row">
-            <fieldset class="input col-md-6">
-                <style scoped>
-                    .input>legend {
-                        width:auto;
-                        padding:0 10px;
-                        border-bottom:none
-                    }
-                </style>
-                <legend>
-                    <small>{{ "orob2b.account.frontend.address.form.addressTypes.label"|trans }}:</small>
-                </legend>
-                {{ form_widget(form.types) }}
-                {{ form_widget(form.defaults) }}
-            </fieldset>
-        </div>
+        <fieldset class="hidden">
+            {{ form_widget(form.id) }}
+            {{ form_widget(form.region_text) }}
+        </fieldset>
     {% endspaceless %}
 {% endblock %}
 
@@ -80,5 +88,36 @@
                 {{ form_widget(child) }}
             </div>
         {% endfor %}
+    </div>
+{% endblock %}
+
+{%- block form_row -%}
+    <div class="checkout__form__col {{ parentClass|default('form__col_x6') }}">
+        {{- form_label(form, null, {'class_prefix': 'checkout'}) -}}
+        {{- form_widget(form, {'class_prefix': 'checkout'}) -}}
+        {{- form_errors(form, {'class_prefix': 'checkout'}) -}}
+    </div>
+{%- endblock form_row -%}
+
+{% block checkbox_row %}
+    {{- form_widget(form) -}}
+    {{- form_errors(form) -}}
+{% endblock %}
+
+{%- block form_label -%}
+    {% set label_attr = label_attr|merge({class: label_attr.class|default('') ~ "checkout__form__label_additional"}) %}
+
+    {{ parent() }}
+{%- endblock form_label -%}
+
+{% block orob2b_region_widget %}
+    <div class="checkout__form__select">
+        {{ block('oro_region_widget') }}
+    </div>
+{% endblock %}
+
+{% block orob2b_country_widget %}
+    <div class="checkout__form__select">
+        {{ form_widget(form, {'class_prefix': 'checkout'}) }}
     </div>
 {% endblock %}

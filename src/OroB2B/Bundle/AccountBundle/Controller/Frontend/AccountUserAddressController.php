@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
+use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
@@ -10,7 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
@@ -67,12 +67,9 @@ class AccountUserAddressController extends Controller
 
         $this->prepareEntities($accountUser, $accountAddress, $request);
 
-        $currentUser = $this->getUser();
+        $form = $this->get('orob2b_account.provider.fronted_account_user_address_form')->getForm($accountAddress);
 
-        $form = $this->createForm(
-            $this->get('orob2b_account.form.type.account_user_typed_address'),
-            $accountAddress
-        );
+        $currentUser = $this->getUser();
 
         $manager = $this->getDoctrine()->getManagerForClass(
             $this->container->getParameter('orob2b_account.entity.account_user_address.class')
@@ -108,8 +105,7 @@ class AccountUserAddressController extends Controller
                 }
 
                 return [
-                    'backToUrl' => $url,
-                    'form' => $form
+                    'backToUrl' => $url
                 ];
             }
         );
@@ -119,7 +115,7 @@ class AccountUserAddressController extends Controller
         }
 
         return [
-            'data' => $result
+            'data' => array_merge($result, ['accountUser' => $accountUser])
         ];
     }
 

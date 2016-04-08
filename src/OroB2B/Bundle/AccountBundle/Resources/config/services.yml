@@ -884,7 +884,6 @@ services:
         class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserAddressFormDataProvider
         arguments:
             - @form.factory
-            - @orob2b_account.form.type.account_user_typed_address
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_address_form }
 
