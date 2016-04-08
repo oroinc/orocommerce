@@ -57,7 +57,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.bottle');
 
-        $this->disableRealTimeCalculate();
+        $this->disableRealTimeModeCalculate();
 
         $crawler = $this->client->request(
             'GET',
