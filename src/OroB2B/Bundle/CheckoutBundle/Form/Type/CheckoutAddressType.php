@@ -80,7 +80,11 @@ class CheckoutAddressType extends AbstractOrderAddressType
     {
         $form = $event->getForm();
         $parent = $form->getParent();
-        $shipToBillingAddress = $parent->get('ship_to_billing_address')->getData();
+        $shipToBillingAddress = false;
+
+        if ($parent->has('ship_to_billing_address')) {
+            $shipToBillingAddress = $parent->get('ship_to_billing_address')->getData();
+        }
 
         if ($shipToBillingAddress && $form->getName() === self::SHIPPING_ADDRESS_NAME) {
             $form->setData(null);
