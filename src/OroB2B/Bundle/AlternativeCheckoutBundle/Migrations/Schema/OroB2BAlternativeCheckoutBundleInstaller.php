@@ -155,14 +155,14 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
             ['billing_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL'],
-            'fk_orob2b_order_address'
+            'fk_orob2b_order_address_billing'
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_order_address'),
             ['shipping_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL'],
-            'fk_orob2b_order_address'
+            'fk_orob2b_order_address_shipping'
         );
     }
 }

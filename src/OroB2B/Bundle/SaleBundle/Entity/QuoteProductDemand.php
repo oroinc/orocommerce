@@ -28,7 +28,7 @@ class QuoteProductDemand implements PriceAwareInterface, QuantityAwareInterface,
 
     /**
      * @var Quote
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\SaleBundle\Entity\QuoteDemand")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\SaleBundle\Entity\QuoteDemand", inversedBy="demandProducts")
      * @ORM\JoinColumn(name="quote_demand_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $quoteDemand;
@@ -36,7 +36,7 @@ class QuoteProductDemand implements PriceAwareInterface, QuantityAwareInterface,
     /**
      * @var QuoteProductOffer
      * @ORM\ManyToOne(targetEntity="QuoteProductOffer")
-     * @ORM\JoinColumn(name="quote_product_offer", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="quote_product_offer_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $quoteProductOffer;
 
