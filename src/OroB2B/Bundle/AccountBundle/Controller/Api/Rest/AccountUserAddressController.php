@@ -6,18 +6,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
+use FOS\RestBundle\Routing\ClassResourceInterface;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 
 /**
  * @NamePrefix("orob2b_api_account_")
  */
-class AccountUserAddressController extends AbstractAccountUserAddressController
+class AccountUserAddressController extends RestController implements ClassResourceInterface
 {
     /**
      * REST GET address
@@ -62,7 +66,19 @@ class AccountUserAddressController extends AbstractAccountUserAddressController
      */
     public function cgetAction($entityId)
     {
-        return parent::cgetAction($entityId);
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getAccountUserManager()->find($entityId);
+        $result  = [];
+
+        if ($accountUser) {
+            $items = $accountUser->getAddresses();
+
+            foreach ($items as $item) {
+                $result[] = $this->getPreparedItem($item);
+            }
+        }
+
+        return new JsonResponse($result, $accountUser ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -80,7 +96,16 @@ class AccountUserAddressController extends AbstractAccountUserAddressController
      */
     public function deleteAction($entityId, $addressId)
     {
-        return parent::deleteAction($entityId, $addressId);
+        /** @var AccountUserAddress $address */
+        $address = $this->getManager()->find($addressId);
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getAccountUserManager()->find($entityId);
+        if ($accountUser->getAddresses()->contains($address)) {
+            $accountUser->removeAddress($address);
+            return $this->handleDeleteRequest($addressId);
+        } else {
+            return $this->handleView($this->view(null, Response::HTTP_NOT_FOUND));
+        }
     }
 
     /**
@@ -138,5 +163,70 @@ class AccountUserAddressController extends AbstractAccountUserAddressController
         $responseData = $address ? json_encode($this->getPreparedItem($address)) : '';
 
         return new Response($responseData, $address ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
+    }
+
+    /**
+     * @return \Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+     */
+    protected function getAccountUserManager()
+    {
+        return $this->get('orob2b_account.account_user.manager.api');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getManager()
+    {
+        return $this->get('orob2b_account.account_user_address.manager.api');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getForm()
+    {
+        throw new \BadMethodCallException('Form is not available.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFormHandler()
+    {
+        throw new \BadMethodCallException('FormHandler is not available.');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getPreparedItem($entity, $resultFields = [])
+    {
+        // convert addresses to plain array
+        $addressTypesData = [];
+
+        /** @var $addressType AddressType */
+        foreach ($entity->getTypes() as $addressType) {
+            $addressTypesData[] = parent::getPreparedItem($addressType);
+        }
+
+        $addressDefaultsData = [];
+
+        /** @var  $defaultType AddressType */
+        foreach ($entity->getDefaults() as $defaultType) {
+            $addressDefaultsData[] = parent::getPreparedItem($defaultType);
+        }
+
+        $result                = parent::getPreparedItem($entity);
+        $result['types']       = $addressTypesData;
+        $result['defaults']    = $addressDefaultsData;
+        $result['countryIso2'] = $entity->getCountryIso2();
+        $result['countryIso3'] = $entity->getCountryIso2();
+        $result['regionCode']  = $entity->getRegionCode();
+        $result['country'] = $entity->getCountryName();
+
+        unset($result['frontendOwner']);
+
+        return $result;
     }
 }

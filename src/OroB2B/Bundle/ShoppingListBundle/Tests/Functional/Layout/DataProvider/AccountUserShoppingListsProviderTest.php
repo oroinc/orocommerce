@@ -30,7 +30,7 @@ class AccountUserShoppingListsProviderTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
 
-        $this->client->request('GET', $this->getUrl('_frontend'));
+        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
 
         $this->loadFixtures(
             [

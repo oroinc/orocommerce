@@ -5,9 +5,10 @@ namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
+use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessorInterface;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
+
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 
@@ -40,12 +41,12 @@ class FrontendAccountUserAddressFormDataProvider extends AbstractServerRenderDat
         $this->formFactory = $formFactory;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function getData(ContextInterface $context)
     {
-        /**
-         * @var AccountUserAddress $accountUserAddress
-         */
+        /** @var AccountUserAddress $accountUserAddress */
         $accountUserAddress = $context->data()->get('entity');
 
         $addressId = $accountUserAddress->getId();
