@@ -184,7 +184,7 @@ workflows:
             continue_to_order_review:
                 label: Continue
                 step_to: order_review
-                transition_definition: do_nothing
+                transition_definition: continue_to_order_review_definition
                 frontend_options:
                     is_checkout_continue: true
                 form_options:
@@ -308,7 +308,9 @@ workflows:
         transition_definitions:
             __start___definition:
                 pre_conditions:
-                    @assert_account: 4
+                    @and:
+                        - @assert_account: 4
+                        - @payment_method_enabled: 'payment_term'
             do_nothing: ~
             go_back_definition:
                 post_actions:
@@ -590,3 +592,6 @@ workflows:
                     - @create_datetime:
                         attribute: $checkout.allowRequestDate
 
+            continue_to_order_review_definition:
+                pre_conditions:
+                    @payment_method_enabled: 'payment_term'

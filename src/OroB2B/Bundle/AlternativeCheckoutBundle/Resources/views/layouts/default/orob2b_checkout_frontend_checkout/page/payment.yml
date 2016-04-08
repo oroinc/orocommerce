@@ -3,4 +3,7 @@ layout:
         - @setOption:
             id: payment_methods
             optionName: vars.views
-            optionValue: [{ @value: $data.orob2b_payment_methods_provider.PaymentTerm }]
+            optionValue: {'payment_term': { @value: $data.orob2b_payment_methods_provider.payment_term }}
+
+    conditions:
+        @payment_method_enabled: 'payment_term'

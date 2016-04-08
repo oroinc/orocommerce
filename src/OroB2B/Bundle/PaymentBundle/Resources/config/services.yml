@@ -22,6 +22,8 @@ parameters:
     orob2b_payment.event_listener.callback.redirect.class: OroB2B\Bundle\PaymentBundle\EventListener\Callback\RedirectListener
     orob2b_payment.event_listener.callback.payment_term.class: OroB2B\Bundle\PaymentBundle\EventListener\Callback\PaymentTermListener
 
+    orob2b_payment.condition.payment_method_enabled.class: OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodEnabled
+
 services:
     orob2b_payment.payment_term.manager.api:
         class: %orob2b_payment.payment_term.manager.api.class%
@@ -193,3 +195,12 @@ services:
             - '@orob2b_payment.provider.payment_term'
         tags:
             - { name: kernel.event_listener, event: orob2b_payment.callback.return, method: onReturn }
+
+    orob2b_payment.condition.payment_method_enabled:
+        class: '%orob2b_payment.condition.payment_method_enabled.class%'
+        arguments:
+            - '@orob2b_payment.payment_method.registry'
+        tags:
+            - { name: oro_workflow.condition, alias: 'payment_method_enabled' }
+            - { name: oro_action.condition, alias: 'payment_method_enabled' }
+            - { name: oro_layout.expression, alias: 'payment_method_enabled'  }
