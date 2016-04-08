@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
-use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
@@ -11,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
+use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 

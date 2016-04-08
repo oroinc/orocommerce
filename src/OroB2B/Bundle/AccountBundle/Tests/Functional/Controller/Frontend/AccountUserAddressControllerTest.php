@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\DomCrawler\Form;
+
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -9,8 +12,6 @@ use Oro\Component\Testing\Fixtures\LoadAccountUserData as OroLoadAccountUserData
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use Symfony\Component\DomCrawler\Field\ChoiceFormField;
-use Symfony\Component\DomCrawler\Form;
 
 /**
  * @dbIsolation

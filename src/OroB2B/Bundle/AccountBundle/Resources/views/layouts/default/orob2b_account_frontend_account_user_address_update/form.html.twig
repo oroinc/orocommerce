@@ -1,7 +1,6 @@
 {% extends 'OroB2BFrontendBundle:layouts/default:form_theme.html.twig' %}
 
 {% block orob2b_account_typed_address_widget %}
-    {% import _self as draw %}
     {% spaceless %}
         <fieldset class="checkout__form__row">
             {{ form_row(form.label, {'attr': {'placeholder': 'orob2b.account.frontend.address.form.placeholder.label'|trans}, 'parentClass': 'form__col_x12'}) }}

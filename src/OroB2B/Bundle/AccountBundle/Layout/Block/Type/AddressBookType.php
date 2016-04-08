@@ -28,6 +28,7 @@ class AddressBookType extends AbstractType
 
     /**
      * @param UrlGeneratorInterface $router
+     * @param FragmentHandler $fragmentHandler
      */
     public function __construct(UrlGeneratorInterface $router, FragmentHandler $fragmentHandler)
     {
