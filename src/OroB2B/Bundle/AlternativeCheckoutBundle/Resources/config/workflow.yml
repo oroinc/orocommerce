@@ -547,7 +547,7 @@ workflows:
 
                     - @tree:
                         conditions:
-                            @not_empty:  $.result.order.id
+                            @not_empty: $.result.order.id
                         actions:
                             - @assign_url:
                                 attribute: $.result.successUrl
