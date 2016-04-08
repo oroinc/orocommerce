@@ -12,6 +12,9 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Form;
 
+/**
+ * @dbIsolation
+ */
 class AccountUserAddressControllerTest extends WebTestCase
 {
     const ADDRESS_LABEL       = 'Address Label';
