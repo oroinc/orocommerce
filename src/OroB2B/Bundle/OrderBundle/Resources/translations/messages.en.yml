@@ -186,7 +186,7 @@ orob2b:
             thank_you: 'Thank You For Your Purchase!'
             order_number: 'Your order number is'
             click_to_review: 'click here to review'
-            receive_email: 'You will also receive a confirmation email with a link to view your order.'
+            receive_email: 'You will receive a confirmation email with your order details.'
             done: 'Done'
 
     frontend:
