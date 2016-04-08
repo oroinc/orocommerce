@@ -26,7 +26,7 @@ oro_system_configuration:
             title: orob2b.payment.system_configuration.groups.advansed_settings.title
 
         payment_term:
-            title: orob2b.payment.system_configuration.groups.payment_term.title
+            title: orob2b.payment.system_configuration.groups.payment_terms.title
         payment_term_display:
             title: orob2b.payment.system_configuration.groups.display_options.title
 

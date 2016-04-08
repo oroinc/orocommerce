@@ -44,7 +44,7 @@ class PaymentTermView implements PaymentMethodViewInterface
         if ($paymentTerm) {
             return [
                 'value' => $this->translator->trans(
-                    'orob2b.payment.payment_term.label',
+                    'orob2b.payment.payment_terms.label',
                     ['%paymentTerm%' => $paymentTerm->getLabel()]
                 ),
             ];

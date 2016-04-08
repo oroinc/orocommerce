@@ -120,3 +120,44 @@
     </label>
     {{- form_errors(form, {'class_prefix': class_prefix}) -}}
 {%- endblock radio_widget -%}
+
+
+{%- block oro_date_widget -%}
+        {% if attribute(attr, 'data-validation') is defined %}
+            {% set dateValidation = attr['data-validation'] %}
+        {% else %}
+            {% set dateValidation = {'Date' : {}} %}
+
+            {% if required %}
+                {% set dateValidation = dateValidation|merge({'NotBlank' : {'message': 'This value should not be blank.'}}) %}
+            {% endif %}
+
+            {% set dateValidation = dateValidation|json_encode %}
+        {% endif %}
+
+        {% set options = {
+            view: 'oroui/js/app/views/datepicker/datepicker-view',
+            nativeMode: isMobileVersion(),
+            dateInputAttrs: {
+                placeholder: 'oro.form.choose_date'|trans,
+                id: 'date_selector_' ~ id,
+                name: 'date_selector_' ~ id,
+                'data-validation': dateValidation,
+                class: 'datepicker-input ' ~ (attribute(attr, 'class') is defined ? attr['class'] : ''),
+            },
+            datePickerOptions: {
+                altFormat: 'yy-mm-dd',
+                changeMonth: false,
+                changeYear: false,
+                yearRange: years|default('-80:+1'),
+                showButtonPanel: true
+            }
+        } %}
+
+        {% set attr = attr|merge({
+            'data-page-component-module': 'oroui/js/app/components/view-component',
+            'data-page-component-options': options|json_encode(constant('JSON_FORCE_OBJECT'))
+        }) %}
+
+        {{ block('date_widget') }}
+{%- endblock oro_date_widget -%}

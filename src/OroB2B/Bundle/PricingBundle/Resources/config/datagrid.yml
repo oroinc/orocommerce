@@ -109,11 +109,12 @@ datagrid:
         acl_resource:      orob2b_pricing_price_list_view
         options:
             entity_pagination: true
+            skip_count_walker: true
         source:
             type:              orm
             query:
                 select:
-                    - relatedEntity.id
+                    - distinct relatedEntity.id
                     - relatedEntity.name
                 where:
                     and:
