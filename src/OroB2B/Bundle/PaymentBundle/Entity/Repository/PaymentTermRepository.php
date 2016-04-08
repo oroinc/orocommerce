@@ -16,6 +16,10 @@ class PaymentTermRepository extends EntityRepository
      */
     public function getOnePaymentTermByAccountGroup(AccountGroup $accountGroup)
     {
+        if (!$accountGroup->getId()) {
+            return null;
+        }
+
         $qb = $this->createQueryBuilder('paymentTerm');
 
         $qb->innerJoin('paymentTerm.accountGroups', 'accountGroup')
@@ -31,6 +35,10 @@ class PaymentTermRepository extends EntityRepository
      */
     public function getOnePaymentTermByAccount(Account $account)
     {
+        if (!$account->getId()) {
+            return null;
+        }
+
         $qb = $this->createQueryBuilder('paymentTerm');
         $qb->innerJoin('paymentTerm.accounts', 'account')
             ->andWhere('account = :account')
