@@ -177,7 +177,7 @@ class OroB2BOrderBundleInstaller implements
     {
         $table = $schema->createTable('orob2b_order_discount');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('order_id', 'integer', ['notnull' => false]);
+        $table->addColumn('order_id', 'integer', ['notnull' => true]);
         $table->addColumn('description', 'text', ['notnull' => false]);
         $table->addColumn('type', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn(
