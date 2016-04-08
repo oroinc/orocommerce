@@ -416,6 +416,12 @@ workflows:
                                     successUrl: $.result.successUrl
                                     errorUrl: $.result.errorUrl
                             - @assign_value: [$payment_in_progress, true]
+                            - @send_email_template:
+                                parameters:
+                                    from: $checkout.order.owner.email
+                                    to: $checkout.order.accountUser.email
+                                    template: 'order_confirmation_email'
+                                    entity: $checkout.order
 
             finish_checkout_definition:
                 conditions:
