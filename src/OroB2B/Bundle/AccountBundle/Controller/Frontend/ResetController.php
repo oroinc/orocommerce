@@ -34,7 +34,9 @@ class ResetController extends Controller
         $handler = $this->get('orob2b_account.account_user.password_request.handler');
         $form = $this->get('orob2b_account.provider.frontend_account_user_forgot_password_form')->getForm();
 
-        if ($user = $handler->process($form, $this->getRequest())) {
+        $request = $this->get('request_stack')->getCurrentRequest();
+        $user = $handler->process($form, $request);
+        if ($user) {
             $this->get('session')->set(static::SESSION_EMAIL, $this->getObfuscatedEmail($user));
             return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_reset_check_email'));
         }

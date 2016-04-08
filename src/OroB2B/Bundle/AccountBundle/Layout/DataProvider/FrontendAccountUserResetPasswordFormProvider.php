@@ -15,13 +15,19 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType;
 
 class FrontendAccountUserResetPasswordFormProvider extends AbstractServerRenderDataProvider
 {
-    /** @var FormAccessor */
+    /**
+     * @var FormAccessor
+     */
     protected $data;
 
-    /** @var FormInterface */
+    /**
+     * @var FormInterface
+     */
     protected $form;
 
-    /** @var FormFactoryInterface */
+    /**
+     * @var FormFactoryInterface
+     */
     protected $formFactory;
 
     /**
@@ -43,6 +49,7 @@ class FrontendAccountUserResetPasswordFormProvider extends AbstractServerRenderD
                 FormAction::createByRoute('orob2b_account_frontend_account_user_password_reset')
             );
         }
+
         return $this->data;
     }
 

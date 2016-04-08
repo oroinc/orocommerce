@@ -14,13 +14,19 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType;
 
 class FrontendAccountUserForgotPasswordFormProvider extends AbstractServerRenderDataProvider
 {
-    /** @var FormAccessor */
+    /**
+     * @var FormAccessor
+     */
     protected $data;
 
-    /** @var FormInterface */
+    /**
+     * @var FormInterface
+     */
     protected $form;
 
-    /** @var FormFactoryInterface */
+    /**
+     * @var FormFactoryInterface
+     */
     protected $formFactory;
 
     /**
