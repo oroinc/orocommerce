@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
 
-use OroB2B\Bundle\OrderBundle\Validator\Constraints\Discounts;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Validator\Constraints\Discounts;
 use OroB2B\Bundle\OrderBundle\Validator\Constraints\LineItemProductValidator;
 
 class DiscountsTest extends \PHPUnit_Framework_TestCase
