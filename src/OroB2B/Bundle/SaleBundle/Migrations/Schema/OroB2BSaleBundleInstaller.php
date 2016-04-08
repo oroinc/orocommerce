@@ -114,6 +114,7 @@ class OroB2BSaleBundleInstaller implements
         $this->addOroB2BSaleQuoteProdRequestForeignKeys($schema);
         $this->addOroB2BQuoteAddressForeignKeys($schema);
         $this->addOroB2BSaleQuoteProductDemandForeignKeys($schema);
+        $this->addOroB2BSaleQuoteDemandForeignKeys($schema);
 
         $this->addNoteAssociations($schema, $this->noteExtension);
         $this->addAttachmentAssociations($schema, $this->attachmentExtension);
@@ -600,11 +601,10 @@ class OroB2BSaleBundleInstaller implements
         $table = $schema->createTable('orob2b_quote_product_demand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('quote_demand_id', 'integer', ['notnull' => false]);
-        $table->addColumn('quote_product_offer', 'integer', ['notnull' => false]);
+        $table->addColumn('quote_product_offer_id', 'integer', ['notnull' => false]);
         $table->addColumn('quantity', 'float', []);
         $table->setPrimaryKey(['id']);
     }
-
 
     /**
      * Add orob2b_quote_product_demand foreign keys.
@@ -617,6 +617,28 @@ class OroB2BSaleBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_quote_demand'),
             ['quote_demand_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_sale_quote_prod_offer'),
+            ['quote_product_offer_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_quote_demand foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BSaleQuoteDemandForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_quote_demand');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_sale_quote'),
+            ['quote_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

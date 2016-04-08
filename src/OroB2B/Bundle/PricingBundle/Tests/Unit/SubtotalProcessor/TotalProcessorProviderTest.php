@@ -90,6 +90,14 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(142.0, $subtotal->getAmount());
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetSubtotalsException()
+    {
+        $this->provider->getSubtotals(null);
+    }
+
     public function testGetTotal()
     {
         $this->translator->expects($this->once())
