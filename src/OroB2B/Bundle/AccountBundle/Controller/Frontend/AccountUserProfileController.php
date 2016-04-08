@@ -2,10 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,9 +14,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
 use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
 
 class AccountUserProfileController extends Controller
 {
@@ -129,7 +124,7 @@ class AccountUserProfileController extends Controller
      * Edit account user form
      *
      * @Route("/profile/update", name="orob2b_account_frontend_account_user_profile_update")
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:updateProfile.html.twig")
+     * @Layout()
      * @AclAncestor("orob2b_account_frontend_account_user_update")
      *
      * @param Request $request
@@ -138,13 +133,13 @@ class AccountUserProfileController extends Controller
     public function updateAction(Request $request)
     {
         $accountUser = $this->getUser();
-        $form = $this->createForm(FrontendAccountUserProfileType::NAME, $accountUser);
+        $form = $this->get('orob2b_account.provider.frontend_account_user_profile_form')->getForm($accountUser);
         $handler = new FrontendAccountUserHandler(
             $form,
             $request,
             $this->get('orob2b_account_user.manager')
         );
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        $resultHandler = $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
             ['route' => 'orob2b_account_frontend_account_user_profile_update'],
@@ -152,5 +147,15 @@ class AccountUserProfileController extends Controller
             $this->get('translator')->trans('orob2b.account.controller.accountuser.profile_updated.message'),
             $handler
         );
+
+        if ($resultHandler instanceof Response) {
+            return $resultHandler;
+        }
+
+        return [
+            'data' => [
+                'entity' => $accountUser
+            ]
+        ];
     }
 }

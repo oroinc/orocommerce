@@ -85,7 +85,7 @@ class AuditControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_create'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $form['orob2b_account_frontend_account_user[enabled]'] = $this->userData['enabled'];
         $form['orob2b_account_frontend_account_user[plainPassword][first]'] = $this->userData['password'];
         $form['orob2b_account_frontend_account_user[plainPassword][second]'] = $this->userData['password'];
