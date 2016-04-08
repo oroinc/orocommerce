@@ -111,7 +111,7 @@ class Request extends ExtendRequest implements
     /**
      * @var string
      *
-     * @ORM\Column(name="phone", type="string", length=255)
+     * @ORM\Column(name="phone", type="string", length=255, nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -153,7 +153,7 @@ class Request extends ExtendRequest implements
     /**
      * @var string
      *
-     * @ORM\Column(name="note", type="text")
+     * @ORM\Column(name="note", type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

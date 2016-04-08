@@ -71,6 +71,16 @@ layout:
                     options:
                         route_name: orob2b_account_frontend_account_user_reset_request
                         text: orob2b.account.accountuser.profile.forgot_password
+                        attr:
+                            class: col-md-12
+                login_form_register:
+                    blockType: link
+                    options:
+                        route_name: orob2b_account_frontend_account_user_register
+                        text: orob2b.account.accountuser.profile.create_an_account
+                        attr:
+                            class: col-md-12
+                        visible: { @eq: [$data.registrationAllowed, true] }
             tree:
                 content:
                     login_page:
@@ -82,5 +92,6 @@ layout:
                             login_form_remember: ~
                             login_form_submit: ~
                             login_form_forgot: ~
+                            login_form_register: ~
                             login_form_target: ~
                             login_form_csrf: ~
