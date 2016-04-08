@@ -43,14 +43,27 @@
     {{ buttons.getButton(btnOptions) }}
 {% endmacro %}
 
+{% macro addToShoppingListButtonTemplate(options) %}
+{% spaceless %}
+    {% import _self as buttons %}
+    {{ buttons.addToCurrentShoppingListButton(options|merge({
+        shoppingList: {
+            id: '<%= id %>',
+            label: '<%= label %>'
+        }
+    }))|replace({
+        '&lt;%': '<%',
+        '%&gt;': '%>'
+    })|raw }}
+{% endspaceless %}
+{% endmacro %}
+
 {% macro addToCurrentShoppingListButton(options) %}
     {% import _self as buttons %}
 
     {% set shoppingListId = options.shoppingList ? options.shoppingList.id : null %}
 
-    {% set dataAttributes = options.dataAttributes|merge({
-        intention: 'current'
-    }) %}
+    {% set dataAttributes = options.dataAttributes %}
     {% if options.dataUrl %}
         {% set dataAttributes = dataAttributes|merge({
             urlOptions: (options.dataUrlOptions|merge({shoppingListId: shoppingListId}))|json_encode
@@ -125,6 +138,8 @@
     {{ UI.pinnedDropdownButton({
         'html': buttonsHtml,
         'options': {
+            'addButtonEvent': 'shopping-list:created',
+            'buttonTemplate': buttons.addToShoppingListButtonTemplate(options.current),
             'truncateLength': 15
         }|merge(customOptions)
     }) }}

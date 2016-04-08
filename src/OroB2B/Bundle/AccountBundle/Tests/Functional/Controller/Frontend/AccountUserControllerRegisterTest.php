@@ -52,7 +52,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Create an Account')->form();
+        $form = $crawler->selectButton('Create An Account')->form();
 
         $submittedData = [
             'orob2b_account_frontend_account_user_register' => [
@@ -226,7 +226,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Create an Account')->form();
+        $form = $crawler->selectButton('Create An Account')->form();
         $submittedData = [
             'orob2b_account_frontend_account_user_register' => [
                 '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
@@ -332,7 +332,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
      */
     protected function submitRegisterForm(Crawler $crawler, $email)
     {
-        $form = $crawler->selectButton('Create an Account')->form();
+        $form = $crawler->selectButton('Create An Account')->form();
         $submittedData = [
             'orob2b_account_frontend_account_user_register' => [
                 '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),

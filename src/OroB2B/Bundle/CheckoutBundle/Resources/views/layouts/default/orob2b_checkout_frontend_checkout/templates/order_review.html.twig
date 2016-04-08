@@ -60,7 +60,9 @@
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}
                 <fieldset class="checkout__form__row">
-                    {{ form_row(form.remove_source, removeElementOptions) }}
+                    <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm">
+                        {{ form_row(form.remove_source, removeElementOptions) }}
+                    </div>
                 </fieldset>
             {% endif %}
         </div>

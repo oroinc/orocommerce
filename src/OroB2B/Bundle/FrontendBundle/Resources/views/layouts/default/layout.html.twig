@@ -27,7 +27,7 @@
 
 {% block form_end_widget %}
     {{ parent() }}
-    {{ oro_form_js_validation(form) }}
+    {{ oro_form_js_validation(form, js_validation_options|default({})) }}
 {% endblock %}
 
 {#Action Buttons#}

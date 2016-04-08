@@ -227,8 +227,6 @@
   text-indent: -999rem;
 
   @media (max-width: 991px) {
-    width: 24rem;
-    height: 3.2rem;
     background-size: 24rem 3.2rem;
     margin: 0 auto;
   }
@@ -250,11 +248,11 @@
 }
 
 .cart__promo__link {
-  color: @base-font-color;
+  color: @base-font-color !important;
 
   &:hover {
     color: @base-font-color;
-    text-decoration: none;
+    text-decoration: none !important;
 
     span {
       text-decoration: underline;
@@ -2506,12 +2504,6 @@
     }
   }
 
-  &:first-child:not(.oro-pagination) {
-    @media (max-width: 991px) {
-      display: none;
-    }
-  }
-
   &:nth-child(2) {
     @media (max-width: 991px) {
       order: 1;
@@ -2856,18 +2848,17 @@
 
 /*START CREATE ACCOUNT FORM*/
 .create-account {
-   
-   &.create-account_full {
-      width: 86rem;
-      margin: 0 auto;
+  &.create-account_full {
+    width: 86rem;
+    margin: 0 auto;
 
-      @media (max-width: 991px) {
-        width: 100%;
-        margin-bottom: 8rem;
-      }
-   }
+    @media (max-width: 991px) {
+      width: 100%;
+      margin-bottom: 8rem;
+    }
+  }
 
-   &.create-account_half-cols {
+  &.create-account_half-cols {
     margin: 0 -1.5rem;
 
     &:before, &:after {
@@ -2876,7 +2867,25 @@
       height: 0;
       clear: both;
     }
-   }
+  }
+
+  &.create-account_pos-absolute_vert-centered {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+
+    @media (max-width: 991px) {
+      margin: 0;
+    }
+
+    .create-account__form-container {
+      &.form-container-x6 {
+        max-width: 700px;
+      }
+    }
+  }
 }
 
 .create-account__title {
@@ -2899,7 +2908,7 @@
 
   &.form-container-x6 {
     width: 50%;
-    float: left;
+    margin: 0 auto;
     padding: 0 1.5rem;
 
     @media (max-width: 991px) {
@@ -5406,7 +5415,7 @@
     }
   }
 
-  &.checkout__form__select_exp-day {
+  &.checkout__form__select_exp-year {
     display: inline-block;
     width: 9rem;
   }
@@ -5509,7 +5518,6 @@
 }
 
 .checkout__form__payment-methods__form {
-  display: none;
   margin: 2rem 0 0;
 }
 
@@ -5591,16 +5599,33 @@
           padding-left: 0;
         }
 
+        &:last-child {
+          padding-right: 0;
+        }
+
         padding: 1rem 1.2rem;
         border-top: .1rem solid @table-alt-border-color;
+
+        text-align: left;
+      }
+    }
+
+    .table {
+      td:first-child {
+        text-align: left;
+      }
+
+      td:last-child {
+        text-align: right;
       }
     }
   }
 }
 
 .checkout-order-summary__price-table {
-  max-width: 25rem;
-  display: inline-block;
+  max-width: 22.5rem;
+
+  margin-left: auto;
 
   .table {
     margin: 0;
