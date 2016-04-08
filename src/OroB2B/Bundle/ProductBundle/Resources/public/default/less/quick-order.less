@@ -13,10 +13,6 @@
     }
 
     .notification.notification_error {
-        font-size: 1.2rem;
-        color: #ab1a25;
-        padding: 0;
-        background: none;
         margin-top: -15px !important;
         margin-bottom: 10px;
 
@@ -212,6 +208,11 @@
             width: 100%;
             float: none;
         }
+
+        .fields-row-error,
+        .fields-row-error-autocomplite {
+            margin: 0 .7rem;
+        }
     }
 
     .form-field-copyPaste {
@@ -232,20 +233,6 @@
         display: block;
         height: 0;
         clear: both;
-    }
-
-    .fields-row-error {
-        margin: 0 .7rem;
-        .validation-failed {
-            font-size: 1.2rem;
-            color: @theme-red2-color;
-            padding: 0;
-            background: none;
-        }
-        .product-autocomplete-name {
-            font-size: 1.2rem;
-            color: @theme-green2-color;
-        }
     }
 }
 .quick-order__form__row__head {
@@ -412,6 +399,10 @@
                     color: #fff;
                     width: calc(~'100% - 36px');
                     padding: 0 1.5rem;
+                }
+
+                &.icons-holder .direct-link {
+                    width: 100%;
                 }
 
                 > .dropdown-toggle {

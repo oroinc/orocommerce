@@ -1,6 +1,7 @@
 OroB2B\Bundle\OrderBundle\Entity\Order:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: identifier
+        - OroB2B\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
     properties:
         owner:
             - NotBlank: ~
@@ -13,9 +14,22 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
             - Date: ~
         currency:
             - Currency: ~
-#        subtotal:
-#            - Type:
-#                type: float
+        total:
+            - Type:
+                type: numeric
+            - Range:
+                min: 0
+                max: 999999999999999999
+                minMessage: 'orob2b.order.total.min.error.label'
+                maxMessage: 'orob2b.order.total.max.error.label'
+        subtotal:
+            - Type:
+                type: numeric
+            - Range:
+                min: 0
+                max: 999999999999999999
+                minMessage: 'orob2b.order.subtotal.min.error.label'
+                maxMessage: 'orob2b.order.subtotal.max.error.label'
         account:
             - NotBlank: ~
         website:
@@ -87,3 +101,9 @@ OroB2B\Bundle\OrderBundle\Entity\OrderDiscount:
             - Range:
                 min: -100
                 max: 100
+        amount:
+            - Type:
+                type: numeric
+            - Range:
+                min: 0
+                max: 999999999999999999

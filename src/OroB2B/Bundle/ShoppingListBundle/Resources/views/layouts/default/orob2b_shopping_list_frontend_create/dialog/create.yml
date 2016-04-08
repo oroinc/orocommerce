@@ -6,6 +6,10 @@ layout:
             id: widget_content
             optionName: 'vars.savedId'
             optionValue: { @value: $data.savedId }
+        - @setOption:
+            id: widget_content
+            optionName: 'vars.shoppingList'
+            optionValue: { @value: $data.shoppingList }
         - @addTree:
             items:
                 form_errors:
@@ -27,6 +31,8 @@ layout:
                         form: { @value: $data.orob2b_shopping_list_shopping_list_form }
                 form_comment:
                     blockType: block
+                    options:
+                        visible: { @neq: [$data.createOnly, true] }
                 form_actions:
                     blockType: container
                 form_actions_reset:
@@ -35,14 +41,23 @@ layout:
                         action: reset
                         text: orob2b.shoppinglist.create_new_form.cancel_label
                         vars:
-                            style: auto
+                            style: gray
                 form_actions_create:
                     blockType: button
                     options:
                         action: submit
-                        text: orob2b.shoppinglist.create_new_form.submit_label
+                        text: orob2b.shoppinglist.create_new_form.create.label
                         vars:
                             style: auto
+                        visible: { @eq: [$data.createOnly, true] }
+                form_actions_create_and_add:
+                    blockType: button
+                    options:
+                        action: submit
+                        text: orob2b.shoppinglist.create_new_form.create_and_add.label
+                        vars:
+                            style: auto
+                        visible: { @neq: [$data.createOnly, true] }
             tree:
                 widget_content:
                     form_errors: ~
@@ -52,4 +67,5 @@ layout:
                     form_actions:
                         form_actions_reset: ~
                         form_actions_create: ~
+                        form_actions_create_and_add: ~
                     form_end: ~

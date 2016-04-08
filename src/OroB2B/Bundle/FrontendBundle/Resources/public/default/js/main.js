@@ -1,11 +1,11 @@
-require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScrollbar', 'fastclick'], function(
+require(['jquery', 'lodash', 'slick', 'raty', 'perfectScrollbar', 'fastclick', 'elevatezoom'], function(
     jQuery,
     _,
     slick,
-    datepicker,
     raty,
     perfectScrollbar,
-    FastClick
+    FastClick,
+    elevateZoom
 ) {
 
     (function($) {
@@ -37,8 +37,6 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                 moreInfoExpandBinding(); //More info button binding
                 pinClickBinding(); //Pin click binding
                 filterWidgetToggleBinding(); //Filter Widget toggle binding
-                datepickerInit(); //Initing of the datepicker
-                datepickerSetDateBindingInit();
                 topbarButtonsBinding(); //Topbar buttons clicks binding
                 salesPanelToggleInit(); //Sales panel toggle binding
                 flexSelectResizeInit(); //resizing the selects
@@ -47,6 +45,7 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                 avoidDropdwonMenuHideInit();
                 dropdownMenuHideByCloseBtnBinding();
                 customScrollbarInit();
+                elevateZoomInit();
 
                 countInit().init({
                     plus: '[data-count-plus]',
@@ -501,24 +500,6 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                 });
             }
 
-            function datepickerInit() {
-                var $datepicker = $('.input_datepicker');
-
-                if ($datepicker.length) {
-                    $datepicker.datepicker({
-                        orientation: "bottom left"
-                    });
-                }
-            }
-
-            function datepickerSetDateBindingInit() {
-                var $datepicker = $('.input_datepicker');
-
-                $datepicker.on('changeDate', function(event) {
-                    $(this).prev().addClass('date-applied');
-                });
-            }
-
             function topbarButtonsBinding() {
                 var trigger = '[data-topbar-dropdown-trigger]';
 
@@ -685,6 +666,19 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                     $('.columnsSettings').each(function() {
                         $(this).perfectScrollbar('update');
                     });
+                });
+            }
+
+            function elevateZoomInit() {
+                $('[data-zoom-image]').elevateZoom({
+                    scrollZoom: true,
+                    zoomWindowWidth: 630,
+                    zoomWindowHeight: 376,
+                    borderSize: 1,
+                    borderColour: '#ebebeb',
+                    lensBorderColour: '#7d7d7d',
+                    lensColour: '#000',
+                    lensOpacity: 0.22
                 });
             }
 

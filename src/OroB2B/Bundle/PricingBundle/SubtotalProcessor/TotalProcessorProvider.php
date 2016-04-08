@@ -107,13 +107,16 @@ class TotalProcessorProvider
     /**
      * Collect all entity subtotals
      *
-     * @param $entity
+     * @param object $entity
      *
      * @return ArrayCollection|Subtotal[]
      */
     public function getSubtotals($entity)
     {
         $subtotalCollection = new ArrayCollection();
+        if (!is_object($entity)) {
+            throw new \InvalidArgumentException('Function parameter "entity" should be object.');
+        }
         $hash = spl_object_hash($entity);
 
         if (!array_key_exists($hash, $this->subtotals)) {

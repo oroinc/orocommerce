@@ -1,19 +1,18 @@
-oro_menu_config:
-    items:
-        invoices_list:
-            label:           'orob2b.invoice.entity_plural_label'
-            route:           'orob2b_invoice_index'
-            extras:
-                position:    750
-                routes: ['/^orob2b_invoice_/']
-
-    tree:
-        application_menu:
-            children:
-                sales_tab:
-                    children:
-                        invoices_list: ~
-
+#oro_menu_config:
+#    items:
+#        invoices_list:
+#            label:           'orob2b.invoice.entity_plural_label'
+#            route:           'orob2b_invoice_index'
+#            extras:
+#                position:    750
+#                routes: ['/^orob2b_invoice_/']
+#
+#    tree:
+#        application_menu:
+#            children:
+#                sales_tab:
+#                    children:
+#                        invoices_list: ~
 
 oro_titles:
     orob2b_invoice_index: ~

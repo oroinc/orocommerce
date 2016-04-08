@@ -1,4 +1,8 @@
 //Toolbar
+.grid-scrollable-container {
+  overflow: visible;
+}
+
 .grid-toolbar {
   margin: 0 0 1rem;
   display: flex;
@@ -340,10 +344,6 @@
           line-height: 1.9rem !important;
         }
       }
-
-      @media (max-width: 991px) {
-        margin: 0 .5rem 0 0;
-      }
     }
   }
 
@@ -352,6 +352,7 @@
     .dropdown-menu {
       top: 3.1rem;
       left: auto;
+      bottom: auto;
       right: 0;
       margin: 0;
       border-radius: .5rem;
@@ -1345,6 +1346,10 @@
     .container-fluid {
       padding: 0;
     }
+
+    .table-bordered {
+      border-width: 0 0 1px 0;
+    }
   }
 
   .grid-container {
@@ -1438,6 +1443,10 @@
     a {
       padding: 5px 10px;
       line-height: 18px;
+
+      .hide-text {
+        margin-right: 5px;
+      }
     }
   }
 

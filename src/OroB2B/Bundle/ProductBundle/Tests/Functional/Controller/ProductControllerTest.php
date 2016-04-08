@@ -7,6 +7,7 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
@@ -34,6 +35,10 @@ class ProductControllerTest extends WebTestCase
     const SECOND_UNIT_CODE = 'kg';
     const SECOND_UNIT_FULL_NAME = 'kilogram';
     const SECOND_UNIT_PRECISION = '1';
+
+    const THIRD_UNIT_CODE = 'piece';
+    const THIRD_UNIT_FULL_NAME = 'piece';
+    const THIRD_UNIT_PRECISION = '0';
 
     const DEFAULT_NAME = 'default name';
     const DEFAULT_NAME_ALTERED = 'altered default name';
@@ -112,6 +117,7 @@ class ProductControllerTest extends WebTestCase
                 'unitPrecisions' => [
                     ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
                     ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
+                    ['unit' => self::THIRD_UNIT_CODE, 'precision' => self::THIRD_UNIT_PRECISION]
                 ],
                 'names' => [
                     'values' => [
@@ -138,9 +144,8 @@ class ProductControllerTest extends WebTestCase
         ];
 
         $this->client->followRedirects(true);
-
-        $result = $this->client->getResponse();
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         // Check product unit precisions
@@ -148,21 +153,25 @@ class ProductControllerTest extends WebTestCase
 
         $actualUnitPrecisions = [
             [
-                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][0][unit]"] :selected')
-                    ->html(),
+                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][0][unit]"] :selected')->html(),
                 'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][0][precision]"]')
                     ->extract('value')[0],
             ],
             [
-                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][1][unit]"] :selected')
-                    ->html(),
+                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][1][unit]"] :selected')->html(),
                 'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][1][precision]"]')
                     ->extract('value')[0],
             ],
+            [
+                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][2][unit]"] :selected')->html(),
+                'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][2][precision]"]')
+                    ->extract('value')[0],
+            ]
         ];
         $expectedUnitPrecisions = [
             ['unit' => self::FIRST_UNIT_FULL_NAME, 'precision' => self::FIRST_UNIT_PRECISION],
             ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION],
+            ['unit' => self::THIRD_UNIT_CODE, 'precision' => self::THIRD_UNIT_PRECISION],
         ];
 
         $this->assertEquals(
@@ -191,16 +200,9 @@ class ProductControllerTest extends WebTestCase
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_STATUS, $html);
-
-        $productUnitPrecision = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BProductBundle:ProductUnitPrecision')
-            ->findOneBy(['product' => $id, 'unit' => self::FIRST_UNIT_CODE]);
-        $this->assertEquals(self::FIRST_UNIT_PRECISION, $productUnitPrecision->getPrecision());
-
-        $productUnitPrecision = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BProductBundle:ProductUnitPrecision')
-            ->findOneBy(['product' => $id, 'unit' => self::SECOND_UNIT_CODE]);
-        $this->assertEquals(self::SECOND_UNIT_PRECISION, $productUnitPrecision->getPrecision());
+        $this->assertProductPrecision($id, self::FIRST_UNIT_CODE, self::FIRST_UNIT_PRECISION);
+        $this->assertProductPrecision($id, self::SECOND_UNIT_CODE, self::SECOND_UNIT_PRECISION);
+        $this->assertProductPrecision($id, self::THIRD_UNIT_CODE, self::THIRD_UNIT_PRECISION);
     }
 
     /**
@@ -237,6 +239,10 @@ class ProductControllerTest extends WebTestCase
         );
         $this->assertContains(
             $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
+            $html
+        );
+        $this->assertContains(
+            $this->createUnitPrecisionString(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION),
             $html
         );
 
@@ -318,6 +324,10 @@ class ProductControllerTest extends WebTestCase
         );
         $this->assertContains(
             $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
+            $html
+        );
+        $this->assertContains(
+            $this->createUnitPrecisionString(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION),
             $html
         );
 
@@ -402,12 +412,18 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @param string $name
-     * @param string $precision
+     * @param int $precision
      * @return string
      */
     private function createUnitPrecisionString($name, $precision)
     {
-        return sprintf('%s with precision %s decimal places', $name, $precision);
+        if ($precision == 0) {
+            return sprintf('%s (whole numbers)', $name);
+        } elseif ($precision == 1) {
+            return sprintf('%s (fractional, %d decimal digit)', $name, $precision);
+        } else {
+            return sprintf('%s (fractional, %d decimal digits)', $name, $precision);
+        }
     }
 
     /**
@@ -447,5 +463,20 @@ class ProductControllerTest extends WebTestCase
         }
 
         return $localizedName;
+    }
+
+    /**
+     * @param int $productId
+     * @param string $unit
+     * @param string $expectedPrecision
+     */
+    protected function assertProductPrecision($productId, $unit, $expectedPrecision)
+    {
+        $productUnitPrecision = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository('OroB2BProductBundle:ProductUnitPrecision')
+            ->findOneBy(['product' => $productId, 'unit' => $unit]);
+
+        $this->assertEquals($expectedPrecision, $productUnitPrecision->getPrecision());
     }
 }

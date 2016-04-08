@@ -2,10 +2,11 @@
 
 {%- block form_label -%}
     {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
+    {% set modifier = modifier|default("__form__label") %}
     {% set label_attr = label_attr|merge({
         class: [
             label_attr.class|default(''),
-            class_prefix ~ "__form__label"
+            class_prefix ~ modifier
         ]|join(' ')
     }) %}
 
@@ -47,11 +48,11 @@
     <fieldset class="{{ class_prefix }}__form__row">
         <div class="{{ class_prefix }}__form__col form__col form__col_x12">
             {{- form_label(form, null, {'class_prefix': class_prefix}) -}}
-            {{- form_errors(form, {'class_prefix': class_prefix}) -}}
             {{- form_widget(form, {
                 'class_prefix': class_prefix,
                 attr: attr
             }) -}}
+            {{- form_errors(form, {'class_prefix': class_prefix}) -}}
         </div>
     </fieldset>
 {%- endblock form_row -%}
@@ -67,10 +68,10 @@
 
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
-        <div class="notification notification_xsm notification_error notification-radiused mmt5-md">
+        <div class="notification notification_xsm notification_error notification-radiused">
             <ul>
             {%- for error in errors -%}
-                <li><i class="cf-attention"></i><span class="mml5-md">{{ error.message }}</span></li>
+                <li><i class="cf-attention cf--base-line"></i><span class="mml5-md">{{ error.message }}</span></li>
             {%- endfor -%}
             </ul>
         </div>
@@ -119,3 +120,44 @@
     </label>
     {{- form_errors(form, {'class_prefix': class_prefix}) -}}
 {%- endblock radio_widget -%}
+
+
+{%- block oro_date_widget -%}
+        {% if attribute(attr, 'data-validation') is defined %}
+            {% set dateValidation = attr['data-validation'] %}
+        {% else %}
+            {% set dateValidation = {'Date' : {}} %}
+
+            {% if required %}
+                {% set dateValidation = dateValidation|merge({'NotBlank' : {'message': 'This value should not be blank.'}}) %}
+            {% endif %}
+
+            {% set dateValidation = dateValidation|json_encode %}
+        {% endif %}
+
+        {% set options = {
+            view: 'oroui/js/app/views/datepicker/datepicker-view',
+            nativeMode: isMobileVersion(),
+            dateInputAttrs: {
+                placeholder: 'oro.form.choose_date'|trans,
+                id: 'date_selector_' ~ id,
+                name: 'date_selector_' ~ id,
+                'data-validation': dateValidation,
+                class: 'datepicker-input ' ~ (attribute(attr, 'class') is defined ? attr['class'] : ''),
+            },
+            datePickerOptions: {
+                altFormat: 'yy-mm-dd',
+                changeMonth: false,
+                changeYear: false,
+                yearRange: years|default('-80:+1'),
+                showButtonPanel: true
+            }
+        } %}
+
+        {% set attr = attr|merge({
+            'data-page-component-module': 'oroui/js/app/components/view-component',
+            'data-page-component-options': options|json_encode(constant('JSON_FORCE_OBJECT'))
+        }) %}
+
+        {{ block('date_widget') }}
+{%- endblock oro_date_widget -%}

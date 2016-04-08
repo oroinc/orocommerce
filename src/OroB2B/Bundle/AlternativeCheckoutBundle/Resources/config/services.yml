@@ -1,0 +1,36 @@
+parameters:
+    orob2b_alternativecheckout.conditions.order_total_limit.class: OroB2B\Bundle\AlternativeCheckoutBundle\Condition\OrderTotalLimit
+    orob2b_alternativecheckout.model.action.checkout_to_quote.class: OroB2B\Bundle\AlternativeCheckoutBundle\Model\Action\AlternativeCheckoutByQuote
+    orob2b_alternativecheckout.conditions.less_order_total_limit.class: OroB2B\Bundle\AlternativeCheckoutBundle\Condition\OrderTotalLimit
+services:
+    orob2b.event_listener.checkout_entity:
+        class: OroB2B\Bundle\AlternativeCheckoutBundle\EventListener\CheckoutEntityListener
+        lazy: true
+        arguments:
+            - @oro_workflow.manager
+            - @doctrine
+        tags:
+            - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity}
+
+    orob2b.workflow_expression.user_in_group:
+        class: OroB2B\Bundle\AlternativeCheckoutBundle\Condition\AssertAccount
+        arguments:
+            - @oro_security.security_facade
+        tags:
+            - { name: oro_workflow.condition, alias: assert_account }
+
+    orob2b_alternativecheckout.conditions.less_order_total_limit:
+        class: %orob2b_alternativecheckout.conditions.less_order_total_limit.class%
+        arguments:
+            - @orob2b_pricing.subtotal_processor.total_processor_provider
+            - @orob2b_checkout.data_provider.manager.checkout_line_items
+        tags:
+            - { name: oro_workflow.condition, alias: less_order_total_limit }
+
+    orob2b_alternativecheckout.model.action.checkout_to_quote:
+        class: %orob2b_alternativecheckout.model.action.checkout_to_quote.class%
+        arguments:
+            - @doctrine
+            - @oro_action.context_accessor
+        tags:
+            - { name: oro_action.action, alias: alternative_checkout_to_quote }

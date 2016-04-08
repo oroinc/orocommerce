@@ -1,7 +1,6 @@
-
 {% block _login_page_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_half-cols"
+        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_half-cols create-account_pos-absolute_vert-centered"
     }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -114,4 +113,20 @@
             {{ block_widget(block) }}
         </div>
     </fieldset>
+{% endblock %}
+
+{% block _login_form_forgot_widget %}
+    <div class="row">
+        <div class="col-md-12">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _login_form_register_widget %}
+    <div class="row">
+        <div class="col-md-12">
+            {{ block_widget(block) }}
+        </div>
+    </div>
 {% endblock %}

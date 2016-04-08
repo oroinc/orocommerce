@@ -6,6 +6,7 @@
 {% set formAction = path('orob2b_product_visibility_edit', { 'id': entity.id })  %}
 
 {% block navButtons %}
+    {{ UI.cancelButton(path('orob2b_product_index')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_product_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
@@ -19,7 +20,10 @@
             'entity':      entity,
             'indexPath':   path('orob2b_product_index'),
             'indexLabel': 'orob2b.product.entity_plural_label'|trans,
-            'entityTitle': entity.sku ~ ' - ' ~ entity.defaultName
+            'entityTitle': UI.link({
+                'path': path('orob2b_product_view', {'id': entity.id}),
+                'label': entity.sku ~ ' - ' ~ entity.defaultName
+            })
         } %}
         {{ parent() }}
     {% endif %}
