@@ -101,6 +101,7 @@ workflows:
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
+                    - back_to_payment
                     - back_to_order_review
             approve_request:
                 label: Order Approval
@@ -113,6 +114,7 @@ workflows:
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
+                    - back_to_payment
                     - back_to_order_review
                     - back_to_request_approval
         transitions:
