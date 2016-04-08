@@ -122,8 +122,8 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
 
         $itemMyAccount = $item->addChild('My Account');
         $itemMyAccount->addChild('Sign Out', ['uri' => '/account/user/logout']);
-        $itemMyAccount->addChild('View Cart', ['uri' => '/cart']);
-        $itemMyAccount->addChild('My Wishlist', ['uri' => '/wishlist']);
+        $itemMyAccount->addChild('View Cart', ['uri' => '/account/shoppinglist']);
+        $itemMyAccount->addChild('My Wishlist', ['uri' => '/account/shoppinglist']);
         $itemMyAccount->addChild('Track My Order', ['uri' => '/shipping/tracking']);
         $itemMyAccount->addChild('Help', ['uri' => '/help']);
 
