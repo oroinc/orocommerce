@@ -12,11 +12,11 @@ layout:
                     blockType: block
                 main:
                     blockType: container
-                content:
-                    blockType: container
                     options:
                         attr:
                           id: 'container'
+                content:
+                    blockType: container
                 sidebar_left:
                     blockType: container
                 page_title_container:
