@@ -2,6 +2,12 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_reset_check_email/check_email.html.twig'
+
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue: 'orob2b.account.accountuser.profile.check_email.title'
+
         - @addTree:
             items:
                 check_email_page:
@@ -13,7 +19,7 @@ layout:
                 check_email_label:
                     blockType: text
                     options:
-                        text: Check Email
+                        text: 'orob2b.account.accountuser.profile.check_email.title'
                 check_email_message:
                     blockType: block
                     options:

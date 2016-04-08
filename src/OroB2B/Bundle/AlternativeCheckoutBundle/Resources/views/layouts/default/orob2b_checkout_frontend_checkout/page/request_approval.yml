@@ -35,5 +35,6 @@ layout:
                           checkout_button_back: ~
     conditions:
         @and:
+            - @eq: [$context.workflowName, 'b2b_flow_alternative_checkout']
             - @eq: [$context.workflowStepName, 'request_approval']
             - @empty: [$context.widget_container]

@@ -2,6 +2,15 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/main.html.twig'
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue:
+                - 'orob2b.checkout.entity_label'
+                -
+                    label: 'orob2b.checkout.title.step.label'
+                    parameters:
+                        '%step_label%': { @value: $data.workflowStep.label }
         - @addTree:
             items:
                 checkout_content:

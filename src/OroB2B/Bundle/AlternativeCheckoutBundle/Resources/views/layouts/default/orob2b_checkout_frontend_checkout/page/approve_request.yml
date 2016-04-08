@@ -39,5 +39,6 @@ layout:
 
     conditions:
         @and:
+            - @eq: [$context.workflowName, 'b2b_flow_alternative_checkout']
             - @eq: [$context.workflowStepName, 'approve_request']
             - @empty: [$context.widget_container]

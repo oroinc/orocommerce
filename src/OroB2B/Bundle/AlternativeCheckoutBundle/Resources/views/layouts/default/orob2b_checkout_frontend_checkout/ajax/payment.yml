@@ -6,4 +6,6 @@ layout:
             optionValue: {'payment_term': { @value: $data.orob2b_payment_methods_provider.payment_term }}
 
     conditions:
-        @payment_method_enabled: 'payment_term'
+        @and:
+            - @payment_method_enabled: 'payment_term'
+            - @eq: [$context.workflowName, 'b2b_flow_alternative_checkout']

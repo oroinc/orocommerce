@@ -7,6 +7,6 @@ layout:
             optionName: visible
             optionValue:
                 @and:
+                    - @eq: [$context.workflowName, 'b2b_flow_alternative_checkout']
                     - @neq: [$context.workflowStepName, 'order_review']
-    #                                - @neq: [$context.workflowStepName, 'request_approval']
                     - @neq: [$context.workflowStepName, 'approve_request']
