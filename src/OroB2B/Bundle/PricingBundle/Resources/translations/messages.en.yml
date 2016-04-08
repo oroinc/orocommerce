@@ -97,7 +97,7 @@ orob2b.pricing:
             default_price_lists.title: Default Price Lists
             price_rounding.title: Pricing Rounding
             pricing.title: Pricing
-            price_lists_update_mode.title: Price Lists Updating
+            price_lists_update_mode.title: 'Price List Calculations'
         fields:
             price_lists.title: Price Lists
             precision.label: Pricing Precision
@@ -113,11 +113,11 @@ orob2b.pricing:
                     half_down.label: Half Down
                     half_up.label: Half Up
             price_lists_update_mode:
-                label: mode Price Lists Updating
-                tooltip: Use scheduled mode to process big data.
+                label: 'Price List Calculation Mode'
+                tooltip: '"Deferred" is the recommended setting for the production environment.'
                 choices:
-                    scheduled.label: Scheduled
-                    real_time.label: Real Time
+                    scheduled.label: 'Deferred'
+                    real_time.label: 'Immediate'
 
     lineitem:
         subtotal.label: 'Line items subtotal'
