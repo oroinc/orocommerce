@@ -427,22 +427,129 @@ workflows:
                             -  $.result.order
                     - @flush_entity:  $.result.order
 
+                    # Save billing address if required
+                    - @assign_constant_value: [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
+                    - @tree:
+                        conditions:
+                            @and:
+                                - @equal: [$checkout.saveBillingAddress, true]
+                                - @empty: $.result.order.billingAddress.accountAddress
+                                - @empty: $.result.order.billingAddress.accountUserAddress
+                                - @acl_granted: 'orob2b_order_address_billing_allow_manual'
+                        actions:
+                            - @find_entity:
+                                class: Oro\Bundle\AddressBundle\Entity\AddressType
+                                attribute: $.result.typeBilling
+                                identifier: $.result.typeBillingName
+                            - @create_entity:
+                                attribute: $.result.customerBillingAddress
+                                class: OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress
+                                data:
+                                    frontendOwner: $checkout.accountUser
+                                    owner: $checkout.owner
+                                    systemOrganization: $checkout.organization
+                                    label: $.result.order.billingAddress.label
+                                    organization: $.result.order.billingAddress.organization
+                                    street: $.result.order.billingAddress.street
+                                    street2: $.result.order.billingAddress.street2
+                                    city: $.result.order.billingAddress.city
+                                    postalCode: $.result.order.billingAddress.postalCode
+                                    country: $.result.order.billingAddress.country
+                                    region: $.result.order.billingAddress.region
+                                    regionText: $.result.order.billingAddress.regionText
+                                    namePrefix: $.result.order.billingAddress.namePrefix
+                                    firstName: $.result.order.billingAddress.firstName
+                                    middleName: $.result.order.billingAddress.middleName
+                                    lastName: $.result.order.billingAddress.lastName
+                                    nameSuffix: $.result.order.billingAddress.nameSuffix
+                                    phone: $.result.order.billingAddress.phone
+                            - @call_method:
+                                object: $.result.customerBillingAddress
+                                method: addType
+                                method_parameters:
+                                    - $.result.typeBilling
+                            - @flush_entity:
+                                conditions:
+                                    @not_empty: $.result.customerBillingAddress
+                                parameters: [$.result.customerBillingAddress]
+
+                    # Save shipping address if required
+                    - @assign_constant_value: [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
+                    - @tree:
+                        conditions:
+                            @and:
+                                - @equal: [$checkout.saveShippingAddress, true]
+                                - @empty: $.result.order.shippingAddress.accountAddress
+                                - @empty: $.result.order.shippingAddress.accountUserAddress
+                                - @acl_granted: 'orob2b_order_address_shipping_allow_manual'
+                        actions:
+                            - @find_entity:
+                                class: Oro\Bundle\AddressBundle\Entity\AddressType
+                                attribute: $.result.typeShipping
+                                identifier: $.result.typeShippingName
+                            - @tree:
+                                conditions:
+                                    @equal: [$checkout.shipToBillingAddress, false]
+                                actions:
+                                    - @create_entity:
+                                        attribute: $.result.customerShippingAddress
+                                        class: OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress
+                                        data:
+                                            frontendOwner: $checkout.accountUser
+                                            owner: $checkout.owner
+                                            systemOrganization: $checkout.organization
+                                            label: $checkout.shippingAddress.label
+                                            organization: $checkout.shippingAddress.organization
+                                            street: $.result.order.shippingAddress.street
+                                            street2: $.result.order.shippingAddress.street2
+                                            city: $.result.order.shippingAddress.city
+                                            postalCode: $.result.order.shippingAddress.postalCode
+                                            country: $.result.order.shippingAddress.country
+                                            region: $.result.order.shippingAddress.region
+                                            regionText: $.result.order.shippingAddress.regionText
+                                            namePrefix: $.result.order.shippingAddress.namePrefix
+                                            firstName: $.result.order.shippingAddress.firstName
+                                            middleName: $.result.order.shippingAddress.middleName
+                                            lastName: $.result.order.shippingAddress.lastName
+                                            nameSuffix: $.result.order.shippingAddress.nameSuffix
+                                            phone: $.result.order.shippingAddress.phone
+                                    - @call_method:
+                                        object: $.result.customerShippingAddress
+                                        method: addType
+                                        method_parameters:
+                                            - $.result.typeShipping
+                            - @call_method:
+                                conditions:
+                                    @equal: [$checkout.shipToBillingAddress, true]
+                                parameters:
+                                    object: $.result.customerBillingAddress
+                                    method: addType
+                                    method_parameters:
+                                        - $.result.typeShipping
+                            - @flush_entity:
+                                conditions:
+                                    @not_empty: $.result.customerShippingAddress
+                                parameters: [$.result.customerShippingAddress]
+
+                    - @remove_entity:
+                        conditions:
+                            @or:
+                                - @equal: [$auto_remove_source, true]
+                                - @and:
+                                    - @equal: [$allow_manual_source_remove, true]
+                                    - @equal: [$remove_source, true]
+                        parameters: [$checkout.sourceEntity]
+                    - @remove_entity: $checkout
+
                     - @tree:
                         conditions:
                             @not_empty:  $.result.order.id
                         actions:
                             - @assign_url:
                                 attribute: $.result.successUrl
-                                route: orob2b_checkout_frontend_checkout
+                                route: orob2b_order_frontend_success
                                 route_parameters:
-                                    id: $checkout.id
-                                    transition: 'finish_checkout'
-                            - @assign_url:
-                                attribute: $.result.errorUrl
-                                route: orob2b_checkout_frontend_checkout
-                                route_parameters:
-                                    id: $checkout.id
-                                    transition: 'payment_error'
+                                    id: $.result.order.id
                             - @payment_purchase:
                                 attribute: $.result.responseData
                                 object:  $.result.order
@@ -451,7 +558,8 @@ workflows:
                                 paymentMethod: $payment_method
                                 transactionOptions:
                                     successUrl: $.result.successUrl
-                                    errorUrl: $.result.errorUrl
+                            - @redirect:
+                                url: "$.result.responseData[returnUrl]"
 
             continue_to_request_approval_definition:
                 pre_conditions:
