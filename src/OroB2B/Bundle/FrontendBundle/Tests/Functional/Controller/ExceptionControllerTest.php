@@ -2,10 +2,8 @@
 
 namespace OroB2B\Bundle\FrontendBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
-
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -18,10 +16,6 @@ class ExceptionControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
-        $this->loadFixtures([
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
-        ]);
     }
 
     /**
@@ -52,19 +46,5 @@ class ExceptionControllerTest extends WebTestCase
                 'selector' => 'div.popup-frame div.popup-holder div.pagination-centered.popup-box-errors h1',
             ],
         ];
-    }
-
-    public function testShowActionUnauthorized()
-    {
-        $product = $this->getReference(LoadProductData::PRODUCT_4);
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_product_frontend_product_view', ['id' => $product->getId()])
-        );
-        $result = $this->client->getResponse();
-        $expectedCode = 403;
-        $this->assertHtmlResponseStatusCodeEquals($result, $expectedCode);
-        $this->assertContains((string)$expectedCode, $crawler->html());
-        $this->assertContains('Forbidden', $crawler->html());
     }
 }
