@@ -8,7 +8,7 @@
     font-size: 1.4rem;
 
     + .oro-pagination__pager {
-      margin: 0 0 0 .9rem;
+      margin: 0 0 0 .5rem;
     }
   }
 
@@ -17,7 +17,7 @@
     vertical-align: middle;
     
     + span {
-      margin-left: .9rem;
+      margin-left: .5rem;
     }
   }
 
@@ -28,23 +28,20 @@
     text-decoration: none;
     cursor: pointer;
     vertical-align: middle;
-    width: 2.2rem;
+    width: 2.3rem;
     line-height: 2.95rem;
     font-size: 1.6rem;
     padding: 0;
     border: .1rem solid @base-border-color;
-    background: rgb(255,255,255);
-    background: -moz-linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(230,230,230,1) 100%);
-    background: -webkit-gradient(linear, to bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(230,230,230,1))); 
-    background: -webkit-linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
-    background: -o-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%); 
-    background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
-    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e6e6e6',GradientType=0 );
+    background: @base-sidebar-background-color-light;
   
     &.disabled {
       color: #9c9c9c;
       cursor: default;
+    }
+
+    i {
+      margin-right: 0;
     }
   }
 
@@ -64,13 +61,12 @@
     vertical-align: middle;
     padding: 0;
     text-align: center;
-    width: 3.5rem;
+    width: 3rem;
     border: 0;
     border-radius: 0;
-    line-height: 3rem;
+    line-height: 2.95rem;
     border-top: .1rem solid @base-border-color;
     border-bottom: .1rem solid @base-border-color;
-    box-shadow: inset 0 .1rem .2rem 0 rgba(0,0,0,.1);
     appearance: none;
   }
 }

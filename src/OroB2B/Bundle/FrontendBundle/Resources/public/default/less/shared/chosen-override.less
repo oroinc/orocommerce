@@ -16,7 +16,6 @@
 
       span {
         color: @base-font-color;
-        //text-transform: uppercase;
       }
 
       abbr {
@@ -217,18 +216,11 @@
 
 .action-selectbox_custom_in-pager {
   .chosen-container {
-    background: rgb(255,255,255);
-    background: -moz-linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(230,230,230,1) 100%);
-    background: -webkit-gradient(linear, to bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(230,230,230,1))); 
-    background: -webkit-linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
-    background: -o-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%); 
-    background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
-    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e6e6e6',GradientType=0 );
+    background: @base-white-color;
     
     &.chosen-container-single {
       .chosen-single {
-        padding: .43rem .7rem;
+        padding: .5rem .6rem .5rem 1rem;
 
         span {
           margin-right: 16px;
