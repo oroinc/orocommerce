@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\FrontendBundle\EventListener;
 
-use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\EntityExtendBundle\Grid\AdditionalFieldsExtension;
+use Oro\Bundle\EntityExtendBundle\Grid\DynamicFieldsExtension;
 
 use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 use OroB2B\Bundle\FrontendBundle\Request\FrontendHelperTrait;
 
-class DatagridBottomToolbarListener
+class DatagridFieldsListener
 {
     use FrontendHelperTrait;
 
@@ -21,23 +22,16 @@ class DatagridBottomToolbarListener
     }
 
     /**
-     * {@inheritDoc}
+     * @param BuildBefore $event
      */
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
-        if ($this->isApplicable($config)) {
-            $config->offsetSetByPath('[options][toolbarOptions][placement][bottom]', true);
+        if (!$this->isFrontendRequest()) {
+            return;
         }
-    }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @return bool
-     */
-    protected function isApplicable(DatagridConfiguration $config)
-    {
-        return $this->isFrontendRequest() &&
-            $config->offsetGetByPath('[options][toolbarOptions][placement][bottom]') === null;
+        $config->offsetSetByPath(AdditionalFieldsExtension::ADDITIONAL_FIELDS_CONFIG_PATH, []);
+        $config->offsetSetByPath(DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH, false);
     }
 }
