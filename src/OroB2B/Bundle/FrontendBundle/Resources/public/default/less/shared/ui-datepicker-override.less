@@ -1,0 +1,122 @@
+.ui-datepicker td {
+  text-align: center;
+  width: 20px;
+  height: 20px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: none;
+  padding: 2px;
+}
+
+
+body {
+  .ui-datepicker{
+    padding: 1rem 1.5rem 1rem;
+
+    .ui-datepicker-buttonpane{
+      display: none;
+    }
+    .ui-datepicker-calendar{
+      thead th span {
+        color: @theme-datepicker-head-color;
+        font-weight: 400;
+        vertical-align: middle;
+      }
+      tbody tr:hover{
+        background: none;
+      }
+      .ui-datepicker-today{
+        a.ui-state-default{
+          border-color: white;
+          &:hover{
+            border-color: white;
+          }
+        }
+      }
+      a.ui-state-default{
+        background:none;
+        font-size: 14px;
+        color: @base-font-color;
+        -webkit-border-radius: 4px;
+        border-radius: 4px;
+        padding: 5px 6px;
+
+        &.ui-state-active,
+        &:hover{
+          border: none;
+          background: @base-sidebar-background-color-light;
+        }
+        &.ui-state-active {
+          background: #cc5c28;
+          color: #fff;
+          text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+          border: 0;
+        }
+      }
+    }
+
+    .ui-datepicker-header{
+      background: none;
+      border: none;
+      padding: 5px 0;
+    }
+
+    .ui-widget-header{
+      .ui-datepicker-next {
+        &:before {
+          content: "";
+          width: 8px;
+          display: inline-block;
+          vertical-align: middle;
+          border-top: .7rem solid transparent;
+          border-bottom: .7rem solid transparent;
+          border-left: 0.7rem solid #ccc;
+          margin-left: 8px;
+          margin-top: 3px;
+        }
+
+        right: 4px;
+        span {
+          background: none;
+        }
+      }
+      .ui-datepicker-prev {
+        &:before {
+          content: "";
+          width: 15px;
+          display: inline-block;
+          vertical-align: middle;
+          border-top: .7rem solid transparent;
+          border-bottom: .7rem solid transparent;
+          border-right: 0.7rem solid #ccc;
+          margin-top: 3px;
+        }
+
+        left: 4px;
+        span {
+          background: none;
+        }
+      }
+      .ui-datepicker-next-hover{
+        top: 6px;
+        right: 4px;
+        background: @base-sidebar-background-color-light;
+        //background-image: none;
+        border-color: transparent;
+      }
+      .ui-datepicker-prev-hover{
+        top: 6px;
+        left: 4px;
+        background: @base-sidebar-background-color-light;
+        //background-image: none;
+        border-color: transparent;
+      }
+    }
+  }
+}
+.ui-datepicker .ui-datepicker-title {
+  color: #464646;
+  font-size: 1.4rem;
+  font-weight: 100;
+}
