@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,9 +26,11 @@ class AccountUserAddressController extends Controller
      *     name="orob2b_account_frontend_account_user_address_create",
      *     requirements={"entityId":"\d+"}
      * )
-     * @ParamConverter("accountUser", options={"id" = "entityId"})
-     * @Layout()
      * @AclAncestor("orob2b_account_frontend_account_user_create")
+     * @Layout
+     *
+     * @ParamConverter("accountUser", options={"id" = "entityId"})
+     *
      * @param AccountUser $accountUser
      * @param Request $request
      * @return array
@@ -43,9 +46,11 @@ class AccountUserAddressController extends Controller
      *     name="orob2b_account_frontend_account_user_address_update",
      *     requirements={"entityId":"\d+", "id":"\d+"}
      * )
-     * @ParamConverter("accountUser", options={"id" = "entityId"})
-     * @Layout()
      * @AclAncestor("orob2b_account_frontend_account_user_update")
+     * @Layout
+     *
+     * @ParamConverter("accountUser", options={"id" = "entityId"})
+     *
      * @param AccountUser $accountUser
      * @param AccountUserAddress $accountAddress
      * @param Request $request
@@ -64,7 +69,6 @@ class AccountUserAddressController extends Controller
      */
     private function update(AccountUser $accountUser, AccountUserAddress $accountAddress, Request $request)
     {
-
         $this->prepareEntities($accountUser, $accountAddress, $request);
 
         $form = $this->get('orob2b_account.provider.fronted_account_user_address_form')->getForm($accountAddress);
