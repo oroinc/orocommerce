@@ -34,8 +34,6 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     protected function setUp()
     {
-        $this->markTestIncomplete('Test will be fixed in https://magecore.atlassian.net/browse/BB-2572');
-
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)

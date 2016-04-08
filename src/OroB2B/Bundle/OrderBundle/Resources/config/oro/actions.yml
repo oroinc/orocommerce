@@ -15,7 +15,9 @@ operations:
                 method_parameters: [$.data, $.data.total, $.data.currency]
                 attribute: $.authorizePaymentTransaction
         preconditions:
-            @not_empty: [$.authorizePaymentTransaction]
+            @and:
+                - @not_empty: [$.authorizePaymentTransaction]
+                - @payment_method_enabled: $.authorizePaymentTransaction.paymentMethod
         actions:
             - @payment_capture:
                 attribute: $.result
