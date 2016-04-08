@@ -11,8 +11,3 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
-
-{% block _account_user_address_edit_form_end_widget %}
-    {% set attr = attr|merge({class: attr.class|default('')}) %}
-    {{ form_end(form, {'render_rest': true}) }}
-{% endblock %}

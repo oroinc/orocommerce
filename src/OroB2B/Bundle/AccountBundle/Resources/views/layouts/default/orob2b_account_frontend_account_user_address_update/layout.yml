@@ -14,7 +14,7 @@ layout:
             id: page_title
             optionName: text
             optionValue:
-                label: orob2b.account.frontend.address.label
+                label: orob2b.account.frontend.address.page_title.update
         - @add:
             id: account_sidebar
             parentId: sidebar_left
@@ -23,6 +23,11 @@ layout:
             items:
                 account_user_address_edit_container:
                     blockType: container
+                account_user_address_edit_form_errors:
+                    blockType: block
+                    options:
+                        vars:
+                            form: { @value: $data.orob2b_account_frontend_account_user_address_form }
                 account_user_address_edit_form_start:
                     blockType: form_start
                     options:
@@ -56,6 +61,7 @@ layout:
             tree:
                 content:
                     account_user_address_edit_container:
+                        account_user_address_edit_form_errors: ~
                         account_user_address_edit_form_start: ~
                         account_user_address_edit_form_fields: ~
                         account_user_address_edit_form_actions:

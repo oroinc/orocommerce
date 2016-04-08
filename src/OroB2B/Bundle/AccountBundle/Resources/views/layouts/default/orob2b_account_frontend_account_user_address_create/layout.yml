@@ -8,14 +8,13 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'Create' #todo trans
-                - 'Address' #todo trans
-                - 'Account User' #todo trans
+                - orob2b.account.frontend.address.title.create
+                - orob2b.account.frontend.address.title.subject
         - @setOption:
             id: page_title
             optionName: text
             optionValue:
-                label: 'Create Address' #todo trans
+                label: orob2b.account.frontend.address.page_title.create
         - @add:
             id: account_sidebar
             parentId: sidebar_left
@@ -47,7 +46,7 @@ layout:
                     blockType: button
                     options:
                         action: submit
-                        text: 'Save' #todo trans
+                        text: orob2b.account.frontend.address.buttons.save
                         vars:
                             style: auto
                         attr:
@@ -56,7 +55,7 @@ layout:
                     blockType: link
                     options:
                         path: { @value: $data.backToUrl }
-                        text: 'Cancel' #todo trans
+                        text: orob2b.account.frontend.address.buttons.cancel
                         attr:
                             'class': btn theme-btn btn-gray
             tree:

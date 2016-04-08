@@ -414,9 +414,11 @@ orob2b.account:
             action.label: Capabillities
         address: #orob2b.account.frontend.address
             title:
+                create: 'Create'
                 edit: 'Edit'
                 subject: 'Address Account User'
-            label: 'Edit Address'
+            page_title.edit: 'Edit Address'
+            page_title.create: 'Create Address'
             form:
                 placeholder:
                     first_name: ""
