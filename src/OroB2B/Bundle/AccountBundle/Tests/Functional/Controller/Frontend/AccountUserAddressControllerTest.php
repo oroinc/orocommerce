@@ -18,26 +18,6 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
  */
 class AccountUserAddressControllerTest extends WebTestCase
 {
-    const ADDRESS_LABEL       = 'Address Label';
-    const ADDRESS_NAME_PREFIX = 'test prefix';
-    const ADDRESS_COUNTRY     = 'ZW';
-    const ADDRESS_REGION      = 'ZW-MA';
-    const ADDRESS_FIRST_NAME  = 'First';
-    const ADDRESS_MIDDLE_NAME = 'der';
-    const ADDRESS_LAST_NAME   = 'Last';
-    const ADDRESS_NAME_SUFFIX = 'great';
-    const ADDRESS_ORG         = 'mega inc';
-    const ADDRESS_PHONE       = '+5000000000';
-    const ADDRESS_STREET      = 'Saint Bugs st, 42';
-    const ADDRESS_STREET2     = 'Saint Bugs st, 42/2';
-    const ADDRESS_CITY        = 'City';
-    const ADDRESS_ZIP         = '10500';
-
-    /**
-     * @var AccountUser
-     */
-    protected $account;
-
     /**
      * @var AccountUser
      */
@@ -91,20 +71,20 @@ class AccountUserAddressControllerTest extends WebTestCase
      */
     protected function fillFormForCreate(Form $form)
     {
-        $form['orob2b_account_account_user_typed_address[label]'] = self::ADDRESS_LABEL;
+        $form['orob2b_account_account_user_typed_address[label]'] = 'Address Label';
         $form['orob2b_account_account_user_typed_address[primary]'] = true;
-        $form['orob2b_account_account_user_typed_address[namePrefix]'] = self::ADDRESS_NAME_PREFIX;
-        $form['orob2b_account_account_user_typed_address[firstName]'] = self::ADDRESS_FIRST_NAME;
-        $form['orob2b_account_account_user_typed_address[middleName]'] = self::ADDRESS_MIDDLE_NAME;
-        $form['orob2b_account_account_user_typed_address[lastName]'] = self::ADDRESS_LAST_NAME;
-        $form['orob2b_account_account_user_typed_address[nameSuffix]'] = self::ADDRESS_NAME_SUFFIX;
-        $form['orob2b_account_account_user_typed_address[organization]'] = self::ADDRESS_ORG;
-        $form['orob2b_account_account_user_typed_address[phone]'] = self::ADDRESS_PHONE;
-        $form['orob2b_account_account_user_typed_address[street]'] = self::ADDRESS_STREET;
-        $form['orob2b_account_account_user_typed_address[street2]'] = self::ADDRESS_STREET2;
-        $form['orob2b_account_account_user_typed_address[city]'] = self::ADDRESS_CITY;
+        $form['orob2b_account_account_user_typed_address[namePrefix]'] = 'pref';
+        $form['orob2b_account_account_user_typed_address[firstName]'] = 'first';
+        $form['orob2b_account_account_user_typed_address[middleName]'] = 'middle';
+        $form['orob2b_account_account_user_typed_address[lastName]'] = 'last';
+        $form['orob2b_account_account_user_typed_address[nameSuffix]'] = 'suffix';
+        $form['orob2b_account_account_user_typed_address[organization]'] = 'org';
+        $form['orob2b_account_account_user_typed_address[phone]'] = '+05000000';
+        $form['orob2b_account_account_user_typed_address[street]'] = 'Street, 1';
+        $form['orob2b_account_account_user_typed_address[street2]'] = 'Street, 2';
+        $form['orob2b_account_account_user_typed_address[city]'] = 'London';
 
-        $form['orob2b_account_account_user_typed_address[postalCode]'] = self::ADDRESS_ZIP;
+        $form['orob2b_account_account_user_typed_address[postalCode]'] = 10500;
 
         $form['orob2b_account_account_user_typed_address[types]'] = [
             AddressType::TYPE_BILLING,
@@ -133,7 +113,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $form['orob2b_account_account_user_typed_address[region]'] = self::ADDRESS_REGION;
+        $form['orob2b_account_account_user_typed_address[region]'] = 'ZW-MA';
 
         return $form;
     }
