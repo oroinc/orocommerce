@@ -43,6 +43,7 @@ define(function(require) {
         },
 
         reloadPrices: function() {
+            ProductsPricesComponent.__super__.reloadPrices.apply(this, arguments);
             mediator.trigger('entry-point:order:trigger');
         }
     });

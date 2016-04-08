@@ -44,11 +44,16 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
         $response = new Response();
         $event = new CallbackReturnEvent();
 
-        $this->doctrineHelper->expects($this->once())->method('getEntity')->willReturn(null);
+        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repo->expects($this->once())->method('findOneBy')->willReturn(null);
+        $this->doctrineHelper->expects($this->once())->method('getEntityRepository')->willReturn($repo);
         $this->doctrineHelper->expects($this->never())->method('getEntityManager');
         $this->eventDispatcher->expects($this->never())->method('dispatch');
 
-        $result = $this->handler->handle(1, $event);
+        $result = $this->handler->handle('id', 'token', $event);
         $this->assertEquals($response, $result);
         $this->assertNotSame($response, $result);
     }
@@ -64,8 +69,14 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrineHelper->expects($this->once())->method('getEntity')->willReturn($transaction);
+        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repo->expects($this->once())->method('findOneBy')->willReturn($transaction);
         $this->doctrineHelper->expects($this->once())->method('getEntityManager')->willReturn($objectManager);
+        $this->doctrineHelper->expects($this->once())->method('getEntityRepository')->willReturn($repo);
+
         $objectManager->expects($this->once())->method('transactional')
             ->with(
                 $this->callback(
@@ -86,7 +97,7 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $result = $this->handler->handle(1, $event);
+        $result = $this->handler->handle('id', 'token', $event);
         $this->assertEquals($response, $result);
         $this->assertSame($response, $result);
     }
@@ -102,8 +113,13 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrineHelper->expects($this->once())->method('getEntity')->willReturn($transaction);
+        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repo->expects($this->once())->method('findOneBy')->willReturn($transaction);
         $this->doctrineHelper->expects($this->once())->method('getEntityManager')->willReturn($objectManager);
+        $this->doctrineHelper->expects($this->once())->method('getEntityRepository')->willReturn($repo);
 
         /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
         $logger = $this->getMock('Psr\Log\LoggerInterface');
@@ -131,7 +147,7 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $result = $this->handler->handle(1, $event);
+        $result = $this->handler->handle('id', 'token', $event);
         $this->assertEquals($response, $result);
         $this->assertSame($response, $result);
     }

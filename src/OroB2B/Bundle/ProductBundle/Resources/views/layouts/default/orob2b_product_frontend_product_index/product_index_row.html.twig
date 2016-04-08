@@ -17,7 +17,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         {% set noImageUrl = Image.url(null, 'product_large') %}
-        <a href="javascript:void(0)" class="view-product" style="background-image: url('<% if (model.image) { %><%= model.image %><% } else { %>{{ noImageUrl }}<% } %>')"></a>
+        <a href="<%= model.view_link %>" class="view-product" style="background-image: url('<% if (model.image) { %><%= model.image %><% } else { %>{{ noImageUrl }}<% } %>')"></a>
     </div>
 {% endblock %}
 
@@ -37,7 +37,7 @@
         class: attr.class|default('') ~ " product-item__title product-item__title_<%= themeOptions.view %>"
     }) %}
     <h3 {{ block('block_attributes') }}>
-        <a href="javascript:void(0)" class="view-product"><%= model.name %></a>
+        <a href="<%= model.view_link %>" class="view-product"><%= model.name %></a>
     </h3>
 {% endblock %}
 
@@ -103,7 +103,7 @@
         class: attr.class|default('') ~ " product__view-details-link product__view-details-link_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        <a href="javascript:void(0)" class="view-product">
+        <a href="<%= model.view_link %>" class="view-product">
             <span class="underlined">{{ 'orob2b.product.frontend.index.view_details'|trans }}</span><i class="cf-right-open-mini"></i>
         </a>
     </div>

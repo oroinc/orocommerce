@@ -40,13 +40,14 @@ class CallbackHandler
     }
 
     /**
-     * @param int $transactionId
+     * @param string $accessIdentifier
+     * @param string $accessToken
      * @param AbstractCallbackEvent $event
      * @return Response
      */
-    public function handle($transactionId, AbstractCallbackEvent $event)
+    public function handle($accessIdentifier, $accessToken, AbstractCallbackEvent $event)
     {
-        $paymentTransaction = $this->getPaymentTransaction($transactionId);
+        $paymentTransaction = $this->getPaymentTransaction($accessIdentifier, $accessToken);
         if (!$paymentTransaction) {
             return $event->getResponse();
         }
@@ -72,11 +73,13 @@ class CallbackHandler
     }
 
     /**
-     * @param int $transactionId
+     * @param string $accessIdentifier
+     * @param string $accessToken
      * @return PaymentTransaction
      */
-    protected function getPaymentTransaction($transactionId)
+    protected function getPaymentTransaction($accessIdentifier, $accessToken)
     {
-        return $this->doctrineHelper->getEntity($this->paymentTransactionClass, (int)$transactionId);
+        return $this->doctrineHelper->getEntityRepository($this->paymentTransactionClass)
+            ->findOneBy(['accessIdentifier' => (string)$accessIdentifier, 'accessToken' => (string)$accessToken]);
     }
 }

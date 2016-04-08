@@ -76,7 +76,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         $this->assertNotNull($role);
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $form['orob2b_account_frontend_account_user[enabled]'] = true;
         $form['orob2b_account_frontend_account_user[namePrefix]'] = self::NAME_PREFIX;
         $form['orob2b_account_frontend_account_user[firstName]'] = self::FIRST_NAME;
@@ -148,7 +148,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
             $this->getUrl('orob2b_account_frontend_account_user_update', ['id' => $id])
         );
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $form['orob2b_account_frontend_account_user[enabled]'] = false;
         $form['orob2b_account_frontend_account_user[namePrefix]'] = self::UPDATED_NAME_PREFIX;
         $form['orob2b_account_frontend_account_user[firstName]'] = self::UPDATED_FIRST_NAME;
@@ -184,35 +184,6 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->assertContains(self::UPDATED_EMAIL, $content);
 
         return $id;
-    }
-
-    /**
-     * @depends testUpdate
-     * @param integer $id
-     */
-    public function testInfo($id)
-    {
-        $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_info', ['id' => $id]),
-            ['_widgetContainer' => 'dialog']
-        );
-
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
-        $user = $this->getUserRepository()->find($id);
-        $this->assertNotNull($user);
-
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserRole $role */
-        $roles = $user->getRoles();
-        $role = reset($roles);
-        $this->assertNotNull($role);
-
-        $result = $this->client->getResponse();
-
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(self::UPDATED_FIRST_NAME, $result->getContent());
-        $this->assertContains(self::UPDATED_LAST_NAME, $result->getContent());
-        $this->assertContains(self::UPDATED_EMAIL, $result->getContent());
     }
 
     /**

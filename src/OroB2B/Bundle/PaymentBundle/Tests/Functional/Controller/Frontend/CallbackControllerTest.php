@@ -21,7 +21,10 @@ class CallbackControllerTest extends WebTestCase
     {
         foreach (['POST', 'GET'] as $method) {
             foreach (['orob2b_payment_callback_return', 'orob2b_payment_callback_error'] as $route) {
-                $this->client->request($method, $this->getUrl($route, ['transactionId' => 0]));
+                $this->client->request(
+                    $method,
+                    $this->getUrl($route, ['accessIdentifier' => 'some_key', 'accessToken' => 'some_val'])
+                );
             }
         }
     }
@@ -59,7 +62,13 @@ class CallbackControllerTest extends WebTestCase
         $expectedData = $parameters + $paymentTransaction->getRequest();
         $this->client->request(
             $method,
-            $this->getUrl($route, ['transactionId' => $paymentTransaction->getId()]),
+            $this->getUrl(
+                $route,
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    'accessToken' => $paymentTransaction->getAccessToken(),
+                ]
+            ),
             $expectedData
         );
 
