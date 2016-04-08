@@ -20,7 +20,9 @@ define(function(require) {
             intention: {
                 new: 'new'
             },
-            widgetAlias: 'shopping_list_add_product_form'
+            widgetAlias: 'shopping_list_add_product_form',
+            createNewLabel: 'orob2b.shoppinglist.widget.add_to_new_shopping_list',
+            addToShoppingListButtonSelector: '.add-to-shopping-list-button'
         },
 
         /**
@@ -140,10 +142,11 @@ define(function(require) {
         },
 
         transformCreateNewButton: function() {
-            var $button = $('[data-url="orob2b_shopping_list_frontend_add_product"][data-id=""]');
+            var $button = $(this.options.addToShoppingListButtonSelector)
+                    .filter('[data-id=""]').not('[data-intention="' + this.options.intention.new + '"]');
             if ($button.length) {
                 $button.data('intention', this.options.intention.new);
-                $button.html('Create New Shopping List');
+                $button.html(_.__(this.options.createNewLabel));
             }
         },
 
