@@ -29,13 +29,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
             ],
             true
         );
-
-        $configManager = $this->getContainer()->get('oro_config.scope.global');
-        $configManager->set(
-            Configuration::getConfigKeyByName(Configuration::PRICE_LISTS_UPDATE_MODE),
-            CombinedPriceListQueueConsumer::MODE_SCHEDULED
-        );
-        $configManager->flush();
+        $this->disableRealTimeMode();
     }
 
     /**
@@ -193,5 +187,20 @@ class AccountGroupChangesListenerTest extends WebTestCase
             }
             $this->assertTrue($exist);
         }
+    }
+
+    /**
+     * Disable realtime price update mode
+     */
+    protected function disableRealTimeMode()
+    {
+        $configManager = $this->getContainer()->get('oro_config.scope.global');
+        $configManager->set(
+            Configuration::getConfigKeyByName(
+                Configuration::PRICE_LISTS_UPDATE_MODE
+            ),
+            CombinedPriceListQueueConsumer::MODE_SCHEDULED
+        );
+        $configManager->flush();
     }
 }
