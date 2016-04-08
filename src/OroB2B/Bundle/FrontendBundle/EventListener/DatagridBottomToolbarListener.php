@@ -24,7 +24,7 @@ class DatagridBottomToolbarListener extends AbstractFrontendDatagridListener
      */
     protected function isApplicable(DatagridConfiguration $config)
     {
-        return parent::isFrontendRequest($config) &&
+        return $this->isFrontendRequest() &&
             $config->offsetGetByPath('[options][toolbarOptions][placement][bottom]') === null;
     }
 }
