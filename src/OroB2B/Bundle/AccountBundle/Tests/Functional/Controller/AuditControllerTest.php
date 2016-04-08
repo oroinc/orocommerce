@@ -26,6 +26,8 @@ class AuditControllerTest extends WebTestCase
 
     protected function setUp()
     {
+        $this->markTestIncomplete('Test will be fixed in https://magecore.atlassian.net/browse/BB-2572');
+
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
@@ -34,7 +36,6 @@ class AuditControllerTest extends WebTestCase
 
     public function testAuditHistory()
     {
-        $this->markTestIncomplete('Test will be fixed in https://magecore.atlassian.net/browse/BB-2572');
         if (!$this->client->getContainer()->hasParameter('orob2b_account.entity.account_user.class')) {
             $this->markTestSkipped('OroB2BAccountBundle is not installed');
         }
