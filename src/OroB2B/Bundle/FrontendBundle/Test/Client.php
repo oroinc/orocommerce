@@ -35,8 +35,8 @@ class Client extends BaseClient
     {
         if ($this->isFrontendUri($uri)) {
             $backendPrefix = $this->getBackendPrefix();
-            if (strpos($crawler->html(), $backendPrefix) !== false) {
-                throw new \RuntimeException(
+            if (count($crawler) && strpos($crawler->html(), $backendPrefix) !== false) {
+                throw new \PHPUnit_Framework_AssertionFailedError(
                     sprintf('Response to uri "%s" contains link to backend (with "%s" prefix).', $uri, $backendPrefix)
                 );
             }

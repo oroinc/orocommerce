@@ -14,6 +14,8 @@ class TestClientPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $container->setParameter('test.client.class', 'OroB2B\Bundle\FrontendBundle\Test\Client');
+        if ($container->hasParameter('test.client.class')) {
+            $container->setParameter('test.client.class', 'OroB2B\Bundle\FrontendBundle\Test\Client');
+        }
     }
 }
