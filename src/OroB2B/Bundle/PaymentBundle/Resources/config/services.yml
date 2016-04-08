@@ -181,8 +181,8 @@ services:
         arguments:
             - '@session'
         tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.return, method: onReturn }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.error, method: onError }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.return, method: onReturn, priority: 10 }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.error, method: onError, priority: 10 }
 
     orob2b_payment.event_listener.callback.payment_term:
         class: '%orob2b_payment.event_listener.callback.payment_term.class%'

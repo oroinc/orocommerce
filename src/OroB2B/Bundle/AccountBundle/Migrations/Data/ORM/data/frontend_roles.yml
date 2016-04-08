@@ -11,3 +11,4 @@ BUYER:
         entity|OroB2B\Bundle\AccountBundle\Entity\AccountAddress: [VIEW_LOCAL]
         entity|OroB2B\Bundle\AccountBundle\Entity\AccountUser: [VIEW_LOCAL, EDIT_LOCAL]
         entity|OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress: [VIEW_BASIC]
+        entity|OroB2B\Bundle\AccountBundle\Entity\AccountUserRole: []

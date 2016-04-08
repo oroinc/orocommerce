@@ -250,13 +250,9 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $repository->expects($this->once())
-            ->method('findAllExceptCurrentForAccountUser')
+            ->method('findByUser')
             ->with($user)
-            ->willReturn([$shoppingList1, $shoppingList2]);
-        $repository->expects($this->once())
-            ->method('findCurrentForAccountUser')
-            ->with($user)
-            ->willReturn($shoppingList3);
+            ->willReturn([$shoppingList3, $shoppingList1, $shoppingList2]);
 
         /* @var $entityManager EntityManager|\PHPUnit_Framework_MockObject_MockObject */
         $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
@@ -285,10 +281,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
-            [
-                'currentShoppingList' => $shoppingList3,
-                'shoppingLists' => [$shoppingList1, $shoppingList2],
-            ],
+            [$shoppingList3, $shoppingList1, $shoppingList2],
             $manager->getShoppingLists()
         );
     }

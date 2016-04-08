@@ -227,8 +227,6 @@
   text-indent: -999rem;
 
   @media (max-width: 991px) {
-    width: 24rem;
-    height: 3.2rem;
     background-size: 24rem 3.2rem;
     margin: 0 auto;
   }
@@ -250,11 +248,11 @@
 }
 
 .cart__promo__link {
-  color: @base-font-color;
+  color: @base-font-color !important;
 
   &:hover {
     color: @base-font-color;
-    text-decoration: none;
+    text-decoration: none !important;
 
     span {
       text-decoration: underline;
@@ -1210,6 +1208,7 @@
   position: absolute;
   top: 0;
   left: 0;
+  z-index:1;
   
   [class^="cf-"] {
     font-size: 1.8rem;
@@ -2484,7 +2483,7 @@
 
 .catalog__filter-controls__item {
   flex-grow: 1;
-  margin-right: 1.5rem;
+  margin-right: .5rem;
 
   &.catalog__filter-controls__item_filter {
     flex-grow: 0;
@@ -2503,12 +2502,6 @@
     .action-selectbox_custom_in-pager {
       width: 100%;
       max-width: 16.5rem;
-    }
-  }
-
-  &:first-child:not(.oro-pagination) {
-    @media (max-width: 991px) {
-      display: none;
     }
   }
 
@@ -2856,18 +2849,17 @@
 
 /*START CREATE ACCOUNT FORM*/
 .create-account {
-   
-   &.create-account_full {
-      width: 86rem;
-      margin: 0 auto;
+  &.create-account_full {
+    width: 86rem;
+    margin: 0 auto;
 
-      @media (max-width: 991px) {
-        width: 100%;
-        margin-bottom: 8rem;
-      }
-   }
+    @media (max-width: 991px) {
+      width: 100%;
+      margin-bottom: 8rem;
+    }
+  }
 
-   &.create-account_half-cols {
+  &.create-account_half-cols {
     margin: 0 -1.5rem;
 
     &:before, &:after {
@@ -2876,7 +2868,25 @@
       height: 0;
       clear: both;
     }
-   }
+  }
+
+  &.create-account_pos-absolute_vert-centered {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+
+    @media (max-width: 991px) {
+      margin: 0;
+    }
+
+    .create-account__form-container {
+      &.form-container-x6 {
+        max-width: 700px;
+      }
+    }
+  }
 }
 
 .create-account__title {
@@ -2899,7 +2909,7 @@
 
   &.form-container-x6 {
     width: 50%;
-    float: left;
+    margin: 0 auto;
     padding: 0 1.5rem;
 
     @media (max-width: 991px) {
@@ -3594,8 +3604,6 @@
       }
 
       &.oro-oq__filter__item_group-btn {
-        flex-basis: 9rem;
-
         @media (max-width: 992px) {
           flex-basis: auto !important;
         }
@@ -4286,27 +4294,19 @@
 
 .action-select  {
   .input();
-  border: .1rem solid #d6d6d6;
+  position: relative;
+
   padding: .6rem .9rem .6rem !important;
-  background: rgb(255,255,255);
-  background: -moz-linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(230,230,230,1) 100%);
-  background: -webkit-gradient(linear, to bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(230,230,230,1))); 
-  background: -webkit-linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
-  background: -o-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%); 
-  background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
-  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e6e6e6',GradientType=0 );
-  
+
+  border: .1rem solid @base-border-color;
+  background: @base-white-color;
+
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 
   &[disabled] {
-    background: rgb(255,255,255);
-    background: -moz-linear-gradient(to bottom, rgba(255,255,255,1) 0%, #e6e6e6 100%);
-    background: -webkit-gradient(linear, to bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,#e6e6e6)); 
-    background: -webkit-linear-gradient(to bottom, rgba(255,255,255,1) 0%,#e6e6e6 100%);
-    background: -o-linear-gradient(top, rgba(255,255,255,1) 0%,#e6e6e6 100%); 
-    background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%,#e6e6e6 100%);
     background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,#e6e6e6 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e6e6e6',GradientType=0 );
   }
 }
 
@@ -5590,16 +5590,31 @@
           padding-left: 0;
         }
 
+        &:last-child {
+          padding-right: 0;
+        }
+
         padding: 1rem 1.2rem;
         border-top: .1rem solid @table-alt-border-color;
+      }
+    }
+
+    .table {
+      td:first-child {
+        text-align: left;
+      }
+
+      td:last-child {
+        text-align: right;
       }
     }
   }
 }
 
 .checkout-order-summary__price-table {
-  max-width: 25rem;
-  display: inline-block;
+  max-width: 22.5rem;
+
+  margin-left: auto;
 
   .table {
     margin: 0;
