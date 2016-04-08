@@ -79,6 +79,7 @@ class PaymentTransactionProvider
             $object,
             [
                 'active' => true,
+                'successful' => true,
                 'action' => PaymentMethodInterface::AUTHORIZE,
                 'amount' => round($amount, 2),
                 'currency' => $currency,
