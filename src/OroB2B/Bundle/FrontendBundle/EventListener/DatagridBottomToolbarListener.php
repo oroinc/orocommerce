@@ -5,8 +5,21 @@ namespace OroB2B\Bundle\FrontendBundle\EventListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
-class DatagridBottomToolbarListener extends AbstractFrontendDatagridListener
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelperTrait;
+
+class DatagridBottomToolbarListener
 {
+    use FrontendHelperTrait;
+
+    /**
+     * @param FrontendHelper $frontendHelper
+     */
+    public function __construct(FrontendHelper $frontendHelper)
+    {
+        $this->frontendHelper = $frontendHelper;
+    }
+
     /**
      * {@inheritDoc}
      */

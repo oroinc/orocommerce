@@ -6,8 +6,21 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\EntityExtendBundle\Grid\AdditionalFieldsExtension;
 use Oro\Bundle\EntityExtendBundle\Grid\DynamicFieldsExtension;
 
-class DatagridFieldsListener extends AbstractFrontendDatagridListener
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelperTrait;
+
+class DatagridFieldsListener
 {
+    use FrontendHelperTrait;
+
+    /**
+     * @param FrontendHelper $frontendHelper
+     */
+    public function __construct(FrontendHelper $frontendHelper)
+    {
+        $this->frontendHelper = $frontendHelper;
+    }
+
     /**
      * @param BuildBefore $event
      */
