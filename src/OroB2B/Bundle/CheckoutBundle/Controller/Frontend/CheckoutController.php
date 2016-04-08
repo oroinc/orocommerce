@@ -64,14 +64,19 @@ class CheckoutController extends Controller
         $workflowItem = $this->handleTransition($checkout, $request);
         $currentStep = $this->validateStep($workflowItem);
 
+        $responseData = [];
         if ($workflowItem->getResult()->has('responseData')) {
-            return new JsonResponse(['responseData' => $workflowItem->getResult()->get('responseData')]);
-        } elseif ($workflowItem->getResult()->has('redirectUrl')) {
+            $responseData['responseData'] = $workflowItem->getResult()->get('responseData');
+        }
+        if ($workflowItem->getResult()->has('redirectUrl')) {
             if ($request->isXmlHttpRequest()) {
-                return new JsonResponse(['redirectUrl' => $workflowItem->getResult()->get('redirectUrl')]);
+                $responseData['redirectUrl'] = $workflowItem->getResult()->get('redirectUrl');
             } else {
                 return $this->redirect($workflowItem->getResult()->get('redirectUrl'));
             }
+        }
+        if ($responseData) {
+            return new JsonResponse($responseData);
         }
 
         return [

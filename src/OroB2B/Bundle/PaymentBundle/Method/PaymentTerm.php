@@ -13,7 +13,7 @@ class PaymentTerm implements PaymentMethodInterface
 {
     use ConfigTrait;
 
-    const TYPE = 'PaymentTerm';
+    const TYPE = 'payment_term';
 
     /** @var PaymentTermProvider */
     protected $paymentTermProvider;
