@@ -28,6 +28,11 @@ class RedirectListener
     public function onReturn(CallbackReturnEvent $event)
     {
         $this->handleEvent($event, 'successUrl');
+
+        $event
+            ->getPaymentTransaction()
+            ->setActive(false)
+            ->setSuccessful(true);
     }
 
     /**
@@ -36,6 +41,11 @@ class RedirectListener
     public function onError(CallbackErrorEvent $event)
     {
         $this->handleEvent($event, 'errorUrl');
+
+        $event
+            ->getPaymentTransaction()
+            ->setActive(false)
+            ->setSuccessful(false);
 
         if (!$this->session->has('error')) {
             $this->session->getFlashBag()->add('error', 'orob2b.payment.result.error');
