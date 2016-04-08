@@ -7,10 +7,10 @@
         {{ form_widget(field, {attr: attr}) }}
     </div>
 {% endmacro %}
+
 {% block orob2b_account_typed_address_widget %}
     {% import _self as draw %}
     {% spaceless %}
-
         <div class="row">
             {{ draw.group(form.label, 6) }}
         </div>
