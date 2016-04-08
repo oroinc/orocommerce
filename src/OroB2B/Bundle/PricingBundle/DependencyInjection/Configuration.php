@@ -39,7 +39,7 @@ class Configuration implements ConfigurationInterface
                 self::ROUNDING_TYPE => ['value' => PriceRoundingService::ROUND_HALF_UP],
                 self::PRECISION => ['value' => PriceRoundingService::FALLBACK_PRECISION],
                 self::COMBINED_PRICE_LIST => null,
-                self::PRICE_LISTS_UPDATE_MODE => ['value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED],
+                self::PRICE_LISTS_UPDATE_MODE => ['value' => CombinedPriceListQueueConsumer::MODE_REAL_TIME],
             ]
         );
 
