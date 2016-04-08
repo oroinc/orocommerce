@@ -125,6 +125,7 @@ layout:
                         label: 'orob2b.order.po_number.label'
                         text: {@value: $data.order.poNumber}
                         block_prefixes: ['order_body_column_element']
+                        visible: { @not_empty: $data.order.poNumber }
                 order_shipping_method:
                     blockType: text
                     options:
