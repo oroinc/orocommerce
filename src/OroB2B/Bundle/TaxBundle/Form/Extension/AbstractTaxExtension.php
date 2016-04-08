@@ -66,7 +66,7 @@ abstract class AbstractTaxExtension extends AbstractTypeExtension
 
     /**
      * @param object $object
-     * @return AbstractTaxCode
+     * @return AbstractTaxCode|null
      */
     abstract protected function getTaxCode($object);
 

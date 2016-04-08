@@ -92,7 +92,7 @@ orob2b.account:
             registration.title: 'Registration'
             register: 'Register'
             register.description: 'Please register if you do not have an account. A sales representative will contact you shortly.'
-            create_an_account: 'Create an Account'
+            create_an_account: 'Create An Account'
             forgot_password: 'Forgot Your Password?'
             enter_password: 'Enter your password'
             reset_password:
@@ -450,12 +450,17 @@ orob2b.account:
         account_user_link.text: '< Back to Account User List'
         action:
             back.label: "< Back"
+            back_to_login.label: "Already have an account? Log in >"
             account_user_role.edit: "Edit Role"
         table:
             entity:
                 section.label: Section
                 action.label: Action
                 permission.label: Permission
+        menu:
+            account_user_signed_in_as.label: 'Signed in as:'
+            account_user_sign_out.label: 'Sign Out'
+            account_user_profile.label: 'My Account'
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'

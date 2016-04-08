@@ -61,13 +61,11 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     protected function createTopNavMenu(ObjectManager $manager)
     {
         $item = $this->factory->createItem('top-nav');
-        $item->addChild('My Account', ['uri' => '/account/user/profile']);
-        $item->addChild('Order History', ['uri' => '/account/order']);
-        $item->addChild('Sign Out', ['uri' => '/account/user/logout', 'extras' => [
-            'condition' => 'is_logged_in()'
-        ]]);
         $item->addChild('1-800-555-5555');
         $item->addChild('Live Chat', ['uri' => '/contact-us']);
+        $item->addChild('<span>Fast & Free Shipping</span> for orders over $45', ['uri' => '/about'])
+            ->setAttribute('class', 'topbar__controls')
+            ->setLinkAttribute('class', 'cart__promo__link');
 
         $menuItem = $this->menuItemManager->createFromItem($item);
         $manager->persist($menuItem);
@@ -124,8 +122,8 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
 
         $itemMyAccount = $item->addChild('My Account');
         $itemMyAccount->addChild('Sign Out', ['uri' => '/account/user/logout']);
-        $itemMyAccount->addChild('View Cart', ['uri' => '/cart']);
-        $itemMyAccount->addChild('My Wishlist', ['uri' => '/wishlist']);
+        $itemMyAccount->addChild('View Cart', ['uri' => '/account/shoppinglist']);
+        $itemMyAccount->addChild('My Wishlist', ['uri' => '/account/shoppinglist']);
         $itemMyAccount->addChild('Track My Order', ['uri' => '/shipping/tracking']);
         $itemMyAccount->addChild('Help', ['uri' => '/help']);
 
