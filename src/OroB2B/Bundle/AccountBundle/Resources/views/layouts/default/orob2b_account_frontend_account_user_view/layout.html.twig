@@ -98,9 +98,11 @@
 {% endblock %}
 
 {% block _account_user_address_add_link_widget %}
-    <div class="oro-account-user-address__add-link pull-right">
-        {{ block_widget(block) }}
-    </div>
+    {% if block.vars.visible %}
+        <div class="oro-account-user-address__add-link pull-right">
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block _account_user_address_book_content_widget %}
