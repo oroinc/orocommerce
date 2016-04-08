@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table(name="orob2b_payment_transaction")
  * @ORM\Entity
+ *
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class PaymentTransaction
 {
@@ -31,6 +33,18 @@ class PaymentTransaction
      * @ORM\Column(name="entity_identifier", type="integer")
      */
     protected $entityIdentifier;
+
+    /**
+     * @var string
+     * @ORM\Column(name="access_identifier", type="string")
+     */
+    protected $accessIdentifier;
+
+    /**
+     * @var string
+     * @ORM\Column(name="access_token", type="string")
+     */
+    protected $accessToken;
 
     /**
      * @var string
@@ -114,10 +128,20 @@ class PaymentTransaction
      */
     protected $transactionOptions;
 
+    /**
+     * @return string
+     */
+    public static function generate()
+    {
+        return md5(microtime() . uniqid('PaymentTransaction', true));
+    }
 
     public function __construct()
     {
         $this->relatedPaymentTransactions = new ArrayCollection();
+
+        $this->accessIdentifier = self::generate();
+        $this->accessToken = self::generate();
     }
 
     /**
@@ -371,7 +395,7 @@ class PaymentTransaction
      */
     public function setSuccessful($successful)
     {
-        $this->successful = $successful;
+        $this->successful = (bool)$successful;
 
         return $this;
     }
@@ -401,5 +425,43 @@ class PaymentTransaction
         $this->transactionOptions = $transactionOptions;
 
         return $this;
+    }
+
+    /**
+     * @param string $accessIdentifier
+     * @return PaymentTransaction
+     */
+    public function setAccessIdentifier($accessIdentifier)
+    {
+        $this->accessIdentifier = (string)$accessIdentifier;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccessIdentifier()
+    {
+        return $this->accessIdentifier;
+    }
+
+    /**
+     * @param string $accessToken
+     * @return PaymentTransaction
+     */
+    public function setAccessToken($accessToken)
+    {
+        $this->accessToken = (string)$accessToken;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccessToken()
+    {
+        return $this->accessToken;
     }
 }

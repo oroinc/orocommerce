@@ -67,7 +67,7 @@ class Configuration implements ConfigurationInterface
     const ALLOWED_COUNTRIES_SELECTED = 'selected';
 
     const CREDIT_CARD_LABEL = 'Credit Card';
-    const PAYMENT_TERM_LABEL = 'Payment Term';
+    const PAYMENT_TERM_LABEL = 'Payment Terms';
 
     /**
      * {@inheritdoc}

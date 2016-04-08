@@ -17,7 +17,7 @@ class AccountGroupFormExtension extends AbstractPaymentTermExtension
     {
         /** @var AccountGroup|null $accountGroup */
         $accountGroup = $event->getData();
-        if (!$accountGroup || !$accountGroup->getId()) {
+        if (!$accountGroup) {
             return;
         }
 
@@ -33,7 +33,7 @@ class AccountGroupFormExtension extends AbstractPaymentTermExtension
     {
         /** @var AccountGroup|null $accountGroup */
         $accountGroup = $event->getData();
-        if (!$accountGroup || !$accountGroup->getId()) {
+        if (!$accountGroup) {
             return;
         }
 

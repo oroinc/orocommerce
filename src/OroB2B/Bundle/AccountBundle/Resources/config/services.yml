@@ -102,6 +102,8 @@ parameters:
     orob2b_account.provider.frontend_account_user_registration_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider
     orob2b_account.provider.frontend_account_user_role_privileges.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRolePrivilegesDataProvider
     orob2b_account.provider.frontend_account_user_role_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleFormDataProvider
+    orob2b_account.provider.frontend_account_user_profile_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserProfileFormProvider
+    orob2b_account.provider.frontend_account_user_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserFormDataProvider
 
     orob2b_account.audit.discriminator_map_listener.class: OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener
 
@@ -895,3 +897,17 @@ services:
             - @fragment.handler
         tags:
              - { name: layout.block_type, alias: address_book }
+
+    orob2b_account.provider.frontend_account_user_profile_form:
+        class: %orob2b_account.provider.frontend_account_user_profile_form.class%
+        arguments:
+            - @form.factory
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_profile_form }
+
+    orob2b_account.provider.frontend_account_user_form:
+        class: %orob2b_account.provider.frontend_account_user_form.class%
+        arguments:
+              - @form.factory
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_form }

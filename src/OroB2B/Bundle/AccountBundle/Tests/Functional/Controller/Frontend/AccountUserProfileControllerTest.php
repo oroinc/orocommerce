@@ -34,7 +34,7 @@ class AccountUserProfileControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $form->offsetSet('orob2b_account_frontend_account_user_profile[firstName]', 'AccountUserUpdated');
 
         $this->client->followRedirects(true);
@@ -52,7 +52,7 @@ class AccountUserProfileControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $form->offsetSet(
             'orob2b_account_frontend_account_user_profile[changePassword]',
             [
@@ -70,7 +70,7 @@ class AccountUserProfileControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains('The password fields must match.', $crawler->filter('.validation-failed')->html());
+        $this->assertContains('The password fields must match.', $crawler->filter('.password_first span')->html());
     }
 
     public function testEditProfileWithoutCurrentPassword()
@@ -79,7 +79,7 @@ class AccountUserProfileControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $form->offsetSet(
             'orob2b_account_frontend_account_user_profile[changePassword]',
             [
@@ -98,7 +98,7 @@ class AccountUserProfileControllerTest extends WebTestCase
 
         $this->assertContains(
             'This value should be the user\'s current password.',
-            $crawler->filter('.validation-failed')->html()
+            $crawler->filter('.current_password span')->html()
         );
     }
 }

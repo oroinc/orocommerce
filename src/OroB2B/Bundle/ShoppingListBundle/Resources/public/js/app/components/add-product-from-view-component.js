@@ -11,7 +11,6 @@ define(function(require) {
     var Error = require('oroui/js/error');
     var $ = require('jquery');
     var _ = require('underscore');
-    var widgetManager = require('oroui/js/widget-manager');
 
     AddProductFromViewComponent = BaseComponent.extend({
         /**
@@ -91,13 +90,12 @@ define(function(require) {
          */
         createNewShoppingList: function(url, urlOptions, formData) {
             var self = this;
-            if (!this.dialog) {
-                this.dialog = new ShoppingListWidget({});
-                this.dialog.on('formSave', _.bind(function(response) {
-                    urlOptions.shoppingListId = response;
-                    self.addProductToShoppingList(url, urlOptions, formData);
-                }, this));
-            }
+
+            this.dialog = new ShoppingListWidget({});
+            this.dialog.on('formSave', _.bind(function(response) {
+                urlOptions.shoppingListId = response;
+                self.addProductToShoppingList(url, urlOptions, formData);
+            }, this));
 
             this.dialog.render();
         },
@@ -123,9 +121,8 @@ define(function(require) {
                         );
                     }
                     if (!self.buttonExists(urlOptions.shoppingListId)) {
-                        widgetManager.getWidgetInstanceByAlias(self.options.widgetAlias, function(widget) {
-                            widget.render();
-                        });
+                        self.transformCreateNewButton();
+                        mediator.trigger('shopping-list:created', response.shoppingList);
                     }
                 },
                 error: function(xhr) {
@@ -140,6 +137,14 @@ define(function(require) {
          */
         buttonExists: function(id) {
             return Boolean(this.options._sourceElement.find('[data-id="' + id + '"]').length);
+        },
+
+        transformCreateNewButton: function() {
+            var $button = $('[data-url="orob2b_shopping_list_frontend_add_product"][data-id=""]');
+            if ($button.length) {
+                $button.data('intention', this.options.intention.new);
+                $button.html('Create New Shopping List');
+            }
         },
 
         dispose: function() {
