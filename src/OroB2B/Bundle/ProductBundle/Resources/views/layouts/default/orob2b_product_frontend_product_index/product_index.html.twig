@@ -18,7 +18,7 @@
     }) %}
     <div{{ block('block_attributes') }}>
         {% set row_view_key = constant('OroB2B\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::GRID_THEME_PARAM_NAME') %}
-        <span class="fs14 va-m_md mmr9-md mmr9-sm hidden-sm hidden-xs">Display:</span>
+        <span class="fs14 va-m_md hidden-sm hidden-xs">Display: &nbsp;</span>
         <div class="buttons-inline-group inline">
             {% set row_view = constant('OroB2B\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_TILES') %}
             <a href="{{ path('orob2b_product_frontend_product_index', {'frontend-products-grid': {(row_view_key): row_view}}) }}"
