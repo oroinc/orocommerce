@@ -135,9 +135,8 @@ class DatagridListener
             return;
         }
 
-        $includeSubcategoriesChoice = $this->requestProductHandler->getIncludeSubcategoriesChoice();
         $productCategoryIds = [$categoryId];
-        if ($includeSubcategoriesChoice) {
+        if ($isIncludeSubcategories) {
             $productCategoryIds = array_merge($repo->getChildrenIds($category), $productCategoryIds);
         }
 

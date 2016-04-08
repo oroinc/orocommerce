@@ -112,23 +112,32 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider childrenIdsDataProvider
      *
+     * @param boolean $useRequest
      * @param int $catId
      * @param boolean $includeSubcategoriesChoice
      * @param array $childrenIds
      * @param array $expectedParameters
      */
     public function testOnPreBuild(
+        $useRequest,
         $catId,
         $includeSubcategoriesChoice,
         array $childrenIds,
         array $expectedParameters = []
     ) {
         $category = new Category();
-        $this->requestProductHandler->expects($this->atLeastOnce())->method('getCategoryId')->willReturn($catId);
-        $this->requestProductHandler
-            ->expects($this->atLeastOnce())
-            ->method('getIncludeSubcategoriesChoice')
-            ->willReturn($includeSubcategoriesChoice);
+        $event = $this->createPreBuildEvent();
+
+        if ($useRequest) {
+            $this->requestProductHandler->expects($this->atLeastOnce())->method('getCategoryId')->willReturn($catId);
+            $this->requestProductHandler
+                ->expects($this->atLeastOnce())
+                ->method('getIncludeSubcategoriesChoice')
+                ->willReturn($includeSubcategoriesChoice);
+        } else {
+            $event->getParameters()->set('categoryId', $catId);
+            $event->getParameters()->set('includeSubcategories', $includeSubcategoriesChoice);
+        }
 
         /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject $repo */
         $repo = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
@@ -140,7 +149,6 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->doctrine->expects($this->atLeastOnce())->method('getRepository')->with(self::DATA_CLASS)
             ->willReturn($repo);
 
-        $event = $this->createPreBuildEvent();
         $this->listener->onPreBuildProducts($event);
         $this->assertEquals($expectedParameters, $event->getParameters()->all());
 
@@ -173,28 +181,36 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
+                'useRequest' => true,
                 'catId' => 1,
                 'includeSubcategories' => true,
                 'childrenIds' => [2, 3],
-                'expectedParameters' => ['productCategoryIds' => [2, 3, 1]]
+                'expectedParameters' => ['productCategoryIds' => [2, 3, 1]],
             ],
             [
+                'useRequest' => true,
                 'catId' => 1,
                 'includeSubcategories' => true,
                 'childrenIds' => [],
-                'expectedParameters' => ['productCategoryIds' => [1]]
+                'expectedParameters' => ['productCategoryIds' => [1]],
             ],
             [
+                'useRequest' => true,
                 'catId' => 1,
                 'includeSubcategories' => false,
                 'childrenIds' => [],
-                'expectedParameters' => ['productCategoryIds' => [1]]
+                'expectedParameters' => ['productCategoryIds' => [1]],
             ],
             [
+                'useRequest' => false,
                 'catId' => 2,
                 'includeSubcategories' => true,
                 'childrenIds' => [1],
-                'expectedParameters' => ['productCategoryIds' => [1, 2]]
+                'expectedParameters' => [
+                    'productCategoryIds' => [1, 2],
+                    'categoryId' => 2,
+                    'includeSubcategories' => true,
+                ],
             ],
         ];
     }
