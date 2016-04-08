@@ -1,0 +1,4 @@
+orob2b:
+    payment:
+        number.error: This value should be a number.
+        account.error: Invalid card number.

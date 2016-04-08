@@ -66,7 +66,7 @@ define(function(require) {
 
             this.$discountsSumElement.val(discountsSum);
 
-            if (!_.isEmpty(dataValidation.Range)) {
+            if (dataValidation && !_.isEmpty(dataValidation.Range)) {
                 dataValidation.Range.max = total;
             }
 

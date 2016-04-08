@@ -129,10 +129,21 @@ class AccountGroupFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSetDataNewAccountGroup()
     {
-        $event = $this->createEvent($this->createAccountGroupEntity());
+        $accountGroup = $this->createAccountGroupEntity();
+        $event = $this->createEvent($accountGroup);
 
-        $this->repository->expects($this->never())
-            ->method('getOnePaymentTermByAccountGroup');
+        $paymentTerm = $this->createPaymentTermEntity();
+
+        $this->repository->expects($this->once())
+            ->method('getOnePaymentTermByAccountGroup')
+            ->with($accountGroup)
+            ->willReturn($paymentTerm);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $paymentTermForm */
+        $paymentTermForm = $event->getForm()->get('paymentTerm');
+        $paymentTermForm->expects($this->once())
+            ->method('setData')
+            ->with($paymentTerm);
 
         $this->extension->onPostSetData($event);
     }
