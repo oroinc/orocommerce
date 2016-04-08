@@ -1,6 +1,6 @@
 {% block _account_user_view_page_widget %}
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
+        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
     }) %}
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
@@ -33,10 +33,48 @@
     {% import 'OroEmailBundle::macros.html.twig' as Email %}
 
     <div class="account-oq__item__body">
-        {{ oro_widget_render({
-            'widgetType': 'block',
-            'url': path('orob2b_account_account_user_info', {id: entity.id})
-        }) }}
+        <div class="widget-content">
+            <div class="row-fluid form-horizontal">
+                <div class="responsive-block">
+                    {% if  entity.namePrefix is defined %}
+                        {{ UI.renderProperty('orob2b.account.accountuser.name_prefix.label'|trans, entity.namePrefix) }}
+                    {% endif %}
+                    {{ UI.renderProperty('orob2b.account.accountuser.first_name.label'|trans, entity.firstName) }}
+                    {% if  entity.middleName is defined %}
+                        {{ UI.renderProperty('orob2b.account.accountuser.middle_name.label'|trans, entity.middleName) }}
+                    {% endif %}
+                    {{ UI.renderProperty('orob2b.account.accountuser.last_name.label'|trans, entity.lastName) }}
+                    {% if  entity.nameSuffix is defined %}
+                        {{ UI.renderProperty('orob2b.account.accountuser.name_suffix.label'|trans, entity.nameSuffix) }}
+                    {% endif %}
+
+                    {% set birthday_string %}
+                        {{ entity.birthday is empty ? 'N/A'|trans : entity.birthday|oro_format_date }}
+                        {% if entity.birthday is not empty %}
+                            ({{ entity.birthday|age_string({'default': 'N/A'}) }})
+                        {% endif %}
+                    {% endset %}
+                    {{ UI.renderProperty('orob2b.account.accountuser.birthday.label'|trans, birthday_string) }}
+                    {{ UI.renderHtmlProperty('orob2b.account.accountuser.email.label'|trans, Email.email_address_simple(entity.email)) }}
+
+                    {% if entity.account %}
+                        {{ UI.renderHtmlProperty('orob2b.account.accountuser.profile.company_name'|trans, entity.account.name) }}
+                    {% endif %}
+
+                    {% if resource_granted('orob2b_account_account_user_role_view') %}
+                        {% set roles = [] %}
+                        {% for entityRole in entity.roles %}
+                            {% set roles = roles|merge([entityRole.label]) %}
+                        {% endfor %}
+                        {{ UI.renderHtmlProperty('orob2b.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
+                    {% endif %}
+
+                    {% if entity.salesRepresentatives | length %}
+                        {{ UI.renderHtmlProperty('orob2b.account.accountuser.sales_representatives.label'|trans, UI.entityViewLinks(entity.salesRepresentatives, 'fullName', 'oro_user_view')) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
@@ -67,11 +105,7 @@
 
 {% block _account_user_address_book_content_widget %}
     <div class="account-oq__item__body">
-        {{ oro_widget_render({
-            'widgetType': 'block',
-            'contentClasses': [],
-            'url': path('orob2b_account_account_user_address_book', {id: entity.id})
-        }) }}
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 

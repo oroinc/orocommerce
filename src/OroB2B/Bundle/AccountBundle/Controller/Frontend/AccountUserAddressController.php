@@ -27,7 +27,7 @@ class AccountUserAddressController extends Controller
      * )
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      * @Layout()
-     * @AclAncestor("orob2b_account_account_user_create")
+     * @AclAncestor("orob2b_account_frontend_account_user_create")
      * @param AccountUser $accountUser
      * @param Request $request
      * @return array
@@ -45,7 +45,7 @@ class AccountUserAddressController extends Controller
      * )
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      * @Layout()
-     * @AclAncestor("orob2b_account_account_user_update")
+     * @AclAncestor("orob2b_account_frontend_account_user_update")
      * @param AccountUser $accountUser
      * @param AccountUserAddress $accountAddress
      * @param Request $request

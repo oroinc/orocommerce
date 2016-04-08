@@ -49,7 +49,7 @@ layout:
                 account_user_view_information_title:
                     blockType: text
                     options:
-                        text: {@value: 'orob2b.account.frontend.section.account_user.my_profile'}
+                        text: {@value: 'orob2b.account.frontend.sections.account_user.my_profile'}
                 account_user_view_information_content:
                     blockType: block
                     options:
@@ -63,7 +63,7 @@ layout:
                 account_user_address_book_title:
                     blockType: text
                     options:
-                        text: {@value: 'orob2b.account.frontend.section.account_user.address_book'}
+                        text: {@value: 'orob2b.account.frontend.sections.account_user.address_book'}
                 account_user_address_add_link:
                     blockType: link
                     options:
@@ -71,11 +71,16 @@ layout:
                         route_name: orob2b_account_frontend_account_user_address_create
                         route_parameters: { entityId: {@value: $data.entity.id }}
                         text: {@value: 'orob2b.account.address.add'}
+                        icon: plus
                 account_user_address_book_content:
-                    blockType: block
+                    blockType: address_book
                     options:
-                        vars:
-                            entity: { @value: $data.entity }
+                        entity: { @value: $data.entity }
+                        addressListRouteName: 'orob2b_api_account_frontend_get_accountuser_addresses'
+                        addressCreateRouteName: 'orob2b_account_frontend_account_user_address_create'
+                        addressCreateAclResource: 'orob2b_account_frontend_account_user_create'
+                        addressUpdateRouteName: 'orob2b_account_frontend_account_user_address_update'
+                        addressUpdateAclResource: 'orob2b_account_frontend_account_user_update'
             tree:
                 content:
                     account_user_view_page:

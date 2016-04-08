@@ -30,6 +30,8 @@ class OroB2BPaymentBundle implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('entity_class', 'string', ['length' => 255]);
         $table->addColumn('entity_identifier', 'integer', []);
+        $table->addColumn('access_identifier', 'string', ['length' => 255]);
+        $table->addColumn('access_token', 'string', ['length' => 255]);
         $table->addColumn('payment_method', 'string', ['length' => 255]);
         $table->addColumn('action', 'string', ['length' => 255]);
         $table->addColumn('reference', 'string', ['notnull' => false, 'length' => 255]);
