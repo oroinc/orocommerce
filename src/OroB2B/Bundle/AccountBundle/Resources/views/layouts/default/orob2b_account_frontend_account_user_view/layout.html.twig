@@ -67,11 +67,7 @@
 
 {% block _account_user_address_book_content_widget %}
     <div class="account-oq__item__body">
-        {{ oro_widget_render({
-            'widgetType': 'block',
-            'contentClasses': [],
-            'url': path('orob2b_account_account_user_address_book', {id: entity.id})
-        }) }}
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 

@@ -10,5 +10,7 @@ config:
         'oro/select2-autocomplete-account-parent-component': 'bundles/orob2baccount/js/app/components/select2-autocomplete-account-parent-component.js'
         'orob2baccount/js/app/modules/views-module': 'bundles/orob2baccount/js/app/modules/views-module.js'
         'orob2baccount/js/app/views/account-role-view': 'bundles/orob2baccount/js/app/views/account-role-view.js'
+        'orob2baccount/js/address-book': 'bundles/orob2baccount/js/address-book.js'
+        'orob2baccount/js/app/components/frontend-account-address-book-component': 'bundles/orob2baccount/js/app/components/frontend-account-address-book-component.js'
     appmodules:
         - orob2baccount/js/app/modules/views-module

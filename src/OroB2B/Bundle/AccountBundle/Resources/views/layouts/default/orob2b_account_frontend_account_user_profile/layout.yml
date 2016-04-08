@@ -72,10 +72,14 @@ layout:
                         route_parameters: { entityId: {@value: $data.entity.id }}
                         text: {@value: 'orob2b.account.address.add'}
                 account_user_address_book_content:
-                    blockType: block
+                    blockType: address_book
                     options:
-                        vars:
-                            entity: { @value: $data.entity }
+                        entity: { @value: $data.entity }
+                        addressListRouteName: 'orob2b_api_account_frontend_get_accountuser_addresses'
+                        addressCreateRouteName: 'orob2b_account_frontend_account_user_address_create'
+                        addressCreateAclResource: 'orob2b_account_frontend_account_user_create'
+                        addressUpdateRouteName: 'orob2b_account_frontend_account_user_address_update'
+                        addressUpdateAclResource: 'orob2b_account_frontend_account_user_update'
             tree:
                 content:
                     account_user_view_page:
