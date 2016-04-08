@@ -47,12 +47,13 @@ class FrontendAccountUserResetPasswordFormProvider extends AbstractServerRenderD
     }
 
     /**
+     * @param AccountUser $user
      * @return FormInterface
      */
-    public function getForm()
+    public function getForm(AccountUser $user = null)
     {
         if (!$this->form) {
-            $this->form = $this->formFactory->create(AccountUserPasswordResetType::NAME);
+            $this->form = $this->formFactory->create(AccountUserPasswordResetType::NAME, $user);
         }
 
         return $this->form;

@@ -103,7 +103,7 @@ class ResetController extends Controller
 
         /** @var AccountUserPasswordResetHandler $handler */
         $handler = $this->get('orob2b_account.account_user.password_reset.handler');
-        $form = $this->get('orob2b_account.provider.frontend_account_user_reset_password_form')->getForm();
+        $form = $this->get('orob2b_account.provider.frontend_account_user_reset_password_form')->getForm($user);
 
         if ($handler->process($form, $this->getRequest())) {
             // force user logout
