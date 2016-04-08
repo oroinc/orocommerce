@@ -49,7 +49,7 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
             ],
             'none' => [
                 'mode_value' => null,
-                'expected_message' => 'The cache is updated successfully'
+                'expected_message' => 'Recalculation is not required, another mode is active'
             ],
             'scheduled' => [
                 'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,

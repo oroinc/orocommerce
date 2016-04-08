@@ -15,7 +15,7 @@ orob2b:
         status.label: Status
         owner.label: Owner
         organization.label: Organization
-        unit_precisions.label: Unit Precisions
+        unit_precisions.label: Units of Quantity
         image.label: Image
         names.label: Name
         descriptions.label: Description
@@ -53,7 +53,8 @@ orob2b:
             product.label: Product
             unit.label: Unit
             precision.label: Precision
-            representation: "{{ label }} with precision {{ precision }} decimal places"
+            representation: "{0} {{ label }} (whole numbers)|{1} {{ label }} (fractional, %count% decimal digit)|]1,Inf[ {{ label }} (fractional, %count% decimal digits)"
+            zero_representation: ""
             unit_precision_required: Please select a unit precision first...
 
         productvariantlink:

@@ -100,6 +100,8 @@ parameters:
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
     orob2b_account.provider.sign_in.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\SignInProvider
     orob2b_account.provider.frontend_account_user_registration_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider
+    orob2b_account.provider.frontend_account_user_forgot_password_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserForgotPasswordFormProvider
+    orob2b_account.provider.frontend_account_user_reset_password_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserResetPasswordFormProvider
     orob2b_account.provider.frontend_account_user_role_privileges.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRolePrivilegesDataProvider
     orob2b_account.provider.frontend_account_user_role_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleFormDataProvider
     orob2b_account.provider.frontend_account_user_profile_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserProfileFormProvider
@@ -845,6 +847,20 @@ services:
             - @oro_user.manager
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_register }
+
+    orob2b_account.provider.frontend_account_user_forgot_password_form:
+        class: %orob2b_account.provider.frontend_account_user_forgot_password_form.class%
+        arguments:
+            - @form.factory
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_account_user_password_request }
+
+    orob2b_account.provider.frontend_account_user_reset_password_form:
+        class: %orob2b_account.provider.frontend_account_user_reset_password_form.class%
+        arguments:
+            - @form.factory
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_account_user_password_reset }
 
     orob2b_account.manager.windows_state:
         parent: oro_windows.manager.windows_state.abstract
