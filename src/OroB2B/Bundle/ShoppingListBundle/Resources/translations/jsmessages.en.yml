@@ -1,7 +1,5 @@
 orob2b:
     shoppinglist:
-        flash:
-            success: Shopping list was created successfully
         line_item_save:
             flash:
                 success: Line Item has been saved
