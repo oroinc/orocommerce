@@ -3,14 +3,16 @@
 namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\EntityExtendBundle\Grid\AdditionalFieldsExtension;
+use Oro\Bundle\EntityExtendBundle\Grid\DynamicFieldsExtension;
 
-use OroB2B\Bundle\FrontendBundle\EventListener\DatagridBottomToolbarListener;
+use OroB2B\Bundle\FrontendBundle\EventListener\DatagridFieldsListener;
 use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 
-class DatagridBottomToolbarListenerTest extends FrontendDatagridListenerTestCase
+class DatagridFieldsListenerTest extends FrontendDatagridListenerTestCase
 {
     /**
-     * @var DatagridBottomToolbarListener
+     * @var DatagridFieldsListener
      */
     protected $listener;
 
@@ -30,27 +32,13 @@ class DatagridBottomToolbarListenerTest extends FrontendDatagridListenerTestCase
      */
     public function createListener(FrontendHelper $helper)
     {
-        return new DatagridBottomToolbarListener($helper);
+        return new DatagridFieldsListener($helper);
     }
 
-    public function testIsNotApplicableNotFrontendRequest()
+    public function testIsNotApplicable()
     {
         $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
-            ->willReturn(false);
-        $this->datagridConfig->expects($this->never())
-            ->method('offsetSetByPath');
-        $this->listener->onBuildBefore($this->event);
-    }
-
-    public function testIsNotApplicableAlreadySet()
-    {
-        $this->frontendHelper->expects($this->once())
-            ->method('isFrontendRequest')
-            ->willReturn(true);
-        $this->datagridConfig->expects($this->once())
-            ->method('offsetGetByPath')
-            ->with('[options][toolbarOptions][placement][bottom]')
             ->willReturn(false);
         $this->datagridConfig->expects($this->never())
             ->method('offsetSetByPath');
@@ -62,13 +50,13 @@ class DatagridBottomToolbarListenerTest extends FrontendDatagridListenerTestCase
         $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
             ->willReturn(true);
-        $this->datagridConfig->expects($this->once())
-            ->method('offsetGetByPath')
-            ->with('[options][toolbarOptions][placement][bottom]')
-            ->willReturn(null);
-        $this->datagridConfig->expects($this->once())
+        $this->datagridConfig->expects($this->at(0))
             ->method('offsetSetByPath')
-            ->with('[options][toolbarOptions][placement][bottom]', true)
+            ->with(AdditionalFieldsExtension::ADDITIONAL_FIELDS_CONFIG_PATH, [])
+            ->willReturn(null);
+        $this->datagridConfig->expects($this->at(1))
+            ->method('offsetSetByPath')
+            ->with(DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH, false)
             ->willReturn(null);
         $this->listener->onBuildBefore($this->event);
     }

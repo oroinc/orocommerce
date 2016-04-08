@@ -45,7 +45,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'scope' => 'app'
                 ],
                 'price_lists_update_mode' => [
-                    'value' => 'scheduled',
+                    'value' => 'real_time',
                     'scope' => 'app'
                 ],
             ]
