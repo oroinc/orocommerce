@@ -71,6 +71,7 @@ layout:
                         route_name: orob2b_account_frontend_account_user_address_create
                         route_parameters: { entityId: {@value: $data.entity.id }}
                         text: {@value: 'orob2b.account.address.add'}
+                        icon: plus
                 account_user_address_book_content:
                     blockType: address_book
                     options:
