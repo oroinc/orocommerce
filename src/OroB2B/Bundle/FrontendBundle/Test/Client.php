@@ -37,7 +37,7 @@ class Client extends BaseClient
             $backendPrefix = $this->getBackendPrefix();
             if (count($crawler) && strpos($crawler->html(), $backendPrefix) !== false) {
                 throw new \PHPUnit_Framework_AssertionFailedError(
-                    sprintf('Response to uri "%s" contains link to backend (with "%s" prefix).', $uri, $backendPrefix)
+                    sprintf('Page "%s" contains backend prefix "%s".', $uri, $backendPrefix)
                 );
             }
         }
