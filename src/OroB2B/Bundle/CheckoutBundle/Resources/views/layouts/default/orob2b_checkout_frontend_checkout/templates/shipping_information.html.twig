@@ -19,7 +19,8 @@
                  selectors: {
                      address: '#' ~ form.shipping_address.accountAddress.vars.id,
                      region: '#' ~ form.shipping_address.region.vars.id,
-                     fieldsContainer: '#checkout-address-fields-container'
+                     fieldsContainer: '#checkout-address-fields-container',
+                     shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
                  }
              }|json_encode }}">
 

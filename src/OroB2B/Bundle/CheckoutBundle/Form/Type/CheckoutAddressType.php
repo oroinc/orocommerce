@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\CheckoutBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 
@@ -15,6 +17,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
 {
     const NAME = 'orob2b_checkout_address';
     const ENTER_MANUALLY = 0;
+    const SHIPPING_ADDRESS_NAME = 'shipping_address';
 
     /**
      * @param Checkout $entity
@@ -63,6 +66,28 @@ class CheckoutAddressType extends AbstractOrderAddressType
                 $builder->get('firstName')->setRequired(true);
                 $builder->get('lastName')->setRequired(true);
             }
+
+            if ($type === AddressType::TYPE_SHIPPING) {
+                $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData']);
+            }
+        }
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function postSetData(FormEvent $event)
+    {
+        $form = $event->getForm();
+        $parent = $form->getParent();
+        $shipToBillingAddress = false;
+
+        if ($parent && $parent->has('ship_to_billing_address')) {
+            $shipToBillingAddress = $parent->get('ship_to_billing_address')->getData();
+        }
+
+        if ($shipToBillingAddress && $form->getName() === self::SHIPPING_ADDRESS_NAME) {
+            $form->setData(null);
         }
     }
 
