@@ -76,7 +76,16 @@ class AjaxLineItemController extends Controller
         $linkTitle = $translator->trans('orob2b.shoppinglist.actions.view');
         $message = sprintf("%s (<a href='%s'>%s</a>).", $message, $link, $linkTitle);
 
-        return new JsonResponse(['successful' => true, 'message' => $message]);
+        return new JsonResponse(
+            [
+                'successful' => true,
+                'message' => $message,
+                'shoppingList' => [
+                    'id' => $shoppingList->getId(),
+                    'label' => $shoppingList->getLabel(),
+                ]
+            ]
+        );
     }
 
     /**
