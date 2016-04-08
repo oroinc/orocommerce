@@ -192,7 +192,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     }
 
     /**
-     * Disable realtime price calculate mode 
+     * Disable realtime price calculate mode
      */
     protected function disableRealTimeModeCalculate()
     {
