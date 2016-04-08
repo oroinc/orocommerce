@@ -2,18 +2,19 @@
 
 namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessorInterface;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
+use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessorInterface;
+use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
+
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType;
-use Symfony\Component\Form\FormInterface;
 
 class FrontendAccountUserAddressFormDataProvider extends AbstractServerRenderDataProvider
 {
@@ -40,12 +41,12 @@ class FrontendAccountUserAddressFormDataProvider extends AbstractServerRenderDat
         $this->formFactory = $formFactory;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function getData(ContextInterface $context)
     {
-        /**
-         * @var AccountUserAddress $accountUserAddress
-         */
+        /** @var AccountUserAddress $accountUserAddress */
         $accountUserAddress = $context->data()->get('entity');
 
         $addressId = $accountUserAddress->getId();

@@ -27,7 +27,7 @@ layout:
                     blockType: block
                     options:
                         vars:
-                            form: { @value: $data.orob2b_account_frontend_account_user_address_form }
+                            form: { @value: $data.orob2b_account_frontend_account_user_address_form.view }
                 account_user_address_edit_form_start:
                     blockType: form_start
                     options:

@@ -3,7 +3,6 @@
 {% block orob2b_account_typed_address_widget %}
     {% import _self as draw %}
     {% spaceless %}
-
         <fieldset class="checkout__form__row">
             {{ form_row(form.label, {'attr': {'placeholder': 'orob2b.account.frontend.address.form.placeholder.label'|trans}, 'parentClass': 'form__col_x12'}) }}
         </fieldset>
@@ -97,7 +96,7 @@
         {{- form_widget(form, {'class_prefix': 'checkout'}) -}}
         {{- form_errors(form, {'class_prefix': 'checkout'}) -}}
     </div>
-{%- endblock form_row -%}
+{%- endblock -%}
 
 {% block checkbox_row %}
     {{- form_widget(form) -}}
@@ -108,7 +107,7 @@
     {% set label_attr = label_attr|merge({class: label_attr.class|default('') ~ "checkout__form__label_additional"}) %}
 
     {{ parent() }}
-{%- endblock form_label -%}
+{%- endblock -%}
 
 {% block orob2b_region_widget %}
     <div class="checkout__form__select">
