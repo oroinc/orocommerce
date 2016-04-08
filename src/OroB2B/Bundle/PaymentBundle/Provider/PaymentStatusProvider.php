@@ -83,6 +83,7 @@ class PaymentStatusProvider
             ->filter(
                 function (PaymentTransaction $paymentTransaction) {
                     return $paymentTransaction->isActive()
+                    && $paymentTransaction->isSuccessful()
                     && $paymentTransaction->getAction() === PaymentMethodInterface::AUTHORIZE;
                 }
             )

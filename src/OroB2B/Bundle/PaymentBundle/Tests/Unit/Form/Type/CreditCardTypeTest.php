@@ -85,7 +85,7 @@ class CreditCardTypeTest extends FormIntegrationTestCase
                             'attr' => [
                                 'data-validation' => [
                                     'creditCardNumberLuhnCheck' => [
-                                        'message' => 'Invalid card number.',
+                                        'message' => 'orob2b.payment.account.error',
                                         'payload' => null,
                                     ],
                                 ],
@@ -128,7 +128,7 @@ class CreditCardTypeTest extends FormIntegrationTestCase
                             'mapped' => false,
                             'block_name' => 'payment_credit_card_cvv',
                             'constraints' => [
-                                new Integer(),
+                                new Integer(['message' => 'orob2b.payment.number.error']),
                                 new NotBlank(),
                                 new Length(['min' => 3, 'max' => 4]),
                             ],
