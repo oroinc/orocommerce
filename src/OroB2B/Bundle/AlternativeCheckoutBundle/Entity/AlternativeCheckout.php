@@ -22,6 +22,7 @@ use OroB2B\Bundle\AlternativeCheckoutBundle\Model\ExtendAlternativeCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -67,7 +68,8 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     AccountOwnerAwareInterface,
     DatesAwareInterface,
     ContextItemInterface,
-    LineItemsNotPricedAwareInterface
+    LineItemsNotPricedAwareInterface,
+    ShippingAwareInterface
 {
     const TYPE = 'alternative';
 
@@ -202,7 +204,9 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     protected $shippingMethod;
 
     /**
-     * @var
+     * @var string
+     *
+     * @ORM\Column(name="payment_method", type="string", nullable=true)
      */
     protected $paymentMethod;
 
