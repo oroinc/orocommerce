@@ -30,6 +30,7 @@ class AccountUserProviderTest extends WebTestCase
 
     public function testAccountPermissions()
     {
+        $this->markTestIncomplete('Test will be fixed in https://magecore.atlassian.net/browse/BB-2572');
         // init tokens
         $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_profile'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
