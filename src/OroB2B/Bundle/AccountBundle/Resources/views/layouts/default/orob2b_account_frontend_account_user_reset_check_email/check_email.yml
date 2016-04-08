@@ -23,7 +23,7 @@ layout:
                     blockType: link
                     options:
                         route_name: orob2b_account_account_user_security_login
-                        text: Return to Login
+                        text: 'orob2b.account.accountuser.profile.return_to_login'
 
             tree:
                 content:

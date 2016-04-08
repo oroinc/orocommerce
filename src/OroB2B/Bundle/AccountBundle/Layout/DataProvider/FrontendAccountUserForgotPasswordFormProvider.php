@@ -42,6 +42,7 @@ class FrontendAccountUserForgotPasswordFormProvider extends AbstractServerRender
                 FormAction::createByRoute('orob2b_account_frontend_account_user_reset_request')
             );
         }
+
         return $this->data;
     }
 
