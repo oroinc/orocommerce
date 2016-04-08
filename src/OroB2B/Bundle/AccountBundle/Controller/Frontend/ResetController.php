@@ -4,14 +4,14 @@ namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordRequestHandler;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordResetHandler;
 
@@ -20,9 +20,9 @@ class ResetController extends Controller
     const SESSION_EMAIL = 'orob2b_account_user_reset_email';
 
     /**
+     * @Layout()
      * @Route("/reset-request", name="orob2b_account_frontend_account_user_reset_request")
      * @Method({"GET", "POST"})
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend/Password:request.html.twig")
      */
     public function requestAction()
     {
@@ -32,24 +32,24 @@ class ResetController extends Controller
 
         /** @var AccountUserPasswordRequestHandler $handler */
         $handler = $this->get('orob2b_account.account_user.password_request.handler');
-        $form = $this->createForm(AccountUserPasswordRequestType::NAME);
+        $form = $this->get('orob2b_account.provider.frontend_account_user_forgot_password_form')->getForm();
 
-        if ($user = $handler->process($form, $this->getRequest())) {
+        $request = $this->get('request_stack')->getCurrentRequest();
+        $user = $handler->process($form, $request);
+        if ($user) {
             $this->get('session')->set(static::SESSION_EMAIL, $this->getObfuscatedEmail($user));
             return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_reset_check_email'));
         }
 
-        return [
-            'form' => $form->createView()
-        ];
+        return [];
     }
 
     /**
      * Tell the user to check his email
      *
+     * @Layout()
      * @Route("/check-email", name="orob2b_account_frontend_account_user_reset_check_email")
      * @Method({"GET"})
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend/Password:checkEmail.html.twig")
      */
     public function checkEmailAction()
     {
@@ -63,16 +63,18 @@ class ResetController extends Controller
         }
 
         return [
-            'email' => $email
+            'data' => [
+                'email' => $email
+            ]
         ];
     }
 
     /**
      * Reset user password
      *
+     * @Layout(vars={"user"})
      * @Route("/reset", name="orob2b_account_frontend_account_user_password_reset")
      * @Method({"GET", "POST"})
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend/Password:reset.html.twig")
      * @return array|RedirectResponse
      */
     public function resetAction()
@@ -103,7 +105,7 @@ class ResetController extends Controller
 
         /** @var AccountUserPasswordResetHandler $handler */
         $handler = $this->get('orob2b_account.account_user.password_reset.handler');
-        $form = $this->createForm('orob2b_account_account_user_password_reset', $user);
+        $form = $this->get('orob2b_account.provider.frontend_account_user_reset_password_form')->getForm($user);
 
         if ($handler->process($form, $this->getRequest())) {
             // force user logout
@@ -119,9 +121,7 @@ class ResetController extends Controller
         }
 
         return [
-            'token' => $user->getConfirmationToken(),
-            'username' => $user->getUsername(),
-            'form' => $form->createView()
+            'user' => $user
         ];
     }
 
