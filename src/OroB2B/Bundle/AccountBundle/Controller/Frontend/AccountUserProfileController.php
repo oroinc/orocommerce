@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Component\Layout\LayoutContext;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -31,17 +30,20 @@ class AccountUserProfileController extends Controller
         if ($this->getUser()) {
             return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_profile'));
         }
-        $this->checkPermissions();
+
+        if (!$this->isRegistrationAllowed()) {
+            return $this->redirect($this->generateUrl('orob2b_account_account_user_security_login'));
+        }
 
         return $this->handleForm($request);
     }
 
-    protected function checkPermissions()
+    /**
+     * @return bool
+     */
+    protected function isRegistrationAllowed()
     {
-        $isRegistrationAllowed = $this->get('oro_config.manager')->get('oro_b2b_account.registration_allowed');
-        if (!$isRegistrationAllowed) {
-            throw new AccessDeniedException();
-        }
+        return (bool) $this->get('oro_config.manager')->get('oro_b2b_account.registration_allowed');
     }
 
     /**
