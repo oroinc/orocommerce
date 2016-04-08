@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
@@ -26,7 +27,7 @@ class AccountUserAddressController extends Controller
      * )
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      * @Layout()
-     *
+     * @AclAncestor("orob2b_account_account_user_create")
      * @param AccountUser $accountUser
      * @param Request $request
      * @return array
@@ -44,7 +45,7 @@ class AccountUserAddressController extends Controller
      * )
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      * @Layout()
-     *
+     * @AclAncestor("orob2b_account_account_user_update")
      * @param AccountUser $accountUser
      * @param AccountUserAddress $accountAddress
      * @param Request $request
@@ -64,19 +65,7 @@ class AccountUserAddressController extends Controller
     private function update(AccountUser $accountUser, AccountUserAddress $accountAddress, Request $request)
     {
 
-        if ($request->getMethod() === 'GET' && !$accountAddress->getId()) {
-            $accountAddress->setFirstName($accountUser->getFirstName());
-            $accountAddress->setLastName($accountUser->getLastName());
-            if (!$accountUser->getAddresses()->count()) {
-                $accountAddress->setPrimary(true);
-            }
-        }
-
-        if (!$accountAddress->getFrontendOwner()) {
-            $accountUser->addAddress($accountAddress);
-        } elseif ($accountAddress->getFrontendOwner()->getId() !== $accountUser->getId()) {
-            throw new BadRequestHttpException('Address must belong to AccountUser');
-        }
+        $this->prepareEntities($accountUser, $accountAddress, $request);
 
         $currentUser = $this->getUser();
 
@@ -132,5 +121,27 @@ class AccountUserAddressController extends Controller
         return [
             'data' => $result
         ];
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @param AccountUserAddress $accountAddress
+     * @param Request $request
+     */
+    private function prepareEntities(AccountUser $accountUser, AccountUserAddress $accountAddress, Request $request)
+    {
+        if ($request->getMethod() === 'GET' && !$accountAddress->getId()) {
+            $accountAddress->setFirstName($accountUser->getFirstName());
+            $accountAddress->setLastName($accountUser->getLastName());
+            if (!$accountUser->getAddresses()->count()) {
+                $accountAddress->setPrimary(true);
+            }
+        }
+
+        if (!$accountAddress->getFrontendOwner()) {
+            $accountUser->addAddress($accountAddress);
+        } elseif ($accountAddress->getFrontendOwner()->getId() !== $accountUser->getId()) {
+            throw new BadRequestHttpException('Address must belong to AccountUser');
+        }
     }
 }
