@@ -42,6 +42,11 @@ layout:
                     blockType: form_end
                     options:
                         form: { @value: $data.orob2b_account_frontend_account_user_register }
+                registration_back_btn:
+                    blockType: link
+                    options:
+                        route_name: orob2b_account_account_user_security_login
+                        text: orob2b.account.frontend.action.back_to_login.label
             tree:
                 content:
                     registration_page:
@@ -51,4 +56,5 @@ layout:
                             registration_form_description: ~
                             registration_form_fields: ~
                             registration_form_submit: ~
+                            registration_back_btn: ~
                             registration_form_end: ~
