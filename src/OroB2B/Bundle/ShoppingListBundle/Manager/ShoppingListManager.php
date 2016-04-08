@@ -277,14 +277,10 @@ class ShoppingListManager
     public function getShoppingLists()
     {
         $accountUser = $this->getAccountUser();
-
         /* @var $repository ShoppingListRepository */
         $repository = $this->getRepository('OroB2BShoppingListBundle:ShoppingList');
 
-        return [
-            'shoppingLists' => $repository->findAllExceptCurrentForAccountUser($accountUser),
-            'currentShoppingList' => $repository->findCurrentForAccountUser($accountUser)
-        ];
+        return $repository->findByUser($accountUser);
     }
 
     /**

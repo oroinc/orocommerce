@@ -26,16 +26,6 @@ layout:
             optionValue: true
 
         - @add:
-            id: create_order_button
-            parentId: datagrid_toolbar_button_container
-            blockType: action_combined_buttons
-            options:
-                actions:
-                    @value: $data.actions.all
-                entityClass:
-                    @value: 'OroB2B\Bundle\OrderBundle\Entity\Order'
-
-        - @add:
             id: orders
             parentId: content
             blockType: datagrid

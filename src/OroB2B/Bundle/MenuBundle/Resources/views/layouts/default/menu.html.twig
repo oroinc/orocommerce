@@ -126,5 +126,9 @@
 {% endblock %}
 
 {% block label %}
+    {% if options.allow_safe_labels %}
+        {{- item.label|raw -}}
+    {% else %}
         {{- item.label -}}
+    {% endif %}
 {% endblock %}

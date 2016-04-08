@@ -35,7 +35,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
         $actions = [];
 
         /** @var ShoppingList $shoppingList */
-        foreach ($this->getShoppingLists() as $shoppingList) {
+        foreach ($this->manager->getShoppingLists() as $shoppingList) {
             $name = $shoppingList->isCurrent() ? 'current' : 'list' . $shoppingList->getId();
 
             $actions[$name] = $this->getConfig([
@@ -67,20 +67,6 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
         ]);
 
         return $actions;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getShoppingLists()
-    {
-        $shoppingLists = $this->manager->getShoppingLists();
-
-        if ($shoppingLists['currentShoppingList']) {
-            array_unshift($shoppingLists['shoppingLists'], $shoppingLists['currentShoppingList']);
-        }
-
-        return $shoppingLists['shoppingLists'];
     }
 
     /**
