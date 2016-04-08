@@ -14,7 +14,7 @@ layout:
             id: page_title
             optionName: text
             optionValue:
-                label: orob2b.account.frontend.address.page_title.update
+                label: orob2b.account.frontend.address.page_title.edit
         - @add:
             id: account_sidebar
             parentId: sidebar_left
