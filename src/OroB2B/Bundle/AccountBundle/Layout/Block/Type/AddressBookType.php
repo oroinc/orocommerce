@@ -83,7 +83,6 @@ class AddressBookType extends AbstractType
         $view->vars['componentOptions'] = $this->getAddressBookOptions($options['entity'], $options);
     }
 
-
     /**
      * @param AccountUser $entity
      * @param array $options
