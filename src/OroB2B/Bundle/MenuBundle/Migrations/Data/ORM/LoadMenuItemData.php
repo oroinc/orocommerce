@@ -9,6 +9,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
 
@@ -27,6 +28,11 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     protected $menuItemManager;
 
     /**
+     * @var RouterInterface
+     */
+    protected $router;
+
+    /**
      * {@inheritdoc}
      */
     public function getVersion()
@@ -41,6 +47,7 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     {
         $this->factory = $container->get('orob2b_menu.menu.factory');
         $this->menuItemManager = $container->get('orob2b_menu.entity.menu_item_manager');
+        $this->router = $container->get('router');
     }
 
     /**
@@ -61,13 +68,11 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     protected function createTopNavMenu(ObjectManager $manager)
     {
         $item = $this->factory->createItem('top-nav');
-        $item->addChild('My Account', ['uri' => '/account/user/profile']);
-        $item->addChild('Order History', ['uri' => '/account/order']);
-        $item->addChild('Sign Out', ['uri' => '/account/user/logout', 'extras' => [
-            'condition' => 'is_logged_in()'
-        ]]);
         $item->addChild('1-800-555-5555');
         $item->addChild('Live Chat', ['uri' => '/contact-us']);
+        $item->addChild('<span>Fast & Free Shipping</span> for orders over $45', ['uri' => '/about'])
+            ->setAttribute('class', 'topbar__controls')
+            ->setLinkAttribute('class', 'cart__promo__link');
 
         $menuItem = $this->menuItemManager->createFromItem($item);
         $manager->persist($menuItem);
@@ -80,8 +85,8 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     {
         $item = $this->factory->createItem('quick-access');
         $item->addChild('Orders');
-        $item->addChild('Quotes', ['uri' => '/account/quote']);
-        $item->addChild('Quick Order Form', ['uri' => '/account/product/quick-add']);
+        $item->addChild('Quotes', ['uri' => $this->router->generate('orob2b_sale_quote_frontend_index')]);
+        $item->addChild('Quick Order Form', ['uri' => $this->router->generate('orob2b_product_frontend_quick_add')]);
 
         $menuItem = $this->menuItemManager->createFromItem($item);
         $manager->persist($menuItem);
@@ -123,9 +128,15 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
         $itemWhy->addChild('International Shipping', ['uri' => '/international-shipping']);
 
         $itemMyAccount = $item->addChild('My Account');
-        $itemMyAccount->addChild('Sign Out', ['uri' => '/account/user/logout']);
-        $itemMyAccount->addChild('View Cart', ['uri' => '/cart']);
-        $itemMyAccount->addChild('My Wishlist', ['uri' => '/wishlist']);
+        $itemMyAccount->addChild(
+            'Sign Out',
+            ['uri' => $this->router->generate('orob2b_account_account_user_security_logout')]
+        );
+        $itemMyAccount->addChild('View Cart', ['uri' => $this->router->generate('orob2b_shopping_list_frontend_view')]);
+        $itemMyAccount->addChild(
+            'My Wishlist',
+            ['uri' => $this->router->generate('orob2b_shopping_list_frontend_view')]
+        );
         $itemMyAccount->addChild('Track My Order', ['uri' => '/shipping/tracking']);
         $itemMyAccount->addChild('Help', ['uri' => '/help']);
 

@@ -1,9 +1,13 @@
 {% extends 'OroUIBundle:layouts:base/dialog/dialog.html.twig' %}
 
 {% block _widget_content_widget %}
+    {% set shoppingListLink %}
+        <a href="{{ path('orob2b_shopping_list_frontend_view', {id: shoppingList.id}) }}">{{ shoppingList.label }}</a>
+    {% endset %}
+
     {% set pageComponentOptions = {
         savedId: savedId|default(null),
-        message: 'orob2b.shoppinglist.flash.success'
+        message: 'orob2b.shoppinglist.flash.success'|trans({'%shoppinglist%': shoppingListLink|trim|default(null)})
     } %}
     {% set attr = {
         'data-page-component-module': 'orob2bfrontend/js/app/components/widget-form-component',

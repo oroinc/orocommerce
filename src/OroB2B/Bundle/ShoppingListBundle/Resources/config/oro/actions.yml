@@ -56,7 +56,7 @@ operations:
             - @call_service_method:
                 service: orob2b_shopping_list.shopping_list.manager
                 method: getShoppingLists
-                attribute: $.params
+                attribute: $.shoppingLists
             - @call_service_method:
                 service: orob2b_shopping_list.processor.quick_add
                 method: isAllowed

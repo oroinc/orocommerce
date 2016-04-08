@@ -55,7 +55,7 @@ class ProductTaxExtension extends AbstractTaxExtension
 
     /**
      * @param Product $product
-     * @return ProductTaxCode
+     * @return ProductTaxCode|null
      */
     protected function getTaxCode($product)
     {
