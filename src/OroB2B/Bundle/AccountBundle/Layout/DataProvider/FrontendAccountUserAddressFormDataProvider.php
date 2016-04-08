@@ -2,23 +2,23 @@
 
 namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessorInterface;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use Symfony\Component\Form\FormFactory;
-
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType;
-use Symfony\Component\Form\FormInterface;
 
 class FrontendAccountUserAddressFormDataProvider extends AbstractServerRenderDataProvider
 {
     /**
-     * @var FormFactory
+     * @var FormFactoryInterface
      */
     private $formFactory;
 
@@ -33,9 +33,9 @@ class FrontendAccountUserAddressFormDataProvider extends AbstractServerRenderDat
     private $forms = [];
 
     /**
-     * @param FormFactory $formFactory
+     * @param FormFactoryInterface $formFactory
      */
-    public function __construct(FormFactory $formFactory)
+    public function __construct(FormFactoryInterface $formFactory)
     {
         $this->formFactory = $formFactory;
     }
