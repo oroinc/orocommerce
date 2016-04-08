@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use OroB2B\Bundle\FrontendBundle\DependencyInjection\OroB2BFrontendExtension;
+use OroB2B\Bundle\FrontendBundle\DependencyInjection\CompilerPass\TestClientPass;
 use OroB2B\Bundle\FrontendBundle\DependencyInjection\CompilerPass\ExceptionControllerCompilerPass;
 
 class OroB2BFrontendBundle extends Bundle
@@ -15,7 +16,10 @@ class OroB2BFrontendBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
+        parent::build($container);
+
         $container->addCompilerPass(new ExceptionControllerCompilerPass());
+        $container->addCompilerPass(new TestClientPass());
     }
 
     /**
