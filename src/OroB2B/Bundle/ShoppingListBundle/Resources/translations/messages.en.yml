@@ -13,7 +13,7 @@ orob2b:
         organization.label: Organization
         line_items.label: Line Items
         current.label: Current
-        default.label: Default
+        default.label: 'Shopping list'
         items.label: 'Item|Items'
         subtotal.label: Subtotal
         total.label: Grand Total
@@ -21,9 +21,11 @@ orob2b:
         website.label: Website
         btn:
             create_order: 'Create Order'
+        flash:
+            success: 'Shopping list "%shoppinglist%" was created successfully'
 
         create_new_form:
-            input_label: Shopping List Label
+            input_label: Shopping List Name
             comment: Selected products will be added to this new shopping list.
             comment_cancel: Click "Cancel" to select a different list.
             submit_label: Create and Add
@@ -32,7 +34,7 @@ orob2b:
         product:
             add_to_shopping_list.label: Add to Shopping List
             create_new_shopping_list.label: Create New Shopping List
-            added.label: Product has been added
+            added.label: 'Product has been added to "%shoppinglist%"'
 
         actions:
             set_current: Set as current

@@ -85,6 +85,12 @@ class ProductFormExtension extends AbstractTypeExtension
         }
 
         $form = $event->getForm();
+        /** @var ProductPrice[] $prices */
+        $prices = (array)$form->get('prices')->getData();
+        foreach ($prices as $price) {
+            $price->setProduct($product);
+        }
+
         if (!$form->isValid()) {
             return;
         }
@@ -92,8 +98,6 @@ class ProductFormExtension extends AbstractTypeExtension
         $entityManager = $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPrice');
 
         // persist existing prices
-        /** @var ProductPrice[] $prices */
-        $prices = (array)$form->get('prices')->getData();
         $persistedPriceIds = [];
         foreach ($prices as $price) {
             $priceId = $price->getId();

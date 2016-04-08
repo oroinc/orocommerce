@@ -251,6 +251,8 @@
   }
 
   &.btn-dark {
+    position: relative;
+
     background: @theme-dark-gray-color;
     color: #fff;
 
@@ -265,8 +267,19 @@
     }
 
     > a {
-      color: #fff;
       text-decoration: none !important;
+
+      color: #fff;
+
+      &.action-button:before {
+        content: '';
+
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
 
       &:hover {
         text-decoration: none !important;
@@ -854,4 +867,8 @@
       border-bottom-left-radius: 0;
     }
   }
+}
+
+.dropdown-menu {
+  z-index: 900;
 }

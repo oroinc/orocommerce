@@ -6,6 +6,10 @@ layout:
             id: widget_content
             optionName: 'vars.savedId'
             optionValue: { @value: $data.savedId }
+        - @setOption:
+            id: widget_content
+            optionName: 'vars.shoppingList'
+            optionValue: { @value: $data.shoppingList }
         - @addTree:
             items:
                 form_errors:
@@ -35,7 +39,7 @@ layout:
                         action: reset
                         text: orob2b.shoppinglist.create_new_form.cancel_label
                         vars:
-                            style: auto
+                            style: gray
                 form_actions_create:
                     blockType: button
                     options:

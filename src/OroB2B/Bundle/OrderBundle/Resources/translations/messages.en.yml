@@ -169,7 +169,7 @@ orob2b:
                     account_user: Account User Address Book
 
         subtotals:
-            shipping_cost: Shipping Cost
+            shipping_cost: Shipping
             discount: Discount
 
         sales_orders.label: 'Sales Orders'
@@ -185,7 +185,8 @@ orob2b:
         success:
             thank_you: 'Thank You For Your Purchase!'
             order_number: 'Your order number is'
-            receive_email: 'You will receive a confirmation email with a link to view your order.'
+            click_to_review: 'click here to review'
+            receive_email: 'You will receive a confirmation email with your order details.'
             done: 'Done'
 
     frontend:

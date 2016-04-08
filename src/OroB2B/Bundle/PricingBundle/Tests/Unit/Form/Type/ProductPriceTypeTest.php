@@ -19,7 +19,7 @@ use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceUnitSelectorType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -81,7 +81,10 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             ]
         );
 
-        $productUnitSelection = new ProductUnitSelectionTypeStub($this->prepareProductUnitSelectionChoices());
+        $productUnitSelection = new ProductUnitSelectionTypeStub(
+            $this->prepareProductUnitSelectionChoices(),
+            ProductPriceUnitSelectorType::NAME
+        );
         $priceType = PriceTypeGenerator::createPriceType();
 
         return [
@@ -89,7 +92,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
                 [
                     $entityType->getName() => $entityType,
                     PriceListSelectType::NAME => new PriceListSelectTypeStub(),
-                    ProductUnitSelectionType::NAME => $productUnitSelection,
+                    ProductPriceUnitSelectorType::NAME => $productUnitSelection,
                     PriceType::NAME => $priceType,
                     CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
                     QuantityTypeTrait::$name => $this->getQuantityType(),

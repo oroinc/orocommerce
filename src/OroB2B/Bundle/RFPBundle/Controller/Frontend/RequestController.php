@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
@@ -27,7 +26,7 @@ class RequestController extends Controller
 {
     /**
      * @Route("/view/{id}", name="orob2b_rfp_frontend_request_view", requirements={"id"="\d+"})
-     * @Template("OroB2BRFPBundle:Request/Frontend:view.html.twig")
+     * @Layout
      * @Acl(
      *      id="orob2b_rfp_frontend_request_view",
      *      type="entity",
@@ -42,7 +41,9 @@ class RequestController extends Controller
     public function viewAction(RFPRequest $request)
     {
         return [
-            'entity' => $request,
+            'data' => [
+                'entity' => $request
+            ]
         ];
     }
 
@@ -64,21 +65,6 @@ class RequestController extends Controller
 
         return [
             'entity_class' => $entityClass,
-        ];
-    }
-
-    /**
-     * @Route("/info/{id}", name="orob2b_rfp_frontend_request_info", requirements={"id"="\d+"})
-     * @Template("OroB2BRFPBundle:Request/Frontend/widget:info.html.twig")
-     * @AclAncestor("orob2b_rfp_frontend_request_view")
-     *
-     * @param RFPRequest $request
-     * @return array
-     */
-    public function infoAction(RFPRequest $request)
-    {
-        return [
-            'entity' => $request
         ];
     }
 
@@ -162,7 +148,7 @@ class RequestController extends Controller
 
         return $handler->handleUpdate(
             $rfpRequest,
-            $this->createForm(RequestType::NAME, $rfpRequest),
+            $this->get('orob2b_rfp.layout.data_provider.request_form')->getForm($rfpRequest),
             function (RFPRequest $rfpRequest) use ($securityFacade) {
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     $route = $securityFacade->isGranted('ACCOUNT_EDIT', $rfpRequest)
