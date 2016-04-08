@@ -442,13 +442,12 @@ orob2b.account:
         sections:
             account_user_role:
                 label: Role Title
-                users.label: Role Users
+                users.label: Users
 
             account_user.user_profile: 'User profile'
             account_user.my_profile: 'My profile'
             account_user.address_book: 'Address book'
         account_user_link.text: '< Back to Account User List'
-
         action:
             back.label: "< Back"
             back_to_login.label: "Already have an account? Log in >"
@@ -458,6 +457,10 @@ orob2b.account:
                 section.label: Section
                 action.label: Action
                 permission.label: Permission
+        menu:
+            account_user_signed_in_as.label: 'Signed in as:'
+            account_user_sign_out.label: 'Sign Out'
+            account_user_profile.label: 'My Account'
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'

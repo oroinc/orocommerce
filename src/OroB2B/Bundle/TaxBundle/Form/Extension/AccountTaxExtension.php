@@ -57,7 +57,7 @@ class AccountTaxExtension extends AbstractTaxExtension
 
     /**
      * @param Account $object
-     * @return AccountTaxCode
+     * @return AccountTaxCode|null
      */
     protected function getTaxCode($object)
     {
