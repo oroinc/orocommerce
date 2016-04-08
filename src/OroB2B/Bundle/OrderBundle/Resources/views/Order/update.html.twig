@@ -87,6 +87,9 @@
             {{ form_widget(form.lineItems) }}
             {{ form_errors(form.lineItems) }}
         </div>
+        <div
+                data-page-component-module="orob2border/js/app/components/data-load-component"
+                data-page-component-options="{{ orderData|json_encode }}"></div>
     {% endset %}
 
     {% set dataBlocks = [

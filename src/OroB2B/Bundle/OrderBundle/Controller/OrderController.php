@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\OrderBundle\Controller;
 
 use Doctrine\Common\Util\ClassUtils;
 
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,10 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
+use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
+use OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
+use OroB2B\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener;
+use OroB2B\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener;
 
 class OrderController extends AbstractOrderController
 {
@@ -166,17 +171,24 @@ class OrderController extends AbstractOrderController
             $this->get('translator')->trans('orob2b.order.controller.order.saved.message'),
             $handler,
             function (Order $order, FormInterface $form, Request $request) {
+
+                $submittedData = $request->get($form->getName(), []);
+                $event = new OrderEvent($form, $form->getData(), $submittedData);
+                $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);
+                $orderData = $event->getData()->getArrayCopy();
+
                 return [
                     'form' => $form->createView(),
                     'entity' => $order,
-                    'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order),
+                    'totals' => $orderData[OrderTotalEventListener::TOTALS_KEY],
                     'isWidgetContext' => (bool)$request->get('_wid', false),
                     'isShippingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_SHIPPING),
                     'isBillingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_BILLING),
-                    'tierPrices' => $this->getTierPrices($order),
-                    'matchedPrices' => $this->getMatchedPrices($order),
+                    'tierPrices' => $orderData[TierPriceEventListener::TIER_PRICES_KEY],
+                    'matchedPrices' => $orderData[MatchingPriceEventListener::MATCHED_PRICES_KEY],
+                    'orderData' => $orderData
                 ];
             }
         );
