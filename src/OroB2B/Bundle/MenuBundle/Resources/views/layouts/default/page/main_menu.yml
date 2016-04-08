@@ -7,6 +7,9 @@ layout:
                 main_menu_container:
                     blockType: container
                     siblingId: middle_bar
+                    options:
+                        attr:
+                            id: main-menu
                 main_menu:
                     blockType: menu
                     options:
@@ -16,14 +19,11 @@ layout:
                     blockType: container
                 main_menu_messages_widget:
                     blockType: block
-                main_menu_orders_widget:
-                    blockType: block
             tree:
                 header:
                     main_menu_container:
                         main_menu: ~
                         main_menu_widgets:
                             #main_menu_messages_widget: ~
-                            main_menu_orders_widget: ~
     conditions:
         @neq: [ $context.logged_user, null ]
