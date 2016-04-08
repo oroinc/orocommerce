@@ -3303,6 +3303,19 @@
       margin-bottom: 8rem;
     }
   }
+
+  &.reset-password_pos-absolute_vert-centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    @media (max-width: 991px) {
+      left: 0;
+      transform: translate(0, -50%);
+      padding: 0 1.5rem;
+    }
+  }
 }
 
 .reset-password__title {
@@ -3314,7 +3327,6 @@
 }
 
 .reset-password-container {
-
   p {
     margin: 0 0 1.5rem;
   }
@@ -3467,7 +3479,6 @@
 
 /*START CHECK EMAIL*/
 .check-email {
-
   &.check-email_full {
     width: 43rem;
     margin: 0 auto;
@@ -3475,6 +3486,19 @@
     @media (max-width: 991px) {
       width: 100%;
       margin-bottom: 8rem;
+    }
+  }
+
+  &.check-email_pos-absolute_vert-centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    @media (max-width: 991px) {
+      left: 0;
+      transform: translate(0, -50%);
+      padding: 0 1.5rem;
     }
   }
 }
@@ -3488,7 +3512,6 @@
 }
 
 .check-email-container {
-
   p {
     margin: 0 0 1.5rem;
   }
