@@ -34,6 +34,6 @@ orob2b:
             product_unit_precision.label: Product Unit Precision
             warehouse.label: Warehouse
             error:
-                units: Please select add at least one Unit of Quantity to the current product to enable inventory management
-                warehouses: There are no warehouses configured in the system
+                units: Please select/add at least one Unit of Quantity to the current product to enable inventory management.
+                warehouses: There are no warehouses configured in the system.
 
