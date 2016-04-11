@@ -193,7 +193,7 @@ define(function(require) {
          */
         getTotals: function(callback) {
             var self = this;
-            var type = 'GET';
+            var typeRequest = 'GET';
             var data = null;
 
             var params = {
@@ -205,13 +205,13 @@ define(function(require) {
             this.formData = formData;
 
             if (formData) {
-                type = 'POST';
+                typeRequest = 'POST';
                 data = formData;
             }
 
             $.ajax({
                 url: routing.generate(this.options.route, params),
-                type: type,
+                type: typeRequest,
                 data: data,
                 success: function (response) {
                     if (formData === self.formData) {
