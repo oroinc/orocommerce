@@ -19,7 +19,7 @@ define(function(require) {
                 year: '.checkout__form__select_exp-year',
                 hiddenDate: 'input[name="EXPDATE"]',
                 form: '.checkout__form__payment-methods__form',
-                expirationDate: '#credit-card-expiration-date',
+                expirationDate: '.credit-card-expiration-date',
                 cvv: '.credit-card-cvv',
                 cardNumber: '.credit-card-number',
                 validation: '[data-validation]'
@@ -152,6 +152,13 @@ define(function(require) {
             var clonedForm = this.$form.clone();
 
             var self = this;
+
+            clonedForm.find('select').each(function(index, item) {
+                //set new select to value of old select
+                //http://stackoverflow.com/questions/742810/clone-isnt-cloning-select-values
+                $(item).val(self.$form.find('select').eq(index).val());
+            });
+
             var validator = virtualForm
                 .append(clonedForm)
                 .validate({

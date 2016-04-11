@@ -12,8 +12,9 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'jquery.validate
         'creditCardExpirationDateNotBlank',
         function(value, element, param) {
             param = _.extend({}, defaultParam, param);
-            var year = $(param.yearSelector).val();
-            var month = $(param.monthSelector).val();
+            var form = $(element).parents('form');
+            var year = form.find(param.yearSelector).val();
+            var month = form.find(param.monthSelector).val();
 
             return (year.length > 0 && month.length > 0)
         },

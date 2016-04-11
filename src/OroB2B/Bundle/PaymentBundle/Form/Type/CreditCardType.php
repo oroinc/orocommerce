@@ -56,9 +56,9 @@ class CreditCardType extends AbstractType
                         'year' => 'Year',
                         'month' => 'Month',
                     ],
-                    'constraints' => [
-                        new NotBlank(),
-                    ],
+                    'attr' => [
+                        'class' => 'credit-card-expiration-date'
+                    ]
                 ]
             )
             ->add(

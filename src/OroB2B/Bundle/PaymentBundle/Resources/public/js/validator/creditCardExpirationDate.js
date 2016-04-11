@@ -12,13 +12,14 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'jquery.validate
         'creditCardExpirationDate',
         function(value, element, param) {
             param = _.extend({}, defaultParam, param);
-            var year = $(param.yearSelector).val();
-            var month = $(param.monthSelector).val();
+            var form = $(element).parents('form');
+            var year = form.find(param.yearSelector).val();
+            var month = form.find(param.monthSelector).val();
             var now = new Date();
 
             if (year.length) {
                 if (year == now.getFullYear() % 100) {
-                    return parseInt(month, 10) >= now.getMonth();
+                    return parseInt(month, 10) >= now.getMonth()+1;
                 }
             }
             return true;
