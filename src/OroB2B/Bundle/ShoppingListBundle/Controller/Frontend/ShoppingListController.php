@@ -43,18 +43,13 @@ class ShoppingListController extends Controller
      */
     public function viewAction(ShoppingList $shoppingList = null)
     {
+        $totalWithSubtotalsAsArray = [];
 
-        if (!$shoppingList) {
-            /** @var ShoppingListRepository $repo */
-            $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
-            $user = $this->getUser();
-            if ($user instanceof AccountUser) {
-                $shoppingList = $repo->findAvailableForAccountUser($user);
-            }
+        $shoppingList = $this->ensureAvailableShoppingList($shoppingList);
+
+        if ($shoppingList) {
+            $totalWithSubtotalsAsArray = $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList);
         }
-
-        $totalWithSubtotalsAsArray = $shoppingList ?
-            $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList) : [];
 
         return [
             'title' => $shoppingList ? $shoppingList->getLabel() : null,
@@ -66,6 +61,24 @@ class ShoppingListController extends Controller
                 ]
             ],
         ];
+    }
+
+    /**
+     * @param ShoppingList|null $shoppingList
+     * @return null|ShoppingList
+     */
+    private function ensureAvailableShoppingList(ShoppingList $shoppingList = null)
+    {
+        if (!$shoppingList) {
+            /** @var ShoppingListRepository $repo */
+            $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
+            $user = $this->getUser();
+            if ($user instanceof AccountUser) {
+                $shoppingList = $repo->findAvailableForAccountUser($user);
+            }
+        }
+
+        return $shoppingList;
     }
 
     /**
