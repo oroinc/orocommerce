@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\OrderBundle\Controller;
 
 use Doctrine\Common\Util\ClassUtils;
 
-
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,9 +21,6 @@ use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
-use OroB2B\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener;
-use OroB2B\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener;
 
 class OrderController extends AbstractOrderController
 {
@@ -148,10 +144,11 @@ class OrderController extends AbstractOrderController
 
         $form = $this->createForm(OrderType::NAME, $order);
         $handler = new OrderHandler(
-            $form,
             $request,
             $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order))
         );
+
+        $handler->setForm($form);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
@@ -180,14 +177,11 @@ class OrderController extends AbstractOrderController
                 return [
                     'form' => $form->createView(),
                     'entity' => $order,
-                    'totals' => $orderData[OrderTotalEventListener::TOTALS_KEY],
                     'isWidgetContext' => (bool)$request->get('_wid', false),
                     'isShippingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_SHIPPING),
                     'isBillingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_BILLING),
-                    'tierPrices' => $orderData[TierPriceEventListener::TIER_PRICES_KEY],
-                    'matchedPrices' => $orderData[MatchingPriceEventListener::MATCHED_PRICES_KEY],
                     'orderData' => $orderData
                 ];
             }

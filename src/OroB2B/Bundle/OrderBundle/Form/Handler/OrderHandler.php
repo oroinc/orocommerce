@@ -21,16 +21,13 @@ class OrderHandler
     protected $manager;
 
     /**
-     * @param FormInterface $form
      * @param Request $request
      * @param ObjectManager $manager
      */
     public function __construct(
-        FormInterface $form,
         Request $request,
         ObjectManager $manager
     ) {
-        $this->form    = $form;
         $this->request = $request;
         $this->manager = $manager;
     }
@@ -43,6 +40,10 @@ class OrderHandler
      */
     public function process(Order $entity)
     {
+        if (!$this->form) {
+            throw new \BadMethodCallException('Form not injected');
+        }
+
         $this->form->setData($entity);
 
         if ($this->request->isMethod('POST')) {
@@ -56,5 +57,13 @@ class OrderHandler
         }
 
         return false;
+    }
+
+    /**
+     * @param FormInterface $form
+     */
+    public function setForm(FormInterface $form)
+    {
+        $this->form = $form;
     }
 }

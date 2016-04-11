@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\OrderBundle\Controller\AjaxOrderController as BaseAjaxOrderController;
+use OroB2B\Bundle\OrderBundle\Model\FrontendOrderDataHandler;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 
@@ -26,6 +27,11 @@ class AjaxOrderController extends BaseAjaxOrderController
      */
     public function entryPointAction(Request $request, Order $order = null)
     {
+        $order->setAccountUser($this->getOrderHandler()->getAccountUser());
+        $order->setAccount($this->getOrderHandler()->getAccount());
+        $order->setPaymentTerm($this->getOrderHandler()->getPaymentTerm());
+        $order->setOwner($this->getOrderHandler()->getOwner());
+
         return parent::entryPointAction($request, $order);
     }
 
@@ -36,5 +42,13 @@ class AjaxOrderController extends BaseAjaxOrderController
     protected function getType(Order $order)
     {
         return $this->createForm(FrontendOrderType::NAME, $order);
+    }
+
+    /**
+     * @return FrontendOrderDataHandler
+     */
+    protected function getOrderHandler()
+    {
+        return $this->get('orob2b_order.model.frontend_order_data_handler');
     }
 }

@@ -4,7 +4,6 @@ define(function(require) {
     var DataLoadComponent;
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
-    var EntryPointComponent = require('orob2border/js/app/components/entry-point-component');
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     DataLoadComponent = BaseComponent.extend({
@@ -25,6 +24,8 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
+
+            mediator.off('page:afterChange', this.updateOrderData, this);
 
             DataLoadComponent.__super__.dispose.call(this);
         },

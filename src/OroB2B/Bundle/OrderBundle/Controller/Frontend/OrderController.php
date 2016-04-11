@@ -16,12 +16,13 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\OrderBundle\Controller\AbstractOrderController;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
+use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
+use OroB2B\Bundle\OrderBundle\Model\FrontendOrderDataHandler;
 
 class OrderController extends AbstractOrderController
 {
@@ -157,38 +158,19 @@ class OrderController extends AbstractOrderController
      */
     protected function update(Order $order, Request $request)
     {
-        if (!$order->getAccountUser()) {
-            $accountUser = $this->get('oro_security.security_facade')->getLoggedUser();
-            if (!$accountUser instanceof AccountUser) {
-                throw new \InvalidArgumentException('Only AccountUser can create an Order.');
-            }
-
-            $order->setAccountUser($accountUser);
-        }
-
-        if ($order->getAccount()) {
-            $paymentTerm = $this->get('orob2b_payment.provider.payment_term')->getPaymentTerm($order->getAccount());
-
-            if ($paymentTerm) {
-                $order->setPaymentTerm($paymentTerm);
-            }
-        }
-
-        //TODO: set correct owner in task BB-929
-        if (!$order->getOwner()) {
-            $user = $this->getDoctrine()->getManagerForClass('OroUserBundle:User')
-                ->getRepository('OroUserBundle:User')
-                ->findOneBy([]);
-
-            $order->setOwner($user);
-        }
+        $order->setAccountUser($this->getOrderHandler()->getAccountUser());
+        $order->setAccount($this->getOrderHandler()->getAccount());
+        $order->setPaymentTerm($this->getOrderHandler()->getPaymentTerm());
+        $order->setOwner($this->getOrderHandler()->getOwner());
 
         $form = $this->createForm(FrontendOrderType::NAME, $order);
+
         $handler = new OrderHandler(
-            $form,
             $request,
             $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order))
         );
+
+        $handler->setForm($form);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
@@ -208,17 +190,21 @@ class OrderController extends AbstractOrderController
             $this->get('translator')->trans('orob2b.order.controller.order.saved.message'),
             $handler,
             function (Order $order, FormInterface $form, Request $request) {
+
+                $submittedData = $request->get($form->getName(), []);
+                $event = new OrderEvent($form, $form->getData(), $submittedData);
+                $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);
+                $orderData = $event->getData()->getArrayCopy();
+
                 return [
                     'form' => $form->createView(),
                     'entity' => $order,
-                    'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order),
                     'isWidgetContext' => (bool)$request->get('_wid', false),
                     'isShippingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_SHIPPING),
                     'isBillingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_BILLING),
-                    'tierPrices' => $this->getTierPrices($order),
-                    'matchedPrices' => $this->getMatchedPrices($order),
+                    'orderData' => $orderData
                 ];
             }
         );
@@ -230,5 +216,13 @@ class OrderController extends AbstractOrderController
     protected function getTotalProcessor()
     {
         return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
+    }
+
+    /**
+     * @return FrontendOrderDataHandler
+     */
+    protected function getOrderHandler()
+    {
+        return $this->get('orob2b_order.model.frontend_order_data_handler');
     }
 }
