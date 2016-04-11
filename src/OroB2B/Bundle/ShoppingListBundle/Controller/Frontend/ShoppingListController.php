@@ -58,7 +58,6 @@ class ShoppingListController extends Controller
         return [
             'title' => $shoppingList ? $shoppingList->getLabel() : null,
             'data' => [
-                'shoppingList' => $shoppingList,
                 'entity' => $shoppingList,
                 'totals' => [
                     'identifier' => 'totals',
