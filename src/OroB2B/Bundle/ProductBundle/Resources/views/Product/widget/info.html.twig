@@ -17,10 +17,12 @@
                 {% set productUnitPrecisions = [] %}
                 {% for unitPrecision in product.unitPrecisions %}
                     {% set unitPrecisionElement %}
-                        {{ 'orob2b.product.productunitprecision.representation'|trans({
-                            '{{ label }}': ('orob2b.product_unit.'~ unitPrecision.unit.code ~'.label.full')|trans,
-                            '{{ precision }}': unitPrecision.precision
-                        }) }}
+                        {{ 'orob2b.product.productunitprecision.representation'|transchoice(
+                            unitPrecision.precision,
+                            {
+                                '{{ label }}': ('orob2b.product_unit.'~ unitPrecision.unit.code ~'.label.full')|trans
+                            }
+                        ) }}
                     {% endset %}
                     {% set productUnitPrecisions = productUnitPrecisions|merge([unitPrecisionElement]) %}
                 {% endfor %}

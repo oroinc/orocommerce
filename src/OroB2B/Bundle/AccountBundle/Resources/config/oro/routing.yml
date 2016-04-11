@@ -64,6 +64,13 @@ orob2b_account_frontend_account_user:
     options:
         frontend: true
 
+orob2b_account_frontend_account_user_address:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserAddressController.php"
+    type: annotation
+    prefix: /account/user/address
+    options:
+        frontend: true
+
 orob2b_account_user_security:
     resource: "@OroB2BAccountBundle/Controller/SecurityController.php"
     type: annotation

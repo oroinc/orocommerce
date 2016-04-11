@@ -27,7 +27,7 @@ class FrontendControllerTest extends WebTestCase
 
     public function testRedirectToLogin()
     {
-        $this->client->request('GET', $this->getUrl('_frontend'));
+        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
         $crawler = $this->client->followRedirect();
         $this->assertNotContains($this->getBackendPrefix(), $crawler->html());
         $this->assertEquals(
@@ -47,7 +47,7 @@ class FrontendControllerTest extends WebTestCase
             )
         );
 
-        $this->client->request('GET', $this->getUrl('_frontend'));
+        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
         $crawler = $this->client->followRedirect();
         $this->assertNotContains($this->getBackendPrefix(), $crawler->html());
         $this->assertEquals('Products', $crawler->filter('h1.oro-subtitle')->html());
@@ -61,7 +61,7 @@ class FrontendControllerTest extends WebTestCase
         $layoutTheme = 'default';
         $this->setTheme($layoutTheme);
 
-        $this->client->request('GET', $this->getUrl('_frontend'));
+        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
         $crawler = $this->client->followRedirect();
         $this->assertEquals('Login', $crawler->filter('title')->html());
 
@@ -72,7 +72,7 @@ class FrontendControllerTest extends WebTestCase
         // Check that after selecting of layout there is an ability to switch to oro theme
         $this->setTheme(self::DEFAULT_THEME);
 
-        $this->client->request('GET', $this->getUrl('_frontend'));
+        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
         $crawler = $this->client->followRedirect();
         $this->assertEquals(
             'Sign In',

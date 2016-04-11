@@ -38,7 +38,7 @@ class CheckoutController extends Controller
      *     name="orob2b_checkout_frontend_checkout",
      *     requirements={"id"="\d+", "type"="\w+"}
      * )
-     * @Layout(vars={"workflowStepName"})
+     * @Layout(vars={"workflowStepName", "workflowName"})
      * @Acl(
      *      id="orob2b_checkout_frontend_checkout",
      *      type="entity",
@@ -64,18 +64,24 @@ class CheckoutController extends Controller
         $workflowItem = $this->handleTransition($checkout, $request);
         $currentStep = $this->validateStep($workflowItem);
 
+        $responseData = [];
         if ($workflowItem->getResult()->has('responseData')) {
-            return new JsonResponse(['responseData' => $workflowItem->getResult()->get('responseData')]);
-        } elseif ($workflowItem->getResult()->has('redirectUrl')) {
+            $responseData['responseData'] = $workflowItem->getResult()->get('responseData');
+        }
+        if ($workflowItem->getResult()->has('redirectUrl')) {
             if ($request->isXmlHttpRequest()) {
-                return new JsonResponse(['redirectUrl' => $workflowItem->getResult()->get('redirectUrl')]);
+                $responseData['redirectUrl'] = $workflowItem->getResult()->get('redirectUrl');
             } else {
                 return $this->redirect($workflowItem->getResult()->get('redirectUrl'));
             }
         }
+        if ($responseData) {
+            return new JsonResponse($responseData);
+        }
 
         return [
             'workflowStepName' => $currentStep->getName(),
+            'workflowName' => $workflowItem->getWorkflowName(),
             'data' =>
                 [
                     'checkout' => $checkout,

@@ -19,7 +19,14 @@ class SecurityController extends Controller
         if ($this->getUser()) {
             return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_profile'));
         }
-        return [];
+
+        $registrationAllowed = (bool) $this->get('oro_config.manager')->get('oro_b2b_account.registration_allowed');
+
+        return [
+            'data' => [
+                'registrationAllowed' => $registrationAllowed
+            ]
+        ];
     }
 
     /**

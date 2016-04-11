@@ -73,6 +73,10 @@ define(function(require) {
                 mediator.execute('redirectTo', {url: response.redirectUrl}, {redirect: true});
             } else {
                 var $response = $('<div/>').html(response);
+                var $title = $response.find('title');
+                if ($title.length) {
+                    document.title = $title.text();
+                }
                 var sidebarSelector = this.options.selectors.checkoutSidebar;
                 var contentSelector = this.options.selectors.checkoutContent;
 

@@ -92,7 +92,7 @@ orob2b.account:
             registration.title: 'Registration'
             register: 'Register'
             register.description: 'Please register if you do not have an account. A sales representative will contact you shortly.'
-            create_an_account: 'Create an Account'
+            create_an_account: 'Create An Account'
             forgot_password: 'Forgot Your Password?'
             enter_password: 'Enter your password'
             reset_password:
@@ -373,6 +373,8 @@ orob2b.account:
             profile_updated.message: 'Account User profile updated'
             token_not_found.message: 'The user with "confirmation token" does not exist for value "%token%"'
             confirmation_sent.message: 'Confirmation email has been sent'
+        accountuseraddress:
+            saved.message: 'Account User Address has been saved'
         accountuserrole:
             saved.message:     'Account User Role has been saved'
 
@@ -410,6 +412,33 @@ orob2b.account:
         privileges:
             entity.label: Access
             action.label: Capabillities
+        address: #orob2b.account.frontend.address
+            title:
+                create: 'Create'
+                edit: 'Edit'
+                subject: 'Address Account User'
+            page_title.edit: 'Edit Address'
+            page_title.create: 'Create Address'
+            form:
+                placeholder:
+                    first_name: ""
+                    middle_name: ""
+                    name_suffix: ""
+                    last_name: ""
+                    label: ""
+                    organization: ""
+                    street: ""
+                    street2: ""
+                    city: ""
+                    zip: ""
+                    phone: ""
+                    name.prefix: ""
+                label:
+                    primary: Is Primary Address
+                    address_types: Address type and usage
+            buttons:
+                cancel: Cancel
+                save: Save
         security:
             access-level:
                 BASIC: 'Individual'
@@ -450,12 +479,17 @@ orob2b.account:
         account_user_link.text: '< Back to Account User List'
         action:
             back.label: "< Back"
+            back_to_login.label: "Already have an account? Log in >"
             account_user_role.edit: "Edit Role"
         table:
             entity:
                 section.label: Section
                 action.label: Action
                 permission.label: Permission
+        menu:
+            account_user_signed_in_as.label: 'Signed in as:'
+            account_user_sign_out.label: 'Sign Out'
+            account_user_profile.label: 'My Account'
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'

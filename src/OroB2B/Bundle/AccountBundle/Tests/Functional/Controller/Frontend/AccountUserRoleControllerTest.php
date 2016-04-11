@@ -122,16 +122,11 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $accountUserRoleLabel = $this->getReference(LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER);
-        $response = $this->requestFrontendGrid(
-            'frontend-account-account-user-roles-grid',
-            [
-                'frontend-account-account-user-roles-grid[_filter][label][value]' => $accountUserRoleLabel
-            ]
-        );
+        $response = $this->requestFrontendGrid('frontend-account-account-user-roles-grid');
 
         $this->assertJsonResponseStatusCodeEquals($response, 200);
         $this->assertContains(LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER, $response->getContent());
+        $this->assertContains(self::ACCOUNT_ROLE, $response->getContent());
     }
 
     /**

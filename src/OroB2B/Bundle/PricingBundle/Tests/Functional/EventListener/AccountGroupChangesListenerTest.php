@@ -6,6 +6,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
+use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -27,6 +29,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
             ],
             true
         );
+        $this->disableRealTimeMode();
     }
 
     /**
@@ -184,5 +187,20 @@ class AccountGroupChangesListenerTest extends WebTestCase
             }
             $this->assertTrue($exist);
         }
+    }
+
+    /**
+     * Disable realtime price update mode
+     */
+    protected function disableRealTimeMode()
+    {
+        $configManager = $this->getContainer()->get('oro_config.scope.global');
+        $configManager->set(
+            Configuration::getConfigKeyByName(
+                Configuration::PRICE_LISTS_UPDATE_MODE
+            ),
+            CombinedPriceListQueueConsumer::MODE_SCHEDULED
+        );
+        $configManager->flush();
     }
 }

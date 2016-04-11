@@ -4,6 +4,19 @@ layout:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/main.html.twig'
         - @addTree:
             items:
+                head:
+                    blockType: head
+                title:
+                    blockType: title
+                    options:
+                        separator: ' - '
+                        reverse: true
+                        value:
+                            - 'orob2b.checkout.entity_label'
+                            -
+                                label: 'orob2b.checkout.title.step.label'
+                                parameters:
+                                    '%step_label%': { @value: $data.workflowStep.label }
                 checkout_widget_content:
                     blockType: container
                 checkout_content:
@@ -48,6 +61,8 @@ layout:
                     blockType: body
             tree:
                 root:
+                    head:
+                        title: ~
                     body:
                         checkout_content:
                             checkout_information:
