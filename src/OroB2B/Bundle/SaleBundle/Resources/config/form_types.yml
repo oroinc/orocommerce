@@ -20,7 +20,7 @@ services:
     orob2b_sale.form.type.quote:
         class: %orob2b_sale.form.type.quote.class%
         arguments:
-            -  "@orob2b_sale.provider.quote_address_security"
+            - "@orob2b_sale.provider.quote_address_security"
         calls:
             - [setDataClass, [%orob2b_sale.entity.quote.class%]]
         tags:
@@ -29,10 +29,10 @@ services:
     orob2b_sale.form.type.quote_product:
         class: %orob2b_sale.form.type.quote_product.class%
         arguments:
-            -  "@translator"
-            -  "@orob2b_product.formatter.product_unit_label"
-            -  "@orob2b_sale.formatter.quote_product"
-            -  "@doctrine"
+            - "@translator"
+            - "@orob2b_product.formatter.product_unit_label"
+            - "@orob2b_sale.formatter.quote_product"
+            - "@doctrine"
         calls:
             - [setDataClass, [%orob2b_sale.entity.quote_product.class%]]
             - [setProductUnitClass, [%orob2b_product.product_unit.class%]]
@@ -42,7 +42,7 @@ services:
     orob2b_sale.form.type.quote_product_offer:
         class: %orob2b_sale.form.type.quote_product_offer.class%
         arguments:
-            -  "@orob2b_sale.formatter.quote_product_offer"
+            - "@orob2b_sale.formatter.quote_product_offer"
         calls:
             - [setDataClass, [%orob2b_sale.entity.quote_product_offer.class%]]
         tags:
@@ -82,10 +82,10 @@ services:
     orob2b_sale.form.type.quote_address:
         class: %orob2b_sale.form.type.quote_address.class%
         arguments:
-            -  "@oro_locale.formatter.address"
-            -  "@orob2b_sale.manager.quote_address"
-            -  "@orob2b_sale.provider.quote_address_security"
-            -  "@oro_importexport.serializer"
+            - "@oro_locale.formatter.address"
+            - "@orob2b_sale.manager.quote_address"
+            - "@orob2b_sale.provider.quote_address_security"
+            - "@oro_importexport.serializer"
         tags:
             - { name: form.type, alias: orob2b_quote_address_type }
         calls:

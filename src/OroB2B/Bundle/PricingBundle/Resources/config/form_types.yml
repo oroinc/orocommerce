@@ -36,7 +36,7 @@ services:
     orob2b_pricing.form.type.product_price_collection:
         class: %orob2b_pricing.form.type.product_price_collection.class%
         arguments:
-            -"@doctrine"
+            - "@doctrine"
         calls:
             - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
             - [setPriceListClass, [%orob2b_pricing.entity.price_list.class%]]

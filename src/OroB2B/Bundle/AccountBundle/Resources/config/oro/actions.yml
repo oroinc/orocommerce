@@ -218,7 +218,7 @@ operations:
                 type: 'info'
                 message_parameters:
                     entityLabel: $.entityLabel
-            - '@redirect: {route': orob2b_account_frontend_account_user_index}
+            - '@redirect': {route: orob2b_account_frontend_account_user_index}
 
     orob2b_account_frontend_edit_user:
         label: orob2b.account.action.account_user.edit
