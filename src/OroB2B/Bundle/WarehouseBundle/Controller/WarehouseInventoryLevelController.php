@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\WarehouseBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -53,7 +54,7 @@ class WarehouseInventoryLevelController extends Controller
             $this->get('orob2b_product.service.quantity_rounding')
         );
 
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        $result = $this->get('oro_form.model.update_handler')->handleUpdate(
             $product,
             $form,
             null,
@@ -61,5 +62,51 @@ class WarehouseInventoryLevelController extends Controller
             null,
             $handler
         );
+
+        if ($result instanceof Response) {
+            return $result;
+        }
+
+        return array_merge($result, $this->widgetNoDataReasonsCheck($product));
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    private function widgetNoDataReasonsCheck(Product $product)
+    {
+        $units = $product->getUnitPrecisions();
+
+        if (count($units) === 0) {
+            return [
+                'noDataReason' => $this->get('translator')->trans(
+                    'orob2b.warehouse.warehouseinventorylevel.error.units'
+                )
+            ];
+        }
+
+        $warehouses = $this->getAvailableWarehouses();
+
+        if (count($warehouses) === 0) {
+            return [
+                'noDataReason' => $this->get('translator')->trans(
+                    'orob2b.warehouse.warehouseinventorylevel.error.warehouses'
+                )
+            ];
+        }
+
+        return [];
+    }
+
+    /**
+     * @return array|\OroB2B\Bundle\WarehouseBundle\Entity\Warehouse[]
+     */
+    private function getAvailableWarehouses()
+    {
+        return $this->getDoctrine()
+            ->getManagerForClass($this->getParameter('orob2b_warehouse.entity.warehouse.class'))
+            ->getRepository('OroB2BWarehouseBundle:Warehouse')
+            ->findAll();
     }
 }
