@@ -43,9 +43,9 @@ class ShoppingListController extends Controller
      */
     public function viewAction(ShoppingList $shoppingList = null)
     {
-        $totalWithSubtotalsAsArray = [];
-
         $shoppingList = $this->ensureAvailableShoppingList($shoppingList);
+
+        $totalWithSubtotalsAsArray = [];
 
         if ($shoppingList) {
             $totalWithSubtotalsAsArray = $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList);
