@@ -80,6 +80,6 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
 
         return $this->registry->getManagerForClass('OroB2BProductBundle:ProductUnit')
             ->getRepository('OroB2BProductBundle:ProductUnit')
-            ->getProductUnitPrecisions($products->toArray());
+            ->getProductsUnits($products->toArray());
     }
 }

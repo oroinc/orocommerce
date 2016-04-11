@@ -25,7 +25,7 @@ class ProductUnitRepository extends EntityRepository
      * @param array $products
      * @return array
      */
-    public function getProductUnitPrecisions(array $products = [])
+    public function getProductsUnits(array $products = [])
     {
         $qb = $this->createQueryBuilder('unit');
         $qb
