@@ -11,24 +11,24 @@ operations:
         button_options:
             icon: icon-copy
         actions:
-            - @run_action_group:
+            - '@run_action_group':
                 results:
                     product_copy_id: $.productCopy.id
                 action_group: orob2b_product_duplicate
                 parameters_mapping:
                     data: $.data
-            - @call_service_method:
+            - '@call_service_method':
                 attribute: $.hasSuccessMessage
                 service: session.flash_bag
                 method: has
                 method_parameters: ['success']
-            - @flash_message:
+            - '@flash_message':
                 conditions:
-                    @equal: [$.hasSuccessMessage, false]
+                    '@equal': [$.hasSuccessMessage, false]
                 parameters:
                     message: orob2b.product.controller.product.duplicated.message
                     type: 'success'
-            - @redirect:
+            - '@redirect':
                 route: orob2b_product_view
                 route_parameters:
                     id: $.product_copy_id
@@ -41,7 +41,7 @@ action_groups:
                 type: OroB2B\Bundle\ProductBundle\Entity\Product
         acl_resource: orob2b_product_create
         actions:
-            - @call_service_method:
+            - '@call_service_method':
                 service: orob2b_product.service.duplicator
                 method: duplicate
                 method_parameters: [$.data]

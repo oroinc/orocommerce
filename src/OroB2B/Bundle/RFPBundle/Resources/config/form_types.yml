@@ -149,9 +149,9 @@ services:
     orob2b_rfp.form.type.extension.order_data_storage:
         class: %orob2b_rfp.form.type.extension.order_data_storage.class%
         arguments:
-            - @request_stack
-            - @orob2b_pricing.provider.combined_product_price
-            - @orob2b_pricing.model.price_list_tree_handler
+            - '@request_stack'
+            - '@orob2b_pricing.provider.combined_product_price'
+            - '@orob2b_pricing.model.price_list_tree_handler'
         calls:
             - [setExtendedType, [orob2b_order_type]]
         tags:

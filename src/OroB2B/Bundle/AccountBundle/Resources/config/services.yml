@@ -851,14 +851,14 @@ services:
     orob2b_account.provider.frontend_account_user_forgot_password_form:
         class: %orob2b_account.provider.frontend_account_user_forgot_password_form.class%
         arguments:
-            - @form.factory
+            - '@form.factory'
         tags:
             - { name: layout.data_provider, alias: orob2b_account_account_user_password_request }
 
     orob2b_account.provider.frontend_account_user_reset_password_form:
         class: %orob2b_account.provider.frontend_account_user_reset_password_form.class%
         arguments:
-            - @form.factory
+            -'@form.factory'
         tags:
             - { name: layout.data_provider, alias: orob2b_account_account_user_password_reset }
 
@@ -888,41 +888,41 @@ services:
     orob2b_account.provider.frontend_account_user_role_privileges:
         class: %orob2b_account.provider.frontend_account_user_role_privileges.class%
         arguments:
-            - @orob2b_account.helper.account_user_role_privileges.frontend
+            - '@orob2b_account.helper.account_user_role_privileges.frontend'
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_role_privileges }
 
     orob2b_account.provider.frontend_account_user_role_form:
         class: %orob2b_account.provider.frontend_account_user_role_form.class%
         arguments:
-            - @orob2b_account.form.handler.update_account_user_role_frontend=
+            - '@orob2b_account.form.handler.update_account_user_role_frontend='
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_role_form }
     orob2b_account.provider.fronted_account_user_address_form:
         class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserAddressFormDataProvider
         arguments:
-            - @form.factory
+            - '@form.factory'
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_address_form }
 
     orob2b_account.layout.block_type.address_book:
         class: OroB2B\Bundle\AccountBundle\Layout\Block\Type\AddressBookType
         arguments:
-            - @router
-            - @fragment.handler
+            - '@router'
+            - '@fragment.handler'
         tags:
              - { name: layout.block_type, alias: address_book }
 
     orob2b_account.provider.frontend_account_user_profile_form:
         class: %orob2b_account.provider.frontend_account_user_profile_form.class%
         arguments:
-            - @form.factory
+            - '@form.factory'
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_profile_form }
 
     orob2b_account.provider.frontend_account_user_form:
         class: %orob2b_account.provider.frontend_account_user_form.class%
         arguments:
-              - @form.factory
+              - '@form.factory'
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_form }

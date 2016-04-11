@@ -153,6 +153,6 @@ services:
     orob2b_rfp.layout.data_provider.request_form:
         class: %orob2b_rfp.layout.data_provider.request_form.class%
         arguments:
-            - @form.factory
+            - '@form.factory'
         tags:
             - { name: layout.data_provider, alias: orob2b_rfp_request_form }

@@ -9,11 +9,11 @@ operations:
         button_options:
             icon: icon-briefcase
         actions:
-            - @call_service_method:
+            - '@call_service_method':
                 service: orob2b_shopping_list.service.product_data_storage
                 method: saveToStorage
                 method_parameters: [$.data]
-            - @redirect:
+            - '@redirect':
                 parameters:
                     route: orob2b_order_create
                     route_parameters: {'storage': true}
@@ -28,14 +28,14 @@ operations:
         button_options:
             icon: icon-briefcase
         actions:
-            - @assign_url:
+            - '@assign_url':
                 attribute: $.editLink
                 route: orob2b_shopping_list_frontend_view
                 route_parameters: { 'id': $.data.id }
-            - @translate:
+            - '@translate':
                 attribute: $.sourceRemoveLabel
                 id: orob2b.frontend.shoppinglist.workflow.remove_source.label
-            - @start_checkout:
+            - '@start_checkout':
                 source_name: 'shoppingList'
                 source_entity: $.data
                 settings:
@@ -53,16 +53,16 @@ operations:
             template: OroB2BShoppingListBundle:Action:buttons.html.twig
             page_component_module: orob2bshoppinglist/js/app/components/quick-add-button-component
         preactions:
-            - @call_service_method:
+            - '@call_service_method':
                 service: orob2b_shopping_list.shopping_list.manager
                 method: getShoppingLists
                 attribute: $.shoppingLists
-            - @call_service_method:
+            - '@call_service_method':
                 service: orob2b_shopping_list.processor.quick_add
                 method: isAllowed
                 attribute: $.isAllowed
         preconditions:
-            @equal: [true, $.isAllowed]
+            '@equal': [true, $.isAllowed]
 
     orob2b_shoppinglist_frontend_products_add_to_shoppinglist:
         extends: orob2b_shoppinglist_frontend_products_add_to_shoppinglist_base
@@ -97,12 +97,12 @@ operations:
             page_component_options:
                 component_name: '[name$="[component]"]'
         preactions:
-            - @call_service_method:
+            - '@call_service_method':
                 service: orob2b_shopping_list.processor.quick_add_to_checkout
                 method: isAllowed
                 attribute: $.isAllowed
         preconditions:
-            @equal: [true, $.isAllowed]
+            '@equal': [true, $.isAllowed]
 
     orob2b_shoppinglist_frontend_addlineitem:
         extends: orob2b_shoppinglist_lineitem_base
@@ -123,22 +123,22 @@ operations:
                 lineItem:
                     form_type: orob2b_shopping_list_frontend_line_item_widget
         form_init:
-            - @get_active_user: $.currentUser
-            - @call_service_method:
+            - '@get_active_user': $.currentUser
+            - '@call_service_method':
                 service: orob2b_shopping_list.handler.shopping_list_line_item
                 method: prepareLineItemWithProduct
                 method_parameters: [$.currentUser, $.data]
                 attribute: $.lineItem
         actions:
-            - @run_action_group:
+            - '@run_action_group':
                 results:
                     success_message: $.successMessage
                 action_group: orob2b_shoppinglist_frontend_addlineitem
                 parameters_mapping:
                     line_item: $.lineItem
                     form: $.form
-            - @flash_message: { message: $.success_message, type: success }
-            - @refresh_grid: frontend-products-grid
+            - '@flash_message: { message: $.success_message, type': success }
+            - '@refresh_grid': frontend-products-grid
 
     orob2b_shoppinglist_lineitem_base:
         label: ' '
@@ -182,20 +182,20 @@ operations:
                 dblclick: maximize
                 maximizedHeightDecreaseBy: minimize-bar
         form_init:
-            - @create_object:
+            - '@create_object':
                 class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
                 attribute: $.lineItem
-            - @assign_value: [$.lineItem.shoppingList, $.data]
-            - @assign_value: [$.lineItem.accountUser, $.data.accountUser]
-            - @assign_value: [$.lineItem.organization, $.data.organization]
+            - '@assign_value': [$.lineItem.shoppingList, $.data]
+            - '@assign_value': [$.lineItem.accountUser, $.data.accountUser]
+            - '@assign_value': [$.lineItem.organization, $.data.organization]
         actions:
-            - @run_action_group:
+            - '@run_action_group':
                 action_group: orob2b_shoppinglist_addlineitem
                 parameters_mapping:
                     data: $.data
                     line_item: $.lineItem
-            - @refresh_grid: shopping-list-line-items-grid
-            - @flash_message:
+            - '@refresh_grid': shopping-list-line-items-grid
+            - '@flash_message':
                 message: orob2b.shoppinglist.lineitem.flash.added
                 type: 'success'
 
@@ -211,17 +211,17 @@ operations:
             options:
                 modal: true
         form_init:
-            - @assign_value: [$.lineItem, $.data]
-            - @assign_value: [$.lineItem.shoppingList, $.data.shoppingList]
+            - '@assign_value': [$.lineItem, $.data]
+            - '@assign_value': [$.lineItem.shoppingList, $.data.shoppingList]
         actions:
-            - @call_service_method:
+            - '@call_service_method':
                 service: orob2b_shopping_list.shopping_list.manager
                 method: recalculateSubtotals
                 method_parameters: [$.data.shoppingList]
-            - @flash_message:
+            - '@flash_message':
                 message: orob2b.shoppinglist.lineitem.flash.updated
                 type: 'success'
-            - @refresh_grid: shopping-list-line-items-grid
+            - '@refresh_grid': shopping-list-line-items-grid
 
     orob2b_shoppinglist_frontend_request_quote:
         label: orob2b.frontend.shoppinglist.btn.request_quote_create_rfp
@@ -233,11 +233,11 @@ operations:
         button_options:
             icon: icon-briefcase
         actions:
-            - @call_service_method:
+            - '@call_service_method':
                 service: orob2b_shopping_list.service.product_data_storage
                 method: saveToStorage
                 method_parameters: [$.data]
-            - @redirect:
+            - '@redirect':
                 parameters:
                     route: orob2b_rfp_frontend_request_create
                     route_parameters: {'storage': true}
@@ -251,11 +251,11 @@ action_groups:
                 type: Symfony\Component\Form\FormInterface
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         actions:
-            - @call_service_method:
+            - '@call_service_method':
                 service: orob2b_shopping_list.handler.shopping_list_line_item
                 method: processLineItem
                 method_parameters: [$.line_item, $.form]
-            - @call_service_method:
+            - '@call_service_method':
                 service: orob2b_shopping_list.service.message_generator
                 method: getSuccessMessage
                 method_parameters: [$.line_item.shoppingList.id, 1, orob2b.shoppinglist.lineitem.flash.added]
@@ -269,11 +269,11 @@ action_groups:
                 type: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
         acl_resource: [CREATE, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         actions:
-            - @call_service_method:
+            - '@call_service_method':
                 service: orob2b_shopping_list.shopping_list.manager
                 method: addLineItem
                 method_parameters: [$.line_item, $.data, true, true]
-            - @call_service_method:
+            - '@call_service_method':
                 service: orob2b_shopping_list.shopping_list.manager
                 method: recalculateSubtotals
                 method_parameters: [$.data]
