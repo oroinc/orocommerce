@@ -56,7 +56,7 @@ class RequestACLTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Form $form */
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Submit Request For Quote')->form();
         $form->remove('orob2b_rfp_frontend_request[requestProducts][0]');
         $form['orob2b_rfp_frontend_request[firstName]'] = LoadAccountUsersData::USER_NAME;
         $form['orob2b_rfp_frontend_request[lastName]']  = LoadAccountUsersData::USER_LAST_NAME;
@@ -184,7 +184,7 @@ class RequestACLTest extends WebTestCase
             $this->generateBasicAuthHeader($email, $password)
         );
 
-        $this->client->request('GET', $this->getUrl('_frontend'));
+        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
     }
 
     /**

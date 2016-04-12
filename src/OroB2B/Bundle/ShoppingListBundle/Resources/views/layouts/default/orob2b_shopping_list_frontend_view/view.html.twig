@@ -50,7 +50,7 @@
 {% endblock %}
 
 {% block _shopping_list_top_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart__order__controls-list" }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart__order__controls-list pull-right" }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -63,8 +63,10 @@
     {% set hasRecords = notes is not empty %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-more-info-toggler" }) %}
     <div{{ block('block_attributes') }}>
-        <i class="cf-play {% if hasRecords %}expanded{% endif %}"></i>
-        <a href="#" data-more-info-expand tabindex="0">{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
+        <div data-more-info-expand>
+            <i class="oro-more-info-toggler__icon cf-play cf--gray {% if hasRecords %}expanded{% endif %}"></i>
+            <a href="#" class="oro-more-info-toggler__trigger orange" tabindex="0">{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
+        </div>
         <div class="oro-more-info-toggler__container" data-more-info {% if hasRecords %}style="display: block"{% endif %}>
 
             <div class="ml1-md mmt5-md" {{ UI.renderPageComponentAttributes({
@@ -90,17 +92,17 @@
                 }
             }) }}>
                 <label for="addANote" data-checkbox
-                    class="checkbox_custom checkbox_custom_blue mml5-md {% if notes is not empty %}checked{% endif %}">
+                       class="checkbox_custom checkbox_custom_blue mml5-md {% if notes is not empty %}checked{% endif %}">
                     <input type="checkbox" name="addANote" id="addANote" data-role="start-editing"
-                        {% if notes is not empty %}checked="checked"{% endif %}>
+                           {% if notes is not empty %}checked="checked"{% endif %}>
                     <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
                     <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
                     <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_note.label'|trans }}</span>
                 </label>
                 <div class="form-input" data-role="editor">
-                    <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
-                        rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
-                        class="input input_sm input_block">{{ notes }}</textarea>
+                <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
+                          rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
+                          class="input input_sm input_block">{{ notes }}</textarea>
                 </div>
             </div>
         </div>
@@ -122,7 +124,7 @@
             <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md">
                 <thead>
                 <tr>
-                    <th><small>{{ 'orob2b.frontend.shoppinglist.view.item.lable'|trans }}</small></th>
+                    <th colspan="2"><small>{{ 'orob2b.frontend.shoppinglist.view.item.lable'|trans }}</small></th>
                     <th><small>{{ 'orob2b.frontend.shoppinglist.view.availability.lable'|trans }}</small></th>
                     <th><small>{{ 'orob2b.frontend.shoppinglist.view.quantity.lable'|trans }}</small></th>
                     <th class="text-right"><small>{{ 'orob2b.frontend.shoppinglist.view.price.lable'|trans }}</small></th>
@@ -159,7 +161,7 @@
                             }
                         }
                     }) }}>
-                        <td class="va-t_md">
+                        <td class="va-t_md" colspan="2">
                             <div class="product-item product-item_in-cart">
                                 <div class="product-item__image-holder product-item__image-holder_in-cart">
                                     <a href="{{ path('orob2b_product_frontend_product_view', {'id': lineItem.product.id}) }}">{{ Image.image(lineItem.product.image, 'product_small') }}</a>
@@ -181,7 +183,7 @@
                                     <div class="product__qty-input__count-option">
                                         <input type="number" value="{{ lineItem.quantity }}" name="product_qty"
                                             placeholder="{{ 'orob2b.frontend.shoppinglist.view.qty.label'|trans }}"
-                                            class="input input_sm input_block text-center" disabled="disabled" required />
+                                            class="input input_md input_block text-center" disabled="disabled" required />
                                     </div>
                                 </div>
                                 <div class="product__select inline va-m_md">
@@ -226,7 +228,7 @@
                     </tr>
                     <tr class="borderless t_paddingless">
                         {% set notes = lineItem.notes %}
-                        <td colspan="5">
+                        <td colspan="6">
                             <div class="checkbox_custom-wrapper" {{ UI.renderPageComponentAttributes({
                                 module: 'orob2bfrontend/js/app/components/switchable-editable-view-component',
                                 options: {

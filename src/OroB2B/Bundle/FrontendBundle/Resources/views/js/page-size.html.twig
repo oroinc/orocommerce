@@ -1,7 +1,7 @@
 <script type="text/html" id="template-datagrid-toolbar-page-size">
-    <span class="hidden-sm hidden-xs fs14 va-m_md mmr9-md"><%- _.__("View per page") %>: &nbsp;</span>
-    <div class="action-selectbox_custom action-selectbox_custom_in-pager">
-        <select name="action" class="input input_xs action-select" data-chosen-selectbox data-grid-pagesize-selector>
+    <span class="fs14 va-m_md"><%- _.__("View per page") %>: &nbsp;</span>
+    <div class="chosen-container chosen-container-single chosen-container-single-nosearch action-selectbox_custom_in-pager">
+        <select name="action" class="action-select" data-grid-pagesize-selector>
             <% _.each(items, function (item) { %>
                 <option
                         <% if (item === currentSizeLabel || (_.isUndefined(item.size) && item.size === currentSizeLabel)) { %>selected<% } %>
@@ -12,5 +12,7 @@
             <% }); %>
         </select>
     </div>
-    <span class="hidden-lg hidden-md fs14 va-m_md ml1-sm"><%- _.__("Per page") %></span>
+    {#
+        <span class="hidden-lg hidden-md fs14 va-m_md ml1-sm"><%- _.__("Per page") %></span>
+    #}
 </script>

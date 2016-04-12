@@ -1,20 +1,20 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BFrontendBundle:layouts:default/page/layout.html.twig'
-        - @addTree:
+        - '@addTree':
             items:
                 wrapper:
                     blockType: container
-                    options:
-                        attr:
-                          id: 'container'
                 header:
                     blockType: container
                 notification:
                     blockType: block
                 main:
                     blockType: container
+                    options:
+                        attr:
+                          id: 'container'
                 content:
                     blockType: container
                 sidebar_left:
@@ -25,13 +25,6 @@ layout:
                     blockType: text
                     options:
                         text: ~
-                footer:
-                    blockType: container
-                footer_copyright:
-                    blockType: text
-                    options:
-                        text: 'orob2b_frontend.copyright'
-                        escape: false
                 scripts:
                     blockType: script
                     options:
@@ -40,49 +33,22 @@ layout:
                 body:
                     wrapper:
                         header: ~
-                        notification: ~
                         main:
+                            notification: ~
                             content:
                                 page_title_container:
                                     page_title: ~
                             sidebar_left: ~
-                        footer:
-                            footer_copyright: ~
                     scripts: ~
-        - @move:
-            id: datagrid_toolbar_mass_actions
-            parentId: datagrid_toolbar
-            siblingId: datagrid_toolbar_sorting
-        - @move:
-            id: datagrid_toolbar_extra_actions
-            parentId: datagrid_toolbar
-            siblingId: datagrid_toolbar_mass_actions
-        - @move:
-            id: datagrid_toolbar_pagination
-            parentId: datagrid_toolbar
-            siblingId: datagrid_toolbar_extra_actions
-        - @move:
-            id: datagrid_toolbar_page_size
-            parentId: datagrid_toolbar
-            siblingId: datagrid_toolbar_pagination
-        - @move:
-            id: datagrid_toolbar_actions
-            parentId: datagrid_toolbar
-            siblingId: datagrid_toolbar_page_size
-        - @remove:
-            id: datagrid_toolbar_actions_container
-        - @remove:
-            id: datagrid_toolbar_tools_container
-        - @add:
+        - '@add':
             id: require_js_config
             parentId: require_js
             blockType: block
-        - @replaceOption:
-            id: head
-            optionName: title
-            oldOptionValue: OroPlatform
-            newOptionValue: OroCommerce
-        - @setOption:
-            id: datagrid_toolbar
-            optionName: attr.class
-            optionValue: 'oro-oq__filter-controls oro-oq__filter-controls oro-oq__filter-controls_has-pagination'
+        - '@setOption':
+            id: title
+            optionName: separator
+            optionValue: ' - '
+        - '@setOption':
+            id: title
+            optionName: reverse
+            optionValue: true

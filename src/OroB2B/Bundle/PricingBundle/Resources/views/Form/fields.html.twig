@@ -1,31 +1,33 @@
 {% block orob2b_pricing_product_price_widget %}
-    <table data-page-component-module="orob2bpricing/js/app/components/price-list-currency-limitations-component">
-        <tr>
-            <td>{{ form_label(form.priceList) }}</td>
-            <td>{{ form_widget(form.priceList, { 'attr': {'class': 'priceList'} }) }}</td>
-            <td>{{ form_errors(form.priceList) }}</td>
-        </tr>
-        <tr>
-            <td>{{ form_label(form.quantity) }}</td>
-            <td>{{ form_widget(form.quantity, { 'attr': {'class': 'quantity'} }) }}</td>
-            <td>{{ form_errors(form.quantity) }}</td>
-        </tr>
-        <tr>
-            <td>{{ form_label(form.unit) }}</td>
-            <td>{{ form_widget(form.unit, { 'attr': {'class': 'unit'} }) }}</td>
-            <td>{{ form_errors(form.unit) }}</td>
-        </tr>
-        <tr>
-            <td>{{ form_label(form.price.value) }}</td>
-            <td>{{ form_widget(form.price.value, { 'attr': {'class': 'price-value'} }) }}</td>
-            <td>{{ form_errors(form.price.value) }}</td>
-        </tr>
-        <tr>
-            <td>{{ form_label(form.price.currency) }}</td>
-            <td>{{ form_widget(form.price.currency, { 'attr': {'class': 'price-currency'} }) }}</td>
-            <td>{{ form_errors(form.price.currency) }}</td>
-        </tr>
-    </table>
+    <div data-page-component-module="orob2bpricing/js/app/components/price-list-currency-limitations-component">
+        <div class="row">
+            <div class="small-row">
+                <div>
+                        <div class="group-label">{{ form_label(form.priceList) }}</div>
+                        <div>{{ form_widget(form.priceList, { 'attr': {'class': 'priceList'} }) }}</div>
+                        <div>{{ form_errors(form.priceList) }}</div>
+                </div>
+            </div>
+            <div class="small-row">
+                <div class="grouped-fields">
+                        <div class="group-label">{{ form_label(form.quantity) }}</div>
+                        <div class="col-widget">{{ form_widget(form.quantity, { 'attr': {'class': 'quantity'} }) }}</div>
+                        <div>{{ form_errors(form.quantity) }}</div>
+                        <div>{{ form_widget(form.unit, { 'attr': {'class': 'unit'} }) }}</div>
+                        <div>{{ form_errors(form.unit) }}</div>
+                </div>
+            </div>
+            <div class="small-row">
+                <div class="grouped-fields">
+                        <div class="group-label">{{ form_label(form.price.value) }}</div>
+                        <div class="col-widget">{{ form_widget(form.price.value, { 'attr': {'class': 'price-value'} }) }}</div>
+                        <div>{{ form_errors(form.price.value) }}</div>
+                        <div class="price-currency-div">{{ form_widget(form.price.currency, { 'attr': {'class': 'price-currency'} }) }}</div>
+                        <div>{{ form_errors(form.price.currency) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block orob2b_pricing_product_price_collection_widget %}

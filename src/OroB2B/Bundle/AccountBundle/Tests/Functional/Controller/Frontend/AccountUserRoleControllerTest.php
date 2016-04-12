@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
+
 use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData as OroLoadAccountUserData;
 
@@ -122,16 +122,11 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $accountUserRoleLabel = $this->getReference(LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER);
-        $response = $this->requestFrontendGrid(
-            'frontend-account-account-user-roles-grid',
-            [
-                'frontend-account-account-user-roles-grid[_filter][label][value]' => $accountUserRoleLabel
-            ]
-        );
+        $response = $this->requestFrontendGrid('frontend-account-account-user-roles-grid');
 
         $this->assertJsonResponseStatusCodeEquals($response, 200);
         $this->assertContains(LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER, $response->getContent());
+        $this->assertContains(self::ACCOUNT_ROLE, $response->getContent());
     }
 
     /**
@@ -220,9 +215,12 @@ class AccountUserRoleControllerTest extends WebTestCase
         $result = reset($result['data']);
 
         $this->assertEquals($this->currentUser->getId(), $result['id']);
-        $this->assertEquals($this->currentUser->getFirstName(), $result['firstName']);
-        $this->assertEquals($this->currentUser->getLastName(), $result['lastName']);
-        $this->assertEquals($this->currentUser->getEmail(), $result['email']);
+        $this->assertContains($this->currentUser->getFullName(), $result['fullName']);
+        $this->assertContains($this->currentUser->getEmail(), $result['email']);
+        $this->assertEquals(
+            $this->currentUser->isEnabled() && $this->currentUser->isConfirmed() ? 'Active' : 'Inactive',
+            trim($result['status'])
+        );
     }
 
     /**

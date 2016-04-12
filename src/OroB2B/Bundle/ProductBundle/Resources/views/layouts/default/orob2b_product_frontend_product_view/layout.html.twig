@@ -22,6 +22,9 @@
                 <div class="product-gallery__image-holder__carousel" data-product-gallery>
                     <a href="#">
                         <img src="{{ Image.url(product.image, 'product_large') }}" alt="{{ product.defaultName }}"
+                                {% if product.image %}
+                                    data-zoom-image="{{ Image.url(product.image, 'product_original') }}"
+                                {% endif %}
                              width="378" height="378">
                     </a>
                 </div>
@@ -68,17 +71,14 @@
 
 {% block _product_specification_widget %}
     <div class="product__specification">
-        <table class="table borderless paddingless">
-            {{ block_widget(block) }}
-        </table>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _product_specification_sku_widget %}
-    <tr>
-        <td>Item #:</td>
-        <td><span class="red">{{ block_widget(block) }}</span></td>
-    </tr>
+    <div>
+        {{ 'orob2b.product.frontend.index.item'|trans }} <span class="red">{{ block_widget(block) }}</span>
+    </div>
 {% endblock %}
 
 {% block _product_specification_mfg_widget %}

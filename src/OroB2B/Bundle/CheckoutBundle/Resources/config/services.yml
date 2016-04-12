@@ -24,6 +24,8 @@ services:
 
     orob2b_checkout.data_provider.converter.checkout_line_items:
         class: %orob2b_checkout.data_provider.converter.checkout_line_items.class%
+        arguments:
+            - '@property_accessor'
 
     orob2b_checkout.data_provider.manager.checkout_line_items:
         class: %orob2b_checkout.data_provider.manager.checkout_line_items.class%
@@ -117,5 +119,13 @@ services:
             - '@security.token_storage'
             - '@property_accessor'
             - '@oro_action.action.redirect'
+            - '@event_dispatcher'
         tags:
             - { name: oro_action.action, alias: start_checkout }
+
+    orob2b_checkout..expression.acl_granted:
+        class: OroB2B\Bundle\CheckoutBundle\Expression\CheckRequest
+        arguments:
+            - '@request_stack'
+        tags:
+            - { name: oro_workflow.condition, alias: check_request }

@@ -79,6 +79,19 @@
           background-color: @base-border-color;
         }
       }
+
+      &.underlined-row {
+        padding: 0 !important;
+
+        &:before {
+          content: '';
+
+          display: block;
+          height: 1px;
+
+          background-color: @base-border-color;
+        }
+      }
     }
   }
 
@@ -435,6 +448,33 @@
 
   &.oro-grid-table_b-bordered {
     border-bottom: .1rem solid @base-border-color;
+  }
+
+  &.oro-grid-table__access {
+    th, td {
+      &:first-child {
+        padding: 0.4rem 1.2rem 0.4rem 0;
+      }
+    }
+
+    .access_level_value {
+      min-height: 20px;
+    }
+  }
+
+  &.oro-grid-table__capabilities {
+    td {
+      padding: 1.4rem 1.2rem 1.4rem 0;
+
+      &:empty {
+        height: 1px;
+        padding: 0;
+      }
+
+      div:first-child {
+        padding-left: 0;
+      }
+    }
   }
 }
 
@@ -851,4 +891,8 @@
       padding: 1.2rem 0 0;
     }
   }
+}
+
+.account-oq__order-info__title {
+  min-width: 12rem;
 }

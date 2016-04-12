@@ -16,11 +16,17 @@ orob2b:
         save_billing_address.label: Save address to my address book
         save_shipping_address.label: Save address to my address book
         ship_to_billing_address.label: Ship to billing address
+        quoted_shipping_amount.label: Quoted shipping amount
+        preferred_shipping_method.label: Preferred shipping method
         source.label: Source
         currency.label: Currency
         website.label: Website
         workflow_item.label: Workflow Item
         workflow_step.label: Workflow Step
+        shipping_estimate_amount.label: Shipping Estimate Ammount
+        shipping_estimate_currency.label: Shipping Estimate Currency
+        payment_method.label: Payment Method
+        order.label: Order
 
         checkoutsource:
             entity_label: Checkout Source
@@ -54,9 +60,12 @@ orob2b:
             total_price: Row Total
             total_qty: Total QTY
 
+        title:
+            step.label: '%step_label%'
+
         workflow:
             view_options.label: View Options for this Order
-            unavailable_transition.message: Transition could not be performed because:
+            unavailable_transition.message: This action is not available, reason:
             b2b_flow_checkout:
                 label: Checkout
 
@@ -68,13 +77,13 @@ orob2b:
                     enter_shipping_address.label: Shipping Information
                     enter_shipping_method.label: Shipping Method
                     enter_payment.label: Payment
-                    place_order.label: Order Review
+                    order_review.label: Order Review
 
                 transition:
                     continue_to_shipping_address.label: Continue
                     continue_to_shipping_method.label: Continue
                     continue_to_payment.label: Continue
-                    continue_to_place_order.label: Continue
+                    continue_to_order_review.label: Continue
                     back_to_billing_address.label: Edit Billing Information
                     back_to_shipping_address.label: Edit Shipping Information
                     back_to_shipping_method.label: Edit Shipping Method

@@ -242,7 +242,7 @@ class ShoppingList extends ExtendShoppingList implements
      */
     public function __toString()
     {
-        return (string) $this->label;
+        return (string)$this->label;
     }
 
     /**
@@ -403,7 +403,7 @@ class ShoppingList extends ExtendShoppingList implements
      */
     public function setCurrent($current)
     {
-        $this->current = (bool) $current;
+        $this->current = (bool)$current;
 
         return $this;
     }
@@ -567,5 +567,21 @@ class ShoppingList extends ExtendShoppingList implements
     public function getIdentifier()
     {
         return $this->getId();
+    }
+
+    /**
+     * @return $this
+     */
+    public function getSourceDocument()
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSourceDocumentIdentifier()
+    {
+        return $this->label;
     }
 }

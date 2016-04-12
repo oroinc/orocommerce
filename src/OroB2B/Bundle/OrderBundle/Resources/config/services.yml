@@ -45,6 +45,8 @@ parameters:
 
     orob2b_order.order.total.total_helper.class: OroB2B\Bundle\OrderBundle\Total\TotalHelper
 
+    orob2b_order.layout.provider.order_payment_status.class: OroB2B\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentStatusProvider
+
 services:
     orob2b_order.order.manager.api:
         class: %orob2b_order.order.manager.api.class%
@@ -63,8 +65,8 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, event: postPersist}
 
-    orob2b_order.provider.subtotal_shipping_cost:
-        class: %orob2b_order.provider.subtotal_shipping_cost.class%
+    orob2b_order.provider.shipping_cost_subtotal:
+        class: %orob2b_order.provider.shipping_cost_subtotal.class%
         arguments:
             - '@translator'
             - '@orob2b_pricing.rounding.price_rounding_service'
@@ -179,7 +181,7 @@ services:
     orob2b_order.event_listener.order.tier_prices:
         class: %orob2b_order.event_listener.order.tier_prices.class%
         arguments:
-            - '@orob2b_pricing.provider.product_price'
+            - '@orob2b_pricing.provider.combined_product_price'
             - '@orob2b_pricing.model.price_list_tree_handler'
         tags:
             - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
@@ -248,3 +250,10 @@ services:
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
             - '@orob2b_order.provider.discount_subtotal'
+
+    orob2b_order.layout.provider.order_payment_status:
+        class: '%orob2b_order.layout.provider.order_payment_status.class%'
+        arguments:
+            - '@orob2b_payment.provider.payment_status'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_order_frontend_payment_status_provider }

@@ -78,7 +78,7 @@
     </div>
 {% endblock %}
 
-{% block order_body_block_contener_widget %}
+{% block order_body_block_container_widget %}
     <div class="account-oq__item__body">
         {{ block_widget(block) }}
     </div>
@@ -104,3 +104,14 @@
     </div>
 {% endblock %}
 
+{% block _order_po_number_widget %}
+    {{ text|default('oro.ui.empty'|trans) }}
+{% endblock %}
+
+{% block _order_payment_status_widget %}
+    {% if text is not empty %}
+        {{ 'orob2b.payment.status.%s'|format(text)|trans }}
+    {% else %}
+        {{ 'oro.ui.empty'|trans }}
+    {% endif %}
+{% endblock %}

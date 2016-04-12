@@ -28,21 +28,22 @@ class ShoppingListController extends Controller
      *     class="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList",
      *     isOptional="true",
      *     options={"id" = "id"})
-     * @Layout()
+     * @Layout(vars={"title"})
      * @Acl(
      *      id="orob2b_shopping_list_frontend_view",
      *      type="entity",
      *      class="OroB2BShoppingListBundle:ShoppingList",
-     *      permission="VIEW",
+     *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )
      *
-     * @param ShoppingList $shoppingList
+     * @param ShoppingList|null $shoppingList
      *
      * @return array
      */
     public function viewAction(ShoppingList $shoppingList = null)
     {
+        $totalWithSubtotalsAsArray = [];
         if (!$shoppingList) {
             /** @var ShoppingListRepository $repo */
             $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
@@ -50,14 +51,17 @@ class ShoppingListController extends Controller
             if ($user instanceof AccountUser) {
                 $shoppingList = $repo->findAvailableForAccountUser($user);
             }
+        } else {
+            $totalWithSubtotalsAsArray = $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList);
         }
 
         return [
+            'title' => $shoppingList ? $shoppingList->getLabel() : null,
             'data' => [
                 'shoppingList' => $shoppingList,
                 'totals' => [
                     'identifier' => 'totals',
-                    'data' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList)
+                    'data' => $totalWithSubtotalsAsArray
                 ]
             ],
         ];
@@ -91,7 +95,8 @@ class ShoppingListController extends Controller
 
         $defaultResponse = [
             'savedId' => null,
-            'shoppingList' => $shoppingList
+            'shoppingList' => $shoppingList,
+            'createOnly' => $request->get('createOnly')
         ];
 
         return ['data' => array_merge($defaultResponse, $response)];

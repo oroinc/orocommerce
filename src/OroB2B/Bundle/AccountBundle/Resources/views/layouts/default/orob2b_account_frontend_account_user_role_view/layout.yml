@@ -1,41 +1,48 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_role_view/layout.html.twig'
-        - @setOption:
-            id: head
-            optionName: title
+        - '@appendOption':
+            id: title
+            optionName: value
             optionValue:
-                label: 'orob2b.account.frontend.account_user.role.entity_plural_label'
-        - @add:
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.account.frontend.account_user.role.entity_plural_label'
+                - { '@value': $data.entity.label }
+        - '@add':
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
-        - @addTree:
+            blockType: container
+        - '@addTree':
             items:
                 account_user_role_view_container:
                     blockType: container
                 account_user_role_title:
                     blockType: block
                     options:
-                        visible: { @not_empty: $data.entity }
+                        visible: { '@not_empty': $data.entity }
                         vars:
-                            entity: { @value: $data.entity }
+                            entity: { '@value': $data.entity }
+                account_user_role_back_link:
+                    blockType: link
+                    options:
+                        route_name: orob2b_account_frontend_account_user_role_index
+                        text: orob2b.account.frontend.action.back.label
                 account_user_role_top_actions:
                     blockType: action_line_buttons
                     options:
-                        visible: { @not_empty: $data.entity }
-                        actions: { @value: $data.actions.all }
-                        entity: { @value: $data.entity }
+                        visible: { '@not_empty': $data.entity }
+                        actions: { '@value': $data.actions.all }
+                        entity: { '@value': $data.entity }
                 account_user_role_items:
                     blockType: container
                 account_user_role_items_view_privileges:
                     blockType: container
                     options:
-                        visible: { @not_empty: $data.entity }
+                        visible: { '@not_empty': $data.entity }
                         vars:
-                            entity: { @value: $data.entity }
-                            privileges: { @value: $data.orob2b_account_frontend_account_user_role_privileges }
+                            entity: { '@value': $data.entity }
+                            privileges: { '@value': $data.orob2b_account_frontend_account_user_role_privileges }
                 account_user_role_items_view_privileges_container:
                     blockType: container
                 account_user_role_items_view_privileges_entity:
@@ -55,13 +62,14 @@ layout:
                     options:
                         grid_name: frontend-account-account-users-grid-view
                         grid_parameters:
-                            role: {@value: $data.entity.id}
+                            role: {'@value': $data.entity.id}
             tree:
                 content:
                     account_user_role_view_container:
                         account_user_role_title: ~
-                        account_user_role_top_actions: ~
+                        account_user_role_back_link: ~
                         account_user_role_items:
+                            account_user_role_top_actions: ~
                             account_user_role_items_view_privileges:
                                 account_user_role_items_view_privileges_container:
                                     account_user_role_items_view_privileges_entity:

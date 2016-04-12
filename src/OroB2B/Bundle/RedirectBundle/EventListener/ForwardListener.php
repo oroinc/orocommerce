@@ -135,20 +135,26 @@ class ForwardListener
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass('OroB2BRedirectBundle:Slug');
         $slug = $em->getRepository('OroB2BRedirectBundle:Slug')->findOneBy(['url' => $slugUrl]);
-
-        if ($slug) {
-            $routeName = $slug->getRouteName();
-            $controller = $this->router->getRouteCollection()->get($routeName)->getDefault('_controller');
-
-            $parameters = [];
-            $parameters['_route'] = $routeName;
-            $parameters['_controller'] = $controller;
-
-            $redirectRouteParameters = $slug->getRouteParameters();
-            $parameters = array_merge($parameters, $redirectRouteParameters);
-            $parameters['_route_params'] = $redirectRouteParameters;
-
-            $request->attributes->add($parameters);
+        if (!$slug) {
+            return;
         }
+
+        $routeName = $slug->getRouteName();
+        $routeParameters = $slug->getRouteParameters();
+
+        $generator = $this->router->getGenerator();
+        $matcher = $this->router->getMatcher();
+        $route = $matcher->match($generator->generate($routeName, $routeParameters));
+        if (!array_key_exists('_controller', $route)) {
+            return;
+        }
+
+        $parameters = [];
+        $parameters['_route'] = $routeName;
+        $parameters['_controller'] = $route['_controller'];
+        $parameters = array_merge($parameters, $routeParameters);
+        $parameters['_route_params'] = $routeParameters;
+
+        $request->attributes->add($parameters);
     }
 }

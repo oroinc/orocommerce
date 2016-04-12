@@ -184,7 +184,7 @@
   }
 
   &.btn_squared {
-    padding: .3rem .4rem;
+    padding: .1rem .4rem;
   }
 
   &.btn_xs {
@@ -251,6 +251,8 @@
   }
 
   &.btn-dark {
+    position: relative;
+
     background: @theme-dark-gray-color;
     color: #fff;
 
@@ -265,8 +267,19 @@
     }
 
     > a {
-      color: #fff;
       text-decoration: none !important;
+
+      color: #fff;
+
+      &.action-button:before {
+        content: '';
+
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
 
       &:hover {
         text-decoration: none !important;
@@ -812,18 +825,15 @@
 
 .buttons-inline-group {
 
+  i {
+    margin-right: 0;
+  }
+
   .btn {
     min-width: 3rem;
-    min-height: 2.8rem;
+    min-height: 2.7rem;
     color: @theme-light-gray-color;
-    background: rgb(255,255,255);
-    background: -moz-linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(230,230,230,1) 100%);
-    background: -webkit-gradient(linear, to bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(230,230,230,1))); 
-    background: -webkit-linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
-    background: -o-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%); 
-    background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
-    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e6e6e6',GradientType=0 );
+    background: @base-white-color;
     
     &.btn_bordered {
       border-color: @theme-bucket-color;
@@ -834,7 +844,7 @@
     }
 
     &.current {
-      background: @base-background-color;
+      background: @base-footer-background-color;
       box-shadow: inset 0 .2rem .5rem 0 rgba(0,0,0,.2);
     }
 
@@ -854,4 +864,8 @@
       border-bottom-left-radius: 0;
     }
   }
+}
+
+.dropdown-menu {
+  z-index: 900;
 }

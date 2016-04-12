@@ -100,8 +100,12 @@ parameters:
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
     orob2b_account.provider.sign_in.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\SignInProvider
     orob2b_account.provider.frontend_account_user_registration_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider
+    orob2b_account.provider.frontend_account_user_forgot_password_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserForgotPasswordFormProvider
+    orob2b_account.provider.frontend_account_user_reset_password_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserResetPasswordFormProvider
     orob2b_account.provider.frontend_account_user_role_privileges.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRolePrivilegesDataProvider
     orob2b_account.provider.frontend_account_user_role_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleFormDataProvider
+    orob2b_account.provider.frontend_account_user_profile_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserProfileFormProvider
+    orob2b_account.provider.frontend_account_user_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserFormDataProvider
 
     orob2b_account.audit.discriminator_map_listener.class: OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener
 
@@ -238,7 +242,16 @@ services:
             - ["firstname", "lastname"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_account_user, acl_resource: orob2b_account_account_user_view }
-        lazy: true
+
+    orob2b_account.frontend_form.autocomplete.account_user_account.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        class: %orob2b_account.form.autocomplete.account_account_user.search_handler.class%
+        arguments:
+            - %orob2b_account.entity.account_user.class%
+            - ["firstname", "lastname"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_frontend_account_user, acl_resource: orob2b_account_frontend_account_user_view }
+
 
     orob2b_account.account_user.manager.api:
         class: %orob2b_account.account_user.manager.api.class%
@@ -400,6 +413,7 @@ services:
         class: %orob2b_account.event_listener.datagrid.account_user.class%
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-account-users-grid-update-basic, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-account-account-users-grid-update, method: onBuildBefore }
 
     orob2b_account.twig.security_extension:
         class: %orob2b_account.twig.account_extension.class%
@@ -834,6 +848,20 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_register }
 
+    orob2b_account.provider.frontend_account_user_forgot_password_form:
+        class: %orob2b_account.provider.frontend_account_user_forgot_password_form.class%
+        arguments:
+            - '@form.factory'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_account_user_password_request }
+
+    orob2b_account.provider.frontend_account_user_reset_password_form:
+        class: %orob2b_account.provider.frontend_account_user_reset_password_form.class%
+        arguments:
+            - '@form.factory'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_account_user_password_reset }
+
     orob2b_account.manager.windows_state:
         parent: oro_windows.manager.windows_state.abstract
         arguments:
@@ -860,13 +888,41 @@ services:
     orob2b_account.provider.frontend_account_user_role_privileges:
         class: %orob2b_account.provider.frontend_account_user_role_privileges.class%
         arguments:
-            - @orob2b_account.helper.account_user_role_privileges.frontend
+            - '@orob2b_account.helper.account_user_role_privileges.frontend'
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_role_privileges }
 
     orob2b_account.provider.frontend_account_user_role_form:
         class: %orob2b_account.provider.frontend_account_user_role_form.class%
         arguments:
-            - @orob2b_account.form.handler.update_account_user_role_frontend=
+            - '@orob2b_account.form.handler.update_account_user_role_frontend='
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_role_form }
+    orob2b_account.provider.fronted_account_user_address_form:
+        class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserAddressFormDataProvider
+        arguments:
+            - '@form.factory'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_address_form }
+
+    orob2b_account.layout.block_type.address_book:
+        class: OroB2B\Bundle\AccountBundle\Layout\Block\Type\AddressBookType
+        arguments:
+            - '@router'
+            - '@fragment.handler'
+        tags:
+             - { name: layout.block_type, alias: address_book }
+
+    orob2b_account.provider.frontend_account_user_profile_form:
+        class: %orob2b_account.provider.frontend_account_user_profile_form.class%
+        arguments:
+            - '@form.factory'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_profile_form }
+
+    orob2b_account.provider.frontend_account_user_form:
+        class: %orob2b_account.provider.frontend_account_user_form.class%
+        arguments:
+              - '@form.factory'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_form }

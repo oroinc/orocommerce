@@ -2,39 +2,21 @@
 
 namespace OroB2B\Bundle\AccountBundle\Migrations\Data\ORM;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
-use Oro\Bundle\PlatformBundle\Yaml\Yaml;
-
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
+use Symfony\Component\Yaml\Yaml;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use OroB2B\Bundle\FrontendBundle\Migrations\Data\ORM\AbstractRolesData;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
+class LoadAccountUserRoles extends AbstractRolesData
 {
+    const ROLES_FILE_NAME = 'frontend_roles.yml';
+
     const ADMINISTRATOR = 'ADMINISTRATOR';
     const BUYER = 'BUYER';
-
-    /**
-     * @var array
-     */
-    protected $defaultRoles = [
-        self::ADMINISTRATOR => 'Administrator',
-        self::BUYER => 'Buyer',
-    ];
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
 
     /**
      * {@inheritdoc}
@@ -47,17 +29,9 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
     /**
      * {@inheritdoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function load(ObjectManager $manager)
     {
-        $aclManager = $this->container->get('oro_security.acl.manager');
+        $aclManager = $this->getAclManager();
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
 
         $roleData = $this->loadRolesData();
@@ -94,81 +68,6 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
 
         $manager->flush();
         $aclManager->flush();
-    }
-
-    /**
-     * @param AclManager $aclManager
-     * @param SecurityIdentityInterface $sid
-     * @param array $permissions
-     */
-    protected function setPermissions(AclManager $aclManager, SecurityIdentityInterface $sid, array $permissions)
-    {
-        foreach ($permissions as $permission => $acls) {
-            $oid = $aclManager->getOid(str_replace('|', ':', $permission));
-            $extension = $aclManager->getExtensionSelector()->select($oid);
-            $maskBuilders = $extension->getAllMaskBuilders();
-
-            foreach ($maskBuilders as $maskBuilder) {
-                $maskBuilder->reset();
-
-                if ($acls) {
-                    foreach ($acls as $acl) {
-                        if ($maskBuilder->hasMask('MASK_' . $acl)) {
-                            $maskBuilder->add($acl);
-                        }
-                    }
-                }
-
-                $aclManager->setPermission($sid, $oid, $maskBuilder->get());
-            }
-        }
-    }
-
-    /**
-     * @return array
-     */
-    protected function loadRolesData()
-    {
-        $rolesData = [];
-        /** @var Kernel $kernel */
-        $kernel = $this->container->get('kernel');
-        $bundles = array_keys($this->container->getParameter('kernel.bundles'));
-        foreach ($bundles as $bundle) {
-            $fileName = $this->getFileName($bundle);
-            try {
-                $file = $kernel->locateResource($fileName);
-                $rolesData = array_merge_recursive($rolesData, Yaml::parse(file_get_contents($file)));
-            } catch (\InvalidArgumentException $e) {
-            }
-        }
-
-        return $rolesData;
-    }
-
-    /**
-     * @param string $bundle
-     * @return string
-     */
-    protected function getFileName($bundle)
-    {
-        return sprintf('@%s%s', $bundle, '/Migrations/Data/ORM/data/frontend_roles.yml');
-    }
-
-    /**
-     * @param AclManager $aclManager
-     * @param SecurityIdentityInterface $sid
-     */
-    protected function setPermissionGroup(AclManager $aclManager, SecurityIdentityInterface $sid)
-    {
-        foreach ($aclManager->getAllExtensions() as $extension) {
-            $rootOid = $aclManager->getRootOid($extension->getExtensionKey());
-            foreach ($extension->getAllMaskBuilders() as $maskBuilder) {
-                $fullAccessMask = $maskBuilder->hasMask('GROUP_SYSTEM')
-                    ? $maskBuilder->getMask('GROUP_SYSTEM')
-                    : $maskBuilder->getMask('GROUP_ALL');
-                $aclManager->setPermission($sid, $rootOid, $fullAccessMask, true);
-            }
-        }
     }
 
     /**

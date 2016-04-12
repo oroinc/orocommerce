@@ -6,6 +6,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
@@ -231,6 +232,8 @@ class QuoteControllerTest extends WebTestCase
             $property = $accessor->getValue($quote, $column['property']) ?: $translator->trans('N/A');
             if ($property instanceof \DateTime) {
                 $property = $property->format('M j, Y');
+            } elseif ($property instanceof Price) {
+                $property = round($property->getValue());
             } else {
                 $property = (string)$property;
             }
@@ -240,7 +243,7 @@ class QuoteControllerTest extends WebTestCase
         }
 
         $createOrderButton = (bool)$crawler
-            ->filterXPath('//a[contains(., \'Submit to Order\')]')->count();
+            ->filterXPath('//a[contains(., \'Accept and Submit to Order\')]')->count();
          $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
     }
 
@@ -276,6 +279,10 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'ship_until',
                         ],
                         [
+                            'label' => 'orob2b.frontend.sale.quote.ship_estimate.label',
+                            'property' => 'shipping_estimate',
+                        ],
+                        [
                             'label' => 'orob2b.sale.quote.sections.shipping_address',
                             'property' => 'shippingAddress.street',
                         ]
@@ -306,6 +313,10 @@ class QuoteControllerTest extends WebTestCase
                         [
                             'label' => 'orob2b.sale.quote.ship_until.label',
                             'property' => 'ship_until',
+                        ],
+                        [
+                            'label' => 'orob2b.frontend.sale.quote.ship_estimate.label',
+                            'property' => 'shipping_estimate',
                         ],
                         [
                             'label' => 'orob2b.sale.quote.sections.shipping_address',

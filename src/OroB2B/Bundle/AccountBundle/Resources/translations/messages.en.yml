@@ -17,6 +17,24 @@ orob2b.account:
     owner.label: 'Owner'
     sales_representatives.label: 'Assigned Sales Representatives'
 
+    form:
+        placeholder:
+            first_name: 'Enter your first name'
+            middle_name: 'Enter your middle name'
+            last_name: 'Enter your last name'
+            email: 'Enter your email'
+            password: 'Enter your passrowd'
+            new_password: 'Enter your new passrowd'
+            current_password: 'Enter your current passrowd'
+            password_confirmation: 'Enter passrowd confirmation'
+            birthday: 'Enter your birthday'
+            name_prefix: 'Enter your name prefix'
+            name_suffix: 'Enter your name suffix'
+        action:
+            create.label: 'Save'
+            save.label: 'Save'
+            cancel.label: 'Cancel'
+
     address:
         add: 'Add Address'
         cancel: 'Cancel'
@@ -74,7 +92,7 @@ orob2b.account:
             registration.title: 'Registration'
             register: 'Register'
             register.description: 'Please register if you do not have an account. A sales representative will contact you shortly.'
-            create_an_account: 'Create an Account'
+            create_an_account: 'Create An Account'
             forgot_password: 'Forgot Your Password?'
             enter_password: 'Enter your password'
             reset_password:
@@ -97,6 +115,12 @@ orob2b.account:
             confirmed.label: 'Confirmed'
             unconfirmed.label: 'Unconfirmed'
             cancel.label: 'Cancel'
+
+            form:
+                sections:
+                    profile_information.label: 'Profile information'
+                    password.label: 'Password'
+                    roles.label: 'Roles'
 
     accountuserrole:
         entity_label:                    'Account User Role'
@@ -153,6 +177,8 @@ orob2b.account:
             confirm: 'Confirm'
             send_confirmation: 'Resend Confirmation Email'
             create: 'Create Account'
+            edit: 'Edit'
+            delete: 'Delete'
 
         account_user_role:
             create: 'Create Account User Role'
@@ -318,6 +344,7 @@ orob2b.account:
         shortcut_list_account_user_roles.label: 'Show account user roles'
         shortcut_list_account_user_roles.description: 'View list of account user roles'
 
+        account_user.label: My Account
         account_user_profile.label: My Profile
         account_user_login.label: Login
         account_user_logout.label: Logout
@@ -346,6 +373,8 @@ orob2b.account:
             profile_updated.message: 'Account User profile updated'
             token_not_found.message: 'The user with "confirmation token" does not exist for value "%token%"'
             confirmation_sent.message: 'Confirmation email has been sent'
+        accountuseraddress:
+            saved.message: 'Account User Address has been saved'
         accountuserrole:
             saved.message:     'Account User Role has been saved'
 
@@ -380,9 +409,39 @@ orob2b.account:
             NONE: 'None'
 
     frontend:
+        privileges:
+            entity.label: Access
+            action.label: Capabillities
+        address: #orob2b.account.frontend.address
+            title:
+                create: 'Create'
+                edit: 'Edit'
+                subject: 'Address Account User'
+            page_title.edit: 'Edit Address'
+            page_title.create: 'Create Address'
+            form:
+                placeholder:
+                    first_name: ""
+                    middle_name: ""
+                    name_suffix: ""
+                    last_name: ""
+                    label: ""
+                    organization: ""
+                    street: ""
+                    street2: ""
+                    city: ""
+                    zip: ""
+                    phone: ""
+                    name.prefix: ""
+                label:
+                    primary: Is Primary Address
+                    address_types: Address type and usage
+            buttons:
+                cancel: Cancel
+                save: Save
         security:
             access-level:
-                BASIC: 'Own'
+                BASIC: 'Individual'
                 LOCAL: 'All'
                 DEEP: 'Not supported'
                 GLOBAL: 'Not supported'
@@ -391,9 +450,46 @@ orob2b.account:
         account_user:
             role.entity_plural_label: Account User Roles
             entity_plural_label: Account Users
+            profile.label: Account Information
+            full_name.label: Name
+            email.label: Email Address
+            status.label: Status
+            status_active.label: Active
+            status_inactive.label: Inactive
         title:
             account_user_role.create: Create Account User Role
             account_user_role.edit: Edit Account User Role
+            account_user.view: 'Account User - %identifier%'
+            account_user.edit: 'Edit Account User'
+            account_user.create: 'Create Account User'
+            account_user.profile: 'Account information'
+
+            page:
+                account_user_role.create: Create Role
+                account_user_role.edit: Edit Role
+                account_user.edit: 'Edit Account User - %identifier%'
+        sections:
+            account_user_role:
+                label: Role Title
+                users.label: Users
+
+            account_user.user_profile: 'User profile'
+            account_user.my_profile: 'My profile'
+            account_user.address_book: 'Address book'
+        account_user_link.text: '< Back to Account User List'
+        action:
+            back.label: "< Back"
+            back_to_login.label: "Already have an account? Log in >"
+            account_user_role.edit: "Edit Role"
+        table:
+            entity:
+                section.label: Section
+                action.label: Action
+                permission.label: Permission
+        menu:
+            account_user_signed_in_as.label: 'Signed in as:'
+            account_user_sign_out.label: 'Sign Out'
+            account_user_profile.label: 'My Account'
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'

@@ -11,6 +11,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -60,17 +61,16 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
     {
         /** @var Checkout $checkout */
         $checkout = $context->data()->get('checkout');
-
         if (!array_key_exists($checkout->getId(), $this->summary)) {
-            $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
-            $lineItemTotals = $this->getOrderLineItemsTotals($orderLineItems);
+            $order = new Order();
+            $order->setShippingCost($checkout->getShippingCost());
+            $order->setLineItems($this->checkoutLineItemsManager->getData($checkout));
+            $lineItemsWithTotals = $this->getOrderLineItemsTotals($order->getLineItems());
 
             $this->summary[$checkout->getId()] = [
-                'lineItemTotals' => $lineItemTotals,
-                'lineItems' => $orderLineItems,
-                'lineItemsCount' => $orderLineItems->count(),
-                'subtotals' => $this->totalsProvider->getSubtotals($checkout),
-                'generalTotal' => $this->totalsProvider->getTotal($checkout)
+                'lineItemsWithTotals' => $lineItemsWithTotals,
+                'subtotals' => $this->totalsProvider->getSubtotals($order),
+                'generalTotal' => $this->totalsProvider->getTotal($order)
             ];
         }
 
@@ -79,11 +79,11 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
 
     /**
      * @param Collection|OrderLineItem[] $orderLineItems
-     * @return array
+     * @return \SplObjectStorage
      */
     protected function getOrderLineItemsTotals(Collection $orderLineItems)
     {
-        $lineItemTotals = [];
+        $lineItemTotals = new \SplObjectStorage();
         foreach ($orderLineItems as $orderLineItem) {
             $lineItemTotal = new Price();
             $lineItemTotal->setValue(
@@ -91,7 +91,7 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
             );
             $lineItemTotal->setCurrency($orderLineItem->getCurrency());
 
-            $lineItemTotals[$orderLineItem->getProductSku()] = $lineItemTotal;
+            $lineItemTotals->attach($orderLineItem, ['total' => $lineItemTotal]);
         }
 
         return $lineItemTotals;

@@ -144,7 +144,7 @@ class RequestControllerTest extends WebTestCase
             $this->assertContains($request->getShipUntil()->format('M j, Y'), $result->getContent());
         }
 
-        $controls = $crawler->filter('.control-group');
+        $controls = $crawler->filter('.account-oq__order-info__control');
         static::assertEquals($expectedData['columnsCount'], count($controls));
     }
 
@@ -170,7 +170,7 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
-                        'isDraft',
+                        'statusLabel',
                         'poNumber',
                         'shipUntil',
                         'createdAt',
@@ -196,7 +196,7 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
-                        'isDraft',
+                        'statusLabel',
                         'poNumber',
                         'shipUntil',
                         'createdAt',
@@ -219,7 +219,7 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
-                        'isDraft',
+                        'statusLabel',
                         'poNumber',
                         'shipUntil',
                         'createdAt',
@@ -242,7 +242,7 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
-                        'isDraft',
+                        'statusLabel',
                         'poNumber',
                         'shipUntil',
                         'createdAt',
@@ -295,7 +295,7 @@ class RequestControllerTest extends WebTestCase
         $this->initClient([], $authParams);
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_create'));
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Submit Request For Quote')->form();
 
         $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('orob2b_rfp_frontend_request');
 
@@ -352,7 +352,7 @@ class RequestControllerTest extends WebTestCase
         $id = $result['id'];
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_update', ['id' => $id]));
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Submit Request For Quote')->form();
 
         $form['orob2b_rfp_frontend_request[firstName]'] = LoadRequestData::FIRST_NAME . '_UPDATE';
         $form['orob2b_rfp_frontend_request[lastName]'] = LoadRequestData::LAST_NAME . '_UPDATE';

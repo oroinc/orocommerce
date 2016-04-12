@@ -29,7 +29,7 @@
                         {% endif %}
                     </span>
                     <h3 class="checkout-navigation__title">
-                        {{ step.label|trans }}
+                        {{ step.label }}
                         {% if isComplete and editTransitions[step.name] is defined and block.step_edit_button is defined %}
                             {% set editTransitionData = editTransitions[step.name] %}
                             {{ block_widget(block.step_edit_button,
@@ -65,13 +65,16 @@
 {% endblock %}
 
 {% block _enter_shipping_method_information_widget %}
-    {#{% if checkout.shippingMethod %}#}
-        <div>USPS Ground - $19.75</div>
-    {#{% endif %}#}
+    {% if checkout.shippingCost %}
+        <div>{{ 'orob2b.checkout.quoted_shipping_amount.label'|trans}}:
+            {{ checkout.shippingCost|oro_format_price }}</div>
+    {% else %}
+        <div>{{ 'orob2b.checkout.preferred_shipping_method.label'|trans}}</div>
+    {% endif %}
 {% endblock %}
 
 {% block _enter_payment_information_widget %}
-    {#{% if checkout.paymentMethod %}#}
-        <div>Wells Fargo ************1234</div>
-    {#{% endif %}#}
+    {% if checkout.paymentMethod %}
+        <div>{{ oro_config_value('orob2b_payment.%s_label'|format(checkout.paymentMethod)) }}</div>
+    {% endif %}
 {% endblock %}

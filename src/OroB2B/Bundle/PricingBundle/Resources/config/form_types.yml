@@ -10,7 +10,7 @@ parameters:
     orob2b_pricing.form.type.price_type_selector.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType
     orob2b_pricing.form.type.price_list_select_with_priority.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType
     orob2b_pricing.form.type.price_list_system_config.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType
-
+    orob2b_pricing.form.type.product_price_unit_selector.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceUnitSelectorType
 
     orob2b_pricing.form.extension.account_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\AccountFormExtension
     orob2b_pricing.form.extension.account_group_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension
@@ -36,7 +36,7 @@ services:
     orob2b_pricing.form.type.product_price_collection:
         class: %orob2b_pricing.form.type.product_price_collection.class%
         arguments:
-            -"@doctrine"
+            - "@doctrine"
         calls:
             - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
             - [setPriceListClass, [%orob2b_pricing.entity.price_list.class%]]
@@ -124,4 +124,10 @@ services:
             - %orob2b_pricing.system_config.class%
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_system_config }
+
+    orob2b_pricing.form.type.product_price_unit_selector:
+        parent: orob2b_product.form.type.product_unit_selection
+        class: '%orob2b_pricing.form.type.product_price_unit_selector.class%'
+        tags:
+            - { name: form.type, alias: orob2b_pricing_product_price_unit_selector }
 

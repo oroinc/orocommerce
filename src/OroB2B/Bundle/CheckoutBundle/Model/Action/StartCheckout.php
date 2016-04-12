@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\CheckoutBundle\Model\Action;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -20,6 +22,8 @@ use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvent;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
 
 /**
  * Start checkout process on frontend
@@ -32,7 +36,7 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *     data:
  *         currency: $.currency
  *     settings:
- *          allow_source_remove: false
+ *          allow_manual_source_remove: false
  *
  * source_name (required) is name of corresponding extended relation added to CheckoutSource
  * source_entity (required) is a source entity
@@ -45,6 +49,7 @@ class StartCheckout extends AbstractAction
     const SOURCE_ENTITY_KEY = 'source_entity';
     const CHECKOUT_DATA_KEY = 'data';
     const SETTINGS_KEY = 'settings';
+    const FORCE = 'force';
 
     /**
      * @var ManagerRegistry
@@ -97,6 +102,11 @@ class StartCheckout extends AbstractAction
     protected $em;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
      * @param ContextAccessor $contextAccessor
      * @param ManagerRegistry $registry
      * @param WebsiteManager $websiteManager
@@ -104,6 +114,7 @@ class StartCheckout extends AbstractAction
      * @param TokenStorageInterface $tokenStorage
      * @param PropertyAccessor $propertyAccessor
      * @param AbstractAction $redirect
+     * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
         ContextAccessor $contextAccessor,
@@ -112,7 +123,8 @@ class StartCheckout extends AbstractAction
         UserCurrencyProvider $currencyProvider,
         TokenStorageInterface $tokenStorage,
         PropertyAccessor $propertyAccessor,
-        AbstractAction $redirect
+        AbstractAction $redirect,
+        EventDispatcherInterface $dispatcher
     ) {
         parent::__construct($contextAccessor);
 
@@ -122,6 +134,7 @@ class StartCheckout extends AbstractAction
         $this->tokenStorage = $tokenStorage;
         $this->propertyAccessor = $propertyAccessor;
         $this->redirect = $redirect;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -178,16 +191,18 @@ class StartCheckout extends AbstractAction
         $checkoutSource = $em->getRepository('OroB2BCheckoutBundle:CheckoutSource')
             ->findOneBy([$sourceFieldName => $sourceEntity]);
 
-        if ($checkoutSource) {
-            $checkout = $em->getRepository('OroB2BCheckoutBundle:Checkout')
-                ->findOneBy(['source' => $checkoutSource]);
-
+        $checkout = $this->getCheckout($checkoutSource);
+        if ($this->isCheckoutExist($checkout)) {
+            if ($this->getOptionFromContext($context, self::FORCE, false)) {
+                $this->updateCheckoutData($context, $checkout);
+                $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
+                $em->flush();
+            }
         } else {
             $checkoutSource = $this->createCheckoutSource($sourceFieldName, $sourceEntity);
             $checkout = $this->createCheckout($context, $checkoutSource);
             $em->persist($checkout);
             $em->flush($checkout);
-
             $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
             $em->flush($checkout->getWorkflowItem());
         }
@@ -195,7 +210,7 @@ class StartCheckout extends AbstractAction
         $this->redirect->initialize(
             [
                 'route' => $this->checkoutRoute,
-                'route_parameters' => ['id' => $checkout->getId()]
+                'route_parameters' => ['id' => $checkout->getId(), 'type' => $checkout->getType()]
             ]
         );
         $this->redirect->execute($context);
@@ -232,11 +247,26 @@ class StartCheckout extends AbstractAction
     }
 
     /**
+     * We can create any custom checkout entity here in event listener
+     *
      * @param mixed $context
      * @param CheckoutSource $checkoutSource
-     * @return Checkout
+     * @return CheckoutInterface
      */
     protected function createCheckout($context, CheckoutSource $checkoutSource)
+    {
+        $checkout = $this->getCheckout();
+        $checkout->setSource($checkoutSource);
+        $this->updateCheckoutData($context, $checkout);
+
+        return $checkout;
+    }
+
+    /**
+     * @param mixed $context
+     * @param CheckoutInterface $checkout
+     */
+    protected function updateCheckoutData($context, CheckoutInterface $checkout)
     {
         /** @var AccountUser $user */
         $user = $this->tokenStorage->getToken()->getUser();
@@ -251,21 +281,15 @@ class StartCheckout extends AbstractAction
             'website' => $this->websiteManager->getCurrentWebsite(),
             'currency' => $this->currencyProvider->getUserCurrency()
         ];
-
-        $checkout = new Checkout();
-        $checkout->setSource($checkoutSource);
-
         $this->setCheckoutData($context, $checkout, $defaultData);
-
-        return $checkout;
     }
 
     /**
      * @param mixed $context
-     * @param Checkout $checkout
+     * @param CheckoutInterface $checkout
      * @param array $defaultData
      */
-    protected function setCheckoutData($context, Checkout $checkout, array $defaultData)
+    protected function setCheckoutData($context, CheckoutInterface $checkout, array $defaultData)
     {
         $data = $this->getOptionFromContext($context, self::CHECKOUT_DATA_KEY, []);
         $data = array_filter(
@@ -308,12 +332,41 @@ class StartCheckout extends AbstractAction
             $data = $this->contextAccessor->getValue($context, $this->options[$key]);
         }
 
-        if ($data) {
+        if ($data && is_array($data)) {
             foreach ($data as &$value) {
                 $value = $this->contextAccessor->getValue($context, $value);
             }
         }
 
         return $data;
+    }
+
+    /**
+     * @param object $checkoutSource
+     * @return CheckoutInterface
+     */
+    protected function getCheckout($checkoutSource = null)
+    {
+        $event = new CheckoutEvent();
+        $event->setSource($checkoutSource);
+        $event->setSource($checkoutSource);
+        $this->dispatcher->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
+        $checkout = $event->getCheckoutEntity();
+
+        if ($checkoutSource && !$checkout) {
+            $checkout = $this->getEntityManager()->getRepository('OroB2BCheckoutBundle:Checkout')
+                ->findOneBy(['source' => $checkoutSource]);
+        }
+
+        return $checkout ?: new Checkout();
+    }
+
+    /**
+     * @param CheckoutInterface|null $checkout
+     * @return bool
+     */
+    protected function isCheckoutExist(CheckoutInterface $checkout = null)
+    {
+        return $checkout && $checkout->getWorkflowItem();
     }
 }

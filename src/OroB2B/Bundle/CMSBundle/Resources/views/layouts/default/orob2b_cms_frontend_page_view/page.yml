@@ -1,17 +1,21 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BCMSBundle:layouts:default/orob2b_cms_frontend_page_view/page.html.twig'
-        - @setOption:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue: { '@value': $data.page.title }
+        - '@setOption':
             id: page_title
             optionName: text
-            optionValue: {@value: $data.page.title }
-        - @addTree:
+            optionValue: {'@value': $data.page.title }
+        - '@addTree':
             items:
                 cms_page_content:
                     blockType: text
                     options:
-                        text: { @value: $data.page.content }
+                        text: { '@value': $data.page.content }
                         escape: false
             tree:
                 content:

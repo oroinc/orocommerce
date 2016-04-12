@@ -55,15 +55,21 @@
                                 <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_until.label'|trans }}</td>
                                 <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                             </tr>
+                            {% if quote.shippingEstimate is not empty %}
+                            <tr class="account-oq__order-info__control">
+                                <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_estimate.label'|trans }}</td>
+                                <td>{{ quote.shippingEstimate|oro_format_price }}</td>
+                            </tr>
+                            {% endif %}
                             {{ block_widget(block) }}
                         </tbody>
                     </table>
                 </div>
             </div>
+
         </div>
     </div>
 {% endblock %}
-
 
 {% block _quote_view_line_items_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
@@ -82,7 +88,7 @@
                     <thead>
                     <tr>
                         <th colspan="2">{{ 'orob2b.frontend.sale.quote.sections.quote_products.columns.item'|trans }}</th>
-                        <th class="text-center">{{ 'orob2b.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</th>
+                        <th>{{ 'orob2b.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</th>
                         <th class="text-right">{{ 'orob2b.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}</th>
                     </tr>
                     </thead>
@@ -102,10 +108,15 @@
                                                 {{ quoteProduct.productName }}
                                             {% endif %}
                                         </h3>
-                                        <div>{{ 'orob2b.frontend.sale.quoteproduct.product_sku.label'|trans }}: {{ quoteProduct.productSku }}</div>
+                                        <div>{{ 'orob2b.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="red">{{ quoteProduct.productSku }}</span></div>
                                     </td>
                                 {% endif %}
-                                <td class="text-center">{{ productOffer.quantity|orob2b_format_short_product_unit_value(productOffer.productUnit) }}</td>
+                                <td>
+                                    {{ productOffer.quantity|orob2b_format_short_product_unit_value(productOffer.productUnit) }}
+                                    {% if productOffer.allowIncrements %}
+                                        {{ 'orob2b.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
+                                    {% endif %}
+                                </td>
                                 <td class="text-right">{{ productOffer.price|oro_format_price }}</td>
                             </tr>
                         {% endfor %}
@@ -153,31 +164,6 @@
                     <div class="order-builder-clear-btn">
                         <a href="{{ path('orob2b_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'orob2b.frontend.sale.quote.sections.back.label'|trans }}</span></a>
                     </div>
-
-                    <div class="order-checkout-widget__container-wrapper">
-                        <div class="order-checkout-widget__container order-checkout-widget__container_lg">
-                            <table class="order-checkout-widget__table pull-right">
-                                <tbody>
-                                <tr>
-                                    <td>Price Total</td>
-                                    <td>$19,830.69</td>
-                                </tr>
-                                <tr>
-                                    <td>Shipping Total</td>
-                                    <td>$442.85</td>
-                                </tr>
-                                <tr>
-                                    <td>Tax</td>
-                                    <td>$200.87</td>
-                                </tr>
-                                <tr>
-                                    <td class="order-checkout-widget__total"><span class="text-uppercase">total</span></td>
-                                    <td class="order-checkout-widget__total"><span class="blue">$20,273.54</span></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -212,7 +198,7 @@
                                         {{ quoteProduct.productName }}
                                     {% endif %}
                                 </h3>
-                                <div>{{ 'orob2b.frontend.sale.quoteproduct.product_sku.label'|trans }}: {{ quoteProduct.productSku }}</div>
+                                <div>{{ 'orob2b.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="red">{{ quoteProduct.productSku }}</span></div>
 
                                 <table class="oro-grid-table oro-grid-table-properties">
                                     <tbody>
@@ -268,34 +254,6 @@
                     {% endfor %}
                     </tbody>
                 </table>
-
-                <div class="order-checkout-widget order-checkout-widget_block text-right">
-                    <div class="order-checkout-widget__container-wrapper">
-                        <div class="order-checkout-widget__container order-checkout-widget__container_lg">
-                            <table class="order-checkout-widget__table pull-right">
-                                <tbody>
-                                <tr>
-                                    <td>Price Total</td>
-                                    <td>$19,830.69</td>
-                                </tr>
-                                <tr>
-                                    <td>Shipping Total</td>
-                                    <td>$442.85</td>
-                                </tr>
-                                <tr>
-                                    <td>Tax</td>
-                                    <td>$200.87</td>
-                                </tr>
-                                <tr>
-                                    <td class="order-checkout-widget__total"><span class="text-uppercase">total</span></td>
-                                    <td class="order-checkout-widget__total"><span class="blue">$20,273.54</span></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
                 <a href="{{ path('orob2b_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'orob2b.frontend.sale.quote.sections.back.label'|trans }}</span></a>
             </div>
         </div>

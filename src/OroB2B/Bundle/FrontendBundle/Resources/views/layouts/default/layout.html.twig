@@ -27,7 +27,7 @@
 
 {% block form_end_widget %}
     {{ parent() }}
-    {{ oro_form_js_validation(form) }}
+    {{ oro_form_js_validation(form, js_validation_options|default({})) }}
 {% endblock %}
 
 {#Action Buttons#}
@@ -53,7 +53,12 @@
     {% if actionsCount > 0 %}
         {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
         {% set hasVariants = actionsCount > 1 %}
-        {% set additionalCss = "btn theme-btn btn-orange" %}
+        {% set additionalCss = "btn" %}
+        {% if block.parent.vars.id == 'datagrid_toolbar_button_container' %}
+            {% set additionalCss = additionalCss ~ " btn_xsm btn-dark btn-block oq-group-btn" %}
+        {% else %}
+            {% set additionalCss = additionalCss ~ " theme-btn btn-orange" %}
+        {% endif %}
         {% if hasVariants %}
             {% set additionalCss = additionalCss ~ " btn_has-dropdown btn_has-dropdown_xlg" %}
         {% endif %}

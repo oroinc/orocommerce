@@ -7,7 +7,6 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var ShoppingListWidget = require('orob2bshoppinglist/js/app/widget/shopping-list-widget');
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var widgetManager = require('oroui/js/widget-manager');
 
     AddButtonAbstractComponent = BaseComponent.extend({
         /**
@@ -51,30 +50,12 @@ define(function(require) {
         },
 
         showForm: function() {
-            var self = this;
-
             this.dialog = new ShoppingListWidget({});
             this.dialog.on('formSave', _.bind(function(response) {
-                self.reloadWidget(response);
-
                 this.selectShoppingList(response);
-                $('.btn[data-intention="current"]').data('id', response);
             }, this));
 
             this.dialog.render();
-        },
-
-        /**
-         * @param {String} id
-         */
-        reloadWidget: function(id) {
-            if (this.buttonExists(id)) {
-                return;
-            }
-
-            widgetManager.getWidgetInstanceByAlias(this.options.widgetAlias, function(widget) {
-                widget.render();
-            });
         },
 
         /**

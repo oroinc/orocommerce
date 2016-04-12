@@ -87,6 +87,17 @@
       float: none;
     }
   }
+
+  .add_to_shopping_list_form_product_view {
+    .pinned-dropdown {
+      width: 100%;
+      .btn-block,
+      .btn-group {
+        width: 100%;
+        max-width: inherit;
+      }
+    }
+  }
 }
 
 .product__title-container {
@@ -365,7 +376,6 @@
   input[type="text"],
   input[type="number"] {
     .input();
-    width: 7rem !important;
 
     &::-webkit-input-placeholder {
       color: @base-font-color-lightest;
