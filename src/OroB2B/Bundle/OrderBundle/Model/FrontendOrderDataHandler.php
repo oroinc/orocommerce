@@ -63,7 +63,7 @@ class FrontendOrderDataHandler
     {
         $accountUser = $this->securityFacade->getLoggedUser();
         if (!$accountUser instanceof AccountUser) {
-            throw new \InvalidArgumentException('Only AccountUser can create an Order.');
+            throw new \InvalidArgumentException('Only AccountUser can create an Order');
         }
 
         return $accountUser;

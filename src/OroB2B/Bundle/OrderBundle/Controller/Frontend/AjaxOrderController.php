@@ -27,10 +27,12 @@ class AjaxOrderController extends BaseAjaxOrderController
      */
     public function entryPointAction(Request $request, Order $order = null)
     {
-        $order->setAccountUser($this->getOrderHandler()->getAccountUser());
-        $order->setAccount($this->getOrderHandler()->getAccount());
-        $order->setPaymentTerm($this->getOrderHandler()->getPaymentTerm());
-        $order->setOwner($this->getOrderHandler()->getOwner());
+        if ($order) {
+            $order->setAccountUser($this->getOrderHandler()->getAccountUser());
+            $order->setAccount($this->getOrderHandler()->getAccount());
+            $order->setPaymentTerm($this->getOrderHandler()->getPaymentTerm());
+            $order->setOwner($this->getOrderHandler()->getOwner());
+        }
 
         return parent::entryPointAction($request, $order);
     }

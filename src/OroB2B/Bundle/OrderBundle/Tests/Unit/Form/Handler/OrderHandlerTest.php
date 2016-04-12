@@ -42,10 +42,11 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
         $this->entity = new Order();
 
         $this->handler = new OrderHandler(
-            $this->form,
             $this->request,
             $this->manager
         );
+
+        $this->handler->setForm($this->form);
     }
 
     public function testProcessUnsupportedRequest()
