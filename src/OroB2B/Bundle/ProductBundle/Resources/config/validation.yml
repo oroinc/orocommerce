@@ -5,7 +5,8 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
         - OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks: ~
     properties:
         sku:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.product.sku.blank'
             - Length:
                 min: 3
                 max: 255

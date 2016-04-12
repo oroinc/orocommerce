@@ -139,7 +139,7 @@ class ImportExportTest extends WebTestCase
         $this->assertErrors(
             $strategy,
             '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/unavailable_product.csv',
-            'Error in row #1. product: Product is not exist.'
+            'Error in row #1. product: Product does not exist.'
         );
     }
 
