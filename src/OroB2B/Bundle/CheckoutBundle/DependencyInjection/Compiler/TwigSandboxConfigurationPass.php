@@ -17,11 +17,9 @@ class TwigSandboxConfigurationPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-
         $securityPolicyDef = $container->getDefinition(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY);
         $filters = $securityPolicyDef->getArgument(1);
         $filters = array_merge($filters, ['oro_format_address']);
         $securityPolicyDef->replaceArgument(1, $filters);
-
     }
 }
