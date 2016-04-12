@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\src\Oro\Component\Testing;
+namespace Oro\Component\Testing;
 
 use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\ORM\EntityManagerInterface;
