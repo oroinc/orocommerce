@@ -76,27 +76,16 @@ class WarehouseInventoryLevelController extends Controller
      */
     private function widgetNoDataReasonsCheck(Product $product)
     {
-        $units = $product->getUnitPrecisions();
-
-        if (count($units) === 0) {
-            return [
-                'noDataReason' => $this->get('translator')->trans(
-                    'orob2b.warehouse.warehouseinventorylevel.error.units'
-                )
-            ];
+        $noDataReason = '';
+        if (0 === count($product->getUnitPrecisions())) {
+            $noDataReason = 'orob2b.warehouse.warehouseinventorylevel.error.units';
+        } elseif (0 === count($this->getAvailableWarehouses())) {
+            $noDataReason = 'orob2b.warehouse.warehouseinventorylevel.error.warehouses';
         }
 
-        $warehouses = $this->getAvailableWarehouses();
-
-        if (count($warehouses) === 0) {
-            return [
-                'noDataReason' => $this->get('translator')->trans(
-                    'orob2b.warehouse.warehouseinventorylevel.error.warehouses'
-                )
-            ];
-        }
-
-        return [];
+        return $noDataReason
+            ? ['noDataReason' => $this->get('translator')->trans($noDataReason)]
+            : [];
     }
 
     /**
