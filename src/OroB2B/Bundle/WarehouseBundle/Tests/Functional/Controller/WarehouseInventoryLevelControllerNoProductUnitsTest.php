@@ -56,7 +56,7 @@ class WarehouseInventoryLevelControllerNoProductUnitsTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl($route, $parameters));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $msg = 'Please select/add at least one Unit of Quantity to the current product to enable inventory management.';
+        $msg = 'Please add at least one Unit of Quantity to the current product to enable inventory management.';
         $this->assertContains($msg, $crawler->html());
     }
 
