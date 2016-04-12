@@ -24,9 +24,6 @@ class WarehouseInventoryLevelControllerNoProductUnitsTest extends WebTestCase
         );
     }
 
-    /**
-     * @dbIsolation
-     */
     public function testNoUnitsOfQuantityReasonMessage()
     {
         /** @var Product $product */
