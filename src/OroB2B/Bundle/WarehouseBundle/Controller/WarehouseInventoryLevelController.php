@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType;
 use OroB2B\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelHandler;
 
@@ -89,13 +90,15 @@ class WarehouseInventoryLevelController extends Controller
     }
 
     /**
-     * @return array|\OroB2B\Bundle\WarehouseBundle\Entity\Warehouse[]
+     * @return array|Warehouse[]
      */
     private function getAvailableWarehouses()
     {
+        $warehouseClass = $this->getParameter('orob2b_warehouse.entity.warehouse.class');
+
         return $this->getDoctrine()
-            ->getManagerForClass($this->getParameter('orob2b_warehouse.entity.warehouse.class'))
-            ->getRepository('OroB2BWarehouseBundle:Warehouse')
+            ->getManagerForClass($warehouseClass)
+            ->getRepository($warehouseClass)
             ->findAll();
     }
 }
