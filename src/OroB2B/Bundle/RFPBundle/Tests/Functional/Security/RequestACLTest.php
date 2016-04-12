@@ -184,7 +184,7 @@ class RequestACLTest extends WebTestCase
             $this->generateBasicAuthHeader($email, $password)
         );
 
-        $this->client->request('GET', $this->getUrl('_frontend'));
+        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
     }
 
     /**

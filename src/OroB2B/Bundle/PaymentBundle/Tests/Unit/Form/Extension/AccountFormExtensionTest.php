@@ -194,10 +194,21 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSetDataNewAccount()
     {
-        $event = $this->createEvent($this->createAccountEntity());
+        $account = $this->createAccountEntity();
+        $event = $this->createEvent($account);
 
-        $this->repository->expects($this->never())
-            ->method('getOnePaymentTermByAccount');
+        $paymentTerm = $this->createPaymentTermEntity();
+
+        $this->repository->expects($this->once())
+            ->method('getOnePaymentTermByAccount')
+            ->with($account)
+            ->willReturn($paymentTerm);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $paymentTermForm */
+        $paymentTermForm = $event->getForm()->get('paymentTerm');
+        $paymentTermForm->expects($this->once())
+            ->method('setData')
+            ->with($paymentTerm);
 
         $this->extension->onPostSetData($event);
     }

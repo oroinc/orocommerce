@@ -10,4 +10,6 @@ layout:
                     - @neq: [$context.workflowStepName, 'order_review']
                     - @neq: [$context.workflowStepName, 'approve_request']
     conditions:
-        @empty: [$context.widget_container]
+        @and:
+            - @eq: [$context.workflowName, 'b2b_flow_alternative_checkout']
+            - @empty: [$context.widget_container]

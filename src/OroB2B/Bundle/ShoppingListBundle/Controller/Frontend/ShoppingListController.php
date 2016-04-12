@@ -43,17 +43,18 @@ class ShoppingListController extends Controller
      */
     public function viewAction(ShoppingList $shoppingList = null)
     {
-        $totalWithSubtotalsAsArray = [];
         if (!$shoppingList) {
-            /** @var ShoppingListRepository $repo */
-            $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
             $user = $this->getUser();
             if ($user instanceof AccountUser) {
+                /** @var ShoppingListRepository $repo */
+                $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
                 $shoppingList = $repo->findAvailableForAccountUser($user);
             }
-        } else {
-            $totalWithSubtotalsAsArray = $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList);
         }
+
+        $totalWithSubtotalsAsArray = $shoppingList
+            ? $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList)
+            : [];
 
         return [
             'title' => $shoppingList ? $shoppingList->getLabel() : null,
@@ -95,7 +96,8 @@ class ShoppingListController extends Controller
 
         $defaultResponse = [
             'savedId' => null,
-            'shoppingList' => $shoppingList
+            'shoppingList' => $shoppingList,
+            'createOnly' => $request->get('createOnly')
         ];
 
         return ['data' => array_merge($defaultResponse, $response)];

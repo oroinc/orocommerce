@@ -6,13 +6,11 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
 use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelperTrait;
 
 class DatagridBottomToolbarListener
 {
-    /**
-     * @var FrontendHelper
-     */
-    protected $frontendHelper;
+    use FrontendHelperTrait;
 
     /**
      * @param FrontendHelper $frontendHelper
@@ -39,7 +37,7 @@ class DatagridBottomToolbarListener
      */
     protected function isApplicable(DatagridConfiguration $config)
     {
-        return $this->frontendHelper->isFrontendRequest() &&
+        return $this->isFrontendRequest() &&
             $config->offsetGetByPath('[options][toolbarOptions][placement][bottom]') === null;
     }
 }

@@ -64,7 +64,6 @@ abstract class AbstractPriceListCollectionAwareListener
         $this->triggerHandler = $triggerHandler;
     }
 
-
     /**
      * @param FormEvent $event
      */
