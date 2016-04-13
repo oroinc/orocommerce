@@ -1,0 +1,27 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BSaleBundle:layouts:default/orob2b_product_frontend_product_view/layout.html.twig'
+        - @add:
+            id: request_for_quote
+            parentId: product_specification_container
+            siblingId: product_specification
+            blockType: action_combined_buttons
+            options:
+                actions:
+                    @value: $data.actions.all
+                entityClass:
+                    @value: 'OroB2B\Bundle\RFPBundle\Entity\Request'
+                visible: { @empty: $data.frontend_product_prices }
+        - @add:
+            id: request_for_quote_for_unit
+            parentId: product_prices
+            blockType: action_combined_buttons
+            options:
+                vars:
+                    unit_precisions: { @value: $data.product_unit_precisions_without_prices }
+                    black_xsm: true
+                actions:
+                    @value: $data.actions.all
+                entityClass:
+                    @value: 'OroB2B\Bundle\RFPBundle\Entity\Request'
