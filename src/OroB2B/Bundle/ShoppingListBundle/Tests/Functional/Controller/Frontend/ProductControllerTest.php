@@ -55,7 +55,7 @@ class ProductControllerTest extends WebTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
 
-        $this->assertCount(2, $shoppingList->getLineItems());
+        $this->assertCount(1, $shoppingList->getLineItems());
 
         $tokenManager = $this->getContainer()->get('security.csrf.token_manager');
 
@@ -93,7 +93,7 @@ class ProductControllerTest extends WebTestCase
         $shoppingList = $this->getContainer()->get('doctrine')->getManagerForClass($shoppingListClass)
             ->find($shoppingListClass, $shoppingList->getId());
 
-        $this->assertCount(3, $shoppingList->getLineItems());
+        $this->assertCount(2, $shoppingList->getLineItems());
 
         /** @var LineItem $lineItem */
         $lineItem = $shoppingList->getLineItems()->first();
