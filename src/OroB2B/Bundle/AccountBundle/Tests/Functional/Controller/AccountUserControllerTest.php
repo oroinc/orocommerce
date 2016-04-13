@@ -113,7 +113,6 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->assertContains($this->getReference(LoadUserData::USER2)->getFullName(), $result->getContent());
     }
 
-
     /**
      * @depends testCreate
      */
