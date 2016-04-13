@@ -34,6 +34,7 @@ class ShoppingListControllerTest extends WebTestCase
             [
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
+                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
             ]
         );
     }
@@ -52,6 +53,9 @@ class ShoppingListControllerTest extends WebTestCase
         );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains($currentShoppingList->getLabel(), $crawler->html());
+        // operations only for ShoppingList with LineItems
+        $this->assertNotContains('Request Quote', $crawler->html());
+        $this->assertNotContains('Create Order', $crawler->html());
 
         // assert selected shopping list
         $crawler = $this->client->request(
@@ -60,6 +64,9 @@ class ShoppingListControllerTest extends WebTestCase
         );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains($selectedShoppingList->getLabel(), $crawler->html());
+        // operations only for ShoppingList with LineItems
+        $this->assertContains('Request Quote', $crawler->html());
+        $this->assertContains('Create Order', $crawler->html());
     }
 
     public function testQuickAdd()

@@ -125,7 +125,7 @@ class AccountUserProfileController extends Controller
     /**
      * Edit account user form
      *
-     * @Route("/update", name="orob2b_account_frontend_account_user_profile_update")
+     * @Route("/profile/update", name="orob2b_account_frontend_account_user_profile_update")
      * @Layout()
      * @AclAncestor("orob2b_account_frontend_account_user_update")
      *
