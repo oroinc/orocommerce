@@ -6034,9 +6034,14 @@
 
         background: transparent;
       }
+
+      table-layout: auto;
     }
 
-    tbody {
+    & > tbody {
+      & > tr > td {
+        width: 30%;
+      }
       td {
         &:first-child {
           padding-left: 0;
@@ -6048,7 +6053,10 @@
 
         padding: 1rem 1.2rem;
         border-top: .1rem solid @table-alt-border-color;
+        border-bottom: .1rem solid @table-alt-border-color;
       }
+
+      max-height: 490px;
     }
 
     .table {
@@ -6084,6 +6092,10 @@
     }
   }
 }
+.checkout-order-summary__price-table-total {
+  padding: 1rem 0 1rem 1.2rem;
+}
+
 /*END CHECKOUT PAGE*/
 
 /*START CMS*/
