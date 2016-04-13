@@ -239,7 +239,10 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $notExpectedRoles[] = $foreignRole;
         $manager->flush();
 
-        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_roles', []));
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_account_user_roles', ['_widgetContainer' => 'widget'])
+        );
         $response = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
@@ -286,7 +289,8 @@ class AccountUserControllerTest extends AbstractUserControllerTest
                 'orob2b_account_account_user_roles',
                 [
                     'accountUserId' => $accountUser->getId(),
-                    'accountId'     => $userAccount->getId()
+                    'accountId'     => $userAccount->getId(),
+                    '_widgetContainer' => 'widget'
                 ]
             )
         );
@@ -306,7 +310,8 @@ class AccountUserControllerTest extends AbstractUserControllerTest
             $this->getUrl(
                 'orob2b_account_account_user_roles',
                 [
-                    'accountUserId' => $accountUser->getId()
+                    'accountUserId' => $accountUser->getId(),
+                    '_widgetContainer' => 'widget'
                 ]
             )
         );
