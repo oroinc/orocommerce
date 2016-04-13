@@ -16,6 +16,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
@@ -70,25 +71,68 @@ class AjaxLineItemController extends Controller
             return new JsonResponse(['successful' => false, 'message' => (string)$form->getErrors(true, false)]);
         }
 
-        $translator = $this->get('translator');
-        $link = $this->get('router')->generate('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
-        $shoppingListLink = sprintf("<a href='%s'>%s</a>", $link, $shoppingList->getLabel());
-
-        $message = $translator->trans(
-            'orob2b.shoppinglist.product.added.label',
-            ['%shoppinglist%' => $shoppingListLink]
-        );
-
         return new JsonResponse(
             [
                 'successful' => true,
-                'message' => $message,
+                'message' => $this->getSuccessMessage($shoppingList, 'orob2b.shoppinglist.product.added.label'),
                 'shoppingList' => [
                     'id' => $shoppingList->getId(),
                     'label' => $shoppingList->getLabel(),
                 ]
             ]
         );
+    }
+
+    /**
+     * Remove Product from Shopping List (product view form)
+     *
+     * @Route(
+     *      "/remove-product-from-view/{productId}",
+     *      name="orob2b_shopping_list_frontend_remove_product",
+     *      requirements={"productId"="\d+"}
+     * )
+     * @Acl(
+     *      id="orob2b_shopping_list_line_item_frontend_remove",
+     *      type="entity",
+     *      class="OroB2BShoppingListBundle:LineItem",
+     *      permission="DELETE",
+     *      group_name="commerce"
+     * )
+     * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
+     *
+     * @param Product $product
+     *
+     * @return JsonResponse
+     */
+    public function removeProductFromViewAction(Product $product)
+    {
+        $shoppingListManager = $this->get('orob2b_shopping_list.shopping_list.manager');
+
+        $shoppingList = $shoppingListManager->getCurrent();
+
+        $result = [
+            'successful' => false,
+            'message' => $this->get('translator')
+                ->trans('orob2b.frontend.shoppinglist.lineitem.product.cant_remove.label')
+        ];
+
+        if ($shoppingList) {
+            $count = $shoppingListManager->removeProduct($shoppingList, $product);
+
+            if ($count) {
+                $shoppingListManager->recalculateSubtotals($shoppingList);
+
+                $result = [
+                    'successful' => true,
+                    'message' => $this->getSuccessMessage(
+                        $shoppingList,
+                        'orob2b.frontend.shoppinglist.lineitem.product.removed.label'
+                    )
+                ];
+            }
+        }
+
+        return new JsonResponse($result);
     }
 
     /**
@@ -143,5 +187,22 @@ class AjaxLineItemController extends Controller
         }
 
         return $response;
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param string $translationKey
+     * @return string
+     */
+    protected function getSuccessMessage(ShoppingList $shoppingList, $translationKey)
+    {
+        $link = $this->get('router')->generate('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
+
+        $translator = $this->get('translator');
+
+        return $translator->trans(
+            $translationKey,
+            ['%shoppinglist%' => sprintf('<a href="%s">%s</a>', $link, $shoppingList->getLabel())]
+        );
     }
 }
