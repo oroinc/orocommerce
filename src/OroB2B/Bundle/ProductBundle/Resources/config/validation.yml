@@ -61,9 +61,11 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
             fields: [ product, unit ]
     properties:
         unit:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.product.productunit.unit.blank'
         precision:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.product.productunit.precision.blank'
             - Range:
                 min: 0
                 max: 10

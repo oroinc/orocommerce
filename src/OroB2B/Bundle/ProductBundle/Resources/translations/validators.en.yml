@@ -15,8 +15,12 @@ orob2b:
 
         sku.blank: SKU should not be blank
 
+        names.blank: Product Name should not be blank
+
         productunit:
             invalid: 'Please enter valid unit of measurement'
+            precision.blank: Precision should not be blank
+            unit.blank: Unit should not be blank
 
         frontend:
             quick_add:
