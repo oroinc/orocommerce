@@ -11,6 +11,7 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use OroB2B\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
 class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatagridListenerTest
 {
@@ -27,7 +28,12 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
     /**
      * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $unitFormatter;
+    protected $unitLabelFormatter;
+
+    /**
+     * @var ProductUnitValueFormatter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $unitValueFormatter;
 
     /**
      * @var UserCurrencyProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -39,9 +45,14 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
         $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->unitFormatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->unitLabelFormatter =
+            $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+                ->disableOriginalConstructor()
+                ->getMock();
+        $this->unitValueFormatter =
+            $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter')
+                ->disableOriginalConstructor()
+                ->getMock();
         $this->currencyProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
             ->disableOriginalConstructor()
             ->getMock();
@@ -58,7 +69,8 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
             $this->translator,
             $this->priceListRequestHandler,
             $this->numberFormatter,
-            $this->unitFormatter,
+            $this->unitLabelFormatter,
+            $this->unitValueFormatter,
             $this->currencyProvider
         );
     }
@@ -101,6 +113,7 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                     'properties' => [
                         'prices' => ['type' => 'field', 'frontend_type' => 'row_array'],
                         'price_units' => null,
+                        'price_quantities' => null,
                     ],
                     'filters' => [
                         'columns' => [
@@ -121,20 +134,20 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                     'source' => [
                         'query' => [
                             'select' => [
-                                'GROUP_CONCAT(minimum_price_table.value SEPARATOR \'{sep}\') as prices',
-                                'GROUP_CONCAT(IDENTITY(minimum_price_table.unit) SEPARATOR \'{sep}\') as price_units',
-                                'MIN(minimum_price_table.value) as minimum_price',
+                                'GROUP_CONCAT(product_price.value SEPARATOR \'{sep}\') as prices',
+                                'GROUP_CONCAT(IDENTITY(product_price.unit) SEPARATOR \'{sep}\') as price_units',
+                                'GROUP_CONCAT(product_price.quantity SEPARATOR \'{sep}\') as price_quantities',
+                                'MIN(product_price.value) as minimum_price',
                             ],
                             'join' => [
                                 'left' => [
                                     [
                                         'join' => 'OroB2BPricingBundle:ProductPrice',
-                                        'alias' => 'minimum_price_table',
+                                        'alias' => 'product_price',
                                         'conditionType' => 'WITH',
-                                        'condition' => 'minimum_price_table.product = product.id ' .
-                                            'AND minimum_price_table.currency = \'EUR\' ' .
-                                            'AND minimum_price_table.priceList = 1 ' .
-                                            'AND minimum_price_table.quantity = 1',
+                                        'condition' => 'product_price.product = product.id ' .
+                                            'AND product_price.currency = \'EUR\' ' .
+                                            'AND product_price.priceList = 1'
                                     ],
                                 ],
                             ],
@@ -173,7 +186,7 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                 }
             );
 
-        $this->unitFormatter->expects($this->any())
+        $this->unitLabelFormatter->expects($this->any())
             ->method('format')
             ->willReturnCallback(
                 function ($unit) {
@@ -181,6 +194,13 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                 }
             );
 
+        $this->unitValueFormatter->expects($this->any())
+            ->method('formatCode')
+            ->willReturnCallback(
+                function ($quantity, $unit) {
+                    return $quantity . '-' . $unit . '-formatted';
+                }
+            );
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
@@ -217,58 +237,66 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                     [
                         'id' => 2,
                         'prices' => '20.000{sep}21.000',
-                        'price_units' => 'item{sep}piece',
+                        'price_units' => 'item{sep}item',
+                        'price_quantities' => '1{sep}2',
                     ],
                     [
                         'id' => 3,
                         'prices' => '1.000{sep}2.000',
                         'price_units' => 'box{sep}liter',
+                        'price_quantities' => '0.5{sep}1',
                     ],
                 ],
                 'expectedResults' => [
                     [
                         'id' => 2,
                         'prices' => [
-                            'item' => [
+                            'item_1' => [
                                 'price' => 20,
                                 'currency' => 'EUR',
                                 'formatted_price' => 'EUR20',
                                 'unit' => 'item',
                                 'formatted_unit' => 'item-formatted',
-
+                                'quantity' => 1,
+                                'quantity_with_unit' => '1-item-formatted',
                             ],
-                            'piece' => [
+                            'item_2' => [
                                 'price' => 21,
                                 'currency' => 'EUR',
                                 'formatted_price' => 'EUR21',
-                                'unit' => 'piece',
-                                'formatted_unit' => 'piece-formatted',
-
+                                'unit' => 'item',
+                                'formatted_unit' => 'item-formatted',
+                                'quantity' => 2,
+                                'quantity_with_unit' => '2-item-formatted',
                             ],
                         ],
                         'price_units' => null,
+                        'price_quantities' => null,
                     ],
                     [
                         'id' => 3,
                         'prices' => [
-                            'box' => [
+                            'box_0.5' => [
                                 'price' => 1,
                                 'currency' => 'EUR',
                                 'formatted_price' => 'EUR1',
                                 'unit' => 'box',
                                 'formatted_unit' => 'box-formatted',
-
+                                'quantity' => 0.5,
+                                'quantity_with_unit' => '0.5-box-formatted',
                             ],
-                            'liter' => [
+                            'liter_1' => [
                                 'price' => 2,
                                 'currency' => 'EUR',
                                 'formatted_price' => 'EUR2',
                                 'unit' => 'liter',
                                 'formatted_unit' => 'liter-formatted',
-
+                                'quantity' => 1,
+                                'quantity_with_unit' => '1-liter-formatted',
                             ],
                         ],
                         'price_units' => null,
+                        'price_quantities' => null,
                     ],
                 ],
             ],
