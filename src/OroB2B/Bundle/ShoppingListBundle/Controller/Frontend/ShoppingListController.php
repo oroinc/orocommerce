@@ -104,6 +104,16 @@ class ShoppingListController extends Controller
     }
 
     /**
+     * @Route("/widget", name="orob2b_shopping_list_frontend_widget")
+     * @Layout
+     * @return array
+     */
+    public function widgetAction()
+    {
+        return [];
+    }
+
+    /**
      * @param Request $request
      * @param ShoppingList $shoppingList
      *
