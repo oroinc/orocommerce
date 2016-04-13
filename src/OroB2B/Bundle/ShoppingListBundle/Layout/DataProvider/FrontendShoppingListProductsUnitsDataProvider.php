@@ -72,16 +72,14 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
      */
     protected function getProductsUnits(ShoppingList $shoppingList)
     {
-        $priceList = $this->requestHandler->getPriceListByAccount();
-
         $products = $shoppingList->getLineItems()->map(
             function (LineItem $lineItem) {
                 return $lineItem->getProduct();
             }
         );
 
-        return $this->registry->getManagerForClass('OroB2BPricingBundle:CombinedProductPrice')
-            ->getRepository('OroB2BPricingBundle:CombinedProductPrice')
-            ->getProductsUnitsByPriceList($priceList, $products, $this->userCurrencyProvider->getUserCurrency());
+        return $this->registry->getManagerForClass('OroB2BProductBundle:ProductUnit')
+            ->getRepository('OroB2BProductBundle:ProductUnit')
+            ->getProductsUnits($products->toArray());
     }
 }
