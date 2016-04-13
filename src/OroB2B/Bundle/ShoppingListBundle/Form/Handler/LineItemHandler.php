@@ -92,7 +92,7 @@ class LineItemHandler
                             $lineItem->getProduct()
                         )
                     );
-
+                    $lineItem->getShoppingList()->addLineItem($lineItem);
                     $manager->persist($lineItem);
                 }
 
