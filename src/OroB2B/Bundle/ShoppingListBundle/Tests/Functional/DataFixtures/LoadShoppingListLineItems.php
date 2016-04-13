@@ -25,18 +25,18 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
             'unit' => 'product_unit.bottle',
             'quantity' => 23.15
         ],
-//        self::LINE_ITEM_2 => [
-//            'product' => LoadProductData::PRODUCT_2,
-//            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_2,
-//            'unit' => 'product_unit.bottle',
-//            'quantity' => 24
-//        ],
-//        self::LINE_ITEM_3 => [
-//            'product' => LoadProductData::PRODUCT_3,
-//            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_3,
-//            'unit' => 'product_unit.liter',
-//            'quantity' => 5
-//        ],
+        self::LINE_ITEM_2 => [
+            'product' => LoadProductData::PRODUCT_2,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_3,
+            'unit' => 'product_unit.liter',
+            'quantity' => 5
+        ],
+        self::LINE_ITEM_3 => [
+            'product' => LoadProductData::PRODUCT_3,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_3,
+            'unit' => 'product_unit.bottle',
+            'quantity' => 24
+        ],
     ];
 
     /**

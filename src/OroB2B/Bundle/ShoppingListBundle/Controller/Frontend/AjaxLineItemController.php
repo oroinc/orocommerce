@@ -100,12 +100,11 @@ class AjaxLineItemController extends Controller
      * )
      * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
      *
-     * @param Request $request
      * @param Product $product
      *
      * @return JsonResponse
      */
-    public function removeProductFromViewAction(Request $request, Product $product)
+    public function removeProductFromViewAction(Product $product)
     {
         $shoppingListManager = $this->get('orob2b_shopping_list.shopping_list.manager');
 
