@@ -20,6 +20,7 @@ parameters:
     orob2b_shopping_list.action.datagrid.mass_action_provider.class: OroB2B\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider
     orob2b_shopping_list.layout.block.type.shopping_list_selector.class: OroB2B\Bundle\ShoppingListBundle\Layout\Block\Type\ShoppingListSelectorType
     orob2b_shopping_list.data_provider.checkout_line_item.class: OroB2B\Bundle\ShoppingListBundle\DataProvider\CheckoutLineItemDataProvider
+    orob2b_shopping_list.event_listener.frontend_product_datagrid.class: OroB2B\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener
 
 services:
     orob2b_shopping_list.validator.line_item:
@@ -192,3 +193,14 @@ services:
              - @doctrine
         tags:
              - { name: checkout.data_provider.line_item }
+
+    orob2b_shopping_list.event_listener.frontend_product_datagrid:
+        class: %orob2b_shopping_list.event_listener.frontend_product_datagrid.class%
+        arguments:
+            - @oro_security.security_facade
+            - @doctrine
+            - %orob2b_shopping_list.entity.shopping_list.class%
+            - %orob2b_shopping_list.entity.line_item.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
