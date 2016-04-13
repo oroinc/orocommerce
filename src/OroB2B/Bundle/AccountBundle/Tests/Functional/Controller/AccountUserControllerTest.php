@@ -10,7 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Migrations\Data\ORM\LoadAccountUserRoles;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
@@ -43,7 +43,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
             [
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData',
-                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData'
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadUserData'
             ]
         );
     }
@@ -112,7 +112,6 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->assertContains($this->getReference(LoadUserData::USER1)->getFullName(), $result->getContent());
         $this->assertContains($this->getReference(LoadUserData::USER2)->getFullName(), $result->getContent());
     }
-
 
     /**
      * @depends testCreate
