@@ -134,6 +134,9 @@ orob2b.pricing:
                 your_price: 'Your Price:'
                 listed_price: 'Listed Price:'
                 msrp: 'MSRP:'
+        product_prices:
+            empty_prices: Price not available
+            price_not_found: Price for requested quantity is not available
 
 oro:
     importexport:
