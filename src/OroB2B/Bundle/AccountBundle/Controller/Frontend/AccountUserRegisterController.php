@@ -71,6 +71,7 @@ class AccountUserRegisterController extends Controller
         if ($response instanceof Response) {
             return $response;
         }
+
         return [];
     }
 
@@ -102,6 +103,7 @@ class AccountUserRegisterController extends Controller
         }
 
         $this->get('session')->getFlashBag()->add($messageType, $message);
+
         return $this->redirect($this->generateUrl('orob2b_account_account_user_security_login'));
     }
 }

@@ -15,10 +15,8 @@ use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
 
 class AccountUserProfileController extends Controller
 {
-
-
     /**
-     * @Route("", name="orob2b_account_frontend_account_user_profile")
+     * @Route("/", name="orob2b_account_frontend_account_user_profile")
      * @Layout
      * @AclAncestor("orob2b_account_frontend_account_user_view")
      *
