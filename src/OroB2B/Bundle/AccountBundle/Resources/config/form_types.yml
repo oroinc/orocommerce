@@ -216,7 +216,7 @@ services:
         class: %orob2b_account.form.type.typed_address_with_default.class%
         arguments: ['@translator']
         calls:
-             - [setRegistry, ['@doctrine']
+             - [setRegistry, ['@doctrine']]
         tags:
              - { name: form.type, alias: orob2b_account_typed_address_with_default}
 
