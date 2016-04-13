@@ -38,9 +38,6 @@ define(function(require) {
                 .on('frontend:item:delete', _.bind(this.renderWidget, this));
         },
 
-        /**
-         * @param {Object} data
-         */
         renderWidget: function() {
             widgetManager.getWidgetInstanceByAlias(this.options.widgetAlias, function(widget) {
                 widget.render();
