@@ -9,7 +9,8 @@ layout:
                     blockType: block
                     siblingId: product_grid_row_specification_delivery
                     options:
-                        visible: false
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_msrp:
                     parentId: product_grid_row_secondary_content_first_container
                     blockType: block
