@@ -4,8 +4,8 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'jquery.validate
 
     var defaultParam = {
         message: 'orob2b.payment.validation.month',
-        monthSelector: '.checkout__form__select_exp-month select',
-        yearSelector: '.checkout__form__select_exp-year select'
+        monthSelector: '[data-expiration-date-month]',
+        yearSelector: '[data-expiration-date-year]'
     };
 
     return [
@@ -18,8 +18,8 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'jquery.validate
             var now = new Date();
 
             if (year.length) {
-                if (year == now.getFullYear() % 100) {
-                    return parseInt(month, 10) >= now.getMonth()+1;
+                if (parseInt(year, 10) === now.getFullYear() % 100) {
+                    return parseInt(month, 10) >= now.getMonth() + 1;
                 }
             }
             return true;

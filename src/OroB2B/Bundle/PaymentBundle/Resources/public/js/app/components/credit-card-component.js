@@ -15,13 +15,13 @@ define(function(require) {
         options: {
             paymentMethod: null,
             selectors: {
-                month: '.checkout__form__select_exp-month',
-                year: '.checkout__form__select_exp-year',
+                month: '[data-expiration-date-month]',
+                year: '[data-expiration-date-year]',
                 hiddenDate: 'input[name="EXPDATE"]',
-                form: '.checkout__form__payment-methods__form',
-                expirationDate: '.credit-card-expiration-date',
-                cvv: '.credit-card-cvv',
-                cardNumber: '.credit-card-number',
+                form: '[data-credit-card-form]',
+                expirationDate: '[data-expiration-date]',
+                cvv: '[data-card-cvv]',
+                cardNumber: '[data-card-number]',
                 validation: '[data-validation]'
             }
         },
