@@ -241,7 +241,8 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_roles', ['_widgetContainer' => 'widget'])
+            $this->getUrl('orob2b_account_account_user_roles'),
+            ['_widgetContainer' => 'widget']
         );
         $response = $this->client->getResponse();
 
@@ -290,9 +291,9 @@ class AccountUserControllerTest extends AbstractUserControllerTest
                 [
                     'accountUserId' => $accountUser->getId(),
                     'accountId'     => $userAccount->getId(),
-                    '_widgetContainer' => 'widget'
                 ]
-            )
+            ),
+            ['_widgetContainer' => 'widget']
         );
 
         $response = $this->client->getResponse();
@@ -311,9 +312,9 @@ class AccountUserControllerTest extends AbstractUserControllerTest
                 'orob2b_account_account_user_roles',
                 [
                     'accountUserId' => $accountUser->getId(),
-                    '_widgetContainer' => 'widget'
                 ]
-            )
+            ),
+            ['_widgetContainer' => 'widget']
         );
 
         $response = $this->client->getResponse();
