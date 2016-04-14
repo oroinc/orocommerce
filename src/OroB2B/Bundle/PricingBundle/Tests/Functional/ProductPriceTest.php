@@ -63,7 +63,8 @@ class ProductPriceTest extends WebTestCase
                     'entityId' => $priceList->getId(),
                     'entityClass' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList'
                 ]
-            )
+            ),
+            ['_widgetContainer' => 'dialog']
         );
 
         $result = $this->client->getResponse();

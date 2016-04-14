@@ -40,8 +40,8 @@ services:
     orob2b_product.form.type.product_unit_selection:
         class: %orob2b_product.form.type.product_unit_selection.class%
         arguments:
-            - @orob2b_product.formatter.product_unit_label
-            - @translator
+            - "@orob2b_product.formatter.product_unit_label"
+            - "@translator"
         calls:
             - [setEntityClass, [%orob2b_product.product_unit.class%]]
         tags:
@@ -50,7 +50,7 @@ services:
     orob2b_product.form.type.quantity_type:
         class: %orob2b_product.form.type.quantity_type.class%
         arguments:
-            - @orob2b_product.service.quantity_rounding
+            - "@orob2b_product.service.quantity_rounding"
             - %orob2b_product.product.class%
         tags:
             - { name: form.type, alias: orob2b_quantity }
@@ -70,7 +70,7 @@ services:
     orob2b_product.form.type.product_select:
         class: %orob2b_product.form.type.product_select.class%
         arguments:
-            - @translator
+            - "@translator"
         tags:
             - { name: form.type, alias: orob2b_product_select }
 
@@ -88,9 +88,9 @@ services:
         class: %orob2b_product.form.type.extension.product_data_storage.abstract.class%
         abstract: true
         arguments:
-            - @request_stack
-            - @orob2b_product.storage.product_data_storage
-            - @oro_entity.doctrine_helper
+            - "@request_stack"
+            - "@orob2b_product.storage.product_data_storage"
+            - "@oro_entity.doctrine_helper"
             - %orob2b_product.product.class%
 
     orob2b_product.form.type.extension.integer:
@@ -101,7 +101,7 @@ services:
     orob2b_product.form.type.custom_entity_fields_choice:
         class: %orob2b_product.form.type.custom_entity_fields_choice.class%
         arguments:
-            - @orob2b_product.provider.custom_field_provider
+            - "@orob2b_product.provider.custom_field_provider"
             - %orob2b_product.product.class%
         tags:
             - { name: form.type, alias: orob2b_product_custom_entity_fields_choice }
@@ -114,14 +114,14 @@ services:
     orob2b_product.form.type.product_status:
         class: %orob2b_product.form.type.product_status.class%
         arguments:
-            - @orob2b_product.provider.product_status_provider
+            - "@orob2b_product.provider.product_status_provider"
         tags:
             - { name: form.type, alias: orob2b_product_status }
 
     orob2b_product.form.type.product_inventory_status_select:
         class: %orob2b_product.form.type.product_inventory_status_select.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
         tags:
             - { name: form.type, alias: orob2b_product_inventory_status_select }
 

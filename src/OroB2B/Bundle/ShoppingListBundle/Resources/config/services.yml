@@ -25,7 +25,7 @@ services:
     orob2b_shopping_list.validator.line_item:
         class: %orob2b_shopping_list.validator.line_item.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
         tags:
             - { name: validator.constraint_validator, alias: orob2b_shopping_list_line_item_validator }
 
@@ -34,26 +34,26 @@ services:
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_shopping_list.entity.line_item.class%
-            - @doctrine.orm.entity_manager
+            - "@doctrine.orm.entity_manager"
 
     orob2b_shopping_list.shopping_list.manager.api:
         class: %orob2b_shopping_list.shopping_list.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_shopping_list.entity.shopping_list.class%
-            - @doctrine.orm.entity_manager
+            - "@doctrine.orm.entity_manager"
 
     orob2b_shopping_list.shopping_list.manager:
         class: %orob2b_shopping_list.shopping_list.manager.class%
         arguments:
-            - @doctrine
-            - @security.token_storage
-            - @translator
-            - @orob2b_product.service.quantity_rounding
-            - @orob2b_pricing.subtotal_processor.total_processor_provider
-            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced
-            - @oro_locale.settings
-            - @orob2b_website.manager
+            - "@doctrine"
+            - "@security.token_storage"
+            - "@translator"
+            - "@orob2b_product.service.quantity_rounding"
+            - "@orob2b_pricing.subtotal_processor.total_processor_provider"
+            - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced"
+            - "@oro_locale.settings"
+            - "@orob2b_website.manager"
 
     orob2b_shopping_list.shopping_list.manager.link:
         tags:
@@ -62,14 +62,14 @@ services:
     orob2b_shopping_list.placeholder.filter:
         class: %orob2b_shopping_list.placeholder.filter.class%
         arguments:
-            - @oro_security.security_facade
+            - "@oro_security.security_facade"
 
     orob2b_shopping_list.handler.shopping_list_line_item:
         class: %orob2b_shopping_list.handler.shopping_list_line_item.class%
         arguments:
-            - @doctrine
-            - @orob2b_shopping_list.shopping_list.manager
-            - @oro_security.security_facade
+            - "@doctrine"
+            - "@orob2b_shopping_list.shopping_list.manager"
+            - "@oro_security.security_facade"
         calls:
             - [setProductClass, [%orob2b_product.product.class%]]
             - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
@@ -77,16 +77,16 @@ services:
     orob2b_shopping_list.service.message_generator:
         class: %orob2b_shopping_list.service.message_generator.class%
         arguments:
-            - @translator
-            - @router
+            - "@translator"
+            - "@router"
 
     orob2b_shopping_list.processor.abstract_quick_add:
         class: %orob2b_shopping_list.processor.abstract_quick_add.class%
         abstract: true
         arguments:
-            - @orob2b_shopping_list.handler.shopping_list_line_item
-            - @doctrine
-            - @orob2b_shopping_list.service.message_generator
+            - "@orob2b_shopping_list.handler.shopping_list_line_item"
+            - "@doctrine"
+            - "@orob2b_shopping_list.service.message_generator"
         calls:
             - [setProductClass, [%orob2b_product.product.class%]]
 
@@ -100,10 +100,10 @@ services:
         class: %orob2b_shopping_list.processor.quick_add_to_checkout.class%
         parent: orob2b_shopping_list.processor.abstract_quick_add
         calls:
-            - [setShoppingListManager, [@orob2b_shopping_list.shopping_list.manager]]
-            - [setOperationManager, [@oro_action.operation_manager]]
-            - [setTranslator, [@translator]]
-            - [setDateFormatter, [@oro_locale.formatter.date_time]]
+            - [setShoppingListManager, ['@orob2b_shopping_list.shopping_list.manager']]
+            - [setOperationManager, ['@oro_action.operation_manager']]
+            - [setTranslator, ['@translator']]
+            - [setDateFormatter, ['@oro_locale.formatter.date_time']]
             - [setOperationName, ['orob2b_shoppinglist_frontend_createorder']]
         tags:
             - { name: orob2b_product.quick_add_processor }
@@ -111,7 +111,7 @@ services:
     orob2b_shopping_list.service.product_data_storage:
         class: %orob2b_shopping_list.service.product_data_storage.class%
         arguments:
-            - @orob2b_product.storage.product_data_storage
+            - "@orob2b_product.storage.product_data_storage"
 
     orob2b_shopping_list.event_listener.product_select_db_query:
         class: %orob2b_product.event_listener.scoped_product_select_db_query.class%
@@ -125,24 +125,24 @@ services:
     orob2b_shopping_list.layout.data_provider.shopping_list_form:
         class: %orob2b_shopping_list.layout.data_provider.shopping_list_form.class%
         arguments:
-            - @form.factory
+            - "@form.factory"
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_shopping_list_form }
 
     orob2b_shopping_list.layout.data_provider.frontend_line_item_form:
         class: %orob2b_shopping_list.layout.data_provider.frontend_line_item_form.class%
         arguments:
-            - @form.factory
-            - @oro_security.security_facade
+            - "@form.factory"
+            - "@oro_security.security_facade"
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_frontend_line_item_form }
 
     orob2b_shopping_list.layout.data_provider.account_user_shopping_lists:
         class: %orob2b_shopping_list.layout.data_provider.account_user_shopping_lists.class%
         arguments:
-            - @oro_entity.doctrine_helper
-            - @oro_security.security_facade
-            - @request_stack
+            - "@oro_entity.doctrine_helper"
+            - "@oro_security.security_facade"
+            - "@request_stack"
         calls:
             - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
         tags:
@@ -151,32 +151,32 @@ services:
     orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_prices:
         class: %orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_prices.class%
         arguments:
-            - @orob2b_shopping_list.data_provider.frontend_product_prices
-            - @doctrine
+            - '@orob2b_shopping_list.data_provider.frontend_product_prices'
+            - '@doctrine'
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_products_prices }
 
     orob2b_shopping_list.data_provider.frontend_product_prices:
         class: %orob2b_shopping_list.data_provider.frontend_product_prices.class%
         arguments:
-            - @orob2b_pricing.provider.combined_product_price
-            - @oro_security.security_facade
-            - @orob2b_pricing.provider.user_currency
+            - '@orob2b_pricing.provider.combined_product_price'
+            - '@oro_security.security_facade'
+            - '@orob2b_pricing.provider.user_currency'
 
     orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_units:
         class: %orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_units.class%
         arguments:
-            - @doctrine
-            - @orob2b_pricing.model.price_list_request_handler
-            - @orob2b_pricing.provider.user_currency
+            - "@doctrine"
+            - "@orob2b_pricing.model.price_list_request_handler"
+            - "@orob2b_pricing.provider.user_currency"
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_products_units }
 
     orob2b_shopping_list.action.datagrid.mass_action_provider:
         class: %orob2b_shopping_list.action.datagrid.mass_action_provider.class%
         arguments:
-            - @orob2b_shopping_list.shopping_list.manager
-            - @translator
+            - "@orob2b_shopping_list.shopping_list.manager"
+            - "@translator"
         tags:
             - { name: oro_action.datagrid.mass_action_provider, alias: orob2b_shopping_list_add_products }
 
@@ -188,7 +188,7 @@ services:
     orob2b_shopping_list.data_provider.checkout_line_item:
         class: %orob2b_shopping_list.data_provider.checkout_line_item.class%
         arguments:
-             - @orob2b_shopping_list.data_provider.frontend_product_prices
-             - @doctrine
+             - '@orob2b_shopping_list.data_provider.frontend_product_prices'
+             - '@doctrine'
         tags:
              - { name: checkout.data_provider.line_item }

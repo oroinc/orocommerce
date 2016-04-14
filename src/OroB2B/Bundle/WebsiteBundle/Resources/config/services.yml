@@ -13,12 +13,12 @@ services:
     orob2b_website.manager:
         class: %orob2b_website.manager.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
 
     orob2b_website.twig.website_extension:
         class: %orob2b_website.twig.website_extension.class%
         arguments:
-            - @orob2b_website.manager
+            - "@orob2b_website.manager"
         tags:
             - { name: twig.extension }
 
@@ -27,20 +27,20 @@ services:
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_website.website.class%
-            - @doctrine.orm.entity_manager
+            - "@doctrine.orm.entity_manager"
 
     orob2b_website.locale_helper:
         class: OroB2B\Bundle\WebsiteBundle\Locale\LocaleHelper
         arguments:
-            - @doctrine
+            - "@doctrine"
         calls:
             - [setEntityClass, [%orob2b_website.locale.class%]]
 
     orob2b_website.model.action.assign_current_website:
         class: %orob2b_website.model.action.assign_current_website.class%
         arguments:
-            - @oro_action.context_accessor
-            - @orob2b_website.manager
+            - '@oro_action.context_accessor'
+            - '@orob2b_website.manager'
         tags:
             - { name: oro_action.action, alias: assign_current_website }
             - { name: oro_workflow.action, alias: assign_current_website }
