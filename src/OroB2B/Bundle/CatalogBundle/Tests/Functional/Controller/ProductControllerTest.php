@@ -79,7 +79,8 @@ class ProductControllerTest extends WebTestCase
             $this->getUrl(
                 static::SIDEBAR_ROUTE,
                 [RequestProductHandler::CATEGORY_ID_KEY => $categoryId]
-            )
+            ),
+            ['_widgetContainer' => 'widget']
         );
         $json = $crawler->filterXPath('//*[@data-page-component-options]')->attr('data-page-component-options');
         $this->assertJson($json);
