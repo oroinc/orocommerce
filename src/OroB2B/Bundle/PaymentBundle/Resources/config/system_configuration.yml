@@ -114,19 +114,19 @@ oro_system_configuration:
             options:
                 label: orob2b.payment.system_configuration.fields.partner.label
 
-        orob2b_payment.paypal_payments_pro_user:
+        orob2b_payment.paypal_payments_pro_vendor:
             data_type: string
             type: text
             priority: 90
             options:
-                label: orob2b.payment.system_configuration.fields.user.label
+                label: orob2b.payment.system_configuration.fields.vendor.label
 
-        orob2b_payment.paypal_payments_pro_vendor:
+        orob2b_payment.paypal_payments_pro_user:
             data_type: string
             type: text
             priority: 80
             options:
-                label: orob2b.payment.system_configuration.fields.vendor.label
+                label: orob2b.payment.system_configuration.fields.user.label
 
         orob2b_payment.paypal_payments_pro_password:
             data_type: string
@@ -287,19 +287,19 @@ oro_system_configuration:
             options:
                 label: orob2b.payment.system_configuration.fields.partner.label
 
-        orob2b_payment.payflow_gateway_user:
+        orob2b_payment.payflow_gateway_vendor:
             data_type: string
             type: text
             priority: 90
             options:
-                label: orob2b.payment.system_configuration.fields.user.label
+                label: orob2b.payment.system_configuration.fields.vendor.label
 
-        orob2b_payment.payflow_gateway_vendor:
+        orob2b_payment.payflow_gateway_user:
             data_type: string
             type: text
             priority: 80
             options:
-                label: orob2b.payment.system_configuration.fields.vendor.label
+                label: orob2b.payment.system_configuration.fields.user.label
 
         orob2b_payment.payflow_gateway_password:
             data_type: string
@@ -437,8 +437,8 @@ oro_system_configuration:
                                         priority: 90
                                         children:
                                             - orob2b_payment.paypal_payments_pro_partner
-                                            - orob2b_payment.paypal_payments_pro_user
                                             - orob2b_payment.paypal_payments_pro_vendor
+                                            - orob2b_payment.paypal_payments_pro_user
                                             - orob2b_payment.paypal_payments_pro_password
                                             - orob2b_payment.paypal_payments_pro_payment_action
                                             - orob2b_payment.paypal_payments_pro_test_mode
@@ -468,8 +468,8 @@ oro_system_configuration:
                                         priority: 90
                                         children:
                                             - orob2b_payment.payflow_gateway_partner
-                                            - orob2b_payment.payflow_gateway_user
                                             - orob2b_payment.payflow_gateway_vendor
+                                            - orob2b_payment.payflow_gateway_user
                                             - orob2b_payment.payflow_gateway_password
                                             - orob2b_payment.payflow_gateway_payment_action
                                             - orob2b_payment.payflow_gateway_test_mode
