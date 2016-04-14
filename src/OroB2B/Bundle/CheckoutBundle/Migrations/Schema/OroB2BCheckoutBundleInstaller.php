@@ -18,7 +18,7 @@ class OroB2BCheckoutBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -83,6 +83,7 @@ class OroB2BCheckoutBundleInstaller implements Installation
         ]);
         $table->addColumn('shipping_estimate_currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('payment_method', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('type', 'string', ['notnull' => true, 'length' => 30]);
         $table->addUniqueIndex(['billing_address_id'], 'uniq_e56b559d79d0c0e4');
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');
         $table->addUniqueIndex(['workflow_item_id'], 'uniq_e56b559d1023c4ee');
