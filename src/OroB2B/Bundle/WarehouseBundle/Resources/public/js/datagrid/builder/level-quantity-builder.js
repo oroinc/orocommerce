@@ -118,7 +118,7 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orodatagrid/js/datagrid/fo
             }
 
             var editorInput = cell.$el.find(':input').first();
-            editorInput.parent().addClass('controls');
+            editorInput.parent().addClass('controls').removeClass('editable');
             editorInput.attr('name', 'quantity_' + cell.model.cid);
             editorInput.data('validation', constraints);
             editorInput.valid();

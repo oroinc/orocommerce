@@ -12,6 +12,7 @@ use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\FrontendBundle\Test\Client;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -26,6 +27,11 @@ class ImportExportTest extends WebTestCase
      * @var string
      */
     protected $file;
+
+    /**
+     * @var Client
+     */
+    protected $client;
 
     protected function setUp()
     {
@@ -151,7 +157,10 @@ class ImportExportTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $data['url']
+            $data['url'],
+            [],
+            [],
+            $this->client->generateNoHashNavigationHeader()
         );
 
         $result = $this->client->getResponse();

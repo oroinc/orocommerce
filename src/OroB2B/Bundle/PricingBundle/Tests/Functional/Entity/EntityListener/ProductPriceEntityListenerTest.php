@@ -2,8 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
-use Oro\Component\Testing\QueryTracker;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+
+use Oro\Component\Testing\QueryTracker;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
