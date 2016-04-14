@@ -1,4 +1,17 @@
 <script type="text/html" id="line-item-taxes-template">
     {% import 'OroB2BTaxBundle::macros.html.twig' as TAX %}
-    {{ TAX.renderJsTaxes() }}
+    <div class="line-item-taxes-container">
+        {% set blockrenderJsItems =TAX.renderJsItems()  %}
+        {% if blockrenderJsItems %}
+            <div class="line-item-taxes-items">
+                {{ blockrenderJsItems }}
+            </div>
+        {% endif %}
+        {% set blockrenderJsTaxes = TAX.renderJsTaxes()  %}
+        {% if blockrenderJsTaxes %}
+            <div class="line-item-taxes-results">
+                {{ blockrenderJsTaxes }}
+            </div>
+        {% endif %}
+    </div>
 </script>

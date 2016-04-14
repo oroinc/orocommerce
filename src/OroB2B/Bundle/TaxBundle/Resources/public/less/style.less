@@ -32,6 +32,18 @@
   margin: 0 !important;
 }
 
+.order-line-item-taxes {
+  width: 100%;
+}
+
+.order-line-item-taxes .tax-result-grid table {
+  width: auto;
+}
+
+.order-line-item-taxes .tax-result-grid ~ .tax-result-grid {
+  margin-top: 20px;
+}
+
 .tax-result-grid {
   th {
     border-bottom-left-radius: 0 !important;
@@ -59,5 +71,35 @@
   .order-line-items-table {
     overflow-x: scroll !important;
     display: block !important;
+  }
+}
+
+.line-item-taxes-container {
+  div ~ div {
+    padding-top: 20px;
+  }
+  .line-item-taxes-items {
+    .tax-result-grid {
+      min-width: 325px;
+
+      td:first-child {
+        white-space: nowrap;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+@media (min-width: 1900px) {
+  .line-item-taxes-items, .line-item-taxes-results {
+    display:table-cell;
+  }
+  .line-item-taxes-container {
+    display: table-row;
+  }
+
+  .line-item-taxes-container div ~ div {
+    padding-left: 20px;
+    padding-top: 0;
   }
 }
