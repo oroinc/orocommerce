@@ -1,9 +1,34 @@
-.notification {
-
+.notification-flash {
+  margin-bottom: -2rem;
   &:empty {
     display: none;
+    margin-bottom: 0;
   }
 
+  .notification.notification_lg  {
+    padding-left: 48px;
+    padding-right: 48px;
+    margin-left: 15px;
+    margin-right: 15px;
+    width: auto;
+    line-height: 2rem;
+  }
+
+  .badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+  }
+
+  .cf-clear {
+    cursor: pointer;
+    position: absolute;
+    top: 14px;
+    right: 8px;
+    font-size: 24px;
+  }
+}
+.notification {
   &.notification_success {
     background: @theme-success-bg-color;
     color: @theme-success-font-color;
@@ -80,9 +105,7 @@
   }
 
   &.notification_lg {
-    position: fixed;
-    top: 0;
-    left: 0;
+    position: relative;
     width: 100%;
     z-index: 101;
     min-height: 5rem;
@@ -102,7 +125,6 @@
 
   > ul {
     .list-normalize;
-    margin: .5rem 0 0;
   }
 }
 

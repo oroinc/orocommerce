@@ -3,15 +3,15 @@
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 
@@ -38,14 +38,7 @@ class AccountUserRoleController extends Controller
 
     /**
      * @Route("/view/{id}", name="orob2b_account_frontend_account_user_role_view", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:view.html.twig")
-     * @Acl(
-     *      id="orob2b_account_frontend_account_user_role_view",
-     *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUserRole",
-     *      permission="FRONTEND_ACCOUNT_ROLE_VIEW",
-     *      group_name="commerce"
-     * )
+     * @Layout()
      *
      * @param AccountUserRole $role
      *
@@ -53,17 +46,24 @@ class AccountUserRoleController extends Controller
      */
     public function viewAction(AccountUserRole $role)
     {
-        $privileges = $this->get('orob2b_account.helper.account_user_role_privileges.frontend')->collect($role);
+        $isGranted = $role->isPredefined()
+            ? $this->getSecurityFacade()->isGranted('orob2b_account_frontend_account_user_role_view')
+            : $this->getSecurityFacade()->isGranted('FRONTEND_ACCOUNT_ROLE_VIEW', $role);
+
+        if (!$isGranted) {
+            throw $this->createAccessDeniedException();
+        }
 
         return [
-            'entity' => $role,
-            'privileges' => $privileges
+            'data' => [
+                'entity' => $role
+            ]
         ];
     }
 
     /**
      * @Route("/create", name="orob2b_account_frontend_account_user_role_create")
-     * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:update.html.twig")
+     * @Layout()
      * @Acl(
      *      id="orob2b_account_frontend_account_user_role_create",
      *      type="entity",
@@ -81,30 +81,27 @@ class AccountUserRoleController extends Controller
 
     /**
      * @Route("/update/{id}", name="orob2b_account_frontend_account_user_role_update", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:update.html.twig")
+     * @Layout()
      * @param AccountUserRole $role
      * @param Request $request
      * @return array
      */
     public function updateAction(AccountUserRole $role, Request $request)
     {
-        $securityFacade = $this->get('oro_security.security_facade');
-
-        if ($role->isPredefined()) {
-            if ($request->isMethod(Request::METHOD_GET)) {
-                $this->addFlash(
-                    'warning',
-                    $this->get('translator')
-                        ->trans('orob2b.account.accountuserrole.frontend.edit-predifined-role.message')
-                );
-            }
-            $isGranted = $securityFacade->isGranted('orob2b_account_frontend_account_user_role_create');
-        } else {
-            $isGranted = $securityFacade->isGranted('FRONTEND_ACCOUNT_ROLE_UPDATE', $role);
-        }
+        $isGranted = $role->isPredefined()
+            ? $this->getSecurityFacade()->isGranted('orob2b_account_frontend_account_user_role_create')
+            : $this->getSecurityFacade()->isGranted('FRONTEND_ACCOUNT_ROLE_UPDATE', $role);
 
         if (!$isGranted) {
             throw $this->createAccessDeniedException();
+        }
+
+        if ($role->isPredefined() && $request->isMethod(Request::METHOD_GET)) {
+            $this->addFlash(
+                'warning',
+                $this->get('translator')
+                    ->trans('orob2b.account.accountuserrole.frontend.edit-predifined-role.message')
+            );
         }
 
         return $this->update($role);
@@ -119,7 +116,7 @@ class AccountUserRoleController extends Controller
         $handler = $this->get('orob2b_account.form.handler.update_account_user_role_frontend');
         $form = $handler->createForm($role);
 
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        $response = $this->get('oro_form.model.update_handler')->handleUpdate(
             $form->getData(),
             $form,
             function (AccountUserRole $role) {
@@ -135,15 +132,25 @@ class AccountUserRoleController extends Controller
                 ];
             },
             $this->get('translator')->trans('orob2b.account.controller.accountuserrole.saved.message'),
-            $handler,
-            function (AccountUserRole $entity, FormInterface $form, Request $request) use ($role) {
-                return [
-                    'form' => $form->createView(),
-                    'entity' => $entity,
-                    'isWidgetContext' => (bool)$request->get('_wid', false),
-                    'predefined_role_id' => $role->getId(),
-                ];
-            }
+            $handler
         );
+
+        if ($response instanceof Response) {
+            return $response;
+        }
+
+        return [
+            'data' => [
+                'entity' => $role
+            ]
+        ];
+    }
+
+    /**
+     * @return SecurityFacade
+     */
+    protected function getSecurityFacade()
+    {
+        return $this->get('oro_security.security_facade');
     }
 }

@@ -51,11 +51,14 @@
 
 {% block content_data %}
     {% set id = 'product-edit' %}
-    {% set productHasVariants = entity.hasVariants and form.variantFields.vars.choices|length != 0 %}
 
-    {% set generalData = [
+    {# Should be returned in scope of BB-2696 #}
+    {# set generalData = [
         form_row(form.sku),
         form_row(form.variantFields)
+    ] #}
+    {%  set generalData = [
+        form_row(form.sku)
     ] %}
 
     {% set generalData = generalData|merge([
@@ -77,6 +80,12 @@
             'title': '',
             'data': [
                 form_row(form.descriptions),
+            ]
+        },
+        {
+            'title': '',
+            'data': [
+                form_row(form.shortDescriptions),
             ]
         }]
     } %}
@@ -100,6 +109,9 @@
         }] ) %}
     {% endif %}
 
+    {# Should be returned in scope of BB-2696 #}
+    {#
+    {% set productHasVariants = entity.hasVariants and form.variantFields.vars.choices|length != 0 %}
     {% if productHasVariants %}
         {% set variantLinksForm = form.variantLinks %}
         {% set dataBlocks = dataBlocks|merge([{
@@ -115,7 +127,7 @@
             }]
         }] ) %}
     {% endif %}
-
+    #}
     {% set data = {
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks

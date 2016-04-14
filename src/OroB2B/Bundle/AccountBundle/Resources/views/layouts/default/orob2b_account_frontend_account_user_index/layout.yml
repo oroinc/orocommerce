@@ -1,56 +1,48 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_index/layout.html.twig'
 
-        - @setOption:
-            id: head
-            optionName: title
-            optionValue: 'orob2b.account.frontend.account_user.entity_plural_label'
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.account.frontend.account_user.entity_plural_label'
 
-        - @setOption:
+        - '@setOption':
             id: page_title
             optionName: text
             optionValue: 'orob2b.account.frontend.account_user.entity_plural_label'
 
-        - @setOption:
+        - '@setOption':
             id: content
             optionName: class_prefix
             optionValue: 'account-users'
 
-        - @add:
-            id: create_account_user_button_top
-            parentId: content
+        - '@setOption':
+            id: datagrid_toolbar_button_container
+            optionName: visible
+            optionValue: true
+
+        - '@add':
+            id: create_account_user_button
+            parentId: datagrid_toolbar_button_container
             blockType: action_combined_buttons
             options:
                 actions:
-                    @value: $data.actions.all
+                    '@value': $data.actions.all
                 entityClass:
-                    @value: 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'
+                    '@value': 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'
 
-        - @add:
-            id: create_account_user_button
-            parentId: content
-            blockType: block
-
-        - @add:
+        - '@add':
             id: account_users
             parentId: content
             blockType: datagrid
             options:
                 grid_name: frontend-account-account-user-grid
 
-        - @add:
-            id: create_account_user_button_bottom
-            parentId: content
-            blockType: action_combined_buttons
-            options:
-                actions:
-                    @value: $data.actions.all
-                entityClass:
-                    @value: 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'
-
-        - @add:
+        - '@add':
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
+            blockType: container

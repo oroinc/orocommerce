@@ -4,7 +4,8 @@ oro_menu_config:
             label: 'orob2b.menu.sales_tab.label'
             uri:   '#'
             extras:
-                position: 300
+                icon:     icon-usd
+                position: 100
 
         sale_quote_list:
             label: 'orob2b.frontend.sale.quote.entity_plural_label'

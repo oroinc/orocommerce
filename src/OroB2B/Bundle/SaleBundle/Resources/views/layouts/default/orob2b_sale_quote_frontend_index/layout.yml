@@ -1,20 +1,26 @@
 layout:
     actions:
-        - @setOption:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.frontend.sale.quote.entity_plural_label'
+        - '@setOption':
             id: page_title
             optionName: text
             optionValue: 'orob2b.frontend.sale.quote.entity_plural_label'
-        - @setOption:
+        - '@setOption':
             id: content
             optionName: class_prefix
             optionValue: 'account'
-        - @add:
+        - '@add':
             id: quotes
             parentId: content
             blockType: datagrid
             options:
                 grid_name: frontend-quotes-grid
-        - @add:
+        - '@add':
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
+            blockType: container

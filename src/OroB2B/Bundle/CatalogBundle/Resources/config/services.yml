@@ -3,6 +3,7 @@ parameters:
     orob2b_catalog.category_tree_handler.class: OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler
     orob2b_catalog.category.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_catalog.handler.request_product.class: OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler
+    orob2b_catalog.provider.category_tree_provider.class: OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider
 
     orob2b_catalog.event_listener.form_view.class: OroB2B\Bundle\CatalogBundle\EventListener\FormViewListener
     orob2b_catalog.event_listener.datagrid.class: OroB2B\Bundle\CatalogBundle\EventListener\DatagridListener
@@ -17,23 +18,35 @@ services:
         class: %orob2b_catalog.category_tree_handler.class%
         arguments:
             - %orob2b_catalog.category.class%
-            - @doctrine
-            - @oro_security.security_facade
-            - @event_dispatcher
+            - '@doctrine'
+            - '@oro_security.security_facade'
+            - '@orob2b_catalog.provider.category_tree_provider'
+
+    orob2b_catalog.provider.category_tree_provider:
+        class: %orob2b_catalog.provider.category_tree_provider.class%
+        arguments:
+            - '@orob2b_catalog.repository.category'
+            - '@event_dispatcher'
+
+    orob2b_catalog.repository.category:
+        class: Doctrine\ORM\EntityRepository
+        factory: ['@oro_entity.doctrine_helper', getEntityRepository]
+        arguments:
+            - %orob2b_catalog.category.class%
 
     orob2b_catalog.category.manager.api:
         class: %orob2b_catalog.category.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_catalog.category.class%
-            - @doctrine.orm.entity_manager
+            - "@doctrine.orm.entity_manager"
 
     orob2b_catalog.event_listener.form_view:
         class: %orob2b_catalog.event_listener.form_view.class%
         arguments:
-            - @translator
-            - @oro_entity.doctrine_helper
-            - @request_stack
+            - "@translator"
+            - "@oro_entity.doctrine_helper"
+            - "@request_stack"
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
@@ -41,8 +54,8 @@ services:
     orob2b_catalog.event_listener.datagrid:
         class: %orob2b_catalog.event_listener.datagrid.class%
         arguments:
-            - @doctrine
-            - @orob2b_catalog.handler.request_product
+            - "@doctrine"
+            - "@orob2b_catalog.handler.request_product"
         calls:
             - [setDataClass, [%orob2b_catalog.category.class%]]
         tags:
@@ -54,7 +67,7 @@ services:
         class: %orob2b_catalog.event_listener.product_duplicate.class%
         calls:
             - [setCategoryClass, [%orob2b_catalog.category.class%]]
-            - [setDoctrineHelper, [@oro_entity.doctrine_helper]]
+            - [setDoctrineHelper, ["@oro_entity.doctrine_helper"]]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
 
@@ -62,7 +75,7 @@ services:
         class: %orob2b_catalog.event_listener.abstract_product_import.class%
         abstract: true
         arguments:
-            - @doctrine
+            - "@doctrine"
             - %orob2b_catalog.category.class%
 
     orob2b_catalog.event_listener.product_strategy:
@@ -87,4 +100,4 @@ services:
     orob2b_catalog.handler.request_product:
         class: %orob2b_catalog.handler.request_product.class%
         arguments:
-            - @request_stack
+            - "@request_stack"

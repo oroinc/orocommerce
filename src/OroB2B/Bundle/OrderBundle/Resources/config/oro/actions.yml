@@ -1,12 +1,41 @@
 operations:
-    orob2b_order_frontend_order_grid_create:
-        label: orob2b.frontend.order.create.label
-        applications: [frontend]
+    orob2b_order_capture:
+        label: orob2b.payment.capture
+        button_options:
+            icon: icon-credit-card
+        applications: [backend]
         routes:
-            - orob2b_order_frontend_index
-        acl_resource: orob2b_order_frontend_create
-        order: 10
+            - orob2b_order_view
+        acl_resource: orob2b_payment_transaction
+        order: 20
+        preactions:
+            - '@call_service_method':
+                service: orob2b_payment.provider.payment_transaction
+                method: getActiveAuthorizePaymentTransaction
+                method_parameters: [$.data, $.data.total, $.data.currency]
+                attribute: $.authorizePaymentTransaction
+        preconditions:
+            '@and':
+                - '@not_empty': [$.authorizePaymentTransaction]
+                - '@payment_method_enabled': $.authorizePaymentTransaction.paymentMethod
         actions:
-            - @redirect:
-                parameters:
-                    route: orob2b_order_frontend_create
+            - '@payment_capture':
+                attribute: $.result
+                object: $.data
+                amount: $.data.total
+                currency: $.data.currency
+                transactionOptions: []
+            - '@flash_message':
+                conditions:
+                    '@and':
+                        - '@not_empty': ['$.result[message]']
+                        - '@equal': ['$.result[successful]', true]
+                message: '$.result[message]'
+                type: 'success'
+            - '@flash_message':
+                conditions:
+                    '@and':
+                        - '@not_empty': ['$.result[message]']
+                        - '@equal': ['$.result[successful]', false]
+                message: '$.result[message]'
+                type: 'error'

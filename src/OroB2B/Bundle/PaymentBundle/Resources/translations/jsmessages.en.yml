@@ -3,3 +3,7 @@ orob2b:
         autocomplete:
             account: account default
             account_group: account group default
+        validation:
+            expiration_date: "Invalid Expiration date."
+            month: "Please, choose correct month."
+            credit_card: "Invalid card number."

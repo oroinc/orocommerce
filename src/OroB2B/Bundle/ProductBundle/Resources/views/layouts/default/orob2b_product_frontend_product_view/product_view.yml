@@ -1,15 +1,21 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_view/layout.html.twig'
-        - @setOption:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'orob2b.product.entity_plural_label'
+                - { '@value': $data.product.defaultName.string }
+        - '@setOption':
             id: page_title
             optionName: text
-            optionValue: {@value: $data.product.defaultName}
-        - @move:
+            optionValue: {'@value': $data.product.defaultName}
+        - '@move':
             id: page_title
             parentId: product_title_container
-        - @addTree:
+        - '@addTree':
             items:
                 product_view_page:
                     blockType: container
@@ -18,12 +24,12 @@ layout:
                 product_title_mobile:
                     blockType: text
                     options:
-                        text: {@value: $data.product.defaultName}
+                        text: {'@value': $data.product.defaultName}
                 product_image:
                     blockType: block
                     options:
                         vars:
-                            product: {@value: $data.product}
+                            product: {'@value': $data.product}
                 product_description_container:
                     blockType: container
                 product_title_container:
@@ -33,14 +39,19 @@ layout:
                 product_specification_container:
                     blockType: container
                 product_specification:
-                    blockType: block
+                    blockType: container
+                product_specification_sku:
+                    blockType: text
                     options:
-                        vars:
-                            product: {@value: $data.product}
+                        text: {'@value': $data.product.sku}
+                product_specification_mfg:
+                    blockType: text
+                    options:
+                        text: 1ABC13656
                 product_variants:
                     blockType: block
                     options:
-                        visible: { @value: $data.product.hasVariants }
+                        visible: { '@value': $data.product.hasVariants }
                 order_with_matrix:
                     blockType: block
                 product_description_content:
@@ -48,7 +59,7 @@ layout:
                 product_description:
                     blockType: text
                     options:
-                        text: {@value: $data.product.defaultDescription}
+                        text: {'@value': $data.product.defaultDescription}
                         escape: false
                 attachments:
                     blockType: block
@@ -63,14 +74,16 @@ layout:
                             product_title_mobile: ~
                             product_image: ~
                             product_description_container:
-                                product_title_container:
-                                    product_rating: ~
+                                product_title_container: ~
+                                    #product_rating: ~
                                 product_specification_container:
-                                    product_specification: ~
-                                    product_variants: ~
-                                    order_with_matrix: ~
+                                    product_specification:
+                                        product_specification_sku: ~
+                                        #product_specification_mfg: ~
+                                    #product_variants: ~
+                                    #order_with_matrix: ~
                                 product_description_content:
                                     product_description: ~
-                                    attachments: ~
-                                    share: ~
-                        product_tabs: ~
+                                    #attachments: ~
+                                    #share: ~
+                        #product_tabs: ~

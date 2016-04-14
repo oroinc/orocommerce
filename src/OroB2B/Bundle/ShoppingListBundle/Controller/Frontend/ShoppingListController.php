@@ -28,36 +28,41 @@ class ShoppingListController extends Controller
      *     class="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList",
      *     isOptional="true",
      *     options={"id" = "id"})
-     * @Layout()
+     * @Layout(vars={"title"})
      * @Acl(
      *      id="orob2b_shopping_list_frontend_view",
      *      type="entity",
      *      class="OroB2BShoppingListBundle:ShoppingList",
-     *      permission="VIEW",
+     *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )
      *
-     * @param ShoppingList $shoppingList
+     * @param ShoppingList|null $shoppingList
      *
      * @return array
      */
     public function viewAction(ShoppingList $shoppingList = null)
     {
         if (!$shoppingList) {
-            /** @var ShoppingListRepository $repo */
-            $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
             $user = $this->getUser();
             if ($user instanceof AccountUser) {
+                /** @var ShoppingListRepository $repo */
+                $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
                 $shoppingList = $repo->findAvailableForAccountUser($user);
             }
         }
 
+        $totalWithSubtotalsAsArray = $shoppingList
+            ? $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList)
+            : [];
+
         return [
+            'title' => $shoppingList ? $shoppingList->getLabel() : null,
             'data' => [
-                'shoppingList' => $shoppingList,
+                'entity' => $shoppingList,
                 'totals' => [
                     'identifier' => 'totals',
-                    'data' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList)
+                    'data' => $totalWithSubtotalsAsArray
                 ]
             ],
         ];
@@ -91,10 +96,21 @@ class ShoppingListController extends Controller
 
         $defaultResponse = [
             'savedId' => null,
-            'shoppingList' => $shoppingList
+            'shoppingList' => $shoppingList,
+            'createOnly' => $request->get('createOnly')
         ];
 
         return ['data' => array_merge($defaultResponse, $response)];
+    }
+
+    /**
+     * @Route("/widget", name="orob2b_shopping_list_frontend_widget")
+     * @Layout
+     * @return array
+     */
+    public function widgetAction()
+    {
+        return [];
     }
 
     /**

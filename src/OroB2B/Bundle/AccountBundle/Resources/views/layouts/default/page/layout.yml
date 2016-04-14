@@ -1,4 +1,4 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BAccountBundle:layouts:default/page/layout.html.twig'

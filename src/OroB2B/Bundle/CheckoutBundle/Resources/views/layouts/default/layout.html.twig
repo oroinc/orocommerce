@@ -4,8 +4,10 @@
     {# Simplified transitions handler specific for checkout logic #}
     {% set transition = transitionData.transition %}
 
+    {% set pageComponentModule = transition.frontendOptions.page_component_module|default('orob2bcheckout/js/app/components/transition-button-component') %}
+
     {{ UI.renderPageComponentAttributes({
-        module: 'orob2bcheckout/js/app/components/transition-button-component',
+        module: pageComponentModule,
         options: {
             'enabled': transitionData.isAllowed,
             'hasForm': transition.hasForm(),
@@ -13,6 +15,7 @@
                 'orob2b_checkout_frontend_checkout',
                 {
                     id: checkout.id,
+                    type: checkout.type,
                     transition: transition.name
                 }
             )
@@ -56,6 +59,7 @@
         'orob2b_checkout_frontend_checkout',
         {
             id: checkout.id,
+            type: checkout.type,
             transition: transitionData.transition.name
         })
     %}
@@ -70,8 +74,8 @@
 {% block checkout_transition_continue_widget %}
     {% if transitionData is defined and transitionData %}
     {{ _self.conditionMessagesStart(transitionData) }}
-    <button type="submit" class="btn {% if transitionData.isAllowed %}btn_orange{% endif %} btn_lg checkout__form__submit" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
-        {{ transitionData.transition.label|trans }}<i class="cf-right-open-mini va-m_md"></i>
+    <button type="submit" class="btn {% if transitionData.isAllowed %}btn-orange{% endif %} btn_lg checkout__form__submit" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
+        {{ transitionData.transition.label }}&nbsp;<i class="cf-right-open-mini va-m_md"></i>
     </button>
     {{ _self.conditionMessagesEnd(transitionData) }}
     {% endif %}
@@ -83,6 +87,7 @@
         'orob2b_checkout_frontend_checkout',
         {
             id: checkout.id,
+            type: checkout.type,
             transition: transitionData.transition.name
         })
     %}
@@ -94,7 +99,7 @@
                 {% if transitionData.errors|length > 0 %}
                     {{ _self.transitionConditionMessages(transitionData) }}
                 {% else %}
-                    {{ transitionData.transition.label|trans }}
+                    {{ transitionData.transition.label }}
                 {% endif %}
             </span>
           </span>

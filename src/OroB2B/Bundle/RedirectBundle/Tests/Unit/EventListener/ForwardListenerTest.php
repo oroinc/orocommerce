@@ -94,7 +94,12 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
 
         if ($requestType === HttpKernelInterface::MASTER_REQUEST) {
             $this->mockSlugRepository($slugParams, $slug);
-            $this->mockRouteCollection();
+            $this->mockRouter(
+                $slugParams['route_name'],
+                $slugParams['route_parameters'],
+                $slugParams['url'],
+                isset($expected['_controller']) ? $expected['_controller'] : null
+            );
         }
 
         $this->listener->onKernelRequest($event);
@@ -264,26 +269,31 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($em));
     }
 
-    protected function mockRouteCollection()
+    /**
+     * @param string $routeName
+     * @param array $routeParameters
+     * @param string $url
+     * @param string $controllerName|null
+     */
+    protected function mockRouter($routeName, array $routeParameters, $url, $controllerName = null)
     {
-        $route = $this->getMockBuilder('Symfony\Component\Routing\Route')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $generator = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $generator->expects($this->any())
+            ->method('generate')
+            ->with($routeName, $routeParameters)
+            ->willReturn($url);
 
-        $route->expects($this->any())
-            ->method('getDefault')
-            ->with('_controller')
-            ->will($this->returnValue('TestController'));
-
-        $routeCollection = $this->getMock('Symfony\Component\Routing\RouteCollection');
-
-        $routeCollection->expects($this->any())
-            ->method('get')
-            ->with('test_route')
-            ->will($this->returnValue($route));
+        $matcher = $this->getMock('Symfony\Component\Routing\Matcher\UrlMatcherInterface');
+        $matcher->expects($this->any())
+            ->method('match')
+            ->with($url)
+            ->willReturn($controllerName ? ['_controller' => $controllerName] : []);
 
         $this->router->expects($this->any())
-            ->method('getRouteCollection')
-            ->will($this->returnValue($routeCollection));
+            ->method('getGenerator')
+            ->willReturn($generator);
+        $this->router->expects($this->any())
+            ->method('getMatcher')
+            ->willReturn($matcher);
     }
 }

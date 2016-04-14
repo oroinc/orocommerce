@@ -17,7 +17,7 @@
 {% endmacro %}
 
 {% block menu_widget %}
-    {% set listAttributes = item.childrenAttributes %}
+    {% set listAttributes = item.childrenAttributes|merge(attr) %}
 
     {% if options.rootClass is defined %}
         {% import _self as oro_menu %}
@@ -44,7 +44,7 @@
         {% set options = currentOptions|merge({'depth': currentOptions.depth - 1}) %}
     {% endif %}
     {% for item in currentItem.children %}
-        {%- set itemAttributes = item.attributes %}
+        {%- set itemAttributes = item.attributes|merge(child_attr) %}
         {%- set childrenAttributes = item.childrenAttributes %}
         {%- set classes = itemAttributes.class is defined ? itemAttributes.class|split(' ') : [] %}
         {%- set childrenClasses = childrenAttributes.class is defined ? childrenAttributes.class|split(' ') : [] %}
@@ -87,8 +87,8 @@
 {% endblock %}
 
 {% block item_content %}
-    {%- set linkAttributes = item.linkAttributes %}
-    {%- set labelAttributes = item.labelAttributes %}
+    {%- set linkAttributes = item.linkAttributes|merge(link_attr) %}
+    {%- set labelAttributes = item.labelAttributes|merge(label_attr) %}
     {%- if item.uri is not empty and (not matcher.isCurrent(item) or options.currentAsLink) %}
         {{ block('linkElement') }}
     {%- else %}
@@ -115,7 +115,7 @@
             entityId: app.user.id
         }) }}
     {%- else %}
-        <a href="{{ item.uri }}"{{ oro_menu.attributes(linkAttributes) }}>{{ block('label') }}</a>
+        <a href="{{ app.request.getUriForPath(item.uri) }}"{{ oro_menu.attributes(linkAttributes) }}>{{ block('label') }}</a>
     {% endif %}
 
 {% endblock %}
@@ -126,5 +126,9 @@
 {% endblock %}
 
 {% block label %}
+    {% if options.allow_safe_labels %}
+        {{- item.label|raw -}}
+    {% else %}
         {{- item.label -}}
+    {% endif %}
 {% endblock %}

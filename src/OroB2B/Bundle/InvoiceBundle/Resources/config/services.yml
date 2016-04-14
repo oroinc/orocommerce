@@ -15,7 +15,7 @@ services:
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_invoice.entity.invoice.class%
-            - @doctrine.orm.entity_manager
+            - "@doctrine.orm.entity_manager"
 
     orob2b_invoice.form.type.invoice:
         class: %orob2b_invoice.form.type.invoice.class%
@@ -33,9 +33,9 @@ services:
     orob2b_invoice.form.type.invoice_line_item:
         class: %orob2b_invoice.form.type.invoice_line_item.class%
         arguments:
-            - @doctrine
-            - @orob2b_product.formatter.product_unit_label
-            - @orob2b_pricing.rounding.price_rounding_service
+            - "@doctrine"
+            - "@orob2b_product.formatter.product_unit_label"
+            - "@orob2b_pricing.rounding.price_rounding_service"
         calls:
             - [setDataClass, [%orob2b_invoice.entity.invoice_line_item.class%]]
             - [setProductUnitClass, [%orob2b_product.product_unit.class%]]
@@ -48,20 +48,20 @@ services:
     orob2b_invoice.event_listener.orm.invoice_event_listener:
         class: %orob2b_invoice.event_listener.orm.invoice_event_listener.class%
         calls:
-            - [setInvoiceNumberGenerator, [@orob2b_invoice.doctrine.orm.invoice_number_generator]]
+            - [setInvoiceNumberGenerator, ["@orob2b_invoice.doctrine.orm.invoice_number_generator"]]
         tags:
             - { name: doctrine.orm.entity_listener }
 
     orob2b_invoice.event_listener.invoice_form_listener:
         class: OroB2B\Bundle\InvoiceBundle\EventListener\InvoiceFormListener
         arguments:
-            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
+            - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item"
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_invoice_type, method: beforeFlush}
 
     orob2b_invoice.event_listener.total_calculate_listener:
         class: %orob2b_invoice.event_listener.total_calculate_listener.class%
         arguments:
-            - @form.factory
+            - '@form.factory'
         tags:
             - { name: kernel.event_listener, event: orob2b_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }

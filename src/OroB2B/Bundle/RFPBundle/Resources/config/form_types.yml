@@ -15,15 +15,16 @@ parameters:
     orob2b_rfp.form.type.frontend_request.class: OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType
     orob2b_rfp.form.type.frontend_request_product.class: OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType
     orob2b_rfp.form.type.frontend_request_product_collection.class: OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType
-
+    orob2b_rfp.form.type.frontend_request_product_item_collection.class: OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType
     orob2b_rfp.form.type.extension.request_data_storage.class: OroB2B\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension
     orob2b_rfp.form.type.extension.order_data_storage.class: OroB2B\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension
+    orob2b_rfp.form.type.extension.order_line_item_data_storage.class: OroB2B\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension
 
 services:
     orob2b_rfp.form.type.default_request_status:
         class: %orob2b_rfp.form.type.default_request_status.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
         calls:
             - [setRequestStatusClass, [%orob2b_rfp.entity.request.status.class%]]
         tags:
@@ -54,7 +55,7 @@ services:
     orob2b_rfp.form.type.user_select:
         class: %orob2b_rfp.form.type.user_select.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
         tags:
             - { name: form.type, alias: orob2b_rfp_user_select }
 
@@ -66,8 +67,8 @@ services:
     orob2b_rfp.form.type.request_status:
         class: %orob2b_rfp.form.type.request_status.class%
         arguments:
-            - @oro_config.user
-            - @oro_locale.settings
+            - "@oro_config.user"
+            - "@oro_locale.settings"
         calls:
             - [setDataClass, [%orob2b_rfp.entity.request.status.class%]]
         tags:
@@ -76,7 +77,7 @@ services:
     orob2b_rfp.form.type.request_product:
         class: %orob2b_rfp.form.type.request_product.class%
         arguments:
-            - @orob2b_product.formatter.product_unit_label
+            - "@orob2b_product.formatter.product_unit_label"
         calls:
             - [setDataClass, [%orob2b_rfp.entity.request_product.class%]]
         tags:
@@ -99,11 +100,16 @@ services:
         tags:
             - { name: form.type, alias: orob2b_rfp_request_product_item_collection }
 
+    orob2b_rfp.form.type.frontend_request_product_item_collection:
+            class: %orob2b_rfp.form.type.frontend_request_product_item_collection.class%
+            tags:
+                - { name: form.type, alias: orob2b_rfp_frontend_request_product_item_collection }
+
     orob2b_rfp.form.type.frontend_request:
         class: %orob2b_rfp.form.type.frontend_request.class%
         arguments:
-            - @oro_config.manager
-            - @doctrine
+            - "@oro_config.manager"
+            - "@doctrine"
         calls:
             - [setDataClass, [%orob2b_rfp.entity.request.class%]]
             - [setRequestStatusClass, [%orob2b_rfp.entity.request.status.class%]]
@@ -131,14 +137,25 @@ services:
         tags:
             - { name: form.type_extension, alias: orob2b_rfp_frontend_request }
 
+    orob2b_rfp.form.type.extension.order_line_item_data_storage:
+        class: %orob2b_rfp.form.type.extension.order_line_item_data_storage.class%
+        arguments:
+            - "@request_stack"
+            - "@orob2b_rfp.storage.offers_data_storage"
+            - "@orob2b_rfp.storage.offers_form_storage"
+        tags:
+            - { name: form.type_extension, alias: orob2b_order_line_item, priority: 5 }
+
     orob2b_rfp.form.type.extension.order_data_storage:
         class: %orob2b_rfp.form.type.extension.order_data_storage.class%
         arguments:
-            - @request_stack
-            - @orob2b_rfp.storage.offers_data_storage
-            - @orob2b_rfp.storage.offers_form_storage
+            - '@request_stack'
+            - '@orob2b_pricing.provider.combined_product_price'
+            - '@orob2b_pricing.model.price_list_tree_handler'
+        calls:
+            - [setExtendedType, [orob2b_order_type]]
         tags:
-            - { name: form.type_extension, alias: orob2b_order_line_item, priority: 5 }
+            - { name: form.type_extension, alias: orob2b_order_type }
 
     orob2b_rfp.form.type.request_offers:
         class: %orob2b_rfp.form.type.request_offers.class%

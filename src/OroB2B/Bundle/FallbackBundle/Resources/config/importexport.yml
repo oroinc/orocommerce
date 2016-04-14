@@ -13,7 +13,7 @@ services:
         class: %orob2b_fallback.importexport.data_converter.localized_fallback_value_aware.class%
         parent: orob2b_fallback.importexport.data_converter.property_path_title
         calls:
-            - [setRegistry, [@doctrine]]
+            - [setRegistry, ["@doctrine"]]
             - [setLocalizedFallbackValueClassName, [%orob2b_fallback.entity.localized_fallback_value.class%]]
             - [setLocaleClassName, [%orob2b_website.locale.class%]]
 
@@ -26,7 +26,7 @@ services:
     orob2b_fallback.importexport.normalizer.localized_fallback_value_collection_normalizer:
         class: %orob2b_fallback.importexport.normalizer.localized_fallback_value_collection_normalizer%
         arguments:
-            - @doctrine
+            - "@doctrine"
             - %orob2b_fallback.entity.localized_fallback_value.class%
             - %orob2b_website.locale.class%
         tags:

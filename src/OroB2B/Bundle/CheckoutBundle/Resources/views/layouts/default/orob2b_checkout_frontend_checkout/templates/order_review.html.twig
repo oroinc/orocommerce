@@ -53,14 +53,16 @@
                 </div>
             </fieldset>
 
-            {% if workflowItem.data.get('allow_source_remove') %}
+            {% if workflowItem.data.get('allow_manual_source_remove') %}
                 {% set removeElementOptions = {} %}
                 {% set removeLabel = workflowItem.data.get('source_remove_label') %}
                 {% if removeLabel %}
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}
                 <fieldset class="checkout__form__row">
-                    {{ form_row(form.remove_source, removeElementOptions) }}
+                    <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm">
+                        {{ form_row(form.remove_source, removeElementOptions) }}
+                    </div>
                 </fieldset>
             {% endif %}
         </div>
@@ -68,26 +70,3 @@
 
     {{ block_widget(block) }}
 {%- endblock %}
-
-{% block _checkout_button_continue_widget %}
-    {% if transitionData is defined and transitionData %}
-        {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
-        <div class="order-checkout-widget order-checkout-widget_block text-right">
-            {{ _layout.conditionMessagesStart(transitionData) }}
-            <button type="submit"
-                    class="btn btn_xlg {% if transitionData.isAllowed %}btn_orange{% endif %} checkout__submit-btn" {{ _layout.transitionAttrbiutes(transitionData, checkout) }}>
-                {{ transitionData.transition.label|trans }}
-            </button>
-            {{ _layout.conditionMessagesEnd(transitionData) }}
-        </div>
-    {% endif %}
-{% endblock %}
-
-{% block _checkout_button_back_widget %}
-    {% if transitionData is defined and transitionData %}
-        {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
-        <div class="checkout__form__back order-checkout-widget order-checkout-widget_block text-right">
-            {{ block_widget(block) }}
-        </div>
-    {% endif %}
-{% endblock %}

@@ -9,10 +9,13 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Routing\RouterInterface;
+
+use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
 
 use OroB2B\Bundle\MenuBundle\Entity\Manager\MenuItemManager;
 
-class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterface
+class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterface, VersionedFixtureInterface
 {
     /**
      * @var MenuFactory
@@ -25,12 +28,26 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     protected $menuItemManager;
 
     /**
+     * @var RouterInterface
+     */
+    protected $router;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVersion()
+    {
+        return '1.0';
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function setContainer(ContainerInterface $container = null)
     {
         $this->factory = $container->get('orob2b_menu.menu.factory');
         $this->menuItemManager = $container->get('orob2b_menu.entity.menu_item_manager');
+        $this->router = $container->get('router');
     }
 
     /**
@@ -51,12 +68,11 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     protected function createTopNavMenu(ObjectManager $manager)
     {
         $item = $this->factory->createItem('top-nav');
-        $item->addChild('My Account', ['uri' => '/account/dashboard']);
-        $item->addChild('My Wishlist', ['uri' => '/wishlist/account/dashboard']);
-        $item->addChild('Order History', ['uri' => '/account/order']);
-        $item->addChild('Sign Out', ['uri' => '/account/user/logout']);
         $item->addChild('1-800-555-5555');
-        $item->addChild('Live Chat');
+        $item->addChild('Live Chat', ['uri' => '/contact-us']);
+        $item->addChild('<span>Fast & Free Shipping</span> for orders over $45', ['uri' => '/about'])
+            ->setAttribute('class', 'topbar__controls')
+            ->setLinkAttribute('class', 'cart__promo__link');
 
         $menuItem = $this->menuItemManager->createFromItem($item);
         $manager->persist($menuItem);
@@ -68,9 +84,9 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     protected function createQuickAccessMenu(ObjectManager $manager)
     {
         $item = $this->factory->createItem('quick-access');
-        $item->addChild('Purchase Orders');
-        $item->addChild('Quotes', ['uri' => '/account/quote']);
-        $item->addChild('Quick Order Form', ['uri' => '/account/product/quick-add']);
+        $item->addChild('Orders');
+        $item->addChild('Quotes', ['uri' => $this->router->generate('orob2b_sale_quote_frontend_index')]);
+        $item->addChild('Quick Order Form', ['uri' => $this->router->generate('orob2b_product_frontend_quick_add')]);
 
         $menuItem = $this->menuItemManager->createFromItem($item);
         $manager->persist($menuItem);
@@ -82,9 +98,8 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     protected function createMainMenu(ObjectManager $manager)
     {
         $item = $this->factory->createItem('main-menu');
-        $item->addChild('Store', ['uri' => '/account/product/']);
+        $item->addChild('Contact Us', ['uri' => '/contact-us']);
         $item->addChild('About', ['uri' => '/about']);
-        $item->addChild('Blog', ['uri' => '/blog']);
 
         $menuItem = $this->menuItemManager->createFromItem($item);
         $manager->persist($menuItem);
@@ -113,9 +128,15 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
         $itemWhy->addChild('International Shipping', ['uri' => '/international-shipping']);
 
         $itemMyAccount = $item->addChild('My Account');
-        $itemMyAccount->addChild('Sign Out', ['uri' => '/account/user/logout']);
-        $itemMyAccount->addChild('View Cart', ['uri' => '/cart']);
-        $itemMyAccount->addChild('My Wishlist', ['uri' => '/wishlist']);
+        $itemMyAccount->addChild(
+            'Sign Out',
+            ['uri' => $this->router->generate('orob2b_account_account_user_security_logout')]
+        );
+        $itemMyAccount->addChild('View Cart', ['uri' => $this->router->generate('orob2b_shopping_list_frontend_view')]);
+        $itemMyAccount->addChild(
+            'My Wishlist',
+            ['uri' => $this->router->generate('orob2b_shopping_list_frontend_view')]
+        );
         $itemMyAccount->addChild('Track My Order', ['uri' => '/shipping/tracking']);
         $itemMyAccount->addChild('Help', ['uri' => '/help']);
 

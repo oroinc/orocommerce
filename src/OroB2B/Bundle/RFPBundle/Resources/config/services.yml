@@ -7,7 +7,6 @@ parameters:
 
     orob2b_rfp.mailer.processor.class: OroB2B\Bundle\RFPBundle\Mailer\Processor
 
-    orob2b_rfp.event_listener.request_frontend_datagrid.class: OroB2B\Bundle\RFPBundle\EventListener\RequestFrontendDatagridListener
     orob2b_rfp.storage.offers_data_storage.class: OroB2B\Bundle\RFPBundle\Storage\OffersDataStorage
     orob2b_rfp.storage.offers_form_storage.class: OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage
 
@@ -16,25 +15,24 @@ parameters:
     orob2b_rfp.factory.duplicator_factory.class: OroB2B\Bundle\RFPBundle\Factory\DuplicatorFactory
     orob2b_rfp.factory.duplicator_filter_factory.class: OroB2B\Component\Duplicator\Filter\FilterFactory
     orob2b_rfp.factory.duplicator_matcher_factory.class: OroB2B\Component\Duplicator\Matcher\MatcherFactory
+
+    # layout data providers
+    orob2b_rfp.layout.data_provider.request_form.class: OroB2B\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+
 services:
     orob2b_rfp.datagrid.action_permission_provider:
         class: %orob2b_rfp.datagrid.action_permission_provider.class%
         arguments:
-            - @oro_config.manager
+            - "@oro_config.manager"
 
     orob2b_rfp.mailer.processor:
         class: %orob2b_rfp.mailer.processor.class%
         arguments:
-            - @doctrine
-            - @oro_config.manager
-            - @oro_email.email_renderer
-            - @oro_email.email_holder_helper
-            - @oro_email.direct_mailer
-
-    orob2b_rfp.event_listener.request_frontend_datagrid:
-        class: %orob2b_rfp.event_listener.request_frontend_datagrid.class%
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-requests-grid, method: onResultAfter }
+            - "@doctrine"
+            - "@oro_config.manager"
+            - "@oro_email.email_renderer"
+            - "@oro_email.email_holder_helper"
+            - "@oro_email.direct_mailer"
 
     orob2b_rfp.processor.quick_add:
         parent: orob2b_product.component_processor.data_storage_aware.processor
@@ -59,7 +57,7 @@ services:
     orob2b_rfp.service.request_to_quote_data_storage:
         class: %orob2b_rfp.service.request_to_quote_data_storage.class%
         arguments:
-            - @orob2b_product.storage.product_data_storage
+            - "@orob2b_product.storage.product_data_storage"
 
     orob2b_rfp.storage.offers_data_storage:
         class: %orob2b_rfp.storage.offers_data_storage.class%
@@ -71,8 +69,8 @@ services:
     orob2b_rfp.factory.duplicator_factory:
         class: %orob2b_rfp.factory.duplicator_factory.class%
         calls:
-            - [setFilterFactory, [@orob2b_rfp.factory.duplicator_filter_factory]]
-            - [setMatcherFactory, [@orob2b_rfp.factory.duplicator_matcher_factory]]
+            - [setFilterFactory,  ["@orob2b_rfp.factory.duplicator_filter_factory"]]
+            - [setMatcherFactory,  ["@orob2b_rfp.factory.duplicator_matcher_factory"]]
 
     orob2b_rfp.factory.duplicator_filter_factory:
         class: %orob2b_rfp.factory.duplicator_filter_factory.class%
@@ -151,3 +149,10 @@ services:
             - DeepCopy\Matcher\PropertyTypeMatcher
         tags:
             - { name: orob2b_rfp.duplicate.matcher_type }
+
+    orob2b_rfp.layout.data_provider.request_form:
+        class: %orob2b_rfp.layout.data_provider.request_form.class%
+        arguments:
+            - '@form.factory'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_rfp_request_form }
