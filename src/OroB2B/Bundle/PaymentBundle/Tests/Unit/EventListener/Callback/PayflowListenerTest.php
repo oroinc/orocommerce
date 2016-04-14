@@ -7,6 +7,8 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use OroB2B\Bundle\PaymentBundle\EventListener\Callback\PayflowListener;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
 
 class PayflowListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -158,6 +160,88 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
                     'SECURETOKENID' => 'SECURETOKENID',
                     'key' => 'request',
                     'key2' => 'request',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param array $data
+     * @param array $paymentTransactionData
+     * @param array $expectedPaymentTransactionData
+     *
+     * @dataProvider onErrorDataProvider
+     */
+    public function testOnError(
+        array $data,
+        array $paymentTransactionData = [],
+        array $expectedPaymentTransactionData = []
+    ) {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setResponse($paymentTransactionData)
+            ->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $event = new CallbackReturnEvent($data);
+        $event->setPaymentTransaction($paymentTransaction);
+
+        if ($data['RESULT'] == ResponseStatusMap::SECURE_TOKEN_EXPIRED) {
+            $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+            $flashBag->expects($this->once())
+                ->method('set')
+                ->with('warning', 'orob2b.payment.result.token_expired');
+
+            $this->session->expects($this->once())
+                ->method('getFlashBag')
+                ->willReturn($flashBag);
+        }
+
+        $this->listener->onError($event);
+        $this->assertEquals($expectedPaymentTransactionData, $paymentTransaction->getResponse());
+
+        $this->assertEquals($data['RESULT'] === '0', $event->getPaymentTransaction()->isActive());
+    }
+
+    /**
+     * @return array
+     */
+    public function onErrorDataProvider()
+    {
+        return [
+            'token expired' => [
+                [
+                    'PNREF' => 'Transaction Reference',
+                    'RESULT' => ResponseStatusMap::SECURE_TOKEN_EXPIRED,
+                    'SECURETOKEN' => 'SECURETOKEN',
+                    'SECURETOKENID' => 'SECURETOKENID',
+                ],
+                [
+                    'SECURETOKEN' => 'SECURETOKEN',
+                    'SECURETOKENID' => 'SECURETOKENID',
+                ],
+                [
+                    'PNREF' => 'Transaction Reference',
+                    'RESULT' => ResponseStatusMap::SECURE_TOKEN_EXPIRED,
+                    'SECURETOKEN' => 'SECURETOKEN',
+                    'SECURETOKENID' => 'SECURETOKENID',
+                ],
+            ],
+            'token match ordered' => [
+                [
+                    'PNREF' => 'Transaction Reference',
+                    'RESULT' => '0',
+                    'SECURETOKEN' => 'SECURETOKEN',
+                    'SECURETOKENID' => 'SECURETOKENID',
+                ],
+                [
+                    'SECURETOKEN' => 'SECURETOKEN',
+                    'SECURETOKENID' => 'SECURETOKENID',
+                ],
+                [
+                    'PNREF' => 'Transaction Reference',
+                    'RESULT' => '0',
+                    'SECURETOKEN' => 'SECURETOKEN',
+                    'SECURETOKENID' => 'SECURETOKENID',
                 ],
             ],
         ];
