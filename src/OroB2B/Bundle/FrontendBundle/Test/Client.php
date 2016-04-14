@@ -21,6 +21,14 @@ class Client extends BaseClient
     }
 
     /**
+     * @return array
+     */
+    public static function generateNoHashNavigationHeader()
+    {
+        return [self::getHashNavigationHeader() => 0];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function request(
@@ -33,7 +41,7 @@ class Client extends BaseClient
         $changeHistory = true
     ) {
         $hashNavigationHeader = self::getHashNavigationHeader();
-        if ($this->isHashNavigationRequest($uri, $server)) {
+        if ($this->isHashNavigationRequest($uri, $parameters, $server)) {
             $server[$hashNavigationHeader] = 1;
         }
 
@@ -107,10 +115,11 @@ class Client extends BaseClient
 
     /**
      * @param $uri
+     * @param array $parameters
      * @param array $server
      * @return bool
      */
-    protected function isHashNavigationRequest($uri, array $server)
+    protected function isHashNavigationRequest($uri, array $parameters, array $server)
     {
         $isWidget = !empty($parameters['_widgetContainer']) || strpos($uri, '_widgetContainer=') !== false;
 
