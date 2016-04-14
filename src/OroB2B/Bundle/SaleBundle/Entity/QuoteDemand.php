@@ -52,6 +52,27 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
      */
     protected $demandProducts;
 
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="subtotal", type="money", nullable=true)
+     */
+    protected $subtotal;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="total", type="money", nullable=true)
+     */
+    protected $total;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     */
+    protected $currency;
+
     public function __construct()
     {
         $this->demandProducts = new ArrayCollection();
@@ -171,5 +192,77 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
     public function getSourceDocumentIdentifier()
     {
         return $this->quote->getPoNumber();
+    }
+
+    /**
+     * Set currency
+     *
+     * @param string $currency
+     *
+     * @return $this
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * Get currency
+     *
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * Set subtotal
+     *
+     * @param float $subtotal
+     *
+     * @return $this
+     */
+    public function setSubtotal($subtotal)
+    {
+        $this->subtotal = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * Get subtotal
+     *
+     * @return float
+     */
+    public function getSubtotal()
+    {
+        return $this->subtotal;
+    }
+
+    /**
+     * Set total
+     *
+     * @param float $total
+     *
+     * @return $this
+     */
+    public function setTotal($total)
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    /**
+     * Get total
+     *
+     * @return float
+     */
+    public function getTotal()
+    {
+        return $this->total;
     }
 }
