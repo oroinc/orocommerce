@@ -127,4 +127,10 @@ class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
 
         $this->type->getSQLDeclaration([], $platform);
     }
+
+    public function testRequiresSQLCommentHint()
+    {
+        $platform = $this->getMock('Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock');
+        $this->assertTrue($this->type->requiresSQLCommentHint($platform));
+    }
 }

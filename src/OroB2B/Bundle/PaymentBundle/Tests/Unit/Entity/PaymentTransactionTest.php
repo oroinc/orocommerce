@@ -26,6 +26,9 @@ class PaymentTransactionTest extends \PHPUnit_Framework_TestCase
             ['currency', 'USD'],
             ['successful', true],
             ['sourcePaymentTransaction', $this->createPaymentTransaction()],
+            ['transactionOptions', ['option']],
+            ['accessIdentifier', 'accessIdentifier', false],
+            ['accessToken', 'accessToken', false],
         ];
 
         $this->assertPropertyAccessors($this->createPaymentTransaction(), $properties);
