@@ -132,7 +132,7 @@
                 </tr>
                 </thead>
                 {% for lineItem in shoppingList.lineItems %}
-                {% set productPrice = lineItem is defined and productsPrices[lineItem.product.id] is not empty ? productsPrices[lineItem.product.id] : null %}
+                {% set productPrice = lineItem is defined and productsPrices[lineItem.product.id][lineItem.unit.code] is not empty ? productsPrices[lineItem.product.id][lineItem.unit.code] : null %}
                 {% set currency = productPrice ? productPrice.currency : defaultCurrency %}
                 <tbody class="line_item">
                     <tr {{ UI.renderPageComponentAttributes({
