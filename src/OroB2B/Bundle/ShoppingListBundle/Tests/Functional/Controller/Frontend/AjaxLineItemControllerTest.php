@@ -7,6 +7,7 @@ use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -26,25 +27,35 @@ class AjaxLineItemControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
     }
 
-    public function testAddProductFromView()
+    /**
+     * @dataProvider addProductFromViewDataProvider
+     *
+     * @param string $product
+     * @param string $unit
+     * @param int $quantity
+     * @param float $expectedSubtotal
+     * @param float $expectedTotal
+     */
+    public function testAddProductFromView($product, $unit, $quantity, $expectedSubtotal, $expectedTotal)
     {
+        $this->getContainer()->get('oro_config.global')->set('oro_locale.currency', 'EUR');
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference($product);
         /** @var ProductUnit $unit */
-        $unit = $this->getReference('product_unit.bottle');
+        $unit = $this->getReference($unit);
 
         $this->client->request(
             'POST',
             $this->getUrl('orob2b_shopping_list_frontend_add_product', ['productId' => $product->getId()]),
             [
                 'orob2b_shopping_list_frontend_line_item' => [
-                    'quantity' => 110,
+                    'quantity' => $quantity,
                     'unit' => $unit->getCode(),
                     '_token' => $this->getCsrfToken(),
                 ],
@@ -55,6 +66,42 @@ class AjaxLineItemControllerTest extends WebTestCase
 
         $this->assertArrayHasKey('successful', $result);
         $this->assertTrue($result['successful']);
+        $shoppingList = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BShoppingListBundle:ShoppingList')
+            ->find('OroB2BShoppingListBundle:ShoppingList', $result['shoppingList']['id']);
+
+        $this->assertEquals($expectedSubtotal, $shoppingList->getSubtotal());
+        $this->assertEquals($expectedTotal, $shoppingList->getTotal());
+    }
+
+    /**
+     * @return array
+     */
+    public function addProductFromViewDataProvider()
+    {
+        return [
+            [
+                'product' => LoadProductData::PRODUCT_1,
+                'unit' => 'product_unit.bottle',
+                'quantity' => 110,
+                'expectedSubtotals' => 1342,
+                'expectedTotals' => 1342,
+            ],
+            [
+                'product' => LoadProductData::PRODUCT_1,
+                'unit' => 'product_unit.bottle',
+                'quantity' => 20,
+                'expectedSubtotals' => 1586,
+                'expectedTotals' => 1586,
+            ],
+            [
+                'product' => LoadProductData::PRODUCT_2,
+                'unit' => 'product_unit.liter',
+                'quantity' => 14,
+                'expectedSubtotals' => 1817,
+                'expectedTotals' => 1817,
+            ],
+        ];
     }
 
     public function testAddProductFromViewNotValidData()
