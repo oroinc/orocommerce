@@ -97,7 +97,7 @@
     {%- if label is empty -%}
         {% set label = id|humanize %}
     {%- endif -%}
-    <label for="{{ id }}" class="checkbox_custom checkbox_custom_blue {% if form.vars.checked %}checked{% endif %}" data-checkbox>
+    <label for="{{ id }}" class="checkbox_custom checkbox_custom_blue {% if form.vars.checked %}checked{% endif %}" data-checkbox tabindex="0">
         {{- parent() -}}
         <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
         <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
