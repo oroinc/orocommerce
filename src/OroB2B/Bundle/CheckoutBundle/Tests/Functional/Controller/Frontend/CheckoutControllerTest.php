@@ -37,8 +37,8 @@ class CheckoutControllerTest extends WebTestCase
     const ANOTHER_ACCOUNT_ADDRESS = 'account.level_1.address_1';
     const DEFAULT_BILLING_ADDRESS = 'account.level_1.address_2';
 
-    const SHIPPING_ADDRESS_SIGN = 'SHIPPING ADDRESS FROM YOUR ACCOUNT';
-    const BILLING_ADDRESS_SIGN = 'BILLING ADDRESS FROM YOUR ACCOUNT';
+    const SHIPPING_ADDRESS_SIGN = 'SELECT BILLING ADDRESS';
+    const BILLING_ADDRESS_SIGN = 'SELECT BILLING ADDRESS';
     const SHIPPING_METHOD_SIGN = 'Select a Shipping Method';
     const PAYMENT_METHOD_SIGN = 'Select a Payment Method';
     const ORDER_REVIEW_SIGN = 'View Options for this Order';
