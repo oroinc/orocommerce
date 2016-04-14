@@ -28,7 +28,7 @@ operations:
         button_options:
             icon: icon-briefcase
         preconditions:
-            @has_elements: $lineItems
+            '@has_elements': $lineItems
         actions:
             - '@assign_url':
                 attribute: $.editLink
@@ -235,7 +235,7 @@ operations:
         button_options:
             icon: icon-briefcase
         preconditions:
-            @has_elements: $lineItems
+            '@has_elements': $lineItems
         actions:
             - '@call_service_method':
                 service: orob2b_shopping_list.service.product_data_storage
