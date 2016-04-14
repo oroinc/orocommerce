@@ -5,9 +5,9 @@ definitions:
         order:   50
         entity:  OroB2B\Bundle\RFPBundle\Entity\Request
         actions_configuration:
-            - @create_datetime:
+            - '@create_datetime':
                 attribute: $.date
-            - @find_entities:
+            - '@find_entities':
                 class: OroB2B\Bundle\SaleBundle\Entity\Quote
                 attribute: $.quotes
                 where:
@@ -16,11 +16,11 @@ definitions:
                         - e.validUntil < :date
                 query_parameters:
                     date: $.date
-            - @foreach:
+            - '@foreach':
                 array: $.quotes
                 value: $.quote
                 actions:
-                    - @run_action_group:
+                    - '@run_action_group':
                         action_group: orob2b_sale_expire_quote_action
                         parameters_mapping:
                             data: $.quote
@@ -31,15 +31,15 @@ definitions:
         order:   50
         entity:  OroB2B\Bundle\RFPBundle\Entity\Request
         actions_configuration:
-            - @call_service_method:
+            - '@call_service_method':
                 attribute: $.requests
                 service: orob2b_sale.service.request_helper
                 method: getRequestsWoQuote
-            - @foreach:
+            - '@foreach':
                 array: $.requests
                 value: $.request
                 actions:
-                    - @run_action_group:
+                    - '@run_action_group':
                         action_group: orob2b_sale_send_no_quote_alert
                         parameters_mapping:
                             data: $.request

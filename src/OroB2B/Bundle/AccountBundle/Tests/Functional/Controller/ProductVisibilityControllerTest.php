@@ -303,7 +303,8 @@ class ProductVisibilityControllerTest extends WebTestCase
             $this->getUrl(
                 'orob2b_product_visibility_website',
                 ['productId' => $productId, 'id' => $websiteId]
-            )
+            ),
+            ['_widgetContainer' => 'widget']
         );
 
         return [

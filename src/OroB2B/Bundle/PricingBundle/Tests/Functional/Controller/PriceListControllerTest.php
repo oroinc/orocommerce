@@ -169,7 +169,8 @@ class PriceListControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_pricing_price_list_info', ['id' => $id])
+            $this->getUrl('orob2b_pricing_price_list_info', ['id' => $id]),
+            ['_widgetContainer' => 'widget']
         );
 
         $result = $this->client->getResponse();
