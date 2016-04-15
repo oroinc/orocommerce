@@ -158,10 +158,10 @@ class OrderController extends AbstractOrderController
      */
     protected function update(Order $order, Request $request)
     {
-        $order->setAccountUser($this->getOrderHandler()->getAccountUser());
-        $order->setAccount($this->getOrderHandler()->getAccount());
-        $order->setPaymentTerm($this->getOrderHandler()->getPaymentTerm());
-        $order->setOwner($this->getOrderHandler()->getOwner());
+        $order->setAccountUser($this->getFrontendOrderDataHandler()->getAccountUser());
+        $order->setAccount($this->getFrontendOrderDataHandler()->getAccount());
+        $order->setPaymentTerm($this->getFrontendOrderDataHandler()->getPaymentTerm());
+        $order->setOwner($this->getFrontendOrderDataHandler()->getOwner());
 
         $form = $this->createForm(FrontendOrderType::NAME, $order);
 
@@ -221,7 +221,7 @@ class OrderController extends AbstractOrderController
     /**
      * @return FrontendOrderDataHandler
      */
-    protected function getOrderHandler()
+    protected function getFrontendOrderDataHandler()
     {
         return $this->get('orob2b_order.model.frontend_order_data_handler');
     }

@@ -138,8 +138,8 @@ class OrderController extends AbstractOrderController
     protected function update(Order $order, Request $request)
     {
         if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
-            $order->setAccount($this->getOrderHandler()->getAccount());
-            $order->setAccountUser($this->getOrderHandler()->getAccountUser());
+            $order->setAccount($this->getOrderRequestHandler()->getAccount());
+            $order->setAccountUser($this->getOrderRequestHandler()->getAccountUser());
         }
 
         $form = $this->createForm(OrderType::NAME, $order);
@@ -191,7 +191,7 @@ class OrderController extends AbstractOrderController
     /**
      * @return OrderRequestHandler
      */
-    protected function getOrderHandler()
+    protected function getOrderRequestHandler()
     {
         return $this->get('orob2b_order.model.order_request_handler');
     }
