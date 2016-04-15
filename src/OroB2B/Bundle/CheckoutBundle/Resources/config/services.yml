@@ -121,9 +121,9 @@ services:
         class: OroB2B\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener
         lazy: true
         arguments:
-            - @oro_workflow.manager
-            - @doctrine
+            - '@oro_workflow.manager'
+            - '@doctrine'
         calls:
-            - [setCheckoutClassName, [%orob2b_checkout.entity.checkout.class%]]
+            - [setCheckoutClassName, ['%orob2b_checkout.entity.checkout.class%']]
         tags:
             - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity}
