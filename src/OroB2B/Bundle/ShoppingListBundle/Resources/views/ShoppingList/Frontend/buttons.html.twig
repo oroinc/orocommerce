@@ -138,6 +138,8 @@
     {{ UI.pinnedDropdownButton({
         'html': buttonsHtml,
         'options': {
+            'widgetModule': 'orob2bshoppinglist/js/content-processor/add-to-shopping-list-dropdown-button',
+            'widgetName': 'addToShoppingListDropdownButtonProcessor',
             'addButtonEvent': 'shopping-list:created',
             'buttonTemplate': buttons.addToShoppingListButtonTemplate(options.current),
             'truncateLength': 15

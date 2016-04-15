@@ -123,7 +123,6 @@ define(function(require) {
                         );
                     }
                     if (!self.buttonExists(urlOptions.shoppingListId)) {
-                        self.transformCreateNewButton();
                         mediator.trigger('shopping-list:created', response.shoppingList);
                     } else {
                         mediator.trigger('shopping-list:updated', response.shoppingList);
@@ -141,15 +140,6 @@ define(function(require) {
          */
         buttonExists: function(id) {
             return Boolean(this.options._sourceElement.find('[data-id="' + id + '"]').length);
-        },
-
-        transformCreateNewButton: function() {
-            var $button = $(this.options.addToShoppingListButtonSelector)
-                    .filter('[data-id=""]').not('[data-intention="' + this.options.intention.new + '"]');
-            if ($button.length) {
-                $button.data('intention', this.options.intention.new);
-                $button.html(_.__(this.options.createNewLabel));
-            }
         },
 
         dispose: function() {
