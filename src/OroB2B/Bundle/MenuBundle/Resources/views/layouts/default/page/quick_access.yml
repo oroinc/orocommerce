@@ -1,8 +1,8 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BMenuBundle:layouts:default/page/quick_access.html.twig'
-        - @addTree:
+        - '@addTree':
             items:
                 quick_access_container:
                     blockType: container
@@ -16,4 +16,4 @@ layout:
                     quick_access_container:
                         quick_access_menu: ~
     conditions:
-        @neq: [ $context.logged_user, null ]
+        '@neq': [ $context.logged_user, null ]

@@ -210,7 +210,7 @@ class FrontendProductDatagridListener
         }
 
         /** @var ProductRepository $repository */
-        $repository = $this->registry->getEntityManagerForClass('OroB2BProductBundle:Product')
+        $repository = $this->registry->getManagerForClass('OroB2BProductBundle:Product')
             ->getRepository('OroB2BProductBundle:Product');
 
         /** @var Product[] $products */

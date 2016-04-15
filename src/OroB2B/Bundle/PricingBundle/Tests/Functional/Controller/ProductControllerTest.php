@@ -24,7 +24,11 @@ class ProductControllerTest extends WebTestCase
 
     public function testSidebar()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_pricing_price_product_sidebar'));
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_pricing_price_product_sidebar'),
+            ['_widgetContainer' => 'widget']
+        );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -66,7 +70,8 @@ class ProductControllerTest extends WebTestCase
                 [
                     PriceListRequestHandler::PRICE_LIST_KEY => $priceList->getId(),
                 ]
-            )
+            ),
+            ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -94,7 +99,8 @@ class ProductControllerTest extends WebTestCase
                     PriceListRequestHandler::PRICE_LIST_KEY => $priceList->getId(),
                     PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY => false,
                 ]
-            )
+            ),
+            ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -129,7 +135,8 @@ class ProductControllerTest extends WebTestCase
                     PriceListRequestHandler::PRICE_LIST_KEY => $priceList->getId(),
                     PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY => $priceList->getCurrencies(),
                 ]
-            )
+            ),
+            ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -164,7 +171,8 @@ class ProductControllerTest extends WebTestCase
                     PriceListRequestHandler::PRICE_LIST_KEY => $priceList->getId(),
                     PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY => $selectedCurrencies,
                 ]
-            )
+            ),
+            ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -199,7 +207,8 @@ class ProductControllerTest extends WebTestCase
                 [
                     PriceListRequestHandler::TIER_PRICES_KEY => true,
                 ]
-            )
+            ),
+            ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -219,7 +228,8 @@ class ProductControllerTest extends WebTestCase
                 [
                     PriceListRequestHandler::TIER_PRICES_KEY => false,
                 ]
-            )
+            ),
+            ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);

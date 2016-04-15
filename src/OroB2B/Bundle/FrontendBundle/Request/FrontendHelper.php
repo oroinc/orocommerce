@@ -36,7 +36,8 @@ class FrontendHelper
     {
         $request = $request ?: $this->requestStack->getCurrentRequest();
         if (!$request) {
-            throw new BadRequestHttpException('Request is not defined');
+            // no request means CLI i.e. not frontend
+            return false;
         }
 
         // the least time consuming method to check whether URL is frontend

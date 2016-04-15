@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
@@ -26,7 +26,13 @@ class AccountUserAddressController extends Controller
      *     name="orob2b_account_frontend_account_user_address_create",
      *     requirements={"entityId":"\d+"}
      * )
-     * @AclAncestor("orob2b_account_frontend_account_user_create")
+     * @Acl(
+     *      id="orob2b_account_frontend_account_user_address_create",
+     *      type="entity",
+     *      class="OroB2BAccountBundle:AccountUserAddress",
+     *      permission="CREATE",
+     *      group_name="commerce"
+     * )
      * @Layout
      *
      * @ParamConverter("accountUser", options={"id" = "entityId"})
@@ -46,7 +52,13 @@ class AccountUserAddressController extends Controller
      *     name="orob2b_account_frontend_account_user_address_update",
      *     requirements={"entityId":"\d+", "id":"\d+"}
      * )
-     * @AclAncestor("orob2b_account_frontend_account_user_update")
+     * @Acl(
+     *      id="orob2b_account_frontend_account_user_address_update",
+     *      type="entity",
+     *      class="OroB2BAccountBundle:AccountUserAddress",
+     *      permission="EDIT",
+     *      group_name="commerce"
+     * )
      * @Layout
      *
      * @ParamConverter("accountUser", options={"id" = "entityId"})

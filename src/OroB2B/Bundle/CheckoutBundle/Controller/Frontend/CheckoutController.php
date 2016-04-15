@@ -38,7 +38,7 @@ class CheckoutController extends Controller
      *     name="orob2b_checkout_frontend_checkout",
      *     requirements={"id"="\d+", "type"="\w+"}
      * )
-     * @Layout(vars={"workflowStepName"})
+     * @Layout(vars={"workflowStepName", "workflowName"})
      * @Acl(
      *      id="orob2b_checkout_frontend_checkout",
      *      type="entity",
@@ -81,6 +81,7 @@ class CheckoutController extends Controller
 
         return [
             'workflowStepName' => $currentStep->getName(),
+            'workflowName' => $workflowItem->getWorkflowName(),
             'data' =>
                 [
                     'checkout' => $checkout,
