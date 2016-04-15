@@ -10,7 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Migrations\Data\ORM\LoadAccountUserRoles;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
@@ -43,7 +43,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
             [
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData',
-                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData'
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadUserData'
             ]
         );
     }
@@ -112,7 +112,6 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->assertContains($this->getReference(LoadUserData::USER1)->getFullName(), $result->getContent());
         $this->assertContains($this->getReference(LoadUserData::USER2)->getFullName(), $result->getContent());
     }
-
 
     /**
      * @depends testCreate
@@ -239,7 +238,11 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $notExpectedRoles[] = $foreignRole;
         $manager->flush();
 
-        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_roles', []));
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_account_user_roles'),
+            ['_widgetContainer' => 'widget']
+        );
         $response = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
@@ -286,9 +289,10 @@ class AccountUserControllerTest extends AbstractUserControllerTest
                 'orob2b_account_account_user_roles',
                 [
                     'accountUserId' => $accountUser->getId(),
-                    'accountId'     => $userAccount->getId()
+                    'accountId'     => $userAccount->getId(),
                 ]
-            )
+            ),
+            ['_widgetContainer' => 'widget']
         );
 
         $response = $this->client->getResponse();
@@ -306,9 +310,10 @@ class AccountUserControllerTest extends AbstractUserControllerTest
             $this->getUrl(
                 'orob2b_account_account_user_roles',
                 [
-                    'accountUserId' => $accountUser->getId()
+                    'accountUserId' => $accountUser->getId(),
                 ]
-            )
+            ),
+            ['_widgetContainer' => 'widget']
         );
 
         $response = $this->client->getResponse();

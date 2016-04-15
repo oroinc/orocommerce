@@ -1,8 +1,8 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BFrontendBundle:layouts:default/page/footer.html.twig'
-        - @addTree:
+        - '@addTree':
             items:
                 footer:
                     blockType: container
@@ -15,9 +15,9 @@ layout:
                 wrapper:
                     footer:
                         footer_copyright: ~
-        - @move:
+        - '@move':
             id: footer
             parentId: wrapper
             siblingId: main
     conditions:
-        @neq: [ $context.logged_user, null ]
+        '@neq': [ $context.logged_user, null ]

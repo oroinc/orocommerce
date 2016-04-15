@@ -51,8 +51,8 @@ abstract class AbstractCheckoutEntityListener
         }
 
         $className = get_class($checkout);
-        $manager = $this->doctrine->getManagerForClass($className);
-        $repository = $manager->getRepository($className);
+        $repository = $this->doctrine->getManagerForClass($className)
+            ->getRepository($className);
 
         if ($event->getCheckoutId()) {
             /** @var CheckoutInterface $checkout */

@@ -54,7 +54,6 @@ class DoctrinePostFlushListenerTest extends \PHPUnit_Framework_TestCase
         $em2->expects($this->once())
             ->method('flush');
 
-        //method 'getManagerForClass' should be called only once for every entity class
         $registry->expects($this->at(0))
             ->method('getManagerForClass')
             ->with(ClassUtils::getClass($testEntity1))

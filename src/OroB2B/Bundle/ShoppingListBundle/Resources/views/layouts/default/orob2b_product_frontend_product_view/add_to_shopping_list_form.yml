@@ -1,30 +1,30 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_product_frontend_product_view/layout.html.twig'
-        - @addTree:
+        - '@addTree':
             items:
                 add_to_shopping_list_form:
                     blockType: container
                 add_to_shopping_list_form_start:
                     blockType: form_start
                     options:
-                        form: { @value: $data.orob2b_shopping_list_frontend_line_item_form }
+                        form: { '@value': $data.orob2b_shopping_list_frontend_line_item_form }
                 add_to_shopping_list_form_fields:
                     blockType: form
                     options:
                         preferred_fields: [quantity]
-                        form: { @value: $data.orob2b_shopping_list_frontend_line_item_form }
+                        form: { '@value': $data.orob2b_shopping_list_frontend_line_item_form }
                 add_to_shopping_list_form_end:
                     blockType: form_end
                     options:
-                        form: { @value: $data.orob2b_shopping_list_frontend_line_item_form }
+                        form: { '@value': $data.orob2b_shopping_list_frontend_line_item_form }
                 add_to_shopping_list_form_button:
                     blockType: block
                     options:
                         vars:
-                            product: { @value: $data.product }
-                            shoppingLists: { @value: $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
+                            product: { '@value': $data.product }
+                            shoppingLists: { '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
             tree:
                 product_specification_container:
                     add_to_shopping_list_form:
@@ -33,4 +33,4 @@ layout:
                         add_to_shopping_list_form_button: ~
                         add_to_shopping_list_form_end: ~
     conditions:
-        @eq: [{ @acl: orob2b_shopping_list_line_item_frontend_add }, true]
+        '@eq': [{ '@acl': orob2b_shopping_list_line_item_frontend_add }, true]

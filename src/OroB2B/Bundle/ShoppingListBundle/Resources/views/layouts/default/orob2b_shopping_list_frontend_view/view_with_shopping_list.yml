@@ -1,8 +1,8 @@
 layout:
     actions:
-        - @appendOption:
+        - '@appendOption':
             id: title
             optionName: value
-            optionValue: { @value: $context.title }
+            optionValue: { '@value': $context.title }
     conditions:
-        @not_empty: [ $context.title ]
+        '@not_empty': [ $context.title ]

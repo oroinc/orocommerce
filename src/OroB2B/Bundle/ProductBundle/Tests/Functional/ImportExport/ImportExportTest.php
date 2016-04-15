@@ -12,6 +12,7 @@ use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\FrontendBundle\Test\Client;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -26,6 +27,11 @@ class ImportExportTest extends WebTestCase
      * @var string
      */
     protected $file;
+
+    /**
+     * @var Client
+     */
+    protected $client;
 
     protected function setUp()
     {
@@ -151,7 +157,10 @@ class ImportExportTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $data['url']
+            $data['url'],
+            [],
+            [],
+            $this->client->generateNoHashNavigationHeader()
         );
 
         $result = $this->client->getResponse();
@@ -300,7 +309,7 @@ class ImportExportTest extends WebTestCase
         $configuration = [
             'import_validation' => [
                 'processorAlias' => 'orob2b_product_product.add_or_replace',
-                'entityName' => $this->getContainer()->getParameter('orob2b_product.product.class'),
+                'entityName' => $this->getContainer()->getParameter('orob2b_product.entity.product.class'),
                 'filePath' => $filePath,
             ],
         ];
@@ -359,7 +368,7 @@ class ImportExportTest extends WebTestCase
 
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import.csv';
 
-        $productClass = $this->getContainer()->getParameter('orob2b_product.product.class');
+        $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
         $configuration = [
             'import' => [
                 'processorAlias' => 'orob2b_product_product.add_or_replace',
