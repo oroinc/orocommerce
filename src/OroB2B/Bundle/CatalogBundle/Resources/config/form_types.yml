@@ -23,6 +23,6 @@ services:
     orob2b_catalog.form.extension.product_type:
         class: %orob2b_catalog.form.extension.product_type.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
         tags:
             - { name: form.type_extension, alias: orob2b_product }

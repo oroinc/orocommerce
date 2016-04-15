@@ -11,7 +11,7 @@ services:
     orob2b_shopping_list.event_listener.line_item_listener:
         class: %orob2b_shopping_list.event_listener.line_item_listener.class%
         arguments:
-            - @orob2b_shopping_list.shopping_list.manager.link
+            - '@orob2b_shopping_list.shopping_list.manager.link'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.event_listener, event: postFlush }

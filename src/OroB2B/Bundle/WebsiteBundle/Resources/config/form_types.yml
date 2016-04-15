@@ -6,7 +6,7 @@ services:
     orob2b_website.form.type.websiite_entity_visibility_type:
         class: %orob2b_website.form.type.websiite_entity_visibility_type.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
         tags:
             - { name: form.type, alias: orob2b_website_scoped_data_type }
         calls:

@@ -45,7 +45,7 @@ abstract class AbstractCheckoutEventListener
         }
 
         $className = get_class($checkout);
-        $repository = $this->doctrine->getEntityManagerForClass($className)
+        $repository = $this->doctrine->getManagerForClass($className)
             ->getRepository($className);
 
         if ($this->isSupportedCheckout($event, $checkout)) {

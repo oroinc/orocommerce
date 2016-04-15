@@ -23,16 +23,16 @@ services:
     orob2b_rfp.datagrid.action_permission_provider:
         class: %orob2b_rfp.datagrid.action_permission_provider.class%
         arguments:
-            - @oro_config.manager
+            - "@oro_config.manager"
 
     orob2b_rfp.mailer.processor:
         class: %orob2b_rfp.mailer.processor.class%
         arguments:
-            - @doctrine
-            - @oro_config.manager
-            - @oro_email.email_renderer
-            - @oro_email.email_holder_helper
-            - @oro_email.direct_mailer
+            - "@doctrine"
+            - "@oro_config.manager"
+            - "@oro_email.email_renderer"
+            - "@oro_email.email_holder_helper"
+            - "@oro_email.direct_mailer"
 
     orob2b_rfp.processor.quick_add:
         parent: orob2b_product.component_processor.data_storage_aware.processor
@@ -57,7 +57,7 @@ services:
     orob2b_rfp.service.request_to_quote_data_storage:
         class: %orob2b_rfp.service.request_to_quote_data_storage.class%
         arguments:
-            - @orob2b_product.storage.product_data_storage
+            - "@orob2b_product.storage.product_data_storage"
 
     orob2b_rfp.storage.offers_data_storage:
         class: %orob2b_rfp.storage.offers_data_storage.class%
@@ -69,8 +69,8 @@ services:
     orob2b_rfp.factory.duplicator_factory:
         class: %orob2b_rfp.factory.duplicator_factory.class%
         calls:
-            - [setFilterFactory, [@orob2b_rfp.factory.duplicator_filter_factory]]
-            - [setMatcherFactory, [@orob2b_rfp.factory.duplicator_matcher_factory]]
+            - [setFilterFactory,  ["@orob2b_rfp.factory.duplicator_filter_factory"]]
+            - [setMatcherFactory,  ["@orob2b_rfp.factory.duplicator_matcher_factory"]]
 
     orob2b_rfp.factory.duplicator_filter_factory:
         class: %orob2b_rfp.factory.duplicator_filter_factory.class%
@@ -153,6 +153,6 @@ services:
     orob2b_rfp.layout.data_provider.request_form:
         class: %orob2b_rfp.layout.data_provider.request_form.class%
         arguments:
-            - @form.factory
+            - '@form.factory'
         tags:
             - { name: layout.data_provider, alias: orob2b_rfp_request_form }

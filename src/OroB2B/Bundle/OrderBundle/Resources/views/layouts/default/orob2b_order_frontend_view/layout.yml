@@ -1,8 +1,8 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BOrderBundle:layouts:default/orob2b_order_frontend_view/layout.html.twig'
-        - @appendOption:
+        - '@appendOption':
             id: title
             optionName: value
             optionValue:
@@ -11,27 +11,27 @@ layout:
                 -
                     label: 'orob2b.order.navigation.view'
                     parameters:
-                        '%identifier%': { @value: $data.order.identifier }
-        - @setOption:
+                        '%identifier%': { '@value': $data.order.identifier }
+        - '@setOption':
             id: page_title
             optionName: text
             optionValue:
                 label: 'orob2b.order.navigation.view'
                 parameters:
-                    '%identifier%': { @value: $data.order.identifier }
-        - @setOption:
+                    '%identifier%': { '@value': $data.order.identifier }
+        - '@setOption':
             id: content
             optionName: class_prefix
             optionValue: 'account'
-        - @setOption:
+        - '@setOption':
             id: datagrid_toolbar
             optionName: attr.class
             optionValue: 'oro-oq__filter-controls oro-oq__filter-controls_on-details'
-        - @add:
+        - '@add':
             id: account_sidebar
             parentId: sidebar_left
             blockType: container
-        - @addTree:
+        - '@addTree':
             items:
                 order_view_page:
                     blockType: container
@@ -70,11 +70,11 @@ layout:
                 order_information_head:
                     blockType: text
                     options:
-                        text: {@value: 'orob2b.order.frontend.order_information.title'}
+                        text: {'@value': 'orob2b.order.frontend.order_information.title'}
                 order_line_items_grid_title:
                     blockType: text
                     options:
-                        text: {@value: 'orob2b.order.frontend.ordered_items.title'}
+                        text: {'@value': 'orob2b.order.frontend.ordered_items.title'}
                 order_list_link:
                     blockType: link
                     options:
@@ -83,33 +83,33 @@ layout:
                 order_identifier:
                     blockType: text
                     options:
-                        text: {@value: $data.order.identifier}
+                        text: {'@value': $data.order.identifier}
                         label: 'orob2b.order.identifier.label'
                         block_prefixes: ['order_body_column_element']
                 order_date:
                     blockType: date
                     options:
-                        date: {@value: $data.order.createdAt}
+                        date: {'@value': $data.order.createdAt}
                         dateType: 3
                         label: 'orob2b.order.order_date.label'
                         block_prefixes: ['order_body_column_element']
                 order_subtotal:
                     blockType: currency
                     options:
-                        value: {@value: $data.order.subtotal}
-                        currency: {@value: $data.order.currency}
+                        value: {'@value': $data.order.subtotal}
+                        currency: {'@value': $data.order.currency}
                         label: 'orob2b.order.subtotal.label'
                         block_prefixes: ['order_body_column_element']
                 order_billing_address:
                     blockType: address
                     options:
-                        address: {@value: $data.order.billingAddress}
+                        address: {'@value': $data.order.billingAddress}
                         label: 'orob2b.order.billing_address.label'
                         block_prefixes: ['order_body_column_element']
                 order_shipping_address:
                     blockType: address
                     options:
-                        address: {@value: $data.order.shippingAddress}
+                        address: {'@value': $data.order.shippingAddress}
                         label: 'orob2b.order.shipping_address.label'
                         block_prefixes: ['order_body_column_element']
                 order_line_items_grid:
@@ -118,53 +118,53 @@ layout:
                     blockType: datagrid
                     options:
                         grid_name: order-line-items-grid-frontend
-                        grid_parameters: { order_id: {@value: $data.order.id} }
+                        grid_parameters: { order_id: {'@value': $data.order.id} }
                 order_po_number:
                     blockType: text
                     options:
                         label: 'orob2b.order.po_number.label'
-                        text: {@value: $data.order.poNumber}
+                        text: {'@value': $data.order.poNumber}
                         block_prefixes: ['order_body_column_element']
-                        visible: { @not_empty: $data.order.poNumber }
+                        visible: { '@not_empty': $data.order.poNumber }
                 order_shipping_method:
                     blockType: text
                     options:
-                        text: {@value: 'orob2b.checkout.preferred_shipping_method.label' }
+                        text: {'@value': 'orob2b.checkout.preferred_shipping_method.label' }
                         label: 'orob2b.order.shipping_method.label'
                         block_prefixes: ['order_body_column_element']
                 order_payment_status:
                     blockType: text
                     options:
-                        text: {@value: $data.orob2b_order_frontend_payment_status_provider }
+                        text: {'@value': $data.orob2b_order_frontend_payment_status_provider }
                         label: 'orob2b.payment.status.label'
                         block_prefixes: ['order_body_column_element']
                 order_customer_notes:
                     blockType: text
                     options:
-                        text: {@value: $data.order.customerNotes}
+                        text: {'@value': $data.order.customerNotes}
                         label: 'orob2b.order.customer_notes.frontend.label'
                         block_prefixes: ['order_body_column_element']
-                        visible: { @not_empty: $data.order.customerNotes }
+                        visible: { '@not_empty': $data.order.customerNotes }
                 order_ship_until:
                     blockType: date
                     options:
-                        date: {@value: $data.order.shipUntil}
+                        date: {'@value': $data.order.shipUntil}
                         dateType: 3
                         label: 'orob2b.order.ship_until.label'
                         block_prefixes: ['order_body_column_element']
-                        visible: { @not_empty: $data.order.shipUntil }
+                        visible: { '@not_empty': $data.order.shipUntil }
                 order_po_number:
                     blockType: text
                     options:
-                        text: {@value: $data.order.poNumber }
+                        text: {'@value': $data.order.poNumber }
                         label: 'orob2b.order.po_number.label'
                         block_prefixes: ['order_body_column_element']
-                        visible: { @not_empty: $data.order.poNumber }
+                        visible: { '@not_empty': $data.order.poNumber }
                 order_total:
                     blockType: order_total
                     options:
-                        total: {@value: $data.totals.total}
-                        subtotals: {@value: $data.totals.subtotals}
+                        total: {'@value': $data.totals.total}
+                        subtotals: {'@value': $data.totals.subtotals}
             tree:
                 content:
                     order_view_page:

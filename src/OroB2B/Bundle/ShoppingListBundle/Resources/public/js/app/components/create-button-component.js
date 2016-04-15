@@ -6,6 +6,7 @@ define(function(require) {
     var CreateButtonComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
     var ShoppingListWidget = require('orob2bshoppinglist/js/app/widget/shopping-list-widget');
+    var widgetManager = require('oroui/js/widget-manager');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var _ = require('underscore');
@@ -14,7 +15,9 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        options: {},
+        options: {
+            widgetAlias: 'shopping_lists_frontend_widget',
+        },
 
         /**
          * @property {jQuery.Element}
@@ -28,6 +31,17 @@ define(function(require) {
             _.extend(this.options, options || {});
 
             this.options._sourceElement.on('click', 'a', _.bind(this.onClick, this));
+
+            mediator
+                .on('shopping-list:created', _.bind(this.renderWidget, this))
+                .on('shopping-list:updated', _.bind(this.renderWidget, this))
+                .on('frontend:item:delete', _.bind(this.renderWidget, this));
+        },
+
+        renderWidget: function() {
+            widgetManager.getWidgetInstanceByAlias(this.options.widgetAlias, function(widget) {
+                widget.render();
+            });
         },
 
         onClick: function() {
@@ -45,6 +59,11 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
+
+            mediator
+                .off('shopping-list:created')
+                .off('shopping-list:updated')
+                .off('frontend:item:delete');
 
             this.options._sourceElement.off();
 

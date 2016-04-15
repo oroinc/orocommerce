@@ -6,6 +6,6 @@ services:
     oro_currency.twig.currency:
         class: %oro_currency.twig.currency.class%
         arguments:
-            - @oro_locale.formatter.number
+            - '@oro_locale.formatter.number'
         tags:
             - { name: twig.extension }

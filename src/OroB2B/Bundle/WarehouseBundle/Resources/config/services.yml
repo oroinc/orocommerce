@@ -10,4 +10,4 @@ services:
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_warehouse.entity.warehouse.class%
-            - @doctrine.orm.entity_manager
+            - "@doctrine.orm.entity_manager"

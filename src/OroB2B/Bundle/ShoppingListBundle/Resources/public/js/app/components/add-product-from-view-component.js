@@ -125,6 +125,8 @@ define(function(require) {
                     if (!self.buttonExists(urlOptions.shoppingListId)) {
                         self.transformCreateNewButton();
                         mediator.trigger('shopping-list:created', response.shoppingList);
+                    } else {
+                        mediator.trigger('shopping-list:updated', response.shoppingList);
                     }
                 },
                 error: function(xhr) {
