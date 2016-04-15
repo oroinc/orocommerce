@@ -12,9 +12,7 @@ class OroB2BFallbackExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroB2BFallbackExtension());
 
         $expectedParameters = [
-            'orob2b_fallback.form.type.fallback_property.class',
-            'orob2b_fallback.form.type.fallback_value.class',
-
+            'orob2b_fallback.entity.localized_fallback_value.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
 
