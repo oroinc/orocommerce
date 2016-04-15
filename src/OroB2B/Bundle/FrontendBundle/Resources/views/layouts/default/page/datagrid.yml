@@ -1,48 +1,48 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BFrontendBundle:layouts:default/page/datagrid.html.twig'
-        - @setOption:
+        - '@setOption':
             id: datagrid_toolbar_sorting
             optionName: visible
             optionValue: false
-        - @setOption:
+        - '@setOption':
             id: datagrid_toolbar_mass_actions
             optionName: visible
             optionValue: false
-        - @setOption:
+        - '@setOption':
             id: datagrid_toolbar_extra_actions
             optionName: visible
             optionValue: false
-        - @move:
+        - '@move':
             id: datagrid_toolbar_mass_actions
             parentId: datagrid_toolbar
             siblingId: datagrid_toolbar_sorting
-        - @move:
+        - '@move':
             id: datagrid_toolbar_extra_actions
             parentId: datagrid_toolbar
             siblingId: datagrid_toolbar_mass_actions
-        - @move:
+        - '@move':
             id: datagrid_toolbar_pagination
             parentId: datagrid_toolbar
             siblingId: datagrid_toolbar_extra_actions
-        - @move:
+        - '@move':
             id: datagrid_toolbar_page_size
             parentId: datagrid_toolbar
             siblingId: datagrid_toolbar_pagination
-        - @move:
+        - '@move':
             id: datagrid_toolbar_actions
             parentId: datagrid_toolbar
             siblingId: datagrid_toolbar_page_size
-        - @remove:
+        - '@remove':
             id: datagrid_toolbar_actions_container
-        - @remove:
+        - '@remove':
             id: datagrid_toolbar_tools_container
-        - @setOption:
+        - '@setOption':
             id: datagrid_toolbar
             optionName: attr.class
             optionValue: 'oro-oq__filter-controls oro-oq__filter-controls oro-oq__filter-controls_has-pagination'
-        - @add:
+        - '@add':
             id: datagrid_toolbar_button_container
             parentId: datagrid_toolbar
             blockType: container

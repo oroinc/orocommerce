@@ -217,7 +217,8 @@ class ProductControllerTest extends WebTestCase
         $button = $crawler->filterXPath('//a[@title="Duplicate"]');
         $this->assertEquals(1, $button->count());
 
-        $this->client->request('GET', $button->eq(0)->link()->getUri(), [], [], $this->generateWsseAuthHeader());
+        $headers = ['HTTP_X-Requested-With' => 'XMLHttpRequest'];
+        $this->client->request('GET', $button->eq(0)->link()->getUri(), [], [], $headers);
         $response = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($response, 200);
         $data = json_decode($response->getContent(), true);

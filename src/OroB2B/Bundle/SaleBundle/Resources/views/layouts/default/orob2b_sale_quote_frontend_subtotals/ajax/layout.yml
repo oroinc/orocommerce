@@ -1,12 +1,12 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BSaleBundle:layouts:default/orob2b_sale_quote_frontend_choice/layout.html.twig'
 
-        - @add:
+        - '@add':
             id: quote_choice_subtotals
             parentId: root
             blockType: order_total
             options:
-                total: {@value: $data.totals.total}
-                subtotals: {@value: $data.totals.subtotals}
+                total: {'@value': $data.totals.total}
+                subtotals: {'@value': $data.totals.subtotals}

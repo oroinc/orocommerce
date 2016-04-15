@@ -1,12 +1,12 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_account_user_security_login/layout.html.twig'
-        - @appendOption:
+        - '@appendOption':
             id: title
             optionName: value
             optionValue: 'orob2b.account.menu.account_user_login.label'
-        - @addTree:
+        - '@addTree':
             items:
                 login_page:
                     blockType: container
@@ -21,14 +21,14 @@ layout:
                 login_form_error:
                     blockType: text
                     options:
-                        visible: { @not_empty: $data.orob2b_account_sign_in.error }
-                        text: { @value: $data.orob2b_account_sign_in.error }
+                        visible: { '@not_empty': $data.orob2b_account_sign_in.error }
+                        text: { '@value': $data.orob2b_account_sign_in.error }
                 login_form_username:
                     blockType: input
                     options:
                         id: userNameSignIn
                         name: _username
-                        value: { @value: $data.orob2b_account_sign_in.last_username }
+                        value: { '@value': $data.orob2b_account_sign_in.last_username }
                         placeholder: orob2b.account.accountuser.email.label
                         label: orob2b.account.accountuser.email.label
                 login_form_password:
@@ -57,7 +57,7 @@ layout:
                     options:
                         type: hidden
                         name: _csrf_token
-                        value: { @value: $data.orob2b_account_sign_in.csrf_token }
+                        value: { '@value': $data.orob2b_account_sign_in.csrf_token }
                 login_form_submit:
                     blockType: button
                     options:
@@ -80,7 +80,7 @@ layout:
                         text: orob2b.account.accountuser.profile.create_an_account
                         attr:
                             class: col-md-12
-                        visible: { @eq: [$data.registrationAllowed, true] }
+                        visible: { '@eq': [$data.registrationAllowed, true] }
             tree:
                 content:
                     login_page:
