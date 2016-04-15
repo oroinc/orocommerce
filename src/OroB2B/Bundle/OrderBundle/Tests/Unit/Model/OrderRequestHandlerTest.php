@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Model;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
+
+use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
