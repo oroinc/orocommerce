@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Model;
+namespace OroB2B\Bundle\OrderBundle\Tests\Unit\RequestHandler;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +11,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
-use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
+use OroB2B\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 
 class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
 {

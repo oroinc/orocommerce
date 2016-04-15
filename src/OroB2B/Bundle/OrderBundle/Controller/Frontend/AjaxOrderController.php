@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\OrderBundle\Controller\AjaxOrderController as BaseAjaxOrderController;
-use OroB2B\Bundle\OrderBundle\Model\FrontendOrderDataHandler;
+use OroB2B\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 
@@ -51,6 +51,6 @@ class AjaxOrderController extends BaseAjaxOrderController
      */
     protected function getOrderHandler()
     {
-        return $this->get('orob2b_order.model.frontend_order_data_handler');
+        return $this->get('orob2b_order.request_handler.frontend_order_data_handler');
     }
 }

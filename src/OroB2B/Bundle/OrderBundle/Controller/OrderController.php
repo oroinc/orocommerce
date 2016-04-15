@@ -18,7 +18,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
-use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
+use OroB2B\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
 
@@ -143,12 +143,6 @@ class OrderController extends AbstractOrderController
         }
 
         $form = $this->createForm(OrderType::NAME, $order);
-        $handler = new OrderHandler(
-            $request,
-            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order))
-        );
-
-        $handler->setForm($form);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
@@ -166,7 +160,7 @@ class OrderController extends AbstractOrderController
                 ];
             },
             $this->get('translator')->trans('orob2b.order.controller.order.saved.message'),
-            $handler,
+            null,
             function (Order $order, FormInterface $form, Request $request) {
 
                 $submittedData = $request->get($form->getName(), []);
@@ -193,7 +187,7 @@ class OrderController extends AbstractOrderController
      */
     protected function getOrderRequestHandler()
     {
-        return $this->get('orob2b_order.model.order_request_handler');
+        return $this->get('orob2b_order.request_handler.order_request_handler');
     }
 
     /**

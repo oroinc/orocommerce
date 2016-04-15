@@ -22,7 +22,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\OrderBundle\Model\FrontendOrderDataHandler;
+use OroB2B\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
 
 class OrderController extends AbstractOrderController
 {
@@ -92,15 +92,14 @@ class OrderController extends AbstractOrderController
      *      group_name="commerce"
      * )
      *
-     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function createAction(Request $request)
+    public function createAction()
     {
         $order = new Order();
         $order->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
 
-        return $this->update($order, $request);
+        return $this->update($order);
     }
 
     /**
@@ -117,12 +116,11 @@ class OrderController extends AbstractOrderController
      * )
      *
      * @param Order $order
-     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function updateAction(Order $order, Request $request)
+    public function updateAction(Order $order)
     {
-        return $this->update($order, $request);
+        return $this->update($order);
     }
 
     /**
@@ -152,11 +150,10 @@ class OrderController extends AbstractOrderController
 
     /**
      * @param Order $order
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
-    protected function update(Order $order, Request $request)
+    protected function update(Order $order)
     {
         $order->setAccountUser($this->getFrontendOrderDataHandler()->getAccountUser());
         $order->setAccount($this->getFrontendOrderDataHandler()->getAccount());
@@ -164,13 +161,6 @@ class OrderController extends AbstractOrderController
         $order->setOwner($this->getFrontendOrderDataHandler()->getOwner());
 
         $form = $this->createForm(FrontendOrderType::NAME, $order);
-
-        $handler = new OrderHandler(
-            $request,
-            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order))
-        );
-
-        $handler->setForm($form);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
@@ -188,7 +178,7 @@ class OrderController extends AbstractOrderController
                 ];
             },
             $this->get('translator')->trans('orob2b.order.controller.order.saved.message'),
-            $handler,
+            null,
             function (Order $order, FormInterface $form, Request $request) {
 
                 $submittedData = $request->get($form->getName(), []);
@@ -223,6 +213,6 @@ class OrderController extends AbstractOrderController
      */
     protected function getFrontendOrderDataHandler()
     {
-        return $this->get('orob2b_order.model.frontend_order_data_handler');
+        return $this->get('orob2b_order.request_handler.frontend_order_data_handler');
     }
 }

@@ -76,7 +76,7 @@ services:
     orob2b_sale.service.quote_to_order_converter:
         class: %orob2b_sale.service.quote_to_order_converter.class%
         arguments:
-            - @orob2b_order.model.order_currency_handler
+            - @orob2b_order.handler.order_currency_handler
             - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
             - @orob2b_pricing.subtotal_processor.total_processor_provider
             - @doctrine
