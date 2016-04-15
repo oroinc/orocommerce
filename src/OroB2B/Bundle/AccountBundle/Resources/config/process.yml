@@ -5,7 +5,7 @@ definitions:
         order: 20
         entity: OroB2B\Bundle\CatalogBundle\Entity\Category
         actions_configuration:
-            - @change_category_position: ~
+            - '@change_category_position': ~
 
     # Category visibility update
 
@@ -15,7 +15,7 @@ definitions:
         order: 21
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
         actions_configuration:
-            - @change_category_visibility: ~
+            - '@change_category_visibility': ~
 
     change_account_group_category_visibility:
         label: 'Update product visibility after category visibility for account group changed'
@@ -23,7 +23,7 @@ definitions:
         order: 22
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
         actions_configuration:
-            - @change_category_visibility: ~
+            - '@change_category_visibility': ~
 
     change_account_category_visibility:
         label: 'Update product visibility after category visibility for account changed'
@@ -31,7 +31,7 @@ definitions:
         order: 23
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
         actions_configuration:
-            - @change_category_visibility: ~
+            - '@change_category_visibility': ~
 
     # Product visibility update
 
@@ -41,7 +41,7 @@ definitions:
         order: 1
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
         actions_configuration:
-            - @resolve_product_visibility: ~
+            - '@resolve_product_visibility': ~
 
     account_group_product_visibility_change:
         enabled: true
@@ -49,7 +49,7 @@ definitions:
         order: 2
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility
         actions_configuration:
-            - @resolve_product_visibility: ~
+            - '@resolve_product_visibility': ~
 
     account_product_visibility_change:
         enabled: true
@@ -57,42 +57,42 @@ definitions:
         order: 3
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility
         actions_configuration:
-            - @resolve_product_visibility: ~
+            - '@resolve_product_visibility': ~
 
     product_visibility_product_create:
         enabled: true
         label: 'Update product visibility after product created'
         entity: OroB2B\Bundle\ProductBundle\Entity\Product
         actions_configuration:
-            - @change_product_category: ~
+            - '@change_product_category': ~
 
     product_visibility_category_create:
         enabled: true
         label: 'Update product visibility after category created'
         entity: OroB2B\Bundle\CatalogBundle\Entity\Category
         actions_configuration:
-            - @find_entity:
+            - '@find_entity':
                 class: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
                 where:
                     category: $.data
                 attribute: $.visibilityEntity
-            - @tree:
+            - '@tree':
                 conditions:
-                    @empty: $.visibilityEntity
+                    '@empty': $.visibilityEntity
                 actions:
-                    - @create_object: # there is no need to persist entity because it has default fallback
+                    - '@create_object': # there is no need to persist entity because it has default fallback
                         class: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
                         data:
                             category: $.data
                             visibility: parent_category
                         attribute: $.visibilityEntity
-                    - @change_category_visibility:
+                    - '@change_category_visibility':
                         entity: $.visibilityEntity
-            - @foreach: # for all products in new category
+            - '@foreach': # for all products in new category
                 array: $products
                 value: $.product
                 actions:
-                    - @change_product_category:
+                    - '@change_product_category':
                         entity: $.product
 
     product_visibility_website_added:
@@ -100,7 +100,7 @@ definitions:
         label: 'Update product visibility after website added'
         entity: OroB2B\Bundle\WebsiteBundle\Entity\Website
         actions_configuration:
-            - @build_website_cache: ~
+            - '@build_website_cache': ~
 
 triggers:
     change_category_position:

@@ -1,13 +1,13 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BPricingBundle:layouts:default/orob2b_product_frontend_product_view/layout.html.twig'
-        - @add:
+        - '@add':
             id: product_prices
             parentId: product_specification_container
             siblingId: product_specification
             blockType: block
             options:
                 vars:
-                    prices: {@value: $data.frontend_product_prices}
-                visible: { @not_empty: $data.frontend_product_prices }
+                    prices: {'@value': $data.frontend_product_prices}
+                visible: { '@not_empty': $data.frontend_product_prices }

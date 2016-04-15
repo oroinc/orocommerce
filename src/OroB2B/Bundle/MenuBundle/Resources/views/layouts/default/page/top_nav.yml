@@ -1,8 +1,8 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BMenuBundle:layouts:default/page/top_nav.html.twig'
-        - @addTree:
+        - '@addTree':
             items:
                 top_nav_container:
                     blockType: container
@@ -26,4 +26,4 @@ layout:
                         top_nav_controls: ~
                         top_nav: ~
     conditions:
-        @neq: [ $context.logged_user, null ]
+        '@neq': [ $context.logged_user, null ]
