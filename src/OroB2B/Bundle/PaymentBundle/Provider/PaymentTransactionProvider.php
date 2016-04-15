@@ -17,7 +17,7 @@ class PaymentTransactionProvider
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param $paymentTransactionClass
+     * @param string $paymentTransactionClass
      */
     public function __construct(DoctrineHelper $doctrineHelper, $paymentTransactionClass)
     {
