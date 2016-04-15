@@ -27,9 +27,6 @@ class LineItemHandler
     /** @var ShoppingListManager */
     protected $shoppingListManager;
 
-    /** @var int */
-    protected $savedId;
-
     /** @var QuantityRoundingService */
     protected $roundingService;
 
@@ -95,32 +92,14 @@ class LineItemHandler
                     )
                 );
                 $lineItem->getShoppingList()->addLineItem($lineItem);
-                $manager->persist($lineItem);
             }
-
+            $this->shoppingListManager->recalculateSubtotals($lineItem->getShoppingList(), false);
             $manager->flush();
             $manager->commit();
-            $this->shoppingListManager->recalculateSubtotals($lineItem->getShoppingList());
             return true;
         }
         $manager->rollback();
         return false;
-    }
-
-    /**
-     * Update savedId for widget result
-     *
-     * @param array $result
-     *
-     * @return array
-     */
-    public function updateSavedId(array $result)
-    {
-        if ($this->savedId) {
-            $result['savedId'] = $this->savedId;
-        }
-
-        return $result;
     }
 
     /**
@@ -142,6 +121,6 @@ class LineItemHandler
         if ($notes) {
             $existingLineItem->setNotes($notes);
         }
-        $this->savedId = $existingLineItem->getId();
+        $existingLineItem->getShoppingList()->removeLineItem($lineItem);
     }
 }

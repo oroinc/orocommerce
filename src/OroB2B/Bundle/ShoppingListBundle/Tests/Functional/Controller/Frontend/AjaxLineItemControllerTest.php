@@ -27,7 +27,7 @@ class AjaxLineItemControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
@@ -88,18 +88,11 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'expectedTotals' => 1342,
             ],
             [
-                'product' => LoadProductData::PRODUCT_1,
-                'unit' => 'product_unit.bottle',
-                'quantity' => 20,
-                'expectedSubtotals' => 1586,
-                'expectedTotals' => 1586,
-            ],
-            [
                 'product' => LoadProductData::PRODUCT_2,
                 'unit' => 'product_unit.liter',
                 'quantity' => 14,
-                'expectedSubtotals' => 1817,
-                'expectedTotals' => 1817,
+                'expectedSubtotals' => 1573,
+                'expectedTotals' => 1573,
             ],
         ];
     }
