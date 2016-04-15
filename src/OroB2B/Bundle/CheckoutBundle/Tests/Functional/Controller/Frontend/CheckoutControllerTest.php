@@ -37,10 +37,10 @@ class CheckoutControllerTest extends WebTestCase
     const ANOTHER_ACCOUNT_ADDRESS = 'account.level_1.address_1';
     const DEFAULT_BILLING_ADDRESS = 'account.level_1.address_2';
 
-    const SHIPPING_ADDRESS_SIGN = 'SELECT BILLING ADDRESS';
+    const SHIPPING_ADDRESS_SIGN = 'SELECT SHIPPING ADDRESS';
     const BILLING_ADDRESS_SIGN = 'SELECT BILLING ADDRESS';
     const SHIPPING_METHOD_SIGN = 'Select a Shipping Method';
-    const PAYMENT_METHOD_SIGN = 'Select a Payment Method';
+    const PAYMENT_METHOD_SIGN = 'Payment - Checkout';
     const ORDER_REVIEW_SIGN = 'View Options for this Order';
     const FINISH_SIGN = 'Thank You For Your Purchase!';
 
@@ -207,6 +207,7 @@ class CheckoutControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
+
         $this->assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
         $form = $this->getFakeForm($crawler);
         $crawler = $this->client->submit($form);
@@ -215,20 +216,36 @@ class CheckoutControllerTest extends WebTestCase
 
     /**
      * @depends testShippingMethodToPaymentTransition
+     * @return Crawler
      */
     public function testPaymentToOrderReviewTransition()
     {
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
-        $form = $this->getFakeForm($crawler);
-        $crawler = $this->client->submit($form);
+        $form = $this->getTransitionForm($crawler);
+        $values = $this->explodeArrayPaths($form->getValues());
+        $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] = 'payment_term';
+        $values['_widgetContainer'] = 'ajax';
+        $values['_wid'] = 'ajax_checkout';
+
+        $crawler = $this->client->request(
+            'POST',
+            $form->getUri(),
+            $values,
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
+
         $this->assertContains(self::ORDER_REVIEW_SIGN, $crawler->html());
+
+        return $crawler;
     }
 
     /**
      * @depends testPaymentToOrderReviewTransition
+     * @param Crawler $crawler
      */
-    public function testSubmitOrder()
+    public function testSubmitOrder(Crawler $crawler)
     {
         /** @var ShoppingList $sourceEntity */
         $sourceEntity = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
@@ -238,10 +255,12 @@ class CheckoutControllerTest extends WebTestCase
             ->findBy(['shoppingList' => $sourceEntity]);
 
         $this->assertCount(1, $checkoutSources);
-        $crawler = $this->client->request('GET', self::$checkoutUrl);
         $form = $crawler->selectButton('Submit Order')->form();
+        $this->client->submit($form);
+        $result = $this->client->getResponse();
+        $data = json_decode($result->getContent(), true);
         $this->client->followRedirects();
-        $crawler = $this->client->submit($form);
+        $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
         $this->assertContains(self::FINISH_SIGN, $crawler->html());
         $this->assertCount(0, $this->registry->getRepository('OroB2BCheckoutBundle:CheckoutSource')->findAll());
         $this->assertNull(
@@ -397,7 +416,7 @@ class CheckoutControllerTest extends WebTestCase
      */
     protected function getFakeForm(Crawler $crawler)
     {
-        return $crawler->selectButton('Continue')->form();
+        return $crawler->filter('form')->form();
     }
 
     /**
@@ -446,10 +465,10 @@ class CheckoutControllerTest extends WebTestCase
                     'currency' => 'EUR'
                 ],
                 StartCheckout::SETTINGS_KEY => [
-                    'allow_source_remove' => true,
+                    'auto_remove_source' => true,
                     'disallow_billing_address_edit' => false,
                     'disallow_shipping_address_edit' => false,
-                    'remove_source' => true
+                    'remove_source' => false
                 ]
             ]
         ];
