@@ -33,6 +33,7 @@ class Configuration implements ConfigurationInterface
     const PAYPAL_PAYMENTS_PRO_ENABLE_SSL_VERIFICATION_KEY = 'paypal_payments_pro_enable_ssl_verification';
     const PAYPAL_PAYMENTS_PRO_REQUIRE_CVV_KEY = 'paypal_payments_pro_require_cvv';
     const PAYPAL_PAYMENTS_PRO_VALIDATE_CVV_KEY = 'paypal_payments_pro_validate_cvv';
+    const PAYPAL_PAYMENTS_PRO_ZERO_DOLLAR_AUTHORIZATION_KEY = 'paypal_payments_pro_zero_dollar_authorization';
 
     const PAYFLOW_GATEWAY_ENABLED_KEY = 'payflow_gateway_enabled';
     const PAYFLOW_GATEWAY_LABEL_KEY = 'payflow_gateway_label';
@@ -53,6 +54,7 @@ class Configuration implements ConfigurationInterface
     const PAYFLOW_GATEWAY_ENABLE_SSL_VERIFICATION_KEY = 'payflow_gateway_enable_ssl_verification';
     const PAYFLOW_GATEWAY_REQUIRE_CVV_KEY = 'payflow_gateway_require_cvv';
     const PAYFLOW_GATEWAY_VALIDATE_CVV_KEY = 'payflow_gateway_validate_cvv';
+    const PAYFLOW_GATEWAY_ZERO_DOLLAR_AUTHORIZATION_KEY = 'payflow_gateway_zero_dollar_authorization';
 
     const PAYMENT_TERM_ENABLED_KEY = 'payment_term_enabled';
     const PAYMENT_TERM_LABEL_KEY = 'payment_term_label';
@@ -166,6 +168,11 @@ class Configuration implements ConfigurationInterface
                     'value' => true
                 ],
 
+                self::PAYPAL_PAYMENTS_PRO_ZERO_DOLLAR_AUTHORIZATION_KEY => [
+                    'type' => 'boolean',
+                    'value' => false
+                ],
+
                 // Payflow Gateway
                 self::PAYFLOW_GATEWAY_ENABLED_KEY => [
                     'type' => 'boolean',
@@ -242,6 +249,11 @@ class Configuration implements ConfigurationInterface
                 self::PAYFLOW_GATEWAY_VALIDATE_CVV_KEY => [
                     'type' => 'boolean',
                     'value' => true
+                ],
+
+                self::PAYFLOW_GATEWAY_ZERO_DOLLAR_AUTHORIZATION_KEY => [
+                    'type' => 'boolean',
+                    'value' => false
                 ],
 
                 // Payment Term
