@@ -62,7 +62,7 @@ class PageController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_cms.page.class')
+            'entity_class' => $this->container->getParameter('orob2b_cms.entity.page.class')
         ];
     }
 

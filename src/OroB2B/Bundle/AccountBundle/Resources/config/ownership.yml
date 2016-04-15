@@ -1,17 +1,13 @@
 parameters:
     orob2b_account.entity.owners:
-        local_level: %orob2b_account.entity.account.class%
-        basic_level: %orob2b_account.entity.account_user.class%
-
-    orob2b_account.owner.frontend_ownership_metadata_provider.class: OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider
-    orob2b_account.owner.decision_maker.class: OroB2B\Bundle\AccountBundle\Owner\EntityOwnershipDecisionMaker
-    orob2b_account.owner.tree_provider.class: OroB2B\Bundle\AccountBundle\Owner\FrontendOwnerTreeProvider
+        local_level: '%orob2b_account.entity.account.class%'
+        basic_level: '%orob2b_account.entity.account_user.class%'
 
 services:
     orob2b_account.owner.frontend_ownership_metadata_provider:
-        class: %orob2b_account.owner.frontend_ownership_metadata_provider.class%
+        class: 'OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider'
         arguments:
-            - %orob2b_account.entity.owners%
+            - '%orob2b_account.entity.owners%'
         calls:
             - [setContainer, ["@service_container"]]
         tags:
@@ -25,7 +21,7 @@ services:
 
     orob2b_account.owner.decision_maker:
         public: false
-        class: %orob2b_account.owner.decision_maker.class%
+        class: 'OroB2B\Bundle\AccountBundle\Owner\EntityOwnershipDecisionMaker'
         parent: oro_security.owner.decision_maker.abstract
         tags:
            - { name: oro_security.owner.ownership_decision_maker, priority: 10 }
@@ -33,7 +29,7 @@ services:
     orob2b_account.owner.tree_provider:
         public: false
         parent: oro_security.abstract_ownership_tree_provider
-        class: %orob2b_account.owner.tree_provider.class%
+        class: 'OroB2B\Bundle\AccountBundle\Owner\FrontendOwnerTreeProvider'
         tags:
             - { name: oro_security.ownership.tree_provider }
 
