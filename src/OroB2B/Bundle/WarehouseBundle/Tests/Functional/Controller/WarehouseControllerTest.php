@@ -94,18 +94,14 @@ class WarehouseControllerTest extends WebTestCase
             ]
         ];
 
-        $this->client->followRedirects(true);
-
         // Submit form
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
-        $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
+        $this->client->followRedirects(true);
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
         $this->assertWarehouseSaved($crawler, self::WAREHOUSE_UPDATED_TEST_NAME);
 
         $warehouse = $this->getWarehouseDataByName(self::WAREHOUSE_UPDATED_TEST_NAME);
-
         $this->assertEquals($id, $warehouse->getId());
     }
 

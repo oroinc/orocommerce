@@ -293,7 +293,7 @@ class QuoteControllerTest extends WebTestCase
     {
         $this->prepareProviderData($submittedData);
 
-        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_create'));
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();

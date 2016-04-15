@@ -95,12 +95,9 @@ class WebsiteControllerTest extends WebTestCase
             ],
         ];
 
-        $this->client->followRedirects(true);
-
         // Submit form
+        $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
-
-        $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertWebsiteSaved($crawler, self::WEBSITE_UPDATED_TEST_NAME);
