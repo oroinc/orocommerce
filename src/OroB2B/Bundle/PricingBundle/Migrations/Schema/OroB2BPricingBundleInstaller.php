@@ -60,6 +60,8 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->createOrob2BCmbPlToPlTable($schema);
         $this->createOroB2BPriceListChangeTriggerTable($schema);
         $this->createOroB2BProductPriceChangeTriggerTable($schema);
+        $this->createOrob2BPriceListScheduleTable($schema);
+        $this->createOrob2BCplActivationRuleTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BPriceListCurrencyForeignKeys($schema);
@@ -78,6 +80,8 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->addOrob2BCmbPlToPlForeignKeys($schema);
         $this->addOrob2BPriceListChangeTriggerForeignKeys($schema);
         $this->addOroB2BProductPriceChangeTriggerForeignKeys($schema);
+        $this->addOrob2BPriceListScheduleForeignKeys($schema);
+        $this->addOrob2BCplActivationRuleForeignKeys($schema);
     }
 
     /**
@@ -195,6 +199,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('is_enabled', 'boolean', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('is_prices_calculated', 'boolean', []);
         $table->setPrimaryKey(['id']);
     }
 
@@ -300,6 +305,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('account_id', 'integer', []);
         $table->addColumn('combined_price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['website_id', 'account_id'], 'orob2b_cpl_to_acc_ws_unq');
         $table->setPrimaryKey(['account_id', 'combined_price_list_id', 'website_id']);
     }
@@ -315,6 +321,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('account_group_id', 'integer', []);
         $table->addColumn('combined_price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['website_id', 'account_group_id'], 'orob2b_cpl_to_acc_gr_ws_unq');
         $table->setPrimaryKey(['account_group_id', 'combined_price_list_id', 'website_id']);
     }
@@ -329,6 +336,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table = $schema->createTable('orob2b_cmb_price_list_to_ws');
         $table->addColumn('combined_price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['combined_price_list_id', 'website_id']);
     }
 
@@ -362,6 +370,39 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('product_id', 'integer', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['product_id', 'price_list_id'], 'orob2b_changed_product_price_list_unq');
+    }
+
+    /**
+     * Create orob2b_price_list_schedule table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BPriceListScheduleTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list_schedule');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('price_list_id', 'integer', ['notnull' => false]);
+        $table->addColumn('active_at', 'datetime', ['notnull' => false]);
+        $table->addColumn('deactivate_at', 'datetime', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['price_list_id'], 'IDX_C706756E5688DED7', []);
+    }
+
+    /**
+     * Create orob2b_cpl_activation_rule table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BCplActivationRuleTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_cpl_activation_rule');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);
+        $table->addColumn('combined_price_list_id', 'integer', ['notnull' => false]);
+        $table->addColumn('expire_at', 'datetime', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['combined_price_list_id'], 'IDX_E71CEADAF4E1C8D4', []);
+        $table->addIndex(['full_combined_price_list_id'], 'IDX_E71CEADA579D9EF', []);
     }
 
     /**
@@ -631,6 +672,12 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_price_list_combined'),
+            ['full_combined_price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**
@@ -641,6 +688,12 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     protected function addOrob2BCmbPriceListToWsForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_cmb_price_list_to_ws');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_price_list_combined'),
+            ['full_combined_price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_website'),
             ['website_id'],
@@ -664,6 +717,12 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     {
         $table = $schema->getTable('orob2b_cmb_price_list_to_acc');
         $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_price_list_combined'),
+            ['full_combined_price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_website'),
             ['website_id'],
             ['id'],
@@ -681,6 +740,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+
     }
 
     /**
@@ -750,6 +810,44 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list'),
             ['price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_price_list_schedule foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BPriceListScheduleForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list_schedule');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_price_list'),
+            ['price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_cpl_activation_rule foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BCplActivationRuleForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_cpl_activation_rule');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_price_list_combined'),
+            ['full_combined_price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_price_list_combined'),
+            ['combined_price_list_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
