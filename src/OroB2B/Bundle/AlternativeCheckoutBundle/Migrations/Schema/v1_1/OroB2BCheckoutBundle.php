@@ -5,10 +5,19 @@ namespace OroB2B\Bundle\CheckoutBundle\Migrations\Schema\v1_1;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BAlternativeCheckoutBundle implements Migration
+class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 10;
+    }
+
     /**
      * {@inheritdoc}
      */

@@ -14,7 +14,7 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_1';
     }
 
     /**
@@ -33,7 +33,7 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
     protected function addAlternativeCheckoutColumns(Schema $schema)
     {
         $table = $schema->getTable('orob2b_checkout');
-        $table->addColumn('allowed', 'boolean', []);
+        $table->addColumn('allowed', 'boolean', ['notnull' => false,]);
         $table->addColumn('allow_request_date', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
         $table->addColumn('request_approval_notes', 'text', ['notnull' => false]);
         $table->addColumn('requested_for_approve', 'boolean', []);

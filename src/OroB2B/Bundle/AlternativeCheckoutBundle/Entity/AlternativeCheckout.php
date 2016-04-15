@@ -7,7 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\CheckoutBundle\Entity\AbstractCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutAddressesTrait;
 
 /**
  * @ORM\Entity(
@@ -38,14 +39,16 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
  *      }
  * )
  */
-class AlternativeCheckout extends Checkout
+class AlternativeCheckout extends AbstractCheckout
 {
+    use CheckoutAddressesTrait;
+
     const TYPE = 'alternative';
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="allowed", type="boolean")
+     * @ORM\Column(name="allowed", type="boolean", nullable=true)
      */
     protected $allowed = false;
 
