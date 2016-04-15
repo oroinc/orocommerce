@@ -309,7 +309,7 @@ class ImportExportTest extends WebTestCase
         $configuration = [
             'import_validation' => [
                 'processorAlias' => 'orob2b_product_product.add_or_replace',
-                'entityName' => $this->getContainer()->getParameter('orob2b_product.product.class'),
+                'entityName' => $this->getContainer()->getParameter('orob2b_product.entity.product.class'),
                 'filePath' => $filePath,
             ],
         ];
@@ -368,7 +368,7 @@ class ImportExportTest extends WebTestCase
 
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import.csv';
 
-        $productClass = $this->getContainer()->getParameter('orob2b_product.product.class');
+        $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
         $configuration = [
             'import' => [
                 'processorAlias' => 'orob2b_product_product.add_or_replace',
