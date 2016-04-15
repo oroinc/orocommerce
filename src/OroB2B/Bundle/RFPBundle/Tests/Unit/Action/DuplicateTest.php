@@ -85,7 +85,7 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
                     Duplicate::OPTION_KEY_TARGET => ['target'],
                 ],
                 'expectedException' => 'Oro\Component\Action\Exception\InvalidParameterException',
-                'expectedExceptionMessage' => 'Option \'target\' should be string',
+                'expectedExceptionMessage' => 'Option \'target\' should be string or PropertyPath',
             ],
             [
                 'options' => [

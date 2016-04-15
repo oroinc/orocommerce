@@ -366,7 +366,7 @@ datagrid:
                 select:
                     - relatedEntity.url
                 from:
-                    - { table: %orob2b_website.website.class%, alias: relatedEntity }
+                    - { table: %orob2b_website.entity.website.class%, alias: relatedEntity }
                 join:
                     left:
                         - { join: %orob2b_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.websites' }
