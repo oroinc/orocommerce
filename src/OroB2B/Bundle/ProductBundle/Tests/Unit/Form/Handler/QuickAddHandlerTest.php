@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
-use OroB2B\Bundle\ProductBundle\Model\ProductRow;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -12,6 +10,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
+use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
@@ -250,7 +250,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $processor->expects($this->never())
             ->method('process');
 
-        $this->assertEquals(null, $this->handler->process($request, 'reload', 'reload'));
+        $this->assertEquals(null, $this->handler->process($request, 'reload'));
     }
 
     public function testProcessValidDataWithoutResponse()
@@ -307,7 +307,11 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->router->expects($this->once())->method('generate')->with('reload')->willReturn('/reload');
-        $this->assertEquals(new RedirectResponse('/reload'), $this->handler->process($request, 'reload'));
+
+        /** @var RedirectResponse $response */
+        $response = $this->handler->process($request, 'reload');
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
+        $this->assertEquals('/reload', $response->getTargetUrl());
     }
 
     public function testProcessValidDataWithResponse()

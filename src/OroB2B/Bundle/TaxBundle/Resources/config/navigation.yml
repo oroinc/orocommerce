@@ -5,7 +5,7 @@ oro_menu_config:
             uri:             '#'
             extras:
                 icon:        icon-filter
-                position:    200
+                position:    400
 
         product_tax_code_list:
             label:           'orob2b.tax.producttaxcode.entity_plural_label'

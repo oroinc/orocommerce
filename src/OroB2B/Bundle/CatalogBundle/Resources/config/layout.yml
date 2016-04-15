@@ -2,7 +2,7 @@ services:
     orob2b_catalog.layout.data_provider.category_tree:
         class: OroB2B\Bundle\CatalogBundle\Layout\DataProvider\CategoryTreeProvider
         arguments:
-            - @orob2b_catalog.provider.category_tree_provider
+            - '@orob2b_catalog.provider.category_tree_provider'
         tags:
             - { name: layout.data_provider, alias: category_tree }
 

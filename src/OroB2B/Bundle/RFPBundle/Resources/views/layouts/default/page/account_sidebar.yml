@@ -1,6 +1,6 @@
 layout:
     actions:
-        - @add:
+        - '@add':
             id: account_sidebar_request
             parentId: account_sidebar
             blockType: link
@@ -8,4 +8,4 @@ layout:
                 route_name: orob2b_rfp_frontend_request_index
                 text: orob2b.frontend.rfp.request.entity_plural_label
     conditions:
-        @acl: orob2b_rfp_frontend_request_view
+        '@acl': orob2b_rfp_frontend_request_view

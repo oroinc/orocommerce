@@ -18,7 +18,7 @@ class ShoppingListActionsTest extends ActionTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures(
             [

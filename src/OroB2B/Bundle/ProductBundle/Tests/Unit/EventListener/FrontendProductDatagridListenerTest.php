@@ -268,7 +268,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
 
         $this->doctrine->expects($this->once())
-            ->method('getEntityManagerForClass')
+            ->method('getManagerForClass')
             ->with('OroB2BProductBundle:Product')
             ->willReturn($em);
 

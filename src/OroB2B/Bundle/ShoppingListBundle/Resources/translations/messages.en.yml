@@ -148,3 +148,8 @@ orob2b:
                 delete: 'Delete'
             workflow:
                 remove_source.label: Delete the shopping list
+            lineitem:
+                product:
+                    added.label: 'Product has been added to "%shoppinglist%"'
+                    removed.label: 'Product has been removed from "%shoppinglist%"'
+                    cant_remove.label: 'No current ShoppingList or no Product in current ShoppingList'
