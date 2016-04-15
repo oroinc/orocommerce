@@ -69,9 +69,9 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
     /**
      * @var string
      *
-     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     * @ORM\Column(name="total_currency", type="string", length=3, nullable=true)
      */
-    protected $currency;
+    protected $totalCurrency;
 
     public function __construct()
     {
@@ -201,9 +201,9 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
      *
      * @return $this
      */
-    public function setCurrency($currency)
+    public function setTotalCurrency($currency)
     {
-        $this->currency = $currency;
+        $this->totalCurrency = $currency;
 
         return $this;
     }
@@ -213,9 +213,9 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
      *
      * @return string
      */
-    public function getCurrency()
+    public function getTotalCurrency()
     {
-        return $this->currency;
+        return $this->totalCurrency;
     }
 
     /**

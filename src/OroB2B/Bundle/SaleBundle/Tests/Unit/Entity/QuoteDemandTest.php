@@ -22,7 +22,7 @@ class QuoteDemandTest extends AbstractTest
             ['quote', new Quote()],
             ['total', 100.1],
             ['subtotal', 100.1],
-            ['currency', 'USD']
+            ['totalCurrency', 'USD']
         ];
 
         static::assertPropertyAccessors(new QuoteDemand(), $properties);

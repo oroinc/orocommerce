@@ -151,3 +151,10 @@ services:
         class: %orob2b_sale.data_provider.checkout_line_item.class%
         tags:
              - { name: checkout.data_provider.line_item }
+
+    orob2b_sale.manager.quote_demand_manager:
+        class: OroB2B\Bundle\SaleBundle\Manager\QuoteDemandManager
+        arguments:
+            - "@orob2b_pricing.subtotal_processor.total_processor_provider"
+            - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item"
+            - "@orob2b_pricing.provider.user_currency"
