@@ -1,46 +1,41 @@
 parameters:
-    orob2b_cms.page.class: OroB2B\Bundle\CMSBundle\Entity\Page
-    orob2b_cms.loginpage.class: OroB2B\Bundle\CMSBundle\Entity\LoginPage
-    orob2b_cms.page_tree_handler.class: OroB2B\Bundle\CMSBundle\JsTree\PageTreeHandler
-    orob2b_cms.page.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_cms.loginpage.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_cms.listener.page_slug_listener.class: OroB2B\Bundle\CMSBundle\EventListener\PageSlugListener
-    orob2b_cms.provider.login_page_data_provider.class: OroB2B\Bundle\CMSBundle\Layout\DataProvider\LoginPageProvider
+    orob2b_cms.entity.page.class: OroB2B\Bundle\CMSBundle\Entity\Page
+    orob2b_cms.entity.loginpage.class: OroB2B\Bundle\CMSBundle\Entity\LoginPage
 
 services:
     orob2b_cms.page_tree_handler:
-        class: %orob2b_cms.page_tree_handler.class%
+        class: 'OroB2B\Bundle\CMSBundle\JsTree\PageTreeHandler'
         arguments:
-            - %orob2b_cms.page.class%
+            - '%orob2b_cms.entity.page.class%'
             - "@doctrine"
             - "@orob2b_redirect.slug.manager"
 
     orob2b_cms.page.manager.api:
-        class: %orob2b_cms.page.manager.api.class%
+        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - %orob2b_cms.page.class%
+            - '%orob2b_cms.entity.page.class%'
             - "@doctrine.orm.entity_manager"
 
     orob2b_cms.loginpage.manager.api:
-        class: %orob2b_cms.loginpage.manager.api.class%
+        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - %orob2b_cms.loginpage.class%
+            - '%orob2b_cms.entity.loginpage.class%'
             - "@doctrine.orm.entity_manager"
 
     orob2b_cms.listener.page_slug_listener:
-        class: %orob2b_cms.listener.page_slug_listener.class%
+        class: 'OroB2B\Bundle\CMSBundle\EventListener\PageSlugListener'
         tags:
             - { name: doctrine.event_listener, event: postPersist }
             - { name: doctrine.event_listener, event: postUpdate }
             - { name: doctrine.event_listener, event: preRemove }
 
     orob2b_cms.provider.login_page_data_provider:
-        class: %orob2b_cms.provider.login_page_data_provider.class%
+        class: 'OroB2B\Bundle\CMSBundle\Layout\DataProvider\LoginPageProvider'
         arguments:
             - "@doctrine"
         calls:
-            - [setLoginPageClass, [%orob2b_cms.loginpage.class%]]
+            - [setLoginPageClass, ['%orob2b_cms.entity.loginpage.class%']]
         tags:
             - { name: layout.data_provider, alias: orob2b_cms_login_page }
