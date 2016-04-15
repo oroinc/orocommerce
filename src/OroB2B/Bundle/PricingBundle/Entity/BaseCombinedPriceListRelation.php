@@ -53,6 +53,9 @@ class BaseCombinedPriceListRelation implements WebsiteAwareInterface
     public function setPriceList(CombinedPriceList $priceList)
     {
         $this->priceList = $priceList;
+        if ($this->fullChainPriceList === null) {
+            $this->fullChainPriceList = $priceList;
+        }
 
         return $this;
     }

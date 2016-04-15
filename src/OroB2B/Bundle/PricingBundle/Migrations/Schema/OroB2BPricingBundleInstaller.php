@@ -33,7 +33,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_7';
     }
 
     /**

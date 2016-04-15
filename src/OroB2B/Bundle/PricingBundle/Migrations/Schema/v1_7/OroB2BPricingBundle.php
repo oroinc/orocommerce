@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_3;
+namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_7\UpdateCPLRelationsQuery;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
