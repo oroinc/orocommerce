@@ -9,9 +9,9 @@ services:
     orob2b_redirect.kernel.listener.process_redirects:
         class: %orob2b_redirect.kernel.listener.process_redirects.class%
         arguments:
-            - @router
-            - @doctrine
-            - @orob2b_frontend.request.frontend_helper
+            - "@router"
+            - "@doctrine"
+            - "@orob2b_frontend.request.frontend_helper"
             - %installed%
             - %kernel.environment%
         calls:
@@ -23,7 +23,7 @@ services:
     orob2b_redirect.slug.manager:
         class: %orob2b_redirect.slug.manager.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
 
     orob2b_redirect.slug.generator:
         class: %orob2b_redirect.slug.generator.class%
@@ -33,4 +33,4 @@ services:
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_catalog.category.class%
-            - @doctrine.orm.entity_manager
+            - "@doctrine.orm.entity_manager"

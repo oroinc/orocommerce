@@ -5,9 +5,9 @@ services:
     orob2b_rfp.action.duplicate:
         class: %orob2b_rfp.action.duplicate.class%
         arguments:
-            - @oro_action.context_accessor
+            - '@oro_action.context_accessor'
         calls:
-          - [setDuplicatorFactory, [@orob2b_rfp.factory.duplicator_factory]]
+          - [setDuplicatorFactory, ['@orob2b_rfp.factory.duplicator_factory']]
         tags:
             - { name: oro_action.action, alias: duplicate }
             - { name: oro_workflow.action, alias: duplicate }

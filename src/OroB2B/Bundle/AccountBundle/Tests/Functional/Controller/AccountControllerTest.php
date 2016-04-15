@@ -9,7 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
@@ -28,7 +28,7 @@ class AccountControllerTest extends WebTestCase
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadInternalRating',
-                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData'
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadUserData'
             ]
         );
     }

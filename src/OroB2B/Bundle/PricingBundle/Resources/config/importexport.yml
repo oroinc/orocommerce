@@ -23,7 +23,7 @@ services:
         class: %orob2b_pricing.importexport.strategy.product_price.add_or_replace.class%
         parent: oro_importexport.strategy.configurable_add_or_replace
         calls:
-            - [setTranslator, [@translator]]
+            - [setTranslator, ['@translator']]
 
     orob2b_pricing.importexport.strategy.product_price.reset:
         class: %orob2b_pricing.importexport.strategy.product_price.reset.class%
@@ -39,8 +39,8 @@ services:
     orob2b_pricing.importexport.processor.import.product_price:
         parent: oro_importexport.processor.import_abstract
         calls:
-             - [setDataConverter, [@orob2b_pricing.importexport.data_converter.product_price]]
-             - [setStrategy, [@orob2b_pricing.importexport.strategy.product_price.add_or_replace]]
+             - [setDataConverter, ['@orob2b_pricing.importexport.data_converter.product_price']]
+             - [setStrategy, ['@orob2b_pricing.importexport.strategy.product_price.add_or_replace']]
         tags:
             - { name: oro_importexport.processor, type: import, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price.add_or_replace }
             - { name: oro_importexport.processor, type: import_validation, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price.add_or_replace }
@@ -48,8 +48,8 @@ services:
     orob2b_pricing.importexport.processor.import.product_price.reset:
         parent: oro_importexport.processor.import_abstract
         calls:
-             - [setDataConverter, [@orob2b_pricing.importexport.data_converter.product_price]]
-             - [setStrategy, [@orob2b_pricing.importexport.strategy.product_price.reset]]
+             - [setDataConverter, ['@orob2b_pricing.importexport.data_converter.product_price']]
+             - [setStrategy, ['@orob2b_pricing.importexport.strategy.product_price.reset']]
         tags:
             - { name: oro_importexport.processor, type: import, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price.reset }
             - { name: oro_importexport.processor, type: import_validation, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price.reset }
@@ -58,7 +58,7 @@ services:
     orob2b_pricing.importexport.processor.export.product_price:
         parent: oro_importexport.processor.export_abstract
         calls:
-            - [setDataConverter, [@orob2b_pricing.importexport.data_converter.product_price]]
+            - [setDataConverter, ['@orob2b_pricing.importexport.data_converter.product_price']]
         tags:
             - { name: oro_importexport.processor, type: export, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price }
 
@@ -71,7 +71,7 @@ services:
     orocrm_contact.importexport.processor.export_template.product_price:
         parent: oro_importexport.processor.export_abstract
         calls:
-            - [setDataConverter, [@orob2b_pricing.importexport.data_converter.product_price]]
+            - [setDataConverter, ['@orob2b_pricing.importexport.data_converter.product_price']]
         tags:
             - { name: oro_importexport.processor, type: export_template, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price }
 

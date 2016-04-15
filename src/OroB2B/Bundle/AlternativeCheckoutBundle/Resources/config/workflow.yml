@@ -193,7 +193,7 @@ workflows:
                     attribute_fields:
                         payment_method: ~
                     init_actions:
-                        - @assign_constant_value: [$payment_method, 'OroB2B\Bundle\PaymentBundle\Method\PaymentTerm::TYPE']
+                        - '@assign_constant_value': [$payment_method, 'OroB2B\Bundle\PaymentBundle\Method\PaymentTerm::TYPE']
 
             continue_to_request_approval:
                 label: Request Approval
@@ -310,94 +310,94 @@ workflows:
         transition_definitions:
             __start___definition:
                 pre_conditions:
-                    @and:
-                        - @assert_account: 4
-                        - @payment_method_enabled: 'payment_term'
+                    '@and':
+                        - '@assert_account': 4
+                        - '@payment_method_enabled': 'payment_term'
             do_nothing: ~
             go_back_definition:
                 post_actions:
-                    - @assign_value:
+                    - '@assign_value':
                         conditions:
-                            @equal: [$checkout.allowed, true]
+                            '@equal': [$checkout.allowed, true]
                         parameters: [$checkout.allowed, false]
             back_to_billing_address_definition:
                 post_actions:
-                    - @assign_value: [$billing_address_has_shipping, true]
+                    - '@assign_value': [$billing_address_has_shipping, true]
             continue_to_shipping_address_definition:
                 conditions:
-                    @not_empty: $checkout.billingAddress
+                    '@not_empty': $checkout.billingAddress
                 post_actions:
-                    - @assign_constant_value: [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
-                    - @call_method:
+                    - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
+                    - '@call_method':
                         conditions:
-                            @not_empty: $checkout.billingAddress.accountAddress
+                            '@not_empty': $checkout.billingAddress.accountAddress
                         parameters:
                             attribute: $billing_address_has_shipping
                             object: $checkout.billingAddress.accountAddress
                             method: hasTypeWithName
                             method_parameters:
                                 - $.result.typeShippingName
-                    - @call_method:
+                    - '@call_method':
                         conditions:
-                            @not_empty: $checkout.billingAddress.accountUserAddress
+                            '@not_empty': $checkout.billingAddress.accountUserAddress
                         parameters:
                             attribute: $billing_address_has_shipping
                             object: $checkout.billingAddress.accountUserAddress
                             method: hasTypeWithName
                             method_parameters:
                                 - $.result.typeShippingName
-                    - @assign_value:
+                    - '@assign_value':
                         conditions:
-                            @and:
-                                - @empty: $checkout.billingAddress.accountAddress
-                                - @empty: $checkout.billingAddress.accountUserAddress
+                            '@and':
+                                - '@empty': $checkout.billingAddress.accountAddress
+                                - '@empty': $checkout.billingAddress.accountUserAddress
                         parameters: [$billing_address_has_shipping, true]
-                    - @assign_value:
+                    - '@assign_value':
                         conditions:
-                            @and:
-                                - @equal: [$disallow_shipping_address_edit, false]
-                                - @equal: [$checkout.shipToBillingAddress, true]
-                                - @equal: [$billing_address_has_shipping, true]
+                            '@and':
+                                - '@equal': [$disallow_shipping_address_edit, false]
+                                - '@equal': [$checkout.shipToBillingAddress, true]
+                                - '@equal': [$billing_address_has_shipping, true]
                         parameters: [$checkout.shippingAddress, $checkout.billingAddress]
             continue_to_shipping_method_definition:
                 conditions:
-                    @or:
-                        - @and:
-                            - @equal: [$billing_address_has_shipping, true]
-                            - @equal: [$checkout.shipToBillingAddress, true]
-                        - @and:
-                            - @equal: [$checkout.shipToBillingAddress, false]
-                            - @not_empty: $checkout.shippingAddress
+                    '@or':
+                        - '@and':
+                            - '@equal': [$billing_address_has_shipping, true]
+                            - '@equal': [$checkout.shipToBillingAddress, true]
+                        - '@and':
+                            - '@equal': [$checkout.shipToBillingAddress, false]
+                            - '@not_empty': $checkout.shippingAddress
                 post_actions:
-                    - @assign_value:
+                    - '@assign_value':
                         conditions:
-                            @and:
-                                - @equal: [$checkout.shipToBillingAddress, true]
-                                - @equal: [$billing_address_has_shipping, true]
+                            '@and':
+                                - '@equal': [$checkout.shipToBillingAddress, true]
+                                - '@equal': [$billing_address_has_shipping, true]
                         parameters: [$checkout.shippingAddress, $checkout.billingAddress]
             place_order_definition:
                 pre_conditions:
-                    @or:
+                    '@or':
                         message: "Pending approval"
                         parameters:
-                            - @less_order_total_limit: [$checkout, 5000]
-                            - @equal: [$checkout.allowed, true]
-                            - @acl_granted: 'orob2b_alternativecheckout_checkout_approve'
+                            - '@less_order_total_limit': [$checkout, 5000]
+                            - '@equal': [$checkout.allowed, true]
+                            - '@acl_granted': 'orob2b_alternativecheckout_checkout_approve'
                 post_actions:
-                    - @assign_value:
+                    - '@assign_value':
                         conditions:
-                            @equal: [$checkout.shipToBillingAddress, false]
+                            '@equal': [$checkout.shipToBillingAddress, false]
                         parameters: [$.result.shippingAddress, $checkout.shippingAddress]
-                    - @assign_value:
+                    - '@assign_value':
                         conditions:
-                            @equal: [$checkout.shipToBillingAddress, true]
+                            '@equal': [$checkout.shipToBillingAddress, true]
                         parameters: [$.result.shippingAddress, $checkout.billingAddress]
 
                     # Place order
-                    - @get_class_name:
+                    - '@get_class_name':
                         object: $checkout.sourceEntity.sourceDocument
                         attribute: $.result.sourceDocumentEntityClassName
-                    - @create_entity:
+                    - '@create_entity':
                         attribute: $.result.order
                         class: OroB2B\Bundle\OrderBundle\Entity\Order
                         data:
@@ -416,36 +416,36 @@ workflows:
                             sourceEntityClass: $.result.sourceDocumentEntityClassName
                             sourceEntityId: $checkout.sourceEntity.sourceDocument.id
                             sourceEntityIdentifier: $checkout.sourceEntity.sourceDocumentIdentifier
-                    - @get_order_line_items:
+                    - '@get_order_line_items':
                         attribute: $.result.lineItems
                         checkout: $checkout
-                    - @call_method:
+                    - '@call_method':
                         object:  $.result.order
                         method: setLineItems
                         method_parameters:
                             - $.result.lineItems
-                    - @call_service_method:
+                    - '@call_service_method':
                         service: orob2b_order.model.order_totals_handler
                         method: fillSubtotals
                         method_parameters:
                             -  $.result.order
-                    - @flush_entity:  $.result.order
+                    - '@flush_entity':  $.result.order
 
                     # Save billing address if required
-                    - @assign_constant_value: [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
-                    - @tree:
+                    - '@assign_constant_value': [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
+                    - '@tree':
                         conditions:
-                            @and:
-                                - @equal: [$checkout.saveBillingAddress, true]
-                                - @empty: $.result.order.billingAddress.accountAddress
-                                - @empty: $.result.order.billingAddress.accountUserAddress
-                                - @acl_granted: 'orob2b_order_address_billing_allow_manual'
+                            '@and':
+                                - '@equal': [$checkout.saveBillingAddress, true]
+                                - '@empty': $.result.order.billingAddress.accountAddress
+                                - '@empty': $.result.order.billingAddress.accountUserAddress
+                                - '@acl_granted': 'orob2b_order_address_billing_allow_manual'
                         actions:
-                            - @find_entity:
+                            - '@find_entity':
                                 class: Oro\Bundle\AddressBundle\Entity\AddressType
                                 attribute: $.result.typeBilling
                                 identifier: $.result.typeBillingName
-                            - @create_entity:
+                            - '@create_entity':
                                 attribute: $.result.customerBillingAddress
                                 class: OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress
                                 data:
@@ -467,35 +467,35 @@ workflows:
                                     lastName: $.result.order.billingAddress.lastName
                                     nameSuffix: $.result.order.billingAddress.nameSuffix
                                     phone: $.result.order.billingAddress.phone
-                            - @call_method:
+                            - '@call_method':
                                 object: $.result.customerBillingAddress
                                 method: addType
                                 method_parameters:
                                     - $.result.typeBilling
-                            - @flush_entity:
+                            - '@flush_entity':
                                 conditions:
-                                    @not_empty: $.result.customerBillingAddress
+                                    '@not_empty': $.result.customerBillingAddress
                                 parameters: [$.result.customerBillingAddress]
 
                     # Save shipping address if required
-                    - @assign_constant_value: [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
-                    - @tree:
+                    - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
+                    - '@tree':
                         conditions:
-                            @and:
-                                - @equal: [$checkout.saveShippingAddress, true]
-                                - @empty: $.result.order.shippingAddress.accountAddress
-                                - @empty: $.result.order.shippingAddress.accountUserAddress
-                                - @acl_granted: 'orob2b_order_address_shipping_allow_manual'
+                            '@and':
+                                - '@equal': [$checkout.saveShippingAddress, true]
+                                - '@empty': $.result.order.shippingAddress.accountAddress
+                                - '@empty': $.result.order.shippingAddress.accountUserAddress
+                                - '@acl_granted': 'orob2b_order_address_shipping_allow_manual'
                         actions:
-                            - @find_entity:
+                            - '@find_entity':
                                 class: Oro\Bundle\AddressBundle\Entity\AddressType
                                 attribute: $.result.typeShipping
                                 identifier: $.result.typeShippingName
-                            - @tree:
+                            - '@tree':
                                 conditions:
-                                    @equal: [$checkout.shipToBillingAddress, false]
+                                    '@equal': [$checkout.shipToBillingAddress, false]
                                 actions:
-                                    - @create_entity:
+                                    - '@create_entity':
                                         attribute: $.result.customerShippingAddress
                                         class: OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress
                                         data:
@@ -517,44 +517,44 @@ workflows:
                                             lastName: $.result.order.shippingAddress.lastName
                                             nameSuffix: $.result.order.shippingAddress.nameSuffix
                                             phone: $.result.order.shippingAddress.phone
-                                    - @call_method:
+                                    - '@call_method':
                                         object: $.result.customerShippingAddress
                                         method: addType
                                         method_parameters:
                                             - $.result.typeShipping
-                            - @call_method:
+                            - '@call_method':
                                 conditions:
-                                    @equal: [$checkout.shipToBillingAddress, true]
+                                    '@equal': [$checkout.shipToBillingAddress, true]
                                 parameters:
                                     object: $.result.customerBillingAddress
                                     method: addType
                                     method_parameters:
                                         - $.result.typeShipping
-                            - @flush_entity:
+                            - '@flush_entity':
                                 conditions:
-                                    @not_empty: $.result.customerShippingAddress
+                                    '@not_empty': $.result.customerShippingAddress
                                 parameters: [$.result.customerShippingAddress]
 
-                    - @remove_entity:
+                    - '@remove_entity':
                         conditions:
-                            @or:
-                                - @equal: [$auto_remove_source, true]
-                                - @and:
-                                    - @equal: [$allow_manual_source_remove, true]
-                                    - @equal: [$remove_source, true]
+                            '@or':
+                                - '@equal': [$auto_remove_source, true]
+                                - '@and':
+                                    - '@equal': [$allow_manual_source_remove, true]
+                                    - '@equal': [$remove_source, true]
                         parameters: [$checkout.sourceEntity]
-                    - @remove_entity: $checkout
+                    - '@remove_entity': $checkout
 
-                    - @tree:
+                    - '@tree':
                         conditions:
-                            @not_empty: $.result.order.id
+                            '@not_empty': $.result.order.id
                         actions:
-                            - @assign_url:
+                            - '@assign_url':
                                 attribute: $.result.successUrl
                                 route: orob2b_order_frontend_success
                                 route_parameters:
                                     id: $.result.order.id
-                            - @payment_purchase:
+                            - '@payment_purchase':
                                 attribute: $.result.responseData
                                 object:  $.result.order
                                 amount:  $.result.order.total
@@ -562,38 +562,38 @@ workflows:
                                 paymentMethod: $payment_method
                                 transactionOptions:
                                     successUrl: $.result.successUrl
-                            - @redirect:
+                            - '@redirect':
                                 url: "$.result.responseData[returnUrl]"
 
             continue_to_request_approval_definition:
                 pre_conditions:
-                    @and:
-                        - @not:
-                            - @acl_granted: 'orob2b_alternativecheckout_checkout_approve'
-                        - @not:
-                            - @less_order_total_limit: [$checkout, 5000]
-                        - @equal: [$checkout.allowed, false]
+                    '@and':
+                        - '@not':
+                            - '@acl_granted': 'orob2b_alternativecheckout_checkout_approve'
+                        - '@not':
+                            - '@less_order_total_limit': [$checkout, 5000]
+                        - '@equal': [$checkout.allowed, false]
 
             request_for_approve_order_definition:
                 post_actions:
-                    - @assign_value:
+                    - '@assign_value':
                         conditions:
-                            @equal: [$checkout.requestedForApprove, false]
+                            '@equal': [$checkout.requestedForApprove, false]
                         parameters: [$checkout.requestedForApprove, true]
 
             approve_order_definition:
                 pre_conditions:
-                    @and:
-                        - @acl_granted: 'orob2b_alternativecheckout_checkout_approve'
-                        - @equal: [$checkout.allowed, false]
+                    '@and':
+                        - '@acl_granted': 'orob2b_alternativecheckout_checkout_approve'
+                        - '@equal': [$checkout.allowed, false]
                 post_actions:
-                    - @assign_value:
+                    - '@assign_value':
                         conditions:
-                            @equal: [$checkout.allowed, false]
+                            '@equal': [$checkout.allowed, false]
                         parameters: [$checkout.allowed, true]
-                    - @create_datetime:
+                    - '@create_datetime':
                         attribute: $checkout.allowRequestDate
 
             continue_to_order_review_definition:
                 pre_conditions:
-                    @payment_method_enabled: 'payment_term'
+                    '@payment_method_enabled': 'payment_term'

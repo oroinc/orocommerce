@@ -1,41 +1,41 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BCMSBundle:layouts:default/orob2b_account_account_user_security_login/update.html.twig'
-        - @add:
+        - '@add':
             id: login_page_styles:
             parentId: head
             blockType: style
             options:
-                visible: { @not_empty: $data.orob2b_cms_login_page.css }
-                content: { @value: $data.orob2b_cms_login_page.css }
-        - @add:
+                visible: { '@not_empty': $data.orob2b_cms_login_page.css }
+                content: { '@value': $data.orob2b_cms_login_page.css }
+        - '@add':
             id: login_page_logo
             parentId: login_page
             blockType: block
             options:
-                visible: { @not_empty: $data.orob2b_cms_login_page.logoImage }
+                visible: { '@not_empty': $data.orob2b_cms_login_page.logoImage }
                 vars:
-                    loginPage: { @value: $data.orob2b_cms_login_page }
+                    loginPage: { '@value': $data.orob2b_cms_login_page }
             prepend: true
-        - @add:
+        - '@add':
             id: login_page_top
             parentId: login_page
             blockType: text
             options:
-                visible: { @not_empty: $data.orob2b_cms_login_page.topContent }
-                text: { @value: $data.orob2b_cms_login_page.topContent }
+                visible: { '@not_empty': $data.orob2b_cms_login_page.topContent }
+                text: { '@value': $data.orob2b_cms_login_page.topContent }
                 escape: false
             siblingId: login_page_logo
-        - @add:
+        - '@add':
             id: login_page_bottom
             parentId: login_page
             blockType: text
             options:
-                visible: { @not_empty: $data.orob2b_cms_login_page.bottomContent }
-                text: { @value: $data.orob2b_cms_login_page.bottomContent }
+                visible: { '@not_empty': $data.orob2b_cms_login_page.bottomContent }
+                text: { '@value': $data.orob2b_cms_login_page.bottomContent }
                 escape: false
-        - @setOption:
+        - '@setOption':
             id: login_page
             optionName: vars.loginPage
-            optionValue: { @value: $data.orob2b_cms_login_page }
+            optionValue: { '@value': $data.orob2b_cms_login_page }
