@@ -55,7 +55,7 @@
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-order-summary"}) %}
     {% set workfowItem = checkout.workflowItem %}
     <div{{ block('block_attributes') }}>
-        <div class="checkout-order-summary__tab" data-tab="">
+        <div class="checkout-order-summary__tab {% if app.request.cookies.has('order-tab:state') %}active{% endif %}" data-tab="">
             <div class="checkout-order-summary__header">
                 <div data-tab-trigger="" data-allow-tab-toggle="true">
                     <div class="checkout-order-summary__header__icon-group">

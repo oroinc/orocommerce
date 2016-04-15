@@ -167,8 +167,7 @@ require(['jquery', 'lodash', 'slick', 'raty', 'perfectScrollbar', 'fastclick', '
                        productsSliderInit();
                     }
 
-                    $(this).trigger('tab:triggered');
-
+                    $(this).trigger('tab:toggle');
                     event.stopPropagation();
                     event.preventDefault();
                 });
