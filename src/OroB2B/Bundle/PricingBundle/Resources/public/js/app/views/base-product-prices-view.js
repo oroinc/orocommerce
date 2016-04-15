@@ -40,9 +40,9 @@ define(function(require) {
 
         renderHint: function() {
             var $pricesHint = this.getElement('pricesHint');
-            var $pricesHintContent = this.getElement('pricesHintContent');
 
-            if ($pricesHint) {
+            if ($pricesHint.length) {
+                var $pricesHintContent = this.getElement('pricesHintContent');
                 $pricesHint.data('content', $pricesHintContent.html());
                 $pricesHint.popover({
                     animation: false,
@@ -72,7 +72,7 @@ define(function(require) {
         },
 
         findPrice: function(priceData) {
-            if (!priceData && _.isObject(priceData)) {
+            if (!priceData || !_.isObject(priceData)) {
                 return null;
             }
 

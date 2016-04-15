@@ -4,7 +4,6 @@ define(function(require) {
     /**
      * This helper use in the context of component View
      * */
-
     var $ = require('jquery');
     var _ = require('underscore');
 
@@ -35,8 +34,8 @@ define(function(require) {
                 return this[key];
             }
 
-            var $element = null,
-                selector = this.options.elements[key] || null;
+            var $element = null;
+            var selector = this.options.elements[key] || null;
 
             if (!selector) {
                 return $element;
