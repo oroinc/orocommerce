@@ -16,14 +16,11 @@
     })) %}
     <div {{ block('block_attributes') }}>
         <div data-role="price">
-        <% if (!_.isEmpty(model.prices)) { %>
             {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }}
-            <div class="product-item__price_block">
-                <% _.each(model.prices, function(price, forField) { %>
-                    <div data-role="prices-hint" data-placement="bottom" data-close="false" data-trigger="hover"><span class="fs16 blue" data-role="price-value"><%= price.formatted_price %></span> / <%= price.formatted_unit %></div>
-                <% }) %>
+            <div class="product-item__price_block" data-role="prices-hint" data-placement="bottom" data-close="false" data-trigger="hover">
+                {# TODO: apply correct price in scope of BB-2461 #}
+                <div><span class="fs16 blue" data-role="price-value">$12.99</span> / item</div>
             </div>
-        <% } %>
         </div>
         <div data-role="prices-hint-content" style="display:none;">
             <% _.each(model.prices, function(price, forField) { %>
@@ -45,7 +42,23 @@
         class: attr.class|default('') ~ " product-item__listed-price product-item__listed-price_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        {{ 'orob2b.pricing.frontend.pricelist.index.listed_price'|trans }} <span>$12.99</span>
+        <% if (!_.isEmpty(model.prices)) { %>
+            {{ 'orob2b.pricing.frontend.pricelist.index.listed_price'|trans }}
+            <div class="product-item__price_block">
+                <% var pricesPerUnits = {};
+                _.each(model.prices, function(price) {
+                    var unit = price.unit;
+                    if (!pricesPerUnits[unit] || price.quantity < pricesPerUnits[unit].quantity) {
+                        pricesPerUnits[unit] = price;
+                    }
+                }) %>
+                <% _.each(pricesPerUnits, function(price) { %>
+                    <div title="{{ 'orob2b.pricing.productprice.applicable_from'|trans({'%amount%': '<%= price.quantity_with_unit %>'})|raw }}">
+                        <span><%= price.formatted_price %></span> / <%= price.formatted_unit %>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
     </div>
 {% endblock %}
 

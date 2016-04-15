@@ -62,6 +62,8 @@ orob2b.pricing:
             save: Save
             cancel: Cancel
         save.success: Product Price has been added
+        applicable_from: 'Price is applicable starting from %amount%'
+
     price_type:
         bundled: 'bundle'
         unit: 'per unit'

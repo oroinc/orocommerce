@@ -57,7 +57,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
         $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => $priceListId]);
         $productId = 24;
         $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
-        $priceSorting = ['currency' => 'DESC', 'unit' => 'ASC', 'quantity' => 'ASC'];
+        $priceSorting = ['unit' => 'ASC', 'currency' => 'DESC', 'quantity' => 'ASC'];
         $context = new LayoutContext();
         $context->data()->set('product', null, $product);
 

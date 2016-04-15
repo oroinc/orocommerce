@@ -105,7 +105,7 @@ class ProductPriceProvider
 
             $price = $this->matchPriceByQuantity($productPrices, $quantity);
 
-            $result[$productPriceCriteria->getIdentifier()] = $price ? Price::create($price, $currency) : null;
+            $result[$productPriceCriteria->getIdentifier()] = $price !== null ? Price::create($price, $currency) : null;
         }
 
         return $result;
@@ -118,7 +118,7 @@ class ProductPriceProvider
      */
     protected function matchPriceByQuantity(array $prices, $expectedQuantity)
     {
-        $price = 0.0;
+        $price = null;
 
         foreach ($prices as $productPrice) {
             $quantity = (float)$productPrice['quantity'];
