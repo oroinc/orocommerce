@@ -74,7 +74,7 @@ abstract class AbstractAjaxProductPriceController extends Controller
      */
     protected function getProductUnitsByCurrency(BasePriceList $priceList, Request $request, $productPriceClass)
     {
-        $productClass = $this->getParameter('orob2b_product.product.class');
+        $productClass = $this->getParameter('orob2b_product.entity.product.class');
 
         /** @var Product $product */
         $product = $this->getEntityReference($productClass, $request->get('id'));

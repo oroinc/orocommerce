@@ -90,7 +90,7 @@ class CreditCardTypeTest extends FormIntegrationTestCase
                                     ],
                                 ],
                                 'data-gateway' => true,
-                                'class' => 'credit-card-number',
+                                'data-card-number' => true,
                                 'autocomplete' => 'off',
                             ],
                             'constraints' => [
@@ -111,9 +111,9 @@ class CreditCardTypeTest extends FormIntegrationTestCase
                                 'month' => 'Month',
                                 'day' => ''
                             ],
-                            'constraints' => [
-                                new NotBlank(),
-                            ],
+                            'attr' => [
+                                'data-expiration-date' => true
+                            ]
                         ],
                     ],
                     'EXPDATE' => [
@@ -132,6 +132,10 @@ class CreditCardTypeTest extends FormIntegrationTestCase
                                 new NotBlank(),
                                 new Length(['min' => 3, 'max' => 4]),
                             ],
+                            'attr' => [
+                                'data-card-cvv' => true,
+                                'data-gateway' => true,
+                            ]
                         ],
                     ],
                 ],

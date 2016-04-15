@@ -1,10 +1,7 @@
-parameters:
-    orob2b_catalog.twig.category_extension.class: OroB2B\Bundle\CatalogBundle\Twig\CategoryExtension
-
 services:
     # Twig extensions
     orob2b_catalog.twig.category_extension:
-        class: %orob2b_catalog.twig.category_extension.class%
+        class: 'OroB2B\Bundle\CatalogBundle\Twig\CategoryExtension'
         arguments:
             - '@orob2b_catalog.category_tree_handler'
             - '@translator'
