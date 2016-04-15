@@ -10,7 +10,7 @@ services:
             - @oro_workflow.manager
             - @doctrine
         tags:
-            - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity}
+            - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity, priority: -10}
 
     orob2b.workflow_expression.user_in_group:
         class: OroB2B\Bundle\AlternativeCheckoutBundle\Condition\AssertAccount
