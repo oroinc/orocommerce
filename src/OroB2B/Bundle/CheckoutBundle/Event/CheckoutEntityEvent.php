@@ -2,10 +2,12 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Event;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class CheckoutEvent extends Event
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
+
+class CheckoutEntityEvent extends Event
 {
     /**
      * @var CheckoutInterface
@@ -38,13 +40,13 @@ class CheckoutEvent extends Event
     /**
      * @param CheckoutInterface $checkoutEntity
      */
-    public function setCheckoutEntity(CheckoutInterface $checkoutEntity)
+    public function setCheckoutEntity(CheckoutInterface $checkoutEntity = null)
     {
         $this->checkoutEntity = $checkoutEntity;
     }
 
     /**
-     * @return object
+     * @return CheckoutSource
      */
     public function getSource()
     {
@@ -52,7 +54,7 @@ class CheckoutEvent extends Event
     }
 
     /**
-     * @param object $source
+     * @param CheckoutSource $source
      */
     public function setSource($source)
     {
