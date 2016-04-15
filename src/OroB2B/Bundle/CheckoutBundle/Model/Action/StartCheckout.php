@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\CheckoutBundle\Model\Action;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -17,13 +16,13 @@ use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\Action\Model\ContextAccessor;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
+use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * Start checkout process on frontend
@@ -334,7 +333,13 @@ class StartCheckout extends AbstractAction
         $event = new CheckoutEntityEvent();
         $event->setSource($checkoutSource);
         $this->dispatcher->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
-        return $event->getCheckoutEntity() ?: new Checkout();
+        $checkout = $event->getCheckoutEntity();
+
+        if (!$checkout) {
+            throw new \RuntimeException("Checkout entity should be specified during event process");
+        }
+
+        return $checkout;
     }
 
     /**
