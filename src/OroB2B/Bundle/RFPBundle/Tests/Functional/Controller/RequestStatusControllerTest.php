@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
 /**
  * @dbIsolation
@@ -26,16 +27,16 @@ class RequestStatusControllerTest extends WebTestCase
      */
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_rfp_request_status_index'));
-
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_status_index'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('rfp-request-statuses-grid', $crawler->html());
         $this->assertContains('RFQ Statuses', $result->getContent());
     }
 
     /**
-     * Test create
+     * @return int
      */
     public function testCreate()
     {
@@ -52,24 +53,24 @@ class RequestStatusControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Request Status saved', $crawler->html());
+
+        /** @var RequestStatus $status */
+        $status = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BRFPBundle:RequestStatus')
+            ->getRepository('OroB2BRFPBundle:RequestStatus')
+            ->findOneBy(['name' => self::OLD_NAME]);
+        $this->assertNotEmpty($status);
+
+        return $status->getId();
     }
 
     /**
-     * Test update
-     *
-     * @depend testCreate
+     * @param $id int
+     * @return int
+     * @depends testCreate
      */
-    public function testUpdate()
+    public function testUpdate($id)
     {
-        $response = $this->client->requestGrid(
-            'rfp-request-statuses-grid',
-            ['rfp-request-statuses-grid[_filter][name][value]' => self::OLD_NAME]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-        $id = $result['id'];
-
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_status_update', [
             'id' => $id
         ]));
