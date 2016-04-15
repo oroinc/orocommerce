@@ -13,7 +13,7 @@ services:
     orob2b_fallback.form.type.fallback_property:
         class: %orob2b_fallback.form.type.fallback_property.class%
         arguments:
-            - @translator
+            - "@translator"
         tags:
             - { name: form.type, alias: orob2b_fallback_property }
 
@@ -25,7 +25,7 @@ services:
     orob2b_fallback.form.type.locale_collection:
         class: %orob2b_fallback.form.type.locale_collection.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
         calls:
             - [setLocaleClass, [%orob2b_website.locale.class%]]
         tags:
@@ -39,7 +39,7 @@ services:
     orob2b_fallback.form.type.website_collection:
         class: %orob2b_fallback.form.type.website_collection.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
         calls:
             - [setWebsiteClass, [%orob2b_website.website.class%]]
         tags:
@@ -53,6 +53,6 @@ services:
     orob2b_fallback.form.type.localzed_value_colection:
         class: %orob2b_fallback.form.type.localzed_value_colection.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
         tags:
             - { name: form.type, alias: orob2b_fallback_localized_value_collection }

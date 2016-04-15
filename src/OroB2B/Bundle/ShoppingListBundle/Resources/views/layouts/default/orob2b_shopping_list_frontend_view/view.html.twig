@@ -328,12 +328,12 @@
                     'frontend:shopping-list-item-quantity:update'
                 ],
                 selectors: {
+                    subtotalTemplate: '#frontend-subtotals-template',
                     template: '#frontend-totals-template'
                 },
                 entityClassName: 'OroB2B\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList',
                 entityId: shoppingList.id,
                 skipMaskView: true,
-                application: 'frontend',
                 data: totals
             }
         } only %}

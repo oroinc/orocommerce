@@ -55,7 +55,7 @@ class ProductControllerTest extends WebTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
 
-        $this->assertCount(0, $shoppingList->getLineItems());
+        $this->assertCount(1, $shoppingList->getLineItems());
 
         $tokenManager = $this->getContainer()->get('security.csrf.token_manager');
 
@@ -83,9 +83,9 @@ class ProductControllerTest extends WebTestCase
         $this->assertTrue($result['successful']);
         $this->assertArrayHasKey('message', $result);
         $this->assertEquals(
-            'Product has been added to "<a href=\'' .
+            'Product has been added to "<a href="' .
             $this->getUrl('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()]) .
-            '\'>'.$shoppingList->getLabel().'</a>"',
+            '">'.$shoppingList->getLabel().'</a>"',
             $result['message']
         );
 
@@ -93,7 +93,7 @@ class ProductControllerTest extends WebTestCase
         $shoppingList = $this->getContainer()->get('doctrine')->getManagerForClass($shoppingListClass)
             ->find($shoppingListClass, $shoppingList->getId());
 
-        $this->assertCount(1, $shoppingList->getLineItems());
+        $this->assertCount(2, $shoppingList->getLineItems());
 
         /** @var LineItem $lineItem */
         $lineItem = $shoppingList->getLineItems()->first();
