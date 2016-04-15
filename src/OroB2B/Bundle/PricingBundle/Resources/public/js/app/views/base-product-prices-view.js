@@ -41,11 +41,14 @@ define(function(require) {
         renderHint: function() {
             var $pricesHint = this.getElement('pricesHint');
             var $pricesHintContent = this.getElement('pricesHintContent');
-            $pricesHint.data('content', $pricesHintContent.html());
-            $pricesHint.popover({
-                animation: false,
-                html: true
-            });
+
+            if ($pricesHint) {
+                $pricesHint.data('content', $pricesHintContent.html());
+                $pricesHint.popover({
+                    animation: false,
+                    html: true
+                });
+            }
         },
 
         setPrices: function(prices) {
@@ -69,11 +72,11 @@ define(function(require) {
         },
 
         findPrice: function(priceData) {
-            if (!priceData) {
+            if (!priceData && _.isObject(priceData)) {
                 return null;
             }
 
-            return _.find(this.prices[priceData.unit] || {}, function(price) {
+            return _.find(this.prices[priceData.unit], function(price) {
                 return price.qty <= priceData.quantity;
             }) || null;
         },

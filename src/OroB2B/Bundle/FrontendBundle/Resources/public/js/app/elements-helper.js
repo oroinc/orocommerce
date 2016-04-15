@@ -1,6 +1,10 @@
 define(function(require) {
     'use strict';
 
+    /**
+     * This helper use in the context of component View
+     * */
+
     var $ = require('jquery');
     var _ = require('underscore');
 
@@ -31,9 +35,9 @@ define(function(require) {
                 return this[key];
             }
 
-            var $element = null;
+            var $element = null,
+                selector = this.options.elements[key] || null;
 
-            var selector = this.options.elements[key] || null;
             if (!selector) {
                 return $element;
             }
