@@ -274,8 +274,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
-            ->method('submit')
-            ->with($request);
+            ->method('submit');
         $form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
@@ -764,7 +763,6 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('submit')
-            ->with($request)
             ->willReturnCallback(
                 function () use ($role, $newAccount) {
                     $role->setAccount($newAccount);

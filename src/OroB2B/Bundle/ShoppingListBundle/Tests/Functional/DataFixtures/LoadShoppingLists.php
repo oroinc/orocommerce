@@ -43,8 +43,8 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
 
     /**
      * @param ObjectManager $manager
-     * @param string        $name
      * @param AccountUser   $accountUser
+     * @param string        $name
      * @param bool          $isCurrent
      *
      * @return ShoppingList

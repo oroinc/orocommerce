@@ -25,6 +25,7 @@ class ExceptionControllerTest extends WebTestCase
      */
     public function testShowActionNotFound($url, $selector)
     {
+        $this->client->followRedirects();
         $crawler = $this->client->request('GET', $url);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
@@ -37,11 +38,11 @@ class ExceptionControllerTest extends WebTestCase
     public function showActionNotFoundDataProvider()
     {
         return [
-            [
+            'frontend' => [
                 'url' => '/page-does-not-exist',
                 'selector' => 'div.text-center h1',
             ],
-            [
+            'admin' => [
                 'url' => '/admin/page-does-not-exist',
                 'selector' => 'div.popup-frame div.popup-holder div.pagination-centered.popup-box-errors h1',
             ],

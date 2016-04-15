@@ -53,6 +53,13 @@ orob2b_account_product_visibility:
 orob2b_account_frontend_account_user_profile:
     resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserProfileController.php"
     type: annotation
+    prefix: /account/profile
+    options:
+        frontend: true
+
+orob2b_account_frontend_account_user_register:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserRegisterController.php"
+    type: annotation
     prefix: /account/user
     options:
         frontend: true
