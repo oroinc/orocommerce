@@ -9,16 +9,16 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_widget_widget %}
-        <div class="cart-widget__content">
-            <span class="badge badge_md badge_circle badge_orange badge_i-block cart-widget__clipboard">
-                <i class="cf-clipboard"></i>
-            </span>
-            <span class="cart-widget__list-trigger">
-                <span class="cart-widget-text">{{ 'orob2b.frontend.shoppinglist.view.entity.label'|transchoice(shoppingLists|length)|raw }} </span>
-                <i class="cf-down-open-mini"></i>
-            </span>
-        </div>
-        {{ block_widget(block) }}
+    <div class="cart-widget__content">
+        <span class="badge badge_md badge_circle badge_orange badge_i-block cart-widget__clipboard">
+            <i class="cf-clipboard"></i>
+        </span>
+        <span class="cart-widget__list-trigger">
+            <span class="cart-widget-text">{{ 'orob2b.frontend.shoppinglist.view.entity.label'|transchoice(shoppingLists|length)|raw }} </span>
+            <i class="cf-down-open-mini"></i>
+        </span>
+    </div>
+    {{ block_widget(block) }}
 {% endblock %}
 
 {% block _main_menu_shopping_lists_widget_content_widget %}
