@@ -37,6 +37,8 @@ define(function(require) {
             _.extend(this.options, additionalOptions || {});
 
             this.options._sourceElement.on('click', 'a[data-id]', _.bind(this.onClick, this));
+
+            mediator.on('shopping-list:created', this.updateButtons, this);
         },
 
         /**
@@ -122,10 +124,7 @@ define(function(require) {
                             response.message
                         );
                     }
-                    if (!self.buttonExists(urlOptions.shoppingListId)) {
-                        self.transformCreateNewButton();
-                        mediator.trigger('shopping-list:created', response.shoppingList);
-                    } else {
+                    if (self.buttonExists(urlOptions.shoppingListId)) {
                         mediator.trigger('shopping-list:updated', response.shoppingList);
                     }
                 },
@@ -134,6 +133,15 @@ define(function(require) {
                     Error.handle({}, xhr, {enforce: true});
                 }
             });
+        },
+
+        /**
+         * @param {Object} shoppingList
+         */
+        updateButtons: function(shoppingList) {
+            if (!this.buttonExists(shoppingList.id)) {
+                this.transformCreateNewButton();
+            }
         },
 
         /**
@@ -156,6 +164,8 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
+
+            mediator.off('shopping-list:created', this.updateButtons, this);
 
             this.options._sourceElement.off();
 
