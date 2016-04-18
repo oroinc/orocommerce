@@ -119,7 +119,7 @@ services:
 
 
     orob2b_checkout.twig.line_items:
-        class: 'OroB2B\Bundle\CheckoutBundle\Twig\LineItems'
+        class: 'OroB2B\Bundle\CheckoutBundle\Twig\LineItemsExtension'
         arguments:
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
         tags:
