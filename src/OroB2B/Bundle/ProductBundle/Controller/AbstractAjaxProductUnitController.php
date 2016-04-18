@@ -44,7 +44,7 @@ abstract class AbstractAjaxProductUnitController extends Controller
      */
     protected function getRepository()
     {
-        $class = $this->container->getParameter('orob2b_product.product_unit.class');
+        $class = $this->container->getParameter('orob2b_product.entity.product_unit.class');
 
         return $this->getDoctrine()->getManagerForClass($class)->getRepository($class);
     }

@@ -126,25 +126,24 @@ class ProductWithPricesTest extends WebTestCase
             $crawler->filter('select[name="orob2b_product[prices][0][price][currency]"] :selected')
                 ->extract('value')[0]
         );
+
+        /** @var Product $product */
+        $product = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BProductBundle:Product')
+            ->getRepository('OroB2BProductBundle:Product')
+            ->findOneBy(['sku' => self::TEST_SKU]);
+        $this->assertNotEmpty($product);
+
+        return $product->getId();
     }
 
     /**
      * @depends testCreate
+     * @param $id int
      * @return integer
      */
-    public function testUpdate()
+    public function testUpdate($id)
     {
-        $response = $this->client->requestGrid(
-            'products-grid',
-            ['products-grid[_filter][sku][value]' => self::TEST_SKU]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $this->assertEquals(self::TEST_SKU, $result['sku']);
-
-        $id = $result['id'];
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
         /** @var PriceList $priceList */

@@ -80,7 +80,7 @@ class ProductController extends Controller
         );
 
         return [
-            'entity_class' => $this->container->getParameter('orob2b_product.product.class'),
+            'entity_class' => $this->container->getParameter('orob2b_product.entity.product.class'),
             'widgetRouteParameters' => $event->getWidgetRouteParameters()
         ];
     }

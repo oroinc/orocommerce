@@ -118,10 +118,11 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_index'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('account-account-user-grid', $crawler->html());
         $this->assertContains(self::FIRST_NAME, $result->getContent());
         $this->assertContains(self::LAST_NAME, $result->getContent());
         $this->assertContains(self::EMAIL, $result->getContent());
@@ -133,19 +134,12 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testUpdate()
     {
-        $response = $this->client->requestGrid(
-            'account-account-user-grid',
-            [
-                'account-account-user-grid[_filter][firstName][value]' => self::FIRST_NAME,
-                'account-account-user-grid[_filter][LastName][value]'  => self::LAST_NAME,
-                'account-account-user-grid[_filter][email][value]'     => self::EMAIL
-            ]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id = $result['id'];
+        /** @var AccountUser $account */
+        $accountUser = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:AccountUser')
+            ->getRepository('OroB2BAccountBundle:AccountUser')
+            ->findOneBy(['email' => self::EMAIL, 'firstName' => self::FIRST_NAME, 'lastName' => self::LAST_NAME]);
+        $id = $accountUser->getId();
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_update', ['id' => $id]));
 

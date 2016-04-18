@@ -26,7 +26,7 @@ class LoginPageController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_cms.loginpage.class')
+            'entity_class' => $this->container->getParameter('orob2b_cms.entity.loginpage.class')
         ];
     }
 
