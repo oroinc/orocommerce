@@ -58,14 +58,14 @@ class CombinedPriceListQueueConsumer
     }
 
     /**
-     * @param bool|false $force
+     * @param int|null $behavior
      */
-    public function process($force = false)
+    public function process($behavior = null)
     {
         $manager = $this->getManager();
         $i = 0;
         foreach ($this->getUniqueTriggersIterator() as $changeItem) {
-            $this->handlePriceListChangeTrigger($changeItem, $force);
+            $this->handlePriceListChangeTrigger($changeItem, $behavior);
             $manager->remove($changeItem);
             if (++$i % 100 === 0) {
                 $manager->flush();
@@ -84,26 +84,26 @@ class CombinedPriceListQueueConsumer
 
     /**
      * @param PriceListChangeTrigger $trigger
-     * @param bool $force
+     * @param null $behavior
      */
-    protected function handlePriceListChangeTrigger(PriceListChangeTrigger $trigger, $force)
+    protected function handlePriceListChangeTrigger(PriceListChangeTrigger $trigger, $behavior)
     {
         switch (true) {
             case !is_null($trigger->getAccount()):
-                $this->accountPriceListsBuilder->build($trigger->getWebsite(), $trigger->getAccount(), $force);
+                $this->accountPriceListsBuilder->build($trigger->getWebsite(), $trigger->getAccount(), $behavior);
                 break;
             case !is_null($trigger->getAccountGroup()):
                 $this->accountGroupPriceListsBuilder->build(
                     $trigger->getWebsite(),
                     $trigger->getAccountGroup(),
-                    $force
+                    $behavior
                 );
                 break;
             case !is_null($trigger->getWebsite()):
-                $this->websitePriceListsBuilder->build($trigger->getWebsite(), $force);
+                $this->websitePriceListsBuilder->build($trigger->getWebsite(), $behavior);
                 break;
             default:
-                $this->commonPriceListsBuilder->build($force);
+                $this->commonPriceListsBuilder->build($behavior);
         }
     }
 

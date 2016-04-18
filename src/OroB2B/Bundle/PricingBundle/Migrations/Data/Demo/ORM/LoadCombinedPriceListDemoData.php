@@ -9,6 +9,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
+
 class LoadCombinedPriceListDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
@@ -38,7 +40,8 @@ class LoadCombinedPriceListDemoData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $this->container->get('orob2b_pricing.builder.combined_price_list_builder')->build(true);
+        $this->container->get('orob2b_pricing.builder.combined_price_list_builder')
+            ->build(CombinedPriceListProvider::BEHAVIOR_FORCE);
     }
 
     /**

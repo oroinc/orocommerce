@@ -71,13 +71,13 @@ class CombinedPriceListsBuilder
     }
 
     /**
-     * @param boolean|false $force
+     * @param int|null $behavior
      */
-    public function build($force = false)
+    public function build($behavior = null)
     {
-        if ($force || !$this->isBuilt) {
-            $this->updatePriceListsOnCurrentLevel($force);
-            $this->websiteCombinedPriceListBuilder->build(null, $force);
+        if (!$this->isBuilt) {
+            $this->updatePriceListsOnCurrentLevel($behavior);
+            $this->websiteCombinedPriceListBuilder->build(null, $behavior);
             $this->garbageCollector->cleanCombinedPriceLists();
             $this->isBuilt = true;
         }

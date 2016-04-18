@@ -28,11 +28,11 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
     /**
      * @param Website $website
      * @param AccountGroup|null $currentAccountGroup
-     * @param boolean|false $force
+     * @param int|null $behavior
      */
-    public function build(Website $website, AccountGroup $currentAccountGroup = null, $force = false)
+    public function build(Website $website, AccountGroup $currentAccountGroup = null, $behavior = null)
     {
-        if ($force || !$this->isBuiltForAccountGroup($website, $currentAccountGroup)) {
+        if (!$this->isBuiltForAccountGroup($website, $currentAccountGroup)) {
             $accountGroups = [$currentAccountGroup];
             if (!$currentAccountGroup) {
                 $accountGroups = $this->getPriceListToEntityRepository()
@@ -40,8 +40,8 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
             }
 
             foreach ($accountGroups as $accountGroup) {
-                $this->updatePriceListsOnCurrentLevel($website, $accountGroup, $force);
-                $this->accountCombinedPriceListsBuilder->buildByAccountGroup($website, $accountGroup, $force);
+                $this->updatePriceListsOnCurrentLevel($website, $accountGroup, $behavior);
+                $this->accountCombinedPriceListsBuilder->buildByAccountGroup($website, $accountGroup, $behavior);
             }
 
             if ($currentAccountGroup) {
@@ -54,9 +54,9 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
     /**
      * @param Website $website
      * @param AccountGroup $accountGroup
-     * @param boolean $force
+     * @param int|null $behavior
      */
-    protected function updatePriceListsOnCurrentLevel(Website $website, AccountGroup $accountGroup, $force)
+    protected function updatePriceListsOnCurrentLevel(Website $website, AccountGroup $accountGroup, $behavior)
     {
         $priceListsToAccountGroup = $this->getPriceListToEntityRepository()
             ->findOneBy(['website' => $website, 'accountGroup' => $accountGroup]);
@@ -68,7 +68,7 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
             return;
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByAccountGroup($accountGroup, $website);
-        $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
+        $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $behavior);
 
         $this->getCombinedPriceListRepository()
             ->updateCombinedPriceListConnection($combinedPriceList, $website, $accountGroup);
