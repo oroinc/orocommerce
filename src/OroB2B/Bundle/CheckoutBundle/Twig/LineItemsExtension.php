@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Twig;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
-class LineItems extends \Twig_Extension
+class LineItemsExtension extends \Twig_Extension
 {
     const NAME = 'orob2b_checkout_order_line_items';
 
@@ -38,7 +38,7 @@ class LineItems extends \Twig_Extension
     {
         $lineItems = [];
         foreach ($order->getLineItems() as $lineItem) {
-            $data['name'] = $lineItem->__toString();
+            $data['name'] = (string)$lineItem;
             $data['quantity'] = $lineItem->getQuantity();
             $data['unit'] = $lineItem->getProductUnit();
             $data['price'] = $lineItem->getPrice();
