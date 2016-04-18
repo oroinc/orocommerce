@@ -66,7 +66,7 @@ class QuoteDemandType extends AbstractType
     /**
      * @param FormEvent $event
      */
-    protected function postSubmit(FormEvent $event)
+    public function postSubmit(FormEvent $event)
     {
         $data = $event->getData();
 
