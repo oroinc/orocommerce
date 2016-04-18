@@ -10,11 +10,13 @@ use OroB2B\Bundle\PaymentBundle\Method\View\PaymentTermView;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm as PaymentTermMethod;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 
 class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 {
+    use ConfigTestTrait;
+
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $configManager;
 
@@ -102,27 +104,4 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
         $this->setConfig($this->once(), Configuration::PAYMENT_TERM_LABEL_KEY, 'testValue');
         $this->assertEquals('testValue', $this->methodView->getLabel());
     }
-
-    /**
-     * @param mixed $expects
-     * @param string $key
-     * @param mixed $value
-     */
-    protected function setConfig($expects, $key, $value)
-    {
-        $this->configManager->expects($expects)
-            ->method('get')
-            ->with($this->getConfigKey($key))
-            ->willReturn($value);
-    }
-
-    /**
-     * @param string $key
-     * @return string
-     */
-    protected function getConfigKey($key)
-    {
-        return OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
-    }
-
 }

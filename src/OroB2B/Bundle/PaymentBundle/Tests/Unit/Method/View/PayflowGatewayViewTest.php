@@ -3,8 +3,6 @@
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\View;
 
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
@@ -12,10 +10,12 @@ use OroB2B\Bundle\PaymentBundle\Method\View\PayflowGatewayView;
 use OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
+use OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 
 class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
 {
+    use ConfigTestTrait;
+
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $configManager;
 
@@ -85,27 +85,5 @@ class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
     {
         $this->setConfig($this->once(), Configuration::PAYFLOW_GATEWAY_LABEL_KEY, 'testValue');
         $this->assertEquals('testValue', $this->methodView->getLabel());
-    }
-
-    /**
-     * @param mixed $expects
-     * @param string $key
-     * @param mixed $value
-     */
-    protected function setConfig($expects, $key, $value)
-    {
-        $this->configManager->expects($expects)
-            ->method('get')
-            ->with($this->getConfigKey($key))
-            ->willReturn($value);
-    }
-
-    /**
-     * @param string $key
-     * @return string
-     */
-    protected function getConfigKey($key)
-    {
-        return OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
     }
 }

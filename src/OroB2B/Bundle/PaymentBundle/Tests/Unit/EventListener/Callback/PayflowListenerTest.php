@@ -169,13 +169,15 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
      * @param array $data
      * @param array $paymentTransactionData
      * @param array $expectedPaymentTransactionData
+     * @param bool $expectsSession
      *
      * @dataProvider onErrorDataProvider
      */
     public function testOnError(
         array $data,
-        array $paymentTransactionData = [],
-        array $expectedPaymentTransactionData = []
+        array $paymentTransactionData,
+        array $expectedPaymentTransactionData,
+        $expectsSession
     ) {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
@@ -185,16 +187,14 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
         $event = new CallbackReturnEvent($data);
         $event->setPaymentTransaction($paymentTransaction);
 
-        if ($data['RESULT'] == ResponseStatusMap::SECURE_TOKEN_EXPIRED) {
-            $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
-            $flashBag->expects($this->once())
-                ->method('set')
-                ->with('warning', 'orob2b.payment.result.token_expired');
+        $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+        $flashBag->expects($this->exactly($expectsSession))
+            ->method('set')
+            ->with('warning', 'orob2b.payment.result.token_expired');
 
-            $this->session->expects($this->once())
-                ->method('getFlashBag')
-                ->willReturn($flashBag);
-        }
+        $this->session->expects($this->exactly($expectsSession))
+            ->method('getFlashBag')
+            ->willReturn($flashBag);
 
         $this->listener->onError($event);
         $this->assertEquals($expectedPaymentTransactionData, $paymentTransaction->getResponse());
@@ -225,6 +225,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
                     'SECURETOKEN' => 'SECURETOKEN',
                     'SECURETOKENID' => 'SECURETOKENID',
                 ],
+                1
             ],
             'token match ordered' => [
                 [
@@ -243,6 +244,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
                     'SECURETOKEN' => 'SECURETOKEN',
                     'SECURETOKENID' => 'SECURETOKENID',
                 ],
+                0
             ],
         ];
     }
