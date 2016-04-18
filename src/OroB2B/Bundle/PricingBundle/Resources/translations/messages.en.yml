@@ -56,6 +56,7 @@ orob2b.pricing:
         price.label: Price
         import: Import Product Prices
         show_tier_prices.label: Show Tier Prices
+        minimum_quantity.label: 'Minimum Quantity'
         price_in_%currency%: 'Price (%currency%)'
         price_%unit%_in_%currency%: 'Price (%currency%/%unit%)'
         action:

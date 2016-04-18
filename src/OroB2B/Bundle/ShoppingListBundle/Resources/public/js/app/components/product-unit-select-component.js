@@ -13,7 +13,9 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        options: {},
+        options: {
+            defaultQuantity: 1
+        },
 
         /**
          * @param {Object} additionalOptions
@@ -22,6 +24,7 @@ define(function(require) {
             _.extend(this.options, additionalOptions || {});
 
             this.initSelect();
+            this.initQuantityInput();
         },
 
         initSelect: function() {
@@ -32,6 +35,10 @@ define(function(require) {
                 select.append($('<option></option>').attr('value', productCode).text(productUnits[productCode]));
             }
             select.change();
+        },
+
+        initQuantityInput: function() {
+            $('[data-role="field-quantity"]', this.options._sourceElement).val(this.options.defaultQuantity);
         }
     });
 
