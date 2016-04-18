@@ -116,3 +116,10 @@ services:
             - '@request_stack'
         tags:
             - { name: oro_workflow.condition, alias: check_request }
+
+    orob2b_checkout.twig.line_items:
+        class: 'OroB2B\Bundle\CheckoutBundle\Twig\LineItems'
+        arguments:
+            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
+        tags:
+            - { name: twig.extension }
