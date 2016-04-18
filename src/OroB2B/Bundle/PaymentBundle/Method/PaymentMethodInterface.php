@@ -15,6 +15,8 @@ interface PaymentMethodInterface
      */
     const PURCHASE = 'purchase';
 
+    const VALIDATE = 'validate';
+
     /**
      * @param PaymentTransaction $paymentTransaction
      * @return array

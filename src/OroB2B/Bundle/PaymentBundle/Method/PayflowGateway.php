@@ -126,7 +126,53 @@ class PayflowGateway implements PaymentMethodInterface
      */
     public function purchase(PaymentTransaction $paymentTransaction)
     {
-        $options = [
+        $options = $this->getOptions($paymentTransaction);
+
+        $paymentTransaction
+            ->setRequest($options)
+            ->setAction($this->getPurchaseAction());
+
+        $this->execute($paymentTransaction);
+
+        $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
+
+        $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
+
+        $response['formAction'] = $this->gateway->getFormAction();
+
+        return $response;
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    public function validate(PaymentTransaction $paymentTransaction)
+    {
+        $options = $this->getOptions($paymentTransaction);
+
+        $paymentTransaction
+            ->setRequest($options)
+            ->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $this->execute($paymentTransaction);
+
+        $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
+
+        $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
+
+        $response['formAction'] = $this->gateway->getFormAction();
+
+        return $response;
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function getOptions(PaymentTransaction $paymentTransaction)
+    {
+        return [
             Option\SecureTokenIdentifier::SECURETOKENID => Option\SecureTokenIdentifier::generate(),
             Option\CreateSecureToken::CREATESECURETOKEN => true,
             Option\Amount::AMT => round($paymentTransaction->getAmount(), 2),
@@ -150,20 +196,6 @@ class PayflowGateway implements PaymentMethodInterface
                 true
             ),
         ];
-
-        $paymentTransaction
-            ->setRequest($options)
-            ->setAction($this->getPurchaseAction());
-
-        $this->execute($paymentTransaction);
-
-        $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
-
-        $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
-
-        $response['formAction'] = $this->gateway->getFormAction();
-
-        return $response;
     }
 
     /**
