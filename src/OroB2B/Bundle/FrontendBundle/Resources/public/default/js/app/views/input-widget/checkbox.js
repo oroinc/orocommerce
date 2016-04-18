@@ -9,23 +9,18 @@ define(function(require) {
     CheckboxInputWidget = AbstractInputWidget.extend({
         widgetFunction: function() {
             this.findContainer();
-            this.getContainer().on('keydown keypress', _.bind(function (event) {
-                if (event.which === 13) {
-                    this._toggle();
-                }
-            }, this));
-
-
-            this.$el.on('change', _.bind(this._toggle, this));
-            //    //if ($(this).attr('checked') !== 'checked' || typeof $(this).attr('checked') === 'undefined') {
-            //        this._on();
-            //    } else {
-            //        this._off();
-            //    }
-            //});
+            this.getContainer().on('keydown keypress', _.bind(this._handleEnterPress, this));
+            this.$el.on('change', _.bind(this._handleChange, this));
         },
 
-        _toggle: function () {
+        _handleEnterPress: function (event) {
+            if (event.which === 13) {
+                event.preventDefault();
+                this.$el.trigger('click');
+            }
+        },
+
+        _handleChange: function () {
             var $content = $('[data-checkbox-triggered-content]');
             if (this.$el.prop('checked')) {
                 this._on();

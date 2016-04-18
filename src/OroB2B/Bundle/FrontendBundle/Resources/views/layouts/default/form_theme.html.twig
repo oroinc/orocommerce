@@ -112,7 +112,7 @@
     {%- if label is empty -%}
         {% set label = id|humanize %}
     {%- endif -%}
-    <label class="radio_custom radio_custom_blue {% if form.vars.checked %}checked{% endif %}" data-radio>
+    <label class="radio_custom radio_custom_blue {% if form.vars.checked %}checked{% endif %}" data-radio tabindex="0">
         {{- parent() -}}
         <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
         <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
