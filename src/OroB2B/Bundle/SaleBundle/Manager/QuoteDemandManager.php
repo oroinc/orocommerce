@@ -2,8 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Manager;
 
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 
@@ -15,28 +14,20 @@ class QuoteDemandManager
     protected $totalProvider;
 
     /**
-     * @var SubtotalProviderInterface
+     * @var LineItemSubtotalProvider
      */
     protected $subtotalProvider;
 
     /**
-     * @var UserCurrencyProvider
-     */
-    protected $currencyProvider;
-
-    /**
      * @param TotalProcessorProvider $totalProvider
-     * @param SubtotalProviderInterface $subtotalProvider
-     * @param UserCurrencyProvider $currencyProvider
+     * @param LineItemSubtotalProvider $subtotalProvider
      */
     public function __construct(
         TotalProcessorProvider $totalProvider,
-        SubtotalProviderInterface $subtotalProvider,
-        UserCurrencyProvider $currencyProvider
+        LineItemSubtotalProvider $subtotalProvider
     ) {
         $this->totalProvider = $totalProvider;
         $this->subtotalProvider = $subtotalProvider;
-        $this->currencyProvider = $currencyProvider;
     }
 
     /**
@@ -54,6 +45,6 @@ class QuoteDemandManager
             $quoteDemand->setTotal($total->getAmount());
         }
         
-        $quoteDemand->setTotalCurrency($this->currencyProvider->getUserCurrency());
+        $quoteDemand->setTotalCurrency($subtotal->getCurrency());
     }
 }

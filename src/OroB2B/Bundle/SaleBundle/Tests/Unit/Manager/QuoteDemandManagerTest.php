@@ -2,9 +2,8 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Manager;
 
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use OroB2B\Bundle\SaleBundle\Manager\QuoteDemandManager;
@@ -17,14 +16,9 @@ class QuoteDemandManagerTest extends \PHPUnit_Framework_TestCase
     protected $totalProvider;
 
     /**
-     * @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $subtotalProvider;
-
-    /**
-     * @var UserCurrencyProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $currencyProvider;
 
     /**
      * @var QuoteDemandManager
@@ -38,15 +32,13 @@ class QuoteDemandManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->subtotalProvider = $this
-            ->getMock('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface');
-        $this->currencyProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->manager = new QuoteDemandManager(
             $this->totalProvider,
-            $this->subtotalProvider,
-            $this->currencyProvider
+            $this->subtotalProvider
         );
     }
 
@@ -55,7 +47,8 @@ class QuoteDemandManagerTest extends \PHPUnit_Framework_TestCase
         $quoteDemand = new QuoteDemand();
 
         $subtotal = new Subtotal();
-        $subtotal->setAmount(2.5);
+        $subtotal->setAmount(2.5)
+            ->setCurrency('EUR');
         $this->subtotalProvider->expects($this->once())
             ->method('getSubtotal')
             ->with($quoteDemand)
@@ -67,9 +60,6 @@ class QuoteDemandManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getTotal')
             ->with($quoteDemand)
             ->willReturn($total);
-        $this->currencyProvider->expects($this->once())
-            ->method('getUserCurrency')
-            ->willReturn('EUR');
 
         $this->manager->recalculateSubtotals($quoteDemand);
         $this->assertEquals($subtotal->getAmount(), $quoteDemand->getSubtotal());

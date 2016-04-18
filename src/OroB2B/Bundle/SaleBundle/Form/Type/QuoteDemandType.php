@@ -52,16 +52,7 @@ class QuoteDemandType extends AbstractType
             ]
         );
 
-        $builder->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) {
-                $data = $event->getData();
-
-                if ($data instanceof QuoteDemand) {
-                    $this->quoteDemandManager->recalculateSubtotals($data);
-                }
-            }
-        );
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }
 
     /**
@@ -70,5 +61,17 @@ class QuoteDemandType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    protected function postSubmit(FormEvent $event)
+    {
+        $data = $event->getData();
+
+        if ($data instanceof QuoteDemand) {
+            $this->quoteDemandManager->recalculateSubtotals($data);
+        }
     }
 }
