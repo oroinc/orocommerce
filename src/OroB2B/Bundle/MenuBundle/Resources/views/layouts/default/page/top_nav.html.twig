@@ -13,7 +13,7 @@
 
 {% block _top_nav_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " col-md-7 col-sm-7 text-left"
+        class: attr.class|default('') ~ " col-md-7 col-sm-7 text-right"
     }) %}
     <div {{ block('block_attributes') }}>
         <nav class="topbar__navigation">
@@ -24,21 +24,23 @@
 
 {% block _top_nav_controls_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " col-md-5 col-sm-5 text-right"
+        class: attr.class|default('') ~ " col-md-5 col-sm-5 text-left"
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="topbar__controls">
-            <a href="{{ app.request.getUriForPath('/about') }}" class="cart__promo__link ">
-                <span>Fast &amp; Free Shipping</span> for orders over $45
-            </a>
-            {#<span class="currency">
+        <nav class="topbar__navigation">
+            <ul class="pull-left">
+                {{ block_widget(block) }}
+            </ul>
+        </nav>
+        {#<div class="topbar__controls">
+            <span class="currency">
               <span>$</span>
               <i class="icon-down-open-mini"></i>
             </span>
             <span class="language">
               <span>Eng</span>
               <i class="icon-down-open-mini"></i>
-            </span>#}
-        </div>
+            </span>
+        </div>#}
     </div>
 {% endblock %}

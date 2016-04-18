@@ -39,7 +39,7 @@ class DoctrineFiltersListenerTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($filterCollection);
 
             $registry->expects($this->once())
-                ->method('getEntityManager')
+                ->method('getManager')
                 ->willReturn($em);
         }
 

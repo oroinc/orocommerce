@@ -4,8 +4,10 @@
     {# Simplified transitions handler specific for checkout logic #}
     {% set transition = transitionData.transition %}
 
+    {% set pageComponentModule = transition.frontendOptions.page_component_module|default('orob2bcheckout/js/app/components/transition-button-component') %}
+
     {{ UI.renderPageComponentAttributes({
-        module: 'orob2bcheckout/js/app/components/transition-button-component',
+        module: pageComponentModule,
         options: {
             'enabled': transitionData.isAllowed,
             'hasForm': transition.hasForm(),
@@ -73,7 +75,7 @@
     {% if transitionData is defined and transitionData %}
     {{ _self.conditionMessagesStart(transitionData) }}
     <button type="submit" class="btn {% if transitionData.isAllowed %}btn-orange{% endif %} btn_lg checkout__form__submit" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
-        {{ transitionData.transition.label }}<i class="cf-right-open-mini va-m_md"></i>
+        {{ transitionData.transition.label }}&nbsp;<i class="cf-right-open-mini va-m_md"></i>
     </button>
     {{ _self.conditionMessagesEnd(transitionData) }}
     {% endif %}

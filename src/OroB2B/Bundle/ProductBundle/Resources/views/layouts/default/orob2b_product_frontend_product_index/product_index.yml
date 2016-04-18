@@ -1,37 +1,37 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_index/product_index.html.twig'
-        - @appendOption:
+        - '@appendOption':
             id: title
             optionName: value
             optionValue: orob2b.product.entity_plural_label
-        - @add:
+        - '@add':
             id: grid_display_options
             parentId: datagrid_toolbar
             blockType: block
             options:
                 vars:
-                    current_view: {@value: $data.orob2b_product_frontend_datagrid_row_view}
-        - @setOption:
+                    current_view: {'@value': $data.orob2b_product_frontend_datagrid_row_view}
+        - '@setOption':
             id: datagrid_toolbar
             optionName: attr.class
             optionValue: 'catalog__filter-controls'
-        - @setOption:
+        - '@setOption':
             id: datagrid_toolbar_tools_container
             optionName: attr.class
             optionValue: 'catalog__filter-controls__item text-right'
-        - @setOption:
+        - '@setOption':
             id: datagrid_toolbar_pagination
             optionName: attr.class
             optionValue: 'catalog__filter-controls__item'
-        - @setOption:
+        - '@setOption':
             id: datagrid_toolbar_sorting
             optionName: visible
             optionValue: true
-        - @remove:
+        - '@remove':
             id: datagrid_toolbar_actions
-        - @addTree:
+        - '@addTree':
             items:
                 product_index_page:
                     blockType: container
@@ -42,7 +42,7 @@ layout:
                     options:
                         grid_name: frontend-products-grid
                         vars:
-                            current_row_view: {@value: $data.orob2b_product_frontend_datagrid_row_view}
+                            current_row_view: {'@value': $data.orob2b_product_frontend_datagrid_row_view}
             tree:
                 content:
                     product_index_page:

@@ -25,6 +25,8 @@ orob2b:
         workflow_step.label: Workflow Step
         shipping_estimate_amount.label: Shipping Estimate Ammount
         shipping_estimate_currency.label: Shipping Estimate Currency
+        payment_method.label: Payment Method
+        order.label: Order
 
         checkoutsource:
             entity_label: Checkout Source
@@ -58,9 +60,12 @@ orob2b:
             total_price: Row Total
             total_qty: Total QTY
 
+        title:
+            step.label: '%step_label%'
+
         workflow:
             view_options.label: View Options for this Order
-            unavailable_transition.message: Transition could not be performed because:
+            unavailable_transition.message: This action is not available, reason:
             b2b_flow_checkout:
                 label: Checkout
 

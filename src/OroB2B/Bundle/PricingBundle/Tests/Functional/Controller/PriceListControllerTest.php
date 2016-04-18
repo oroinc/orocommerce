@@ -36,6 +36,7 @@ class PriceListControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_pricing_price_list_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('pricing-price-list-grid', $crawler->html());
 
         $this->assertContains($this->getPriceList('price_list_1')->getName(), $crawler->html());
         $this->assertContains($this->getPriceList('price_list_2')->getName(), $crawler->html());
@@ -64,25 +65,25 @@ class PriceListControllerTest extends WebTestCase
         $html = $crawler->html();
 
         $this->assertContains('Price List has been saved', $html);
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BPricingBundle:PriceList')
+            ->getRepository('OroB2BPricingBundle:PriceList')
+            ->findOneBy(['name' => self::PRICE_LIST_NAME]);
+        $this->assertNotEmpty($priceList);
+
+        return $priceList->getId();
     }
 
     /**
+     * @param $id int
      * @return int
      *
      * @depends testCreate
      */
-    public function testView()
+    public function testView($id)
     {
-        $response = $this->client->requestGrid(
-            'pricing-price-list-grid',
-            ['pricing-price-list-grid[_filter][name][value]' => self::PRICE_LIST_NAME]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id = $result['id'];
-
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('orob2b_pricing_price_list_view', ['id' => $id])
@@ -169,7 +170,8 @@ class PriceListControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_pricing_price_list_info', ['id' => $id])
+            $this->getUrl('orob2b_pricing_price_list_info', ['id' => $id]),
+            ['_widgetContainer' => 'widget']
         );
 
         $result = $this->client->getResponse();

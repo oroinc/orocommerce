@@ -22,6 +22,7 @@ use OroB2B\Bundle\AlternativeCheckoutBundle\Model\ExtendAlternativeCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -67,7 +68,8 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     AccountOwnerAwareInterface,
     DatesAwareInterface,
     ContextItemInterface,
-    LineItemsNotPricedAwareInterface
+    LineItemsNotPricedAwareInterface,
+    ShippingAwareInterface
 {
     const TYPE = 'alternative';
 
@@ -202,7 +204,9 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     protected $shippingMethod;
 
     /**
-     * @var
+     * @var string
+     *
+     * @ORM\Column(name="payment_method", type="string", nullable=true)
      */
     protected $paymentMethod;
 
@@ -233,11 +237,6 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
      * @ORM\Column(name="allow_request_date", type="datetime", nullable=true)
      */
     protected $allowRequestDate;
-
-    /**
-     * @var Price
-     */
-    protected $shippingEstimate;
 
     /**
      * @var Price
@@ -636,33 +635,6 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     }
 
     /**
-     * Get shipping estimate
-     *
-     * @return Price|null
-     */
-    public function getShippingEstimate()
-    {
-        return $this->shippingEstimate;
-    }
-
-    /**
-     * Set shipping estimate
-     *
-     * @param Price $shippingEstimate
-     * @return $this
-     */
-    public function setShippingEstimate($shippingEstimate = null)
-    {
-        $this->shippingEstimate = $shippingEstimate;
-
-        $this->updateShippingEstimate();
-
-        return $this;
-    }
-
-    /**
-     * Get shipping estimate
-     *
      * @return Price|null
      */
     public function getShippingCost()
@@ -671,8 +643,6 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     }
 
     /**
-     * Set shipping estimate
-     *
      * @param Price $shippingCost
      * @return $this
      */
@@ -680,7 +650,7 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     {
         $this->shippingCost = $shippingCost;
 
-        $this->updateShippingEstimate();
+        $this->updateShippingCost();
 
         return $this;
     }
@@ -691,7 +661,7 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     public function postLoad()
     {
         if (null !== $this->shippingEstimateAmount && null !== $this->shippingEstimateCurrency) {
-            $this->shippingEstimate = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
+            $this->shippingCost = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
         }
     }
 
@@ -699,10 +669,10 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
-    public function updateShippingEstimate()
+    public function updateShippingCost()
     {
-        $this->shippingEstimateAmount = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
-        $this->shippingEstimateCurrency = $this->shippingEstimate ? $this->shippingEstimate->getCurrency() : null;
+        $this->shippingEstimateAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
+        $this->shippingEstimateCurrency = $this->shippingCost ? $this->shippingCost->getCurrency() : null;
     }
 
     /**

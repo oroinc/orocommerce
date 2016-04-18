@@ -46,7 +46,9 @@ class BackTransitionsDataProvider extends AbstractTransitionDataProvider
             $frontendOptions = $transition->getFrontendOptions();
             if (!empty($frontendOptions['is_checkout_back'])) {
                 $stepOrder = $transition->getStepTo()->getOrder();
-                $backTransitions[$stepOrder] = $this->getTransitionData($transition, $workflowItem);
+                if ($transitionData = $this->getTransitionData($transition, $workflowItem)) {
+                    $backTransitions[$stepOrder] = $transitionData;
+                }
             }
         }
         ksort($backTransitions);

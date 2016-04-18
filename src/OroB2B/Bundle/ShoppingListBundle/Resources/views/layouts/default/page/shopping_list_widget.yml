@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroB2BShoppingListBundle:layouts:default/page/shopping_list_widget.html.twig'
+        - '@addTree':
+            items:
+                main_menu_shopping_lists_wrapper:
+                    blockType: container
+            tree:
+                main_menu_widgets:
+                    main_menu_shopping_lists_wrapper: ~
+    conditions:
+        '@neq': [ $context.logged_user, null ]

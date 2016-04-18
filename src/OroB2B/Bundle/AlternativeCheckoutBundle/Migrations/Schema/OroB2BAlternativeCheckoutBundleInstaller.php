@@ -69,6 +69,7 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
             'comment' => '(DC2Type:money)'
         ]);
         $table->addColumn('shipping_estimate_currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('payment_method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('allowed', 'boolean', []);
@@ -155,14 +156,14 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
             ['billing_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL'],
-            'fk_orob2b_order_address'
+            'fk_orob2b_order_address_billing'
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_order_address'),
             ['shipping_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL'],
-            'fk_orob2b_order_address'
+            'fk_orob2b_order_address_shipping'
         );
     }
 }

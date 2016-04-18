@@ -16,9 +16,10 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvent;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 
@@ -37,7 +38,7 @@ class CheckoutController extends Controller
      *     name="orob2b_checkout_frontend_checkout",
      *     requirements={"id"="\d+", "type"="\w+"}
      * )
-     * @Layout(vars={"workflowStepName"})
+     * @Layout(vars={"workflowStepName", "workflowName"})
      * @Acl(
      *      id="orob2b_checkout_frontend_checkout",
      *      type="entity",
@@ -61,24 +62,62 @@ class CheckoutController extends Controller
         }
 
         $workflowItem = $this->handleTransition($checkout, $request);
-        $currentStep = $workflowItem->getCurrentStep();
+        $currentStep = $this->validateStep($workflowItem);
 
+        $responseData = [];
+        if ($workflowItem->getResult()->has('responseData')) {
+            $responseData['responseData'] = $workflowItem->getResult()->get('responseData');
+        }
         if ($workflowItem->getResult()->has('redirectUrl')) {
             if ($request->isXmlHttpRequest()) {
-                return new JsonResponse(['redirectUrl' => $workflowItem->getResult()->get('redirectUrl')]);
+                $responseData['redirectUrl'] = $workflowItem->getResult()->get('redirectUrl');
             } else {
                 return $this->redirect($workflowItem->getResult()->get('redirectUrl'));
             }
         }
+        if ($responseData) {
+            return new JsonResponse($responseData);
+        }
 
         return [
             'workflowStepName' => $currentStep->getName(),
+            'workflowName' => $workflowItem->getWorkflowName(),
             'data' =>
                 [
                     'checkout' => $checkout,
                     'workflowStep' => $currentStep
                 ]
         ];
+    }
+
+    /**
+     * @param WorkflowItem $workflowItem
+     *
+     * @return WorkflowStep
+     */
+    protected function validateStep(WorkflowItem $workflowItem)
+    {
+        $currentStep = $workflowItem->getCurrentStep();
+        $workflowManager = $this->getWorkflowManager();
+        $verifyTransition = null;
+        $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
+        foreach ($transitions as $transition) {
+            $frontendOptions = $transition->getFrontendOptions();
+            if (!empty($frontendOptions['is_checkout_verify'])) {
+                $verifyTransition = $transition;
+                break;
+            }
+        }
+
+        if ($verifyTransition) {
+            $workflow = $workflowManager->getWorkflow($workflowItem);
+            if ($workflow->isTransitionAllowed($workflowItem, $verifyTransition)) {
+                $workflowManager->transit($workflowItem, $verifyTransition);
+                $currentStep = $workflowItem->getCurrentStep();
+            }
+        }
+
+        return $currentStep;
     }
 
     /**
@@ -148,18 +187,12 @@ class CheckoutController extends Controller
      */
     protected function getCheckout($id, $type)
     {
-        if (!$type) {
-            $checkout = $this->getDoctrine()->getRepository('OroB2BCheckoutBundle:Checkout')
-                ->find($id);
-        } else {
-            $event = new CheckoutEvent();
-            $event->setCheckoutId($id)
-                ->setType($type);
-            $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
+        $type = (string)$type;
+        $event = new CheckoutEntityEvent();
+        $event->setCheckoutId($id)
+            ->setType($type);
+        $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
 
-            $checkout = $event->getCheckoutEntity();
-        }
-
-        return $checkout;
+        return $event->getCheckoutEntity();
     }
 }

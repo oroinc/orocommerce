@@ -35,19 +35,19 @@ operations:
                 price: $.price
 
         form_init:
-            - @create_object:
+            - '@create_object':
                 class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
                 attribute: $.price
-            - @assign_value: [$.price.priceList, $.data]
+            - '@assign_value': [$.price.priceList, $.data]
 
         actions:
-            - @run_action_group:
+            - '@run_action_group':
                 action_group: orob2b_pricing_add_product_price
                 parameters_mapping:
                     data: $.data
                     price: $.price
-            - @refresh_grid: price-list-product-prices-grid
-            - @flash_message:
+            - '@refresh_grid': price-list-product-prices-grid
+            - '@flash_message':
                 message: orob2b.pricing.productprice.save.success
                 type: 'success'
 
@@ -60,7 +60,7 @@ action_groups:
                 type: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
         acl_resource: ['CREATE', 'entity:OroB2B\Bundle\PricingBundle\Entity\ProductPrice']
         actions:
-            - @create_entity:
+            - '@create_entity':
                 class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
                 attribute: $.newPrice
                 data:

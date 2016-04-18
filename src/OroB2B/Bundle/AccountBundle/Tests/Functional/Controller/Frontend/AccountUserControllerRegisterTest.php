@@ -52,7 +52,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Create an Account')->form();
+        $form = $crawler->selectButton('Create An Account')->form();
 
         $submittedData = [
             'orob2b_account_frontend_account_user_register' => [
@@ -226,7 +226,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Create an Account')->form();
+        $form = $crawler->selectButton('Create An Account')->form();
         $submittedData = [
             'orob2b_account_frontend_account_user_register' => [
                 '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
@@ -266,7 +266,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->click($forgotPasswordLink);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals('Forgot Your Password?', $crawler->filter('h2.title')->html());
+        $this->assertEquals('Forgot Your Password?', $crawler->filter('h2')->html());
 
         $this->assertUnknownEmail($crawler);
         $this->assertKnownEmail($crawler);
@@ -286,7 +286,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals('Create New Password', $crawler->filter('h2.title')->html());
+        $this->assertEquals('Create New Password', $crawler->filter('h2')->html());
 
         $form = $crawler->selectButton('Create')->form();
 
@@ -332,7 +332,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
      */
     protected function submitRegisterForm(Crawler $crawler, $email)
     {
-        $form = $crawler->selectButton('Create an Account')->form();
+        $form = $crawler->selectButton('Create An Account')->form();
         $submittedData = [
             'orob2b_account_frontend_account_user_register' => [
                 '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
@@ -369,7 +369,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->client->followRedirects(true);
 
         $crawler = $this->client->submit($form, $submittedData);
-        $this->assertEquals('Forgot Your Password?', $crawler->filter('h2.title')->html());
+        $this->assertEquals('Forgot Your Password?', $crawler->filter('h2')->html());
         $this->assertContains(
             'Email address "'. $unknownEmail .'" is not known',
             $crawler->html()
@@ -419,6 +419,6 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $crawler = $this->client->followRedirect();
 
-        $this->assertEquals('Check Email', $crawler->filter('h2.title')->html());
+        $this->assertEquals('Check Email', $crawler->filter('h2')->html());
     }
 }

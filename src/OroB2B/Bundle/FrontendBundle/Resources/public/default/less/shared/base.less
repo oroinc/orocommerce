@@ -6,7 +6,7 @@
 
 html {
   width: 100%;
-  //height: 100%;
+  height: 100%;
   font-size: @default-font-size;
   font-family: @lato-font;
   -ms-overflow-style: scrollbar;
@@ -27,6 +27,14 @@ body {
   @media (max-width: 991px) {
     &.sales-mode {
       overflow-x: hidden; 
+    }
+  }
+
+  &.loading {
+    height: 100%;
+
+    .loader-mask {
+      position: fixed;
     }
   }
 }

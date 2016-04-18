@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\src\Oro\Bundle\B2BEntityBundle\Tests\Unit\Storage;
+namespace Oro\Bundle\B2BEntityBundle\Tests\Unit\Storage;
 
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorage;
 use Oro\Bundle\B2BEntityBundle\Tests\Stub\ObjectIdentifierAware;

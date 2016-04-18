@@ -17,15 +17,19 @@
     {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
     <!-- START Product Gallery -->
     {% set productImage = get_first_product_image_by_type(product, 'main') %}
-    {% if productImage %}
-        <div class="product-gallery-widget product-gallery-widget_vertical product-gallery-widget_l_floated">
-            <div class="product-gallery product-gallery_vertical">
-                <div class="product-gallery__image-holder">
-                    <div class="product-gallery__image-holder__carousel" data-product-gallery>
-                        <a href="#">
-                            <img src="{{ Image.url(product.image, 'product_large') }}" alt="{{ product.defaultName }}"
-                                 width="378" height="378">
-                        </a>
+    <div class="product-gallery-widget product-gallery-widget_vertical product-gallery-widget_l_floated">
+        <div class="product-gallery product-gallery_vertical">
+            <div class="product-gallery__image-holder">
+                <div class="product-gallery__image-holder__carousel" data-product-gallery>
+                    <div class="product-gallery__image-holder__container">
+                        {% if productImage %}
+                        <img src="{{ Image.url(productImage.image, 'product_large') }}" alt="{{ product.defaultName }}"
+                                {% if product.image %}
+                                    data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
+                                {% endif %}
+                             width="378" height="378">
+                        {% endif %}
+
                         {% set additionalImages = get_product_images_by_type(product, 'additional') %}
                         {% for productImage in additionalImages %}
                             <img src="{{ Image.url(productImage.image, 'product_small') }}" width="50" height="50">
@@ -34,7 +38,7 @@
                 </div>
             </div>
         </div>
-    {% endif %}
+    </div>
     <!-- END Product Gallery -->
 {% endblock %}
 
@@ -75,17 +79,14 @@
 
 {% block _product_specification_widget %}
     <div class="product__specification">
-        <table class="table borderless paddingless">
-            {{ block_widget(block) }}
-        </table>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _product_specification_sku_widget %}
-    <tr>
-        <td>Item #:</td>
-        <td><span class="red">{{ block_widget(block) }}</span></td>
-    </tr>
+    <div>
+        {{ 'orob2b.product.frontend.index.item'|trans }} <span class="red">{{ block_widget(block) }}</span>
+    </div>
 {% endblock %}
 
 {% block _product_specification_mfg_widget %}

@@ -1,6 +1,7 @@
 //Toolbar
 .grid-scrollable-container {
-  overflow: visible;
+  overflow-y: visible;
+  overflow-x: auto;
 }
 
 .grid-toolbar {
@@ -352,6 +353,7 @@
     .dropdown-menu {
       top: 3.1rem;
       left: auto;
+      bottom: auto;
       right: 0;
       margin: 0;
       border-radius: .5rem;
@@ -1344,6 +1346,10 @@
 
     .container-fluid {
       padding: 0;
+    }
+
+    .table-bordered {
+      border-width: 0 0 1px 0;
     }
   }
 

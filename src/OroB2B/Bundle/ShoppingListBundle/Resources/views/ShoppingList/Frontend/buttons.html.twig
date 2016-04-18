@@ -43,14 +43,27 @@
     {{ buttons.getButton(btnOptions) }}
 {% endmacro %}
 
+{% macro addToShoppingListButtonTemplate(options) %}
+{% spaceless %}
+    {% import _self as buttons %}
+    {{ buttons.addToCurrentShoppingListButton(options|merge({
+        shoppingList: {
+            id: '<%= id %>',
+            label: '<%= label %>'
+        }
+    }))|replace({
+        '&lt;%': '<%',
+        '%&gt;': '%>'
+    })|raw }}
+{% endspaceless %}
+{% endmacro %}
+
 {% macro addToCurrentShoppingListButton(options) %}
     {% import _self as buttons %}
 
     {% set shoppingListId = options.shoppingList ? options.shoppingList.id : null %}
 
-    {% set dataAttributes = options.dataAttributes|merge({
-        intention: 'current'
-    }) %}
+    {% set dataAttributes = options.dataAttributes %}
     {% if options.dataUrl %}
         {% set dataAttributes = dataAttributes|merge({
             urlOptions: (options.dataUrlOptions|merge({shoppingListId: shoppingListId}))|json_encode
@@ -65,6 +78,11 @@
         dataId: shoppingListId,
         actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans({'{{ shoppingList }}': label})
     } %}
+    {% if options.aCss is defined %}
+        {% set btnOptions = btnOptions|merge({
+        'aCss': options.aCss,
+        }) %}
+    {% endif %}
 
     {{ buttons.getButton(btnOptions) }}
 {% endmacro %}
@@ -73,13 +91,19 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% set buttonOptions = {
         'dataAttributes': options.dataAttributes,
-        'aCss': 'direct-link',
+        'aCss': 'direct-link add-to-shopping-list-button',
         'dataId': options.dataId,
         'label' : options.actionLabel|default(options.btnLabel)
     } %}
     {% if options.dataUrl %}
         {% set buttonOptions = buttonOptions|merge({
             'dataUrl': options.dataUrl,
+        }) %}
+    {% endif %}
+
+    {% if options.aCss is defined %}
+        {% set buttonOptions = buttonOptions|merge({
+        'aCss': buttonOptions.aCss ~ ' ' ~ options.aCss,
         }) %}
     {% endif %}
     {{ UI.clientButton(buttonOptions) }}
@@ -96,11 +120,16 @@
             {% else %}
                 {%  set existingShoppingLists = existingShoppingLists|merge([shoppingList]) %}
             {% endif %}
+        {% else %}
+            {% set aCss = options.singleButtonACss is defined ? options.singleButtonACss : "" %}
+            {{ buttons.addToCurrentShoppingListButton(options.current|merge({shoppingList: null, aCss: aCss})) }}
         {% endfor %}
         {% for shoppingList in existingShoppingLists %}
             {{ buttons.addToShoppingListButton(options.existing|merge({shoppingList: shoppingList})) }}
         {% endfor %}
-        {{ buttons.addToNewShoppingListButton(options.new) }}
+        {% if options.shoppingLists is not empty %}
+            {{ buttons.addToNewShoppingListButton(options.new) }}
+        {% endif %}
     {% endset %}
     {% set customOptions = {}
         |merge(options.groupContainer|default(false) ? {'groupContainer': options.groupContainer} : {} )
@@ -109,6 +138,8 @@
     {{ UI.pinnedDropdownButton({
         'html': buttonsHtml,
         'options': {
+            'addButtonEvent': 'shopping-list:created',
+            'buttonTemplate': buttons.addToShoppingListButtonTemplate(options.current),
             'truncateLength': 15
         }|merge(customOptions)
     }) }}
