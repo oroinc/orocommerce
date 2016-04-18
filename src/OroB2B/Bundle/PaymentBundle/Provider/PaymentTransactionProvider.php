@@ -2,6 +2,10 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Provider;
 
+use Doctrine\ORM\EntityManagerInterface;
+
+use Psr\Log\LoggerAwareTrait;
+
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -9,6 +13,8 @@ use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class PaymentTransactionProvider
 {
+    use LoggerAwareTrait;
+
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
@@ -115,10 +121,18 @@ class PaymentTransactionProvider
     public function savePaymentTransaction(PaymentTransaction $paymentTransaction)
     {
         $em = $this->doctrineHelper->getEntityManager($paymentTransaction);
-
-        if (!$paymentTransaction->getId()) {
-            $em->persist($paymentTransaction);
+        try {
+            $em->transactional(
+                function (EntityManagerInterface $em) use ($paymentTransaction) {
+                    if (!$paymentTransaction->getId()) {
+                        $em->persist($paymentTransaction);
+                    }
+                }
+            );
+        } catch (\Exception $e) {
+            if ($this->logger) {
+                $this->logger->error($e->getMessage(), $e->getTrace());
+            }
         }
-        $em->flush($paymentTransaction);
     }
 }

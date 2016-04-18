@@ -18,6 +18,8 @@ class PayflowGateway implements PaymentMethodInterface
 
     const TYPE = 'payflow_gateway';
 
+    const ZERO_AMOUNT = 0;
+
     /** @var Gateway */
     protected $gateway;
 
@@ -134,13 +136,7 @@ class PayflowGateway implements PaymentMethodInterface
 
         $this->execute($paymentTransaction);
 
-        $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
-
-        $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
-
-        $response['formAction'] = $this->gateway->getFormAction();
-
-        return $response;
+        return $this->secureTokenResponse($paymentTransaction);
     }
 
     /**
@@ -149,6 +145,8 @@ class PayflowGateway implements PaymentMethodInterface
      */
     public function validate(PaymentTransaction $paymentTransaction)
     {
+        $paymentTransaction->setAmount(self::ZERO_AMOUNT);
+
         $options = $this->getOptions($paymentTransaction);
 
         $paymentTransaction
@@ -157,6 +155,15 @@ class PayflowGateway implements PaymentMethodInterface
 
         $this->execute($paymentTransaction);
 
+        return $this->secureTokenResponse($paymentTransaction);
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function secureTokenResponse(PaymentTransaction $paymentTransaction)
+    {
         $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
 
         $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));

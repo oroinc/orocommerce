@@ -36,15 +36,7 @@ class CaptureAction extends AbstractPaymentMethodAction
             $capturePaymentTransaction->setTransactionOptions($options['transactionOptions']);
         }
 
-        $response = [];
-        try {
-            $response = $this->paymentMethodRegistry
-                ->getPaymentMethod($capturePaymentTransaction->getPaymentMethod())
-                ->execute($capturePaymentTransaction);
-
-            $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
-        } catch (\Exception $e) {
-        }
+        $response = $this->executePaymentTransaction($capturePaymentTransaction);
 
         $this->paymentTransactionProvider->savePaymentTransaction($capturePaymentTransaction);
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);

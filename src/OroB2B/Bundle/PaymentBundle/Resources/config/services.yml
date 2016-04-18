@@ -126,6 +126,8 @@ services:
         arguments:
             - '@oro_api.doctrine_helper'
             - '%orob2b_payment.entity.payment_transaction.class%'
+        calls:
+            - ['setLogger', ['@logger']]
 
     orob2b_payment.provider.payment_status:
         class: 'OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider'

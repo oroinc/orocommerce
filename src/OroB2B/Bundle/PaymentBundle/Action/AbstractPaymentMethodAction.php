@@ -3,14 +3,15 @@
 namespace OroB2B\Bundle\PaymentBundle\Action;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Model\ContextAccessor;
 
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
-use Symfony\Component\Routing\RouterInterface;
 
 abstract class AbstractPaymentMethodAction extends AbstractAction
 {
@@ -135,6 +136,49 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
         }
 
         return $this->getValuesResolver()->resolve($values);
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function getCallbackUrls(PaymentTransaction $paymentTransaction)
+    {
+        return [
+            'errorUrl' => $this->router->generate(
+                'orob2b_payment_callback_error',
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    'accessToken' => $paymentTransaction->getAccessToken(),
+                ],
+                true
+            ),
+            'returnUrl' => $this->router->generate(
+                'orob2b_payment_callback_return',
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    'accessToken' => $paymentTransaction->getAccessToken(),
+                ],
+                true
+            ),
+        ];
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function executePaymentTransaction(PaymentTransaction $paymentTransaction)
+    {
+        try {
+            return $this->paymentMethodRegistry
+                ->getPaymentMethod($paymentTransaction->getPaymentMethod())
+                ->execute($paymentTransaction);
+        } catch (\Exception $e) {
+            // do not expose sensitive data
+        }
+
+        return [];
     }
 
     /**
