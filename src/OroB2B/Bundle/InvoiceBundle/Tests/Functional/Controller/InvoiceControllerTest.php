@@ -51,6 +51,7 @@ class InvoiceControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_invoice_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('invoices-grid', $crawler->html());
         $this->assertEquals('Invoices', $crawler->filter('h1.oro-subtitle')->html());
     }
 
@@ -128,17 +129,7 @@ class InvoiceControllerTest extends WebTestCase
 
         $this->assertEquals($expectedLineItems, $actualLineItems);
 
-        $response = $this->client->requestGrid(
-            'invoices-grid',
-            [
-                'invoices-grid[_filter][poNumber][value]' => self::PO_NUMBER,
-            ]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $invoice = $this->fetchInvoice((int)$result['id']);
+        $invoice = $this->fetchInvoice(['poNumber' => self::PO_NUMBER]);
 
         $this->assertSame('1000.0000', $invoice->getSubtotal());
         $this->assertSame(self::PO_NUMBER, $invoice->getPoNumber());
@@ -244,7 +235,7 @@ class InvoiceControllerTest extends WebTestCase
             ],
         ];
 
-        $invoice = $this->fetchInvoice($id);
+        $invoice = $this->fetchInvoice(['id' => $id]);
         $this->assertEquals($expectedLineItems, $actualLineItems);
         $this->assertNotEquals($invoice->getCreatedAt(), $invoice->getUpdatedAt());
         $this->assertSame('210.0000', $invoice->getSubtotal());
@@ -278,15 +269,15 @@ class InvoiceControllerTest extends WebTestCase
     }
 
     /**
-     * @param int $id
+     * @param array $criteria
      * @return Invoice
      */
-    protected function fetchInvoice($id)
+    protected function fetchInvoice(array $criteria)
     {
         return $this->client->getContainer()
             ->get('oro_entity.doctrine_helper')
             ->getEntityRepository('OroB2B\Bundle\InvoiceBundle\Entity\Invoice')
-            ->find($id);
+            ->findOneBy($criteria);
     }
 
     /**
