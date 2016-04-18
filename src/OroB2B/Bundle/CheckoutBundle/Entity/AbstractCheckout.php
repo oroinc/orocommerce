@@ -448,9 +448,7 @@ abstract class AbstractCheckout extends ExtendCheckout implements
      */
     public function postLoad()
     {
-        if (null !== $this->shippingEstimateAmount && null !== $this->shippingEstimateCurrency) {
-            $this->shippingCost = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
-        }
+        $this->shippingCost = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
     }
 
     /**
