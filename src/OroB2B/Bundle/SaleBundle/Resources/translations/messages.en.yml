@@ -184,7 +184,7 @@ orob2b:
             quote.label: 'Quote'
             total.label: 'Total'
             subtotal.label: 'Subtotal'
-            totalCurrency.label: 'Total Currency'
+            total_сurrency.label: 'Total Currency'
 
         controller:
             quote:
