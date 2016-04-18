@@ -41,7 +41,6 @@ class QuoteTest extends AbstractTest
             ['request', new Request()],
             ['website', new Website()],
             ['shippingEstimate', new Price()],
-            ['currency', 'USD']
         ];
 
         static::assertPropertyAccessors(new Quote(), $properties);
