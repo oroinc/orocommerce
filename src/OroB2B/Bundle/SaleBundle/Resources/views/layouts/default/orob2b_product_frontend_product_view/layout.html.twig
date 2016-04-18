@@ -1,10 +1,3 @@
-{% block _request_for_quote_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " product_view_request_quote"}) %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _request_for_quote_for_unit_widget %}
     {% for unit_precision in unit_precisions %}
         <tr>
@@ -14,7 +7,7 @@
         </tr>
         <tr>
             <td colspan="2" class="text-center">
-                <div class="product_view_request_quote_for_unit">{{ block('action_combined_buttons_widget') }}</div>
+                <div class="product_view_request_quote_for_unit">{{ 'orob2b.frontend.sale.btn.add_to_rfp'|trans }}</div>
             </td>
         </tr>
     {% endfor %}
