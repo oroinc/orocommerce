@@ -12,6 +12,9 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class RemoveImageRelationOnProduct implements Migration, AttachmentExtensionAwareInterface, OrderedMigrationInterface
 {
+    const PRODUCT_TABLE_NAME = 'orob2b_product';
+    const PRODUCT_IMAGE_FIELD = 'image_id';
+
     /**
      * @var AttachmentExtension
      */
@@ -30,7 +33,10 @@ class RemoveImageRelationOnProduct implements Migration, AttachmentExtensionAwar
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        //@TODO remove image relation on product table
+        $productTable = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        if ($productTable->hasColumn(self::PRODUCT_IMAGE_FIELD)) {
+            $productTable->dropColumn(self::PRODUCT_IMAGE_FIELD);
+        }
     }
 
     /**
