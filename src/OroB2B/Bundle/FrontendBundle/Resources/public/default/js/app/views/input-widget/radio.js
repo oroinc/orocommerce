@@ -14,7 +14,7 @@ define(function(require) {
         },
 
         _handleEnterPress: function (event) {
-            if (event.which === 13) {
+            if (event.which === 32) {
                 event.preventDefault();
                 this.$el.trigger('click');
             }
