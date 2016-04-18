@@ -120,8 +120,8 @@ services:
     orob2b_product.validator.product_image_collection:
         class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageCollectionValidator'
         arguments:
-            - @oro_layout.provider.image_type
-            - @translator
+            - "@oro_layout.provider.image_type"
+            - "@translator"
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_image_collection_validator }
 
