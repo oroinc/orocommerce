@@ -197,3 +197,4 @@ orob2b:
                 group_label:
                     account: Global Address Book
                     account_user: My Address Book
+            past_orders.label: Past Orders
