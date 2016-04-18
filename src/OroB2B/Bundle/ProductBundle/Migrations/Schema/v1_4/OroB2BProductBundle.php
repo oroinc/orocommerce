@@ -83,8 +83,8 @@ class OroB2BProductBundle implements
         $queries->addPostQuery(new MigrateImageToProductImageQuery(
             $this->container->get('oro_entity.doctrine_helper'),
             $this->container->get('oro_layout.provider.image_type'),
-            $this->container->getParameter('orob2b_product.product.class'),
-            $this->container->getParameter('orob2b_product.product_image.class')
+            $this->container->getParameter('orob2b_product.entity.product.class'),
+            $this->container->getParameter('orob2b_product.entity.product_image.class')
         ));
     }
 
