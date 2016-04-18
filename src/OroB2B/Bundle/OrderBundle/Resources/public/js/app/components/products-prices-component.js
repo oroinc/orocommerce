@@ -11,6 +11,11 @@ define(function(require) {
      * @class orob2border.app.components.ProductsPricesComponent
      */
     ProductsPricesComponent = BaseProductsPricesComponent.extend({
+        initFieldsListeners: function() {
+            mediator.on('update:currency', this.setCurrency, this);
+            mediator.on('update:website', this.setWebsite, this);
+        },
+
         /**
          * @param {Array} products
          * @param {Function} callback
@@ -31,19 +36,9 @@ define(function(require) {
             });
         },
 
-        /**
-         * @param {Number} val
-         */
-        setAccount: function(val) {
-            this.options.account = val;
-
-            mediator.trigger('order:load:related-data');
-
-            this.reloadPrices();
-        },
-
         reloadPrices: function() {
             ProductsPricesComponent.__super__.reloadPrices.apply(this, arguments);
+
             mediator.trigger('entry-point:order:trigger');
         }
     });

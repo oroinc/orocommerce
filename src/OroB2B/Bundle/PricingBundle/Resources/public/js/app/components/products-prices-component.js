@@ -34,19 +34,26 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.$el = this.options._sourceElement;
 
+            this.initPricesListeners();
+            this.initFieldsListeners();
+
+            if (this.options.$priceList) {
+                this.options.$priceList.change(_.bind(this.reloadPrices, this));
+            }
+        },
+
+        initPricesListeners: function() {
             mediator.on('pricing:get:products-tier-prices', this.getProductsTierPrices, this);
             mediator.on('pricing:load:products-tier-prices', this.loadProductsTierPrices, this);
 
             mediator.on('pricing:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
             mediator.on('pricing:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
+        },
 
+        initFieldsListeners: function() {
             mediator.on('update:currency', this.setCurrency, this);
             mediator.on('update:account', this.setAccount, this);
             mediator.on('update:website', this.setWebsite, this);
-
-            if (this.options.$priceList) {
-                this.options.$priceList.change(_.bind(this.reloadPrices, this));
-            }
         },
 
         /**
