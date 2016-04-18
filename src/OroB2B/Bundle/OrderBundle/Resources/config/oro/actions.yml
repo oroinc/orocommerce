@@ -9,33 +9,33 @@ operations:
         acl_resource: orob2b_payment_transaction
         order: 20
         preactions:
-            - @call_service_method:
+            - '@call_service_method':
                 service: orob2b_payment.provider.payment_transaction
                 method: getActiveAuthorizePaymentTransaction
                 method_parameters: [$.data, $.data.total, $.data.currency]
                 attribute: $.authorizePaymentTransaction
         preconditions:
-            @and:
-                - @not_empty: [$.authorizePaymentTransaction]
-                - @payment_method_enabled: $.authorizePaymentTransaction.paymentMethod
+            '@and':
+                - '@not_empty': [$.authorizePaymentTransaction]
+                - '@payment_method_enabled': $.authorizePaymentTransaction.paymentMethod
         actions:
-            - @payment_capture:
+            - '@payment_capture':
                 attribute: $.result
                 object: $.data
                 amount: $.data.total
                 currency: $.data.currency
                 transactionOptions: []
-            - @flash_message:
+            - '@flash_message':
                 conditions:
-                    @and:
-                        - @not_empty: ['$.result[message]']
-                        - @equal: ['$.result[successful]', true]
+                    '@and':
+                        - '@not_empty': ['$.result[message]']
+                        - '@equal': ['$.result[successful]', true]
                 message: '$.result[message]'
                 type: 'success'
-            - @flash_message:
+            - '@flash_message':
                 conditions:
-                    @and:
-                        - @not_empty: ['$.result[message]']
-                        - @equal: ['$.result[successful]', false]
+                    '@and':
+                        - '@not_empty': ['$.result[message]']
+                        - '@equal': ['$.result[successful]', false]
                 message: '$.result[message]'
                 type: 'error'

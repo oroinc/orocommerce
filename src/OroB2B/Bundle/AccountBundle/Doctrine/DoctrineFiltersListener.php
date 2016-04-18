@@ -50,7 +50,7 @@ class DoctrineFiltersListener
     protected function getEntityManager()
     {
         if (!$this->em) {
-            $this->em = $this->registry->getEntityManager();
+            $this->em = $this->registry->getManager();
         }
 
         return $this->em;
