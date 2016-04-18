@@ -92,12 +92,8 @@ class ProductControllerTest extends WebTestCase
      */
     public function testUpdate()
     {
-        $result = $this->getProductDataBySku(self::TEST_SKU);
-
-        $this->assertEquals(self::TEST_SKU, $result['sku']);
-
-        $id = (int)$result['id'];
-        $product = $this->getContainer()->get('doctrine')->getRepository('OroB2BProductBundle:Product')->find($id);
+        $product = $this->getProductDataBySku(self::TEST_SKU);
+        $id = $product->getId();
         $locale = $this->getLocale();
         $localizedName = $this->getLocalizedName($product, $locale);
 
@@ -217,7 +213,8 @@ class ProductControllerTest extends WebTestCase
         $button = $crawler->filterXPath('//a[@title="Duplicate"]');
         $this->assertEquals(1, $button->count());
 
-        $this->client->request('GET', $button->eq(0)->link()->getUri(), [], [], $this->generateWsseAuthHeader());
+        $headers = ['HTTP_X-Requested-With' => 'XMLHttpRequest'];
+        $this->client->request('GET', $button->eq(0)->link()->getUri(), [], [], $headers);
         $response = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($response, 200);
         $data = json_decode($response->getContent(), true);
@@ -246,9 +243,9 @@ class ProductControllerTest extends WebTestCase
             $html
         );
 
-        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
+        $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
-        return $result['id'];
+        return $product->getId();
     }
 
     /**
@@ -258,10 +255,8 @@ class ProductControllerTest extends WebTestCase
      */
     public function testSaveAndDuplicate()
     {
-        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
-
-        $id = (int)$result['id'];
-        $product = $this->getContainer()->get('doctrine')->getRepository('OroB2BProductBundle:Product')->find($id);
+        $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
+        $id = $product->getId();
         $locale = $this->getLocale();
         $localizedName = $this->getLocalizedName($product, $locale);
 
@@ -331,9 +326,9 @@ class ProductControllerTest extends WebTestCase
             $html
         );
 
-        $result = $this->getProductDataBySku(self::UPDATED_SKU);
+        $product = $this->getProductDataBySku(self::UPDATED_SKU);
 
-        return $result['id'];
+        return $product->getId();
     }
 
     /**
@@ -391,23 +386,18 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @param string $sku
-     * @return array
+     * @return Product
      */
     private function getProductDataBySku($sku)
     {
-        $response = $this->client->requestGrid(
-            'products-grid',
-            ['products-grid[_filter][sku][value]' => $sku]
-        );
+        /** @var Product $product */
+        $product = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BProductBundle:Product')
+            ->getRepository('OroB2BProductBundle:Product')
+            ->findOneBy(['sku' => $sku]);
+        $this->assertNotEmpty($product);
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayHasKey('data', $result);
-        $this->assertNotEmpty($result['data']);
-
-        $result = reset($result['data']);
-        $this->assertNotEmpty($result);
-
-        return $result;
+        return $product;
     }
 
     /**

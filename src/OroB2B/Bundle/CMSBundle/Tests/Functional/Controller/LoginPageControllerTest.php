@@ -6,6 +6,8 @@ use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
+
 /**
  * @dbIsolation
  */
@@ -34,32 +36,36 @@ class LoginPageControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_cms_loginpage_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
+        $this->assertContains('cms-login-page-grid', $crawler->html());
         $this->assertEquals('Customer Login Pages', $crawler->filter('h1.oro-subtitle')->html());
         $this->assertNotContains('Create Login Page', $crawler->filter('div.title-buttons-container')->html());
     }
 
+    /**
+     * @return int
+     */
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_cms_loginpage_create'));
 
         $this->assertLoginPageSave($crawler, static::TOP_CONTENT, static::BOTTOM_CONTENT, static::CSS);
+
+        /** @var LoginPage $page */
+        $page = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BCMSBundle:LoginPage')
+            ->getRepository('OroB2BCMSBundle:LoginPage')
+            ->findOneBy(['id' => static::LOGIN_PAGE_ID]);
+        $this->assertNotEmpty($page);
+
+        return $page->getId();
     }
 
     /**
+     * @param int
      * @depends testCreate
      */
-    public function testUpdate()
+    public function testUpdate($id)
     {
-        $response = $this->client->requestGrid(
-            'cms-login-page-grid',
-            ['cms-login-page-grid[_filter][id][value]' => static::LOGIN_PAGE_ID]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-        $id = $result['id'];
-
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('orob2b_cms_loginpage_update', ['id' => $id])

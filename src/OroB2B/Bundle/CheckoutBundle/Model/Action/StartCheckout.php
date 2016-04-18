@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\CheckoutBundle\Model\Action;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -17,13 +16,13 @@ use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\Action\Model\ContextAccessor;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvent;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
+use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * Start checkout process on frontend
@@ -188,23 +187,23 @@ class StartCheckout extends AbstractAction
         /** @var CheckoutSourceEntityInterface $sourceEntity */
         $sourceEntity = $this->contextAccessor->getValue($context, $this->options[self::SOURCE_ENTITY_KEY]);
 
-        $checkoutSource = $em->getRepository('OroB2BCheckoutBundle:CheckoutSource')
-            ->findOneBy([$sourceFieldName => $sourceEntity]);
+        $sourceRepository = $em->getRepository('OroB2BCheckoutBundle:CheckoutSource');
+        $checkoutSource = $sourceRepository->findOneBy([$sourceFieldName => $sourceEntity])
+            ?: $this->createCheckoutSource($sourceFieldName, $sourceEntity);
 
         $checkout = $this->getCheckout($checkoutSource);
-        if ($this->isCheckoutExist($checkout)) {
+        if ($this->isNewCheckoutEntity($checkout)) {
+            $this->updateCheckoutData($context, $checkout);
+            $em->persist($checkout);
+            $em->flush($checkout);
+            $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
+            $em->flush($checkout->getWorkflowItem());
+        } else {
             if ($this->getOptionFromContext($context, self::FORCE, false)) {
                 $this->updateCheckoutData($context, $checkout);
                 $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
                 $em->flush();
             }
-        } else {
-            $checkoutSource = $this->createCheckoutSource($sourceFieldName, $sourceEntity);
-            $checkout = $this->createCheckout($context, $checkoutSource);
-            $em->persist($checkout);
-            $em->flush($checkout);
-            $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
-            $em->flush($checkout->getWorkflowItem());
         }
 
         $this->redirect->initialize(
@@ -244,22 +243,6 @@ class StartCheckout extends AbstractAction
         $this->propertyAccessor->setValue($checkoutSource, $sourceFieldName, $sourceEntity);
 
         return $checkoutSource;
-    }
-
-    /**
-     * We can create any custom checkout entity here in event listener
-     *
-     * @param mixed $context
-     * @param CheckoutSource $checkoutSource
-     * @return CheckoutInterface
-     */
-    protected function createCheckout($context, CheckoutSource $checkoutSource)
-    {
-        $checkout = $this->getCheckout();
-        $checkout->setSource($checkoutSource);
-        $this->updateCheckoutData($context, $checkout);
-
-        return $checkout;
     }
 
     /**
@@ -342,31 +325,29 @@ class StartCheckout extends AbstractAction
     }
 
     /**
-     * @param object $checkoutSource
+     * @param CheckoutSource $checkoutSource
      * @return CheckoutInterface
      */
     protected function getCheckout($checkoutSource = null)
     {
-        $event = new CheckoutEvent();
-        $event->setSource($checkoutSource);
+        $event = new CheckoutEntityEvent();
         $event->setSource($checkoutSource);
         $this->dispatcher->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
         $checkout = $event->getCheckoutEntity();
 
-        if ($checkoutSource && !$checkout) {
-            $checkout = $this->getEntityManager()->getRepository('OroB2BCheckoutBundle:Checkout')
-                ->findOneBy(['source' => $checkoutSource]);
+        if (!$checkout) {
+            throw new \RuntimeException("Checkout entity should be specified during event process");
         }
 
-        return $checkout ?: new Checkout();
+        return $checkout;
     }
 
     /**
-     * @param CheckoutInterface|null $checkout
+     * @param CheckoutInterface $checkout
      * @return bool
      */
-    protected function isCheckoutExist(CheckoutInterface $checkout = null)
+    protected function isNewCheckoutEntity(CheckoutInterface $checkout)
     {
-        return $checkout && $checkout->getWorkflowItem();
+        return !$checkout->getWorkflowItem();
     }
 }
