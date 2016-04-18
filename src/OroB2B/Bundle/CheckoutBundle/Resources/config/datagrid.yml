@@ -10,7 +10,7 @@ datagrid:
                     - checkout
                     - CONCAT(account_user.firstName, ' ', account_user.lastName) as accountUserName
                 from:
-                    - { table: %orob2b_checkout.entity.checkout.class%, alias: checkout }
+                    - { table: %orob2b_checkout.entity.abstract_checkout.class%, alias: checkout }
                 join:
                     left:
                         - { join: checkout.accountUser, alias: account_user }
@@ -38,6 +38,7 @@ datagrid:
                 type: twig
                 frontend_type: html
                 template: OroB2BCheckoutBundle:Checkout:Datagrid/shippingCost.html.twig
+                renderable: false
             customerNotes:
                 label: orob2b.checkout.customer_notes.label
         sorters:
