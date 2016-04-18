@@ -270,7 +270,7 @@
     <!-- Installing external dependencies -->
     <target name="install-dependencies" extensionOf="install">
         <exec dir="${basedir}" executable="composer" failonerror="true">
-            <arg line="install --prefer-dist --no-dev"/>
+            <arg line="install --prefer-dist --no-dev --optimize-autoloader"/>
         </exec>
         <copy file="${basedir}/composer.lock" todir="${builddir}"/>
     </target>

@@ -35,7 +35,7 @@
                 <li><i class="credit-card-icon credit-card-icon_{{ cc_name }}"></i></li>
             {% endfor %}
         </ul>
-        <div class="{{ class_prefix }}__form__payment-methods__form">
+        <div class="{{ class_prefix }}__form__payment-methods__form" data-credit-card-form="data-credit-card-form">
             {% for child in form.children %}
                 <div class="{{ class_prefix }}__form__row">
                     {{ form_row(child, {class_prefix: class_prefix}) }}

@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Model\Action;
 
-use Doctrine\ORM\EntityRepository;
-
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -27,6 +25,8 @@ use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
 
 class StartCheckoutTest extends \PHPUnit_Framework_TestCase
 {
@@ -123,15 +123,21 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
     public function testExecute(array $options, CheckoutSource $checkoutSource = null)
     {
         $checkout = new Checkout();
-        $checkout->setWorkflowItem(new WorkflowItem());
         $entity = new ShoppingList();
+
+        $this->eventDispatcher
+            ->expects($this->any())
+            ->method('dispatch')
+            ->willReturnCallback(function ($eventName, $event) use ($checkout) {
+                if ($eventName === CheckoutEvents::GET_CHECKOUT_ENTITY && $event instanceof CheckoutEntityEvent) {
+                    $event->setCheckoutEntity($checkout);
+                }
+            });
+
         $context = new ActionData(['data' => $entity]);
 
         $this->action->initialize($options);
 
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $checkoutRepository */
-        $checkoutRepository = $this->getMockWithoutConstructor('Doctrine\ORM\EntityRepository');
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $checkoutRepository */
         $checkoutSourceRepository = $this->getMockWithoutConstructor('Doctrine\ORM\EntityRepository');
         $checkoutSourceRepository->expects($this->any())
             ->method('findOneBy')
@@ -146,7 +152,6 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->willReturnMap(
                 [
-                    ['OroB2BCheckoutBundle:Checkout', $checkoutRepository],
                     ['OroB2BCheckoutBundle:CheckoutSource', $checkoutSourceRepository]
                 ]
             );
@@ -192,12 +197,9 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                 );
             $em->expects($this->exactly(2))->method('flush');
         } else {
-            $checkoutRepository
-                ->expects($this->once())
-                ->method('findOneBy')
-                ->with(['source' => $checkoutSource])
-                ->willReturn($checkout);
+            $checkout->setWorkflowItem(new WorkflowItem());
         }
+
         $this->redirect
             ->expects($this->once())
             ->method('initialize')

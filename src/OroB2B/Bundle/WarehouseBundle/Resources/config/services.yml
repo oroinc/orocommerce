@@ -2,12 +2,10 @@ parameters:
     orob2b_warehouse.entity.warehouse.class: OroB2B\Bundle\WarehouseBundle\Entity\Warehouse
     orob2b_warehouse.entity.warehouse_inventory_level.class: OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel
 
-    orob2b_warehouse.warehouse.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-
 services:
     orob2b_warehouse.warehouse.manager.api:
-        class: %orob2b_warehouse.warehouse.manager.api.class%
+        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - %orob2b_warehouse.entity.warehouse.class%
+            - '%orob2b_warehouse.entity.warehouse.class%'
             - "@doctrine.orm.entity_manager"
