@@ -88,9 +88,12 @@ class BaseCombinedPriceListRelation implements WebsiteAwareInterface
 
     /**
      * @param CombinedPriceList $fullChainPriceList
+     * @return $this
      */
     public function setFullChainPriceList(CombinedPriceList $fullChainPriceList)
     {
         $this->fullChainPriceList = $fullChainPriceList;
+
+        return $this;
     }
 }
