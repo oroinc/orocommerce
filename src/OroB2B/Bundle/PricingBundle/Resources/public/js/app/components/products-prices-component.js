@@ -208,7 +208,9 @@ define(function(require) {
             mediator.off('pricing:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
             mediator.off('pricing:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
 
-            mediator.off('update:currency', this.handleCurrencyChange, this);
+            mediator.off('update:currency', this.setCurrency, this);
+            mediator.off('update:account', this.setAccount, this);
+            mediator.off('update:website', this.setWebsite, this);
 
             ProductsPricesComponent.__super__.dispose.call(this);
         }

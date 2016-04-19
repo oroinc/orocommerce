@@ -40,6 +40,20 @@ define(function(require) {
             ProductsPricesComponent.__super__.reloadPrices.apply(this, arguments);
 
             mediator.trigger('entry-point:order:trigger');
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            mediator.off('update:currency', this.setCurrency, this);
+            mediator.off('update:website', this.setWebsite, this);
+
+            ProductsPricesComponent.__super__.dispose.call(this);
         }
     });
 
