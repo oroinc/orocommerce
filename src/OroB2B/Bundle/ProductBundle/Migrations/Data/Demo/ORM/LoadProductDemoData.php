@@ -16,6 +16,7 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 
 class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -55,6 +56,9 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
 
         $inventoryStatuses = $this->getAllEnumValuesByCode($manager, 'prod_inventory_status');
 
+        $imageTypeProvider = $this->container->get('oro_layout.provider.image_type');
+        $allImageTypes = array_keys($imageTypeProvider->getImageTypes());
+
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
@@ -91,9 +95,9 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->addDescription($description)
                 ->addShortDescription($shortDescription);
 
-            $image = $this->getImageForProductSku($manager, $locator, $row['sku']);
-            if ($image) {
-                $product->setImage($image);
+            $productImage = $this->getProductImageForProductSku($manager, $locator, $row['sku'], $allImageTypes);
+            if ($productImage) {
+                $product->addImage($productImage);
             }
 
             $manager->persist($product);
@@ -120,11 +124,12 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
      * @param ObjectManager $manager
      * @param FileLocator $locator
      * @param string $sku
-     * @return null|\Oro\Bundle\AttachmentBundle\Entity\File
+     * @param array|null $types
+     * @return null|ProductImage
      */
-    protected function getImageForProductSku(ObjectManager $manager, FileLocator $locator, $sku)
+    protected function getProductImageForProductSku(ObjectManager $manager, FileLocator $locator, $sku, $types)
     {
-        $image = null;
+        $productImage = null;
 
         try {
             $imagePath = $locator->locate(sprintf('@OroB2BProductBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
@@ -140,10 +145,14 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $attachmentManager->upload($image);
 
             $manager->persist($image);
+
+            $productImage = new ProductImage();
+            $productImage->setImage($image);
+            $productImage->setTypes($types);
         } catch (\Exception $e) {
             //image not found
         }
 
-        return $image;
+        return $productImage;
     }
 }
