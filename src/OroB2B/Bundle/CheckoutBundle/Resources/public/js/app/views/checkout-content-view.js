@@ -4,9 +4,10 @@ define(function(require) {
     var CheckoutContentView;
     var _ = require('underscore');
     var $ = require('jquery');
-    require('jquery.cookie');
     var mediator = require('oroui/js/mediator');
     var BaseView = require('oroui/js/app/views/base/view');
+
+    require('jquery.cookie');
 
     CheckoutContentView = BaseView.extend({
         /**
@@ -32,8 +33,8 @@ define(function(require) {
 
             $container.on('tab:toggle', '[data-tab-trigger]', function() {
                 var $tab = $(this).closest('[data-tab]');
-                mediator.trigger('scrollable-table:reload');
 
+                mediator.trigger('scrollable-table:reload');
                 if ($tab.hasClass('active')) {
                     $.cookie(cookieName, true, {path: window.location.pathname});
                 } else {

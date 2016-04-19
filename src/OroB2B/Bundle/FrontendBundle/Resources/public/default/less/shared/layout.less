@@ -6061,18 +6061,35 @@
         text-align: right;
       }
     }
-    &.table-scrollable {
-      & > tbody > tr > td {
-        border: none;
-        padding: 0;
-      }
-      .scrollable-content {
-        max-height: 490px;
-        overflow: auto;
-        width: 100%;
-        & > table {
-          width:100%;
-        }
+  }
+}
+
+table.table-scrollable {
+  & > tbody > tr > td {
+    border: none;
+    padding: 0;
+  }
+
+  thead {
+    th {
+      border-color: transparent;
+    }
+  }
+}
+.scrollable-content {
+  max-height: 490px;
+  width: 100%;
+
+  overflow: auto;
+
+  &__table {
+    width:100%;
+
+    tr:last-child {
+      td {
+        padding-bottom: 0;
+
+        border-bottom-color: transparent;
       }
     }
   }
@@ -6100,7 +6117,7 @@
   }
 }
 .checkout-order-summary__price-table-total {
-  padding: 1rem 0 1rem 1.2rem;
+  padding: 1rem 0 1rem 0;
 }
 
 /*END CHECKOUT PAGE*/
