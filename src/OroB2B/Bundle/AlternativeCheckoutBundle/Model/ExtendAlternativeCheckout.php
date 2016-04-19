@@ -2,7 +2,9 @@
 
 namespace OroB2B\Bundle\AlternativeCheckoutBundle\Model;
 
-class ExtendAlternativeCheckout
+use OroB2B\Bundle\CheckoutBundle\Entity\AbstractCheckout;
+
+class ExtendAlternativeCheckout extends AbstractCheckout
 {
     /**
      * The real implementation of this method is auto generated.

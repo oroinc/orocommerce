@@ -2,7 +2,9 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Model;
 
-class ExtendCheckout
+use OroB2B\Bundle\CheckoutBundle\Entity\AbstractCheckout;
+
+class ExtendCheckout extends AbstractCheckout
 {
     /**
      * Constructor

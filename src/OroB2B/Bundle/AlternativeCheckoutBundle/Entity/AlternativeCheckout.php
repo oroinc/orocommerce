@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\AbstractCheckout;
+use OroB2B\Bundle\AlternativeCheckoutBundle\Model\ExtendAlternativeCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutAddressesTrait;
 
 /**
@@ -40,11 +40,20 @@ use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutAddressesTrait;
  *      }
  * )
  */
-class AlternativeCheckout extends AbstractCheckout
+class AlternativeCheckout extends ExtendAlternativeCheckout
 {
     use CheckoutAddressesTrait;
 
     const TYPE = 'alternative';
+
+    /**
+     * @var int
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer", name="id")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
 
     /**
      * @var bool

@@ -29,7 +29,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-abstract class AbstractCheckout extends ExtendCheckout implements
+class AbstractCheckout implements
     CheckoutInterface,
     OrganizationAwareInterface,
     AccountOwnerAwareInterface,
@@ -156,7 +156,13 @@ abstract class AbstractCheckout extends ExtendCheckout implements
      */
     protected $source;
 
-    abstract public function getType();
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return '';
+    }
 
     /**
      * @return int
