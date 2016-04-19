@@ -8,7 +8,7 @@
                     {% for name, view in views if views is defined and view is iterable %}
                         {% set selected = currentPaymentMethod == name %}
                         <div class="{{ class_prefix }}__form__radio" data-item-container>
-                            <label class="radio_custom radio_custom_blue {% if selected %}checked{% endif %}" data-radio>
+                            <label class="radio_custom radio_custom_blue {% if selected %}checked{% endif %}" data-radio tabindex="0" />
                                 <input type="radio" name="paymentMethod" data-choice="{{ name }}" value="{{ name }}" {% if selected%}checked{% endif %} />
                                 <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
                                 <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>

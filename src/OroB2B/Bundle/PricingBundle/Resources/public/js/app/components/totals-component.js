@@ -27,6 +27,7 @@ define(function(require) {
             entityId: 0,
             selectors: {
                 form: '',
+                subtotalTemplate: '#totals-template',
                 template: '#totals-template',
                 noDataTemplate: '#totals-template-no-data',
                 totals: '[data-totals-container]'
@@ -99,6 +100,7 @@ define(function(require) {
             this.$el = options._sourceElement;
             this.$form = $(this.options.selectors.form);
             this.$totals = this.$el.find(this.options.selectors.totals);
+            this.subtotalTemplate = $(this.options.selectors.subtotalTemplate).text();
             this.template = _.template($(this.options.selectors.template).text());
             this.noDataTemplate = _.template($(this.options.selectors.noDataTemplate).text());
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
@@ -112,20 +114,15 @@ define(function(require) {
         },
 
         setDefaultTemplatesForData: function(totals) {
-            var i;
-
-            if (this.options.application === 'frontend') {
-                if (totals.subtotals) {
-                    var frontendSubtotalsTemplate = $('#frontend-subtotals-template').text();
-
-                    for (i in totals.subtotals) {
-                        if (totals.subtotals.hasOwnProperty(i)) {
-                            if (!totals.subtotals[i].template) {
-                                totals.subtotals[i].template = frontendSubtotalsTemplate;
-                            }
-                        }
+            if (totals.subtotals) {
+                var that = this;
+                _.map(totals.subtotals, function(subtotal) {
+                    if (!subtotal.template) {
+                        subtotal.template = that.subtotalTemplate;
                     }
-                }
+
+                    return subtotal;
+                });
             }
 
             return totals;
@@ -196,6 +193,8 @@ define(function(require) {
          */
         getTotals: function(callback) {
             var self = this;
+            var typeRequest = 'GET';
+            var data = null;
 
             var params = {
                 entityClassName: this.options.entityClassName,
@@ -206,29 +205,25 @@ define(function(require) {
             this.formData = formData;
 
             if (formData) {
-                $.post(routing.generate(this.options.route, params), formData, function(response) {
+                typeRequest = 'POST';
+                data = formData;
+            }
+
+            $.ajax({
+                url: routing.generate(this.options.route, params),
+                type: typeRequest,
+                data: data,
+                success: function (response) {
                     if (formData === self.formData) {
                         //data doesn't change after ajax call
                         var totals = response || {};
                         callback(totals);
                     }
-                });
-            } else {
-                $.ajax({
-                    url: routing.generate(this.options.route, params),
-                    type: 'GET',
-                    success: function (response) {
-                        if (formData === self.formData) {
-                            //data doesn't change after ajax call
-                            var totals = response || {};
-                            callback(totals);
-                        }
-                    },
-                    error: function(jqXHR) {
-                        messenger.showErrorMessage(__('Sorry, unexpected error was occurred'), jqXHR.responseJSON);
-                    }
-                });
-            }
+                },
+                error: function(jqXHR) {
+                    messenger.showErrorMessage(__('Sorry, unexpected error was occurred'), jqXHR.responseJSON);
+                }
+            });
         },
 
         /**

@@ -29,9 +29,6 @@ class AccountUserShoppingListsProviderTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
-
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
-
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists'
@@ -45,6 +42,8 @@ class AccountUserShoppingListsProviderTest extends WebTestCase
 
     public function testGetData()
     {
+        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
+
         $actual = $this->dataProvider->getData($this->context);
 
         $this->assertInternalType('array', $actual);

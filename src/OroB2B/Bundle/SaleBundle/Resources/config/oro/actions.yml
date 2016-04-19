@@ -13,18 +13,18 @@ operations:
         frontend_options:
             confirmation: orob2b.sale.quote.actions.quote_expire_confirm
         preconditions:
-            @equal: [$expired, false]
+            '@equal': [$expired, false]
         actions:
-            - @run_action_group:
+            - '@run_action_group':
                 action_group: orob2b_sale_expire_quote
                 parameters_mapping:
                     data: $.data
-            - @flash_message:
+            - '@flash_message':
                 message: orob2b.sale.quote.message.quote.expire.success
                 type: 'info'
                 message_parameters:
                     id: $id
-            - @redirect:
+            - '@redirect':
                 route: 'orob2b_sale_quote_index'
 
     orob2b_sale_notify_customer_by_email:
@@ -62,19 +62,19 @@ operations:
                     form_type: oro_email_email
 
         form_init:
-            - @call_service_method:
+            - '@call_service_method':
                 attribute: $.email
                 service: orob2b_sale.helper.notification
                 method: getEmailModel
                 method_parameters: [$.data]
-            - @call_service_method:
+            - '@call_service_method':
                 attribute: $.appendSignature
                 service: oro_config.user
                 method: get
                 method_parameters: ['oro_email.append_signature']
 
         actions:
-            - @run_action_group:
+            - '@run_action_group':
                 action_group: orob2b_sale_notify_customer_by_email
                 parameters_mapping:
                     data: $.data
@@ -91,21 +91,21 @@ operations:
             icon: icon-edit
             class:  quota-accept-btn
         actions:
-            - @find_entity:
+            - '@find_entity':
                 class: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
                 attribute: $.quoteDemand
                 where:
                     quote: $.data
-            - @create_entity:
+            - '@create_entity':
                 conditions:
-                    @empty: $.quoteDemand
+                    '@empty': $.quoteDemand
                 parameters:
                     attribute: $.quoteDemand
                     class: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
                     flush: true
                     data:
                         quote: $.data
-            - @redirect:
+            - '@redirect':
                  route: 'orob2b_sale_quote_frontend_choice'
                  route_parameters: {id: $.quoteDemand.id}
 
@@ -115,10 +115,10 @@ action_groups:
             data:
                 type: OroB2B\Bundle\SaleBundle\Entity\Quote
         conditions:
-            @equal: [$.data.expired, false]
+            '@equal': [$.data.expired, false]
         actions:
-            - @assign_value: [$.data.expired, true]
-            - @flush_entity: $.data
+            - '@assign_value': [$.data.expired, true]
+            - '@flush_entity': $.data
 
     orob2b_sale_notify_customer_by_email:
         parameters:
@@ -128,7 +128,7 @@ action_groups:
                 type: Oro\Bundle\EmailBundle\Form\Model\Email
         acl_resource: oro_email_email_create
         actions:
-            - @call_service_method:
+            - '@call_service_method':
                 service: orob2b_sale.helper.notification
                 method: send
                 method_parameters: [$.email, $.data]
@@ -138,31 +138,31 @@ action_groups:
             data:
                 type: OroB2B\Bundle\RFPBundle\Entity\Request
         actions:
-            - @foreach:
+            - '@foreach':
                 array: $.data.accountUser.salesRepresentatives
                 value: $.saleRep
                 actions:
-                    - @send_email_template:
+                    - '@send_email_template':
                         conditions:
-                            @not_empty: $.data.accountUser.owner
+                            '@not_empty': $.data.accountUser.owner
                         parameters:
                             from: $.data.accountUser.owner.email
                             to: $.saleRep.email
                             template: 'request_no_quote_alert'
                             entity: $.data
-            - @call_method:
+            - '@call_method':
                 object: $.data.accountUser.salesRepresentatives
                 method: toArray
                 attribute: $.accountUserSalesReps
-            - @foreach:
+            - '@foreach':
                 array: $.data.account.salesRepresentatives
                 value: $.saleRep
                 actions:
-                    - @send_email_template:
+                    - '@send_email_template':
                         conditions:
-                            @and:
-                                - @not_empty: $.data.accountUser.owner
-                                - @not_in: [$.saleRep, $.accountUserSalesReps]
+                            '@and':
+                                - '@not_empty': $.data.accountUser.owner
+                                - '@not_in': [$.saleRep, $.accountUserSalesReps]
                         parameters:
                             from: $.data.accountUser.owner.email
                             to: $.saleRep.email
@@ -174,23 +174,23 @@ action_groups:
             data:
                 type: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
         actions:
-            - @assign_url:
+            - '@assign_url':
                 attribute: $.editLink
                 route: orob2b_sale_quote_frontend_choice
                 route_parameters: { 'id': $.data.id }
-            - @assign_value:
+            - '@assign_value':
                 conditions:
-                   @empty: $.data.quote.shippingEstimate
+                   '@empty': $.data.quote.shippingEstimate
                 parameters: [$.disallow_shipping_method_edit, false]
-            - @assign_value:
+            - '@assign_value':
                 conditions:
-                   @not_empty: $.data.quote.shippingEstimate
+                   '@not_empty': $.data.quote.shippingEstimate
                 parameters: [$.disallow_shipping_method_edit, true]
-            - @tree:
+            - '@tree':
                 conditions:
-                    @not_empty: $.data.quote.shippingAddress
+                    '@not_empty': $.data.quote.shippingAddress
                 actions:
-                    - @create_entity:
+                    - '@create_entity':
                         attribute: $.orderAddress
                         class: OroB2B\Bundle\OrderBundle\Entity\OrderAddress
                         data:
@@ -212,18 +212,18 @@ action_groups:
                             nameSuffix: $.data.quote.shippingAddress.nameSuffix
                             phone: $.data.quote.shippingAddress.phone
                             fromExternalSource: true
-                    - @assign_value:
+                    - '@assign_value':
                         parameters: [$.disallow_shipping_address_edit, true]
-            - @tree:
+            - '@tree':
                 conditions:
-                      @empty: $.data.quote.shippingAddress
+                      '@empty': $.data.quote.shippingAddress
                 actions:
-                    - @assign_value: [$.orderAddress, null]
-                    - @assign_value:
+                    - '@assign_value': [$.orderAddress, null]
+                    - '@assign_value':
                         parameters: [$.disallow_shipping_address_edit, false]
-            - @assign_value:
+            - '@assign_value':
                 parameters: [$.shippingEstimate, $.data.quote.shippingEstimate]
-            - @start_checkout:
+            - '@start_checkout':
                 source_name: 'quoteDemand'
                 source_entity: $.data
                 force: true

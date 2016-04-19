@@ -6,6 +6,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\Tax;
@@ -41,9 +42,10 @@ class TaxRulesControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_tax_rule_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_rule_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('tax-taxe-rules-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -60,6 +62,15 @@ class TaxRulesControllerTest extends WebTestCase
             $this->getTaxJurisdiction(LoadTaxes::TAX_1),
             self::TAX_DESCRIPTION
         );
+
+        /** @var TaxRule $taxRule */
+        $taxRule = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BTaxBundle:TaxRule')
+            ->getRepository('OroB2BTaxBundle:TaxRule')
+            ->findOneBy(['description' => self::TAX_DESCRIPTION]);
+        $this->assertNotEmpty($taxRule);
+
+        return $taxRule->getId();
     }
 
     /**
@@ -99,22 +110,15 @@ class TaxRulesControllerTest extends WebTestCase
     }
 
     /**
+     * @param $id int
+     * @return int
      * @depends testCreate
      */
-    public function testUpdate()
+    public function testUpdate($id)
     {
-        $response = $this->client->requestGrid(
-            'tax-taxe-rules-grid',
-            ['tax-taxe-rules-grid[_filter][description][value]' => self::TAX_DESCRIPTION]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id = $result['id'];
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_rule_update', ['id' => $result['id']])
+            $this->getUrl('orob2b_tax_rule_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);

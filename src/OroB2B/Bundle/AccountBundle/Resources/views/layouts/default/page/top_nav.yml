@@ -1,8 +1,8 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BAccountBundle:layouts:default/page/top_nav.html.twig'
-        - @addTree:
+        - '@addTree':
             items:
                 top_nav_left_logged_user:
                     blockType: container
@@ -13,7 +13,7 @@ layout:
                 top_nav_left_signed_in_as:
                     blockType: text
                     options:
-                        text: { @value: $context.logged_user.fullName }
+                        text: { '@value': $context.logged_user.fullName }
                 top_nav_left_sign_out:
                     blockType: link
                     options:
@@ -32,4 +32,4 @@ layout:
                     top_nav_left_my_account: ~
                     top_nav_left_sign_out: ~
     conditions:
-        @neq: [ $context.logged_user, null ]
+        '@neq': [ $context.logged_user, null ]
