@@ -31,6 +31,7 @@ define(function(require) {
             this.hasScroll();
 
             mediator.on('scrollable-table:reload', _.bind(function() {
+                this.hasScroll();
                 this.alignCell();
             }, this));
 
