@@ -17,7 +17,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
     {
         $this->initClient();
 
-        if (!$this->getContainer()->hasParameter('orob2b_product.product.class')) {
+        if (!$this->getContainer()->hasParameter('orob2b_product.entity.product.class')) {
             $this->markTestSkipped('ProductBundle is missing');
         }
 
@@ -34,7 +34,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
      */
     public function testConvertToImportFormat(array $data, array $expected)
     {
-        $productClass = $this->getContainer()->getParameter('orob2b_product.product.class');
+        $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
 
         /** @var LocalizedFallbackValueAwareDataConverter $converter */
         $converter = $this->getContainer()
@@ -83,7 +83,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
      */
     public function testConvertToExportFormat(array $data, array $expected)
     {
-        $productClass = $this->getContainer()->getParameter('orob2b_product.product.class');
+        $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
 
         /** @var LocalizedFallbackValueAwareDataConverter $converter */
         $converter = $this->getContainer()

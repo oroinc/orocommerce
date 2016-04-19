@@ -1,35 +1,35 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_view/layout.html.twig'
 
-        - @appendOption:
+        - '@appendOption':
             id: title
             optionName: value
             optionValue:
                 - 'orob2b.account.menu.account_user.label'
                 - 'orob2b.account.frontend.account_user.entity_plural_label'
-                - { @value: $data.entity.fullName }
+                - { '@value': $data.entity.fullName }
 
-        - @setOption:
+        - '@setOption':
             id: page_title
             optionName: text
             optionValue:
                 label: 'orob2b.account.frontend.title.account_user.view'
                 parameters:
-                    '%identifier%': { @value: $data.entity.fullName }
+                    '%identifier%': { '@value': $data.entity.fullName }
 
-        - @setOption:
+        - '@setOption':
             id: content
             optionName: class_prefix
             optionValue: 'user'
 
-        - @add:
+        - '@add':
             id: account_sidebar
             parentId: sidebar_left
             blockType: container
 
-        - @addTree:
+        - '@addTree':
             items:
                 account_user_view_page:
                     blockType: container
@@ -39,25 +39,25 @@ layout:
                     blockType: block
                     options:
                         vars:
-                            profile: { @value: $data.entity }
+                            profile: { '@value': $data.entity }
                 account_user_top_actions:
                     blockType: action_line_buttons
                     options:
-                        visible: { @not_empty: $data.entity }
-                        actions: { @value: $data.actions.all }
-                        entity: { @value: $data.entity }
+                        visible: { '@not_empty': $data.entity }
+                        actions: { '@value': $data.actions.all }
+                        entity: { '@value': $data.entity }
 
                 account_user_view_information:
                     blockType: container
                 account_user_view_information_title:
                     blockType: text
                     options:
-                        text: {@value: 'orob2b.account.frontend.sections.account_user.user_profile'}
+                        text: {'@value': 'orob2b.account.frontend.sections.account_user.user_profile'}
                 account_user_view_information_content:
                     blockType: block
                     options:
                         vars:
-                            entity: { @value: $data.entity }
+                            entity: { '@value': $data.entity }
 
                 account_user_address_book:
                     blockType: container
@@ -66,19 +66,19 @@ layout:
                 account_user_address_book_title:
                     blockType: text
                     options:
-                        text: {@value: 'orob2b.account.frontend.sections.account_user.address_book'}
+                        text: {'@value': 'orob2b.account.frontend.sections.account_user.address_book'}
                 account_user_address_add_link:
                     blockType: link
                     options:
-                        visible: { @acl: orob2b_account_frontend_account_user_address_create }
+                        visible: { '@acl': orob2b_account_frontend_account_user_address_create }
                         route_name: orob2b_account_frontend_account_user_address_create
-                        route_parameters: { entityId: {@value: $data.entity.id }}
-                        text: {@value: 'orob2b.account.address.add'}
+                        route_parameters: { entityId: {'@value': $data.entity.id }}
+                        text: {'@value': 'orob2b.account.address.add'}
                         icon: plus
                 account_user_address_book_content:
                     blockType: address_book
                     options:
-                        entity: { @value: $data.entity }
+                        entity: { '@value': $data.entity }
                         addressListRouteName: 'orob2b_api_account_frontend_get_accountuser_addresses'
                         addressCreateRouteName: 'orob2b_account_frontend_account_user_address_create'
                         addressCreateAclResource: 'orob2b_account_frontend_account_user_address_create'

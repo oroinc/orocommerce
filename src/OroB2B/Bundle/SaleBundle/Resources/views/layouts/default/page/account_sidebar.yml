@@ -1,6 +1,6 @@
 layout:
     actions:
-        - @add:
+        - '@add':
             id: account_sidebar_quote
             parentId: account_sidebar
             blockType: link
@@ -8,4 +8,4 @@ layout:
                 route_name: orob2b_sale_quote_frontend_index
                 text: orob2b.frontend.sale.quote.entity_plural_label
     conditions:
-        @acl: orob2b_sale_quote_frontend_index
+        '@acl': orob2b_sale_quote_frontend_index

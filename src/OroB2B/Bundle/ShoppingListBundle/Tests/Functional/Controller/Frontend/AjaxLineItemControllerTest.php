@@ -7,6 +7,7 @@ use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -26,25 +27,35 @@ class AjaxLineItemControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
     }
 
-    public function testAddProductFromView()
+    /**
+     * @dataProvider addProductFromViewDataProvider
+     *
+     * @param string $product
+     * @param string $unit
+     * @param int $quantity
+     * @param float $expectedSubtotal
+     * @param float $expectedTotal
+     */
+    public function testAddProductFromView($product, $unit, $quantity, $expectedSubtotal, $expectedTotal)
     {
+        $this->getContainer()->get('oro_config.global')->set('oro_locale.currency', 'EUR');
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference($product);
         /** @var ProductUnit $unit */
-        $unit = $this->getReference('product_unit.bottle');
+        $unit = $this->getReference($unit);
 
         $this->client->request(
             'POST',
             $this->getUrl('orob2b_shopping_list_frontend_add_product', ['productId' => $product->getId()]),
             [
                 'orob2b_shopping_list_frontend_line_item' => [
-                    'quantity' => 110,
+                    'quantity' => $quantity,
                     'unit' => $unit->getCode(),
                     '_token' => $this->getCsrfToken(),
                 ],
@@ -55,6 +66,35 @@ class AjaxLineItemControllerTest extends WebTestCase
 
         $this->assertArrayHasKey('successful', $result);
         $this->assertTrue($result['successful']);
+        $shoppingList = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BShoppingListBundle:ShoppingList')
+            ->find('OroB2BShoppingListBundle:ShoppingList', $result['shoppingList']['id']);
+
+        $this->assertEquals($expectedSubtotal, $shoppingList->getSubtotal());
+        $this->assertEquals($expectedTotal, $shoppingList->getTotal());
+    }
+
+    /**
+     * @return array
+     */
+    public function addProductFromViewDataProvider()
+    {
+        return [
+            [
+                'product' => LoadProductData::PRODUCT_1,
+                'unit' => 'product_unit.bottle',
+                'quantity' => 110,
+                'expectedSubtotals' => 1342,
+                'expectedTotals' => 1342,
+            ],
+            [
+                'product' => LoadProductData::PRODUCT_2,
+                'unit' => 'product_unit.liter',
+                'quantity' => 14,
+                'expectedSubtotals' => 1573,
+                'expectedTotals' => 1573,
+            ],
+        ];
     }
 
     public function testAddProductFromViewNotValidData()
@@ -78,6 +118,115 @@ class AjaxLineItemControllerTest extends WebTestCase
 
         $this->assertArrayHasKey('successful', $result);
         $this->assertFalse($result['successful']);
+    }
+
+    /**
+     * @depends testAddProductFromView
+     * @dataProvider removeProductFromViewProvider
+     *
+     * @param string $productRef
+     * @param bool $expectedResult
+     * @param string $expectedMessage
+     * @param bool $removeCurrent
+     */
+    public function testRemoveProductFromView($productRef, $expectedResult, $expectedMessage, $removeCurrent = false)
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
+        $shoppingList = $this->getShoppingList($shoppingList->getId());
+
+        $subtotal = $shoppingList->getSubtotal();
+
+        $this->assertCount($expectedResult ? 2 : 0, $shoppingList->getLineItems());
+
+        if ($expectedResult) {
+            $this->assertGreaterThan(0.0, $subtotal);
+        }
+
+        /** @var Product $product */
+        $product = $this->getReference($productRef);
+
+        $subtotal = $shoppingList->getSubtotal();
+
+        if ($removeCurrent) {
+            $this->setShoppingListCurrent($shoppingList, false);
+        }
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('orob2b_shopping_list_frontend_remove_product', ['productId' => $product->getId()])
+        );
+
+        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
+
+        $this->assertArrayHasKey('successful', $result);
+        $this->assertEquals($expectedResult, $result['successful']);
+
+        $this->assertArrayHasKey('message', $result);
+        $this->assertEquals(sprintf($expectedMessage, $shoppingList->getId()), $result['message']);
+
+        $shoppingList = $this->getShoppingList($shoppingList->getId());
+
+        if ($expectedResult) {
+            $this->assertCount(0, $shoppingList->getLineItems());
+            $this->assertNotEquals($subtotal, $shoppingList->getSubtotal());
+        }
+
+        if ($removeCurrent) {
+            $this->setShoppingListCurrent($shoppingList, true);
+        }
+    }
+
+    /**
+     * @param $id
+     * @return null|ShoppingList
+     */
+    protected function getShoppingList($id)
+    {
+        return $this->getShoppingListRepository()->find($id);
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param bool $isCurrent
+     */
+    protected function setShoppingListCurrent(ShoppingList $shoppingList, $isCurrent)
+    {
+        $shoppingList->setCurrent($isCurrent);
+
+        $container = $this->getContainer();
+        $manager = $container->get('doctrine')->getManagerForClass(
+            $container->getParameter('orob2b_shopping_list.entity.shopping_list.class')
+        );
+
+        $manager->persist($shoppingList);
+        $manager->flush();
+    }
+
+    /**
+     * @return array
+     */
+    public function removeProductFromViewProvider()
+    {
+        return [
+            [
+                'productRef' => LoadProductData::PRODUCT_1,
+                'expectedResult' => true,
+                'expectedMessage' => 'Product has been removed from "<a href="/account/shoppinglist/%s">' .
+                    'shopping_list_2_label</a>"'
+            ],
+            [
+                'productRef' => LoadProductData::PRODUCT_1,
+                'expectedResult' => false,
+                'expectedMessage' => 'No current ShoppingList or no Product in current ShoppingList'
+            ],
+            [
+                'productRef' => LoadProductData::PRODUCT_1,
+                'expectedResult' => false,
+                'expectedMessage' => 'No current ShoppingList or no Product in current ShoppingList',
+                'removeCurrent' => true
+            ]
+        ];
     }
 
     public function testAddProductsMassAction()

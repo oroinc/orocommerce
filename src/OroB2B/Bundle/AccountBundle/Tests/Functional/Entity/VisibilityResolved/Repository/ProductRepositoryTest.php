@@ -258,7 +258,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function getProductRepository()
     {
-        $className = $this->getContainer()->getParameter('orob2b_product.product.class');
+        $className = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
 
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass($className)
@@ -307,7 +307,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function getCategoryRepository()
     {
-        $className = $this->getContainer()->getParameter('orob2b_catalog.category.class');
+        $className = $this->getContainer()->getParameter('orob2b_catalog.entity.category.class');
 
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass($className)
@@ -337,7 +337,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function getWebsites()
     {
-        $className = $this->getContainer()->getParameter('orob2b_website.website.class');
+        $className = $this->getContainer()->getParameter('orob2b_website.entity.website.class');
         $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass($className)
             ->getRepository('OroB2BWebsiteBundle:Website');
@@ -412,7 +412,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function getDefaultWebsite()
     {
-        $className = $this->getContainer()->getParameter('orob2b_website.website.class');
+        $className = $this->getContainer()->getParameter('orob2b_website.entity.website.class');
         $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass($className)
             ->getRepository('OroB2BWebsiteBundle:Website');

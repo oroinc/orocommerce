@@ -37,7 +37,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
         $normalizer = new LocalizedFallbackValueCollectionNormalizer(
             $this->getContainer()->get('doctrine'),
             $this->getContainer()->getParameter('orob2b_fallback.entity.localized_fallback_value.class'),
-            $this->getContainer()->getParameter('orob2b_website.locale.class')
+            $this->getContainer()->getParameter('orob2b_website.entity.locale.class')
         );
 
         $this->assertEquals(
@@ -116,7 +116,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
         $normalizer = new LocalizedFallbackValueCollectionNormalizer(
             $this->getContainer()->get('doctrine'),
             $this->getContainer()->getParameter('orob2b_fallback.entity.localized_fallback_value.class'),
-            $this->getContainer()->getParameter('orob2b_website.locale.class')
+            $this->getContainer()->getParameter('orob2b_website.entity.locale.class')
         );
 
         $this->assertEquals($expectedData, $normalizer->denormalize($actualData, $class));
@@ -207,7 +207,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
      */
     public function testSupportsNormalization($data, $expected, array $context = [])
     {
-        if (!$this->getContainer()->hasParameter('orob2b_product.product.class')) {
+        if (!$this->getContainer()->hasParameter('orob2b_product.entity.product.class')) {
             $this->markTestSkipped('ProductBundle required');
         }
 
@@ -215,7 +215,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
         $normalizer = new LocalizedFallbackValueCollectionNormalizer(
             $this->getContainer()->get('doctrine'),
             $this->getContainer()->getParameter('orob2b_fallback.entity.localized_fallback_value.class'),
-            $this->getContainer()->getParameter('orob2b_website.locale.class')
+            $this->getContainer()->getParameter('orob2b_website.entity.locale.class')
         );
 
         $this->assertEquals($expected, $normalizer->supportsNormalization($data, [], $context));
@@ -260,7 +260,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
      */
     public function testSupportsDenormalization($data, $class, $expected, array $context = [])
     {
-        if (!$this->getContainer()->hasParameter('orob2b_product.product.class')) {
+        if (!$this->getContainer()->hasParameter('orob2b_product.entity.product.class')) {
             $this->markTestSkipped('ProductBundle required');
         }
 
@@ -268,7 +268,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
         $normalizer = new LocalizedFallbackValueCollectionNormalizer(
             $this->getContainer()->get('doctrine'),
             $this->getContainer()->getParameter('orob2b_fallback.entity.localized_fallback_value.class'),
-            $this->getContainer()->getParameter('orob2b_website.locale.class')
+            $this->getContainer()->getParameter('orob2b_website.entity.locale.class')
         );
 
         $this->assertEquals($expected, $normalizer->supportsDenormalization($data, $class, [], $context));

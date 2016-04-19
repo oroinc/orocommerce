@@ -49,7 +49,8 @@ class RFPActionsTest extends WebTestCase
                     'entityClass' => 'OroB2B\Bundle\RFPBundle\Entity\Request',
                     'entityId' => $request->getId()
                 ]
-            )
+            ),
+            ['_widgetContainer' => 'dialog']
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);

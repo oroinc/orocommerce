@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Doctrine;
 interface SoftDeleteableInterface
 {
     const FIELD_NAME = 'deletedAt';
-    const NAME = '\OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableInterface';
+    const NAME = 'OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableInterface';
 
     /**
      * @return \DateTime

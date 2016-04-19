@@ -225,6 +225,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @var Collection|ProductUnitPrecision[]
      *
      * @ORM\OneToMany(targetEntity="ProductUnitPrecision", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OrderBy({"id" = "ASC"})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
