@@ -59,14 +59,17 @@ class CombinedPriceListActivationRule
 
     /**
      * @param CombinedPriceList $combinedPriceList
+     * @return $this
      */
     public function setCombinedPriceList(CombinedPriceList $combinedPriceList)
     {
         $this->combinedPriceList = $combinedPriceList;
+
+        return $this;
     }
 
     /**
-     * @return mixed
+     * @return CombinedPriceList
      */
     public function getFullChainPriceList()
     {
@@ -74,11 +77,14 @@ class CombinedPriceListActivationRule
     }
 
     /**
-     * @param mixed $fullChainPriceList
+     * @param CombinedPriceList $fullChainPriceList
+     * @return $this
      */
     public function setFullChainPriceList(CombinedPriceList $fullChainPriceList)
     {
         $this->fullChainPriceList = $fullChainPriceList;
+
+        return $this;
     }
 
     /**
@@ -91,9 +97,12 @@ class CombinedPriceListActivationRule
 
     /**
      * @param \DateTime|null $expireAt
+     * @return $this
      */
     public function setExpireAt(\DateTime $expireAt = null)
     {
         $this->expireAt = $expireAt;
+
+        return $this;
     }
 }

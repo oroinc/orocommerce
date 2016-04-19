@@ -86,9 +86,12 @@ class CombinedPriceList extends BasePriceList
 
     /**
      * @param boolean $pricesCalculated
+     * @return $this
      */
     public function setPricesCalculated($pricesCalculated)
     {
         $this->pricesCalculated = $pricesCalculated;
+
+        return $this;
     }
 }

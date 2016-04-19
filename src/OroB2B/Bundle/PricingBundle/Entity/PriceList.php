@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -65,6 +66,28 @@ class PriceList extends BasePriceList
     protected $currencies;
 
     /**
+     * @var PriceListSchedule[]|ArrayCollection
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule",
+     *      mappedBy="priceList",
+     *      cascade={"all"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\OrderBy({"activeAt" = "ASC"}) //todo ask PO about proper order
+     */
+    protected $schedules;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->schedules = new ArrayCollection();
+    }
+
+    /**
      * @param bool $default
      *
      * @return PriceList
@@ -82,6 +105,45 @@ class PriceList extends BasePriceList
     public function isDefault()
     {
         return $this->default;
+    }
+
+    /**
+     * @return ArrayCollection|PriceListSchedule[]
+     */
+    public function getSchedules()
+    {
+        return $this->schedules;
+    }
+
+    /**
+     * @param ArrayCollection|PriceListSchedule[] $schedules
+     */
+    public function setSchedules($schedules)
+    {
+        $this->schedules = $schedules;
+    }
+
+    /**
+     * @param PriceListSchedule $schedule
+     * @return $this
+     */
+    public function addSchedule(PriceListSchedule $schedule)
+    {
+        $schedule->setPriceList($this);
+        $this->schedules->add($schedule);
+
+        return $this;
+    }
+
+    /**
+     * @param PriceListSchedule $schedule
+     * @return $this
+     */
+    public function removeSchedule(PriceListSchedule $schedule)
+    {
+        $this->schedules->removeElement($schedule);
+
+        return $this;
     }
 
     /**

@@ -66,6 +66,12 @@ orob2b.pricing:
         bundled: 'bundle'
         unit: 'per unit'
 
+    pricelist_schedule:
+        active_at.label: 'Active At'
+        deactivate_at.label: 'Deactivate At'
+
+    add_schedule: 'Add'
+
     menu:
         price_lists_tab.label: Price lists management
         price_lists_list.description: List of existing price lists
