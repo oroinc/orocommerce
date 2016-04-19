@@ -33,6 +33,6 @@ class DropAlternativeCheckoutTable implements Migration, OrderedMigrationInterfa
      */
     protected function dropAlternativeCheckoutTable(Schema $schema)
     {
-        $schema->dropTable('orob2b_alternative_checkout');
+        $schema->dropTable('orob2b_alternative_checkout_old');
     }
 }

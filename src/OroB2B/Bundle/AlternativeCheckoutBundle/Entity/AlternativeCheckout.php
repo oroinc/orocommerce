@@ -11,6 +11,7 @@ use OroB2B\Bundle\CheckoutBundle\Entity\AbstractCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutAddressesTrait;
 
 /**
+ * @ORM\Table(name="orob2b_alternative_checkout")
  * @ORM\Entity(
  *     repositoryClass="OroB2B\Bundle\AlternativeCheckoutBundle\Entity\Repository\AlternativeCheckoutRepository"
  * )
@@ -48,7 +49,7 @@ class AlternativeCheckout extends AbstractCheckout
     /**
      * @var bool
      *
-     * @ORM\Column(name="allowed", type="boolean", nullable=true)
+     * @ORM\Column(name="allowed", type="boolean")
      */
     protected $allowed = false;
 

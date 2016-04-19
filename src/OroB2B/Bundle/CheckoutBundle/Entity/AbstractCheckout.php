@@ -24,7 +24,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 /**
  * @ORM\Table(name="orob2b_checkout")
  * @ORM\Entity
- * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="type", type="string", length=30)
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)

@@ -11,6 +11,7 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 
 /**
+ * @ORM\Table(name="orob2b_default_checkout")
  * @ORM\Entity
  * @Config(
  *      defaultValues={
