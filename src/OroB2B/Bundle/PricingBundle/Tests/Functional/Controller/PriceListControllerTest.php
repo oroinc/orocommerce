@@ -13,6 +13,8 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 /**
  * @dbIsolation
+ *
+ * todo: in BB-1499 test submit with schedules
  */
 class PriceListControllerTest extends WebTestCase
 {
@@ -45,6 +47,9 @@ class PriceListControllerTest extends WebTestCase
         $this->assertContains($this->getPriceList('price_list_5')->getName(), $crawler->html());
     }
 
+    /**
+     * @return int
+     */
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_pricing_price_list_create'));
