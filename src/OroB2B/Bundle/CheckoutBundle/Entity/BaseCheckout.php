@@ -17,7 +17,6 @@ use Oro\Component\Layout\ContextItemInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\CheckoutBundle\Model\ExtendCheckout;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -29,7 +28,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class AbstractCheckout implements
+class BaseCheckout implements
     CheckoutInterface,
     OrganizationAwareInterface,
     AccountOwnerAwareInterface,

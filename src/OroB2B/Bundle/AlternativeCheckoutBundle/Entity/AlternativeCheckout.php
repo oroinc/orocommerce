@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\AlternativeCheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\AlternativeCheckoutBundle\Model\ExtendAlternativeCheckout;
@@ -70,11 +69,6 @@ class AlternativeCheckout extends ExtendAlternativeCheckout
     protected $allowRequestDate;
 
     /**
-     * @var Price
-     */
-    protected $shippingCost;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="request_approval_notes", type="text", nullable=true)
@@ -87,18 +81,6 @@ class AlternativeCheckout extends ExtendAlternativeCheckout
      * @ORM\Column(name="requested_for_approve", type="boolean")
      */
     protected $requestedForApprove = false;
-
-    /**
-     * @return object|null
-     */
-    public function getSourceEntity()
-    {
-        if ($this->source) {
-            return $this->source->getEntity();
-        }
-
-        return null;
-    }
 
     /**
      * @return string

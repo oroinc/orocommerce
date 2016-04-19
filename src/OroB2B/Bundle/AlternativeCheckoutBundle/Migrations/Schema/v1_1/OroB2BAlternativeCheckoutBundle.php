@@ -10,6 +10,8 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInterface
 {
+    const ALTERNATIVE_CHECKOUT_TYPE = 'alternativecheckout';
+
     /**
      * {@inheritdoc}
      */
@@ -126,10 +128,10 @@ class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInte
         shipping_estimate_amount,
         shipping_estimate_currency,
         payment_method,
-        'alternativecheckout'
+        '%s'
      FROM orob2b_alt_checkout_old
 SQL;
-        $queries->addQuery($sql);
+        $queries->addQuery(sprintf($sql, self::ALTERNATIVE_CHECKOUT_TYPE));
     }
 
     /**
