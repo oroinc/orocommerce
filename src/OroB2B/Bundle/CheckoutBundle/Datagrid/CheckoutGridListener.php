@@ -69,41 +69,11 @@ class CheckoutGridListener
         }
 
         if ($updates) {
-            $config->offsetSetByPath(
-                '[source][query][select]',
-                array_merge(
-                    $config->offsetGetByPath('[source][query][select]', []),
-                    $updates['selects']
-                )
-            );
-            $config->offsetSetByPath(
-                '[columns]',
-                array_merge(
-                    $config->offsetGetByPath('[columns]', []),
-                    $updates['columns']
-                )
-            );
-            $config->offsetSetByPath(
-                '[filters][columns]',
-                array_merge(
-                    $config->offsetGetByPath('[filters][columns]', []),
-                    $updates['filters']
-                )
-            );
-            $config->offsetSetByPath(
-                '[sorters][columns]',
-                array_merge(
-                    $config->offsetGetByPath('[sorters][columns]', []),
-                    $updates['sorters']
-                )
-            );
-            $config->offsetSetByPath(
-                '[source][query][join][left]',
-                array_merge(
-                    $config->offsetGetByPath('[source][query][join][left]', []),
-                    $updates['joins']
-                )
-            );
+            $config->offsetAddToArrayByPath('[source][query][select]', $updates['selects']);
+            $config->offsetAddToArrayByPath('[columns]', $updates['columns']);
+            $config->offsetAddToArrayByPath('[filters][columns]', $updates['filters']);
+            $config->offsetAddToArrayByPath('[sorters][columns]', $updates['sorters']);
+            $config->offsetAddToArrayByPath('[source][query][join][left]', $updates['joins']);
         }
     }
 
@@ -173,7 +143,7 @@ class CheckoutGridListener
                 $updates['sorters']['subtotal'] = ['data_name' => 'subtotal'];
             }
             if ($currencyFields) {
-                $updates['selects'][] = sprintf('COALESCE(%s) as totalsCurrency', implode(',', $currencyFields));
+                $updates['selects'][] = sprintf('COALESCE(%s) as currency', implode(',', $currencyFields));
             }
         }
 
@@ -192,26 +162,48 @@ class CheckoutGridListener
             false,
             false
         );
+
+        if (!$relationsMetadata) {
+            return $metadata;
+        }
+
         foreach ($relationsMetadata as $relationMetadata) {
             if (!empty($relationMetadata['related_entity_name'])) {
                 $relatedEntityName = $relationMetadata['related_entity_name'];
                 $relationField = $relationMetadata['name'];
 
-                $fields = $this->fieldProvider->getFields($relatedEntityName);
-                foreach ($fields as $field) {
-                    $fieldName = $field['name'];
-                    if ($this->configProvider->hasConfig($relatedEntityName, $fieldName)) {
-                        $fieldConfig = $this->configProvider->getConfig($relatedEntityName, $fieldName);
-                        if ($fieldConfig->get('is_total')) {
-                            $metadata[$relationField]['total'] = $fieldName;
-                        }
-                        if ($fieldConfig->get('is_subtotal')) {
-                            $metadata[$relationField]['subtotal'] = $fieldName;
-                        }
-                        if ($fieldConfig->get('is_total_currency')) {
-                            $metadata[$relationField]['currency'] = $fieldName;
-                        }
-                    }
+                if ($totalsMetadata = $this->getTotalsMetadata($relatedEntityName)) {
+                    $metadata[$relationField] = $totalsMetadata;
+                }
+            }
+        }
+
+        return $metadata;
+    }
+
+    /**
+     * @param string $entityName
+     * @return array
+     */
+    protected function getTotalsMetadata($entityName)
+    {
+        $metadata = [];
+        $fields = $this->fieldProvider->getFields($entityName);
+        if (!$fields) {
+            return $metadata;
+        }
+        foreach ($fields as $field) {
+            $fieldName = $field['name'];
+            if ($this->configProvider->hasConfig($entityName, $fieldName)) {
+                $fieldConfig = $this->configProvider->getConfig($entityName, $fieldName);
+                if ($fieldConfig->get('is_total')) {
+                    $metadata['total'] = $fieldName;
+                }
+                if ($fieldConfig->get('is_subtotal')) {
+                    $metadata['subtotal'] = $fieldName;
+                }
+                if ($fieldConfig->get('is_total_currency')) {
+                    $metadata['currency'] = $fieldName;
                 }
             }
         }
