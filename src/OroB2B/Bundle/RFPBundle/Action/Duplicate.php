@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\RFPBundle\Action;
 
+use Symfony\Component\PropertyAccess\PropertyPath;
+
 use Oro\Component\Action\Action\ActionInterface;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
@@ -57,8 +59,11 @@ class Duplicate extends AbstractAction
      */
     public function initialize(array $options)
     {
-        if (!empty($options[self::OPTION_KEY_TARGET]) && !is_string($options[self::OPTION_KEY_TARGET])) {
-            throw new InvalidParameterException('Option \'target\' should be string');
+        if (!empty($options[self::OPTION_KEY_TARGET])) {
+            $target = $options[self::OPTION_KEY_TARGET];
+            if (!is_string($target) && !($target instanceof PropertyPath)) {
+                throw new InvalidParameterException('Option \'target\' should be string or PropertyPath');
+            }
         }
         if (!empty($options[self::OPTION_KEY_SETTINGS]) && !is_array($options[self::OPTION_KEY_SETTINGS])) {
             throw new InvalidParameterException('Option \'settings\' should be array');
