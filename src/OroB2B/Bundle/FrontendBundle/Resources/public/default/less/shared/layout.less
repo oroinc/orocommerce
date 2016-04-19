@@ -6034,14 +6034,9 @@
 
         background: transparent;
       }
-
-      table-layout: auto;
     }
 
     & > tbody {
-      & > tr > td {
-        width: 30%;
-      }
       td {
         &:first-child {
           padding-left: 0;
@@ -6055,8 +6050,6 @@
         border-top: .1rem solid @table-alt-border-color;
         border-bottom: .1rem solid @table-alt-border-color;
       }
-
-      max-height: 490px;
     }
 
     .table {
@@ -6066,6 +6059,20 @@
 
       td:last-child {
         text-align: right;
+      }
+    }
+    &.table-scrollable {
+      & > tbody > tr > td {
+        border: none;
+        padding: 0;
+      }
+      .scrollable-content {
+        max-height: 490px;
+        overflow: auto;
+        width: 100%;
+        & > table {
+          width:100%;
+        }
       }
     }
   }

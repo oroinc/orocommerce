@@ -11,12 +11,6 @@ layout:
                     label: 'orob2b.checkout.title.step.label'
                     parameters:
                         '%step_label%': { '@value': $data.workflowStep.label }
-        - '@add':
-            id: checkout_scripts
-            parentId: body
-            blockType: script
-            options:
-                content: 'require(["orob2bcheckout/default/js/main"])'
         - '@addTree':
             items:
                 checkout_content:

@@ -3,6 +3,8 @@ define(function(require) {
 
     var CheckoutContentView;
     var _ = require('underscore');
+    var $ = require('jquery');
+    require('jquery.cookie');
     var mediator = require('oroui/js/mediator');
     var BaseView = require('oroui/js/app/views/base/view');
 
@@ -13,6 +15,7 @@ define(function(require) {
         initialize: function() {
             mediator.on('checkout-content:updated', _.bind(this._onContentUpdated, this));
             mediator.on('checkout-content:before-update', _.bind(this._onBeforeContentUpdate, this));
+            this.initTabs();
         },
 
         _onContentUpdated: function() {
@@ -21,6 +24,22 @@ define(function(require) {
 
         _onBeforeContentUpdate: function() {
             this.disposePageComponents();
+        },
+
+        initTabs: function() {
+            var cookieName = 'order-tab:state';
+            var $container = this.$el;
+
+            $container.on('tab:toggle', '[data-tab-trigger]', function() {
+                var $tab = $(this).closest('[data-tab]');
+                mediator.trigger('scrollable-table:reload');
+
+                if ($tab.hasClass('active')) {
+                    $.cookie(cookieName, true, {path: window.location.pathname});
+                } else {
+                    $.cookie(cookieName, null, {path: window.location.pathname});
+                }
+            });
         },
 
         /**
