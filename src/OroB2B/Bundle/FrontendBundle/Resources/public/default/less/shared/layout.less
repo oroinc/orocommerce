@@ -6062,17 +6062,20 @@
       }
     }
   }
-}
+  table.table-scrollable {
+    & > tbody > tr > td {
+      border: none;
+      padding: 0;
+    }
 
-table.table-scrollable {
-  & > tbody > tr > td {
-    border: none;
-    padding: 0;
-  }
+    thead {
+      th {
+        border-color: transparent;
 
-  thead {
-    th {
-      border-color: transparent;
+        &:last-child {
+          padding-right: 0;
+        }
+      }
     }
   }
 }
