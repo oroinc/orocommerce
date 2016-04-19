@@ -31,6 +31,14 @@ class BaseCombinedPriceListRelation implements WebsiteAwareInterface
     protected $website;
 
     /**
+     * @var CombinedPriceList
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList")
+     * @ORM\JoinColumn(name="full_combined_price_list_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $fullChainPriceList;
+
+    /**
      * @return CombinedPriceList
      */
     public function getPriceList()
@@ -45,6 +53,9 @@ class BaseCombinedPriceListRelation implements WebsiteAwareInterface
     public function setPriceList(CombinedPriceList $priceList)
     {
         $this->priceList = $priceList;
+        if ($this->fullChainPriceList === null) {
+            $this->fullChainPriceList = $priceList;
+        }
 
         return $this;
     }
@@ -65,5 +76,21 @@ class BaseCombinedPriceListRelation implements WebsiteAwareInterface
         $this->website = $website;
 
         return $this;
+    }
+
+    /**
+     * @return CombinedPriceList
+     */
+    public function getFullChainPriceList()
+    {
+        return $this->fullChainPriceList;
+    }
+
+    /**
+     * @param CombinedPriceList $fullChainPriceList
+     */
+    public function setFullChainPriceList(CombinedPriceList $fullChainPriceList)
+    {
+        $this->fullChainPriceList = $fullChainPriceList;
     }
 }
