@@ -262,7 +262,6 @@ operations:
         applications: [frontend]
         routes:
             - orob2b_rfp_frontend_request_index
-            - orob2b_product_frontend_product_view
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\RFPBundle\Entity\Request]
         order: 10
         actions:

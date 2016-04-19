@@ -1,4 +1,5 @@
 parameters:
+    orob2b_product.model.product_line_item.class: OroB2B\Bundle\ProductBundle\Model\ProductLineItem
     orob2b_product.form.type.product.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductType
     orob2b_product.form.type.product_unit_selection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
     orob2b_product.form.type.quantity_type.class: OroB2B\Bundle\ProductBundle\Form\Type\QuantityType
@@ -135,3 +136,7 @@ services:
         tags:
             - { name: form.type, alias: 'orob2b_product_quick_add_import_from_file' }
 
+    orob2b_product.form.type.frontend_line_item:
+        class: 'OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType'
+        tags:
+            - { name: form.type, alias: orob2b_product_frontend_line_item }

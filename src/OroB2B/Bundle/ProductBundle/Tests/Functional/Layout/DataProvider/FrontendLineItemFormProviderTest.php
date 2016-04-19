@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Layout\DataProvider;
+namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Layout\DataProvider;
 
 use Oro\Component\Layout\LayoutContext;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
-use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendLineItemFormProvider;
+use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductLineItemFormProvider;
 
 class FrontendLineItemFormProviderTest extends WebTestCase
 {
-    /** @var FrontendLineItemFormProvider */
+    /** @var ProductLineItemFormProvider */
     protected $dataProvider;
 
     /** @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject */
@@ -26,7 +25,7 @@ class FrontendLineItemFormProviderTest extends WebTestCase
 
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()->getMock();
-        $this->dataProvider = new FrontendLineItemFormProvider(
+        $this->dataProvider = new ProductLineItemFormProvider(
             $this->getContainer()->get('form.factory'),
             $this->securityFacade
         );

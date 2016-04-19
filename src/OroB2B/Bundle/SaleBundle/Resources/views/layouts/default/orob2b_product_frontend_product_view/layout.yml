@@ -9,3 +9,10 @@ layout:
             options:
                 vars:
                     unit_precisions: { @value: $data.product_unit_precisions_without_prices }
+        - @add:
+            id: request_a_quote_form_button
+            parentId: line_item_buttons
+            blockType: block
+            options:
+                vars:
+                    product: { '@value': $data.product }

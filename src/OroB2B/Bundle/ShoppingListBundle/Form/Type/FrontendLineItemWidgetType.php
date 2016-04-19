@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormError;

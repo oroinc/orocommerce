@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
+use OroB2B\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;

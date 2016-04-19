@@ -8,8 +8,6 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
  * @ORM\Table(name="orob2b_rfp_request_prod_item")
@@ -27,7 +25,7 @@ use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInterface
+class RequestProductItem
 {
     /**
      * @var int
@@ -245,7 +243,7 @@ class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInt
      */
     public function updatePrice()
     {
-        $this->value    = $this->price ? $this->price->getValue() : null;
+        $this->value = $this->price ? $this->price->getValue() : null;
         $this->currency = $this->price ? $this->price->getCurrency() : null;
     }
 

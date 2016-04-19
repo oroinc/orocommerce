@@ -1,28 +1,41 @@
-{% block _add_to_shopping_list_form_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " add_to_shopping_list_form_product_view"
-    }) %}
-    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
-{% endblock %}
-
 {% block _add_to_shopping_list_form_button_widget %}
     {% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
     {% set commonOptions = {
+        dataAttributes: {},
         dataUrl: 'orob2b_shopping_list_frontend_add_product',
         dataUrlOptions: {
             productId: product.id
-        },
-        dataAttributes: {}
+        }
     } %}
-    <div class="form__col "
-         data-page-component-module="orob2bshoppinglist/js/app/components/add-product-from-view-component">
-        {{ buttons.createAddToShoppingListButton({
-            groupContainer: '<div class="btn btn-block btn-orange btn_has-dropdown btn_has-dropdown_lg"></div>',
-            new: commonOptions,
-            current: commonOptions,
-            existing: commonOptions,
-            shoppingLists: shoppingLists,
-            singleButtonACss: 'btn-block btn-orange btn_lg'
-        }) }}
-    </div>
+    {% set pageComponent = {
+        module: 'orob2bshoppinglist/js/app/components/add-product-from-view-component',
+        options: {
+            onClickElementSelector: null,
+        }|merge(commonOptions)
+    } %}
+    {% set commonOptions = commonOptions|merge({pageComponent: pageComponent}) %}
+    {% set options = {
+        new: commonOptions,
+        current: commonOptions,
+        existing: commonOptions,
+        shoppingLists: shoppingLists,
+        singleButtonACss: 'btn-block btn-orange btn_lg'
+    } %}
+    {% set existingShoppingLists = [] %}
+    {% for shoppingList in options.shoppingLists %}
+        {% if shoppingList.current %}
+            {{ buttons.addToCurrentShoppingListButton(options.current|merge({shoppingList: shoppingList})) }}
+        {% else %}
+            {%  set existingShoppingLists = existingShoppingLists|merge([shoppingList]) %}
+        {% endif %}
+    {% else %}
+        {% set aCss = options.singleButtonACss is defined ? options.singleButtonACss : "" %}
+        {{ buttons.addToCurrentShoppingListButton(options.current|merge({shoppingList: null, aCss: aCss})) }}
+    {% endfor %}
+    {% for shoppingList in existingShoppingLists %}
+        {{ buttons.addToShoppingListButton(options.existing|merge({shoppingList: shoppingList})) }}
+    {% endfor %}
+    {% if options.shoppingLists is not empty %}
+        {{ buttons.addToNewShoppingListButton(options.new) }}
+    {% endif %}
 {% endblock %}

@@ -16,7 +16,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTy
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
+use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 
 class FrontendLineItemTypeTest extends FormIntegrationTestCase
 {
