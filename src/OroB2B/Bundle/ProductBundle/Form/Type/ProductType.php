@@ -106,14 +106,6 @@ class ProductType extends AbstractType
                 ]
             )
             ->add(
-                'image',
-                'oro_image',
-                [
-                    'label'    => 'orob2b.product.image.label',
-                    'required' => false
-                ]
-            )
-            ->add(
                 'unitPrecisions',
                 ProductUnitPrecisionCollectionType::NAME,
                 [

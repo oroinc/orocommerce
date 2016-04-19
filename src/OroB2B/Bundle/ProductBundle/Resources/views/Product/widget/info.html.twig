@@ -8,10 +8,7 @@
             {{ UI.renderProperty('orob2b.product.names.label'|trans, product.defaultName) }}
             {{ UI.renderHtmlProperty('orob2b.product.inventory_status.label'|trans, product.inventoryStatus) }}
 
-            {{ UI.renderHtmlProperty(
-                'orob2b.product.image.label'|trans,
-                oro_image_view(product, product.image, null, 'image')
-            ) }}
+            {# @TODO render new product.images! #}
 
             {% if product.unitPrecisions.count %}
                 {% set productUnitPrecisions = [] %}
