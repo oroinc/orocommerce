@@ -5,9 +5,10 @@ namespace OroB2B\Bundle\PaymentBundle\Method\View;
 interface PaymentMethodViewInterface
 {
     /**
+     * @param array $context
      * @return array
      */
-    public function getOptions();
+    public function getOptions(array $context = []);
 
     /**
      * @return string
