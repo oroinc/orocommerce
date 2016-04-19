@@ -76,14 +76,18 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     {
         $form = $this->getUpdateForm();
         $formValues = $form->getValues();
+
         $params = $this->setSubmittedValues($submittedData, $formValues);
+        $params['input_action'] = 'save_and_stay';
+
         $this->client->followRedirects();
         $crawler = $this->client->request(
             'POST',
             $this->getCreateUrl(),
             $params
         );
-        $form = $this->getUpdateForm($this->getAccountId($crawler));
+
+        $form = $crawler->selectButton('Save and Close')->form();
         $this->checkExpectedData($expectedData, $form);
     }
 
@@ -98,14 +102,15 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $formValues = $form->getValues();
 
         $params = $this->setSubmittedValues($submittedData, $formValues);
+        $params['input_action'] = 'save_and_stay';
 
-        $this->client->request(
+        $crawler = $this->client->request(
             'POST',
             $this->getUpdateUrl(),
             $params
         );
-        $form = $this->getUpdateForm();
 
+        $form = $crawler->selectButton('Save and Close')->form();
         $this->checkExpectedData($expectedData, $form);
     }
 

@@ -6,6 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 
 /**
@@ -75,10 +76,11 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_role_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_role_index'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('account-account-user-roles-grid', $crawler->html());
         $this->assertContains(self::TEST_ROLE, $result->getContent());
     }
 
@@ -88,17 +90,12 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     public function testUpdate()
     {
-        $response = $this->client->requestGrid(
-            'account-account-user-roles-grid',
-            [
-                'account-account-user-roles-grid[_filter][label][value]' => self::TEST_ROLE
-            ]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id = $result['id'];
+        /** @var AccountUserRole $role = */
+        $role = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
+            ->getRepository('OroB2BAccountBundle:AccountUserRole')
+            ->findOneBy(['label' => self::TEST_ROLE]);
+        $id = $role->getId();
 
         $crawler = $this->client->request(
             'GET',

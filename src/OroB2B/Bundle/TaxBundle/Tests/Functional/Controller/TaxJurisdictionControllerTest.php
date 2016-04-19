@@ -8,6 +8,8 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
+
 /**
  * @dbIsolation
  */
@@ -50,9 +52,10 @@ class TaxJurisdictionControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_tax_jurisdiction_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_jurisdiction_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('tax-jurisdiction-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -71,25 +74,27 @@ class TaxJurisdictionControllerTest extends WebTestCase
             self::STATE_FULL,
             self::$zipCodes
         );
+
+        /** @var TaxJurisdiction $taxJurisdiction */
+        $taxJurisdiction = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BTaxBundle:TaxJurisdiction')
+            ->getRepository('OroB2BTaxBundle:TaxJurisdiction')
+            ->findOneBy(['code' => self::CODE]);
+        $this->assertNotEmpty($taxJurisdiction);
+
+        return $taxJurisdiction->getId();
     }
 
     /**
+     * @paran $id int
+     * @return int
      * @depends testCreate
      */
-    public function testUpdate()
+    public function testUpdate($id)
     {
-        $response = $this->client->requestGrid(
-            'tax-jurisdiction-grid',
-            ['tax-jurisdiction-grid[_filter][code][value]' => self::CODE]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id = $result['id'];
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_jurisdiction_update', ['id' => $result['id']])
+            $this->getUrl('orob2b_tax_jurisdiction_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
