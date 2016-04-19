@@ -142,6 +142,11 @@ orob2b.tax:
         rate: Rate
         taxableAmount: Taxable Amount
 
+        short:
+            includingTax: Incl. Tax
+            excludingTax: Excl. Tax
+            taxAmount: Tax Amount
+
     order_line_item:
         unitPrice:
             includingTax.label: Unit Price (Including Tax)
