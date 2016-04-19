@@ -2,10 +2,18 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 
+use Doctrine\Common\Cache\Cache;
+
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
+/**
+ * Add total and subtotal fields to grid where root entity is checkout
+ * Total field consider to be first non empty field among source entities and marked as is_total in field config
+ * Subtotal field consider to be first non empty field among source entities and marked as is_subtotal in field config
+ */
 class CheckoutGridListener
 {
     /**
@@ -19,6 +27,11 @@ class CheckoutGridListener
     protected $fieldProvider;
 
     /**
+     * @var Cache
+     */
+    protected $cache;
+
+    /**
      * @param ConfigProvider $configProvider
      * @param EntityFieldProvider $fieldProvider
      */
@@ -29,6 +42,14 @@ class CheckoutGridListener
         $this->configProvider = $configProvider;
         $this->fieldProvider = $fieldProvider;
     }
+
+    /**
+     * @param Cache $cache
+     */
+    public function setCache(Cache $cache)
+    {
+        $this->cache = $cache;
+    }
     
     /**
      * {@inheritdoc}
@@ -36,99 +57,133 @@ class CheckoutGridListener
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
-        
-        $totalMetadata = $this->getCheckoutSources();
 
-        if ($totalMetadata) {
-            $from = $config->offsetGetByPath('[source][query][from]');
-            if ($from) {
-                $leftJoins = $config->offsetGetByPath('[source][query][join][left]', array());
-                $firstFrom = current($from);
-                if (!empty($firstFrom['table']) && !empty($firstFrom['alias'])) {
-                    $rootEntityAlias = $firstFrom['alias'];
+        if ($this->cache && $this->cache->contains($config->getName())) {
+            $updates = $this->cache->fetch($config->getName());
+        } else {
+            $updates = $this->getGridUpdates($config);
 
-                    $leftJoins[] = ['join' => $rootEntityAlias . '.source', 'alias' => '_source'];
-
-                    $totalFields = [];
-                    $subtotalFields = [];
-                    $currencyFields = [];
-                    foreach ($totalMetadata as $field => $metadata) {
-                        $totalHolderAlias = '_' . $field;
-                        $leftJoins[] = ['join' =>  '_source.' . $field, 'alias' => $totalHolderAlias];
-
-                        if (!empty($metadata['total'])) {
-                            $totalFields[] = $totalHolderAlias . '.' . $metadata['total'];
-                        }
-                        if (!empty($metadata['subtotal'])) {
-                            $subtotalFields[] = $totalHolderAlias . '.' . $metadata['subtotal'];
-                        }
-                        if (!empty($metadata['currency'])) {
-                            $currencyFields[] = $totalHolderAlias . '.' . $metadata['currency'];
-                        }
-                    }
-
-                    $selects = $config->offsetGetByPath('[source][query][select]', []);
-                    $columns = $config->offsetGetByPath('[columns]', []);
-                    $filters = $config->offsetGetByPath('[filters][columns]', []);
-                    $sorters = $config->offsetGetByPath('[sorters][columns]', []);
-                    if ($totalFields) {
-                        $selects[] = sprintf('COALESCE(%s) as total', implode(',', $totalFields));
-                        $columns['total'] = [
-                            'label' => 'TOTAL',
-                            'type' => 'twig',
-                            'frontend_type' => 'html',
-                            'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
-                            'renderable' => false
-                        ];
-                        if ($filters) {
-                            $filters['total'] = [
-                                'type' => 'number',
-                                'data_name' => 'total'
-                            ];
-                        }
-                        if ($sorters) {
-                            $sorters['total'] = ['data_name' => 'total'];
-                        }
-                    }
-                    if ($subtotalFields) {
-                        $selects[] = sprintf('COALESCE(%s) as subtotal', implode(',', $subtotalFields));
-                        $columns['subtotal'] = [
-                            'label' => 'SUBTOTAL',
-                            'type' => 'twig',
-                            'frontend_type' => 'html',
-                            'template' => 'OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig',
-                            'renderable' => false
-                        ];
-                        if ($filters) {
-                            $filters['subtotal'] = [
-                                'type' => 'number',
-                                'data_name' => 'subtotal',
-                                'enabled' => false
-                            ];
-                        }
-                        if ($sorters) {
-                            $sorters['subtotal'] = ['data_name' => 'subtotal'];
-                        }
-                    }
-                    if ($currencyFields) {
-                        $selects[] = sprintf('COALESCE(%s) as totalsCurrency', implode(',', $currencyFields));
-                    }
-
-                    $config->offsetSetByPath('[source][query][select]', $selects);
-                    $config->offsetSetByPath('[columns]', $columns);
-                    $config->offsetSetByPath('[filters][columns]', $filters);
-                    $config->offsetSetByPath('[sorters][columns]', $sorters);
-                }
-
-                $config->offsetSetByPath('[source][query][join][left]', $leftJoins);
+            if ($this->cache) {
+                $this->cache->save($config->getName(), $updates);
             }
         }
+
+        if ($updates) {
+            $config->offsetSetByPath(
+                '[source][query][select]',
+                array_merge(
+                    $config->offsetGetByPath('[source][query][select]', []),
+                    $updates['selects']
+                )
+            );
+            $config->offsetSetByPath(
+                '[columns]',
+                array_merge(
+                    $config->offsetGetByPath('[columns]', []),
+                    $updates['columns']
+                )
+            );
+            $config->offsetSetByPath(
+                '[filters][columns]',
+                array_merge(
+                    $config->offsetGetByPath('[filters][columns]', []),
+                    $updates['filters']
+                )
+            );
+            $config->offsetSetByPath(
+                '[sorters][columns]',
+                array_merge(
+                    $config->offsetGetByPath('[sorters][columns]', []),
+                    $updates['sorters']
+                )
+            );
+            $config->offsetSetByPath(
+                '[source][query][join][left]',
+                array_merge(
+                    $config->offsetGetByPath('[source][query][join][left]', []),
+                    $updates['joins']
+                )
+            );
+        }
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @return array
+     */
+    protected function getGridUpdates(DatagridConfiguration $config)
+    {
+        $totalMetadata = $this->getSourceTotalsMetadata();
+
+        $updates = [];
+        if ($totalMetadata) {
+            $from = $config->offsetGetByPath('[source][query][from]');
+            $firstFrom = current($from);
+            $updates['joins'][] = ['join' => $firstFrom['alias'] . '.source', 'alias' => '_source'];
+
+            $totalFields = [];
+            $subtotalFields = [];
+            $currencyFields = [];
+            foreach ($totalMetadata as $field => $metadata) {
+                $totalHolderAlias = '_' . $field;
+                $updates['joins'][] = ['join' => '_source.' . $field, 'alias' => $totalHolderAlias];
+
+                if (!empty($metadata['total'])) {
+                    $totalFields[] = $totalHolderAlias . '.' . $metadata['total'];
+                }
+                if (!empty($metadata['subtotal'])) {
+                    $subtotalFields[] = $totalHolderAlias . '.' . $metadata['subtotal'];
+                }
+                if (!empty($metadata['currency'])) {
+                    $currencyFields[] = $totalHolderAlias . '.' . $metadata['currency'];
+                }
+            }
+
+            if ($totalFields) {
+                $updates['selects'][] = sprintf('COALESCE(%s) as total', implode(',', $totalFields));
+                $updates['columns']['total'] = [
+                    'label' => 'orob2b.checkout.grid.total.label',
+                    'type' => 'twig',
+                    'frontend_type' => 'html',
+                    'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
+                    'renderable' => false
+                ];
+
+                $updates['filters']['total'] = [
+                    'type' => 'number',
+                    'data_name' => 'total'
+                ];
+                $updates['sorters']['total'] = ['data_name' => 'total'];
+            }
+            if ($subtotalFields) {
+                $updates['selects'][] = sprintf('COALESCE(%s) as subtotal', implode(',', $subtotalFields));
+                $updates['columns']['subtotal'] = [
+                    'label' => 'orob2b.checkout.grid.subtotal.label',
+                    'type' => 'twig',
+                    'frontend_type' => 'html',
+                    'template' => 'OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig',
+                    'renderable' => false
+                ];
+                $updates['filters']['subtotal'] = [
+                    'type' => 'number',
+                    'data_name' => 'subtotal',
+                    'enabled' => false
+                ];
+
+                $updates['sorters']['subtotal'] = ['data_name' => 'subtotal'];
+            }
+            if ($currencyFields) {
+                $updates['selects'][] = sprintf('COALESCE(%s) as totalsCurrency', implode(',', $currencyFields));
+            }
+        }
+
+        return $updates;
     }
 
     /**
      * @return array
      */
-    protected function getCheckoutSources()
+    protected function getSourceTotalsMetadata()
     {
         $metadata = [];
         $relationsMetadata = $this->fieldProvider->getRelations(

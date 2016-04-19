@@ -123,4 +123,8 @@ orob2b:
             address.select.billing.label: SELECT BILLING ADDRESS
             address.select.shipping.label: SELECT SHIPPING ADDRESS
 
+        grid:
+            total.label: Total
+            subtotal.label: Subtotal
+
 
