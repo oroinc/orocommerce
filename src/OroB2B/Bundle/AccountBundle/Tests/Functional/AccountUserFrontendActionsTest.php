@@ -51,14 +51,17 @@ class AccountUserFrontendActionsTest extends AbstractAccountUserActionsTest
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_api_frontend_action_execute_operations',
+                'orob2b_frontend_action_operation_execute',
                 [
                     'operationName' => $operationName,
                     'route' => 'orob2b_account_frontend_account_user_view',
                     'entityId' => $accountUser->getId(),
                     'entityClass' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'
                 ]
-            )
+            ),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
     }
 }

@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
 
@@ -52,23 +53,23 @@ class AccountGroupControllerTest extends WebTestCase
         $this->assertContains('Account group has been saved', $html);
         $this->assertContains(self::ACCOUNT_GROUP_NAME, $html);
         $this->assertContains($accountTaxCode->getCode(), $html);
+
+        /** @var AccountGroup $taxAccountGroup */
+        $taxAccountGroup = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
+            ->getRepository('OroB2BAccountBundle:AccountGroup')
+            ->findOneBy(['name' => self::ACCOUNT_GROUP_NAME]);
+        $this->assertNotEmpty($taxAccountGroup);
+
+        return $taxAccountGroup->getId();
     }
 
     /**
+     * @param $id int
      * @depends testCreate
      */
-    public function testView()
+    public function testView($id)
     {
-        $response = $this->client->requestGrid(
-            'account-groups-grid',
-            ['account-groups-grid[_filter][name][value]' => self::ACCOUNT_GROUP_NAME]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id = $result['id'];
-
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('orob2b_account_group_view', ['id' => $id])

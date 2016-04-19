@@ -1,74 +1,55 @@
-parameters:
-    orob2b_pricing.form.type.price_list.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListType
-    orob2b_pricing.form.type.price_list_select.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType
-    orob2b_pricing.form.type.product_price_collection.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType
-    orob2b_pricing.form.type.product_price.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType
-    orob2b_pricing.form.type.price_list_product_price.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType
-    orob2b_pricing.form.price_list_collection.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType
-    orob2b_pricing.form.price_lists_settings.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListsSettingsType
-    orob2b_pricing.form.type.product_price_filter.class: OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType
-    orob2b_pricing.form.type.price_type_selector.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType
-    orob2b_pricing.form.type.price_list_select_with_priority.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType
-    orob2b_pricing.form.type.price_list_system_config.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType
-    orob2b_pricing.form.type.product_price_unit_selector.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceUnitSelectorType
-
-    orob2b_pricing.form.extension.account_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\AccountFormExtension
-    orob2b_pricing.form.extension.account_group_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension
-    orob2b_pricing.form.extension.product_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\ProductFormExtension
-    orob2b_pricing.form.extension.website_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\WebsiteFormExtension
-
 services:
     orob2b_pricing.form.type.price_list:
-        class: %orob2b_pricing.form.type.price_list.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListType'
         calls:
-            - [setDataClass, [%orob2b_pricing.entity.price_list.class%]]
-            - [setAccountClass, [%orob2b_account.entity.account.class%]]
-            - [setAccountGroupClass, [%orob2b_account.entity.account_group.class%]]
-            - [setWebsiteClass, [%orob2b_website.website.class%]]
+            - [setDataClass, ['%orob2b_pricing.entity.price_list.class%']]
+            - [setAccountClass, ['%orob2b_account.entity.account.class%']]
+            - [setAccountGroupClass, ['%orob2b_account.entity.account_group.class%']]
+            - [setWebsiteClass, ['%orob2b_website.entity.website.class%']]
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list }
 
     orob2b_pricing.form.type.price_list_select:
-        class: %orob2b_pricing.form.type.price_list_select.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType'
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_select }
 
     orob2b_pricing.form.type.product_price_collection:
-        class: %orob2b_pricing.form.type.product_price_collection.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType'
         arguments:
             - "@doctrine"
         calls:
-            - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
-            - [setPriceListClass, [%orob2b_pricing.entity.price_list.class%]]
+            - [setDataClass, ['%orob2b_pricing.entity.product_price.class%']]
+            - [setPriceListClass, ['%orob2b_pricing.entity.price_list.class%']]
         tags:
             - { name: form.type, alias: orob2b_pricing_product_price_collection }
 
     orob2b_pricing.form.type.product_price:
-        class: %orob2b_pricing.form.type.product_price.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType'
         tags:
             - { name: form.type, alias: orob2b_pricing_product_price }
         calls:
-            - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
+            - [setDataClass, ['%orob2b_pricing.entity.product_price.class%']]
 
     orob2b_pricing.form.type.price_type_selector:
-        class: %orob2b_pricing.form.type.price_type_selector.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType'
         tags:
             - { name: form.type, alias: "orob2b_pricing_price_type" }
 
     orob2b_pricing.form.type.price_list_product_price:
-        class: %orob2b_pricing.form.type.price_list_product_price.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType'
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_product_price }
         calls:
-            - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
+            - [setDataClass, ['%orob2b_pricing.entity.product_price.class%']]
 
     orob2b_pricing.form.price_list_collection:
-        class: %orob2b_pricing.form.price_list_collection.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType'
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_collection }
 
     orob2b_pricing.form.price_lists_settings:
-        class: %orob2b_pricing.form.price_lists_settings.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListsSettingsType'
         arguments:
             - "@doctrine"
             - "@property_accessor"
@@ -76,7 +57,7 @@ services:
             - { name: form.type, alias: orob2b_pricing_price_lists_settings }
 
     orob2b_pricing.form.type.product_price_filter:
-        class: %orob2b_pricing.form.type.product_price_filter.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType'
         arguments:
             - "@translator"
             - "@doctrine"
@@ -85,49 +66,49 @@ services:
             - { name: form.type, alias: orob2b_pricing_product_price_filter }
 
     orob2b_pricing.form.extension.account_type:
-        class: %orob2b_pricing.form.extension.account_type.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Extension\AccountFormExtension'
         arguments:
             - "@orob2b_pricing.entity_listener.account"
         tags:
             - { name: form.type_extension, alias: orob2b_account_type }
 
     orob2b_pricing.form.extension.account_group_type:
-        class: %orob2b_pricing.form.extension.account_group_type.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension'
         arguments:
             - "@orob2b_pricing.entity_listener.account_group"
         tags:
             - { name: form.type_extension, alias: orob2b_account_group_type }
 
     orob2b_pricing.form.extension.product_type:
-        class: %orob2b_pricing.form.extension.product_type.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Extension\ProductFormExtension'
         arguments:
             - "@doctrine"
         tags:
             - { name: form.type_extension, alias: orob2b_product }
 
     orob2b_pricing.form.type.price_list_select_with_priority:
-        class: %orob2b_pricing.form.type.price_list_select_with_priority.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType'
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_select_with_priority }
 
     orob2b_pricing.form.extension.website_type:
-        class: %orob2b_pricing.form.extension.website_type.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Extension\WebsiteFormExtension'
         arguments:
-            - %orob2b_pricing.entity.price_list_to_website.class%
+            - '%orob2b_pricing.entity.price_list_to_website.class%'
             - "@orob2b_pricing.entity_listener.website"
         tags:
             - { name: form.type_extension, alias: orob2b_website_type }
 
     orob2b_pricing.form.type.price_list_system_config:
-        class: %orob2b_pricing.form.type.price_list_system_config.class%
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType'
         arguments:
-            - %orob2b_pricing.system_config.class%
+            - 'OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig'
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_system_config }
 
     orob2b_pricing.form.type.product_price_unit_selector:
         parent: orob2b_product.form.type.product_unit_selection
-        class: '%orob2b_pricing.form.type.product_price_unit_selector.class%'
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceUnitSelectorType'
         tags:
             - { name: form.type, alias: orob2b_pricing_product_price_unit_selector }
 

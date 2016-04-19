@@ -6,6 +6,8 @@ use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
+
 /**
  * @dbIsolation
  */
@@ -24,9 +26,10 @@ class ProductTaxCodeControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_tax_product_tax_code_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_product_tax_code_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('tax-product-tax-codes-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -36,25 +39,27 @@ class ProductTaxCodeControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertProductTaxCodeSave($crawler, self::PRODUCT_TAX_CODE, self::PRODUCT_TAX_CODE_DESCRIPTION);
+
+        /** @var ProductTaxCode $taxCode */
+        $taxCode = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BTaxBundle:ProductTaxCode')
+            ->getRepository('OroB2BTaxBundle:ProductTaxCode')
+            ->findOneBy(['code' => self::PRODUCT_TAX_CODE]);
+        $this->assertNotEmpty($taxCode);
+
+        return $taxCode->getId();
     }
 
     /**
+     * @param $id int
+     * @return int
      * @depends testCreate
      */
-    public function testUpdate()
+    public function testUpdate($id)
     {
-        $response = $this->client->requestGrid(
-            'tax-product-tax-codes-grid',
-            ['tax-product-tax-codes-grid[_filter][code][value]' => self::PRODUCT_TAX_CODE]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id = $result['id'];
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_product_tax_code_update', ['id' => $result['id']])
+            $this->getUrl('orob2b_tax_product_tax_code_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);

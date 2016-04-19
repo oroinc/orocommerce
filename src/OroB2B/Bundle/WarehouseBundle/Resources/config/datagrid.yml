@@ -110,7 +110,7 @@ datagrid:
                     - { table: %orob2b_warehouse.entity.warehouse.class%, alias: warehouse }
                 join:
                     inner:
-                        - { join: %orob2b_product.product_unit_precision.class%, alias: precision, conditionType: WITH, condition: "IDENTITY(precision.product) = :productId" }
+                        - { join: %orob2b_product.entity.product_unit_precision.class%, alias: precision, conditionType: WITH, condition: "IDENTITY(precision.product) = :productId" }
                     left:
                         - { join: %orob2b_warehouse.entity.warehouse_inventory_level.class%, alias: level, conditionType: WITH, condition: "level.warehouse = warehouse AND level.productUnitPrecision = precision" }
             bind_parameters:
