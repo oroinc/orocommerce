@@ -32,6 +32,7 @@ services:
     orob2b_rfp.event_listener.product_select_db_query:
         class: '%orob2b_product.event_listener.scoped_product_select_db_query.common_class%'
         parent: orob2b_product.event_listener.abstract_product_select_db_query
+        public: true
         calls:
             - [setScope, ['rfp']]
             - [setFrontendSystemConfigurationPath, ['oro_b2b_rfp.frontend_product_visibility']]
