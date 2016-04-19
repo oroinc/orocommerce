@@ -26,8 +26,7 @@ class FrontendControllerTest extends WebTestCase
             $this->markTestSkipped('There is no "main-menu" in system.');
         }
 
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
-        $crawler = $this->client->followRedirect();
+        $crawler = $this->client->request('GET', '/about'); // any page, CMS used as a fastest one
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);

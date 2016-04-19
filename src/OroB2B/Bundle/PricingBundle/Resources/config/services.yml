@@ -46,7 +46,6 @@ services:
             - ["name"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_pricing_price_list, acl_resource: orob2b_pricing_price_list_view }
-        lazy: true
 
     orob2b_pricing.listener.product_unit_precision:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener'
