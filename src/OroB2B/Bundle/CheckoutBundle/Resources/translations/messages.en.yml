@@ -27,6 +27,11 @@ orob2b:
         shipping_estimate_currency.label: Shipping Estimate Currency
         payment_method.label: Payment Method
         order.label: Order
+        created_at.label: Started At
+        updated_at.label: Last Updated
+        shipping_cost.label: Shipping
+        panding_orders.label: Panding Orders
+        ordered_by.label: Ordered By
 
         checkoutsource:
             entity_label: Checkout Source
