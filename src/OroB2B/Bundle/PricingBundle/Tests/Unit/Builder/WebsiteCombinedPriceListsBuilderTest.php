@@ -7,6 +7,7 @@ use OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
+use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTest
@@ -55,15 +56,12 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
 
     /**
      * @dataProvider buildDataProvider
-     * @param bool $force
+     * @param int $behavior
      * @param PriceListToWebsite $priceListByWebsite
      */
-    public function testBuildForAll($force, $priceListByWebsite)
+    public function testBuildForAll($behavior, $priceListByWebsite)
     {
         $callExpects = 1;
-        if ($force) {
-            $callExpects = 2;
-        }
         $website = new Website();
         $this->priceListToEntityRepository
             ->expects($this->any())
@@ -86,24 +84,21 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
                 ->expects($this->never())
                 ->method('delete');
 
-            $this->assertRebuild($force, $website);
+            $this->assertRebuild($behavior, $website);
         }
 
-        $this->builder->build(null, $force);
-        $this->builder->build(null, $force);
+        $this->builder->build(null, $behavior);
+        $this->builder->build(null, $behavior);
     }
 
     /**
      * @dataProvider buildDataProvider
-     * @param bool $force
+     * @param int $behavior
      * @param PriceListToWebsite $priceListByWebsite
      */
-    public function testBuildForWebsite($force, $priceListByWebsite)
+    public function testBuildForWebsite($behavior, $priceListByWebsite)
     {
         $callExpects = 1;
-        if ($force) {
-            $callExpects = 2;
-        }
         $website = new Website();
         $this->priceListToEntityRepository
             ->expects($this->any())
@@ -124,11 +119,11 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
                 ->expects($this->never())
                 ->method('delete');
 
-            $this->assertRebuild($force, $website);
+            $this->assertRebuild($behavior, $website);
         }
 
-        $this->builder->build($website, $force);
-        $this->builder->build($website, $force);
+        $this->builder->build($website, $behavior);
+        $this->builder->build($website, $behavior);
     }
 
     /**
@@ -137,23 +132,30 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     public function buildDataProvider()
     {
         return [
-            ['force' => true, 'priceListByWebsite' => null],
-            ['force' => false, 'priceListByWebsite' => null],
-            ['force' => true, 'priceListByWebsite' => new PriceListToWebsite()],
-            ['force' => false, 'priceListByWebsite' => new PriceListToWebsite()]
+            [
+                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE,
+                'priceListByWebsite' => null],
+            [
+                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
+                'priceListByWebsite' => null],
+            [
+                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE,
+                'priceListByWebsite' => new PriceListToWebsite()
+            ],
+            [
+                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
+                'priceListByWebsite' => new PriceListToWebsite()
+            ]
         ];
     }
 
     /**
-     * @param bool $force
+     * @param int $behavior
      * @param Website $website
      */
-    protected function assertRebuild($force, Website $website)
+    protected function assertRebuild($behavior, Website $website)
     {
         $callExpects = 1;
-        if ($force) {
-            $callExpects = 2;
-        }
         $priceListCollection = [$this->getPriceListSequenceMember()];
         $combinedPriceList = new CombinedPriceList();
 
@@ -164,7 +166,7 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
 
         $this->combinedPriceListProvider->expects($this->exactly($callExpects))
             ->method('getCombinedPriceList')
-            ->with($priceListCollection, $force)
+            ->with($priceListCollection, $behavior)
             ->will($this->returnValue($combinedPriceList));
 
         $this->combinedPriceListRepository->expects($this->exactly($callExpects))
@@ -173,6 +175,6 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
 
         $this->accountGroupBuilder->expects($this->exactly($callExpects))
             ->method('build')
-            ->with($website, null, $force);
+            ->with($website, null, $behavior);
     }
 }

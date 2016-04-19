@@ -82,14 +82,11 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider testBuildDataProvider
      * @param int $configCPLId
      * @param int $actualCPLId
-     * @param bool $force
+     * @param int $behavior
      */
-    public function testBuild($configCPLId, $actualCPLId, $force)
+    public function testBuild($configCPLId, $actualCPLId, $behavior)
     {
         $callExpects = 1;
-        if ($force) {
-            $callExpects = 2;
-        }
         $combinedPriceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList');
         $combinedPriceList->expects($this->any())
             ->method('getId')
@@ -105,7 +102,7 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($priceListsCollection));
         $this->combinedPriceListProvider->expects($this->exactly($callExpects))
             ->method('getCombinedPriceList')
-            ->with($priceListsCollection, $force)
+            ->with($priceListsCollection, $behavior)
             ->will($this->returnValue($combinedPriceList));
 
         $key = implode(
@@ -118,7 +115,7 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($configCPLId);
 
         if ($actualCPLId !== $configCPLId) {
-            $this->assertUpdateCombinedPriceListConnection($actualCPLId, $key, $force);
+            $this->assertUpdateCombinedPriceListConnection($actualCPLId, $key);
         } else {
             $this->configManager->expects($this->never())
                 ->method('set');
@@ -126,10 +123,10 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteBuilder->expects($this->exactly($callExpects))
             ->method('build')
-            ->with(null, $force);
+            ->with(null, $behavior);
 
-        $this->builder->build($force);
-        $this->builder->build($force);
+        $this->builder->build($behavior);
+        $this->builder->build($behavior);
     }
 
     /**
@@ -141,32 +138,32 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             'no changes' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 1,
-                false
+                CombinedPriceListProvider::BEHAVIOR_DEFAULT
             ],
             'change cpl' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 2,
-                false
+                CombinedPriceListProvider::BEHAVIOR_DEFAULT
             ],
             'new cpl' => [
                 'configCPLId' => null,
                 'actualCPLId' => 1,
-                false
+                CombinedPriceListProvider::BEHAVIOR_DEFAULT
             ],
             'no changes force' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 1,
-                true
+                CombinedPriceListProvider::BEHAVIOR_FORCE
             ],
             'change cpl force' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 2,
-                true
+                CombinedPriceListProvider::BEHAVIOR_FORCE
             ],
             'new cpl force' => [
                 'configCPLId' => null,
                 'actualCPLId' => 1,
-                true
+                CombinedPriceListProvider::BEHAVIOR_FORCE
             ],
         ];
     }
@@ -174,14 +171,10 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param int $actualCPLId
      * @param string $key
-     * @param bool $force
      */
-    protected function assertUpdateCombinedPriceListConnection($actualCPLId, $key, $force)
+    protected function assertUpdateCombinedPriceListConnection($actualCPLId, $key)
     {
         $callExpects = 1;
-        if ($force) {
-            $callExpects = 2;
-        }
         $this->configManager->expects($this->exactly($callExpects))
             ->method('set')
             ->with($key, $actualCPLId);

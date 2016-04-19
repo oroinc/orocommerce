@@ -50,10 +50,10 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getCombinedPriceListDataProvider
      * @param array $data
-     * @param boolean $force
+     * @param int $behavior
      * @param array $expected
      */
-    public function testGetCombinedPriceList(array $data, $force, array $expected)
+    public function testGetCombinedPriceList(array $data, $behavior, array $expected)
     {
         $this->repository->expects($this->any())
             ->method('findOneBy')
@@ -70,7 +70,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected['name'], $combinedPriceList->getName());
         $this->assertEquals($expected['currencies'], $combinedPriceList->getCurrencies());
 
-        $this->provider->getCombinedPriceList($priceListsRelations, $force);
+        $this->provider->getCombinedPriceList($priceListsRelations, $behavior);
     }
 
     /**
@@ -109,7 +109,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     'priceListFromRepository' => null,
                 ],
-                'force' => false,
+                'force' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
                 'expected' => [
                     'name' => '1t_2f_2t',
                     'currencies' => ['EUR', 'USD'],
@@ -121,11 +121,23 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
                     'priceListsRelationsData' => [],
                     'priceListFromRepository' => $priceList,
                 ],
-                'force' => true,
+                'force' => CombinedPriceListProvider::BEHAVIOR_FORCE,
                 'expected' => [
                     'name' => '',
                     'currencies' => [],
                     'combineCallsCount' => 1,
+                ]
+            ],
+            'empty price lists empty call' => [
+                'data' => [
+                    'priceListsRelationsData' => [],
+                    'priceListFromRepository' => $priceList,
+                ],
+                'force' => CombinedPriceListProvider::BEHAVIOR_EMPTY,
+                'expected' => [
+                    'name' => '',
+                    'currencies' => [],
+                    'combineCallsCount' => 0,
                 ]
             ],
         ];

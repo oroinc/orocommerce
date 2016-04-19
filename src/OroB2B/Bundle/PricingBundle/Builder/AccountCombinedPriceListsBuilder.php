@@ -16,12 +16,12 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
     /**
      * @param Website $website
      * @param Account $account
-     * @param boolean|false $force
+     * @param int|null $behavior
      */
-    public function build(Website $website, Account $account, $force = false)
+    public function build(Website $website, Account $account, $behavior = null)
     {
-        if ($force || !$this->isBuiltForAccount($website, $account)) {
-            $this->updatePriceListsOnCurrentLevel($website, $account, $force);
+        if (!$this->isBuiltForAccount($website, $account)) {
+            $this->updatePriceListsOnCurrentLevel($website, $account, $behavior);
             $this->garbageCollector->cleanCombinedPriceLists();
             $this->setBuiltForAccount($website, $account);
         }
@@ -30,16 +30,16 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
     /**
      * @param Website $website
      * @param AccountGroup $accountGroup
-     * @param boolean|false $force
+     * @param int|null $behavior
      */
-    public function buildByAccountGroup(Website $website, AccountGroup $accountGroup, $force = false)
+    public function buildByAccountGroup(Website $website, AccountGroup $accountGroup, $behavior = null)
     {
-        if ($force || !$this->isBuiltForAccountGroup($website, $accountGroup)) {
+        if (!$this->isBuiltForAccountGroup($website, $accountGroup)) {
             $accounts = $this->getPriceListToEntityRepository()
                 ->getAccountIteratorByDefaultFallback($accountGroup, $website, PriceListAccountFallback::ACCOUNT_GROUP);
 
             foreach ($accounts as $account) {
-                $this->updatePriceListsOnCurrentLevel($website, $account, $force);
+                $this->updatePriceListsOnCurrentLevel($website, $account, $behavior);
             }
             $this->setBuiltForAccountGroup($website, $accountGroup);
         }
@@ -48,9 +48,9 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
     /**
      * @param Website $website
      * @param Account $account
-     * @param boolean $force
+     * @param int $behavior
      */
-    protected function updatePriceListsOnCurrentLevel(Website $website, Account $account, $force)
+    protected function updatePriceListsOnCurrentLevel(Website $website, Account $account, $behavior)
     {
         $priceListsToAccount = $this->getPriceListToEntityRepository()
             ->findOneBy(['website' => $website, 'account' => $account]);
@@ -62,7 +62,7 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
             return;
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByAccount($account, $website);
-        $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
+        $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $behavior);
 
         $this->getCombinedPriceListRepository()
             ->updateCombinedPriceListConnection($combinedPriceList, $website, $account);
