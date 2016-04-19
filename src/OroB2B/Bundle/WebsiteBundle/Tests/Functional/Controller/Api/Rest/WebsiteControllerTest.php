@@ -40,6 +40,7 @@ class WebsiteControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
 
+        $this->client->followRedirects();
         $this->client->request('GET', $this->getUrl('orob2b_website_view', ['id' => $websiteId]));
         $result = $this->client->getResponse();
 

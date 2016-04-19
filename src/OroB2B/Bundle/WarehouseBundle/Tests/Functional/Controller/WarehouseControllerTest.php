@@ -8,6 +8,8 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+
 /**
  * @dbIsolation
  */
@@ -26,6 +28,7 @@ class WarehouseControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_warehouse_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('warehouse-grid', $crawler->html());
         $this->assertEquals('Warehouses', $crawler->filter('h1.oro-subtitle')->html());
     }
 
@@ -60,9 +63,9 @@ class WarehouseControllerTest extends WebTestCase
 
         $this->assertWarehouseSaved($crawler, self::WAREHOUSE_TEST_NAME);
 
-        $result = $this->getWarehouseDataByName(self::WAREHOUSE_TEST_NAME);
+        $warehouse = $this->getWarehouseDataByName(self::WAREHOUSE_TEST_NAME);
 
-        return $result['id'];
+        return $warehouse->getId();
     }
 
     /**
@@ -91,19 +94,15 @@ class WarehouseControllerTest extends WebTestCase
             ]
         ];
 
-        $this->client->followRedirects(true);
-
         // Submit form
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
-        $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
+        $this->client->followRedirects(true);
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
         $this->assertWarehouseSaved($crawler, self::WAREHOUSE_UPDATED_TEST_NAME);
 
-        $result = $this->getWarehouseDataByName(self::WAREHOUSE_UPDATED_TEST_NAME);
-
-        $this->assertEquals($id, $result['id']);
+        $warehouse = $this->getWarehouseDataByName(self::WAREHOUSE_UPDATED_TEST_NAME);
+        $this->assertEquals($id, $warehouse->getId());
     }
 
     /**
@@ -140,26 +139,18 @@ class WarehouseControllerTest extends WebTestCase
 
     /**
      * @param string $name
-     *
-     * @return array
+     * @return Warehouse
      */
     protected function getWarehouseDataByName($name)
     {
-        $response = $this->client->requestGrid(
-            'warehouse-grid',
-            [
-                'warehouse-grid[_filter][name][value]' => $name
-            ]
-        );
+        /** @var Warehouse $warehouse */
+        $warehouse = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BWarehouseBundle:Warehouse')
+            ->getRepository('OroB2BWarehouseBundle:Warehouse')
+            ->findOneBy(['name' => $name]);
+        $this->assertNotEmpty($warehouse);
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayHasKey('data', $result);
-        $this->assertNotEmpty($result['data']);
-
-        $result = reset($result['data']);
-        $this->assertNotEmpty($result);
-
-        return $result;
+        return $warehouse;
     }
 
     /**

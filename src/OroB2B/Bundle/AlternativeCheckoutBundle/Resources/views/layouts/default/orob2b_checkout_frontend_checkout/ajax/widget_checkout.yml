@@ -1,12 +1,12 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/main.html.twig'
-        - @setOption:
+        - '@setOption':
             id: checkout_order_summary
             optionName: visible
             optionValue:
-                @and:
-                    - @eq: [$context.workflowName, 'b2b_flow_alternative_checkout']
-                    - @neq: [$context.workflowStepName, 'order_review']
-                    - @neq: [$context.workflowStepName, 'approve_request']
+                '@and':
+                    - '@eq': [$context.workflowName, 'b2b_flow_alternative_checkout']
+                    - '@neq': [$context.workflowStepName, 'order_review']
+                    - '@neq': [$context.workflowStepName, 'approve_request']

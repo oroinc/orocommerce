@@ -1,8 +1,8 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BFrontendBundle:layouts:default/page/middle_bar.html.twig'
-        - @addTree:
+        - '@addTree':
             items:
                 middle_bar:
                     blockType: container
@@ -19,4 +19,4 @@ layout:
                             #middle_bar_search: ~
                         middle_bar_logo: ~
     conditions:
-        @neq: [ $context.logged_user, null ]
+        '@neq': [ $context.logged_user, null ]

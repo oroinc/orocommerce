@@ -19,7 +19,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvent;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 
@@ -187,18 +187,12 @@ class CheckoutController extends Controller
      */
     protected function getCheckout($id, $type)
     {
-        if (!$type) {
-            $checkout = $this->getDoctrine()->getRepository('OroB2BCheckoutBundle:Checkout')
-                ->find($id);
-        } else {
-            $event = new CheckoutEvent();
-            $event->setCheckoutId($id)
-                ->setType($type);
-            $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
+        $type = (string)$type;
+        $event = new CheckoutEntityEvent();
+        $event->setCheckoutId($id)
+            ->setType($type);
+        $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
 
-            $checkout = $event->getCheckoutEntity();
-        }
-
-        return $checkout;
+        return $event->getCheckoutEntity();
     }
 }

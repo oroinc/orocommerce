@@ -37,14 +37,12 @@ class OrderControllerTest extends WebTestCase
         $request = $this->getReference(LoadRequestData::REQUEST2);
         $this->assertFalse($request->getRequestProducts()->isEmpty());
 
-        $this->client->request(
+        $this->client->followRedirects();
+        $crawler = $this->client->request(
             'GET',
             $this->getUrl('orob2b_rfp_request_create_order', ['id' => $request->getId()])
         );
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 302);
-
-        $crawler = $this->client->followRedirect();
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertStringStartsWith(
             $this->getUrl('orob2b_order_create'),
