@@ -5,10 +5,19 @@ namespace OroB2B\Bundle\CheckoutBundle\Migrations\Schema\v1_1;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BCheckoutBundle implements Migration
+class OroB2BCheckoutBundle implements Migration, OrderedMigrationInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 10;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -19,7 +28,6 @@ class OroB2BCheckoutBundle implements Migration
         $this->createOroB2BDefaultCheckoutTable($schema);
         $this->addOroB2BDefaultCheckoutForeignKeys($schema);
         $this->copyExistingCheckoutsData($queries);
-        $this->deleteDefaultCheckoutFieldsFromCheckout($schema);
     }
 
     /**
@@ -124,22 +132,6 @@ class OroB2BCheckoutBundle implements Migration
         save_shipping_address
      FROM orob2b_checkout
 SQL;
-        $queries->addPreQuery($sql);
-    }
-
-    /**
-     * Delete default checkout fields from orob2b_checkout
-     *
-     * @param Schema $schema
-     */
-    protected function deleteDefaultCheckoutFieldsFromCheckout(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_checkout');
-        $table->dropColumn('order_id');
-        $table->dropColumn('shipping_address_id');
-        $table->dropColumn('billing_address_id');
-        $table->dropColumn('save_billing_address');
-        $table->dropColumn('ship_to_billing_address');
-        $table->dropColumn('save_shipping_address');
+        $queries->addQuery($sql);
     }
 }

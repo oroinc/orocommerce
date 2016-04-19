@@ -15,7 +15,7 @@ class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInte
      */
     public function getOrder()
     {
-        return 10;
+        return 30;
     }
 
     /**
@@ -23,16 +23,10 @@ class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInte
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->renameOldAlternativeCheckoutTable($schema);
         $this->createOroB2BAlternativeCheckoutTable($schema);
         $this->addOroB2BAlternativeCheckoutForeignKeys($schema);
         $this->moveExistingAlternativeCheckoutsToBaseTable($queries);
         $this->moveExistingAlternativeCheckoutsToAdditionalTable($queries);
-    }
-
-    protected function renameOldAlternativeCheckoutTable(Schema $schema)
-    {
-        $schema->renameTable('orob2b_alternative_checkout', 'orob2b_alternative_checkout_old');
     }
 
     /**
@@ -133,7 +127,7 @@ class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInte
         shipping_estimate_currency,
         payment_method,
         'alternativecheckout'
-     FROM orob2b_alternative_checkout_old
+     FROM orob2b_alt_checkout_old
 SQL;
         $queries->addQuery($sql);
     }
@@ -155,17 +149,17 @@ SQL;
         request_approval_notes,
         requested_for_approve)
     SELECT c.id,
-        shipping_address_id,
-        billing_address_id,
-        save_billing_address,
-        ship_to_billing_address,
-        save_shipping_address,
+        aco.shipping_address_id,
+        aco.billing_address_id,
+        aco.save_billing_address,
+        aco.ship_to_billing_address,
+        aco.save_shipping_address,
         aco.allowed,
         aco.allow_request_date,
         aco.request_approval_notes,
         aco.requested_for_approve
-    FROM orob2b_alternative_checkout_old o2b aco
-    LEFT join orob2b_checkout c ON c.workflow_item_id = ac.workflow_item_id
+    FROM orob2b_alt_checkout_old aco
+    LEFT join orob2b_checkout c ON c.workflow_item_id = aco.workflow_item_id
 SQL;
         $queries->addQuery($sql);
     }

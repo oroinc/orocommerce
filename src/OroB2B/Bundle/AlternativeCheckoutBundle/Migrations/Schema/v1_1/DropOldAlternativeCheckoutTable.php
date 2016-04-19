@@ -8,14 +8,14 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class DropAlternativeCheckoutTable implements Migration, OrderedMigrationInterface
+class DropOldAlternativeCheckoutTable implements Migration, OrderedMigrationInterface
 {
     /**
      * {@inheritdoc}
      */
     public function getOrder()
     {
-        return 20;
+        return 40;
     }
 
     /**
@@ -33,6 +33,6 @@ class DropAlternativeCheckoutTable implements Migration, OrderedMigrationInterfa
      */
     protected function dropAlternativeCheckoutTable(Schema $schema)
     {
-        $schema->dropTable('orob2b_alternative_checkout');
+        $schema->dropTable('orob2b_alt_checkout_old');
     }
 }
