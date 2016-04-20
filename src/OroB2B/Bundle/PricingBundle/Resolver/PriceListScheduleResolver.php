@@ -20,6 +20,9 @@ class PriceListScheduleResolver
      */
     public function mergeSchedule(array $priceListSchedules, array $priceListRelations)
     {
+        if (empty($priceListSchedules)) {
+            return [];
+        }
         $baseSetOfPriceLists = [];
         foreach ($priceListRelations as $relation) {
             $baseSetOfPriceLists[$relation->getPriceList()->getId()] = true;
@@ -33,7 +36,7 @@ class PriceListScheduleResolver
                 $time = $scheduleItem->getActiveAt()->getTimestamp();
                 $schedule[$time][$scheduleItem->getPriceList()->getId()] = self::ON;
             } else {
-                $turnedOffPriceLists[0] = true;
+                $schedule[0][$scheduleItem->getPriceList()->getId()] = self::ON;
             }
             if ($scheduleItem->getDeactivateAt()) {
                 $time = $scheduleItem->getDeactivateAt()->getTimestamp();
@@ -92,6 +95,7 @@ class PriceListScheduleResolver
                 $lastTime = $time;
             }
         }
+
         return $lines;
     }
 }
