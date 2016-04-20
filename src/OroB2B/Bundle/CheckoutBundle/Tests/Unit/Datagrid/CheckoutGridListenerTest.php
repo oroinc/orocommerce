@@ -166,15 +166,13 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                 'label' => 'orob2b.checkout.grid.total.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
-                'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
-                'renderable' => false
+                'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig'
             ],
             'subtotal' => [
                 'label' => 'orob2b.checkout.grid.subtotal.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
-                'template' => 'OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig',
-                'renderable' => false
+                'template' => 'OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig'
             ]
         ];
         $expectedFilters = [
@@ -185,8 +183,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             ],
             'subtotal' => [
                 'type' => 'number',
-                'data_name' => 'subtotal',
-                'enabled' => false
+                'data_name' => 'subtotal'
             ]
         ];
         $expectedSorters = [

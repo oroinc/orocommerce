@@ -116,7 +116,6 @@ class CheckoutGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
-                    'renderable' => false
                 ];
 
                 $updates['filters']['total'] = [
@@ -132,12 +131,10 @@ class CheckoutGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'template' => 'OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig',
-                    'renderable' => false
                 ];
                 $updates['filters']['subtotal'] = [
                     'type' => 'number',
-                    'data_name' => 'subtotal',
-                    'enabled' => false
+                    'data_name' => 'subtotal'
                 ];
 
                 $updates['sorters']['subtotal'] = ['data_name' => 'subtotal'];
