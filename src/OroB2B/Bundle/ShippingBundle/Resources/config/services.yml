@@ -1,13 +1,13 @@
 services:
     oro_b2b_shipping.factory.shipping_origin_model_factory:
-        class: 'OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory'
+        class: OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory
         arguments:
-            - @oro_entity.doctrine_helper
+            - '@oro_entity.doctrine_helper'
 
     oro_b2b_shipping.event_listener.config.shipping_origin:
-        class:  'OroB2B\Bundle\ShippingBundle\EventListener\Config\ShippingOriginEventListener'
+        class:  OroB2B\Bundle\ShippingBundle\EventListener\Config\ShippingOriginEventListener
         arguments:
-            - "@oro_b2b_shipping.factory.shipping_origin_model_factory"
+            - '@oro_b2b_shipping.factory.shipping_origin_model_factory'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
