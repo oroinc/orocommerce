@@ -15,13 +15,16 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
 {
     const SELECTED_OFFER_1 = 'selected.offer.1';
     const SELECTED_OFFER_2 = 'selected.offer.2';
+    
+    const QUOTE_DEMAND_1 = 'quote.demand.1';
+    const QUOTE_DEMAND_2 = 'quote.demand.2';
 
     /**
      * @var array
      */
     public static $items = [
         self::SELECTED_OFFER_1 => [
-            'quoteDemandReference' => 'quote.demand.1',
+            'quoteDemandReference' => self::QUOTE_DEMAND_1,
             'quote' => LoadQuoteData::QUOTE1,
             'offer' => LoadQuoteProductOfferData::QUOTE_PRODUCT_OFFER_1,
             'quantity' => 10,
@@ -30,7 +33,7 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
             'currency' => 'USD'
         ],
         self::SELECTED_OFFER_2 => [
-            'quoteDemandReference' => 'quote.demand.2',
+            'quoteDemandReference' => self::QUOTE_DEMAND_2,
             'quote' => LoadQuoteData::QUOTE1,
             'offer' => LoadQuoteProductOfferData::QUOTE_PRODUCT_OFFER_2,
             'quantity' => 10,

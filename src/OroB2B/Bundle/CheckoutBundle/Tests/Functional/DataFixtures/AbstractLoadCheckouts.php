@@ -71,6 +71,7 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
                 $this->getCheckoutSourceName(),
                 $sourceEntity
             );
+            $checkout->setPaymentMethod($checkoutData['checkout']['payment_method']);
             $checkout->setSource($source);
             $manager->persist($checkout);
             $this->setReference($name, $checkout);

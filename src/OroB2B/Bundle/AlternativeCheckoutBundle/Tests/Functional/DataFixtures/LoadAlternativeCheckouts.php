@@ -3,22 +3,27 @@
 namespace OroB2B\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures;
 
 use OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\AbstractLoadCheckouts;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 
 class LoadAlternativeCheckouts extends AbstractLoadCheckouts
 {
+    const CHECKOUT_1 = 'alternative.checkout.1';
+    const CHECKOUT_2 = 'alternative.checkout.2';
+
     /**
      * {@inheritDoc}
      */
     protected function getData()
     {
         return [
-            [
-                'name' => [
-                    'source' => 'quote.demand.1',
-                    'checkout' => []
-                ],
+            self::CHECKOUT_1 => [
+                'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_1,
+                'checkout' => ['payment_method' => 'Visa']
+            ],
+            self::CHECKOUT_2 => [
+                'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_2,
+                'checkout' => ['payment_method' => 'Maestro']
             ],
         ];
     }

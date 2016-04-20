@@ -36,6 +36,6 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
         $table->addColumn('allowed', 'boolean', ['notnull' => false,]);
         $table->addColumn('allow_request_date', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
         $table->addColumn('request_approval_notes', 'text', ['notnull' => false]);
-        $table->addColumn('requested_for_approve', 'boolean', []);
+        $table->addColumn('requested_for_approve', 'boolean', ['notnull' => false]);
     }
 }
