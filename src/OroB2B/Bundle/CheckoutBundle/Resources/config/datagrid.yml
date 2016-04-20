@@ -17,6 +17,7 @@ datagrid:
                     - checkout.shippingEstimateAmount
                     - checkout.shippingEstimateCurrency
                     - checkout.customerNotes
+                    - checkout.checkoutType
                 from:
                     - { table: '%orob2b_checkout.entity.base_checkout.class%', alias: checkout }
                 join:
@@ -38,9 +39,11 @@ datagrid:
                 template: OroB2BCheckoutBundle:Checkout:Datagrid/peymentMethod.html.twig
             poNumber:
                 label: orob2b.checkout.po_number.label
+                renderable: false
             shipUntil:
                 label: orob2b.checkout.ship_until.label
                 frontend_type: date
+                renderable: false
             shippingCost:
                 label: orob2b.checkout.shipping_cost.label
                 type: twig
@@ -49,6 +52,7 @@ datagrid:
                 renderable: false
             customerNotes:
                 label: orob2b.checkout.customer_notes.label
+                renderable: false
         sorters:
             columns:
                 createdAt:
@@ -89,12 +93,13 @@ datagrid:
                     data_name: checkout.shipUntil
         properties:
             id: ~
+            checkoutType: ~
             view_link:
                 type: url
                 route: orob2b_checkout_frontend_checkout
                 params:
                     - id
-                    - type
+                    - checkoutType
         actions:
             view:
                 type: navigate
