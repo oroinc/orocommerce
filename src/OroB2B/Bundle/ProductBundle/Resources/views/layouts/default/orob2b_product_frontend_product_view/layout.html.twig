@@ -16,23 +16,26 @@
 {% block _product_image_widget %}
     {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
     <!-- START Product Gallery -->
-    {% set productImage = get_first_product_image_by_type(product, 'main') %}
     <div class="product-gallery-widget product-gallery-widget_vertical product-gallery-widget_l_floated">
         <div class="product-gallery product-gallery_vertical">
-            <div class="product-gallery__image-holder">
+            <div class="product-gallery__image-holdzer">
                 <div class="product-gallery__image-holder__carousel" data-product-gallery>
                     <div class="product-gallery__image-holder__container">
+                        {% set productImage = get_first_product_image_by_type(product, 'main') %}
                         {% if productImage.image %}
-                        <img src="{{ Image.url(productImage.image, 'product_large') }}" alt="{{ product.defaultName }}"
-                                    data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
-                             width="378" height="378">
+                        <img src="{{ Image.url(productImage.image, 'product_large') }}"
+                             alt="{{ product.defaultName }}"
+                             data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
+                             width="378"
+                             height="378"/>
                         {% endif %}
-
-                        {% set additionalImages = get_product_images_by_type(product, 'additional') %}
-                        {% for productImage in additionalImages %}
-                            <img src="{{ Image.url(productImage.image, 'product_small') }}" width="50" height="50">
-                        {% endfor %}
                     </div>
+                    {% set additionalImages = get_product_images_by_type(product, 'additional') %}
+                    {% for productImage in additionalImages %}
+                        <img src="{{ Image.url(productImage.image, 'product_small') }}"
+                             width="50"
+                             height="50"/>
+                    {% endfor %}
                 </div>
             </div>
         </div>
