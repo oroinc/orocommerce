@@ -7,8 +7,16 @@ datagrid:
             type: orm
             query:
                 select:
-                    - checkout
+                    - checkout.id
+                    - checkout.createdAt
+                    - checkout.updatedAt
                     - CONCAT(account_user.firstName, ' ', account_user.lastName) as accountUserName
+                    - checkout.paymentMethod
+                    - checkout.poNumber
+                    - checkout.shipUntil
+                    - checkout.shippingEstimateAmount
+                    - checkout.shippingEstimateCurrency
+                    - checkout.customerNotes
                 from:
                     - { table: '%orob2b_checkout.entity.base_checkout.class%', alias: checkout }
                 join:
