@@ -4,13 +4,13 @@ namespace OroB2B\Bundle\AlternativeCheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\AbstractCheckout;
+use OroB2B\Bundle\AlternativeCheckoutBundle\Model\ExtendAlternativeCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutAddressesTrait;
 
 /**
+ * @ORM\Table(name="orob2b_alternative_checkout")
  * @ORM\Entity(
  *     repositoryClass="OroB2B\Bundle\AlternativeCheckoutBundle\Entity\Repository\AlternativeCheckoutRepository"
  * )
@@ -39,16 +39,25 @@ use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutAddressesTrait;
  *      }
  * )
  */
-class AlternativeCheckout extends AbstractCheckout
+class AlternativeCheckout extends ExtendAlternativeCheckout
 {
     use CheckoutAddressesTrait;
 
     const TYPE = 'alternative';
 
     /**
+     * @var int
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer", name="id")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
      * @var bool
      *
-     * @ORM\Column(name="allowed", type="boolean", nullable=true)
+     * @ORM\Column(name="allowed", type="boolean")
      */
     protected $allowed = false;
 
@@ -58,11 +67,6 @@ class AlternativeCheckout extends AbstractCheckout
      * @ORM\Column(name="allow_request_date", type="datetime", nullable=true)
      */
     protected $allowRequestDate;
-
-    /**
-     * @var Price
-     */
-    protected $shippingCost;
 
     /**
      * @var string
@@ -77,18 +81,6 @@ class AlternativeCheckout extends AbstractCheckout
      * @ORM\Column(name="requested_for_approve", type="boolean")
      */
     protected $requestedForApprove = false;
-
-    /**
-     * @return object|null
-     */
-    public function getSourceEntity()
-    {
-        if ($this->source) {
-            return $this->source->getEntity();
-        }
-
-        return null;
-    }
 
     /**
      * @return string
