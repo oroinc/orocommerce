@@ -7,6 +7,12 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
 
 class PriceListScheduleResolver
 {
+    const ON = 'on';
+    const OFF = 'off';
+    const PRICE_LISTS_KEY = 'priceLists';
+    const ACTIVATE_AT_KEY = 'activateAt';
+    const EXPIRE_AT_KEY = 'expireAt';
+
     /**
      * @param PriceListSchedule[] $priceListSchedules
      * @param CombinedPriceListToPriceList[] $priceListRelations
@@ -25,11 +31,11 @@ class PriceListScheduleResolver
                 //if start time exist, it might be turned off before this time
                 $turnedOffPriceLists[$scheduleItem->getPriceList()->getId()] = true;
                 $time = $scheduleItem->getActiveAt()->getTimestamp();
-                $schedule[$time][$scheduleItem->getPriceList()->getId()] = 'on';
+                $schedule[$time][$scheduleItem->getPriceList()->getId()] = self::ON;
             }
             if ($scheduleItem->getDeactivateAt()) {
                 $time = $scheduleItem->getDeactivateAt()->getTimestamp();
-                $schedule[$time][$scheduleItem->getPriceList()->getId()] = 'off';
+                $schedule[$time][$scheduleItem->getPriceList()->getId()] = self::OFF;
             }
         }
         $lines = $this->processSchedule($schedule, $baseSetOfPriceLists, $turnedOffPriceLists);
@@ -40,8 +46,8 @@ class PriceListScheduleResolver
 
     /**
      * @param array $schedule
-     * @param $baseName
-     * @param $turnedOffPriceLists
+     * @param array $baseName
+     * @param array $turnedOffPriceLists
      * @return array
      */
     protected function processSchedule(array $schedule, array $baseName, array $turnedOffPriceLists)
@@ -54,9 +60,9 @@ class PriceListScheduleResolver
                 unset($currentName[$priceListDisabled]);
             }
             $lines[0] = [
-                'priceLists' => array_keys($currentName),
-                'activateAt' => null,
-                'expireAt' => null
+                self::PRICE_LISTS_KEY => array_keys($currentName),
+                self::ACTIVATE_AT_KEY => null,
+                self::EXPIRE_AT_KEY => null
             ];
             $lastTime = 0;
         }
@@ -64,7 +70,7 @@ class PriceListScheduleResolver
         foreach ($schedule as $time => $changesAtTimeMoment) {
             foreach ($changesAtTimeMoment as $priceListId => $action) {
                 $currentName = $baseName;
-                if ($action == 'on') {
+                if ($action == self::ON) {
                     unset($turnedOffPriceLists[$priceListId]);
                 } else {
                     $turnedOffPriceLists[$priceListId] = true;
@@ -74,12 +80,12 @@ class PriceListScheduleResolver
                     unset($currentName[$priceListDisabled]);
                 }
                 $lines[$time] = [
-                    'priceLists' => array_keys($currentName),
-                    'activateAt' => $time,
-                    'expireAt' => null
+                    self::PRICE_LISTS_KEY => array_keys($currentName),
+                    self::ACTIVATE_AT_KEY => $time,
+                    self::EXPIRE_AT_KEY => null
                 ];
                 if ($lastTime !== null) {
-                    $lines[$lastTime]['expireAt'] = $time;
+                    $lines[$lastTime][self::EXPIRE_AT_KEY] = $time;
                 }
                 $lastTime = $time;
             }
