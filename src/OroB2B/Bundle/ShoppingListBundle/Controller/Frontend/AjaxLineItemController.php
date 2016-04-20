@@ -71,10 +71,29 @@ class AjaxLineItemController extends Controller
             return new JsonResponse(['successful' => false, 'message' => (string)$form->getErrors(true, false)]);
         }
 
+        $productUnits = [];
+        $translator = $this->get('translator');
+        foreach ($product->getUnitPrecisions() as $unitPrecision) {
+            $label = sprintf('orob2b.product_unit.%s.label.full', $unitPrecision->getProductUnitCode());
+            $productUnits[$unitPrecision->getProductUnitCode()] = $translator->trans($label);
+        }
+
+        $productLineItems = [];
+        foreach ($shoppingList->getLineItems() as $lineItem) {
+            if ($lineItem->getProduct() === $product) {
+                $productLineItems[$lineItem->getProductUnitCode()] = $lineItem->getQuantity();
+            }
+        }
+
         return new JsonResponse(
             [
                 'successful' => true,
                 'message' => $this->getSuccessMessage($shoppingList, 'orob2b.shoppinglist.product.added.label'),
+                'product' => [
+                    'id' => $product->getId(),
+                    'units' => $productUnits,
+                    'lineItems' => $productLineItems,
+                ],
                 'shoppingList' => [
                     'id' => $shoppingList->getId(),
                     'label' => $shoppingList->getLabel(),

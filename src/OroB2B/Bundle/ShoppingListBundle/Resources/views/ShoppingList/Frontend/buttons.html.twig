@@ -1,37 +1,42 @@
 {% macro addToCurrentButton(options) %}
     {% import _self as buttons %}
-    {{ buttons.getButton(options|merge({
+    {% set options = {
         defaultLabel: 'orob2b.shoppinglist.entity_label'|trans,
         actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans
-    })) }}
+    }|merge(options) %}
+    {{ buttons.getButton(options) }}
 {% endmacro %}
 
 {% macro addToButton(options) -%}
     {% import _self as buttons %}
-    {{ buttons.getButton(options|merge({
+    {% set options = {
         actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans
-    })) }}
+    }|merge(options) %}
+    {{ buttons.getButton(options) }}
 {% endmacro %}
 
 {% macro addToNewButton(options) %}
     {% import _self as buttons %}
-    {{ buttons.getButton(options|merge({
-        actionLabel: 'orob2b.shoppinglist.actions.add_to_new_shopping_list'|trans,
-        dataAttributes: options.dataAttributes|merge({intention: 'new'})
-    })) }}
+    {% set dataAttributes = options.dataAttributes|merge({
+        intention: 'new'
+    }) %}
+    {% set options = {
+        actionLabel: 'orob2b.shoppinglist.actions.add_to_new_shopping_list'|trans
+    }|merge(options)|merge({
+        dataAttributes: dataAttributes
+    }) %}
+    {{ buttons.getButton(options) }}
 {% endmacro %}
 
 {% macro buttonTemplate(options) %}
     {% import 'OroB2BFrontendBundle:layouts/default:utils.html.twig' as utils %}
     {% import _self as buttons %}
-    {% spaceless %}
-        {{ utils.underscoreRaw(buttons.addToCurrentButton(options|merge({
-            shoppingList: {
-                id: '<%= id %>',
-                label: '<%= label %>'
-            }
-        }))) }}
-    {% endspaceless %}
+    {{ utils.underscoreRaw(buttons.addToCurrentButton({
+        shoppingList: {
+            id: '<%= id %>',
+            label: '<%= label %>'
+        }
+    }|merge(options))) }}
 {% endmacro %}
 
 {% macro getButton(options) %}
@@ -46,7 +51,12 @@
     {% set shoppingListId = options.shoppingList ? options.shoppingList.id : null %}
     {% set shoppingListLabel = options.shoppingList ? options.shoppingList.label : options.defaultLabel %}
 
-    {% set dataAttributes = options.dataAttributes %}
+    {% set dataAttributes = options.dataAttributes|merge({
+        shoppinglist: {
+            id: shoppingListId,
+            label: shoppingListLabel
+        }
+    }) %}
     {% if options.dataUrl %}
         {% set dataAttributes = dataAttributes|merge({
             urlOptions: (options.dataUrlOptions|merge({shoppingListId: shoppingListId}))|json_encode
@@ -57,7 +67,9 @@
         'dataAttributes': dataAttributes,
         'aCss': 'direct-link add-to-shopping-list-button ' ~ options.aCss,
         'dataId': shoppingListId,
-        'label' : options.actionLabel|replace({'{{ shoppingList }}': shoppingListLabel})
+        'label' : options.actionLabel|replace({
+            '{{ shoppingList }}': shoppingListLabel
+        })
     } %}
     {% if options.dataUrl %}
         {% set buttonOptions = buttonOptions|merge({
@@ -90,7 +102,11 @@
             {{ buttons.addToNewButton(options.new) }}
         {% endif %}
     {% endset %}
-    {% set customOptions = {}
+    {% set customOptions = {
+        defaultClass: options.defaultClass|default(''),
+        addedClass: options.addedClass|default(''),
+    } %}
+    {% set customOptions = customOptions
         |merge(options.groupContainer|default(false) ? {'groupContainer': options.groupContainer} : {} )
         |merge(options.truncateLabelLength|default(false) ? {'truncateLength': options.truncateLabelLength} : {} )
     %}
