@@ -127,15 +127,6 @@ class FrontendProductDatagridListener
     protected function addImageToConfig(DatagridConfiguration $config)
     {
         $updates = [
-            '[source][query][select]' => [
-                'productImage.filename as image',
-            ],
-            '[source][query][join][left]' => [
-                [
-                    'join' => 'product.image',
-                    'alias' => 'productImage',
-                ]
-            ],
             '[columns]' => [
                 'image' => [
                     'label' => $this->translator->trans('orob2b.product.image.label'),
@@ -224,7 +215,8 @@ class FrontendProductDatagridListener
             foreach ($products as $product) {
                 if ($product->getId() === $productId) {
                     $imageUrl = $this->attachmentManager->getFilteredImageUrl(
-                        $product->getImage(),
+                        //@TODO  filter images by type, e.g. listing
+                        $product->getImages()->first()->getImage(),
                         self::PRODUCT_IMAGE_FILTER
                     );
                     break;
