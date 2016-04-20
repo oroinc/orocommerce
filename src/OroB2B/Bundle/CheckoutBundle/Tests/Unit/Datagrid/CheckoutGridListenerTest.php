@@ -51,6 +51,60 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new CheckoutGridListener($this->configProvider, $this->fieldProvider);
         $this->listener->setCache($this->cache);
     }
+
+    public function testGetMetadataNoRelations()
+    {
+        $configuration = DatagridConfiguration::createNamed('test', []);
+        $configuration->offsetAddToArrayByPath('[source][query][from]', [['alias' => 'rootAlias']]);
+        $configuration->offsetSetByPath('[source][query][select]', ['rootAlias.id as id']);
+        $configuration->offsetSetByPath('[columns]', ['id' => ['label' => 'id']]);
+        $configuration->offsetSetByPath('[filters][columns]', ['id' => ['data_name' => 'id']]);
+        $configuration->offsetSetByPath('[sorters][columns]', ['id' => ['data_name' => 'id']]);
+        /** @var DatagridInterface $datagrid */
+        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $event = new BuildBefore($datagrid, $configuration);
+        $this->listener->onBuildBefore($event);
+
+        $expectedSelects = ['rootAlias.id as id'];
+        $expectedColumns = ['id' => ['label' => 'id']];
+        $expectedFilters = ['id' => ['data_name' => 'id']];
+        $expectedSorters = ['id' => ['data_name' => 'id']];
+
+        $this->assertEquals($expectedSelects, $configuration->offsetGetByPath('[source][query][select]'));
+        $this->assertEquals($expectedColumns, $configuration->offsetGetByPath('[columns]'));
+        $this->assertEquals($expectedFilters, $configuration->offsetGetByPath('[filters][columns]'));
+        $this->assertEquals($expectedSorters, $configuration->offsetGetByPath('[sorters][columns]'));
+    }
+
+    public function testGetMetadataNoTotalFields()
+    {
+        $relationsMetadata = [['related_entity_name' => 'Entity1', 'name' => 'relationOne']];
+        $this->fieldProvider->expects($this->once())
+            ->method('getRelations')
+            ->with('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource')
+            ->willReturn($relationsMetadata);
+
+        $configuration = DatagridConfiguration::createNamed('test', []);
+        $configuration->offsetAddToArrayByPath('[source][query][from]', [['alias' => 'rootAlias']]);
+        $configuration->offsetSetByPath('[source][query][select]', ['rootAlias.id as id']);
+        $configuration->offsetSetByPath('[columns]', ['id' => ['label' => 'id']]);
+        $configuration->offsetSetByPath('[filters][columns]', ['id' => ['data_name' => 'id']]);
+        $configuration->offsetSetByPath('[sorters][columns]', ['id' => ['data_name' => 'id']]);
+        /** @var DatagridInterface $datagrid */
+        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $event = new BuildBefore($datagrid, $configuration);
+        $this->listener->onBuildBefore($event);
+
+        $expectedSelects = ['rootAlias.id as id'];
+        $expectedColumns = ['id' => ['label' => 'id']];
+        $expectedFilters = ['id' => ['data_name' => 'id']];
+        $expectedSorters = ['id' => ['data_name' => 'id']];
+
+        $this->assertEquals($expectedSelects, $configuration->offsetGetByPath('[source][query][select]'));
+        $this->assertEquals($expectedColumns, $configuration->offsetGetByPath('[columns]'));
+        $this->assertEquals($expectedFilters, $configuration->offsetGetByPath('[filters][columns]'));
+        $this->assertEquals($expectedSorters, $configuration->offsetGetByPath('[sorters][columns]'));
+    }
     
     public function testGetMetadata()
     {
