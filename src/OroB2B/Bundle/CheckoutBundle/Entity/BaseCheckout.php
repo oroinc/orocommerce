@@ -17,19 +17,18 @@ use Oro\Component\Layout\ContextItemInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\CheckoutBundle\Model\ExtendCheckout;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_checkout")
  * @ORM\Entity
- * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="type", type="string", length=30)
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-abstract class AbstractCheckout extends ExtendCheckout implements
+class BaseCheckout implements
     CheckoutInterface,
     OrganizationAwareInterface,
     AccountOwnerAwareInterface,
@@ -156,7 +155,13 @@ abstract class AbstractCheckout extends ExtendCheckout implements
      */
     protected $source;
 
-    abstract public function getType();
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return '';
+    }
 
     /**
      * @return int
