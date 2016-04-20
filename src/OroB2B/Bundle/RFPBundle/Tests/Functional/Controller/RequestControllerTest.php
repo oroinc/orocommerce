@@ -6,6 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
+use OroB2B\Component\Duplicator\Test\Stub\RFPRequest;
 
 /**
  * @dbIsolation
@@ -28,9 +29,10 @@ class RequestControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_rfp_request_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('rfp-requests-grid', $crawler->html());
 
         $this->assertContainsRequestData(
             LoadRequestData::FIRST_NAME,
@@ -47,20 +49,9 @@ class RequestControllerTest extends WebTestCase
      */
     public function testView()
     {
-        $response = $this->client->requestGrid(
-            'rfp-requests-grid',
-            [
-                'rfp-requests-grid[_filter][firstName][value]' => LoadRequestData::FIRST_NAME,
-                'rfp-requests-grid[_filter][lastName][value]' => LoadRequestData::LAST_NAME,
-                'rfp-requests-grid[_filter][email][value]' => LoadRequestData::EMAIL,
-                'rfp-requests-grid[_filter][poNumber][value]' => LoadRequestData::PO_NUMBER,
-            ]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id = $result['id'];
+        /** @var RFPRequest $request */
+        $request = $this->getReference(LoadRequestData::REQUEST1);
+        $id = $request->getId();
 
         $this->client->request(
             'GET',
@@ -84,31 +75,6 @@ class RequestControllerTest extends WebTestCase
         );
 
         return $id;
-    }
-
-    /**
-     * @depends testView
-     * @param integer $id
-     */
-    public function testInfo($id)
-    {
-        $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_rfp_request_info', ['id' => $id]),
-            ['_widgetContainer' => 'dialog']
-        );
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $this->assertContainsRequestData(
-            LoadRequestData::FIRST_NAME,
-            LoadRequestData::LAST_NAME,
-            LoadRequestData::EMAIL,
-            LoadRequestData::PO_NUMBER,
-            $this->getFormatDate('M j, Y'),
-            $result->getContent()
-        );
     }
 
     /**

@@ -6036,7 +6036,7 @@
       }
     }
 
-    tbody {
+    & > tbody {
       td {
         &:first-child {
           padding-left: 0;
@@ -6048,6 +6048,7 @@
 
         padding: 1rem 1.2rem;
         border-top: .1rem solid @table-alt-border-color;
+        border-bottom: .1rem solid @table-alt-border-color;
       }
     }
 
@@ -6060,6 +6061,32 @@
         text-align: right;
       }
     }
+  }
+  table.table-scrollable {
+    & > tbody > tr > td {
+      border: none;
+      padding: 0;
+    }
+
+    thead {
+      th {
+        border-color: transparent;
+
+        &:last-child {
+          padding-right: 0;
+        }
+      }
+    }
+  }
+}
+.scrollable-content {
+  max-height: 490px;
+  width: 100%;
+
+  overflow: auto;
+
+  &__table {
+    width:100%;
   }
 }
 
@@ -6084,6 +6111,10 @@
     }
   }
 }
+.checkout-order-summary__price-table-total {
+  padding: 1rem 0 1rem 0;
+}
+
 /*END CHECKOUT PAGE*/
 
 /*START CMS*/
