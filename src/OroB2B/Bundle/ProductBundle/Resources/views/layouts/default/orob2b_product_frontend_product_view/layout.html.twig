@@ -299,6 +299,7 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
 {% block _line_item_buttons_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " form__col "}) %}
     {% if block.children is not empty %}

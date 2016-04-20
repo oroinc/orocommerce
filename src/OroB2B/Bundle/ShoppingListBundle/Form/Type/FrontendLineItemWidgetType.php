@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormError;
@@ -18,6 +17,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 
 class FrontendLineItemWidgetType extends AbstractType
 {

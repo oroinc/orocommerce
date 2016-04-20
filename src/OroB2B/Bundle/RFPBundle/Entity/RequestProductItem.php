@@ -245,7 +245,7 @@ class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInt
      */
     public function updatePrice()
     {
-        $this->value = $this->price ? $this->price->getValue() : null;
+        $this->value    = $this->price ? $this->price->getValue() : null;
         $this->currency = $this->price ? $this->price->getCurrency() : null;
     }
 
