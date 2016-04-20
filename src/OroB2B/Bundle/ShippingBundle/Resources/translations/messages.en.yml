@@ -1,15 +1,16 @@
-orob2b.shipping:
-    system_configuration:
-        groups:
-            shipping.title: Shipping
-            shipping_origin.title: Shipping Origin
-        fields:
-            origin_address.label: Shipping Origin Address
-    shipping_origin:
-        country.label:       Country
-        region.label:        State
-        region_text.label:   State
-        postal_code.label:   Zip/postal code
-        city.label:          City
-        street.label:        Street
-        street2.label:       Street 2
+orob2b
+    shipping:
+        system_configuration:
+            groups:
+                shipping.title: Shipping
+                shipping_origin.title: Shipping Origin
+            fields:
+                origin_address.label: Shipping Origin Address
+        shipping_origin:
+            country.label:       Country
+            region.label:        Region/State
+            region_text.label:   State
+            postal_code.label:   Zip/postal code
+            city.label:          City
+            street.label:        Street Address 1
+            street2.label:       Street Address 2
