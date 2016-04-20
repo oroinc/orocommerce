@@ -33,12 +33,10 @@ class OrderControllerTest extends WebTestCase
 
     public function testCheckoutGrid()
     {
-//        $response = $this->requestFrontendGrid(
-//            [
-//                'gridName' => 'frontend-products-grid',
-//                RequestProductHandler::CATEGORY_ID_KEY => $secondLevelCategory->getId(),
-//                RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY => $includeSubcategories,
-//            ]
-//        );
+        $response = $this->requestFrontendGrid(
+            [
+                'gridName' => 'frontend-checkouts-grid',
+            ]
+        );
     }
 }
