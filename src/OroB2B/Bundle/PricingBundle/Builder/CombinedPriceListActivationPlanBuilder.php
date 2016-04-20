@@ -22,31 +22,30 @@ class CombinedPriceListActivationPlanBuilder
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
-
     /**
      * @var PriceListScheduleResolver
      */
     protected $schedulerResolver;
-
     /**
      * @var CombinedPriceListProvider
      */
-    protected $CPLProvider;
-
+    protected $combinedPriceListProvider;
     /**
      * @var CombinedPriceListRepository
      */
     protected $combinedPriceListRepository;
-
     /**
      * @var PriceListScheduleRepository
      */
     protected $priceListScheduleRepository;
-
     /**
      * @var CombinedPriceListToPriceListRepository
      */
     protected $CPLToPriceListRepository;
+    /**
+     * @var CombinedPriceListActivationRuleRepository
+     */
+    protected $CPLActivationRuleRepository;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -60,6 +59,7 @@ class CombinedPriceListActivationPlanBuilder
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->schedulerResolver = $schedulerResolver;
+        $this->combinedPriceListProvider = $combinedPriceListProvider;
     }
 
     /**
@@ -97,17 +97,19 @@ class CombinedPriceListActivationPlanBuilder
         $manager = $this->doctrineHelper->getEntityManagerForClass($activationRuleClass);
         $now = new \DateTime();
         foreach ($rawRules as $ruleData) {
-            if ($now->getTimestamp() > $ruleData['expireAt']) {
+            if ($ruleData['expireAt'] !== null && $now->getTimestamp() > $ruleData['expireAt']) {
                 //rule expired already, no need to add it to activation plan
                 continue;
             }
             $rule = new CombinedPriceListActivationRule();
             $rule->setFullChainPriceList($cpl);
             if ($ruleData['expireAt']) {
-                $rule->setExpireAt(new \DateTime($ruleData['expireAt']));
+                $expireAt = new \DateTime();
+                $rule->setExpireAt($expireAt->setTimestamp($ruleData['expireAt']));
             }
             if ($ruleData['activateAt']) {
-                $rule->setActivateAt(new \DateTime($ruleData['activateAt']));
+                $activateAt = new \DateTime();
+                $rule->setActivateAt($activateAt->setTimestamp($ruleData['activateAt']));
             }
             if ($ruleData['activateAt'] === null || $ruleData['activateAt'] < $now->getTimestamp()) {
                 $rule->setActive(true);
@@ -135,7 +137,10 @@ class CombinedPriceListActivationPlanBuilder
                 );
             }
         }
-        return $this->CPLProvider->getCombinedPriceList($sequence, CombinedPriceListProvider::BEHAVIOR_EMPTY);
+        return $this->combinedPriceListProvider->getCombinedPriceList(
+            $sequence,
+            CombinedPriceListProvider::BEHAVIOR_EMPTY
+        );
     }
 
     /**
@@ -182,10 +187,10 @@ class CombinedPriceListActivationPlanBuilder
      */
     protected function getCPLActivationRuleRepository()
     {
-        if (!$this->CPLToPriceListRepository) {
-            $this->CPLToPriceListRepository = $this->doctrineHelper
+        if (!$this->CPLActivationRuleRepository) {
+            $this->CPLActivationRuleRepository = $this->doctrineHelper
                 ->getEntityRepository('OroB2BPricingBundle:CombinedPriceListActivationRule');
         }
-        return $this->CPLToPriceListRepository;
+        return $this->CPLActivationRuleRepository;
     }
 }

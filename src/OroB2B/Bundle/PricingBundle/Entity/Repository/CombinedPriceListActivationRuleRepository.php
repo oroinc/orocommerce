@@ -12,11 +12,11 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
      */
     public function deleteRulesByCPL(CombinedPriceList $cpl)
     {
-        $qb = $this->_em->createQueryBuilder()->from($this->_entityName, 'rule');
-        $qb->delete('rule')
+        $qb = $this->_em->createQueryBuilder();
+        $qb->delete()
+            ->from($this->_entityName, 'rule')
             ->where($qb->expr()->eq('rule.fullChainPriceList', ':cpl'))
             ->setParameter('cpl', $cpl)
-            ->getQuery()
-            ->execute();
+            ->getQuery()->execute();
     }
 }
