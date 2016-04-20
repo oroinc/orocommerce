@@ -7,6 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout;
 
 class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInterface
 {
@@ -29,6 +30,12 @@ class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInte
         $this->addOroB2BAlternativeCheckoutForeignKeys($schema);
         $this->moveExistingAlternativeCheckoutsToBaseTable($queries);
         $this->moveExistingAlternativeCheckoutsToAdditionalTable($queries);
+
+        $queries->addPreQuery(
+            "DELETE FROM 
+              oro_entity_config 
+            WHERE class_name='OroB2B\\Bundle\\AlternativeCheckoutBundle\\Entity\\AlternativeCheckout'"
+        );
     }
 
     /**
@@ -109,7 +116,9 @@ class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInte
         shipping_estimate_amount,
         shipping_estimate_currency,
         payment_method,
-        type)
+        checkout_discriminator,
+        checkout_type
+    )
     SELECT workflow_step_id,
         workflow_item_id,
         source_id,
@@ -127,10 +136,11 @@ class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInte
         shipping_estimate_amount,
         shipping_estimate_currency,
         payment_method,
+        '%s',
         '%s'
      FROM orob2b_alt_checkout_old
 SQL;
-        $queries->addQuery(sprintf($sql, self::ALTERNATIVE_CHECKOUT_TYPE));
+        $queries->addQuery(sprintf($sql, self::ALTERNATIVE_CHECKOUT_TYPE, AlternativeCheckout::CHECKOUT_TYPE));
     }
 
     /**

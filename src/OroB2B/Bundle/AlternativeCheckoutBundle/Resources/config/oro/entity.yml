@@ -1,5 +1,0 @@
-oro_entity:
-    entity_aliases:
-        OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout:
-            alias: alternative_checkout
-            plural_alias: alternative_checkouts
