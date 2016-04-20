@@ -263,10 +263,6 @@ datagrid:
             id: ~
             view_link:
                 route: orob2b_order_view
-            update_link:
-                route: orob2b_order_update
-            delete_link:
-                route: orob2b_api_delete_order
         actions:
             view:
                 acl_resource:  orob2b_order_view
@@ -482,6 +478,8 @@ datagrid:
                 frontend_type: date
             comment:
                 label: orob2b.order.orderlineitem.comment.label
+        action_configuration:
+            delete: false
 
     order-line-items-grid-frontend:
         extends: base-order-line-items-grid

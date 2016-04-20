@@ -6,14 +6,7 @@
 
 {% block navButtons %}
     {% if entity.id and resource_granted('DELETE', entity) %}
-        {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_tax_delete_tax', {'id': entity.id}),
-            'dataRedirect': path('orob2b_tax_index'),
-            'aCss': 'no-hash remove-button',
-            'dataId': entity.id,
-            'id': 'btn-remove-attribute',
-            'entity_label': 'orob2b.tax.entity_label'|trans,
-        }) }}
+        {{ parent() }}
         {{ UI.buttonSeparator() }}
     {% endif %}
     {{ UI.cancelButton(path('orob2b_tax_index')) }}

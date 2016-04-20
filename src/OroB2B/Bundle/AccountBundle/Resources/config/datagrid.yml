@@ -66,20 +66,13 @@ datagrid:
 
     account-accounts-grid:
         extends: account-accounts-select-grid
+        entity_name: %orob2b_account.entity.account.class%
         options:
             entity_pagination: true
         properties:
             view_link:
                 type:   url
                 route:  orob2b_account_view
-                params: [ id ]
-            update_link:
-                type:   url
-                route:  orob2b_account_update
-                params: [ id ]
-            delete_link:
-                type:   url
-                route:  orob2b_api_account_delete_account
                 params: [ id ]
         actions:
             view:
@@ -89,18 +82,6 @@ datagrid:
                 icon:         eye-open
                 acl_resource: orob2b_account_view
                 rowAction:    true
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_account_update
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_account_delete
 
     account-groups-select-grid:
         acl_resource: orob2b_account_group_view
@@ -170,6 +151,7 @@ datagrid:
                 acl_resource:  orob2b_account_group_delete
 
     account-group-accounts-grid-basic:
+        entity_name: %orob2b_account.entity.account.class%
         acl_resource: orob2b_account_view
         source:
             type: orm
@@ -188,14 +170,6 @@ datagrid:
             view_link:
                 type:   url
                 route:  orob2b_account_view
-                params: [ id ]
-            update_link:
-                type:   url
-                route:  orob2b_account_update
-                params: [ id ]
-            delete_link:
-                type:   url
-                route:  orob2b_api_account_delete_account
                 params: [ id ]
         sorters:
             columns:
@@ -218,12 +192,8 @@ datagrid:
                 link:         view_link
                 icon:         eye-open
                 acl_resource: orob2b_account_view
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_account_update
+        action_configuration:
+            delete: false
         options:
             entityHint: account
 
@@ -328,14 +298,6 @@ datagrid:
                 type:   url
                 route:  orob2b_account_account_user_view
                 params: [ id ]
-            update_link:
-                type:   url
-                route:  orob2b_account_account_user_update
-                params: [ id ]
-            delete_link:
-                type:   url
-                route:  orob2b_api_account_delete_account_user
-                params: [ id ]
         sorters:
             columns:
                 firstName:
@@ -376,18 +338,6 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_account_account_user_view
                 rowAction:     true
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_account_account_user_update
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_account_account_user_delete
         action_configuration: ['@orob2b_account.datagrid.action_permission_provider', "getUserPermissions"]
 
     account-user-by-account-grid:
@@ -407,9 +357,15 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_account_account_user_view
                 rowAction:     true
+        action_configuration:
+            update: false
+            delete: false
 
     account-account-user-select-grid:
         extends:  account-account-user-grid-base
+        action_configuration:
+            update: false
+            delete: false
 
     basic-account-account-user-roles-grid:
         options:
@@ -428,14 +384,6 @@ datagrid:
         properties:
             id: ~
             view_link:
-                type: url
-                params:
-                    - id
-            update_link:
-                type: url
-                params:
-                    - id
-            delete_link:
                 type: url
                 params:
                     - id
@@ -476,18 +424,9 @@ datagrid:
                 link:          view_link
                 icon:          eye-open
                 rowAction:     true
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
 
     account-account-user-roles-grid:
+        entity_name: %orob2b_account.entity.account_user_role.class%
         acl_resource: orob2b_account_account_user_role_view
         extends: basic-account-account-user-roles-grid
         source:
@@ -512,17 +451,9 @@ datagrid:
         properties:
             view_link:
                 route: orob2b_account_account_user_role_view
-            update_link:
-                route: orob2b_account_account_user_role_update
-            delete_link:
-                route: orob2b_api_account_delete_accountuserrole
         actions:
             view:
                 acl_resource:  orob2b_account_account_user_role_view
-            update:
-                acl_resource:  orob2b_account_account_user_role_update
-            delete:
-                acl_resource:  orob2b_account_account_user_role_delete
 
     frontend-account-account-user-roles-grid:
         acl_resource: orob2b_account_frontend_account_user_role_index
@@ -534,15 +465,29 @@ datagrid:
             view_link:
                 route:  orob2b_account_frontend_account_user_role_view
             update_link:
+                type: url
                 route: orob2b_account_frontend_account_user_role_update
+                params:
+                    - id
             delete_link:
+                type: url
                 route: orob2b_api_frontend_account_delete_accountuserrole
+                params:
+                    - id
         actions:
             view:
                 acl_resource:  orob2b_account_frontend_account_user_role_view
             update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
                 acl_resource:  orob2b_account_frontend_account_user_role_update
             delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
                 acl_resource:  orob2b_account_frontend_account_user_role_delete
         action_configuration: ['@orob2b_account.datagrid.action_permission_provider', "getAccountUserRolePermission"]
 
@@ -765,8 +710,8 @@ datagrid:
         properties:
             update_link:
                 route: orob2b_account_account_user_role_update
-            delete_link:
-                route: orob2b_api_account_delete_accountuserrole
+#            delete_link:
+#                route: orob2b_api_account_delete_accountuserrole
 
     frontend-account-account-users-grid-update:
         extends: frontend-account-account-users-grid-basic

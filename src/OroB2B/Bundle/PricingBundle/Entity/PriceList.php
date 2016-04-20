@@ -13,6 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  * @Config(
  *      routeName="orob2b_pricing_price_list_index",
  *      routeView="orob2b_pricing_price_list_view",
+ *      routeUpdate="orob2b_pricing_price_list_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"

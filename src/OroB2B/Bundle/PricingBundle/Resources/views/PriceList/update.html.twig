@@ -8,14 +8,7 @@
 
 {% block navButtons %}
     {% if entity.id and resource_granted('DELETE', entity) %}
-        {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_pricing_delete_price_list', {'id': entity.id}),
-            'dataRedirect': path('orob2b_pricing_price_list_index'),
-            'aCss': 'no-hash remove-button',
-            'dataId': entity.id,
-            'id': 'btn-remove-account',
-            'entity_label': 'orob2b.pricing.pricelist.entity_label'|trans,
-        }) }}
+        {{ parent() }}
         {{ UI.buttonSeparator() }}
     {% endif %}
     {{ UI.cancelButton(path('orob2b_pricing_price_list_index')) }}
