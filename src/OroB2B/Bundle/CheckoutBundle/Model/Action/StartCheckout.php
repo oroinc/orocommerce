@@ -209,7 +209,7 @@ class StartCheckout extends AbstractAction
         $this->redirect->initialize(
             [
                 'route' => $this->checkoutRoute,
-                'route_parameters' => ['id' => $checkout->getId(), 'type' => $checkout->getType()]
+                'route_parameters' => ['id' => $checkout->getId(), 'type' => $checkout->getCheckoutType()]
             ]
         );
         $this->redirect->execute($context);

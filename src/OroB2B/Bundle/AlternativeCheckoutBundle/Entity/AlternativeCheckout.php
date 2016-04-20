@@ -43,7 +43,7 @@ class AlternativeCheckout extends BaseCheckout
 {
     use CheckoutAddressesTrait;
 
-    const TYPE = 'alternative';
+    protected $checkoutType = 'alternative';
 
     /**
      * @var int
@@ -147,13 +147,5 @@ class AlternativeCheckout extends BaseCheckout
     public function setAllowRequestDate($allowRequestDate)
     {
         $this->allowRequestDate = $allowRequestDate;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return self::TYPE;
     }
 }

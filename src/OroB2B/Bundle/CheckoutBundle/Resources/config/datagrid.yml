@@ -17,6 +17,7 @@ datagrid:
                     - checkout.shippingEstimateAmount
                     - checkout.shippingEstimateCurrency
                     - checkout.customerNotes
+                    - checkout.checkoutType
                 from:
                     - { table: '%orob2b_checkout.entity.base_checkout.class%', alias: checkout }
                 join:
@@ -89,12 +90,13 @@ datagrid:
                     data_name: checkout.shipUntil
         properties:
             id: ~
+            checkoutType: ~
             view_link:
                 type: url
                 route: orob2b_checkout_frontend_checkout
                 params:
                     - id
-                    - type
+                    - checkoutType
         actions:
             view:
                 type: navigate

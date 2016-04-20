@@ -38,7 +38,7 @@ class OroB2BCheckoutBundle implements Migration, OrderedMigrationInterface
     protected function addCheckoutTypeColumn(Schema $schema)
     {
         $table = $schema->getTable('orob2b_checkout');
-        $table->addColumn('type', 'string', ['notnull' => false, 'length' => 30]);
+        $table->addColumn('checkout_discriminator', 'string', ['notnull' => false, 'length' => 30]);
     }
 
     /**

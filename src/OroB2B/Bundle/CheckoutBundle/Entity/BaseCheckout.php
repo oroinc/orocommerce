@@ -40,6 +40,13 @@ class BaseCheckout implements
     use WorkflowAwareTrait;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="checkout_type", type="string", length=30, nullable=true)
+     */
+    protected $checkoutType = '';
+
+    /**
      * @var int
      *
      * @ORM\Id
@@ -158,9 +165,9 @@ class BaseCheckout implements
     /**
      * @return string
      */
-    public function getType()
+    public function getCheckoutType()
     {
-        return '';
+        return $this->checkoutType;
     }
 
     /**

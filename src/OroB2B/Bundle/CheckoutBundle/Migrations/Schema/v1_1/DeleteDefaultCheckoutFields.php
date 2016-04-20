@@ -24,6 +24,7 @@ class DeleteDefaultCheckoutFields implements Migration, OrderedMigrationInterfac
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->deleteDefaultCheckoutFieldsFromCheckout($schema);
+        $this->addCheckoutTypeColumn($schema);
     }
 
     /**
@@ -35,7 +36,7 @@ class DeleteDefaultCheckoutFields implements Migration, OrderedMigrationInterfac
     {
         $table = $schema->getTable('orob2b_checkout');
 
-        $table->getColumn('type')->setNotnull(true);
+        $table->getColumn('checkout_discriminator')->setNotnull(true);
 
         $foreignKeys = $table->getForeignKeys();
 
@@ -52,5 +53,17 @@ class DeleteDefaultCheckoutFields implements Migration, OrderedMigrationInterfac
         $table->dropColumn('save_billing_address');
         $table->dropColumn('ship_to_billing_address');
         $table->dropColumn('save_shipping_address');
+    }
+
+    /**
+     * add checkout type column
+     *
+     * @param Schema $schema
+     */
+    protected function addCheckoutTypeColumn(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_checkout');
+
+        $table->addColumn('checkout_type', 'string', ['notnull' => false, 'length' => 30]);
     }
 }

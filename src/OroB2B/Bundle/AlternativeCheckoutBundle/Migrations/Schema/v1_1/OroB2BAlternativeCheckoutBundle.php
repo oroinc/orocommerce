@@ -109,7 +109,7 @@ class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInte
         shipping_estimate_amount,
         shipping_estimate_currency,
         payment_method,
-        type)
+        checkout_discriminator)
     SELECT workflow_step_id,
         workflow_item_id,
         source_id,
