@@ -12,12 +12,13 @@ use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
 
 class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
 {
-
     /** @var ShippingOriginEventListener */
     protected $listener;
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|ShippingOriginModelFactory */
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingOriginModelFactory */
     protected $shippingOriginModelFactory;
 
+    /** @var array  */
     protected $defaultData = [
         'region_text' => 'Alabama',
         'postal_code' => '35004',

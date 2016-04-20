@@ -12,9 +12,12 @@ class ShippingOriginEventListener
 {
     const KEY = 'shipping_origin';
 
-    /** @var  ShippingOriginModelFactory */
+    /** @var ShippingOriginModelFactory */
     protected $shippingOriginModelFactory;
 
+    /**
+     * @param ShippingOriginModelFactory $shippingOriginModelFactory
+     */
     public function __construct(ShippingOriginModelFactory $shippingOriginModelFactory)
     {
         $this->shippingOriginModelFactory = $shippingOriginModelFactory;
@@ -50,13 +53,13 @@ class ShippingOriginEventListener
             return;
         }
         $settings[$key]['value'] = [
-            'country'     => $shippingOrigin->getCountry() ? $shippingOrigin->getCountry()->getIso2Code() : null,
-            'region'      => $shippingOrigin->getRegion() ? $shippingOrigin->getRegion()->getCombinedCode() : null,
+            'country' => $shippingOrigin->getCountry() ? $shippingOrigin->getCountry()->getIso2Code() : null,
+            'region' => $shippingOrigin->getRegion() ? $shippingOrigin->getRegion()->getCombinedCode() : null,
             'region_text' => $shippingOrigin->getRegionText(),
             'postal_code' => $shippingOrigin->getPostalCode(),
-            'city'        => $shippingOrigin->getCity(),
-            'street'      => $shippingOrigin->getStreet(),
-            'street2'     => $shippingOrigin->getStreet2(),
+            'city' => $shippingOrigin->getCity(),
+            'street' => $shippingOrigin->getStreet(),
+            'street2' => $shippingOrigin->getStreet2(),
         ];
         $event->setSettings($settings);
     }
