@@ -24,7 +24,7 @@ trait CheckoutAddressesTrait
 
     /**
      * @param boolean $shipToBillingAddress
-     * @return Checkout
+     * @return $this
      */
     public function setShipToBillingAddress($shipToBillingAddress)
     {

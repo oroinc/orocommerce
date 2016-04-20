@@ -31,7 +31,7 @@ trait ShippingAddressTrait
 
     /**
      * @param boolean $saveShippingAddress
-     * @return Checkout
+     * @return $this
      */
     public function setSaveShippingAddress($saveShippingAddress)
     {
@@ -49,8 +49,8 @@ trait ShippingAddressTrait
     }
 
     /**
-     * @param OrderAddress $shippingAddress
-     * @return Checkout
+     * @param OrderAddress|null $shippingAddress
+     * @return $this
      */
     public function setShippingAddress(OrderAddress $shippingAddress = null)
     {

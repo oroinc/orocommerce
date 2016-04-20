@@ -30,8 +30,8 @@ trait BillingAddressTrait
     }
 
     /**
-     * @param OrderAddress $billingAddress
-     * @return Checkout
+     * @param OrderAddress|null $billingAddress
+     * @return $this
      */
     public function setBillingAddress(OrderAddress $billingAddress = null)
     {
@@ -50,7 +50,7 @@ trait BillingAddressTrait
 
     /**
      * @param boolean $saveBillingAddress
-     * @return Checkout
+     * @return $this
      */
     public function setSaveBillingAddress($saveBillingAddress)
     {

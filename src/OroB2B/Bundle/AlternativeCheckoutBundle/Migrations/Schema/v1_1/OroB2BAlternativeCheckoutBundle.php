@@ -53,8 +53,8 @@ class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInte
 
         $table->setPrimaryKey(['id']);
 
-        $table->addUniqueIndex(['billing_address_id'], 'uniq_default_checkout_billing_address');
-        $table->addUniqueIndex(['shipping_address_id'], 'uniq_default_checkout_shipping_address');
+        $table->addUniqueIndex(['billing_address_id'], 'uniq_def_checkout_bill_addr');
+        $table->addUniqueIndex(['shipping_address_id'], 'uniq_def_checkout_shipp_addr');
     }
 
 
