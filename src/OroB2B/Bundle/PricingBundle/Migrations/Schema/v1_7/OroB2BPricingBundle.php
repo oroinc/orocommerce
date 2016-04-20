@@ -59,6 +59,8 @@ class OroB2BPricingBundle implements Migration
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => false]);
         $table->addColumn('expire_at', 'datetime', ['notnull' => false]);
+        $table->addColumn('activate_at', 'datetime', ['notnull' => false]);
+        $table->addColumn('is_active', 'boolean', []);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['combined_price_list_id'], 'IDX_E71CEADAF4E1C8D4', []);
         $table->addIndex(['full_combined_price_list_id'], 'IDX_E71CEADA579D9EF', []);

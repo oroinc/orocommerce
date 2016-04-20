@@ -6,7 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="orob2b_cpl_activation_rule")
- * @ORM\Entity
+ * @ORM\Entity(
+ *     repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository"
+ * )
  */
 class CombinedPriceListActivationRule
 {
@@ -40,6 +42,19 @@ class CombinedPriceListActivationRule
      * @ORM\Column(name="expire_at", type="datetime", nullable=true)
      */
     protected $expireAt;
+
+    /**
+     * @var \DateTime|null
+     * @ORM\Column(name="activate_at", type="datetime", nullable=true)
+     */
+    protected $activateAt;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_active", type="boolean", nullable=false)
+     */
+    protected $active = false;
 
     /**
      * @return int
@@ -104,5 +119,40 @@ class CombinedPriceListActivationRule
         $this->expireAt = $expireAt;
 
         return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getActivateAt()
+    {
+        return $this->activateAt;
+    }
+
+    /**
+     * @param \DateTime|null $activateAt
+     * @return $this
+     */
+    public function setActivateAt(\DateTime $activateAt = null)
+    {
+        $this->activateAt = $activateAt;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * @param boolean $active
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
     }
 }
