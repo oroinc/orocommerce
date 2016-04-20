@@ -47,23 +47,26 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     /** {@inheritdoc} */
     public function getOptions(array $context = [])
     {
-        $options = $this->getOptionsResolver()->resolve($context);
-        $authorizeTransaction = $this->payflowGatewayPaymentTransactionProvider
-            ->getZeroAmountTransaction($options['entity'], $this->getPaymentMethodType());
+        $contextOptions = $this->getOptionsResolver()->resolve($context);
 
         $formView = $this->formFactory->create(CreditCardType::NAME)->createView();
 
-        $options = [
+        $viewOptions = [
             'formView' => $formView,
             'allowedCreditCards' => $this->getAllowedCreditCards(),
         ];
 
-        if ($authorizeTransaction) {
-            $options['authorizeTransaction'] = $authorizeTransaction->getId();
-            $options['acct'] = $this->getLast4($authorizeTransaction);
+        if ($this->isZeroAmountAuthorizationEnabled()) {
+            $authorizeTransaction = $this->payflowGatewayPaymentTransactionProvider
+                ->getZeroAmountTransaction($contextOptions['entity'], $this->getPaymentMethodType());
+
+            if ($authorizeTransaction) {
+                $viewOptions['authorizeTransaction'] = $authorizeTransaction->getId();
+                $viewOptions['acct'] = $this->getLast4($authorizeTransaction);
+            }
         }
 
-        return $options;
+        return $viewOptions;
     }
 
     /**
@@ -100,7 +103,7 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     /** {@inheritdoc} */
     public function getLabel()
     {
-        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_LABEL_KEY);
+        return (string)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_LABEL_KEY);
     }
 
     /**
@@ -108,7 +111,7 @@ class PayflowGatewayView implements PaymentMethodViewInterface
      */
     public function getAllowedCreditCards()
     {
-        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY);
+        return (array)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY);
     }
 
     /**
@@ -124,5 +127,13 @@ class PayflowGatewayView implements PaymentMethodViewInterface
         }
 
         return $this->optionsResolver;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isZeroAmountAuthorizationEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY);
     }
 }
