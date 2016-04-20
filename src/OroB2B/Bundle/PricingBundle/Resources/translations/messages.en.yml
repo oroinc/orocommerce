@@ -104,7 +104,7 @@ orob2b.pricing:
             default_price_lists.title: Default Price Lists
             price_rounding.title: Pricing Rounding
             pricing.title: Pricing
-            price_lists_update_mode.title: 'Price List Calculations'
+            price_lists_update.title: 'Price List Calculations'
         fields:
             price_lists.title: Price Lists
             precision.label: Pricing Precision
@@ -125,6 +125,9 @@ orob2b.pricing:
                 choices:
                     scheduled.label: 'Deferred'
                     real_time.label: 'Immediate'
+            offset_of_processing_cpl_prices:
+                label: "Offset of processing CPL prices"
+                tooltip: 'Time before CPL prices calculation starts before activation.'
 
     lineitem:
         subtotal.label: 'Line items subtotal'

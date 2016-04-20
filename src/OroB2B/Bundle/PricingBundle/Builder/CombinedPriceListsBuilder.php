@@ -11,6 +11,8 @@ use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 
 class CombinedPriceListsBuilder
 {
+    const DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES = 12;
+
     /**
      * @var PriceListCollectionProvider
      */
