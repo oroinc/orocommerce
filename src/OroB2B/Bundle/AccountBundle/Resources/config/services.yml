@@ -49,7 +49,7 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
         calls:
-            - [setClassName, ['%orob2b_product.product.class%']]
+            - [setClassName, ['%orob2b_product.entity.product.class%']]
             - [setModifier, ["@orob2b_account.model.product_visibility_query_builder_modifier"]]
         tags:
             - { name: security.voter }
@@ -89,7 +89,6 @@ services:
             - ["name"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_group, acl_resource: orob2b_account_group_view }
-        lazy: true
 
     orob2b_account.form.autocomplete.account.search_handler:
         parent: oro_form.autocomplete.search_handler
@@ -98,7 +97,6 @@ services:
             - ["name"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_account, acl_resource: orob2b_account_view }
-        lazy: true
 
     orob2b_account.form.autocomplete.account_parent.search_handler:
         parent: oro_form.autocomplete.search_handler
@@ -108,7 +106,6 @@ services:
             - ["name"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_parent, acl_resource: orob2b_account_view }
-        lazy: true
 
     orob2b_account.form.autocomplete.account_user_account.search_handler:
         parent: oro_form.autocomplete.search_handler
@@ -437,10 +434,10 @@ services:
             - "@doctrine"
             - "@orob2b_account.provider.visibility_choices"
         calls:
-            - [ addSubscribedGridConfig, { datagrid: account-group-category-visibility-grid, visibilityEntityClass: '%orob2b_account.entity.account_group_category_visibility.class%', targetEntityClass: '%orob2b_catalog.category.class%' }]
-            - [ addSubscribedGridConfig, { datagrid: account-category-visibility-grid, visibilityEntityClass: '%orob2b_account.entity.account_category_visibility.class%', targetEntityClass: '%orob2b_catalog.category.class%' }]
-            - [ addSubscribedGridConfig, { datagrid: account-group-product-visibility-grid, visibilityEntityClass: '%orob2b_account.entity.account_group_product_visibility.class%', targetEntityClass: '%orob2b_product.product.class%' }]
-            - [ addSubscribedGridConfig, { datagrid: account-product-visibility-grid, visibilityEntityClass: '%orob2b_account.entity.account_product_visibility.class%', targetEntityClass: '%orob2b_product.product.class%' }]
+            - [ addSubscribedGridConfig, { datagrid: account-group-category-visibility-grid, visibilityEntityClass: '%orob2b_account.entity.account_group_category_visibility.class%', targetEntityClass: '%orob2b_catalog.entity.category.class%' }]
+            - [ addSubscribedGridConfig, { datagrid: account-category-visibility-grid, visibilityEntityClass: '%orob2b_account.entity.account_category_visibility.class%', targetEntityClass: '%orob2b_catalog.entity.category.class%' }]
+            - [ addSubscribedGridConfig, { datagrid: account-group-product-visibility-grid, visibilityEntityClass: '%orob2b_account.entity.account_group_product_visibility.class%', targetEntityClass: '%orob2b_product.entity.product.class%' }]
+            - [ addSubscribedGridConfig, { datagrid: account-product-visibility-grid, visibilityEntityClass: '%orob2b_account.entity.account_product_visibility.class%', targetEntityClass: '%orob2b_product.entity.product.class%' }]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-category-visibility-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-group-category-visibility-grid, method: onPreBuild }

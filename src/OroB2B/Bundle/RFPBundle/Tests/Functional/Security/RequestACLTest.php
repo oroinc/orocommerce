@@ -175,16 +175,8 @@ class RequestACLTest extends WebTestCase
      */
     protected function login($email, $password)
     {
-        // Logout previous user
-        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_security_logout'));
-
-        // Login first user
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader($email, $password)
-        );
-
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
+        $this->initClient([], $this->generateBasicAuthHeader($email, $password));
+        $this->client->request('GET', '/about'); // any page to apply new user, CMS is used as the fastest one
     }
 
     /**

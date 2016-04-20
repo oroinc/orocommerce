@@ -1,6 +1,6 @@
 datagrid:
     products-select-grid-base:
-        extended_entity_name: %orob2b_product.product.class%
+        extended_entity_name: %orob2b_product.entity.product.class%
         options:
             entityHint:        product
         source:
@@ -16,7 +16,7 @@ datagrid:
                     - productInventoryStatus.name as inventoryStatusName
                     - product.status
                 from:
-                    - { table: %orob2b_product.product.class%, alias: product }
+                    - { table: %orob2b_product.entity.product.class%, alias: product }
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
@@ -138,7 +138,7 @@ datagrid:
                 acl_resource:  orob2b_product_delete
 
     frontend-products-grid:
-        extended_entity_name: %orob2b_product.product.class%
+        extended_entity_name: %orob2b_product.entity.product.class%
         options:
             entityHint:        product
             entity_pagination: true
@@ -156,7 +156,7 @@ datagrid:
                     - productInventoryStatus.name as inventoryStatusName
                     - productNames.string as name
                 from:
-                    - { table: %orob2b_product.product.class%, alias: product }
+                    - { table: %orob2b_product.entity.product.class%, alias: product }
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
@@ -280,11 +280,11 @@ datagrid:
                                ELSE false
                           END) as isVariant
                 from:
-                    - { table: %orob2b_product.product.class%, alias: product }
+                    - { table: %orob2b_product.entity.product.class%, alias: product }
                 join:
                     left:
                         -
-                            join: %orob2b_product.product_variant_link.class%
+                            join: %orob2b_product.entity.product_variant_link.class%
                             alias: currentVariantLink
                             conditionType: WITH
                             condition: currentVariantLink.product = product.id AND currentVariantLink.parentProduct = :parentProduct
@@ -325,7 +325,7 @@ datagrid:
                 select:
                     - productVariantLink.visible as visible
                 from:
-                    - { table: %orob2b_product.product_variant_link.class%, alias: productVariantLink }
+                    - { table: %orob2b_product.entity.product_variant_link.class%, alias: productVariantLink }
                 join:
                     inner:
                         - { join: productVariantLink.product, alias: product }

@@ -1,17 +1,13 @@
-parameters:
-    orob2b_warehouse.form.type.warehouse.class: OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseType
-    orob2b_warehouse.form.type.warehouse_inventoty_level_grid.class: OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType
-
 services:
     orob2b_warehouse.form.type.warehouse:
-        class: %orob2b_warehouse.form.type.warehouse.class%
+        class: 'OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseType'
         calls:
-            - [setDataClass, [%orob2b_warehouse.entity.warehouse.class%]]
+            - [setDataClass, ['%orob2b_warehouse.entity.warehouse.class%']]
         tags:
             - { name: form.type, alias: orob2b_warehouse }
 
     orob2b_warehouse.form.type.warehouse_inventoty_level_grid:
-        class: %orob2b_warehouse.form.type.warehouse_inventoty_level_grid.class%
+        class: 'OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType'
         arguments:
             - '@form.factory'
             - '@oro_entity.doctrine_helper'

@@ -7,6 +7,7 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
@@ -181,22 +182,17 @@ class QuoteControllerTest extends WebTestCase
         $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(), $result->getContent());
         $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName(), $result->getContent());
 
-        $this->client->request('GET', $this->getUrl('orob2b_sale_quote_index'));
-        $response = $this->client->requestGrid(
-            'quotes-grid',
-            ['quotes-grid[_filter][id][value]' => $id]
-        );
+        /** @var Quote $quote */
+        $quote = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BSaleBundle:Quote')
+            ->getRepository('OroB2BSaleBundle:Quote')
+            ->find($id);
 
-        $result = static::getJsonResponseContent($response, 200);
-        $this->assertCount(1, $result['data']);
-
-        $row = reset($result['data']);
-
-        $this->assertEquals(self::$qidUpdated, $row['qid']);
-        $this->assertEquals($owner->getFirstName() . ' ' . $owner->getLastName(), $row['ownerName']);
-        $this->assertEquals(self::$validUntilUpdated, $row['validUntil']);
-        $this->assertEquals(self::$poNumberUpdated, $row['poNumber']);
-        $this->assertEquals(self::$shipUntilUpdated, $row['shipUntil']);
+        $this->assertEquals(self::$qidUpdated, $quote->getQid());
+        $this->assertEquals($owner->getId(), $quote->getOwner()->getId());
+        $this->assertEquals(strtotime(self::$validUntilUpdated), $quote->getValidUntil()->getTimestamp());
+        $this->assertEquals(self::$poNumberUpdated, $quote->getPoNumber());
+        $this->assertEquals(strtotime(self::$shipUntilUpdated), $quote->getShipUntil()->getTimestamp());
 
         return $id;
     }
@@ -297,7 +293,7 @@ class QuoteControllerTest extends WebTestCase
     {
         $this->prepareProviderData($submittedData);
 
-        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_create'));
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();

@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Controller;
 
+use OroB2B\Bundle\TaxBundle\Entity\Tax;
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -27,9 +28,10 @@ class TaxControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_tax_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('tax-taxes-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -39,25 +41,27 @@ class TaxControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertTaxSave($crawler, self::TAX_CODE, self::TAX_DESCRIPTION, self::TAX_RATE);
+
+        /** @var Tax $tax */
+        $tax = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BTaxBundle:Tax')
+            ->getRepository('OroB2BTaxBundle:Tax')
+            ->findOneBy(['code' => self::TAX_CODE]);
+        $this->assertNotEmpty($tax);
+
+        return $tax->getId();
     }
 
     /**
+     * @param $id int
+     * @return int
      * @depends testCreate
      */
-    public function testUpdate()
+    public function testUpdate($id)
     {
-        $response = $this->client->requestGrid(
-            'tax-taxes-grid',
-            ['tax-taxes-grid[_filter][code][value]' => self::TAX_CODE]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id = $result['id'];
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_update', ['id' => $result['id']])
+            $this->getUrl('orob2b_tax_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);

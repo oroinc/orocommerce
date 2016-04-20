@@ -49,23 +49,23 @@ class AccountControllerTest extends WebTestCase
         $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_1);
 
         $this->assertAccountSave($crawler, self::ACCOUNT_NAME, $parent, $group, $internalRating, $accountTaxCode);
+
+        /** @var Account $taxAccount */
+        $taxAccount = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:Account')
+            ->getRepository('OroB2BAccountBundle:Account')
+            ->findOneBy(['name' => self::ACCOUNT_NAME]);
+        $this->assertNotEmpty($taxAccount);
+
+        return $taxAccount->getId();
     }
 
     /**
+     * @param $id int
      * @depends testCreate
      */
-    public function testView()
+    public function testView($id)
     {
-        $response = $this->client->requestGrid(
-            'account-accounts-grid',
-            ['account-accounts-grid[_filter][name][value]' => self::ACCOUNT_NAME]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id = $result['id'];
-
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('orob2b_account_view', ['id' => $id])
