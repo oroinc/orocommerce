@@ -2,9 +2,9 @@ orob2b:
     shipping:
         shipping_origin:
             country.label:       Country
-            region.label:        State
+            region.label:        Region/State
             region_text.label:   State
             postal_code.label:   Zip/postal code
             city.label:          City
-            street.label:        Street
-            street2.label:       Street 2
+            street.label:        Street Address 1
+            street2.label:       Street Address 2
