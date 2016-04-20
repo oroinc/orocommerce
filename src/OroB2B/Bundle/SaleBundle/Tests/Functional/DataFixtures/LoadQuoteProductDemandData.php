@@ -6,7 +6,10 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
@@ -18,14 +21,22 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
      */
     public static $items = [
         self::SELECTED_OFFER_1 => [
+            'quoteDemandReference' => 'quote.demand.1',
             'quote' => LoadQuoteData::QUOTE1,
             'offer' => LoadQuoteProductOfferData::QUOTE_PRODUCT_OFFER_1,
             'quantity' => 10,
+            'subtotal' => 122,
+            'total' => 122,
+            'currency' => 'USD'
         ],
         self::SELECTED_OFFER_2 => [
+            'quoteDemandReference' => 'quote.demand.2',
             'quote' => LoadQuoteData::QUOTE1,
             'offer' => LoadQuoteProductOfferData::QUOTE_PRODUCT_OFFER_2,
             'quantity' => 10,
+            'subtotal' => 321,
+            'total' => 321,
+            'currency' => 'UAH'
         ],
     ];
 
@@ -47,11 +58,18 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
     public function load(ObjectManager $manager)
     {
         foreach (self::$items as $key => $item) {
-            $selectedOffer = new QuoteProductDemand(
-                $this->getReference($item['quote']),
-                $this->getReference($item['offer']),
-                $item['quantity']
-            );
+            /** @var Quote $quote */
+            $quote = $this->getReference($item['quote']);
+            $quoteDemand = new QuoteDemand();
+            $quoteDemand->setQuote($quote);
+            $quoteDemand->setSubtotal($item['subtotal']);
+            $quoteDemand->setTotal($item['total']);
+            $quoteDemand->setTotalCurrency($item['currency']);
+            $manager->persist($quoteDemand);
+            $this->setReference($item['quoteDemandReference'], $quoteDemand);
+            /** @var QuoteProductOffer $offer */
+            $offer = $this->getReference($item['offer']);
+            $selectedOffer = new QuoteProductDemand($quoteDemand, $offer, $item['quantity']);
             $manager->persist($selectedOffer);
             $this->setReference($key, $selectedOffer);
         }

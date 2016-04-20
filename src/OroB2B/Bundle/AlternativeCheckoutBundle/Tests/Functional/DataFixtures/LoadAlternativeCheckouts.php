@@ -2,35 +2,49 @@
 
 namespace OroB2B\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
-
 use OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\AbstractLoadCheckouts;
 
-class LoadAlternativeCheckouts extends AbstractFixture implements DependentFixtureInterface
+class LoadAlternativeCheckouts extends AbstractLoadCheckouts
 {
     /**
-     * @var array
+     * {@inheritDoc}
      */
-    protected $data = [
-        [
-            'name' => [],
-        ],
-    ];
+    protected function getData()
+    {
+        return [
+            [
+                'name' => [
+                    'source' => 'quote.demand.1',
+                    'checkout' => []
+                ],
+            ],
+        ];
+    }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    protected function getWorkflowName()
     {
-        foreach ($this->data as $name => $checkoutData) {
-            $checkout = new AlternativeCheckout();
-            $manager->persist($checkout);
-            $this->setReference($name, $checkout);
-        }
+        return 'b2b_flow_alternative_checkout';
+    }
 
-        $manager->flush();
+    /**
+     * {@inheritDoc}
+     */
+    protected function createCheckout()
+    {
+        return new AlternativeCheckout();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getCheckoutSourceName()
+    {
+        return 'quoteDemand';
     }
 
     /**
@@ -38,8 +52,9 @@ class LoadAlternativeCheckouts extends AbstractFixture implements DependentFixtu
      */
     public function getDependencies()
     {
-        return [
-            'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData',
-        ];
+        return array_merge(
+            parent::getDependencies(),
+            ['OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData']
+        );
     }
 }
