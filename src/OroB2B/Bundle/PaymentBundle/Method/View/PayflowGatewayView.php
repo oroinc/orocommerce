@@ -3,13 +3,18 @@
 namespace OroB2B\Bundle\PaymentBundle\Method\View;
 
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
-use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType;
 use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Account;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
+use OroB2B\Bundle\PaymentBundle\Provider\PayflowGatewayPaymentTransactionProvider;
+use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
 class PayflowGatewayView implements PaymentMethodViewInterface
 {
@@ -18,25 +23,63 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     /** @var FormFactoryInterface */
     protected $formFactory;
 
+    /** @var OptionsResolver */
+    private $optionsResolver;
+
+    /** @var PayflowGatewayPaymentTransactionProvider */
+    protected $payflowGatewayPaymentTransactionProvider;
+
     /**
      * @param FormFactoryInterface $formFactory
      * @param ConfigManager $configManager
+     * @param PayflowGatewayPaymentTransactionProvider $payflowGatewayPaymentTransactionProvider
      */
-    public function __construct(FormFactoryInterface $formFactory, ConfigManager $configManager)
-    {
+    public function __construct(
+        FormFactoryInterface $formFactory,
+        ConfigManager $configManager,
+        PayflowGatewayPaymentTransactionProvider $payflowGatewayPaymentTransactionProvider
+    ) {
         $this->formFactory = $formFactory;
         $this->configManager = $configManager;
+        $this->payflowGatewayPaymentTransactionProvider = $payflowGatewayPaymentTransactionProvider;
     }
 
     /** {@inheritdoc} */
-    public function getOptions()
+    public function getOptions(array $context = [])
     {
+        $contextOptions = $this->getOptionsResolver()->resolve($context);
+
         $formView = $this->formFactory->create(CreditCardType::NAME)->createView();
 
-        return [
+        $viewOptions = [
             'formView' => $formView,
-            'allowedCreditCards' => $this->getAllowedCreditCards()
+            'allowedCreditCards' => $this->getAllowedCreditCards(),
         ];
+
+        if ($this->isZeroAmountAuthorizationEnabled()) {
+            $authorizeTransaction = $this->payflowGatewayPaymentTransactionProvider
+                ->getZeroAmountTransaction($contextOptions['entity'], $this->getPaymentMethodType());
+
+            if ($authorizeTransaction) {
+                $viewOptions['authorizeTransaction'] = $authorizeTransaction->getId();
+                $viewOptions['acct'] = $this->getLast4($authorizeTransaction);
+            }
+        }
+
+        return $viewOptions;
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return string|null
+     */
+    protected function getLast4(PaymentTransaction $paymentTransaction)
+    {
+        $response = new Response($paymentTransaction->getResponse());
+
+        $acct = $response->getOffset(Account::ACCT);
+
+        return substr($acct, strlen($acct) - 4, 4);
     }
 
     /** {@inheritdoc} */
@@ -60,7 +103,7 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     /** {@inheritdoc} */
     public function getLabel()
     {
-        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_LABEL_KEY);
+        return (string)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_LABEL_KEY);
     }
 
     /**
@@ -68,6 +111,29 @@ class PayflowGatewayView implements PaymentMethodViewInterface
      */
     public function getAllowedCreditCards()
     {
-        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY);
+        return (array)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY);
+    }
+
+    /**
+     * @return OptionsResolver
+     */
+    public function getOptionsResolver()
+    {
+        if (!$this->optionsResolver) {
+            $this->optionsResolver = new OptionsResolver();
+            $this->optionsResolver
+                ->setRequired('entity')
+                ->addAllowedTypes('entity', ['object']);
+        }
+
+        return $this->optionsResolver;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isZeroAmountAuthorizationEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY);
     }
 }

@@ -46,11 +46,30 @@ class PaymentMethodsProvider implements DataProviderInterface
                 $this->data[$name] = [
                     'label' => $view->getLabel(),
                     'block' => $view->getBlock(),
-                    'options' => $view->getOptions(),
+                    'options' => $view->getOptions(['entity' => $this->getEntity($context)]),
                 ];
             }
         }
 
         return $this->data;
+    }
+
+    /**
+     * @param ContextInterface $context
+     * @return object|null
+     */
+    protected function getEntity(ContextInterface $context)
+    {
+        $entity = null;
+        $contextData = $context->data();
+        if ($contextData->has('entity')) {
+            $entity = $contextData->get('entity');
+        }
+
+        if (!$entity && $contextData->has('checkout')) {
+            $entity = $contextData->get('checkout');
+        }
+
+        return $entity;
     }
 }

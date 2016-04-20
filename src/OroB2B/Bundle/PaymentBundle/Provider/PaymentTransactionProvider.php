@@ -6,7 +6,11 @@ use Doctrine\ORM\EntityManagerInterface;
 
 use Psr\Log\LoggerAwareTrait;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
@@ -21,22 +25,31 @@ class PaymentTransactionProvider
     /** @var string */
     protected $paymentTransactionClass;
 
+    /** @var TokenStorageInterface */
+    protected $tokenStorage;
+
     /**
      * @param DoctrineHelper $doctrineHelper
+     * @param TokenStorageInterface $tokenStorage
      * @param string $paymentTransactionClass
      */
-    public function __construct(DoctrineHelper $doctrineHelper, $paymentTransactionClass)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        TokenStorageInterface $tokenStorage,
+        $paymentTransactionClass
+    ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->paymentTransactionClass = $paymentTransactionClass;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
      * @param object $object
      * @param array $filter
+     * @param array $orderBy
      * @return PaymentTransaction
      */
-    public function getPaymentTransaction($object, array $filter = [])
+    public function getPaymentTransaction($object, array $filter = [], array $orderBy = [])
     {
         $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
@@ -47,9 +60,29 @@ class PaymentTransactionProvider
                 [
                     'entityClass' => $className,
                     'entityIdentifier' => $identifier,
+                    'frontendOwner' => $this->getAccountUser()
                 ]
-            )
+            ),
+            $orderBy
         );
+    }
+
+    /**
+     * @return AccountUser|null
+     */
+    protected function getAccountUser()
+    {
+        $token = $this->tokenStorage->getToken();
+        if (!$token) {
+            return null;
+        }
+
+        $user = $token->getUser();
+        if ($user instanceof AccountUser) {
+            return $user;
+        }
+
+        return null;
     }
 
     /**
@@ -68,6 +101,7 @@ class PaymentTransactionProvider
                 [
                     'entityClass' => $className,
                     'entityIdentifier' => $identifier,
+                    'frontendOwner' => $this->getAccountUser()
                 ]
             )
         );
@@ -89,6 +123,7 @@ class PaymentTransactionProvider
                 'action' => PaymentMethodInterface::AUTHORIZE,
                 'amount' => round($amount, 2),
                 'currency' => $currency,
+                'frontendOwner' => $this->getAccountUser()
             ]
         );
     }
@@ -110,7 +145,8 @@ class PaymentTransactionProvider
             ->setPaymentMethod($paymentMethod)
             ->setAction($type)
             ->setEntityClass($className)
-            ->setEntityIdentifier($identifier);
+            ->setEntityIdentifier($identifier)
+            ->setFrontendOwner($this->getAccountUser());
 
         return $paymentTransaction;
     }
@@ -134,5 +170,7 @@ class PaymentTransactionProvider
                 $this->logger->error($e->getMessage(), $e->getTrace());
             }
         }
+
+        $em->flush($paymentTransaction);
     }
 }

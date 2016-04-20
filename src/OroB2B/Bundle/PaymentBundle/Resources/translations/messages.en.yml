@@ -88,7 +88,7 @@ orob2b:
                 enable_ssl_verification.label: 'Enable SSL Verification'
                 require_cvv.label: 'Require CVV Entry'
                 validate_cvv.label: 'Validate CVV'
-                zero_dollar_authorization.label: 'Zero Dollar Authorization'
+                zero_amount_authorization.label: 'Zero Amount Authorization'
 
         security.transaction: Work with payments
         capture: Capture
@@ -110,3 +110,7 @@ orob2b:
         result:
             token_expired: Authorization token expired, please try one more time
             error: Payment failed
+
+        payflow:
+            authorized_card: 'Credit Card ************{{ last4 }}'
+            use_different_card: 'Use a different card'

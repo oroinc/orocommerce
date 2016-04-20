@@ -22,14 +22,18 @@ class PayPalPaymentsProView extends PayflowGatewayView
     /** {@inheritdoc} */
     public function getLabel()
     {
-        return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_LABEL_KEY);
+        return (string)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_LABEL_KEY);
     }
 
-    /**
-     * @return mixed
-     */
+    /** {@inheritdoc} */
     public function getAllowedCreditCards()
     {
-        return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_CC_TYPES_KEY);
+        return (array)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_CC_TYPES_KEY);
+    }
+
+    /** {@inheritdoc} */
+    protected function isZeroAmountAuthorizationEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ZERO_AMOUNT_AUTHORIZATION_KEY);
     }
 }
