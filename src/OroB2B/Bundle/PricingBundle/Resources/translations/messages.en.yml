@@ -6,6 +6,7 @@ orob2b.pricing:
         id.label: Id
         name.label: Name
         default.label: Is Default
+        active.label: Active
         currencies.label: Currencies
         has_price_list.label: Has Price List
         set_default:
