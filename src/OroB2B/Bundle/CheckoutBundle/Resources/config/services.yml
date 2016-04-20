@@ -1,5 +1,5 @@
 parameters:
-    orob2b_checkout.entity.abstract_checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\AbstractCheckout
+    orob2b_checkout.entity.base_checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout
     orob2b_checkout.entity.checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
     orob2b_checkout.entity.checkout_source.class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
 

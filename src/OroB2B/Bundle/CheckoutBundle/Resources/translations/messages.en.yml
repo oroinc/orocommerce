@@ -30,7 +30,7 @@ orob2b:
         created_at.label: Started At
         updated_at.label: Last Updated
         shipping_cost.label: Shipping
-        panding_orders.label: Panding Orders
+        pending_orders.label: Pending Orders
         ordered_by.label: Ordered By
 
         checkoutsource:
