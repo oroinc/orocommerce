@@ -12,6 +12,8 @@
                     {% set currencies = currencies|merge([currency|oro_localized_currency_name]) %}
                 {% endfor %}
                 {{ UI.renderHtmlProperty('orob2b.pricing.pricelist.currencies.label'|trans, UI.renderList(currencies)) }}
+                {% set status = entity.active ? 'orob2b.pricing.pricelist.status.activated'|trans : 'orob2b.pricing.pricelist.status.disabled'|trans %}
+                {{ UI.renderHtmlProperty('orob2b.pricing.pricelist.status.label'|trans, status) }}
             {% endif %}
         </div>
     </div>

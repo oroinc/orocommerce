@@ -86,8 +86,8 @@ class PriceListType extends AbstractType
                     'label' => 'orob2b.pricing.pricelist.currencies.label',
                     'additional_currencies' => $priceList ? $priceList->getCurrencies() : [],
                 ]
-            );
-        ;
+            )
+            ->add('active', 'checkbox', ['label' => 'orob2b.pricing.pricelist.active.label']);
     }
 
     /**

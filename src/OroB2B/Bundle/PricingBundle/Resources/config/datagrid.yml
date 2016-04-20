@@ -10,6 +10,7 @@ datagrid:
                     - priceList.id
                     - priceList.name
                     - priceList.default
+                    - priceList.active
                     - priceList.createdAt
                     - priceList.updatedAt
                 from:
@@ -19,6 +20,9 @@ datagrid:
                 label:         orob2b.pricing.pricelist.name.label
             default:
                 label:         orob2b.pricing.pricelist.default.label
+                frontend_type: boolean
+            active:
+                label:         orob2b.pricing.pricelist.active.label
                 frontend_type: boolean
             createdAt:
                 label:         oro.ui.created_at
@@ -38,6 +42,8 @@ datagrid:
                     data_name: priceList.updatedAt
                 default:
                     data_name: priceList.default
+                active:
+                    data_name: priceList.active
             default:
                 createdAt:     %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
@@ -54,6 +60,9 @@ datagrid:
                 default:
                     type:      boolean
                     data_name: priceList.default
+                active:
+                    type:      boolean
+                    data_name: priceList.active
 
     pricing-price-list-grid:
         extends: pricing-price-list-select-grid
