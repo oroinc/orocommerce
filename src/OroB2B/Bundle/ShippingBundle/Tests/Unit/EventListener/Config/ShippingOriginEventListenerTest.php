@@ -12,20 +12,23 @@ use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
 
 class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
 {
-
     /** @var ShippingOriginEventListener */
     protected $listener;
+
     /** @var  \PHPUnit_Framework_MockObject_MockObject|ShippingOriginModelFactory */
     protected $shippingOriginModelFactory;
 
+    /**
+     * @var array
+     */
     protected $defaultData = [
         'region_text' => 'Alabama',
         'postal_code' => '35004',
-        'country'     => 'US',
-        'region'      => 'US-AL',
-        'city'        => 'City',
-        'street'      => 'Street',
-        'street2'     => 'Street2',
+        'country' => 'US',
+        'region' => 'US-AL',
+        'city' => 'City',
+        'street' => 'Street',
+        'street2' => 'Street2',
     ];
 
     protected function setUp()
@@ -70,11 +73,11 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
                         'value' => [
                             'region_text' => 'Alabama',
                             'postal_code' => '35004',
-                            'country'     => 'US',
-                            'region'      => 'US-AL',
-                            'city'        => 'City',
-                            'street'      => 'Street',
-                            'street2'     => 'Street2',
+                            'country' => 'US',
+                            'region' => 'US-AL',
+                            'city' => 'City',
+                            'street' => 'Street',
+                            'street2' => 'Street2',
                         ],
                     ],
                 ]
@@ -181,7 +184,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
         /** @var ConfigSettingsUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent')
             ->disableOriginalConstructor()->getMock();
-        $address ='some_value';
+        $address = 'some_value';
         $event->expects($this->once())->method('getSettings')
             ->willReturn(['oro_b2b_shipping.shipping_origin' => ['value' => $address]]);
         $this->shippingOriginModelFactory->expects($this->never())->method($this->anything());

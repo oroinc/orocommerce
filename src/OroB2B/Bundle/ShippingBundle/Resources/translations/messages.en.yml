@@ -1,0 +1,9 @@
+orob2b.shipping:
+    system_configuration:
+        groups:
+            shipping.title: Shipping
+            shipping_origin.title: Shipping Origin
+        fields:
+            origin_address.label: Shipping Origin Address
+    other:
+        test: abc
