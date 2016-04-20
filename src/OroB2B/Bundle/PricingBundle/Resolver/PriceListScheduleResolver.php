@@ -32,6 +32,8 @@ class PriceListScheduleResolver
                 $turnedOffPriceLists[$scheduleItem->getPriceList()->getId()] = true;
                 $time = $scheduleItem->getActiveAt()->getTimestamp();
                 $schedule[$time][$scheduleItem->getPriceList()->getId()] = self::ON;
+            } else {
+                $turnedOffPriceLists[0] = true;
             }
             if ($scheduleItem->getDeactivateAt()) {
                 $time = $scheduleItem->getDeactivateAt()->getTimestamp();

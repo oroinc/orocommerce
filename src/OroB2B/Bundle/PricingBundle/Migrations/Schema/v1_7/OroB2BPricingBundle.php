@@ -18,13 +18,13 @@ class OroB2BPricingBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->createOrob2BPriceListScheduleTable($schema);
-        $this->createOrob2BCplActivationRuleTable($schema);
+        $this->createOroB2BPriceListScheduleTable($schema);
+        $this->createOroB2BCplActivationRuleTable($schema);
         $this->addOrob2BPriceListScheduleForeignKeys($schema);
         $this->addOrob2BCplActivationRuleForeignKeys($schema);
         $this->alterOrob2BCmbPriceListToAccTable($schema);
-        $this->alterOrob2BCmbPriceListToAccGrTable($schema);
-        $this->alterOrob2BCmbPriceListToWsTable($schema);
+        $this->alterOroB2BCmbPriceListToAccGrTable($schema);
+        $this->alterOroB2BCmbPriceListToWsTable($schema);
 
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_acc'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_plist_to_acc_gr'));
@@ -36,7 +36,7 @@ class OroB2BPricingBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BPriceListScheduleTable(Schema $schema)
+    protected function createOroB2BPriceListScheduleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list_schedule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -52,14 +52,14 @@ class OroB2BPricingBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BCplActivationRuleTable(Schema $schema)
+    protected function createOroB2BCplActivationRuleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_cpl_activation_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => false]);
-        $table->addColumn('expire_at', 'datetime', ['notnull' => false]);
         $table->addColumn('activate_at', 'datetime', ['notnull' => false]);
+        $table->addColumn('expire_at', 'datetime', ['notnull' => false]);
         $table->addColumn('is_active', 'boolean', []);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['combined_price_list_id'], 'IDX_E71CEADAF4E1C8D4', []);
@@ -126,7 +126,7 @@ class OroB2BPricingBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function alterOrob2BCmbPriceListToAccGrTable(Schema $schema)
+    protected function alterOroB2BCmbPriceListToAccGrTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_cmb_plist_to_acc_gr');
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);
@@ -143,7 +143,7 @@ class OroB2BPricingBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function alterOrob2BCmbPriceListToWsTable(Schema $schema)
+    protected function alterOroB2BCmbPriceListToWsTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_cmb_price_list_to_ws');
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);

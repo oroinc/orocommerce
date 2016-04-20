@@ -73,6 +73,24 @@ class PriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'priceListSchedules' => [
+                    ['id' => 2, PriceListScheduleResolver::ON => null, PriceListScheduleResolver::OFF => 20160103],
+                ],
+                'priceListRelations' => [2],
+                'expectedResult' => [
+                    0        => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [2],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => 20160103
+                    ],
+                    20160103 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => 20160103,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => null
+                    ],
+                ]
+            ],
+            [
+                'priceListSchedules' => [
                     ['id' => 2, PriceListScheduleResolver::ON => 20160102, PriceListScheduleResolver::OFF => 20160103],
                     ['id' => 3, PriceListScheduleResolver::ON => 20160103, PriceListScheduleResolver::OFF => 20160106],
                     ['id' => 2, PriceListScheduleResolver::ON => 20160105, PriceListScheduleResolver::OFF => 20160108],
