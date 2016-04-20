@@ -10,8 +10,6 @@ class OroB2BShippingExtensionTest extends ExtensionTestCase
     public function testLoad()
     {
         $this->loadExtension(new OroB2BShippingExtension());
-
-        $this->assertExtensionConfigsLoaded([OroB2BShippingExtension::ALIAS]);
     }
 
     /**

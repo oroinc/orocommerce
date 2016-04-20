@@ -2,140 +2,141 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Model;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
-class ShippingOrigin
+class ShippingOrigin extends AbstractAddress
 {
-    /** @var Country */
-    private $country;
-
-    /** @var Region */
-    private $region;
-
-    /** @var string */
-    private $postalCode;
-
-    /** @var string */
-    private $city;
-
-    /** @var string */
-    private $street;
-
-    /** @var string */
-    private $street2;
+    /** @var \ArrayObject */
+    protected $data;
 
     /**
-     * @return Country
+     * @param array $data
      */
-    public function getCountry()
+    public function __construct(array $data = [])
     {
-        return $this->country;
+        $this->data = new \ArrayObject($data);
+
+        if (!empty($data['city'])) {
+            $this->setCity($data['city']);
+        }
+        if (!empty($data['street'])) {
+            $this->setStreet($data['street']);
+        }
+        if (!empty($data['street2'])) {
+            $this->setStreet2($data['street2']);
+        }
     }
 
-    /**
-     * @param Country $country
-     * @return $this
-     */
-    public function setCountry(Country $country = null)
+    /** {@inheritdoc} */
+    public function setCountry($country)
     {
-        $this->country = $country;
+        $this->data->offsetSet('country', $country);
 
-        return $this;
+        return parent::setCountry($country);
     }
 
-    /**
-     * @return Region
-     */
-    public function getRegion()
+    /** {@inheritdoc} */
+    public function setRegion($region)
     {
-        return $this->region;
+        $this->data->offsetSet('region', $region);
+
+        return parent::setRegion($region);
     }
 
-    /**
-     * @param Region $region
-     * @return $this
-     */
-    public function setRegion(Region $region = null)
+    /** {@inheritdoc} */
+    public function setRegionText($regionText)
     {
-        $this->region = $region;
+        $this->data->offsetSet('region_text', $regionText);
 
-        return $this;
+        return parent::setRegionText($regionText);
     }
 
-    /**
-     * @return string
-     */
-    public function getPostalCode()
-    {
-        return $this->postalCode;
-    }
-
-    /**
-     * @param string $postalCode
-     * @return $this
-     */
+    /** {@inheritdoc} */
     public function setPostalCode($postalCode)
     {
-        $this->postalCode = $postalCode;
+        $this->data->offsetSet('postal_code', $postalCode);
 
-        return $this;
+        return parent::setPostalCode($postalCode);
     }
 
-    /**
-     * @return string
-     */
-    public function getCity()
-    {
-        return $this->city;
-    }
-
-    /**
-     * @param string $city
-     * @return $this
-     */
+    /** {@inheritdoc} */
     public function setCity($city)
     {
-        $this->city = $city;
+        $this->data->offsetSet('city', $city);
 
-        return $this;
+        return parent::setCity($city);
     }
 
-    /**
-     * @return string
-     */
-    public function getStreet()
-    {
-        return $this->street;
-    }
-
-    /**
-     * @param string $street
-     * @return $this
-     */
+    /** {@inheritdoc} */
     public function setStreet($street)
     {
-        $this->street = $street;
+        $this->data->offsetSet('street', $street);
 
-        return $this;
+        return parent::setStreet($street);
     }
 
-    /**
-     * @return string
-     */
-    public function getStreet2()
-    {
-        return $this->street2;
-    }
-
-    /**
-     * @param string $street2
-     * @return $this
-     */
+    /** {@inheritdoc} */
     public function setStreet2($street2)
     {
-        $this->street2 = $street2;
+        $this->data->offsetSet('street2', $street2);
 
-        return $this;
+        return parent::setStreet2($street2);
+    }
+
+    /** {@inheritdoc} */
+    public function getCountry()
+    {
+        return $this->getOffset('country');
+    }
+
+    /** {@inheritdoc} */
+    public function getRegion()
+    {
+        return $this->getOffset('region');
+    }
+
+    /** {@inheritdoc} */
+    public function getRegionText()
+    {
+        return $this->getOffset('region_text');
+    }
+
+    /** {@inheritdoc} */
+    public function getPostalCode()
+    {
+        return $this->getOffset('postal_code');
+    }
+
+    /** {@inheritdoc} */
+    public function getCity()
+    {
+        return $this->getOffset('city');
+    }
+
+    /** {@inheritdoc} */
+    public function getStreet()
+    {
+        return $this->getOffset('street');
+    }
+
+    /** {@inheritdoc} */
+    public function getStreet2()
+    {
+        return $this->getOffset('street2');
+    }
+
+    /**
+     * @param string $offset
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    protected function getOffset($offset, $default = null)
+    {
+        if ($this->data->offsetExists((string) $offset)) {
+            return $this->data->offsetGet((string) $offset);
+        }
+
+        return $default;
     }
 }
