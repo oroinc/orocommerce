@@ -11,7 +11,7 @@ abstract class FrontendActionTestCase extends ActionTestCase
      */
     protected function getOperationExecutionRoute()
     {
-        return 'orob2b_api_frontend_action_execute_operations';
+        return 'orob2b_frontend_action_operation_execute';
     }
 
     /**
