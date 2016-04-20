@@ -8,7 +8,6 @@
 {% oro_title_set({params : {"%label%": entity.label|default('N/A'|trans), '%entityName%': 'orob2b.account.accountuserrole.entity_label'|trans} }) %}
 
 {% block navButtons %}
-
     {% set fields = [] %}
     {% for name, child in form %}
         {% if name not in ['appendUsers', 'removeUsers', 'entity', 'privileges', 'action'] %}
@@ -30,8 +29,10 @@
          data-page-component-options="{{ options|json_encode }}">
     </div>
 
-    {{ parent() }}
-
+    {% if entity.id and resource_granted('DELETE', entity) %}
+        {{ parent() }}
+        {{ UI.buttonSeparator() }}
+    {% endif %}
     {{ UI.cancelButton(path('orob2b_account_account_user_role_index')) }}
     {% set html = UI.buttonType({'type': 'button', 'class': 'btn-success role-submit', 'label': 'Save and Close'|trans}) %}
     {% if entity.id or resource_granted('orob2b_account_account_user_role_update') %}

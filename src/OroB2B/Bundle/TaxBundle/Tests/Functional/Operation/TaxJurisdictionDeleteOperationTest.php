@@ -28,22 +28,11 @@ class TaxJurisdictionDeleteOperationTest extends ActionTestCase
         $taxJurisdiction = $this->getReference(
             LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_1
         );
-        $taxJurisdictionId = $taxJurisdiction->getId();
 
-        $this->assertExecuteOperation(
-            'DELETE',
-            $taxJurisdictionId,
-            $this->getContainer()->getParameter('orob2b_tax.entity.tax_jurisdiction.class')
-        );
-
-        $this->assertEquals(
-            [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_tax_jurisdiction_index')
-            ],
-            json_decode($this->client->getResponse()->getContent(), true)
+        $this->assertDeleteOperation(
+            $taxJurisdiction->getId(),
+            'orob2b_tax.entity.tax_jurisdiction.class',
+            'orob2b_tax_jurisdiction_index'
         );
     }
 }

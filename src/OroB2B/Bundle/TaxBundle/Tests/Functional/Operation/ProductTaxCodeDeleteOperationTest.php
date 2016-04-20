@@ -25,22 +25,11 @@ class ProductTaxCodeDeleteOperationTest extends ActionTestCase
     public function testDelete()
     {
         $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
-        $productTaxCodeId = $productTaxCode->getId();
 
-        $this->assertExecuteOperation(
-            'DELETE',
-            $productTaxCodeId,
-            $this->getContainer()->getParameter('orob2b_tax.entity.product_tax_code.class')
-        );
-
-        $this->assertEquals(
-            [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_tax_product_tax_code_index')
-            ],
-            json_decode($this->client->getResponse()->getContent(), true)
+        $this->assertDeleteOperation(
+            $productTaxCode->getId(),
+            'orob2b_tax.entity.product_tax_code.class',
+            'orob2b_tax_product_tax_code_index'
         );
     }
 }

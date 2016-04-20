@@ -25,22 +25,7 @@ class TaxDeleteOperationTest extends ActionTestCase
     public function testDelete()
     {
         $tax = $this->getReference(LoadTaxes::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_1);
-        $taxId = $tax->getId();
 
-        $this->assertExecuteOperation(
-            'DELETE',
-            $taxId,
-            $this->getContainer()->getParameter('orob2b_tax.entity.tax.class')
-        );
-
-        $this->assertEquals(
-            [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_tax_index')
-            ],
-            json_decode($this->client->getResponse()->getContent(), true)
-        );
+        $this->assertDeleteOperation($tax->getId(), 'orob2b_tax.entity.tax.class', 'orob2b_tax_index');
     }
 }

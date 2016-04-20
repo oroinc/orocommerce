@@ -26,22 +26,7 @@ class AccountDeleteOperationTest extends ActionTestCase
     {
         /** @var Account $account */
         $account = $this->getReference('account.orphan');
-        $accountId = $account->getId();
 
-        $this->assertExecuteOperation(
-            'DELETE',
-            $accountId,
-            $this->getContainer()->getParameter('orob2b_account.entity.account.class')
-        );
-
-        $this->assertEquals(
-            [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_account_index')
-            ],
-            json_decode($this->client->getResponse()->getContent(), true)
-        );
+        $this->assertDeleteOperation($account->getId(), 'orob2b_account.entity.account.class', 'orob2b_account_index');
     }
 }

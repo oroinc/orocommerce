@@ -33,20 +33,10 @@ class AccountUserDeleteOperationTest extends ActionTestCase
         $this->assertNotNull($user);
         $id = $user->getId();
 
-        $this->assertExecuteOperation(
-            'DELETE',
+        $this->assertDeleteOperation(
             $id,
-            $this->getContainer()->getParameter('orob2b_account.entity.account_user.class')
-        );
-
-        $this->assertEquals(
-            [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_account_account_user_index')
-            ],
-            json_decode($this->client->getResponse()->getContent(), true)
+            'orob2b_account.entity.account_user.class',
+            'orob2b_account_account_user_index'
         );
 
         $this->getObjectManager()->clear();

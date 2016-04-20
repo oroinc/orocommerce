@@ -1,6 +1,5 @@
 datagrid:
     cms-login-page-grid:
-        entity_name: %orob2b_cms.entity.loginpage.class%
         acl_resource: orob2b_cms_loginpage_view
         options:
             entity_pagination: true
@@ -28,5 +27,3 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_cms_loginpage_view
                 rowAction:     true
-        action_configuration:
-            delete: false

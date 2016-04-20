@@ -112,8 +112,6 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_shopping_list_view
                 rowAction:     true
-        action_configuration:
-            delete: false
 
     shopping-list-line-items-grid:
         acl_resource:      orob2b_shopping_list_view

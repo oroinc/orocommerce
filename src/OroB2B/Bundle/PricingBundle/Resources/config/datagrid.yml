@@ -57,7 +57,6 @@ datagrid:
 
     pricing-price-list-grid:
         extends: pricing-price-list-select-grid
-        entity_name: %orob2b_pricing.entity.price_list.class%
         options:
             entity_pagination: true
         properties:
@@ -372,7 +371,6 @@ datagrid:
                     excluded:   '#priceListRemoveWebsites'
 
     price-list-product-prices-grid:
-        entity_name: %orob2b_pricing.entity.product_price.class%
         acl_resource:      orob2b_pricing_product_price_view
         options:
             entityHint:        productPrice

@@ -28,7 +28,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\Entity
  * @Config(
  *      routeName="orob2b_invoice_index",
- *      routeView="orob2b_invoice_view",
  *      routeUpdate="orob2b_invoice_update",
  *      defaultValues={
  *          "ownership"={

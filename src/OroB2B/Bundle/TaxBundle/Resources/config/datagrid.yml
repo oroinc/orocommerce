@@ -60,7 +60,6 @@ datagrid:
                 rowAction:     true
 
     tax-product-tax-codes-grid:
-        entity_name: %orob2b_tax.entity.product_tax_code.class%
         acl_resource: orob2b_tax_product_tax_code_view
         extends: tax-base-tax-codes-grid
         options:
@@ -82,7 +81,6 @@ datagrid:
                 acl_resource:  orob2b_tax_product_tax_code_view
 
     tax-account-tax-codes-grid:
-        entity_name: %orob2b_tax.entity.account_tax_code.class%
         acl_resource: orob2b_tax_account_tax_code_view
         extends: tax-base-tax-codes-grid
         options:
@@ -114,7 +112,6 @@ datagrid:
         actions: ~
 
     tax-taxes-grid:
-        entity_name: %orob2b_tax.entity.tax.class%
         acl_resource: orob2b_tax_view
         options:
             entityHint: tax
@@ -196,7 +193,6 @@ datagrid:
         actions: ~
 
     tax-taxe-rules-grid:
-        entity_name: %orob2b_tax.entity.tax_rule.class%
         acl_resource: orob2b_tax_rule_view
         options:
             entityHint: tax

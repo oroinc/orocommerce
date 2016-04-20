@@ -66,7 +66,6 @@ datagrid:
 
     account-accounts-grid:
         extends: account-accounts-select-grid
-        entity_name: %orob2b_account.entity.account.class%
         options:
             entity_pagination: true
         properties:
@@ -151,7 +150,6 @@ datagrid:
                 acl_resource:  orob2b_account_group_delete
 
     account-group-accounts-grid-basic:
-        entity_name: %orob2b_account.entity.account.class%
         acl_resource: orob2b_account_view
         source:
             type: orm
@@ -192,8 +190,6 @@ datagrid:
                 link:         view_link
                 icon:         eye-open
                 acl_resource: orob2b_account_view
-        action_configuration:
-            delete: false
         options:
             entityHint: account
 
@@ -357,15 +353,9 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_account_account_user_view
                 rowAction:     true
-        action_configuration:
-            update: false
-            delete: false
 
     account-account-user-select-grid:
         extends:  account-account-user-grid-base
-        action_configuration:
-            update: false
-            delete: false
 
     basic-account-account-user-roles-grid:
         options:
@@ -426,7 +416,6 @@ datagrid:
                 rowAction:     true
 
     account-account-user-roles-grid:
-        entity_name: %orob2b_account.entity.account_user_role.class%
         acl_resource: orob2b_account_account_user_role_view
         extends: basic-account-account-user-roles-grid
         source:
@@ -710,8 +699,6 @@ datagrid:
         properties:
             update_link:
                 route: orob2b_account_account_user_role_update
-#            delete_link:
-#                route: orob2b_api_account_delete_accountuserrole
 
     frontend-account-account-users-grid-update:
         extends: frontend-account-account-users-grid-basic

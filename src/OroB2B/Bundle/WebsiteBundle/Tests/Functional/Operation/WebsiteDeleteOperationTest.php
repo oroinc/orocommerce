@@ -29,21 +29,7 @@ class WebsiteDeleteOperationTest extends ActionTestCase
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $websiteId = $website->getId();
 
-        $this->assertExecuteOperation(
-            'DELETE',
-            $websiteId,
-            $this->getContainer()->getParameter('orob2b_website.entity.website.class')
-        );
-
-        $this->assertEquals(
-            [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_website_index')
-            ],
-            json_decode($this->client->getResponse()->getContent(), true)
-        );
+        $this->assertDeleteOperation($websiteId, 'orob2b_website.entity.website.class', 'orob2b_website_index');
 
         $this->client->followRedirects();
         $this->client->request('GET', $this->getUrl('orob2b_website_view', ['id' => $websiteId]));

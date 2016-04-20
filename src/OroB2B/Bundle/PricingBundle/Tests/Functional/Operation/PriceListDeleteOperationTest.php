@@ -24,20 +24,10 @@ class PriceListDeleteOperationTest extends ActionTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
 
-        $this->assertExecuteOperation(
-            'DELETE',
+        $this->assertDeleteOperation(
             $priceList->getId(),
-            $this->getContainer()->getParameter('orob2b_pricing.entity.price_list.class')
-        );
-
-        $this->assertEquals(
-            [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_pricing_price_list_index')
-            ],
-            json_decode($this->client->getResponse()->getContent(), true)
+            'orob2b_pricing.entity.price_list.class',
+            'orob2b_pricing_price_list_index'
         );
     }
 

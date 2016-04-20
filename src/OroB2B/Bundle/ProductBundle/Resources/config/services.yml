@@ -7,13 +7,6 @@ parameters:
     orob2b_product.event_listener.scoped_product_select_db_query.common_class: OroB2B\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener
 
 services:
-    orob2b_product.product.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%orob2b_product.entity.product.class%'
-            - "@doctrine.orm.entity_manager"
-
     orob2b_product.service.abstract_rounding:
         class: 'OroB2B\Bundle\ProductBundle\Rounding\AbstractRoundingService'
         abstract: true

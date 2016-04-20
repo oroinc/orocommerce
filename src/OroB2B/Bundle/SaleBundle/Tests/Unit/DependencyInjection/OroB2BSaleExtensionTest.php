@@ -17,7 +17,6 @@ class OroB2BSaleExtensionTest extends ExtensionTestCase
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
-            'orob2b_sale.quote.manager.api',
             // validators
             'orob2b_sale.validator.quote_product',
             // form types

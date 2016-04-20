@@ -27,22 +27,7 @@ class TaxRuleDeleteOperationTest extends ActionTestCase
         $taxRule = $this->getReference(
             LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_1
         );
-        $taxRuleId = $taxRule->getId();
 
-        $this->assertExecuteOperation(
-            'DELETE',
-            $taxRuleId,
-            $this->getContainer()->getParameter('orob2b_tax.entity.tax_rule.class')
-        );
-
-        $this->assertEquals(
-            [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_tax_rule_index')
-            ],
-            json_decode($this->client->getResponse()->getContent(), true)
-        );
+        $this->assertDeleteOperation($taxRule->getId(), 'orob2b_tax.entity.tax_rule.class', 'orob2b_tax_rule_index');
     }
 }

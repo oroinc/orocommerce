@@ -27,22 +27,7 @@ class OrderDeleteOperationTest extends ActionTestCase
     {
         /** @var Order $order */
         $order = $this->getReference('simple_order');
-        $orderId = $order->getId();
 
-        $this->assertExecuteOperation(
-            'DELETE',
-            $orderId,
-            $this->getContainer()->getParameter('orob2b_order.entity.order.class')
-        );
-
-        $this->assertEquals(
-            [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_order_index')
-            ],
-            json_decode($this->client->getResponse()->getContent(), true)
-        );
+        $this->assertDeleteOperation($order->getId(), 'orob2b_order.entity.order.class', 'orob2b_order_index');
     }
 }

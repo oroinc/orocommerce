@@ -5,7 +5,10 @@
 {% oro_title_set({params : {"%accountName%": entity.name|default('N/A'|trans), '%entityName%': 'orob2b.account.entity_label'|trans} }) %}
 
 {% block navButtons %}
-    {{ parent() }}
+    {% if entity.id and resource_granted('DELETE', entity) %}
+        {{ parent() }}
+        {{ UI.buttonSeparator() }}
+    {% endif %}
     {{ UI.cancelButton(path('orob2b_account_index')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_account_update') %}

@@ -1,6 +1,5 @@
 datagrid:
     invoices-grid:
-        entity_name: %orob2b_invoice.entity.invoice.class%
         source:
             acl_resource: orob2b_invoice_view
             type: orm

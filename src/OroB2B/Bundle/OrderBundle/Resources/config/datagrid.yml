@@ -478,8 +478,6 @@ datagrid:
                 frontend_type: date
             comment:
                 label: orob2b.order.orderlineitem.comment.label
-        action_configuration:
-            delete: false
 
     order-line-items-grid-frontend:
         extends: base-order-line-items-grid

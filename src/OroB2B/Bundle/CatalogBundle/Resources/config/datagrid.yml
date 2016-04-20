@@ -124,5 +124,3 @@ datagrid:
                 selectors:
                     included: '#categoryAppendProducts'
                     excluded: '#categoryRemoveProducts'
-        action_configuration:
-            delete: false

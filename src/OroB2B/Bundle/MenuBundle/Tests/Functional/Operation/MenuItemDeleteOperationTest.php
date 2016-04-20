@@ -26,21 +26,11 @@ class MenuItemDeleteOperationTest extends ActionTestCase
     {
         /** @var MenuItem $menuItem */
         $menuItem = $this->getReference('menu_item.1');
-        $menuItemId = $menuItem->getId();
-        $this->assertExecuteOperation(
-            'DELETE',
-            $menuItemId,
-            $this->getContainer()->getParameter('orob2b_menu.entity.menu_item.class')
-        );
 
-        $this->assertEquals(
-            [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_menu_item_roots')
-            ],
-            json_decode($this->client->getResponse()->getContent(), true)
+        $this->assertDeleteOperation(
+            $menuItem->getId(),
+            'orob2b_menu.entity.menu_item.class',
+            'orob2b_menu_item_roots'
         );
     }
 }

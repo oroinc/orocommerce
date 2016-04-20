@@ -25,22 +25,11 @@ class AccountTaxCodeDeleteOperationTest extends ActionTestCase
     public function testDelete()
     {
         $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_1);
-        $accountTaxCodeId = $accountTaxCode->getId();
 
-        $this->assertExecuteOperation(
-            'DELETE',
-            $accountTaxCodeId,
-            $this->getContainer()->getParameter('orob2b_tax.entity.account_tax_code.class')
-        );
-
-        $this->assertEquals(
-            [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_tax_account_tax_code_index')
-            ],
-            json_decode($this->client->getResponse()->getContent(), true)
+        $this->assertDeleteOperation(
+            $accountTaxCode->getId(),
+            'orob2b_tax.entity.account_tax_code.class',
+            'orob2b_tax_account_tax_code_index'
         );
     }
 }

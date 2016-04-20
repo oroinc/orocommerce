@@ -35,20 +35,10 @@ class AccountUserRoleDeleteOperationTest extends ActionTestCase
 
         $id = $userRole->getId();
 
-        $this->assertExecuteOperation(
-            'DELETE',
+        $this->assertDeleteOperation(
             $id,
-            $this->getContainer()->getParameter('orob2b_account.entity.account_user_role.class')
-        );
-
-        $this->assertEquals(
-            [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_account_account_user_role_index')
-            ],
-            json_decode($this->client->getResponse()->getContent(), true)
+            'orob2b_account.entity.account_user_role.class',
+            'orob2b_account_account_user_role_index'
         );
 
         $this->getObjectManager()->clear();
