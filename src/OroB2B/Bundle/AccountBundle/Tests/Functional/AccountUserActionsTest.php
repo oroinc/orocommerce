@@ -14,7 +14,7 @@ class AccountUserActionsTest extends AbstractAccountUserActionsTest
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures(
             [
@@ -47,7 +47,7 @@ class AccountUserActionsTest extends AbstractAccountUserActionsTest
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_api_action_execute_operations',
+                'oro_action_operation_execute',
                 [
                     'operationName' => $operationName,
                     'route' => 'orob2b_account_account_user_view',

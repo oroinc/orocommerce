@@ -1,15 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Event;
+namespace OroB2B\Bundle\CheckoutBundle\EventListener;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 use OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 
-abstract class AbstractCheckoutEventListener
+/**
+ * While implementing custom checkout, alternative checkout entity can be set
+ * This Event Listener can be used as base for replacement
+ */
+abstract class AbstractCheckoutEntityListener
 {
     const START_TRANSITION_DEFINITION = '__start__';
 
@@ -17,6 +22,7 @@ abstract class AbstractCheckoutEventListener
      * @var WorkflowManager
      */
     protected $workflowManager;
+
     /**
      * @var RegistryInterface
      */
@@ -33,14 +39,14 @@ abstract class AbstractCheckoutEventListener
     }
 
     /**
-     * @param CheckoutEvent $event
+     * @param CheckoutEntityEvent $event
      * @return AlternativeCheckout
      */
-    public function onGetCheckoutEntity(CheckoutEvent $event)
+    public function onGetCheckoutEntity(CheckoutEntityEvent $event)
     {
         $checkout = $this->createCheckoutEntity();
 
-        if (!$this->isStartWorkflowAllowed($checkout)) {
+        if ($this->isNotAcceptableCheckoutType($event, $checkout) || !$this->isStartWorkflowAllowed($checkout)) {
             return;
         }
 
@@ -48,17 +54,21 @@ abstract class AbstractCheckoutEventListener
         $repository = $this->doctrine->getManagerForClass($className)
             ->getRepository($className);
 
-        if ($this->isSupportedCheckout($event, $checkout)) {
+        if ($event->getCheckoutId()) {
+            /** @var CheckoutInterface $checkout */
             $checkout = $repository->find($event->getCheckoutId());
-        } elseif ($event->getSource()) {
-            $checkout = $repository->findOneBy([
-                'source' => $event->getSource()
-            ]);
+            $event->setCheckoutEntity($checkout);
+            return;
         }
 
-        if ($checkout) {
-            $event->setCheckoutEntity($checkout);
+        if ($event->getSource()) {
+            $checkout = $repository->findOneBy([
+                'source' => $event->getSource()
+            ]) ?: $checkout;
+            $checkout->setSource($event->getSource());
         }
+
+        $event->setCheckoutEntity($checkout);
     }
 
     /**
@@ -75,13 +85,13 @@ abstract class AbstractCheckoutEventListener
     }
 
     /**
-     * @param CheckoutEvent $event
+     * @param CheckoutEntityEvent $event
      * @param CheckoutInterface $checkout
      * @return bool
      */
-    protected function isSupportedCheckout(CheckoutEvent $event, CheckoutInterface $checkout)
+    protected function isNotAcceptableCheckoutType(CheckoutEntityEvent $event, $checkout)
     {
-        return $checkout->getType() === $event->getType() && $event->getCheckoutId();
+        return !is_null($event->getType()) && $checkout->getType() !== $event->getType();
     }
 
     /**
@@ -90,7 +100,7 @@ abstract class AbstractCheckoutEventListener
     abstract protected function getWorkflowName();
 
     /**
-     * @return CheckoutInterface|
+     * @return CheckoutInterface
      */
     abstract protected function createCheckoutEntity();
 }

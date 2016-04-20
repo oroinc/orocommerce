@@ -52,7 +52,7 @@ class AjaxProductController extends Controller
      */
     protected function getProductRepository()
     {
-        $productClass = $this->container->getParameter('orob2b_product.product.class');
+        $productClass = $this->container->getParameter('orob2b_product.entity.product.class');
 
         return $this->getDoctrine()->getManagerForClass($productClass)->getRepository($productClass);
     }

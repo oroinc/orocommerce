@@ -13,16 +13,6 @@ class OroB2BSaleExtensionTest extends ExtensionTestCase
 
         $expectedParameters = [
             'orob2b_sale.entity.quote.class',
-            'orob2b_sale.quote.manager.api.class',
-            // validators
-            'orob2b_sale.validator.quote_product.class',
-            // form types
-            'orob2b_sale.form.type.quote_product.class',
-            'orob2b_sale.form.type.quote_product_offer.class',
-            'orob2b_sale.form.type.quote_product_collection.class',
-            'orob2b_sale.form.type.quote_product_offer_collection.class',
-            // twig extensions
-            'orob2b_sale.twig.quote.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
 
