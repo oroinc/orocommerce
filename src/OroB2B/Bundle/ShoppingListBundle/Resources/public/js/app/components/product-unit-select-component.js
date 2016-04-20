@@ -10,11 +10,13 @@ define(function(require) {
 
     ProductUnitSelectComponent = BaseComponent.extend({
 
+        defaultQuantity: 1,
+
         /**
          * @property {Object}
          */
         options: {
-            defaultQuantity: 1
+            prices: {}
         },
 
         /**
@@ -23,6 +25,7 @@ define(function(require) {
         initialize: function(additionalOptions) {
             _.extend(this.options, additionalOptions || {});
 
+            this.defaultQuantity = this.calculateDefaultQuantity();
             this.initSelect();
             this.initQuantityInput();
         },
@@ -38,7 +41,17 @@ define(function(require) {
         },
 
         initQuantityInput: function() {
-            $('[data-role="field-quantity"]', this.options._sourceElement).val(this.options.defaultQuantity);
+            $('[data-role="field-quantity"]', this.options._sourceElement).val(this.defaultQuantity);
+        },
+
+        calculateDefaultQuantity: function() {
+            var minimumQuantity;
+            _.each(this.options.prices, function(price) {
+                if (minimumQuantity === undefined || price.quantity < minimumQuantity) {
+                    minimumQuantity = price.quantity;
+                }
+            });
+            return minimumQuantity !== undefined ? minimumQuantity : 1;
         }
     });
 
