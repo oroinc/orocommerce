@@ -55,6 +55,9 @@ workflows:
             payment_in_progress:
                 type: bool
                 label: Flag indicates that payment is in progress
+            payment_validate:
+                type: bool
+                label: Payment validatation required
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -171,6 +174,8 @@ workflows:
                 form_options:
                     attribute_fields:
                         payment_method: ~
+                        payment_validate:
+                            form_type: checkbox
 
             back_to_billing_address:
                 label: Edit Billing Information
@@ -353,6 +358,35 @@ workflows:
                                 is_ajax: true
                                 expected_key: _wid
                                 expected_value: ajax_checkout
+                post_actions:
+                    - '@tree':
+                        conditions:
+                            '@equal': [$payment_validate, true]
+                        actions:
+                            - '@assign_constant_value': [$.result.validateAction, OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
+                            - '@assign_url':
+                                attribute: $.result.successUrl
+                                route: orob2b_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: 'place_order'
+                            - '@assign_url':
+                                attribute: $.result.errorUrl
+                                route: orob2b_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: 'payment_error'
+                            - '@payment_validate':
+                                conditions:
+                                    '@payment_method_supports':
+                                        payment_method: $checkout.paymentMethod
+                                        action: $.result.validateAction
+                                attribute: $.result.responseData
+                                object: $checkout
+                                paymentMethod: $checkout.paymentMethod
+                                transactionOptions:
+                                    successUrl: $.result.successUrl
+                                    errorUrl: $.result.errorUrl
 
             verify_payment_definition:
                 pre_conditions:

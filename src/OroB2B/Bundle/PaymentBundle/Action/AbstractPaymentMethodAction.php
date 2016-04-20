@@ -90,7 +90,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 
         $resolver
             ->setRequired(['object', 'amount', 'currency'])
-            ->setDefined(['transactionOptions', 'attribute'])
+            ->setDefined(['transactionOptions', 'attribute', 'conditions'])
             ->setDefault('attribute', null)
             ->setDefault('transactionOptions', [])
             ->addAllowedTypes('object', ['object', $propertyPathType])
@@ -127,6 +127,10 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 
         $definedOptions = $this->getOptionsResolver()->getDefinedOptions();
         foreach ($definedOptions as $definedOption) {
+            if (!array_key_exists($definedOption, $this->options)) {
+                continue;
+            }
+
             $values[$definedOption] = $this->contextAccessor->getValue($context, $this->options[$definedOption]);
             if (is_array($values[$definedOption])) {
                 foreach ($values[$definedOption] as &$value) {

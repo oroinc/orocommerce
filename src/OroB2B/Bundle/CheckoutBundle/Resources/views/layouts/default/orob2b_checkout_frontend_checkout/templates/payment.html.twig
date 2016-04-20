@@ -4,4 +4,8 @@
             {{ form_widget(form.payment_method) }}
         </fieldset>
     </div>
+
+    {% if form.payment_validate is defined %}
+        {{ form_widget(form.payment_validate) }}
+    {% endif %}
 {% endblock %}

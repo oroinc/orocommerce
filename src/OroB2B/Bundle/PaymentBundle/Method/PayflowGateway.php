@@ -148,7 +148,9 @@ class PayflowGateway implements PaymentMethodInterface
      */
     public function validate(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setAmount(self::ZERO_AMOUNT);
+        $paymentTransaction
+            ->setAmount(self::ZERO_AMOUNT)
+            ->setCurrency(Option\Currency::US_DOLLAR);
 
         $options = $this->getOptions($paymentTransaction);
 
