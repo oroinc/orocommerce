@@ -81,9 +81,10 @@ class RequestController extends Controller
      * @Route("/create", name="orob2b_rfp_frontend_request_create")
      * @Layout
      *
+     * @param Request $request
      * @return array
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
         $rfpRequest = new RFPRequest();
         $user = $this->getUser();
@@ -94,9 +95,10 @@ class RequestController extends Controller
                 ->setFirstName($user->getFirstName())
                 ->setLastName($user->getLastName())
                 ->setCompany($user->getAccount()->getName())
-                ->setEmail($user->getEmail())
-            ;
+                ->setEmail($user->getEmail());
         }
+
+        $this->acceptLineItemsOnCreate($request, $rfpRequest);
 
         $response = $this->update($rfpRequest);
 
@@ -155,31 +157,30 @@ class RequestController extends Controller
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     $route = $securityFacade->isGranted('ACCOUNT_EDIT', $rfpRequest)
                         ? 'orob2b_rfp_frontend_request_update'
-                        : 'orob2b_rfp_frontend_request_view'
-                    ;
+                        : 'orob2b_rfp_frontend_request_view';
 
                     return [
-                        'route'         => $route,
-                        'parameters'    => ['id' => $rfpRequest->getId()],
+                        'route' => $route,
+                        'parameters' => ['id' => $rfpRequest->getId()],
                     ];
                 }
 
                 return [
-                    'route'         => 'orob2b_rfp_frontend_request_create',
-                    'parameters'    => [],
+                    'route' => 'orob2b_rfp_frontend_request_create',
+                    'parameters' => [],
                 ];
             },
             function (RFPRequest $rfpRequest) use ($securityFacade) {
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     return [
-                        'route'         => 'orob2b_rfp_frontend_request_view',
-                        'parameters'    => ['id' => $rfpRequest->getId()],
+                        'route' => 'orob2b_rfp_frontend_request_view',
+                        'parameters' => ['id' => $rfpRequest->getId()],
                     ];
                 }
 
                 return [
-                    'route'         => 'orob2b_rfp_frontend_request_create',
-                    'parameters'    => [],
+                    'route' => 'orob2b_rfp_frontend_request_create',
+                    'parameters' => [],
                 ];
             },
             $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message'),
@@ -190,23 +191,6 @@ class RequestController extends Controller
                     $url = $request->headers->get('referer');
                 }
 
-                $product = $request->get('product');
-                $unit = $request->get('unit');
-                $quantity = $request->get('quantity');
-                if ($product && $unit && $quantity) {
-                    $product = $this->container->get('doctrine')->getManagerForClass('OroB2BProductBundle:Product')
-                        ->getReference('OroB2BProductBundle:Product', $product);
-                    $unit = $this->container->get('doctrine')
-                        ->getManagerForClass('OroB2BProductBundle:ProductUnit')
-                        ->getReference('OroB2BProductBundle:ProductUnit', $unit);
-                    $requestProductItem = new RequestProductItem();
-                    $requestProductItem->setQuantity($quantity);
-                    $requestProductItem->setProductUnit($unit);
-                    $requestProduct = new RequestProduct();
-                    $requestProduct->setProduct($product);
-                    $requestProduct->addRequestProductItem($requestProductItem);
-                    $rfpRequest->addRequestProduct($requestProduct);
-                }
                 return [
                     'backToUrl' => $url,
                     'form' => $form->createView()
@@ -256,7 +240,41 @@ class RequestController extends Controller
             ->getDoctrine()
             ->getManagerForClass($requestStatusClass)
             ->getRepository($requestStatusClass)
-            ->findOneBy(['name' => $defaultRequestStatusName])
-        ;
+            ->findOneBy(['name' => $defaultRequestStatusName]);
+    }
+
+    /**
+     * @param Request $request
+     * @param RFPRequest $rfpRequest
+     */
+    protected function acceptLineItemsOnCreate(Request $request, RFPRequest $rfpRequest)
+    {
+        if ($request->getMethod() !== 'GET') {
+            return;
+        }
+
+        $lienItems = $request->get('product_items', []);
+        foreach ($lienItems as $lineItem) {
+            $keys = [
+                'product_id',
+                'unit',
+                'quantity',
+            ];
+            if (count(array_intersect($keys, array_keys($lineItem))) !== count($keys)) {
+                continue;
+            }
+            $product = $this->container->get('doctrine')->getManagerForClass('OroB2BProductBundle:Product')
+                ->getRepository('OroB2BProductBundle:Product')->find($lineItem['product_id']);
+            $unit = $this->container->get('doctrine')
+                ->getManagerForClass('OroB2BProductBundle:ProductUnit')
+                ->getReference('OroB2BProductBundle:ProductUnit', $lineItem['unit']);
+            $requestProductItem = new RequestProductItem();
+            $requestProductItem->setQuantity($lineItem['quantity']);
+            $requestProductItem->setProductUnit($unit);
+            $requestProduct = new RequestProduct();
+            $requestProduct->setProduct($product);
+            $requestProduct->addRequestProductItem($requestProductItem);
+            $rfpRequest->addRequestProduct($requestProduct);
+        }
     }
 }

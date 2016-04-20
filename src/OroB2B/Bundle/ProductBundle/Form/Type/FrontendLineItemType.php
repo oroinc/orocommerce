@@ -35,9 +35,9 @@ class FrontendLineItemType extends AbstractType
                 QuantityType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.shoppinglist.lineitem.quantity.enter',
+                    'label' => 'orob2b.product.lineitem.quantity.enter',
                     'attr' => [
-                        'placeholder' => 'orob2b.shoppinglist.lineitem.quantity.placeholder',
+                        'placeholder' => 'orob2b.product.lineitem.quantity.placeholder',
                     ],
                     'product_holder' => $builder->getData(),
                     'product_unit_field' => 'unit',

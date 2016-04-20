@@ -3,41 +3,32 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Layout\DataProvider;
 
 use Oro\Component\Layout\LayoutContext;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductLineItemFormProvider;
+use OroB2B\Bundle\ProductBundle\Model\ProductLineItem;
 
 class FrontendLineItemFormProviderTest extends WebTestCase
 {
     /** @var ProductLineItemFormProvider */
     protected $dataProvider;
 
-    /** @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
 
     protected function setUp()
     {
         $this->initClient();
 
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()->getMock();
-        $this->dataProvider = new ProductLineItemFormProvider(
-            $this->getContainer()->get('form.factory'),
-            $this->securityFacade
-        );
+        $this->dataProvider = new ProductLineItemFormProvider($this->getContainer()->get('form.factory'));
     }
 
     /**
      * @dataProvider getDataDataProvider
      *
      * @param true $isProduct
-     * @param bool $isAccountUser
      */
-    public function testGetData($isProduct, $isAccountUser)
+    public function testGetData($isProduct)
     {
         $context = new LayoutContext();
         $product = null;
@@ -45,15 +36,13 @@ class FrontendLineItemFormProviderTest extends WebTestCase
             $product = new Product();
             $context->data()->set('product', null, $product);
         }
-        $this->setUpAccount($isAccountUser);
-
         $actual = $this->dataProvider->getData($context);
         $form = $actual->getForm();
 
         $this->assertInstanceOf('\Oro\Bundle\LayoutBundle\Layout\Form\FormAccessorInterface', $actual);
         $this->assertSame($this->dataProvider->getForm($product), $form);
         $lineItem = $form->getData();
-        $this->assertLineItem($isAccountUser, $product, $lineItem);
+        $this->assertLineItem($product, $lineItem);
         $this->assertEquals(FrontendLineItemType::NAME, $actual->getForm()->getName());
     }
 
@@ -63,39 +52,18 @@ class FrontendLineItemFormProviderTest extends WebTestCase
     public function getDataDataProvider()
     {
         return [
-            ['isProduct' => true, 'isAccountUser' => true],
-            ['isProduct' => true, 'isAccountUser' => false],
-            ['isProduct' => false, 'isAccountUser' => true],
-            ['isProduct' => false, 'isAccountUser' => false],
+            ['isProduct' => true],
+            ['isProduct' => false],
         ];
     }
 
     /**
-     * @param bool $isAccountUser
-     */
-    protected function setUpAccount($isAccountUser)
-    {
-        $accountUser = null;
-        if ($isAccountUser) {
-            $accountUser = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
-        }
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
-            ->willReturn($accountUser);
-    }
-
-    /**
-     * @param bool $isAccountUser
      * @param Product|null $product
-     * @param LineItem|null $lineItem
+     * @param ProductLineItem|null $lineItem
      */
-    protected function assertLineItem($isAccountUser = false, Product $product = null, LineItem $lineItem = null)
+    protected function assertLineItem(Product $product = null, ProductLineItem $lineItem = null)
     {
-        if ($isAccountUser) {
-            $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', $lineItem);
-            $this->assertSame($product, $lineItem->getProduct());
-            return;
-        }
-        $this->assertNull($lineItem);
+        $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Model\ProductLineItem', $lineItem);
+        $this->assertSame($product, $lineItem->getProduct());
     }
 }

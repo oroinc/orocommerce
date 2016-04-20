@@ -67,7 +67,9 @@ orob2b:
 
         lineitem:
             unit.label: Unit
-            quantity.enter: Enter a QTY
+            quantity:
+                enter: Enter a QTY
+                placeholder: 'QTY #'
 
         menu:
             products_tab.label: Products

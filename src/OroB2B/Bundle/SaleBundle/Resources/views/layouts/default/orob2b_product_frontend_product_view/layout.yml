@@ -16,3 +16,4 @@ layout:
             options:
                 vars:
                     product: { '@value': $data.product }
+                visible: { @not_empty: $data.product_unit_precisions_without_prices }

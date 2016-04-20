@@ -7,7 +7,6 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
-    var Error = require('oroui/js/error');
     var $ = require('jquery');
     var _ = require('underscore');
 
@@ -70,14 +69,16 @@ define(function(require) {
 
         /**
          * @param {String} url
-         * @param {Object} urlOptions
+         * @param {Object} lineItemOptions
          * @param {Object} form
          */
-        createRequestQuotePage: function(url, urlOptions, form) {
-            var self = this;
+        createRequestQuotePage: function(url, lineItemOptions, form) {
+            lineItemOptions.unit = form.find('select[name="orob2b_product_frontend_line_item[unit]"]').val();
+            lineItemOptions.quantity = form.find('input[name="orob2b_product_frontend_line_item[quantity]"]').val();
+            var urlOptions = {
+                'product_items': [lineItemOptions]
+            };
             mediator.execute('showLoading');
-            urlOptions.unit = form.find('select[name="orob2b_product_frontend_line_item[unit]"]').val();
-            urlOptions.quantity = form.find('input[name="orob2b_product_frontend_line_item[quantity]"]').val();
             mediator.execute('redirectTo', {url: routing.generate(url, urlOptions)}, {redirect: true});
         },
 
