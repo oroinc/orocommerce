@@ -535,25 +535,57 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     public function postSetDataProvider()
     {
-        $productUnit = new ProductUnit();
-        $code = 'sku';
-        $productUnit->setCode($code);
-        $unitPrecision = new ProductUnitPrecision();
-        $unitPrecision->setUnit($productUnit);
-        $productHolder = $this->createProductHolder(1, $code, (new Product())->addUnitPrecision($unitPrecision));
-        $productUnitHolder = $this->createProductUnitHolder(1, $code, $productUnit, $productHolder);
-
         return [
             'already updated' => [
-                $productUnitHolder,
-                $productHolder,
-                $productUnit,
+                $this->getProductUnitHolder(),
+                $this->getProductHolder(),
+                $this->getProductUnit(),
                 ['choices_updated' => true],
                 false,
             ],
-            'product found' => [$productUnitHolder, $productHolder, $productUnit, [], true,],
+            'product found' => [
+                $this->getProductUnitHolder(),
+                $this->getProductHolder(),
+                $this->getProductUnit(),
+                [],
+                true,
+            ],
             'product not found' => [null, null, null, [], false,],
         ];
+    }
+
+    /**
+     * @param string $code
+     * @return ProductUnit
+     */
+    protected function getProductUnit($code = 'sku')
+    {
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($code);
+
+        return $productUnit;
+    }
+
+    /**
+     * @param string $code
+     * @return \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface
+     */
+    protected function getProductHolder($code = 'sku')
+    {
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setUnit($this->getProductUnit());
+        $productHolder = $this->createProductHolder(1, $code, (new Product())->addUnitPrecision($unitPrecision));
+
+        return $productHolder;
+    }
+
+    /**
+     * @param string $code
+     * @return \PHPUnit_Framework_MockObject_MockObject|ProductUnitHolderInterface
+     */
+    protected function getProductUnitHolder($code = 'sku')
+    {
+        return $this->createProductUnitHolder(1, $code, $this->getProductUnit(), $this->getProductHolder());
     }
 
     /**
