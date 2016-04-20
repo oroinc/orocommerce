@@ -32,6 +32,7 @@ orob2b:
         shipping_cost.label: Shipping
         pending_orders.label: Pending Orders
         ordered_by.label: Ordered By
+        checkout_type.label: Checkout Type
 
         checkoutsource:
             entity_label: Checkout Source
