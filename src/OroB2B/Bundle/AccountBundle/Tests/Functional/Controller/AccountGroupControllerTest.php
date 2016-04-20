@@ -9,6 +9,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
  * @dbIsolation
@@ -41,9 +42,10 @@ class AccountGroupControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_account_group_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_group_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('account-groups-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -172,14 +174,12 @@ class AccountGroupControllerTest extends WebTestCase
      */
     protected function getGroupId($name)
     {
-        $response = $this->client->requestGrid(
-            'account-groups-grid',
-            ['account-accounts-grid[_filter][name][value]' => $name]
-        );
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
+            ->getRepository('OroB2BAccountBundle:AccountGroup')
+            ->findOneBy(['name' => $name]);
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        return (int)$result['id'];
+        return $accountGroup->getId();
     }
 }

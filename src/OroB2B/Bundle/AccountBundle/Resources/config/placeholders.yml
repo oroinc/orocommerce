@@ -91,7 +91,7 @@ items:
     product_visibility_button:
         template: OroB2BAccountBundle:ProductVisibility:button.html.twig
         applicable:
-            - "@oro_ui.placeholder.filter->isInstanceOf($entity$, %orob2b_product.product.class%)"
+            - "@oro_ui.placeholder.filter->isInstanceOf($entity$, %orob2b_product.entity.product.class%)"
             - "@orob2b_frontend.placeholder.filter->isBackendRoute()"
     frontend_window_bundle_js:
         template: OroB2BAccountBundle:Windows:javascript.html.twig

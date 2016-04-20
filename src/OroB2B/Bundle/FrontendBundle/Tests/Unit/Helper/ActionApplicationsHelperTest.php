@@ -81,7 +81,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
-                    'execution' => 'oro_api_action_execute_operations',
+                    'execution' => 'oro_action_operation_execute',
                 ],
             ],
             'frontend user' => [
@@ -89,7 +89,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'orob2b_frontend_action_widget_buttons',
                     'dialog' => 'orob2b_frontend_action_widget_form',
-                    'execution' => 'orob2b_api_frontend_action_execute_operations',
+                    'execution' => 'orob2b_frontend_action_operation_execute',
                 ],
             ],
             'not supported user' => [
@@ -97,7 +97,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
-                    'execution' => 'oro_api_action_execute_operations',
+                    'execution' => 'oro_action_operation_execute',
                 ],
             ],
             'empty token' => [
@@ -105,7 +105,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
-                    'execution' => 'oro_api_action_execute_operations',
+                    'execution' => 'oro_action_operation_execute',
                 ],
             ],
         ];

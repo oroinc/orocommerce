@@ -62,7 +62,7 @@ class WebsiteController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_website.website.class')
+            'entity_class' => $this->container->getParameter('orob2b_website.entity.website.class')
         ];
     }
 

@@ -27,9 +27,6 @@ class LineItemHandler
     /** @var ShoppingListManager */
     protected $shoppingListManager;
 
-    /** @var int */
-    protected $savedId;
-
     /** @var QuantityRoundingService */
     protected $roundingService;
 
@@ -61,68 +58,48 @@ class LineItemHandler
      */
     public function process(LineItem $lineItem)
     {
-        if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
-            /** @var EntityManagerInterface $manager */
-            $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+        if (!in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
+            return false;
+        }
+        /** @var EntityManagerInterface $manager */
+        $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
 
-            $manager->beginTransaction();
+        $manager->beginTransaction();
 
-            // handle case for new shopping list creation
-            $formName = $this->form->getName();
-            $formData = $this->request->request->get($formName, []);
-            if (empty($formData['shoppingList']) && !empty($formData['shoppingListLabel'])) {
-                $shoppingList = $this->shoppingListManager->createCurrent($formData['shoppingListLabel']);
-                $formData['shoppingList'] = $shoppingList->getId();
-                $this->request->request->set($formName, $formData);
-            }
+        // handle case for new shopping list creation
+        $formName = $this->form->getName();
+        $formData = $this->request->request->get($formName, []);
+        if (empty($formData['shoppingList']) && !empty($formData['shoppingListLabel'])) {
+            $shoppingList = $this->shoppingListManager->createCurrent($formData['shoppingListLabel']);
+            $formData['shoppingList'] = $shoppingList->getId();
+            $this->request->request->set($formName, $formData);
+        }
 
-            $this->form->submit($this->request);
-            if ($this->form->isValid()) {
-                /** @var LineItemRepository $lineItemRepository */
-                $lineItemRepository = $manager->getRepository('OroB2BShoppingListBundle:LineItem');
-                $existingLineItem = $lineItemRepository->findDuplicate($lineItem);
+        $this->form->submit($this->request);
+        if ($this->form->isValid()) {
+            /** @var LineItemRepository $lineItemRepository */
+            $lineItemRepository = $manager->getRepository('OroB2BShoppingListBundle:LineItem');
+            $existingLineItem = $lineItemRepository->findDuplicate($lineItem);
 
-                if ($existingLineItem) {
-                    $this->updateExistingLineItem($lineItem, $existingLineItem);
-                } else {
-                    $lineItem->setQuantity(
-                        $this->roundingService->roundQuantity(
-                            $lineItem->getQuantity(),
-                            $lineItem->getProductUnit(),
-                            $lineItem->getProduct()
-                        )
-                    );
-
-                    $manager->persist($lineItem);
-                }
-
-                $manager->flush();
-                $manager->commit();
-                $this->shoppingListManager->recalculateSubtotals($lineItem->getShoppingList());
-
-                return true;
+            if ($existingLineItem) {
+                $this->updateExistingLineItem($lineItem, $existingLineItem);
             } else {
-                $manager->rollback();
+                $lineItem->setQuantity(
+                    $this->roundingService->roundQuantity(
+                        $lineItem->getQuantity(),
+                        $lineItem->getProductUnit(),
+                        $lineItem->getProduct()
+                    )
+                );
+                $lineItem->getShoppingList()->addLineItem($lineItem);
             }
+            $this->shoppingListManager->recalculateSubtotals($lineItem->getShoppingList(), false);
+            $manager->flush();
+            $manager->commit();
+            return true;
         }
-
+        $manager->rollback();
         return false;
-    }
-
-    /**
-     * Update savedId for widget result
-     *
-     * @param array $result
-     *
-     * @return array
-     */
-    public function updateSavedId(array $result)
-    {
-        if ($this->savedId) {
-            $result['savedId'] = $this->savedId;
-        }
-
-        return $result;
     }
 
     /**
@@ -144,6 +121,6 @@ class LineItemHandler
         if ($notes) {
             $existingLineItem->setNotes($notes);
         }
-        $this->savedId = $existingLineItem->getId();
+        $existingLineItem->getShoppingList()->removeLineItem($lineItem);
     }
 }

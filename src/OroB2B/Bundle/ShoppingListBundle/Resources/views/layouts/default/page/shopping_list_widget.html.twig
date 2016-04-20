@@ -1,12 +1,13 @@
 {% block _main_menu_shopping_lists_wrapper_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg"
+        class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg shopping-lists-frontend-widget"
     }) %}
 
     <li {{ block('block_attributes') }} data-dropdown-trigger>
         {{ oro_widget_render({
             'widgetType': 'block',
             'elementFirst' : false,
+            'loadingElement' : '.shopping-lists-frontend-widget > :first-child',
             'url': path('orob2b_shopping_list_frontend_widget'),
             'alias': 'shopping_lists_frontend_widget'
         }) }}

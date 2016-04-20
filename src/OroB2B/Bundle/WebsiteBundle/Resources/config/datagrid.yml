@@ -9,7 +9,7 @@ datagrid:
                 select:
                     - website
                 from:
-                    - { table: %orob2b_website.website.class%, alias: website }
+                    - { table: %orob2b_website.entity.website.class%, alias: website }
         columns:
             id:
                 label:         orob2b.website.id.label
