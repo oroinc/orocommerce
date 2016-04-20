@@ -35,6 +35,8 @@ class DeleteDefaultCheckoutFields implements Migration, OrderedMigrationInterfac
     {
         $table = $schema->getTable('orob2b_checkout');
 
+        $table->getColumn('type')->setNotnull(true);
+
         $foreignKeys = $table->getForeignKeys();
 
         $removedFK = ['order_id', 'shipping_address_id', 'billing_address_id'];
