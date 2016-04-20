@@ -25,7 +25,6 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
     const COLUMN_QUANTITIES = 'price_quantities';
     const JOIN_ALIAS_PRICE = 'product_price';
     const COLUMN_MINIMUM_PRICE = 'minimum_price';
-    const COLUMN_MINIMUM_QUANTITY = 'minimum_quantity';
 
     const DATA_SEPARATOR = '{sep}';
 
@@ -135,7 +134,6 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
         $unitColumnName = self::COLUMN_UNITS;
         $quantitiesColumnName = self::COLUMN_QUANTITIES;
         $minimumPriceColumnName = self::COLUMN_MINIMUM_PRICE;
-        $minimumQuantityColumnName = self::COLUMN_MINIMUM_QUANTITY;
         $joinAlias = self::JOIN_ALIAS_PRICE;
         $separator = (new Expr())->literal(self::DATA_SEPARATOR);
 
@@ -154,11 +152,7 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
         $selectPattern = 'MIN(%s.value) as %s';
         $select = sprintf($selectPattern, $joinAlias, $minimumPriceColumnName);
         $this->addConfigElement($config, '[source][query][select]', $select);
-
-        $selectPattern = 'MIN(%s.quantity) as %s';
-        $select = sprintf($selectPattern, $joinAlias, $minimumQuantityColumnName);
-        $this->addConfigElement($config, '[source][query][select]', $select);
-
+        
         $this->addConfigProductPriceJoin($config, $currency);
 
         $this->addConfigElement(
@@ -189,16 +183,7 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
             ],
             $minimumPriceColumnName
         );
-
-        $this->addConfigElement(
-            $config,
-            '[columns]',
-            [
-                'label' => $this->translator->trans('orob2b.pricing.productprice.minimum_quantity.label')
-            ],
-            $minimumQuantityColumnName
-        );
-
+        
         $filter = ['type' => 'frontend-product-price', 'data_name' => $currency];
         $this->addConfigElement($config, '[filters][columns]', $filter, $minimumPriceColumnName);
     }

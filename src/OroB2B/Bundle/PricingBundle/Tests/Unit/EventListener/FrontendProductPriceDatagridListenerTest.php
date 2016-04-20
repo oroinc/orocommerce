@@ -109,9 +109,6 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                         'minimum_price' => [
                             'label' => 'orob2b.pricing.productprice.price_in_EUR.trans',
                         ],
-                        'minimum_quantity' => [
-                            'label' => 'orob2b.pricing.productprice.minimum_quantity.label.trans',
-                        ],
                     ],
                     'properties' => [
                         'prices' => ['type' => 'field', 'frontend_type' => 'row_array'],
@@ -141,7 +138,6 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                                 'GROUP_CONCAT(IDENTITY(product_price.unit) SEPARATOR \'{sep}\') as price_units',
                                 'GROUP_CONCAT(product_price.quantity SEPARATOR \'{sep}\') as price_quantities',
                                 'MIN(product_price.value) as minimum_price',
-                                'MIN(product_price.quantity) as minimum_quantity',
                             ],
                             'join' => [
                                 'left' => [
