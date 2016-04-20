@@ -104,6 +104,7 @@ services:
     orob2b_product.storage.product_data_storage:
         class: 'OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage'
         parent: orob2b_product.storage.session_data_storage
+        public: true
 
     orob2b_product.validator.product_by_sku:
         class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator'

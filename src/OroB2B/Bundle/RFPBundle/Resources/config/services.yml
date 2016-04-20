@@ -49,6 +49,7 @@ services:
     orob2b_rfp.storage.offers_data_storage:
         class: 'OroB2B\Bundle\RFPBundle\Storage\OffersDataStorage'
         parent: orob2b_product.storage.session_data_storage
+        public: true
 
     orob2b_rfp.storage.offers_form_storage:
         class: 'OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage'
