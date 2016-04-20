@@ -114,3 +114,4 @@ orob2b:
         payflow:
             authorized_card: 'Credit Card ************{{ last4 }}'
             use_different_card: 'Use a different card'
+            cancel_different_card: 'Cancel'

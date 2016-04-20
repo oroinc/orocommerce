@@ -25,6 +25,8 @@ define(function(require) {
                 cardNumber: '[data-card-number]',
                 validation: '[data-validation]',
                 dataDifferentCardHandle: '[data-different-card-handle]',
+                dataDifferentCardCancel: '[data-different-card-cancel]',
+                dataAuthorizedCard: '[data-authorized-card]',
                 dataDifferentCard: '[data-different-card]'
             }
         },
@@ -78,8 +80,13 @@ define(function(require) {
                     this.options.selectors.cardNumber,
                     _.bind(this.validate, this, this.options.selectors.cardNumber)
                 )
-                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv))
-                .on('click', this.options.selectors.dataDifferentCardHandle, _.bind(this.showDifferentCard, this));
+                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
+
+            var $parent = this.$el.parent();
+
+            $parent
+                .on('click', this.options.selectors.dataDifferentCardHandle, _.bind(this.showDifferentCard, this))
+                .on('click', this.options.selectors.dataDifferentCardCancel, _.bind(this.hideDifferentCard, this));
 
             this.isAuthorizedCard = (this.options.authorizedCard !== null);
 
@@ -87,8 +94,17 @@ define(function(require) {
         },
 
         showDifferentCard: function() {
+            $(this.options.selectors.dataAuthorizedCard).hide();
             $(this.options.selectors.dataDifferentCard).show();
             this.isAuthorizedCard = false;
+
+            return false;
+        },
+
+        hideDifferentCard: function() {
+            $(this.options.selectors.dataDifferentCard).hide();
+            $(this.options.selectors.dataAuthorizedCard).show();
+            this.isAuthorizedCard = true;
 
             return false;
         },
@@ -98,7 +114,8 @@ define(function(require) {
                 if (this.isAuthorizedCard) {
                     var data = [{name: 'authorizedCard', value: this.options.authorizedCard }];
 
-                    return true;
+                    // TODO: send data
+                    // return this.postUrl(authorizedCardUrl, data);
                 }
 
                 eventData.stopped = true;
