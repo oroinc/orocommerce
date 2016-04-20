@@ -283,6 +283,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_price_list_product_prices_currency_validator }
 
+    orob2b_pricing.validator.dates_chain:
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\DatesChainValidator'
+        arguments:
+            - @property_accessor
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing_dates_chain_validator }
+
     orob2b_pricing.model.price_list_request_handler:
         class: 'OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler'
         calls:

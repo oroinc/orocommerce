@@ -57,10 +57,13 @@ class PriceListSchedule
 
     /**
      * @param PriceList $priceList
+     * @return $this
      */
     public function setPriceList(PriceList $priceList)
     {
         $this->priceList = $priceList;
+
+        return $this;
     }
 
     /**
@@ -73,10 +76,13 @@ class PriceListSchedule
 
     /**
      * @param \DateTime|null $activeAt
+     * @return $this
      */
     public function setActiveAt(\DateTime $activeAt = null)
     {
         $this->activeAt = $activeAt;
+
+        return $this;
     }
 
     /**
@@ -89,9 +95,12 @@ class PriceListSchedule
 
     /**
      * @param \DateTime|null $deactivateAt
+     * @return $this
      */
     public function setDeactivateAt(\DateTime $deactivateAt = null)
     {
         $this->deactivateAt = $deactivateAt;
+
+        return $this;
     }
 }

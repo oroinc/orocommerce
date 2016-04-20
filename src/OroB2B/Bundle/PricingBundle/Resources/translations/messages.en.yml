@@ -7,6 +7,7 @@ orob2b.pricing:
         name.label: Name
         default.label: Is Default
         currencies.label: Currencies
+        schedule.label: Schedule
         has_price_list.label: Has Price List
         set_default:
             label: Set default
@@ -65,6 +66,12 @@ orob2b.pricing:
     price_type:
         bundled: 'bundle'
         unit: 'per unit'
+
+    pricelist_schedule:
+        active_at.label: 'Active At'
+        deactivate_at.label: 'Deactivate At'
+
+    add_schedule: 'Add'
 
     menu:
         price_lists_tab.label: Price lists management

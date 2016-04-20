@@ -4,13 +4,20 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
 
+/**
+ * todo: in BB-1499 test submit with schedules
+ */
 class PriceListTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceList';
@@ -66,7 +73,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $currencySelectType->getName() => $currencySelectType,
-                    $entityIdentifierType->getName() => $entityIdentifierType
+                    $entityIdentifierType->getName() => $entityIdentifierType,
+                    CollectionType::NAME => new CollectionType(),
+                    PriceListScheduleType::NAME => new PriceListScheduleType(new PropertyAccessor()),
+                    OroDateTimeType::NAME => new OroDateTimeType()
                 ],
                 []
             )
