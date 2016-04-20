@@ -175,6 +175,9 @@ services:
             - '@doctrine'
             - '@orob2b_pricing.resolver.combined_product_price_resolver'
 
+    orob2b_pricing.resolver.price_list_schedule_resolver:
+        class: OroB2B\Bundle\PricingBundle\Resolver\PriceListScheduleResolver
+
     orob2b_pricing.validator.unique_product_prices:
         class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator'
         tags:
