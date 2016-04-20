@@ -68,12 +68,11 @@ class ShippingOriginType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            array(
-                'data_class' => 'OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin',
-                'intention' => 'shipping_origin',
-            )
-        );
+        $resolver->setDefaults([
+            'data_class' => 'OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin',
+            'intention' => 'shipping_origin',
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
+        ]);
     }
 
     /**
