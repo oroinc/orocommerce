@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
-use OroB2B\Bundle\AlternativeCheckoutBundle\Model\ExtendAlternativeCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutAddressesTrait;
 
 /**
@@ -39,7 +39,7 @@ use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutAddressesTrait;
  *      }
  * )
  */
-class AlternativeCheckout extends ExtendAlternativeCheckout
+class AlternativeCheckout extends BaseCheckout
 {
     use CheckoutAddressesTrait;
 
