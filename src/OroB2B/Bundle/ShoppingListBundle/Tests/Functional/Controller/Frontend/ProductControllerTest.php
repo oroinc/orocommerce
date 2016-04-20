@@ -98,6 +98,6 @@ class ProductControllerTest extends WebTestCase
         /** @var LineItem $lineItem */
         $lineItem = $shoppingList->getLineItems()->first();
         $this->assertEquals(5, $lineItem->getQuantity());
-        $this->assertEquals('liter', $lineItem->getUnit()->getCode());
+        $this->assertEquals('bottle', $lineItem->getUnit()->getCode());
     }
 }
