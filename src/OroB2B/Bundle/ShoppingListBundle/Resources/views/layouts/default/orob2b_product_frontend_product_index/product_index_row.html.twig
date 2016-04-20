@@ -39,9 +39,10 @@
     } %}
     <% if (!_.isEmpty(model.product_units)) { %>
         <div {{ block('block_attributes') }}
-                data-page-component-module="orob2bshoppinglist/js/app/components/add-product-from-index-component"
-                data-product-id="<%= model.id %>"
-                data-line-items='<%= JSON.stringify(model.current_shopping_list_line_items) %>'>
+             data-product='{"id": <%= model.id %>, "units": <%= JSON.stringify(model.product_units) %>, "lineItems": <%= JSON.stringify(model.current_shopping_list_line_items) %>}'
+             data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options='{"view": "orob2bshoppinglist/js/app/views/add-product-from-grid-view"}'
+             data-layout="separate">
             {{ buttons.createAddToShoppingListButton({
                 groupContainer: '<div class="btn btn-block btn-dark btn_has-dropdown btn_has-dropdown_lg width-auto"></div>',
                 new: commonOptions,
@@ -49,7 +50,9 @@
                 existing: commonOptions,
                 shoppingLists: shoppingLists,
                 truncateLabelLength: 25,
-                singleButtonACss: 'btn-block btn-dark btn_lg'
+                singleButtonACss: 'btn-block btn-dark btn_lg',
+                defaultClass: 'btn-dark',
+                addedClass: 'btn-orange'
             }) }}
         </div>
     <% } %>
