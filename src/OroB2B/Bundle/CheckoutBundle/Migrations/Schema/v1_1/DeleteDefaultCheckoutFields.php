@@ -25,6 +25,8 @@ class DeleteDefaultCheckoutFields implements Migration, OrderedMigrationInterfac
     {
         $this->deleteDefaultCheckoutFieldsFromCheckout($schema);
         $this->addCheckoutTypeColumn($schema);
+
+        $queries->addQuery("UPDATE orob2b_checkout SET checkout_type=''");
     }
 
     /**

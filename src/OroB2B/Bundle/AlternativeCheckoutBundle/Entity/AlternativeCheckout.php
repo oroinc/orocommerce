@@ -43,7 +43,7 @@ class AlternativeCheckout extends BaseCheckout
 {
     use CheckoutAddressesTrait;
 
-    protected $checkoutType = 'alternative';
+    const CHECKOUT_TYPE = 'alternative';
 
     /**
      * @var int
@@ -81,6 +81,11 @@ class AlternativeCheckout extends BaseCheckout
      * @ORM\Column(name="requested_for_approve", type="boolean")
      */
     protected $requestedForApprove = false;
+
+    public function __construct()
+    {
+        $this->checkoutType = self::CHECKOUT_TYPE;
+    }
 
     /**
      * @return string

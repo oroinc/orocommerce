@@ -48,8 +48,10 @@ class OroB2BCheckoutBundle implements Migration, OrderedMigrationInterface
      */
     protected function setTypeExistingCheckouts(QueryBag $queries)
     {
-        $sql = "UPDATE orob2b_checkout SET type='checkout'";
-        $queries->addQuery($sql);
+        $queries->addPreQuery(
+            "DELETE FROM oro_entity_config WHERE class_name='OroB2B\\Bundle\\CheckoutBundle\\Entity\\Checkout'"
+        );
+        $queries->addQuery("UPDATE orob2b_checkout SET checkout_discriminator='checkout'");
     }
 
     /**
