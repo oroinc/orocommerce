@@ -32,4 +32,10 @@ interface PaymentMethodInterface
      * @return bool
      */
     public function isEnabled();
+
+    /**
+     * @param string $actionName
+     * @return bool
+     */
+    public function supports($actionName);
 }

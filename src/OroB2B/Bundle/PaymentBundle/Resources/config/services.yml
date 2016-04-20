@@ -194,3 +194,11 @@ services:
             - { name: oro_workflow.condition, alias: 'payment_method_enabled' }
             - { name: oro_action.condition, alias: 'payment_method_enabled' }
             - { name: oro_layout.expression, alias: 'payment_method_enabled'  }
+
+    orob2b_payment.condition.payment_method_supports:
+        class: 'OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodSupports'
+        arguments:
+            - '@orob2b_payment.payment_method.registry'
+        tags:
+            - { name: oro_workflow.condition, alias: 'payment_method_supports' }
+            - { name: oro_action.condition, alias: 'payment_method_supports' }
