@@ -39,6 +39,7 @@ orob2b:
             term_method.label: 'Payment Term'
             credit_card.label: 'Credit Card'
             whats_this: "What's this?"
+            use_different_card: 'Use a different card'
             tooltip: |
                 The verification number is a 3-digit number printed on the back of your card.
                 The American Express security code is a 4-digit number printed on the front of your card.

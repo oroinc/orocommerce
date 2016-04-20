@@ -14,6 +14,7 @@ define(function(require) {
          */
         options: {
             paymentMethod: null,
+            authorizedCard: null,
             selectors: {
                 month: '[data-expiration-date-month]',
                 year: '[data-expiration-date-year]',
@@ -22,7 +23,9 @@ define(function(require) {
                 expirationDate: '[data-expiration-date]',
                 cvv: '[data-card-cvv]',
                 cardNumber: '[data-card-number]',
-                validation: '[data-validation]'
+                validation: '[data-validation]',
+                dataDifferentCardHandle: '[data-different-card-handle]',
+                dataDifferentCard: '[data-different-card]'
             }
         },
 
@@ -45,6 +48,11 @@ define(function(require) {
          * @property {jQuery}
          */
         $form: null,
+
+        /**
+         * @property bool
+         */
+        isAuthorizedCard: false,
 
         /**
          * @inheritDoc
@@ -70,13 +78,29 @@ define(function(require) {
                     this.options.selectors.cardNumber,
                     _.bind(this.validate, this, this.options.selectors.cardNumber)
                 )
-                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
+                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv))
+                .on('click', this.options.selectors.dataDifferentCardHandle, _.bind(this.showDifferentCard, this));
+
+            this.isAuthorizedCard = (this.options.authorizedCard !== null);
 
             mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
         },
 
+        showDifferentCard: function() {
+            $(this.options.selectors.dataDifferentCard).show();
+            this.isAuthorizedCard = false;
+
+            return false;
+        },
+
         handleSubmit: function(eventData) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
+                if (this.isAuthorizedCard) {
+                    var data = [{name: 'authorizedCard', value: this.options.authorizedCard }];
+
+                    return true;
+                }
+
                 eventData.stopped = true;
                 var data = this.$el.find('[data-gateway]').serializeArray();
                 var resolvedEventData = _.extend(
@@ -202,7 +226,7 @@ define(function(require) {
         },
 
         beforeTransit: function(eventData) {
-            if (eventData.data.paymentMethod === this.options.paymentMethod) {
+            if (eventData.data.paymentMethod === this.options.paymentMethod && !this.isAuthorizedCard) {
                 eventData.stopped = !this.validate();
             }
         }
