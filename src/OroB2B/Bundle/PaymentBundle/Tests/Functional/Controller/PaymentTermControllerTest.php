@@ -6,6 +6,7 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 
 /**
@@ -64,18 +65,23 @@ class PaymentTermControllerTest extends WebTestCase
 
         $accountsGroupGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
         $this->assertContains($this->getReference('account_group.group1')->getName(), $accountsGroupGrid);
+
+        $paymentTerm = $this->getPaymentTermDataByLabel(self::TERM_LABEL_NEW);
+        $this->assertNotEmpty($paymentTerm);
+
+        return $paymentTerm->getId();
     }
 
     /**
      * @depends testCreate
+     * @param $id int
+     * @return int
      */
-    public function testUpdate()
+    public function testUpdate($id)
     {
-        $paymentTermData = $this->getPaymentTermDataByLabel(self::TERM_LABEL_NEW);
-
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_payment_term_update', ['id' => $paymentTermData['id']])
+            $this->getUrl('orob2b_payment_term_update', ['id' => $id])
         );
 
         /** @var Form $form */
@@ -103,35 +109,38 @@ class PaymentTermControllerTest extends WebTestCase
         $accountsGroupGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
         $this->assertContains($this->getReference('account_group.group2')->getName(), $accountsGroupGrid);
         $this->assertNotContains($this->getReference('account_group.group1')->getName(), $accountsGroupGrid);
+
+        return $id;
     }
 
     /**
      * @depends testUpdate
+     * @param int $paymentTermId
+     * @return int
      */
-    public function testView()
+    public function testView($paymentTermId)
     {
-        $paymentTermData = $this->getPaymentTermDataByLabel(self::TERM_LABEL_UPDATED);
-
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_payment_term_view', ['id' => $paymentTermData['id']])
+            $this->getUrl('orob2b_payment_term_view', ['id' => $paymentTermId])
         );
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(LoadPaymentTermData::TERM_LABEL_NET_10, $crawler->html());
+        $this->assertContains(self::TERM_LABEL_UPDATED, $crawler->html());
+
+        return $paymentTermId;
     }
 
     /**
      * @depends testView
+     * @param int $paymentTermId
      */
-    public function testDelete()
+    public function testDelete($paymentTermId)
     {
-        $paymentTermData = $this->getPaymentTermDataByLabel(LoadPaymentTermData::TERM_LABEL_NET_10);
-
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_delete_paymentterm', ['id' => $paymentTermData['id']]),
+            $this->getUrl('orob2b_api_delete_paymentterm', ['id' => $paymentTermId]),
             [],
             [],
             $this->generateWsseAuthHeader()
@@ -140,26 +149,24 @@ class PaymentTermControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
 
-        $this->client->request('GET', $this->getUrl('orob2b_payment_term_view', ['id' => $paymentTermData['id']]));
+        $this->client->request('GET', $this->getUrl('orob2b_payment_term_view', ['id' => $paymentTermId]));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
     }
 
+    /**
+     * @param string $label
+     * @return PaymentTerm
+     */
     private function getPaymentTermDataByLabel($label)
     {
-        $response = $this->client->requestGrid(
-            'payment-terms-grid',
-            ['payment-terms-grid[_filter][label][value]' => $label]
-        );
+        /** @var PaymentTerm $paymentTerm */
+        $paymentTerm = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BPaymentBundle:PaymentTerm')
+            ->getRepository('OroB2BPaymentBundle:PaymentTerm')
+            ->findOneBy(['label' => $label]);
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayHasKey('data', $result);
-        $this->assertNotEmpty($result['data']);
-
-        $result = reset($result['data']);
-        $this->assertNotEmpty($result);
-
-        return $result;
+        return $paymentTerm;
     }
 }

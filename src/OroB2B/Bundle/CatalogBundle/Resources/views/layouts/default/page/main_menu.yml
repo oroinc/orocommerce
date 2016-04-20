@@ -1,15 +1,15 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BCatalogBundle:layouts:default/page/main_menu.html.twig'
-        - @addTree:
+        - '@addTree':
             items:
                 categories_main_menu:
                     blockType: category_list
                     siblingId: ~
                     prepend: true
                     options:
-                        categories: { @value: $data.category_tree.main }
+                        categories: { '@value': $data.category_tree.main }
                         max_size: 4
                 categories_main_menu_first_level_item:
                     blockType: container
@@ -33,4 +33,4 @@ layout:
                                         categories_main_menu_third_level_item: ~
                             categories_main_menu_second_level_sales: ~
     conditions:
-        @neq: [ $context.logged_user, null ]
+        '@neq': [ $context.logged_user, null ]

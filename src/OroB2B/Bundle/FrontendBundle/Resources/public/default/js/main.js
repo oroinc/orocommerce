@@ -1,8 +1,7 @@
-require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScrollbar', 'fastclick', 'elevatezoom'], function(
+require(['jquery', 'lodash', 'slick', 'raty', 'perfectScrollbar', 'fastclick', 'elevatezoom'], function(
     jQuery,
     _,
     slick,
-    datepicker,
     raty,
     perfectScrollbar,
     FastClick,
@@ -38,8 +37,6 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                 moreInfoExpandBinding(); //More info button binding
                 pinClickBinding(); //Pin click binding
                 filterWidgetToggleBinding(); //Filter Widget toggle binding
-                datepickerInit(); //Initing of the datepicker
-                datepickerSetDateBindingInit();
                 topbarButtonsBinding(); //Topbar buttons clicks binding
                 salesPanelToggleInit(); //Sales panel toggle binding
                 flexSelectResizeInit(); //resizing the selects
@@ -170,6 +167,7 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                        productsSliderInit();
                     }
 
+                    $(this).trigger('tab:toggle');
                     event.stopPropagation();
                     event.preventDefault();
                 });
@@ -500,24 +498,6 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                     }
 
                     event.preventDefault();
-                });
-            }
-
-            function datepickerInit() {
-                var $datepicker = $('.input_datepicker');
-
-                if ($datepicker.length) {
-                    $datepicker.datepicker({
-                        orientation: "bottom left"
-                    });
-                }
-            }
-
-            function datepickerSetDateBindingInit() {
-                var $datepicker = $('.input_datepicker');
-
-                $datepicker.on('changeDate', function(event) {
-                    $(this).prev().addClass('date-applied');
                 });
             }
 

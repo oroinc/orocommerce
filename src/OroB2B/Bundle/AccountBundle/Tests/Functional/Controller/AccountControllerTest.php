@@ -9,7 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
@@ -28,18 +28,22 @@ class AccountControllerTest extends WebTestCase
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadInternalRating',
-                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData'
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadUserData'
             ]
         );
     }
 
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_account_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('account-accounts-grid', $crawler->html());
     }
 
+    /**
+     * @return int
+     */
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_create'));
@@ -53,25 +57,27 @@ class AccountControllerTest extends WebTestCase
         /** @var AbstractEnumValue $internalRating */
         $internalRating = $this->getReference('internal_rating.1 of 5');
         $this->assertAccountSave($crawler, self::ACCOUNT_NAME, $parent, $group, $internalRating);
+
+        /** @var Account $account */
+        $account = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:Account')
+            ->getRepository('OroB2BAccountBundle:Account')
+            ->findOneBy(['name' => self::ACCOUNT_NAME]);
+        $this->assertNotEmpty($account);
+
+        return $account->getId();
     }
 
     /**
+     * @param int $id
+     * @return int
      * @depends testCreate
      */
-    public function testUpdate()
+    public function testUpdate($id)
     {
-        $response = $this->client->requestGrid(
-            'account-accounts-grid',
-            ['account-accounts-grid[_filter][name][value]' => self::ACCOUNT_NAME]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id = $result['id'];
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_update', ['id' => $result['id']])
+            $this->getUrl('orob2b_account_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);

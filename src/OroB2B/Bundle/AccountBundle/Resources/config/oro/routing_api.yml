@@ -29,6 +29,12 @@ orob2b_account_account_user_address_api:
     resource: "@OroB2BAccountBundle/Controller/Api/Rest/AccountUserAddressController.php"
     type:     rest
 
+orob2b_account_frontend_account_user_address_api:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/Api/Rest/AccountUserAddressController.php"
+    type:     rest
+    options:
+        frontend: true
+
 orob2b_account_api_pinbar:
     resource:     "@OroB2BAccountBundle/Controller/Frontend/Api/Rest/NavigationItemController.php"
     type:         rest

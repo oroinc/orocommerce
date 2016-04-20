@@ -29,7 +29,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     {
         $this->initClient();
 
-        if (!$this->getContainer()->hasParameter('orob2b_product.product.class')) {
+        if (!$this->getContainer()->hasParameter('orob2b_product.entity.product.class')) {
             $this->markTestSkipped('ProductBundle is missing');
         }
 
@@ -49,7 +49,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
      */
     public function testProcess(array $entityData = [], array $expectedNames = [], array $itemData = [])
     {
-        $productClass = $this->getContainer()->getParameter('orob2b_product.product.class');
+        $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
 
         /** @var LocalizedFallbackValueAwareStrategy $strategy */
         $strategy = $this->getContainer()->get('orob2b_fallback.importexport.strategy.localized_fallback_value_aware');
@@ -168,7 +168,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
      */
     public function testProcessSkipped(array $entityData, callable $resultCallback)
     {
-        $productClass = $this->getContainer()->getParameter('orob2b_product.product.class');
+        $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
 
         /** @var LocalizedFallbackValueAwareStrategy $strategy */
         $strategy = $this->getContainer()->get('orob2b_fallback.importexport.strategy.localized_fallback_value_aware');

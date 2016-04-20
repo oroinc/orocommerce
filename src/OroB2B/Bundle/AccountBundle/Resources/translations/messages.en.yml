@@ -373,6 +373,8 @@ orob2b.account:
             profile_updated.message: 'Account User profile updated'
             token_not_found.message: 'The user with "confirmation token" does not exist for value "%token%"'
             confirmation_sent.message: 'Confirmation email has been sent'
+        accountuseraddress:
+            saved.message: 'Account User Address has been saved'
         accountuserrole:
             saved.message:     'Account User Role has been saved'
 
@@ -410,6 +412,33 @@ orob2b.account:
         privileges:
             entity.label: Access
             action.label: Capabillities
+        address: #orob2b.account.frontend.address
+            title:
+                create: 'Create'
+                edit: 'Edit'
+                subject: 'Address Account User'
+            page_title.edit: 'Edit Address'
+            page_title.create: 'Create Address'
+            form:
+                placeholder:
+                    first_name: ""
+                    middle_name: ""
+                    name_suffix: ""
+                    last_name: ""
+                    label: ""
+                    organization: ""
+                    street: ""
+                    street2: ""
+                    city: ""
+                    zip: ""
+                    phone: ""
+                    name.prefix: ""
+                label:
+                    primary: Is Primary Address
+                    address_types: Address type and usage
+            buttons:
+                cancel: Cancel
+                save: Save
         security:
             access-level:
                 BASIC: 'Individual'

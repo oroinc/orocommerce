@@ -1,7 +1,7 @@
 orob2b:
     alternativecheckout:
-        entity_label: Checkout
-        entity_plural_label: Checkouts
+        entity_label: Alternative Checkout
+        entity_plural_label: Alternative Checkouts
         id.label: Id
         owner.label: Owner
         account.label: Account
@@ -30,6 +30,7 @@ orob2b:
         shipping_estimate_amount.label: Shipping Estimate Ammount
         shipping_estimate_currency.label: Shipping Estimate Currency
         requested_for_approve.label: Requested For Approve
+        payment_method.label: Payment Method
 
         workflow:
             b2b_flow_alternative_checkout:

@@ -73,7 +73,7 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Undefined data item index: shoppingList.
+     * @expectedExceptionMessage Undefined data item index: entity.
      */
     public function testGetDataWithEmptyContext()
     {
@@ -89,7 +89,7 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
     public function testGetData($shoppingList, $expected)
     {
         $context = new LayoutContext();
-        $context->data()->set('shoppingList', null, $shoppingList);
+        $context->data()->set('entity', null, $shoppingList);
 
         if ($shoppingList) {
             /** @var PriceList $priceList */
@@ -148,14 +148,14 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
 
         return [
             [
-                'shoppingList' => $shoppingList,
+                'entity' => $shoppingList,
                 'expected' => [
                     '123' => ['liter', 'bottle'],
                     '321' => ['piece' ]
                 ]
             ],
             [
-                'shoppingList' => null,
+                'entity' => null,
                 'expected' => null
             ]
         ];
