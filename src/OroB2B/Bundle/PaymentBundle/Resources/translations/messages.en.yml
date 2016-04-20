@@ -111,3 +111,7 @@ orob2b:
         result:
             token_expired: Authorization token expired, please try one more time
             error: Payment failed
+
+        payflow:
+            authorized_card: 'Credit Card ************{{ last4 }}'
+            use_different_card: 'Use a different card'
