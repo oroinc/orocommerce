@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Tests\Functional\Controller\Api\Rest;
+namespace OroB2B\Bundle\WebsiteBundle\Tests\Functional\Operation;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -10,7 +10,7 @@ use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 /**
  * @dbIsolation
  */
-class WebsiteControllerTest extends WebTestCase
+class WebsiteDeleteOperationTest extends ActionTestCase
 {
     protected function setUp()
     {
@@ -29,16 +29,21 @@ class WebsiteControllerTest extends WebTestCase
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $websiteId = $website->getId();
 
-        $this->client->request(
+        $this->assertExecuteOperation(
             'DELETE',
-            $this->getUrl('orob2b_api_delete_website', ['id' => $websiteId]),
-            [],
-            [],
-            $this->generateWsseAuthHeader()
+            $websiteId,
+            $this->getContainer()->getParameter('orob2b_website.entity.website.class')
         );
 
-        $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+        $this->assertEquals(
+            [
+                'success' => true,
+                'message' => '',
+                'messages' => [],
+                'redirectUrl' => $this->getUrl('orob2b_website_index')
+            ],
+            json_decode($this->client->getResponse()->getContent(), true)
+        );
 
         $this->client->followRedirects();
         $this->client->request('GET', $this->getUrl('orob2b_website_view', ['id' => $websiteId]));

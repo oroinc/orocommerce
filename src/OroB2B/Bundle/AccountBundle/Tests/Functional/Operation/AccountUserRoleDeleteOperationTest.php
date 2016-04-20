@@ -1,22 +1,22 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Api\Rest;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Operation;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
 
 /**
  * @dbIsolation
  */
-class AccountUserRoleControllerTest extends WebTestCase
+class AccountUserRoleDeleteOperationTest extends ActionTestCase
 {
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures(
             [
@@ -35,10 +35,21 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $id = $userRole->getId();
 
-        $this->client->request('DELETE', $this->getUrl('orob2b_api_account_delete_accountuserrole', ['id' => $id]));
-        $result = $this->client->getResponse();
+        $this->assertExecuteOperation(
+            'DELETE',
+            $id,
+            $this->getContainer()->getParameter('orob2b_account.entity.account_user_role.class')
+        );
 
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+        $this->assertEquals(
+            [
+                'success' => true,
+                'message' => '',
+                'messages' => [],
+                'redirectUrl' => $this->getUrl('orob2b_account_account_user_role_index')
+            ],
+            json_decode($this->client->getResponse()->getContent(), true)
+        );
 
         $this->getObjectManager()->clear();
         $userRole = $this->getUserRoleRepository()->find($id);
