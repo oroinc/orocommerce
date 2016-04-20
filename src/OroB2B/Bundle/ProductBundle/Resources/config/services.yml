@@ -106,11 +106,12 @@ services:
         parent: orob2b_product.storage.session_data_storage
 
     orob2b_product.validator.product_by_sku:
-            class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator'
-            arguments:
-                - "@doctrine"
-            tags:
-                - { name: validator.constraint_validator, alias: orob2b_product_product_by_sku_validator }
+        class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator'
+        public: true
+        arguments:
+            - "@doctrine"
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_product_product_by_sku_validator }
 
     orob2b_product.component_processor.filter:
         class: 'OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter'
@@ -125,6 +126,7 @@ services:
 
     orob2b_product.component_processor.data_storage_aware.processor:
         class: 'OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor'
+        public: true
         arguments:
             - "@router"
             - "@orob2b_product.storage.product_data_storage"
@@ -174,6 +176,7 @@ services:
 
     orob2b_product.provider.quick_add_form_provider:
         class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider'
+        public: true
         arguments:
             - "@form.factory"
         tags:
@@ -181,6 +184,7 @@ services:
 
     orob2b_product.provider.quick_add_import_form_provider:
         class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider'
+        public: true
         arguments:
             - "@form.factory"
         tags:
@@ -188,6 +192,7 @@ services:
 
     orob2b_product.provider.quick_add_copy_paste_form_provider:
         class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider'
+        public: true
         arguments:
             - "@form.factory"
         tags:

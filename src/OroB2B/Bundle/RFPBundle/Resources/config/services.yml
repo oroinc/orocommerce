@@ -21,6 +21,7 @@ services:
 
     orob2b_rfp.processor.quick_add:
         parent: orob2b_product.component_processor.data_storage_aware.processor
+        public: true
         calls:
             - [setName, ['orob2b_rfp_quick_add_processor']]
             - [setRedirectRouteName, ['orob2b_rfp_frontend_request_create']]
