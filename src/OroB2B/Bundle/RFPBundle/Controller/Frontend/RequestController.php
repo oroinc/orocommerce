@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\RFPBundle\Controller\Frontend;
 
+use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
+use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -188,6 +190,23 @@ class RequestController extends Controller
                     $url = $request->headers->get('referer');
                 }
 
+                $product = $request->get('product');
+                $unit = $request->get('unit');
+                $quantity = $request->get('quantity');
+                if ($product && $unit && $quantity) {
+                    $product = $this->container->get('doctrine')->getManagerForClass('OroB2BProductBundle:Product')
+                        ->getReference('OroB2BProductBundle:Product', $product);
+                    $unit = $this->container->get('doctrine')
+                        ->getManagerForClass('OroB2BProductBundle:ProductUnit')
+                        ->getReference('OroB2BProductBundle:ProductUnit', $unit);
+                    $requestProductItem = new RequestProductItem();
+                    $requestProductItem->setQuantity($quantity);
+                    $requestProductItem->setProductUnit($unit);
+                    $requestProduct = new RequestProduct();
+                    $requestProduct->setProduct($product);
+                    $requestProduct->addRequestProductItem($requestProductItem);
+                    $rfpRequest->addRequestProduct($requestProduct);
+                }
                 return [
                     'backToUrl' => $url,
                     'form' => $form->createView()

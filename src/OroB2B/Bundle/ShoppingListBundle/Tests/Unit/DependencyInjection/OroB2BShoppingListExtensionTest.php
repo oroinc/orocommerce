@@ -33,7 +33,6 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
             'orob2b_shopping_list.form.type.shopping_list.class',
             'orob2b_shopping_list.form.type.line_item.class',
             'orob2b_shopping_list.form.type.frontend_line_item_widget.class',
-            'orob2b_shopping_list.form.type.frontend_line_item.class',
 
             // Event listeners
             'orob2b_shopping_list.event_listener.shopping_list_listener.class',
@@ -57,7 +56,6 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
             // Forms
             'orob2b_shopping_list.form.type.shopping_list',
             'orob2b_shopping_list.form.type.line_item',
-            'orob2b_shopping_list.form.type.frontend_line_item',
             'orob2b_shopping_list.form.type.frontend_line_item_widget',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);

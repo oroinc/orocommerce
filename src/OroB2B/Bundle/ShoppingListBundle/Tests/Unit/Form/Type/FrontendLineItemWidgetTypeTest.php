@@ -284,9 +284,6 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
      */
     protected function getParentForm()
     {
-        $form = new FrontendLineItemType();
-        $form->setDataClass(self::DATA_CLASS);
-
-        return $form;
+        return new FrontendLineItemType();
     }
 }
