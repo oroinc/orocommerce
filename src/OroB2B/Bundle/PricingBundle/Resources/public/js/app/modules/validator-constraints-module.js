@@ -8,5 +8,6 @@ require([
         'jquery', 'jquery.validate'
     ], function ($) {
         $.validator.loadMethod('orob2bpricing/js/validator/unique-product-prices');
+        $.validator.loadMethod('orob2bpricing/js/validator/dates-chain');
     });
 });

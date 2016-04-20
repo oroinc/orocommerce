@@ -107,10 +107,6 @@
 {% endblock %}
 
 {# --------------------------- Price List Schedule ------------------------------------------------------ #}
-{% block orob2b_pricing_price_list_schedule_widget %}
-    <td>{{ form_widget(form.activeAt) }}</td>
-    <td>{{ form_widget(form.deactivateAt) }}</td>
-{% endblock %}
 
 {% macro pl_schedule_collection_item_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
@@ -120,10 +116,20 @@
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
     {% endif %}
+
+    {% set hasErrors = (form.activeAt.vars.errors|length or form.deactivateAt.vars.errors|length) %}
+
     <tr data-content="{{ name }}" data-validation-optional-group class="pl-schedule__row">
-        {{ form_widget(form) }}
+        <td>{{ form_widget(form.activeAt) }}</td>
+        <td>{{ form_widget(form.deactivateAt) }}</td>
         <td class="">
             <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
+        </td>
+    </tr>
+    <tr {% if not hasErrors %}style="display: none"{% endif %}>
+        <td colspan="3">
+            {{ form_errors(form.activeAt) }}
+            {{ form_errors(form.deactivateAt) }}
         </td>
     </tr>
 {% endmacro %}

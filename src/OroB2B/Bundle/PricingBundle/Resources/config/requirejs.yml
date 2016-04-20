@@ -15,6 +15,7 @@ config:
         'orob2bpricing/js/app/listener/value-changing-listener': 'bundles/orob2bpricing/js/app/listener/value-changing-listener.js'
 
         'orob2bpricing/js/validator/unique-product-prices': 'bundles/orob2bpricing/js/validator/unique-product-prices.js'
+        'orob2bpricing/js/validator/dates-chain': 'bundles/orob2bpricing/js/validator/dates-chain.js'
 
         'oro/filter/product-price-filter': 'bundles/orob2bpricing/js/filter/product-price-filter.js'
         'oro/filter/frontend-product-price-filter': 'bundles/orob2bpricing/js/filter/frontend-product-price-filter.js'
