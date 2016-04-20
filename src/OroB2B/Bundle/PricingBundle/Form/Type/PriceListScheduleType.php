@@ -52,4 +52,12 @@ class PriceListScheduleType extends AbstractType
     {
         return self::NAME;
     }
+
+    /**
+     * @param mixed $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
 }

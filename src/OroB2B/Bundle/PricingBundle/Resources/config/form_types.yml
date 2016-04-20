@@ -88,6 +88,8 @@ services:
 
     orob2b_pricing.form.type.price_list_schedule:
         class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListScheduleType'
+        calls:
+            - [setDataClass, ["%orob2b_pricing.entity.price_list_schedule.class%"]]
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_schedule }
 
