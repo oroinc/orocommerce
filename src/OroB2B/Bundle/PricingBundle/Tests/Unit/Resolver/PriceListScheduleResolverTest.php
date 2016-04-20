@@ -32,6 +32,7 @@ class PriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function dataProviderMergeSchedule()
@@ -49,56 +50,120 @@ class PriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'priceListSchedules' => [
-                    ['id' => 2, 'on' => 20160102, 'off' => 20160103],
+                    ['id' => 2, PriceListScheduleResolver::ON => 20160102, PriceListScheduleResolver::OFF => 20160103],
                 ],
                 'priceListRelations' => [1, 2],
                 'expectedResult' => [
-                    0        => ['priceLists' => [1], 'activateAt' => null, 'expireAt' => 20160102],
-                    20160102 => ['priceLists' => [1, 2], 'activateAt' => 20160102, 'expireAt' => 20160103],
-                    20160103 => ['priceLists' => [1], 'activateAt' => 20160103, 'expireAt' => null],
+                    0        => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => 20160102
+                    ],
+                    20160102 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => 20160102,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => 20160103
+                    ],
+                    20160103 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => 20160103,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => null
+                    ],
                 ]
             ],
             [
                 'priceListSchedules' => [
-                    ['id' => 2, 'on' => 20160102, 'off' => 20160103],
-                    ['id' => 3, 'on' => 20160103, 'off' => 20160106],
-                    ['id' => 2, 'on' => 20160105, 'off' => 20160108],
+                    ['id' => 2, PriceListScheduleResolver::ON => 20160102, PriceListScheduleResolver::OFF => 20160103],
+                    ['id' => 3, PriceListScheduleResolver::ON => 20160103, PriceListScheduleResolver::OFF => 20160106],
+                    ['id' => 2, PriceListScheduleResolver::ON => 20160105, PriceListScheduleResolver::OFF => 20160108],
                 ],
                 'priceListRelations' => [1, 2, 3],
                 'expectedResult' => [
-                    0        => ['priceLists' => [1], 'activateAt' => null, 'expireAt' => 20160102],
-                    20160102 => ['priceLists' => [1, 2], 'activateAt' => 20160102, 'expireAt' => 20160103],
-                    20160103 => ['priceLists' => [1, 3], 'activateAt' => 20160103, 'expireAt' => 20160105],
-                    20160105 => ['priceLists' => [1, 2, 3], 'activateAt' => 20160105, 'expireAt' => 20160106],
-                    20160106 => ['priceLists' => [1, 2], 'activateAt' => 20160106, 'expireAt' => 20160108],
-                    20160108 => ['priceLists' => [1], 'activateAt' => 20160108, 'expireAt' => null],
+                    0        => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => 20160102
+                    ],
+                    20160102 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => 20160102,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => 20160103
+                    ],
+                    20160103 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 3],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => 20160103,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => 20160105
+                    ],
+                    20160105 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2, 3],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => 20160105,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => 20160106
+                    ],
+                    20160106 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => 20160106,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => 20160108
+                    ],
+                    20160108 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => 20160108,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => null
+                    ],
                 ]
             ],
             [
                 'priceListSchedules' => [
-                    ['id' => 1, 'on' => 20160102, 'off' => 20160103],
-                    ['id' => 1, 'on' => 20160105, 'off' => null],
-                    ['id' => 2, 'on' => 20160102, 'off' => 20160103],
-                    ['id' => 1, 'on' => 20160105, 'off' => null],
+                    ['id' => 1, PriceListScheduleResolver::ON => 20160102, PriceListScheduleResolver::OFF => 20160103],
+                    ['id' => 1, PriceListScheduleResolver::ON => 20160105, PriceListScheduleResolver::OFF => null],
+                    ['id' => 2, PriceListScheduleResolver::ON => 20160102, PriceListScheduleResolver::OFF => 20160103],
+                    ['id' => 1, PriceListScheduleResolver::ON => 20160105, PriceListScheduleResolver::OFF => null],
                 ],
                 'priceListRelations' => [1, 2],
                 'expectedResult' => [
-                    0        => ['priceLists' => [], 'activateAt' => null, 'expireAt' => 20160102],
-                    20160102 => ['priceLists' => [1, 2], 'activateAt' => 20160102, 'expireAt' => 20160103],
-                    20160103 => ['priceLists' => [], 'activateAt' => 20160103, 'expireAt' => 20160105],
-                    20160105 => ['priceLists' => [1], 'activateAt' => 20160105, 'expireAt' => null],
+                    0        => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => 20160102
+                    ],
+                    20160102 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => 20160102,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => 20160103
+                    ],
+                    20160103 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => 20160103,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => 20160105
+                    ],
+                    20160105 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => 20160105,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => null
+                    ],
                 ]
             ],
             [
                 'priceListSchedules' => [
-                    ['id' => 2, 'on' => 20160101, 'off' => null],
-                    ['id' => 3, 'on' => null, 'off' => 20160103],
+                    ['id' => 2, PriceListScheduleResolver::ON => 20160101, PriceListScheduleResolver::OFF => null],
+                    ['id' => 3, PriceListScheduleResolver::ON => null, PriceListScheduleResolver::OFF => 20160103],
                 ],
                 'priceListRelations' => [1, 2, 3, 4],
                 'expectedResult' => [
-                    0        => ['priceLists' => [1, 3, 4], 'activateAt' => null, 'expireAt' => 20160101],
-                    20160101 => ['priceLists' => [1, 2, 3, 4], 'activateAt' => 20160101, 'expireAt' => 20160103],
-                    20160103 => ['priceLists' => [1, 2, 4], 'activateAt' => 20160103, 'expireAt' => null],
+                    0        => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 3, 4],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => 20160101
+                    ],
+                    20160101 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2, 3, 4],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => 20160101,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => 20160103
+                    ],
+                    20160103 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2, 4],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => 20160103,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => null
+                    ],
                 ]
             ],
         ];
@@ -126,13 +191,13 @@ class PriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
     protected function createScheduleItem(array $priceListSchedule)
     {
         $obj = new PriceListSchedule();
-        if ($priceListSchedule['on']) {
+        if ($priceListSchedule[PriceListScheduleResolver::ON]) {
             $obj->setActiveAt(new \DateTime());
-            $obj->getActiveAt()->setTimestamp($priceListSchedule['on']);
+            $obj->getActiveAt()->setTimestamp($priceListSchedule[PriceListScheduleResolver::ON]);
         }
-        if ($priceListSchedule['off']) {
+        if ($priceListSchedule[PriceListScheduleResolver::OFF]) {
             $obj->setDeactivateAt(new \DateTime());
-            $obj->getDeactivateAt()->setTimestamp($priceListSchedule['off']);
+            $obj->getDeactivateAt()->setTimestamp($priceListSchedule[PriceListScheduleResolver::OFF]);
         }
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
         $priceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\PriceList');
