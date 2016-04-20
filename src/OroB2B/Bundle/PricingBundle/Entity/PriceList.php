@@ -41,6 +41,13 @@ class PriceList extends BasePriceList
     protected $default = false;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="active", type="boolean")
+     */
+    protected $active = true;
+
+    /**
      * @var Collection|ProductPrice[]
      *
      * @ORM\OneToMany(
@@ -90,5 +97,24 @@ class PriceList extends BasePriceList
     protected function createPriceListCurrency()
     {
         return new PriceListCurrency();
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * @param boolean $active
+     * @return $this
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+
+        return $this;
     }
 }
