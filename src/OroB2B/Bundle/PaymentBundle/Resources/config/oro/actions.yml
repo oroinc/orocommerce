@@ -1,0 +1,6 @@
+operations:
+    DELETE:
+        exclude_datagrids:
+            - payment-term-accounts-grid
+            - payment-term-account-groups-grid
+            - payment-terms-select-grid

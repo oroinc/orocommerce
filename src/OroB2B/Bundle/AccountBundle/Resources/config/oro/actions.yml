@@ -302,6 +302,10 @@ operations:
             - account-user-by-account-grid
             - account-accounts-select-grid
             - account-account-user-select-grid
+            - account-account-users-grid-view
+            - account-account-users-grid-update
+            - account-category-visibility-grid
+            - account-product-visibility-grid
     DELETE:
         exclude_datagrids:
             - account-group-accounts-grid-basic
@@ -310,6 +314,13 @@ operations:
             - account-user-by-account-grid
             - account-accounts-select-grid
             - account-account-user-select-grid
+            - account-groups-select-grid
+            - account-account-users-grid-view
+            - account-account-users-grid-update
+            - account-group-category-visibility-grid
+            - account-category-visibility-grid
+            - account-group-product-visibility-grid
+            - account-product-visibility-grid
 
 action_groups:
     orob2b_account_accountuser_set_enabled:
