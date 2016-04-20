@@ -152,7 +152,6 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
         $selectPattern = 'MIN(%s.value) as %s';
         $select = sprintf($selectPattern, $joinAlias, $minimumPriceColumnName);
         $this->addConfigElement($config, '[source][query][select]', $select);
-        
         $this->addConfigProductPriceJoin($config, $currency);
 
         $this->addConfigElement(
@@ -183,7 +182,6 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
             ],
             $minimumPriceColumnName
         );
-        
         $filter = ['type' => 'frontend-product-price', 'data_name' => $currency];
         $this->addConfigElement($config, '[filters][columns]', $filter, $minimumPriceColumnName);
     }
