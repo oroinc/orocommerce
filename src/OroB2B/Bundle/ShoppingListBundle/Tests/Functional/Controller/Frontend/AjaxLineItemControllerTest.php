@@ -196,19 +196,27 @@ class AjaxLineItemControllerTest extends WebTestCase
     }
 
     /**
-     * @param ShoppingList $shoppingList
+     * @param ShoppingList $currentShoppingList
      * @param bool $isCurrent
      */
-    protected function setShoppingListCurrent(ShoppingList $shoppingList, $isCurrent)
+    protected function setShoppingListCurrent(ShoppingList $currentShoppingList, $isCurrent)
     {
-        $shoppingList->setCurrent($isCurrent);
-
         $container = $this->getContainer();
         $manager = $container->get('doctrine')->getManagerForClass(
             $container->getParameter('orob2b_shopping_list.entity.shopping_list.class')
         );
 
-        $manager->persist($shoppingList);
+        /** @var ShoppingList[] $shoppingLists */
+        $shoppingLists = $this->getShoppingListRepository()->findAll();
+        foreach ($shoppingLists as $shoppingList) {
+            $shoppingList->setCurrent(false);
+
+            $manager->persist($shoppingList);
+        }
+
+        $currentShoppingList->setCurrent($isCurrent);
+
+        $manager->persist($currentShoppingList);
         $manager->flush();
     }
 
@@ -278,7 +286,7 @@ class AjaxLineItemControllerTest extends WebTestCase
     public function testAddProductsToNewMassAction()
     {
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
 
         $shoppingListsCount = count($this->getShoppingListRepository()->findAll());
 
