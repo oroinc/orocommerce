@@ -6,10 +6,6 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.ExcessiveClassLength)
- */
 class OroB2BShippingBundleInstaller implements Installation
 {
     /**
@@ -17,7 +13,7 @@ class OroB2BShippingBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'V1_0';
+        return 'v1_0';
     }
 
     /**

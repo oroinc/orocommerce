@@ -8,7 +8,6 @@ use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 
 /**
- * ShippingOriginWarehouse
  * @ORM\Table("orob2b_shipping_orig_warehouse")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
@@ -16,10 +15,10 @@ use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 class ShippingOriginWarehouse extends ShippingOrigin
 {
     /**
-     * @var  Warehouse
+     * @var Warehouse
      *
      * @ORM\OneToOne(targetEntity="OroB2B\Bundle\WarehouseBundle\Entity\Warehouse")
-     * @ORM\JoinColumn(name="warehouse_id", referencedColumnName="id",  nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="warehouse_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $warehouse;
 
@@ -44,8 +43,6 @@ class ShippingOriginWarehouse extends ShippingOrigin
     }
 
     /**
-     * Pre update event handler
-     *
      * @ORM\PreUpdate
      */
     public function preUpdate()

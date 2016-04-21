@@ -6,13 +6,8 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.ExcessiveClassLength)
- */
 class OroB2BShippingBundle implements Migration
 {
-
     /**
      * {@inheritdoc}
      */

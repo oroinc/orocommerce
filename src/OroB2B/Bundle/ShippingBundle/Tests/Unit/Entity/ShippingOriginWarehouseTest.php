@@ -21,7 +21,7 @@ class ShippingOriginWarehouseTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $regionMock = $this->getMock('Oro\Bundle\AddressBundle\Entity\Region', array(), array('combinedCode'));
+        $regionMock = $this->getMock('Oro\Bundle\AddressBundle\Entity\Region', [], ['combinedCode']);
 
         $properties = [
             'id' => ['id', 1],
