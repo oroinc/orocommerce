@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Action;
 
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -132,6 +133,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
                 foreach ($values[$definedOption] as &$value) {
                     $value = $this->contextAccessor->getValue($context, $value);
                 }
+                unset($value);
             }
         }
 

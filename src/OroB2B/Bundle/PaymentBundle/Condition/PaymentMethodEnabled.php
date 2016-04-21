@@ -5,13 +5,15 @@ namespace OroB2B\Bundle\PaymentBundle\Condition;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
-use Oro\Component\ConfigExpression\Exception;
+//use Oro\Component\ConfigExpression\Exception;
+use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
 /**
  * Check payment method enabled
  * Usage:
+ *
  * @payment_method_enabled: 'payment_term'
  */
 class PaymentMethodEnabled extends AbstractCondition implements ContextAccessorAwareInterface
@@ -45,6 +47,11 @@ class PaymentMethodEnabled extends AbstractCondition implements ContextAccessorA
     /** {@inheritdoc} */
     public function initialize(array $options)
     {
+        $optionsCount = count($options);
+        if (1 !== $optionsCount) {
+            throw new InvalidArgumentException(sprintf('Options must have 1 element, but %d given', $optionsCount));
+        }
+
         $this->paymentMethod = reset($options);
 
         return $this;
