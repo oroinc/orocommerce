@@ -29,6 +29,9 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
     /** @var AbstractPaymentMethodAction */
     protected $action;
 
+    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
+    protected $dispatcher;
+
     protected function setUp()
     {
         $this->contextAccessor = $this->getMock('Oro\Component\Action\Model\ContextAccessor');
@@ -40,22 +43,21 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject $router */
         $this->router = $this->getMock('Symfony\Component\Routing\RouterInterface');
 
         $this->action = $this->getAction();
 
-        /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
-        $dispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcher')
+        $this->dispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->action->setDispatcher($dispatcher);
+        $this->action->setDispatcher($this->dispatcher);
     }
 
     protected function tearDown()
     {
         unset($this->action);
+        unset($this->dispatcher);
         unset($this->contextAccessor);
         unset($this->paymentMethodRegistry);
         unset($this->paymentTransactionProvider);

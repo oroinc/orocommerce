@@ -18,8 +18,12 @@ class CaptureActionTest extends AbstractActionTest
      */
     public function testExecute(array $data, array $expected)
     {
+        $paymentTransaction = $data['paymentTransaction'];
+        $options = $data['options'];
+
         $context = [];
-        $this->action->initialize($data['options']);
+
+        $this->action->initialize($options);
 
         $this->contextAccessor
             ->expects($this->any())
@@ -29,9 +33,16 @@ class CaptureActionTest extends AbstractActionTest
         $this->paymentTransactionProvider
             ->expects($this->once())
             ->method('getActiveAuthorizePaymentTransaction')
-            ->willReturn($data['paymentTransaction']);
+            ->willReturn($paymentTransaction);
 
-        if ($data['paymentTransaction']) {
+        if ($paymentTransaction) {
+            $exceptionWillThrow = false;
+            $responseValue = $this->returnValue($data['response']);
+
+            if ($data['response'] instanceof \Exception) {
+                $responseValue = $this->throwException($data['response']);
+                $exceptionWillThrow = true;
+            }
 
             /** @var PaymentTransaction|\PHPUnit_Framework_MockObject_MockObject $capturePaymentTransaction */
             $capturePaymentTransaction = new PaymentTransaction();
@@ -44,7 +55,7 @@ class CaptureActionTest extends AbstractActionTest
             $paymentMethod->expects($this->once())
                 ->method('execute')
                 ->with($capturePaymentTransaction)
-                ->willReturn($data['response']);
+                ->will($responseValue);
 
             $this->paymentTransactionProvider
                 ->expects($this->once())
@@ -58,13 +69,18 @@ class CaptureActionTest extends AbstractActionTest
                 ->willReturn($paymentMethod);
 
             $this->paymentTransactionProvider
-                ->expects($this->exactly(3))
-                ->method('savePaymentTransaction');
+                ->expects($this->exactly($exceptionWillThrow ? 2 : 3))
+                ->method('savePaymentTransaction')
+                ->withConsecutive(
+                    $paymentTransaction,
+                    $capturePaymentTransaction,
+                    $paymentTransaction
+                );
 
             $this->contextAccessor
-                ->expects($this->once())
+                ->expects(!empty($options['attribute']) ? $this->once() : $this->never())
                 ->method('setValue')
-                ->with($context, $data['options']['attribute'], $expected);
+                ->with($context, $options['attribute'], $expected);
 
         } else {
             $this->paymentTransactionProvider
@@ -90,15 +106,12 @@ class CaptureActionTest extends AbstractActionTest
                         'currency' => 'USD',
                         'attribute' => new PropertyPath('test'),
                         'transactionOptions' => [],
-                    ],
-                    'testPaymentMethodType' => 'testPaymentMethodType',
-                    'testEntityIdentifier' => 10,
+                    ]
                 ],
                 'expected' => [
                 ]
             ],
-
-            'usual_case' => [
+            'default' => [
                 'data' => [
                     'paymentTransaction' => new PaymentTransaction(),
                     'options' => [
@@ -119,6 +132,28 @@ class CaptureActionTest extends AbstractActionTest
                     'successful' => false,
                     'message' => null,
                     'testResponse' => 'testResponse',
+                ]
+            ],
+            'throw exception' => [
+                'data' => [
+                    'paymentTransaction' => new PaymentTransaction(),
+                    'options' => [
+                        'object' => new \stdClass(),
+                        'amount' => 100.0,
+                        'currency' => 'USD',
+                        'attribute' => new PropertyPath('test'),
+                        'transactionOptions' => [
+                            'testOption' => 'testOption'
+                        ],
+                    ],
+                    'testPaymentMethodType' => 'testPaymentMethodType',
+                    'testEntityIdentifier' => 10,
+                    'response' => new \Exception(),
+                ],
+                'expected' => [
+                    'transaction' => 10,
+                    'successful' => false,
+                    'message' => null,
                 ]
             ],
         ];

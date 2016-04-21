@@ -19,49 +19,89 @@ class PurchaseActionTest extends AbstractActionTest
     public function testExecute(array $data, array $expected)
     {
         $context = [];
-        $this->action->initialize($data['options']);
+        $options = $data['options'];
+
+        $exceptionWillThrow = false;
+        $responseValue = $this->returnValue($data['response']);
+
+        if ($data['response'] instanceof \Exception) {
+            $responseValue = $this->throwException($data['response']);
+            $exceptionWillThrow = true;
+        }
+
+        $this->action->initialize($options);
 
         $this->contextAccessor
             ->expects($this->any())
             ->method('getValue')
             ->will($this->returnArgument(1));
 
-        /** @var PaymentTransaction|\PHPUnit_Framework_MockObject_MockObject $capturePaymentTransaction */
-        $capturePaymentTransaction = new PaymentTransaction();
-        $capturePaymentTransaction
-            ->setEntityIdentifier($data['testEntityIdentifier']);
+        /** @var PaymentTransaction|\PHPUnit_Framework_MockObject_MockObject $paymentTransaction */
+        $paymentTransaction = new PaymentTransaction();
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
         $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
-            ->with($capturePaymentTransaction)
-            ->willReturn($data['response']);
+            ->with($paymentTransaction)
+            ->will($responseValue);
 
         $this->paymentTransactionProvider
             ->expects($this->once())
             ->method('createPaymentTransaction')
-            ->willReturn($capturePaymentTransaction);
+            ->with($options['paymentMethod'], PaymentMethodInterface::PURCHASE, $options['object'])
+            ->willReturn($paymentTransaction);
 
         $this->paymentMethodRegistry
             ->expects($this->once())
             ->method('getPaymentMethod')
-            ->with($data['options']['paymentMethod'])
+            ->with($options['paymentMethod'])
             ->willReturn($paymentMethod);
 
         $this->paymentTransactionProvider
-            ->expects($this->exactly(2))
-            ->method('savePaymentTransaction');
+            ->expects($this->exactly($exceptionWillThrow ? 1 : 2))
+            ->method('savePaymentTransaction')
+            ->with($paymentTransaction)
+            ->willReturnCallback(
+                function (PaymentTransaction $paymentTransaction) use ($options) {
+                    $this->assertEquals($options['amount'], $paymentTransaction->getAmount());
+                    $this->assertEquals($options['currency'], $paymentTransaction->getCurrency());
+                    if (!empty($options['transactionOptions'])) {
+                        $this->assertEquals(
+                            $options['transactionOptions'],
+                            $paymentTransaction->getTransactionOptions()
+                        );
+                    }
+                }
+            );
 
         $this->router
             ->expects($this->any())
             ->method('generate')
+            ->withConsecutive(
+                [
+                    'orob2b_payment_callback_error',
+                    [
+                        'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                        'accessToken' => $paymentTransaction->getAccessToken(),
+                    ],
+                    true
+                ],
+                [
+                    'orob2b_payment_callback_return',
+                    [
+                        'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                        'accessToken' => $paymentTransaction->getAccessToken(),
+                    ],
+                    true
+                ]
+            )
             ->will($this->returnArgument(0));
 
         $this->contextAccessor
             ->expects($this->once())
             ->method('setValue')
-            ->with($context, $data['options']['attribute'], $expected);
+            ->with($context, $options['attribute'], $expected);
 
         $this->action->execute($context);
     }
@@ -72,9 +112,8 @@ class PurchaseActionTest extends AbstractActionTest
     public function executeDataProvider()
     {
         return [
-            'usual_case' => [
+            'default' => [
                 'data' => [
-                    'paymentTransaction' => new PaymentTransaction(),
                     'options' => [
                         'object' => new \stdClass(),
                         'amount' => 100.0,
@@ -85,8 +124,6 @@ class PurchaseActionTest extends AbstractActionTest
                             'testOption' => 'testOption'
                         ],
                     ],
-                    'testPaymentMethodType' => 'testPaymentMethodType',
-                    'testEntityIdentifier' => 10,
                     'response' => ['testResponse' => 'testResponse'],
                 ],
                 'expected' => [
@@ -94,6 +131,26 @@ class PurchaseActionTest extends AbstractActionTest
                     'errorUrl' => 'orob2b_payment_callback_error',
                     'returnUrl' => 'orob2b_payment_callback_return',
                     'testResponse' => 'testResponse',
+                ]
+            ],
+            'throw exception' => [
+                'data' => [
+                    'options' => [
+                        'object' => new \stdClass(),
+                        'amount' => 100.0,
+                        'currency' => 'USD',
+                        'attribute' => new PropertyPath('test'),
+                        'paymentMethod' => 'testPaymentMethod',
+                        'transactionOptions' => [
+                            'testOption' => 'testOption'
+                        ],
+                    ],
+                    'response' => new \Exception(),
+                ],
+                'expected' => [
+                    'paymentMethod' => 'testPaymentMethod',
+                    'errorUrl' => 'orob2b_payment_callback_error',
+                    'returnUrl' => 'orob2b_payment_callback_return',
                 ]
             ],
         ];

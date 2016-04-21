@@ -8,90 +8,136 @@ use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class PaymentMethodEnabledTest extends \PHPUnit_Framework_TestCase
 {
-    const METHOD_1 = 'Method1';
-    const METHOD_2 = 'Method2';
+    const METHOD = 'Method';
 
     /** @var PaymentMethodEnabled */
     protected $condition;
 
-    /** @var PaymentMethodRegistry | \PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentMethodRegistry;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->paymentMethodRegistry = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
         $this->condition = new PaymentMethodEnabled($this->paymentMethodRegistry);
     }
 
-    public function testGetName()
+    protected function tearDown()
     {
-        $this->assertEquals(PaymentMethodEnabled::NAME, $this->condition->getName());
+        unset($this->condition, $this->paymentMethodRegistry);
     }
 
-    public function testInitialize()
+    public function testGetName()
+    {
+        $this->assertEquals('payment_method_enabled', $this->condition->getName());
+    }
+
+    /**
+     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
+     * @expectedExceptionMessage Options must have 1 element, but 0 given
+     */
+    public function testInitializeInvalidArguments0()
     {
         $this->assertInstanceOf(
             'Oro\Component\ConfigExpression\Condition\AbstractCondition',
             $this->condition->initialize([])
         );
     }
-
-    public function testEvaluate()
+    /**
+     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
+     * @expectedExceptionMessage Options must have 1 element, but 2 given
+     */
+    public function testInitializeInvalidArguments2()
     {
-        $options = [self::METHOD_1, self::METHOD_2];
-        $context = new \stdClass();
-        $errors = $this->getMockForAbstractClass('Doctrine\Common\Collections\Collection');
+        $this->assertInstanceOf(
+            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
+            $this->condition->initialize(['value1', 'value2'])
+        );
+    }
+
+    public function testInitialize()
+    {
+        $this->assertInstanceOf(
+            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
+            $this->condition->initialize(['value'])
+        );
+    }
+
+    /**
+     * @dataProvider evaluateProvider
+     * @param bool $expected
+     */
+    public function testEvaluate($expected)
+    {
+        $context = [];
 
         /** @var PaymentMethodInterface | \PHPUnit_Framework_MockObject_MockObject $paymentMethod */
         $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('isEnabled')
-            ->willReturn(true);
+            ->willReturn($expected);
 
         $this->paymentMethodRegistry->expects($this->once())
             ->method('getPaymentMethod')
-            ->with(self::METHOD_1)
+            ->with(self::METHOD)
             ->willReturn($paymentMethod);
 
-        $this->condition->initialize($options);
-        $this->assertTrue($this->condition->evaluate($context, $errors));
+        $this->condition->initialize([self::METHOD]);
+        $this->assertEquals($expected, $this->condition->evaluate($context));
+    }
+
+    /**
+     * @return array
+     */
+    public function evaluateProvider()
+    {
+        return [
+            [
+                'expected' => true,
+            ],
+            [
+                'expected' => false,
+            ],
+        ];
     }
 
     public function testEvaluateWithException()
     {
-        $options = [];
-        $context = new \stdClass();
-        $errors = $this->getMockForAbstractClass('Doctrine\Common\Collections\Collection');
+        $context = [];
 
         $this->paymentMethodRegistry->expects($this->once())
             ->method('getPaymentMethod')
             ->will($this->throwException(new \InvalidArgumentException));
 
-        $this->condition->initialize($options);
-        $this->assertFalse($this->condition->evaluate($context, $errors));
+        $this->condition->initialize([self::METHOD]);
+        $this->assertFalse($this->condition->evaluate($context));
     }
 
     public function testToArray()
     {
-        $options = [self::METHOD_1, self::METHOD_2];
-
-        $this->condition->initialize($options);
+        $this->condition->initialize([self::METHOD]);
         $result = $this->condition->toArray();
+
+        $key = '@' . PaymentMethodEnabled::NAME;
+
         $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('@' . PaymentMethodEnabled::NAME, $result);
-        $resultSection = $result['@' . PaymentMethodEnabled::NAME];
+        $this->assertArrayHasKey($key, $result);
+
+        $resultSection = $result[$key];
         $this->assertInternalType('array', $resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
-        $this->assertContains(self::METHOD_1, $resultSection['parameters']);
+        $this->assertContains(self::METHOD, $resultSection['parameters']);
     }
 
     public function testCompile()
     {
-        $options = [self::METHOD_1, self::METHOD_2];
+        $options = [self::METHOD];
 
         $this->condition->initialize($options);
-        $result = $this->condition->compile('');
-        $this->assertContains(PaymentMethodEnabled::NAME, $result);
-        $this->assertContains(self::METHOD_1, $result);
+        $result = $this->condition->compile('$factory');
+        $this->assertEquals(
+            sprintf('$factory->create(\'%s\', [\'%s\'])', PaymentMethodEnabled::NAME, self::METHOD),
+            $result
+        );
     }
 }
