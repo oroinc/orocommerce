@@ -28,7 +28,7 @@ class AjaxOrderControllerTest extends WebTestCase
         );
     }
 
-    public function testNewOrderSubtotals()
+    public function testNewOrderTotals()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_create'));
         $result = $this->client->getResponse();
@@ -37,7 +37,7 @@ class AjaxOrderControllerTest extends WebTestCase
         $this->assertTotals($crawler);
     }
 
-    public function testSubtotals()
+    public function testTotals()
     {
         $order = $this->getReference(LoadOrders::MY_ORDER);
 
