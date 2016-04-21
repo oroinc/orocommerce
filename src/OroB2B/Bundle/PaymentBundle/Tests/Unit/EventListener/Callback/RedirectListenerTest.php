@@ -32,9 +32,17 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new RedirectListener($this->session);
     }
 
-    public function testOnReturn()
+    protected function tearDown()
     {
-        $options = ['successUrl' => 'testUrl'];
+        unset($this->listener, $this->paymentTransaction, $this->session);
+    }
+
+    /**
+     * @dataProvider onReturnProvider
+     * @param array $options
+     */
+    public function testOnReturn($options)
+    {
         $this->paymentTransaction
             ->setTransactionOptions($options)
             ->setActive(true)
@@ -45,18 +53,43 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onReturn($event);
 
-        $this->assertFalse($event->getPaymentTransaction()->isActive());
-        $this->assertTrue($event->getPaymentTransaction()->isSuccessful());
+        $this->assertFalse($this->paymentTransaction->isActive());
+        $this->assertTrue($this->paymentTransaction->isSuccessful());
 
         /** @var RedirectResponse $response */
         $response = $event->getResponse();
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
-        $this->assertEquals($options['successUrl'], $response->getTargetUrl());
+
+        if (array_key_exists(RedirectListener::SUCCESS_URL_KEY, $options)) {
+            $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
+            $this->assertEquals($options[RedirectListener::SUCCESS_URL_KEY], $response->getTargetUrl());
+        } else {
+            $this->assertNotInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
+            $this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
+        }
     }
 
-    public function testOnError()
+    /**
+     * @return array
+     */
+    public function onReturnProvider()
     {
-        $options = ['errorUrl' => 'testUrl'];
+        return [
+            [
+                'options' => [RedirectListener::SUCCESS_URL_KEY => 'testUrl']
+            ],
+            [
+                'options' => ['someAnotherValue']
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider onErrorProvider
+     * @param bool $errorAlreadyInFlashBag
+     * @param array $options
+     */
+    public function testOnError($errorAlreadyInFlashBag, $options)
+    {
         $this->paymentTransaction
             ->setTransactionOptions($options)
             ->setActive(true)
@@ -65,8 +98,15 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $event = new CallbackErrorEvent();
         $event->setPaymentTransaction($this->paymentTransaction);
 
+        /** @var FlashBagInterface|\PHPUnit_Framework_MockObject_MockObject $flashBag */
         $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+
         $flashBag->expects($this->once())
+            ->method('has')
+            ->with('error')
+            ->willReturn($errorAlreadyInFlashBag);
+
+        $flashBag->expects($errorAlreadyInFlashBag ? $this->never() : $this->once())
             ->method('add')
             ->with('error', 'orob2b.payment.result.error');
 
@@ -76,12 +116,35 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onError($event);
 
-        $this->assertFalse($event->getPaymentTransaction()->isActive());
-        $this->assertFalse($event->getPaymentTransaction()->isSuccessful());
+        $this->assertFalse($this->paymentTransaction->isActive());
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
 
         /** @var RedirectResponse $response */
         $response = $event->getResponse();
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
-        $this->assertEquals($options['errorUrl'], $response->getTargetUrl());
+
+        if (array_key_exists(RedirectListener::ERROR_URL_KEY, $options)) {
+            $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
+            $this->assertEquals($options[RedirectListener::ERROR_URL_KEY], $response->getTargetUrl());
+        } else {
+            $this->assertNotInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
+            $this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function onErrorProvider()
+    {
+        return [
+            [
+                'errorAlreadyInFlashBag' => false,
+                'options' => [RedirectListener::ERROR_URL_KEY => 'testUrl']
+            ],
+            [
+                'errorAlreadyInFlashBag' => true,
+                'options' => ['someAnotherValue']
+            ],
+        ];
     }
 }

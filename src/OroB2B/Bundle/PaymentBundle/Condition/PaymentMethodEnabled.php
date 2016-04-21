@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\PaymentBundle\Condition;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
-//use Oro\Component\ConfigExpression\Exception;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
