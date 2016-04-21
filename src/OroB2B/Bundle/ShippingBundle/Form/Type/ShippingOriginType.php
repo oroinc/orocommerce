@@ -39,7 +39,7 @@ class ShippingOriginType extends AbstractType
             ->add('region', 'oro_region', [
                 'label' => 'orob2b.shipping.shipping_origin.region.label'
             ])
-            ->add('postalCode', 'text', [
+            ->add('postal_code', 'text', [
                 'label' => 'orob2b.shipping.shipping_origin.postal_code.label'
             ])
             ->add('city', 'text', [
@@ -49,6 +49,7 @@ class ShippingOriginType extends AbstractType
                 'label' => 'orob2b.shipping.shipping_origin.street.label'
             ])
             ->add('street2', 'text', [
+                'required' => false,
                 'label' => 'orob2b.shipping.shipping_origin.street2.label'
             ])
             ->add('region_text', 'hidden', [
