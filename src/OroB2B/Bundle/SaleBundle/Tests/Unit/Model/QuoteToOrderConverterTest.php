@@ -16,7 +16,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
+use OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -56,7 +56,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->orderCurrencyHandler = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler')
+        $this->orderCurrencyHandler = $this
+            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler')
             ->disableOriginalConstructor()
             ->getMock();
         $this->orderCurrencyHandler->expects($this->any())
@@ -530,6 +531,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->willReturn($manager);
     }
 
+    /**
+     * @return OrderAddress
+     */
     protected function createShippingAddress()
     {
         $shippingAddress = new OrderAddress();
