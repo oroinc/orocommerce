@@ -97,6 +97,7 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     {
         return [
             'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData',
+            'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData'
         ];
     }
 }

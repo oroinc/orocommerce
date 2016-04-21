@@ -12,6 +12,8 @@ use Symfony\Component\Security\Core\Authentication\Token\RememberMeToken;
  */
 class OrderControllerTest extends WebTestCase
 {
+    const GRID_NAME = 'frontend-checkouts-grid';
+
     /**
      * {@inheritdoc}
      */
@@ -33,10 +35,46 @@ class OrderControllerTest extends WebTestCase
 
     public function testCheckoutGrid()
     {
-        $response = $this->requestFrontendGrid(
-            [
-                'gridName' => 'frontend-checkouts-grid',
-            ]
-        );
+        $checkout = $this->getDatagridData();
+        $this->assertCount(5, $this->getDatagridData());
+        $value = 400;
+        $checkouts = $this->getDatagridData(['[subtotal][value]' => $value, '[subtotal][type]' => 2]);
+        $this->assertCount(3, $checkouts);
+        foreach ($checkouts as $checkout) {
+            $d = $this->getValue($checkout['subtotal']);
+            $this->assertGreaterThan($this->getValue($checkout['subtotal']), $value);
+        }
+        $checkouts = $this->getDatagridData(['[total][value]' => $value, '[total][type]' => 6]);
+        $this->assertCount(4, $checkouts);
+        foreach ($checkouts as $checkout) {
+            $this->assertLessThan($this->getValue($checkout['total']), $value);
+        }
+    }
+
+    /**
+     * @param array $filters
+     * @return array
+     */
+    protected function getDatagridData(array $filters = [])
+    {
+        $resultFilters = [];
+        foreach ($filters as $filter => $value) {
+            $resultFilters[self::GRID_NAME . '[_filter]' . $filter] = $value;
+        }
+        $response = $this->requestFrontendGrid(['gridName' => self::GRID_NAME], $resultFilters);
+
+        return json_decode($response->getContent(), true)['data'];
+    }
+
+    /**
+     * @param $string
+     * @return float
+     */
+    protected function getValue($string)
+    {
+        preg_match_all('!\d+(?:\.\d+)?!', $string, $matches);
+        $parts = array_map('floatval', $matches[0]);
+
+        return floatval($parts[0] . '.' . $parts[1]);
     }
 }
