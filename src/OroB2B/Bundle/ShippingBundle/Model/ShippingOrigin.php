@@ -155,6 +155,9 @@ class ShippingOrigin extends AbstractAddress
         return $default;
     }
 
+    /**
+     * @return boolean
+     */
     public function isSystem()
     {
         return (bool) $this->system;
