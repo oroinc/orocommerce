@@ -3,32 +3,38 @@ define(function(require) {
 
     var BaseProductPricesView;
     var BaseView = require('oroui/js/app/views/base/view');
-    var _ = require('underscore');
     var ElementsHelper = require('orob2bfrontend/js/app/elements-helper');
+    var _ = require('underscore');
     var NumberFormatter = require('orolocale/js/formatter/number');
+    var tools = require('oroui/js/tools');
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
         options: {
             elements: {
-                quantity: '[data-role="field-quantity"]',
-                unit: '[data-role="field-unit"]',
                 price: '[data-role="price"]',
                 priceValue: '[data-role="price-value"]',
                 priceNotFound: '[data-role="price-not-found"]',
                 pricesHint: '[data-role="prices-hint"]',
                 pricesHintContent: '[data-role="prices-hint-content"]'
-            },
-            prices: {}
+            }
         },
 
         prices: {},
 
         initialize: function(options) {
+            BaseProductPricesView.__super__.initialize.apply(this, arguments);
+            if (!this.model) {
+                if (tools.debug) {
+                    throw new Error('Model not defined!');
+                }
+                return;
+            }
             this.initializeElements(options);
-            this.setPrices(options.prices || {});
 
-            this.getElement('quantity').on('change', _.bind(this.updatePrice, this));
-            this.getElement('unit').on('change', _.bind(this.updatePrice, this));
+            this.setPrices(this.model.get('prices'));
+
+            this.listenTo(this.model, 'change:quantity', _.bind(this.updatePrice, this));
+            this.listenTo(this.model, 'change:unit', _.bind(this.updatePrice, this));
 
             this.render();
         },
@@ -52,21 +58,30 @@ define(function(require) {
         },
 
         setPrices: function(prices) {
-            _.each(prices, function(unitPrices) {
-                _.sortBy(unitPrices, 'qty');
-                unitPrices.reverse();
+            var self = this;
+
+            this.prices = {};
+            _.each(prices, function(price) {
+                if (!self.prices[price.unit]) {
+                    self.prices[price.unit] = [];
+                }
+                self.prices[price.unit].push(price);
             });
-            this.prices = prices;
+
+            //sort for optimize findPrice
+            _.each(this.prices, function(unitPrices, unit) {
+                unitPrices = _.sortBy(unitPrices, 'quantity');
+                unitPrices.reverse();
+                self.prices[unit] = unitPrices;
+            });
         },
 
         updatePrice: function() {
-            var priceData = null;
-            if (this.validate()) {
-                priceData = {
-                    quantity: this.getElement('quantity').val(),
-                    unit: this.getElement('unit').val()
-                };
-            }
+            //todo: check if this.validate()
+            var priceData = {
+                quantity: this.model.get('quantity'),
+                unit: this.model.get('unit')
+            };
 
             this.renderPrice(this.findPrice(priceData));
         },
@@ -75,9 +90,8 @@ define(function(require) {
             if (!priceData || !_.isObject(priceData)) {
                 return null;
             }
-
             return _.find(this.prices[priceData.unit], function(price) {
-                return price.qty <= priceData.quantity;
+                return price.quantity <= priceData.quantity;
             }) || null;
         },
 

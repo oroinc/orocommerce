@@ -3,7 +3,7 @@ define(function(require) {
 
     /**
      * This helper use in the context of component View
-     * */
+     */
     var $ = require('jquery');
     var _ = require('underscore');
 
@@ -17,9 +17,6 @@ define(function(require) {
         initializeElements: function(options) {
             this.options.elements = _.extend({}, this.options.elements || {}, options.elements || {});
             this.$elements = {};
-            if (this.options.elements.el === undefined) {
-                this.options.elements.el = ['$el'];
-            }
         },
 
         getElement: function(key) {
@@ -34,27 +31,26 @@ define(function(require) {
                 return this[key];
             }
 
-            var $element = null;
             var selector = this.options.elements[key] || null;
-
             if (!selector) {
-                return $element;
+                return null;
             }
+
+            var $context;
             if (!_.isArray(selector)) {
-                selector = ['el', selector];
+                //selector = '[data-role="element"]'
+                $context = this.getElement('$el');
+            } else {
+                //selector = ['$el', '[data-role="element"]']
+                $context = this.getElement(selector[0]);
+                selector = selector[1] || null;
             }
 
-            var $context = this.getElement(selector.shift());
-            if (!$context) {
-                return $element;
+            if (!$context || !selector) {
+                return null;
             }
 
-            if (selector.length === 0) {
-                return $context;
-            }
-
-            var method = selector.length > 1 ? selector.shift() : 'find';
-            return $context[method](selector.shift());
+            return $context.find(selector);
         }
     };
 });
