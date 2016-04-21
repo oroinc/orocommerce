@@ -4,12 +4,14 @@ oro_system_configuration:
             title: orob2b.shipping.system_configuration.groups.shipping.title
         shipping_origin:
             title: orob2b.shipping.system_configuration.groups.shipping_origin.title
+        shipping_origin_settings:
+            title: orob2b.shipping.system_configuration.groups.shipping_origin.title
     fields:
-        orob2b_shipping.origin_address:
+        orob2b_shipping.shipping_origin:
             data_type: array
-            type: orob2b_tax_origin_address
+            type: orob2b_shipping_origin
             options:
-                label: orob2b.shipping.system_configuration.fields.origin_address.label
+                label: orob2b.shipping.system_configuration.fields.shipping_origin.label
     tree:
         system_configuration:
             commerce:
@@ -20,7 +22,7 @@ oro_system_configuration:
                             shipping_origin:
                                 priority: 100
                                 children:
-                                    shipping_origin:
+                                    shipping_origin_settings:
                                         children:
-                                            - orob2b_shipping.origin_address
+                                            - orob2b_shipping.shipping_origin
 

@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\AbstractType;
 
@@ -39,7 +41,7 @@ class ShippingOriginType extends AbstractType
                 'required' => false,
                 'label' => 'orob2b.shipping.shipping_origin.region.label'
             ])
-            ->add('postalCode', 'text', [
+            ->add('postal_code', 'text', [
                 'required' => false,
                 'label' => 'orob2b.shipping.shipping_origin.postal_code.label'
             ])
@@ -74,6 +76,24 @@ class ShippingOriginType extends AbstractType
                 'intention' => 'shipping_origin',
             )
         );
+    }
+
+    /** {@inheritdoc} */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $parent = $form->getParent();
+        if (!$parent) {
+            return;
+        }
+
+        if (!$parent->has('use_parent_scope_value')) {
+            return;
+        }
+
+        $useParentScopeValue = $parent->get('use_parent_scope_value')->getData();
+        foreach ($view->children as $child) {
+            $child->vars['use_parent_scope_value'] = $useParentScopeValue;
+        }
     }
 
     /**

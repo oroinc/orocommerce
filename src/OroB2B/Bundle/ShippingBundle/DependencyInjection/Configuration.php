@@ -17,7 +17,7 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                'origin_address' => ['type' => 'array', 'value' => []],
+                'shipping_origin' => ['type' => 'array', 'value' => []],
             ]
         );
         
