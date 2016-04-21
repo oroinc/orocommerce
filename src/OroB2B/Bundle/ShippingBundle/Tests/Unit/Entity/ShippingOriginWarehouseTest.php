@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShippingBundle\Bundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
 
 class ShippingOriginWarehouseTest extends \PHPUnit_Framework_TestCase
@@ -55,5 +56,11 @@ class ShippingOriginWarehouseTest extends \PHPUnit_Framework_TestCase
         $shippingOriginWarehouse = new ShippingOriginWarehouse();
         $shippingOriginWarehouse->preUpdate();
         $this->assertInstanceOf('\DateTime', $shippingOriginWarehouse->getUpdated());
+    }
+
+    public function testIsSystem()
+    {
+        $shippingOriginWarehouse = new ShippingOriginWarehouse();
+        $this->assertFalse($shippingOriginWarehouse->isSystem());
     }
 }

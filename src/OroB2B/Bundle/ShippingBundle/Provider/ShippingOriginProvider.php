@@ -4,9 +4,13 @@ namespace OroB2B\Bundle\ShippingBundle\Provider;
 
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
+use OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
+use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
+
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class ShippingOriginProvider
@@ -14,12 +18,25 @@ class ShippingOriginProvider
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
+    /** @var ConfigManager */
+    protected $configManager;
+
+    /** @var ShippingOriginModelFactory */
+    protected $shippingOriginModelFactory;
+
     /**
-     * @param DoctrineHelper $doctrineHelper
+     * @param DoctrineHelper             $doctrineHelper
+     * @param ConfigManager              $configManager
+     * @param ShippingOriginModelFactory $shippingOriginModelFactory
      */
-    public function __construct(DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        ConfigManager $configManager,
+        ShippingOriginModelFactory $shippingOriginModelFactory
+    ) {
         $this->doctrineHelper = $doctrineHelper;
+        $this->configManager = $configManager;
+        $this->shippingOriginModelFactory = $shippingOriginModelFactory;
     }
 
     /**
@@ -27,7 +44,7 @@ class ShippingOriginProvider
      *
      * @param Warehouse $warehouse
      *
-     * @return null|ShippingOriginWarehouse
+     * @return ShippingOrigin
      */
     public function getShippingOriginByWarehouse(Warehouse $warehouse)
     {
@@ -43,6 +60,13 @@ class ShippingOriginProvider
             return $shippingOriginWarehouse;
         }
 
-        return null;
+        return $this->getSystemShippingOrigin();
+    }
+
+    public function getSystemShippingOrigin()
+    {
+        $configData = $this->configManager->get('oro_b2b_shipping.shipping_origin', true, true);
+
+        return $this->shippingOriginModelFactory->create($configData)->setSystem(true);
     }
 }

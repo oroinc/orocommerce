@@ -6,27 +6,36 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
+use OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
+use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class ShippingOriginProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrineHelper;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingOriginProvider */
+    /** @var ShippingOriginProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|Warehouse */
+    /** @var Warehouse|\PHPUnit_Framework_MockObject_MockObject */
     protected $warehouse;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManager */
+    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $em;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository */
+    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $repo;
+
+    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    protected $configManager;
+
+    /** @var ShippingOriginModelFactory|\PHPUnit_Framework_MockObject_MockObject */
+    protected $shippingOriginModelFactory;
 
     protected function setUp()
     {
@@ -71,27 +80,54 @@ class ShippingOriginProviderTest extends \PHPUnit_Framework_TestCase
                 $this->em
             );
 
-        $this->provider = new ShippingOriginProvider($this->doctrineHelper);
+        $this->configManager = $this
+            ->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->shippingOriginModelFactory = $this
+            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->provider = new ShippingOriginProvider(
+            $this->doctrineHelper,
+            $this->configManager,
+            $this->shippingOriginModelFactory
+        );
     }
 
     public function tearDown()
     {
-        unset($this->provider);
+        unset($this->provider, $this->configManager, $this->doctrineHelper, $this->em, $this->repo, $this->warehouse);
     }
 
     public function testWarehouseWithShippingOrigin()
     {
-        $shippingOriginWarehouse = $this->provider->getShippingOriginByWarehouse($this->warehouse);
-        self::assertInstanceOf(
-            'OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse',
-            $shippingOriginWarehouse
+        $shippingOrigin = $this->provider->getShippingOriginByWarehouse($this->warehouse);
+
+        $this->assertInstanceOf(
+            'OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin',
+            $shippingOrigin
         );
+        $this->assertFalse($shippingOrigin->isSystem());
     }
 
     public function testWarehouseWithoutShippingOrigin()
     {
+        $this->shippingOriginModelFactory->expects($this->once())
+            ->method('create')
+            ->willReturn(
+                new ShippingOrigin()
+            );
+
         $anotherWarehouse = new Warehouse();
-        self::assertEmpty($this->provider->getShippingOriginByWarehouse($anotherWarehouse));
-        unset($anotherWarehouse);
+        $shippingOrigin = $this->provider->getShippingOriginByWarehouse($anotherWarehouse);
+
+        $this->assertInstanceOf(
+            'OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin',
+            $shippingOrigin
+        );
+        $this->assertTrue($shippingOrigin->isSystem());
     }
 }

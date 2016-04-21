@@ -49,4 +49,12 @@ class ShippingOriginWarehouse extends ShippingOrigin
     {
         $this->updated = new \DateTime('now', new \DateTimeZone('UTC'));
     }
+
+    /**
+     * @return boolean
+     */
+    public function isSystem()
+    {
+        return false;
+    }
 }
