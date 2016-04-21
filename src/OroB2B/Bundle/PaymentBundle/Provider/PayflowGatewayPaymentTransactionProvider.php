@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Provider;
 
-use Doctrine\Common\Collections\Criteria;
-
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
@@ -35,8 +33,7 @@ class PayflowGatewayPaymentTransactionProvider
                 'successful' => true,
                 'action' => PaymentMethodInterface::AUTHORIZE,
                 'paymentMethod' => (string)$paymentMethod,
-            ],
-            ['id' => Criteria::DESC]
+            ]
         );
     }
 }

@@ -451,7 +451,9 @@ workflows:
 
                     - '@tree':
                         conditions:
-                            '@not_empty': $checkout.order.id
+                            '@and':
+                                - '@not_empty': $checkout.order.id
+                                - '@equal': [$payment_validate, false]
                         actions:
                             - '@assign_url':
                                 attribute: $.result.successUrl
@@ -475,6 +477,18 @@ workflows:
                                     successUrl: $.result.successUrl
                                     errorUrl: $.result.errorUrl
                             - '@assign_value': [$payment_in_progress, true]
+                    - '@tree':
+                        conditions:
+                            '@and':
+                                - '@not_empty': $checkout.order.id
+                                - '@equal': [$payment_validate, true]
+                        actions:
+                            - '@payment_purchase':
+                                object: $checkout.order
+                                reference: $checkout
+                                amount: $checkout.order.total
+                                currency: $checkout.order.currency
+                                paymentMethod: $payment_method
 
             finish_checkout_definition:
                 conditions:

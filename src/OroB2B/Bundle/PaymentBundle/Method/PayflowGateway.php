@@ -131,15 +131,24 @@ class PayflowGateway implements PaymentMethodInterface
      */
     public function purchase(PaymentTransaction $paymentTransaction)
     {
-        $options = $this->getOptions($paymentTransaction);
+        $options = $this->getPaymentOptions($paymentTransaction);
+
+        $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
+        if (!$sourcePaymentTransaction) {
+            $options = array_merge($options, $this->getSecureTokenOptions($paymentTransaction));
+        }
 
         $paymentTransaction
             ->setRequest($options)
             ->setAction($this->getPurchaseAction());
 
-        $this->execute($paymentTransaction);
+        $response = $this->execute($paymentTransaction);
 
-        return $this->secureTokenResponse($paymentTransaction);
+        if (!$sourcePaymentTransaction) {
+            return $this->secureTokenResponse($paymentTransaction);
+        }
+
+        return $response;
     }
 
     /**
@@ -152,7 +161,10 @@ class PayflowGateway implements PaymentMethodInterface
             ->setAmount(self::ZERO_AMOUNT)
             ->setCurrency(Option\Currency::US_DOLLAR);
 
-        $options = $this->getOptions($paymentTransaction);
+        $options = array_merge(
+            $this->getPaymentOptions($paymentTransaction),
+            $this->getSecureTokenOptions($paymentTransaction)
+        );
 
         $paymentTransaction
             ->setRequest($options)
@@ -182,15 +194,32 @@ class PayflowGateway implements PaymentMethodInterface
      * @param PaymentTransaction $paymentTransaction
      * @return array
      */
-    protected function getOptions(PaymentTransaction $paymentTransaction)
+    protected function getPaymentOptions(PaymentTransaction $paymentTransaction)
+    {
+        $options = [
+            Option\Amount::AMT => round($paymentTransaction->getAmount(), 2),
+            Option\Tender::TENDER => Option\Tender::CREDIT_CARD,
+            Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
+        ];
+
+        if ($paymentTransaction->getSourcePaymentTransaction()) {
+            $options[Option\OriginalTransaction::ORIGID] =
+                $paymentTransaction->getSourcePaymentTransaction()->getReference();
+        }
+
+        return $options;
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function getSecureTokenOptions(PaymentTransaction $paymentTransaction)
     {
         return [
             Option\SecureTokenIdentifier::SECURETOKENID => Option\SecureTokenIdentifier::generate(),
             Option\CreateSecureToken::CREATESECURETOKEN => true,
-            Option\Amount::AMT => round($paymentTransaction->getAmount(), 2),
             Option\TransparentRedirect::SILENTTRAN => true,
-            Option\Tender::TENDER => Option\Tender::CREDIT_CARD,
-            Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
             Option\ReturnUrl::RETURNURL => $this->router->generate(
                 'orob2b_payment_callback_return',
                 [

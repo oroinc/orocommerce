@@ -15,7 +15,9 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $resolver
             ->setRequired('paymentMethod')
-            ->addAllowedTypes('paymentMethod', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface']);
+            ->setDefined('reference')
+            ->addAllowedTypes('paymentMethod', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface'])
+            ->addAllowedTypes('reference', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface']);
     }
 
     /** {@inheritdoc} */
@@ -25,7 +27,9 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $resolver
             ->setRequired('paymentMethod')
-            ->addAllowedTypes('paymentMethod', 'string');
+            ->setDefined('reference')
+            ->addAllowedTypes('paymentMethod', 'string')
+            ->addAllowedTypes('reference', 'object');
     }
 
     /** {@inheritdoc} */
@@ -38,6 +42,13 @@ class PurchaseAction extends AbstractPaymentMethodAction
             PaymentMethodInterface::PURCHASE,
             $options['object']
         );
+
+        if (!empty($options['reference'])) {
+            $sourcePaymentTransaction = $this->paymentTransactionProvider
+                ->getActiveValidatePaymentTransaction($options['reference']);
+
+            $paymentTransaction->setSourcePaymentTransaction($sourcePaymentTransaction);
+        }
 
         $paymentTransaction
             ->setAmount($options['amount'])
