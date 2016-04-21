@@ -58,7 +58,7 @@ class PayflowListener
             return;
         }
 
-        if ($dataToken !== $transactionDataToken) {
+        if ($dataToken != $transactionDataToken) {
             return;
         }
 
