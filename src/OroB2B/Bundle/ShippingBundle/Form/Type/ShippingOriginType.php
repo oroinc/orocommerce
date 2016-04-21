@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\AbstractType;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 
@@ -34,27 +34,21 @@ class ShippingOriginType extends AbstractType
     {
         $builder
             ->add('country', 'oro_country', [
-                'required' => false,
                 'label' => 'orob2b.shipping.shipping_origin.country.label'
             ])
             ->add('region', 'oro_region', [
-                'required' => false,
                 'label' => 'orob2b.shipping.shipping_origin.region.label'
             ])
-            ->add('postal_code', 'text', [
-                'required' => false,
+            ->add('postalCode', 'text', [
                 'label' => 'orob2b.shipping.shipping_origin.postal_code.label'
             ])
             ->add('city', 'text', [
-                'required' => false,
                 'label' => 'orob2b.shipping.shipping_origin.city.label'
             ])
             ->add('street', 'text', [
-                'required' => false,
                 'label' => 'orob2b.shipping.shipping_origin.street.label'
             ])
             ->add('street2', 'text', [
-                'required' => false,
                 'label' => 'orob2b.shipping.shipping_origin.street2.label'
             ])
             ->add('region_text', 'hidden', [
@@ -70,12 +64,11 @@ class ShippingOriginType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            array(
-                'data_class' => 'OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin',
-                'intention' => 'shipping_origin',
-            )
-        );
+        $resolver->setDefaults([
+            'data_class' => 'OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin',
+            'intention' => 'shipping_origin',
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
+        ]);
     }
 
     /** {@inheritdoc} */
