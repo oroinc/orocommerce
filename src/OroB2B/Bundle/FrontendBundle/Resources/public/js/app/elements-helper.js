@@ -8,8 +8,6 @@ define(function(require) {
     var _ = require('underscore');
 
     return {
-        keepElement: true,
-
         $elements: null,
 
         elements: {},
