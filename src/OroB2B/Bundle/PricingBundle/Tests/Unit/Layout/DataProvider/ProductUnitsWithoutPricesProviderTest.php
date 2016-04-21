@@ -132,8 +132,8 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertSameSize($expectedData, $actualData);
         foreach ($expectedData as $unitPrecision) {
             $found = false;
-            foreach ($actualData as $actualUnitPrecision) {
-                if ($actualUnitPrecision->getUnit()->getCode() === $unitPrecision['unit']['code']) {
+            foreach ($actualData as $actualUnits) {
+                if ($actualUnits->getCode() === $unitPrecision['unit']['code']) {
                     $found = true;
                 }
             }

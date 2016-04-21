@@ -12,4 +12,4 @@ services:
         arguments:
             - '@orob2b_pricing.layout.data_provider.frontend_product_prices'
         tags:
-            - { name: layout.data_provider, alias: product_unit_precisions_without_prices }
+            - { name: layout.data_provider, alias: product_units_without_prices }

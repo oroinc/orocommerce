@@ -16,12 +16,8 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class RequestController extends Controller
@@ -86,19 +82,8 @@ class RequestController extends Controller
      */
     public function createAction(Request $request)
     {
-        $rfpRequest = new RFPRequest();
-        $user = $this->getUser();
-        if ($user instanceof AccountUser) {
-            $rfpRequest
-                ->setAccountUser($user)
-                ->setAccount($user->getAccount())
-                ->setFirstName($user->getFirstName())
-                ->setLastName($user->getLastName())
-                ->setCompany($user->getAccount()->getName())
-                ->setEmail($user->getEmail());
-        }
-
-        $this->acceptLineItemsOnCreate($request, $rfpRequest);
+        $rfpRequest = $this->get('orob2b_rfp.request.manager')->create();
+        $this->addProductItemsToRfpRequest($rfpRequest, $request);
 
         $response = $this->update($rfpRequest);
 
@@ -244,37 +229,25 @@ class RequestController extends Controller
     }
 
     /**
-     * @param Request $request
      * @param RFPRequest $rfpRequest
+     * @param Request $request
      */
-    protected function acceptLineItemsOnCreate(Request $request, RFPRequest $rfpRequest)
+    protected function addProductItemsToRfpRequest(RFPRequest $rfpRequest, Request $request)
     {
-        if ($request->getMethod() !== 'GET') {
-            return;
-        }
+        $rfpRequestManager = $this->get('orob2b_rfp.request.manager');
+        $fields = ['product_id', 'unit', 'quantity'];
 
-        $lienItems = $request->get('product_items', []);
-        foreach ($lienItems as $lineItem) {
-            $keys = [
-                'product_id',
-                'unit',
-                'quantity',
-            ];
-            if (count(array_intersect($keys, array_keys($lineItem))) !== count($keys)) {
+        $lineItems = $request->query->get('product_items', []);
+        foreach ($lineItems as $lineItem) {
+            if (!array_diff($fields, array_keys($lineItem))) { // line item has all required fields
                 continue;
             }
-            $product = $this->container->get('doctrine')->getManagerForClass('OroB2BProductBundle:Product')
-                ->getRepository('OroB2BProductBundle:Product')->find($lineItem['product_id']);
-            $unit = $this->container->get('doctrine')
-                ->getManagerForClass('OroB2BProductBundle:ProductUnit')
-                ->getReference('OroB2BProductBundle:ProductUnit', $lineItem['unit']);
-            $requestProductItem = new RequestProductItem();
-            $requestProductItem->setQuantity($lineItem['quantity']);
-            $requestProductItem->setProductUnit($unit);
-            $requestProduct = new RequestProduct();
-            $requestProduct->setProduct($product);
-            $requestProduct->addRequestProductItem($requestProductItem);
-            $rfpRequest->addRequestProduct($requestProduct);
+            $rfpRequestManager->addProductItemToRequest(
+                $rfpRequest,
+                $lineItem['product_id'],
+                $lineItem['unit'],
+                $lineItem['quantity']
+            );
         }
     }
 }

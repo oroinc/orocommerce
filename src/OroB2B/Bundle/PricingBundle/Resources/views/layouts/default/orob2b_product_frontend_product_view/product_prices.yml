@@ -10,7 +10,4 @@ layout:
             options:
                 vars:
                     prices: {'@value': $data.frontend_product_prices}
-                visible:
-                    '@or':
-                        - { '@not_empty': $data.frontend_product_prices }
-                        - { '@not_empty': $data.product_unit_precisions_without_prices }
+                visible: { '@has_elements': $data.product.unitPrecisions }

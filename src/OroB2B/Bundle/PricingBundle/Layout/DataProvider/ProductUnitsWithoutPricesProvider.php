@@ -12,6 +12,11 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 class ProductUnitsWithoutPricesProvider extends AbstractServerRenderDataProvider
 {
     /**
+     * @var array
+     */
+    protected $data = [];
+
+    /**
      * @var PriceListRequestHandler
      */
     protected $pricesProvider;
@@ -31,15 +36,22 @@ class ProductUnitsWithoutPricesProvider extends AbstractServerRenderDataProvider
     {
         /** @var Product $product */
         $product = $context->data()->get('product');
-        $prices = $this->pricesProvider->getData($context);
-        $unitWithPricesCodes = [];
-        foreach ($prices as $price) {
-            $unitWithPricesCodes[$price->getUnit()->getCode()] = true;
+        if (!array_key_exists($product->getId(), $this->data)) {
+            $prices = $this->pricesProvider->getData($context);
+
+            $unitWithPrices = [];
+            foreach ($prices as $price) {
+                $unitWithPrices[] = $price->getUnit();
+            }
+            $units = $product->getUnitPrecisions()->map(
+                function (ProductUnitPrecision $unitPrecision) {
+                    return $unitPrecision->getUnit();
+                }
+            )->toArray();
+
+            $this->data[$product->getId()] = array_diff($units, $unitWithPrices);
         }
-        $unitWithPricesCodes = array_keys($unitWithPricesCodes);
-        $unitPrecisions = $product->getUnitPrecisions()->toArray();
-        return array_filter($unitPrecisions, function (ProductUnitPrecision $unitPrecision) use ($unitWithPricesCodes) {
-            return !in_array($unitPrecision->getUnit()->getCode(), $unitWithPricesCodes, true);
-        });
+
+        return $this->data[$product->getId()];
     }
 }

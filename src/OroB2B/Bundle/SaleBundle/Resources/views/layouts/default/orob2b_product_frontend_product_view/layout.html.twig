@@ -1,8 +1,8 @@
 {% block _request_for_quote_for_unit_widget %}
-    {% for unit_precision in unit_precisions %}
+    {% for unit in units %}
         <tr>
             <td colspan="2" class="text-center">
-                <strong>{{ unit_precision.unit.code|orob2b_format_product_unit_label|capitalize }}</strong>
+                <strong>{{ unit.code|orob2b_format_product_unit_label|capitalize }}</strong>
             </td>
         </tr>
         <tr>
