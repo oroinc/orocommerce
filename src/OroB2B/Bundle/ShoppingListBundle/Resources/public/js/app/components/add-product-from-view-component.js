@@ -38,7 +38,7 @@ define(function(require) {
 
             this.options._sourceElement.on('click', 'a[data-id]', _.bind(this.onClick, this));
 
-            mediator.on('shopping-list:created', this.updateButtons, this);
+            mediator.on('shopping-list:created', this.transformCreateNewButton, this);
         },
 
         /**
@@ -124,7 +124,10 @@ define(function(require) {
                             response.message
                         );
                     }
-                    if (self.buttonExists(urlOptions.shoppingListId)) {
+                    if (!self.buttonExists(urlOptions.shoppingListId)) {
+                        self.transformCreateNewButton();
+                        mediator.trigger('shopping-list:created', response.shoppingList);
+                    } else {
                         mediator.trigger('shopping-list:updated', response.shoppingList);
                     }
                 },
@@ -133,15 +136,6 @@ define(function(require) {
                     Error.handle({}, xhr, {enforce: true});
                 }
             });
-        },
-
-        /**
-         * @param {Object} shoppingList
-         */
-        updateButtons: function(shoppingList) {
-            if (!this.buttonExists(shoppingList.id)) {
-                this.transformCreateNewButton();
-            }
         },
 
         /**
@@ -165,7 +159,7 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('shopping-list:created', this.updateButtons, this);
+            mediator.off('shopping-list:created', this.transformCreateNewButton, this);
 
             this.options._sourceElement.off();
 
