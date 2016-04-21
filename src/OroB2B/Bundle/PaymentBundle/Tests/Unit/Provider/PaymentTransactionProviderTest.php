@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Provider;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -13,11 +14,13 @@ use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrineHelper;
 
     /** @var string */
-    protected $paymentTransactionClass;
+    protected $paymentTransactionClass = 'OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction';
 
     /** @var PaymentTransactionProvider */
     protected $provider;
@@ -27,8 +30,6 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->paymentTransactionClass = 'OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction';
-
         $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
@@ -47,7 +48,7 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->provider, $this->doctrineHelper);
+        unset($this->provider, $this->doctrineHelper, $this->repository);
     }
 
     /**
@@ -58,13 +59,16 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetPaymentTransactions(array $data, array $expected)
     {
-        $this->assertEntityIdCall($data);
+        $this->configureDoctrineHelper($data);
 
+        $result = [new PaymentTransaction(), new PaymentTransaction()];
         $this->repository->expects($this->once())
             ->method('findBy')
-            ->with($expected);
+            ->with($expected)
+            ->willReturn($result);
 
-        $this->provider->getPaymentTransactions($data['entity'], $data['filter']);
+        $actual = $this->provider->getPaymentTransactions($data['entity'], $data['filter']);
+        $this->assertSame($result, $actual);
     }
 
     /**
@@ -82,15 +86,63 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'entityId' => $entityId,
                     'entityClass' => $entityClass,
                     'filter' => [
-                        'testOption' => 'testOption'
+                        'testOption' => 'testOption',
                     ],
                 ],
                 [
                     'testOption' => 'testOption',
                     'entityClass' => $entityClass,
-                    'entityIdentifier' => $entityId
-                ]
-            ]
+                    'entityIdentifier' => $entityId,
+                ],
+            ],
+        ];
+    }
+
+
+    /**
+     * @dataProvider getPaymentTransactionDataProvider
+     *
+     * @param array $data
+     * @param array $expected
+     */
+    public function testGetPaymentTransaction(array $data, array $expected)
+    {
+        $this->configureDoctrineHelper($data);
+
+        $result = new PaymentTransaction();
+        $this->repository->expects($this->once())
+            ->method('findOneBy')
+            ->with($expected)
+            ->willReturn($result);
+
+        $actual = $this->provider->getPaymentTransaction($data['entity'], $data['filter']);
+        $this->assertSame($result, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function getPaymentTransactionDataProvider()
+    {
+        $entityId = 10;
+        $entityClass = 'TestClass';
+
+        return [
+            [
+                [
+                    'entity' => new \stdClass(),
+                    'entityId' => $entityId,
+                    'entityClass' => $entityClass,
+                    'filter' => [
+                        'testOption' => 'testOption',
+                    ],
+                ],
+                [
+                    'testOption' => 'testOption',
+                    'entityClass' => $entityClass,
+                    'entityIdentifier' => $entityId,
+                ],
+            ],
         ];
     }
 
@@ -102,13 +154,21 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetActiveAuthorizePaymentTransaction(array $data, array $expected)
     {
-        $this->assertEntityIdCall($data);
+        $this->configureDoctrineHelper($data);
 
+        $result = new PaymentTransaction();
         $this->repository->expects($this->once())
             ->method('findOneBy')
-            ->with($expected);
+            ->with($expected)
+            ->willReturn($result);
 
-        $this->provider->getActiveAuthorizePaymentTransaction($data['entity'], $data['amount'], $data['currency']);
+        $actual = $this->provider->getActiveAuthorizePaymentTransaction(
+            $data['entity'],
+            $data['amount'],
+            $data['currency']
+        );
+
+        $this->assertSame($result, $actual);
     }
 
     /**
@@ -125,8 +185,8 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                 [
                     'entity' => new \stdClass(),
                     'entityId' => $entityId,
-                    'entityClass' => 'TestClass',
-                    'currency' => 'USD',
+                    'entityClass' => $entityClass,
+                    'currency' => $currency,
                     'amount' => 12.3456,
                 ],
                 [
@@ -136,9 +196,9 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'amount' => 12.35,
                     'currency' => $currency,
                     'entityClass' => $entityClass,
-                    'entityIdentifier' => $entityId
-                ]
-            ]
+                    'entityIdentifier' => $entityId,
+                ],
+            ],
         ];
     }
 
@@ -146,20 +206,19 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider createPaymentTransactionDataProvider
      *
      * @param array $data
-     * @param array $expected
      */
-    public function testCreatePaymentTransaction(array $data, array $expected)
+    public function testCreatePaymentTransaction(array $data)
     {
-        $this->assertEntityIdCall($data);
+        $this->configureDoctrineHelper($data);
 
         $transaction = $this->provider
             ->createPaymentTransaction($data['paymentMethod'], $data['type'], $data['entity']);
 
         $this->assertInstanceOf($this->paymentTransactionClass, $transaction);
-        $this->assertEquals($expected['paymentMethod'], $transaction->getPaymentMethod());
-        $this->assertEquals($expected['action'], $transaction->getAction());
-        $this->assertEquals($expected['entityClass'], $transaction->getEntityClass());
-        $this->assertEquals($expected['entityIdentifier'], $transaction->getEntityIdentifier());
+        $this->assertEquals($data['paymentMethod'], $transaction->getPaymentMethod());
+        $this->assertEquals($data['type'], $transaction->getAction());
+        $this->assertEquals($data['entityClass'], $transaction->getEntityClass());
+        $this->assertEquals($data['entityId'], $transaction->getEntityIdentifier());
     }
 
     /**
@@ -167,34 +226,23 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function createPaymentTransactionDataProvider()
     {
-        $entityId = 10;
-        $entityClass = 'TestClass';
-        $type = 'USD';
-        $paymentMethod = 'testMethod';
-
         return [
             [
                 [
                     'entity' => new \stdClass(),
-                    'entityId' => $entityId,
+                    'entityId' => 10,
                     'entityClass' => 'TestClass',
-                    'paymentMethod' => $paymentMethod,
-                    'type' => $type,
+                    'paymentMethod' => 'testMethod',
+                    'type' => 'authorize',
                 ],
-                [
-                    'paymentMethod' => $paymentMethod,
-                    'action' => $type,
-                    'entityClass' => $entityClass,
-                    'entityIdentifier' => $entityId
-                ]
-            ]
+            ],
         ];
     }
 
     /**
      * @param array $data
      */
-    protected function assertEntityIdCall(array $data)
+    protected function configureDoctrineHelper(array $data)
     {
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityClass')
@@ -211,9 +259,8 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider savePaymentTransactionDataProvider
      *
      * @param PaymentTransaction|\PHPUnit_Framework_MockObject_MockObject $transaction
-     * @param integer $persist
      */
-    public function testSavePaymentTransaction(PaymentTransaction $transaction, $persist)
+    public function testSavePaymentTransaction(PaymentTransaction $transaction)
     {
         /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
@@ -229,7 +276,7 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
             ->method('flush')
             ->with($transaction);
 
-        $em->expects($this->exactly($persist ? 1 : 0))
+        $em->expects($transaction->getId() ? $this->never() : $this->once())
             ->method('persist')
             ->with($transaction);
 
@@ -241,21 +288,19 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function savePaymentTransactionDataProvider()
     {
-        /** @var PaymentTransaction|\PHPUnit_Framework_MockObject_MockObject $paymentTransaction */
-        $paymentTransaction = $this->getMock('OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction');
-        $paymentTransaction->expects($this->any())
-            ->method('getId')
-            ->willReturn(10);
+        $paymentTransactionWithoutId = new PaymentTransaction();
+        $paymentTransactionWithId = $this->getEntity(
+            'OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction',
+            ['id' => 10]
+        );
 
         return [
             [
-                new PaymentTransaction(),
-                true,
+                $paymentTransactionWithoutId,
             ],
             [
-                $paymentTransaction,
-                false,
-            ]
+                $paymentTransactionWithId,
+            ],
         ];
     }
 }

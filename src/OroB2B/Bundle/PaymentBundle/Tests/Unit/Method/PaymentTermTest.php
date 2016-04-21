@@ -36,6 +36,11 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->method = new PaymentTermMethod($this->paymentTermProvider, $this->configManager);
     }
 
+    protected function tearDown()
+    {
+        unset($this->method, $this->configManager, $this->paymentTermProvider);
+    }
+
     public function testExecute()
     {
         $transaction = new PaymentTransaction();
