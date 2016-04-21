@@ -3,9 +3,11 @@
 namespace OroB2B\Bundle\AlternatiiveCheckoutBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
+use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout;
 
@@ -32,9 +34,15 @@ class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInte
         $this->moveExistingAlternativeCheckoutsToAdditionalTable($queries);
 
         $queries->addPreQuery(
-            "DELETE FROM 
-              oro_entity_config 
-            WHERE class_name='OroB2B\\Bundle\\AlternativeCheckoutBundle\\Entity\\AlternativeCheckout'"
+            new ParametrizedSqlMigrationQuery(
+                'DELETE FROM oro_entity_config WHERE class_name = :class_name',
+                [
+                    'class_name'  => 'OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout',
+                ],
+                [
+                    'class_name'  => Type::STRING
+                ]
+            )
         );
     }
 

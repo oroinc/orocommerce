@@ -3,9 +3,11 @@
 namespace OroB2B\Bundle\CheckoutBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
+use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroB2BCheckoutBundle implements Migration, OrderedMigrationInterface
@@ -49,9 +51,27 @@ class OroB2BCheckoutBundle implements Migration, OrderedMigrationInterface
     protected function setTypeExistingCheckouts(QueryBag $queries)
     {
         $queries->addPreQuery(
-            "DELETE FROM oro_entity_config WHERE class_name='OroB2B\\Bundle\\CheckoutBundle\\Entity\\Checkout'"
+            new ParametrizedSqlMigrationQuery(
+                'DELETE FROM oro_entity_config WHERE class_name = :class_name',
+                [
+                    'class_name'  => 'OroB2B\Bundle\CheckoutBundle\Entity\Checkout',
+                ],
+                [
+                    'class_name'  => Type::STRING
+                ]
+            )
         );
-        $queries->addQuery("UPDATE orob2b_checkout SET checkout_discriminator='checkout'");
+        $queries->addQuery(
+            new ParametrizedSqlMigrationQuery(
+                'UPDATE orob2b_checkout SET checkout_discriminator= :checkout_discriminator',
+                [
+                    'checkout_discriminator'  => 'checkout',
+                ],
+                [
+                    'checkout_discriminator'  => Type::STRING
+                ]
+            )
+        );
     }
 
     /**
