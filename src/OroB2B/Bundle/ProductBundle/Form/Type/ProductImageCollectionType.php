@@ -39,7 +39,9 @@ class ProductImageCollectionType extends AbstractType
             ],
             'error_bubbling' => false,
             'cascade_validation' => true,
-            'required' => false
+            'show_form_when_empty' => false,
+            'row_count_initial' => 0
+
         ]);
     }
 

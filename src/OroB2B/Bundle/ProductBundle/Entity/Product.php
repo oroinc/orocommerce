@@ -796,7 +796,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
-     * @return ProductImage[]|Collection
+     * @return Collection|ProductImage[]
      */
     public function getImages()
     {
