@@ -44,6 +44,11 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
         $this->methodView = new PaymentTermView($this->paymentTermProvider, $this->translator, $this->configManager);
     }
 
+    protected function tearDown()
+    {
+        unset($this->methodView, $this->configManager, $this->translator, $this->paymentTermProvider);
+    }
+
     public function testGetOptionsEmpty()
     {
         $this->paymentTermProvider->expects($this->once())
@@ -53,10 +58,7 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
         $this->translator->expects($this->never())
             ->method('trans');
 
-        $this->assertEquals(
-            [],
-            $this->methodView->getOptions()
-        );
+        $this->assertEquals([], $this->methodView->getOptions());
     }
 
     public function testGetOptions()
@@ -70,15 +72,10 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with('orob2b.payment.payment_terms.label', ['%paymentTerm%' => 'testLabel'])
+            ->with('orob2b.payment.payment_terms.label', ['%paymentTerm%' => $paymentTerm->getLabel()])
             ->willReturn('translatedValue');
 
-        $this->assertEquals(
-            [
-                'value' => 'translatedValue'
-            ],
-            $this->methodView->getOptions()
-        );
+        $this->assertEquals(['value' => 'translatedValue'], $this->methodView->getOptions());
     }
 
     public function testGetBlock()
@@ -88,15 +85,14 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 
     public function testGetOrder()
     {
-        $order = 100;
+        $order = '100';
         $this->setConfig($this->once(), Configuration::PAYMENT_TERM_SORT_ORDER_KEY, $order);
-
-        $this->assertEquals($order, $this->methodView->getOrder());
+        $this->assertEquals((int)$order, $this->methodView->getOrder());
     }
 
     public function testGetPaymentMethodType()
     {
-        $this->assertEquals(PaymentTermMethod::TYPE, $this->methodView->getPaymentMethodType());
+        $this->assertEquals('payment_term', $this->methodView->getPaymentMethodType());
     }
 
     public function testGetLabel()

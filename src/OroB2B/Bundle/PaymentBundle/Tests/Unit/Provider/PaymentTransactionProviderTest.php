@@ -98,7 +98,6 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-
     /**
      * @dataProvider getPaymentTransactionDataProvider
      *

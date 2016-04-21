@@ -48,7 +48,6 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
         parent::configureConfig($configs);
     }
 
-
     /**
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)

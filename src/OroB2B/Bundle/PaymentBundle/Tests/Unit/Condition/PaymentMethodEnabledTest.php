@@ -43,6 +43,7 @@ class PaymentMethodEnabledTest extends \PHPUnit_Framework_TestCase
             $this->condition->initialize([])
         );
     }
+
     /**
      * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
      * @expectedExceptionMessage Options must have 1 element, but 2 given
@@ -71,7 +72,7 @@ class PaymentMethodEnabledTest extends \PHPUnit_Framework_TestCase
     {
         $context = [];
 
-        /** @var PaymentMethodInterface | \PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
         $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('isEnabled')

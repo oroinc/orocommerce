@@ -7,7 +7,6 @@ use Symfony\Component\Routing\RouterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
@@ -89,11 +88,21 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->configureRouter($transaction);
 
         $this->gateway->expects($this->any())
-            ->method('setTestMode');
+            ->method('setTestMode')
+            ->with(true);
 
-        $this->gateway->expects($this->any())
+
+        $formActionExpects = $this->never();
+        $formActionReturn = null;
+        if (array_key_exists('formAction', $result)) {
+            $formActionExpects = $this->once();
+            $formActionReturn = $result['formAction'];
+        }
+
+        $this->gateway->expects($formActionExpects)
             ->method('getFormAction')
-            ->willReturn('test_form_action');
+            ->willReturn($formActionReturn);
+
 
         $this->configureConfig($data['configs']);
 

@@ -64,7 +64,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals($options[RedirectListener::SUCCESS_URL_KEY], $response->getTargetUrl());
         } else {
             $this->assertNotInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
-            $this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
+            $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
         }
     }
 
@@ -127,7 +127,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals($options[RedirectListener::ERROR_URL_KEY], $response->getTargetUrl());
         } else {
             $this->assertNotInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
-            $this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
+            $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
         }
     }
 

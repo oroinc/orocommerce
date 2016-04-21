@@ -36,7 +36,6 @@ class PurchaseActionTest extends AbstractActionTest
             ->method('getValue')
             ->will($this->returnArgument(1));
 
-        /** @var PaymentTransaction|\PHPUnit_Framework_MockObject_MockObject $paymentTransaction */
         $paymentTransaction = new PaymentTransaction();
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
