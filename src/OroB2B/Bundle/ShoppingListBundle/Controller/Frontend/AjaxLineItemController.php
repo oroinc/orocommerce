@@ -52,9 +52,9 @@ class AjaxLineItemController extends Controller
 
         $lineItem = (new LineItem())
             ->setProduct($product)
+            ->setShoppingList($shoppingList)
             ->setAccountUser($shoppingList->getAccountUser())
             ->setOrganization($shoppingList->getOrganization());
-        $shoppingList->addLineItem($lineItem);
 
         $form = $this->createForm(FrontendLineItemType::NAME, $lineItem);
 

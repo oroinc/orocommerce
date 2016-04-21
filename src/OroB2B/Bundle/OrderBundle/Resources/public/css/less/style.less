@@ -61,8 +61,6 @@
 }
 
 .order-line-item-quantity {
-  width: 210px;
-
   input[type="text"] {
     text-align: right;
     margin-right: 3px;
@@ -77,11 +75,13 @@
   .input-widget-select {
     float: left;
   }
+
+  .fields-row {
+    width: 210px;
+  }
 }
 
 .order-line-item-price {
-  width: 150px;
-
   input[type="text"] {
     text-align: right;
     padding-left: 17px;
@@ -99,12 +99,17 @@
 
   .fields-row {
     position: relative;
+    width: 150px;
   }
 }
 
 .order-line-item-comment {
   div[data-page-component-module] {
     display: none;
+  }
+
+  .notes-widget {
+    width: 245px;
   }
 }
 

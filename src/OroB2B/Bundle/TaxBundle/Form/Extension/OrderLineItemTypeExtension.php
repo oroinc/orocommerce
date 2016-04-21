@@ -81,12 +81,6 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
 
         $sections = [];
         $sectionNames = [
-            'unitPriceIncludingTax' => 'orob2b.tax.order_line_item.unitPrice.includingTax.label',
-            'unitPriceExcludingTax' => 'orob2b.tax.order_line_item.unitPrice.excludingTax.label',
-            'unitPriceTaxAmount' => 'orob2b.tax.order_line_item.unitPrice.taxAmount.label',
-            'rowTotalIncludingTax' => 'orob2b.tax.order_line_item.rowTotal.includingTax.label',
-            'rowTotalExcludingTax' => 'orob2b.tax.order_line_item.rowTotal.excludingTax.label',
-            'rowTotalTaxAmount' => 'orob2b.tax.order_line_item.rowTotal.taxAmount.label',
             'taxes' => 'orob2b.tax.order_line_item.taxes.label',
         ];
 

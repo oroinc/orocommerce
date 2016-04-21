@@ -17,7 +17,6 @@ services:
             - ["label"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_payment_term, acl_resource: orob2b_payment_term_view }
-        lazy: true
 
     orob2b_payment.payment_term.delete_message_generator:
         class: 'OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator'
