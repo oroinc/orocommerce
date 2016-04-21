@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\DomCrawler\Field\InputFormField;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -20,6 +22,8 @@ class ProductControllerTest extends WebTestCase
     const INVENTORY_STATUS = 'In Stock';
     const DEFAULT_NAME = 'default name';
     const DEFAULT_DESCRIPTION = 'default description';
+    const FIRST_UNIT_CODE = 'item';
+    const FIRST_UNIT_PRECISION = '5';
 
     protected function setUp()
     {
@@ -50,6 +54,26 @@ class ProductControllerTest extends WebTestCase
         $form['orob2b_product[names][values][default]'] = self::DEFAULT_NAME;
         $form['orob2b_product[descriptions][values][default]'] = self::DEFAULT_DESCRIPTION;
         $form['orob2b_product[taxCode]'] = $productTaxCode->getId();
+
+        $doc = new \DOMDocument("1.0");
+        $doc->loadHTML(
+            '<select name="orob2b_product[unitPrecisions][0][unit]" id="orob2b_product_unitPrecisions_0_unit" ' .
+            'tabindex="-1" class="select2-offscreen"> ' .
+            '<option value="" selected="selected"></option> ' .
+            '<option value="item">item</option>'.
+            '<option value="kg">kilogram</option> </select>'
+        );
+        $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
+        $form->set($field);
+        $form['orob2b_product[unitPrecisions][0][unit]'] = self::FIRST_UNIT_CODE;
+
+        $doc->loadHTML(
+            '<input type="text" name="orob2b_product[unitPrecisions][0][precision]" '.
+            'id="orob2b_product_unitPrecisions_0_precision" class="input2-offscreen"> '
+        );
+        $field = new InputFormField($doc->getElementsByTagName('input')->item(0));
+        $form->set($field);
+        $form['orob2b_product[unitPrecisions][0][precision]'] = self::FIRST_UNIT_PRECISION;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

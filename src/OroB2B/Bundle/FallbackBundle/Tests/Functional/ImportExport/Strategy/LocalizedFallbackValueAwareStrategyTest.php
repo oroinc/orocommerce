@@ -104,6 +104,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             [
                 [
                     'sku' => 'product.1',
+                    'unitPrecisions' => [
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision')
+                    ],
                     'names' => new ArrayCollection(
                         [
                             $this->getEntity(
@@ -147,6 +150,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                 ],
                 [
                     'sku' => 'product.1',
+                    'unitPrecisions' => [],
                     'names' => [
                         'en_US' => [
                             'string' => 'product.1 en_US Title',
@@ -201,6 +205,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             'new product, no fallback from another entity' => [
                 [
                     'sku' => 'new_sku',
+                    'unitPrecisions' => [
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision')
+                    ],
                 ],
                 function ($product) {
                     $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
@@ -213,6 +220,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             'existing product with, id not mapped for new fallback' => [
                 [
                     'sku' => 'product.4',
+                    'unitPrecisions' => [
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision')
+                    ],
                     'names' => new ArrayCollection(
                         [
                             $this->getEntity(
