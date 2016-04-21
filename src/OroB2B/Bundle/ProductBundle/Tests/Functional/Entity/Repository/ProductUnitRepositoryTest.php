@@ -49,6 +49,26 @@ class ProductUnitRepositoryTest extends WebTestCase
         $this->assertEquals($expectedUnits, $units);
     }
 
+    public function testGetProductsUnits()
+    {
+        $productsWithUnits = [
+            'product.1' => ['bottle', 'liter'],
+            'product.2' => ['bottle', 'box', 'liter'],
+            'product.3' => ['liter']
+        ];
+        $products = [];
+        $expectedUnits = [];
+        foreach ($productsWithUnits as $productReference => $units) {
+            $product = $this->getProduct($productReference);
+            $products[] = $product;
+            $expectedUnits[$product->getId()] = $units;
+        }
+
+        $units = $this->getRepository()->getProductsUnits($products);
+
+        $this->assertEquals($expectedUnits, $units);
+    }
+
     /**
      * @param array $expectedData
      *

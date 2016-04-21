@@ -22,6 +22,34 @@ class ProductUnitRepository extends EntityRepository
     }
 
     /**
+     * @param array $products
+     * @return array
+     */
+    public function getProductsUnits(array $products = [])
+    {
+        $qb = $this->createQueryBuilder('unit');
+        $qb
+            ->select('IDENTITY(productUnitPrecision.product) AS productId, unit.code AS code')
+            ->join(
+                'OroB2BProductBundle:ProductUnitPrecision',
+                'productUnitPrecision',
+                Join::WITH,
+                $qb->expr()->eq('productUnitPrecision.unit', 'unit')
+            )
+            ->addOrderBy('unit.code')
+            ->where($qb->expr()->in('productUnitPrecision.product', ':products'))
+            ->setParameter('products', $products);
+        $productsUnits = $qb->getQuery()->getArrayResult();
+
+        $result = [];
+        foreach ($productsUnits as $unit) {
+            $result[$unit['productId']][] = $unit['code'];
+        }
+
+        return $result;
+    }
+
+    /**
      * @return ProductUnit[]
      */
     public function getAllUnits()
