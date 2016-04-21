@@ -9,14 +9,12 @@ define(function(require) {
     var tools = require('oroui/js/tools');
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
-        options: {
-            elements: {
-                price: '[data-role="price"]',
-                priceValue: '[data-role="price-value"]',
-                priceNotFound: '[data-role="price-not-found"]',
-                pricesHint: '[data-role="prices-hint"]',
-                pricesHintContent: '[data-role="prices-hint-content"]'
-            }
+        elements: {
+            price: '[data-role="price"]',
+            priceValue: '[data-role="price-value"]',
+            priceNotFound: '[data-role="price-not-found"]',
+            pricesHint: '[data-role="prices-hint"]',
+            pricesHintContent: '[data-role="prices-hint-content"]'
         },
 
         prices: {},
@@ -33,10 +31,15 @@ define(function(require) {
 
             this.setPrices(this.model.get('prices'));
 
-            this.listenTo(this.model, 'change:quantity', _.bind(this.updatePrice, this));
-            this.listenTo(this.model, 'change:unit', _.bind(this.updatePrice, this));
+            this.model.on('change:quantity', this.updatePrice, this);
+            this.model.on('change:unit', this.updatePrice, this);
 
             this.render();
+        },
+
+        dispose: function() {
+            this.disposeElements();
+            BaseProductPricesView.__super__.dispose.apply(this, arguments);
         },
 
         render: function() {
@@ -58,26 +61,23 @@ define(function(require) {
         },
 
         setPrices: function(prices) {
-            var self = this;
-
             this.prices = {};
             _.each(prices, function(price) {
-                if (!self.prices[price.unit]) {
-                    self.prices[price.unit] = [];
+                if (!this.prices[price.unit]) {
+                    this.prices[price.unit] = [];
                 }
-                self.prices[price.unit].push(price);
-            });
+                this.prices[price.unit].push(price);
+            }, this);
 
             //sort for optimize findPrice
             _.each(this.prices, function(unitPrices, unit) {
                 unitPrices = _.sortBy(unitPrices, 'quantity');
                 unitPrices.reverse();
-                self.prices[unit] = unitPrices;
-            });
+                this.prices[unit] = unitPrices;
+            }, this);
         },
 
         updatePrice: function() {
-            //todo: check if this.validate()
             var priceData = {
                 quantity: this.model.get('quantity'),
                 unit: this.model.get('unit')
@@ -106,11 +106,6 @@ define(function(require) {
                 this.getElement('priceNotFound').hide();
                 this.getElement('price').show();
             }
-        },
-
-        validate: function() {
-            var validator = this.getElement('quantity').closest('form').validate();
-            return !validator || validator.form();
         }
     }));
 

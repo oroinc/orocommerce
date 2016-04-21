@@ -9,12 +9,12 @@ define(function(require) {
     var tools = require('oroui/js/tools');
 
     BaseProductView = BaseView.extend(_.extend({}, ElementsHelper, {
-        options: {
-            elements: {
-                quantity: '[data-role="field-quantity"]',
-                unit: '[data-role="field-unit"]'
-            }
+        elements: {
+            quantity: '[data-role="field-quantity"]',
+            unit: '[data-role="field-unit"]'
         },
+
+        modelElements: ['quantity', 'unit'],
 
         defaults: {
             quantity: 0,
@@ -22,7 +22,6 @@ define(function(require) {
         },
 
         initialize: function(options) {
-            var self = this;
             BaseProductView.__super__.initialize.apply(this, arguments);
             if (!this.model) {
                 if (tools.debug) {
@@ -30,18 +29,15 @@ define(function(require) {
                 }
                 return;
             }
-            $.extend(true, this, _.pick(options, ['defaults']));
-
-            this.setDefaults();
             this.initializeElements(options);
 
-            this.getElement('quantity').change(function() {
-                self.model.set('quantity', this.value);
-            }).change();
+            $.extend(true, this, _.pick(options, ['defaults']));
+            this.setDefaults();
+        },
 
-            this.getElement('unit').change(function() {
-                self.model.set('unit', this.value);
-            }).change();
+        dispose: function() {
+            this.disposeElements();
+            BaseProductView.__super__.dispose.apply(this, arguments);
         },
 
         setDefaults: function() {
