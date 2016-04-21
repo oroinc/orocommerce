@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\AbstractType;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 
@@ -47,6 +47,7 @@ class ShippingOriginType extends AbstractType
                 'label' => 'orob2b.shipping.shipping_origin.street.label'
             ])
             ->add('street2', 'text', [
+                'required' => false,
                 'label' => 'orob2b.shipping.shipping_origin.street2.label'
             ])
             ->add('region_text', 'hidden', [
