@@ -98,22 +98,20 @@ class CombinedPriceListActivationPlanBuilder
         $now = new \DateTime();
         foreach ($rawRules as $ruleData) {
             if ($ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY] !== null
-                && $now->getTimestamp() > $ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY]) {
+                && $now > $ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY]) {
                 //rule expired already, no need to add it to activation plan
                 continue;
             }
             $rule = new CombinedPriceListActivationRule();
             $rule->setFullChainPriceList($cpl);
             if ($ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY]) {
-                $expireAt = new \DateTime();
-                $rule->setExpireAt($expireAt->setTimestamp($ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY]));
+                $rule->setExpireAt($ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY]);
             }
             if ($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY]) {
-                $activateAt = new \DateTime();
-                $rule->setActivateAt($activateAt->setTimestamp($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY]));
+                $rule->setActivateAt($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY]);
             }
             if ($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY] === null
-                || $ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY] < $now->getTimestamp()) {
+                || $ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY] < $now) {
                 $rule->setActive(true);
             }
             $actualCPL = $this->combinedActualCombinedPriceList(

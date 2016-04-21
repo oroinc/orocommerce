@@ -149,6 +149,8 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
         $this->combinedPriceListProvider = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->combinedPriceListProvider->method('getCombinedPriceList')->willReturn(new CombinedPriceList());
+        $this->combinedPriceListProvider->method('getCombinedPriceList')
+            ->with([], CombinedPriceListProvider::BEHAVIOR_EMPTY)
+            ->willReturn(new CombinedPriceList());
     }
 }
