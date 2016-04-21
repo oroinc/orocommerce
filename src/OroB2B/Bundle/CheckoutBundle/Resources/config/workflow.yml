@@ -344,6 +344,7 @@ workflows:
                                   - [[keep], [propertyName, [region]]]
                                   - [[keep], [propertyName, [organization]]]
                             - '@flush_entity': $checkout.shippingAddress
+
             continue_to_order_review_definition:
                 pre_conditions:
                     '@not_equal': [$payment_in_progress, true]
@@ -365,17 +366,10 @@ workflows:
                         actions:
                             - '@assign_constant_value': [$.result.validateAction, OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
                             - '@assign_url':
-                                attribute: $.result.successUrl
+                                attribute: $.result.url
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
                                     id: $checkout.id
-                                    transition: 'place_order'
-                            - '@assign_url':
-                                attribute: $.result.errorUrl
-                                route: orob2b_checkout_frontend_checkout
-                                route_parameters:
-                                    id: $checkout.id
-                                    transition: 'payment_error'
                             - '@payment_validate':
                                 conditions:
                                     '@payment_method_supports':
@@ -385,12 +379,13 @@ workflows:
                                 object: $checkout
                                 paymentMethod: $checkout.paymentMethod
                                 transactionOptions:
-                                    successUrl: $.result.successUrl
-                                    errorUrl: $.result.errorUrl
+                                    successUrl: $.result.url
+                                    errorUrl: $.result.url
 
             verify_payment_definition:
                 pre_conditions:
                     '@and':
+                        - '@equal': [$payment_validate, false]
                         - '@not_equal': [$payment_in_progress, true]
                         - '@not':
                             - '@check_request':
