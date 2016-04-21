@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class ShippingOriginProvider
@@ -34,8 +33,8 @@ class ShippingOriginProvider
     {
         /** @var EntityRepository $repo */
         $repo = $this->doctrineHelper
-            ->getEntityManagerForClass('OroB2BShippingBundle:ShippingOriginWarehouse')
-            ->getRepository('OroB2BShippingBundle:ShippingOriginWarehouse');
+            ->getEntityManagerForClass('OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse')
+            ->getRepository('OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse');
 
         /** @var ShippingOriginWarehouse $shippingOriginWarehouse */
         $shippingOriginWarehouse = $repo->findOneBy(['warehouse' => $warehouse]);
@@ -45,13 +44,5 @@ class ShippingOriginProvider
         }
 
         return null;
-    }
-
-    /**
-     * @return ShippingOrigin
-     */
-    public function getSystemShippingOrigin()
-    {
-        return new ShippingOrigin();
     }
 }
