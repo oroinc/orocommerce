@@ -47,7 +47,7 @@ class PayPalPaymentsProViewTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPaymentMethodType()
     {
-        $this->assertEquals(PayPalPaymentsPro::TYPE, $this->methodView->getPaymentMethodType());
+        $this->assertEquals('paypal_payments_pro', $this->methodView->getPaymentMethodType());
     }
 
     public function testGetLabel()

@@ -26,7 +26,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentMethodInterface */
     protected $method;
 
-    protected function setMocks()
+    protected function setUp()
     {
         $this->gateway = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway')
             ->disableOriginalConstructor()
@@ -39,6 +39,11 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
+    }
+
+    protected function tearDown()
+    {
+        unset($this->configManager, $this->router, $this->gateway);
     }
 
     /**
@@ -75,15 +80,13 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
                         unset($options['SECURETOKENID']);
                         $expected = $data['requestOptions'];
 
-                        return(count($options) == count($expected) && $options == $expected);
+                        return count(array_diff($expected, $options)) === 0;
                     }
                 )
             )
             ->willReturn($response);
 
-        $this->router->expects($this->any())
-            ->method('generate')
-            ->willReturnArgument(0);
+        $this->configureRouter($transaction);
 
         $this->gateway->expects($this->any())
             ->method('setTestMode');
@@ -92,27 +95,53 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
             ->method('getFormAction')
             ->willReturn('test_form_action');
 
-        $this->setExecuteConfigs($data['configs']);
+        $this->configureConfig($data['configs']);
 
         $this->assertEquals($result, $this->method->execute($transaction));
     }
 
     /**
+     * @return array
+     */
+    abstract public function executeDataProvider();
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     */
+    protected function configureRouter(PaymentTransaction $paymentTransaction)
+    {
+        if ($paymentTransaction->getAction() !== 'purchase') {
+            return;
+        }
+
+        $this->router->expects($this->exactly(2))
+            ->method('generate')
+            ->withConsecutive(
+                [
+                    'orob2b_payment_callback_return',
+                    [
+                        'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                        'accessToken' => $paymentTransaction->getAccessToken(),
+                    ],
+                    true
+                ],
+                [
+                    'orob2b_payment_callback_error',
+                    [
+                        'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                        'accessToken' => $paymentTransaction->getAccessToken(),
+                    ],
+                    true
+                ]
+            )
+            ->willReturnArgument(0);
+    }
+
+    /**
      * @param array $configs
      */
-    protected function setExecuteConfigs($configs = [])
+    protected function configureConfig(array $configs = [])
     {
-        $configs = array_merge(
-            [
-                Configuration::PAYFLOW_GATEWAY_VENDOR_KEY => 'test_vendor',
-                Configuration::PAYFLOW_GATEWAY_USER_KEY => 'test_user',
-                Configuration::PAYFLOW_GATEWAY_PASSWORD_KEY => 'test_password',
-                Configuration::PAYFLOW_GATEWAY_PARTNER_KEY => 'test_partner',
-                Configuration::PAYFLOW_GATEWAY_TEST_MODE_KEY => true,
-            ],
-            $configs
-        );
-
         $map = [];
         array_walk(
             $configs,
