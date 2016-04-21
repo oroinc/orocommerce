@@ -30,7 +30,7 @@ use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
-use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
+use OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
@@ -90,7 +90,7 @@ class OrderTypeTest extends TypeTestCase
             ->disableOriginalConstructor()->getMock();
         $this->paymentTermProvider = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()->getMock();
-        $this->orderCurrencyHandler = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler')
+        $this->orderCurrencyHandler = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler')
             ->disableOriginalConstructor()->getMock();
 
         $this->totalsProvider = $this
@@ -409,6 +409,10 @@ class OrderTypeTest extends TypeTestCase
         return PriceTypeGenerator::createPriceType();
     }
 
+    /**
+     * @param array $data
+     * @return Order
+     */
     protected function getOrder($data)
     {
         $order = new Order();
@@ -439,6 +443,10 @@ class OrderTypeTest extends TypeTestCase
         return $order;
     }
 
+    /**
+     * @param array $data
+     * @return OrderLineItem
+     */
     protected function getLineItem($data)
     {
         $lineItem = new OrderLineItem();

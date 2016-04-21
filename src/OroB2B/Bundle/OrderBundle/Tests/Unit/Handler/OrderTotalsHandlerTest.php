@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Model;
+namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Handler;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Model\OrderTotalsHandler;
+use OroB2B\Bundle\OrderBundle\Handler\OrderTotalsHandler;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
