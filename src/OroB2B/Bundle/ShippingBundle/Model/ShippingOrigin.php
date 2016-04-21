@@ -54,7 +54,7 @@ class ShippingOrigin extends AbstractAddress
     /** {@inheritdoc} */
     public function setPostalCode($postalCode)
     {
-        $this->data->offsetSet('postal_code', $postalCode);
+        $this->data->offsetSet('postalCode', $postalCode);
 
         return parent::setPostalCode($postalCode);
     }
@@ -104,7 +104,7 @@ class ShippingOrigin extends AbstractAddress
     /** {@inheritdoc} */
     public function getPostalCode()
     {
-        return $this->getOffset('postal_code');
+        return $this->getOffset('postalCode');
     }
 
     /** {@inheritdoc} */

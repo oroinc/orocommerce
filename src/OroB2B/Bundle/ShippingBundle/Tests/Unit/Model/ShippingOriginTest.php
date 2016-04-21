@@ -32,7 +32,7 @@ class ShippingOriginTest extends \PHPUnit_Framework_TestCase
             [
                 ['country', new Country('us')],
                 ['region', new Region('test')],
-                ['regionText', 'test region text'],
+                ['region_text', 'test region text'],
                 ['postalCode', 'test postal code'],
                 ['city', 'test city'],
                 ['street', 'test street 1'],

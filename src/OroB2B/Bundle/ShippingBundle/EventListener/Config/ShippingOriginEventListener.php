@@ -56,7 +56,7 @@ class ShippingOriginEventListener
             'country' => $shippingOrigin->getCountry() ? $shippingOrigin->getCountry()->getIso2Code() : null,
             'region' => $shippingOrigin->getRegion() ? $shippingOrigin->getRegion()->getCombinedCode() : null,
             'region_text' => $shippingOrigin->getRegionText(),
-            'postal_code' => $shippingOrigin->getPostalCode(),
+            'postalCode' => $shippingOrigin->getPostalCode(),
             'city' => $shippingOrigin->getCity(),
             'street' => $shippingOrigin->getStreet(),
             'street2' => $shippingOrigin->getStreet2(),

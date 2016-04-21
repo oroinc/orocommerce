@@ -18,9 +18,9 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingOriginModelFactory */
     protected $shippingOriginModelFactory;
 
-    protected $defaultData = [
+    protected static $defaultData = [
         'region_text' => 'Alabama',
-        'postal_code' => '35004',
+        'postalCode' => '35004',
         'country' => 'US',
         'region' => 'US-AL',
         'city' => 'City',
@@ -69,7 +69,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
                     'oro_b2b_shipping___shipping_origin' => [
                         'value' => [
                             'region_text' => 'Alabama',
-                            'postal_code' => '35004',
+                            'postalCode' => '35004',
                             'country' => 'US',
                             'region' => 'US-AL',
                             'city' => 'City',
@@ -79,7 +79,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
                     ],
                 ]
             );
-        $shippingOrigin = (new ShippingOrigin($this->defaultData))
+        $shippingOrigin = (new ShippingOrigin(self::$defaultData))
             ->setCountry(new Country('US'))
             ->setRegion(new Region('US-AL'));
         $this->shippingOriginModelFactory
@@ -137,7 +137,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
         $country = new Country('US');
         $region = new Region('US-AL');
-        $shippingOrigin = new ShippingOrigin($this->defaultData);
+        $shippingOrigin = new ShippingOrigin(self::$defaultData);
         $shippingOrigin->setCountry($country);
         $shippingOrigin->setRegion($region);
 
@@ -163,10 +163,10 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
                         'Alabama',
                         $settings['oro_b2b_shipping.shipping_origin']['value']['region_text']
                     );
-                    $this->assertArrayHasKey('postal_code', $settings['oro_b2b_shipping.shipping_origin']['value']);
+                    $this->assertArrayHasKey('postalCode', $settings['oro_b2b_shipping.shipping_origin']['value']);
                     $this->assertEquals(
                         '35004',
-                        $settings['oro_b2b_shipping.shipping_origin']['value']['postal_code']
+                        $settings['oro_b2b_shipping.shipping_origin']['value']['postalCode']
                     );
 
                     return true;

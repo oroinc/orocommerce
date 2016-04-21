@@ -7,7 +7,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\AbstractType;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 
@@ -39,34 +38,39 @@ class ShippingOriginType extends AbstractType
                 'oro_country',
                 [
                     'label' => 'orob2b.shipping.shipping_origin.country.label',
+                    'configs' => ['placeholder' => 'oro.address.form.choose_country'],
                 ]
             )
             ->add(
                 'region',
                 'oro_region',
                 [
-                    'label' => 'orob2b.shipping.shipping_origin.region.label'
+                    'label' => 'orob2b.shipping.shipping_origin.region.label',
+                    'configs' => ['placeholder' => 'oro.address.form.choose_region'],
                 ]
             )
             ->add(
-                'postal_code',
+                'postalCode',
                 'text',
                 [
-                    'label' => 'orob2b.shipping.shipping_origin.postal_code.label'
+                    'label' => 'orob2b.shipping.shipping_origin.postal_code.label',
+                    'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.postal_code.label']
                 ]
             )
             ->add(
                 'city',
                 'text',
                 [
-                    'label' => 'orob2b.shipping.shipping_origin.city.label'
+                    'label' => 'orob2b.shipping.shipping_origin.city.label',
+                    'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.city.label']
                 ]
             )
             ->add(
                 'street',
                 'text',
                 [
-                    'label' => 'orob2b.shipping.shipping_origin.street.label'
+                    'label' => 'orob2b.shipping.shipping_origin.street.label',
+                    'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.street.label']
                 ]
             )
             ->add(
@@ -74,7 +78,8 @@ class ShippingOriginType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'orob2b.shipping.shipping_origin.street2.label'
+                    'label' => 'orob2b.shipping.shipping_origin.street2.label',
+                    'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.street2.label']
                 ]
             )
             ->add(
@@ -83,7 +88,8 @@ class ShippingOriginType extends AbstractType
                 [
                     'required' => false,
                     'random_id' => true,
-                    'label' => 'orob2b.shipping.shipping_origin.region_text.label'
+                    'label' => 'orob2b.shipping.shipping_origin.region_text.label',
+                    'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.region_text.label']
                 ]
             )->addEventSubscriber($this->countryAndRegionSubscriber);
     }
