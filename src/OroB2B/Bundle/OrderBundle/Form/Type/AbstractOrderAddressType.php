@@ -18,7 +18,7 @@ use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
-use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
+use OroB2B\Bundle\OrderBundle\Manager\OrderAddressManager;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 abstract class AbstractOrderAddressType extends AbstractType
