@@ -61,10 +61,10 @@ class PaymentTermListenerTest extends \PHPUnit_Framework_TestCase
         $event = new CallbackReturnEvent();
         $event->setPaymentTransaction($this->paymentTransaction);
 
-        $this->listener->onReturn($event);
-
         $this->doctrineHelper->expects($this->never())
             ->method('getEntity');
+
+        $this->listener->onReturn($event);
     }
 
     public function testOnReturnNoEntity()
@@ -91,6 +91,8 @@ class PaymentTermListenerTest extends \PHPUnit_Framework_TestCase
         $entityId = 10;
         $entity = new \stdClass();
         $paymentTerm = new \stdClass();
+
+        /** @var EntityManager $entityManager */
         $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
