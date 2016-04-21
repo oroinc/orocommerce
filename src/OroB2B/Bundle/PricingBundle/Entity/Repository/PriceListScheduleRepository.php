@@ -15,14 +15,14 @@ class PriceListScheduleRepository extends EntityRepository
      */
     public function getSchedulesByCPL(CombinedPriceList $cpl)
     {
-        $qb = $this->createQueryBuilder('shedule')
-                ->join('shedule.priceList', 'priceList');
-        $qb->innerJoin(
-            'OroB2BPricingBundle:CombinedPriceListToPriceList',
-            'priceListRelations',
-            Join::WITH,
-            $qb->expr()->eq('priceList', 'priceListRelations.combinedPriceList')
-        )
+        $qb = $this->createQueryBuilder('shedule');
+        $qb->select('DISTINCT shedule')
+            ->join(
+                'OroB2BPricingBundle:CombinedPriceListToPriceList',
+                'priceListRelations',
+                Join::WITH,
+                $qb->expr()->eq('shedule.priceList', 'priceListRelations.priceList')
+            )
             ->where($qb->expr()->eq('priceListRelations.combinedPriceList', ':cpl'))
             ->setParameter('cpl', $cpl);
 
