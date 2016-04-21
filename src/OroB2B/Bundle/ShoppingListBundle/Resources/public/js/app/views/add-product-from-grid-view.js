@@ -6,14 +6,6 @@ define(function(require) {
     var $ = require('jquery');
 
     AddProductFromGridView = AddProductView.extend({
-        initialize: function(options) {
-            AddProductFromGridView.__super__.initialize.apply(this, arguments);
-
-            var product = this.$el.data('product');
-            this.$el.find('.pinned-dropdown').data('product', product);
-            this.initLayout();
-        },
-
         /**
          * @param {jQuery.Event} e
          */

@@ -36,6 +36,10 @@ define(function(require) {
 
             _.extend(this.options, options || {});
             this.$el.on('click', 'a[data-id]', _.bind(this.onClick, this));
+
+            var product = this.$el.data('product');
+            this.$el.find('.pinned-dropdown').data('product', product);
+            this.initLayout();
         },
 
         /**

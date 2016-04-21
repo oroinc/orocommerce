@@ -61,9 +61,9 @@ define(function(require) {
             }
 
             mediator
-                .off('shopping-list:created')
-                .off('shopping-list:updated')
-                .off('frontend:item:delete');
+                .off('shopping-list:created', _.bind(this.renderWidget, this))
+                .off('shopping-list:updated', _.bind(this.renderWidget, this))
+                .off('frontend:item:delete', _.bind(this.renderWidget, this));
 
             this.options._sourceElement.off();
 

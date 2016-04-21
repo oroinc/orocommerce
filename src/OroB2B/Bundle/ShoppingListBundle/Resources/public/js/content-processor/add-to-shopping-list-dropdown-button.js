@@ -15,6 +15,7 @@ define([
             addButtonEvent: 'shopping-list:created',
             updateButtonEvent: 'shopping-list:updated',
             buttonTemplate: '',
+            buttonRemoveTemplate: '',
             defaultClass: '',
             addedClass: ''
         },
@@ -23,11 +24,17 @@ define([
 
         product: null,
 
+        remove: null,
+
         _create: function() {
             if (this.options.buttonTemplate) {
                 this.options.buttonTemplate = _.template(this.options.buttonTemplate);
                 mediator.on(this.options.addButtonEvent, this._addShoppingList, this);
                 mediator.on(this.options.updateButtonEvent, this._updateShoppingList, this);
+            }
+
+            if (this.options.buttonRemoveTemplate) {
+                this.options.buttonRemoveTemplate = _.template(this.options.buttonRemoveTemplate);
             }
 
             this.product = this.element.data('product');
@@ -51,6 +58,7 @@ define([
             this.main = $mainButton;
 
             this.dropdown.children(':first').replaceWith(this._prepareButtons($filteredButton));
+            this.toggleRemoveButton();
         },
 
         _addShoppingList: function(shoppingList, product) {
@@ -75,15 +83,19 @@ define([
                 this.element.prepend($button);
                 this._renderButtons();
             } else {
+                var $oldMainButton = $(this.options.buttonTemplate(this.main.data('shoppinglist')));
+                $oldMainButton = this._collectButtons($oldMainButton).data('shoppinglist', shoppingList);
+                this.dropdown.children(':first').remove();
+                this.dropdown.children(':last').before(this._prepareButtons($oldMainButton));
+
                 var $mainButton = this._prepareMainButton($filteredButton);
                 this.main.replaceWith($mainButton);
                 this.main = $mainButton;
 
-                var $createNewButton = this.dropdown.children(':last');
-                this.dropdown.children(':first').insertBefore($createNewButton);
-
                 this.dropdown.prepend(this._prepareButtons($filteredButton));
             }
+
+            this.toggleRemoveButton();
         },
 
         transformCreateNewButton: function() {
@@ -98,12 +110,17 @@ define([
         },
 
         _prepareMainButton: function($main) {
-            this.toggleButtonsClass($main);
+            this.toggleButtonsClass();
             this.setButtonLabel($main);
             return this._super($main);
         },
 
-        toggleButtonsClass: function($main) {
+        _renderButtons: function() {
+            this._super();
+            this.toggleRemoveButton();
+        },
+
+        toggleButtonsClass: function() {
             if (!this.product) {
                 return;
             }
@@ -128,9 +145,14 @@ define([
                 var lineItems = '';
                 if (_.size(this.product.lineItems) === 1) {
                     _.each(this.product.lineItems, function(count, unit) {
-                        lineItems = count;
                         if (_.size(self.product.units) > 1) {
-                            lineItems += ' ' + _.__('orob2b.product.product_unit.' + unit + '.label.short');
+                            lineItems = _.__(
+                                'orob2b.product.product_unit.' + unit + '.value.short',
+                                {'count': count},
+                                count
+                            );
+                        } else {
+                            lineItems = count;
                         }
                     });
                 }
@@ -140,6 +162,28 @@ define([
 
             label = label.replace('{{ shoppingList }}', shoppingList.label);
             $main.attr('title', label).html(label);
+        },
+
+        toggleRemoveButton: function() {
+            if (!this.product) {
+                return;
+            }
+
+            var shoppingList = this.main.data('shoppinglist');
+
+            if (!this.remove && !_.isEmpty(this.product.lineItems)) {
+                var $button = $(this.options.buttonRemoveTemplate(shoppingList));
+                var $filteredButton = this._collectButtons($button).data('shoppinglist', shoppingList);
+
+                this.remove = this._prepareButtons($filteredButton);
+
+                this.dropdown.append(this.remove);
+
+                this.remove.insertAfter(this.dropdown.children(':first'));
+            } else if (this.remove && _.isEmpty(this.product.lineItems)) {
+                this.remove.remove();
+                delete(this.remove);
+            }
         }
     });
 
