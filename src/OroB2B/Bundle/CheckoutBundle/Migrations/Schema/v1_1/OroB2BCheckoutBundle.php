@@ -38,7 +38,7 @@ class OroB2BCheckoutBundle implements Migration, OrderedMigrationInterface
     protected function addCheckoutTypeColumn(Schema $schema)
     {
         $table = $schema->getTable('orob2b_checkout');
-        $table->addColumn('type', 'string', ['notnull' => false, 'length' => 30]);
+        $table->addColumn('checkout_discriminator', 'string', ['notnull' => false, 'length' => 30]);
     }
 
     /**
@@ -48,8 +48,10 @@ class OroB2BCheckoutBundle implements Migration, OrderedMigrationInterface
      */
     protected function setTypeExistingCheckouts(QueryBag $queries)
     {
-        $sql = "UPDATE orob2b_checkout SET type='checkout'";
-        $queries->addQuery($sql);
+        $queries->addPreQuery(
+            "DELETE FROM oro_entity_config WHERE class_name='OroB2B\\Bundle\\CheckoutBundle\\Entity\\Checkout'"
+        );
+        $queries->addQuery("UPDATE orob2b_checkout SET checkout_discriminator='checkout'");
     }
 
     /**
@@ -73,6 +75,7 @@ class OroB2BCheckoutBundle implements Migration, OrderedMigrationInterface
 
         $table->addUniqueIndex(['billing_address_id'], 'uniq_def_checkout_bill_addr');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_def_checkout_shipp_addr');
+        $table->addUniqueIndex(['order_id'], 'uniq_def_checkout_order');
     }
 
     /**

@@ -66,6 +66,7 @@ class OroB2BCheckoutBundleInstaller implements Installation
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('checkout_type', 'string', ['notnull' => false, 'length' => 30]);
         $table->addColumn('customer_notes', 'text', ['notnull' => false]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('ship_until', 'date', ['notnull' => false, 'comment' => '(DC2Type:date)']);
@@ -79,7 +80,7 @@ class OroB2BCheckoutBundleInstaller implements Installation
         ]);
         $table->addColumn('shipping_estimate_currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('payment_method', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('type', 'string', ['notnull' => true, 'length' => 30]);
+        $table->addColumn('checkout_discriminator', 'string', ['notnull' => true, 'length' => 30]);
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');
         $table->addUniqueIndex(['workflow_item_id'], 'uniq_e56b559d1023c4ee');
         $table->setPrimaryKey(['id']);
@@ -164,7 +165,7 @@ class OroB2BCheckoutBundleInstaller implements Installation
 
         $table->addUniqueIndex(['billing_address_id'], 'uniq_def_checkout_bill_addr');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_def_checkout_shipp_addr');
-        $table->addUniqueIndex(['order_id'], 'uniq_default_checkout_order');
+        $table->addUniqueIndex(['order_id'], 'uniq_def_checkout_order');
     }
 
     /**

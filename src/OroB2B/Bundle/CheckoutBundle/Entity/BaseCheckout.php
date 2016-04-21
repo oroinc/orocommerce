@@ -24,7 +24,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\Table(name="orob2b_checkout")
  * @ORM\Entity
  * @ORM\InheritanceType("JOINED")
- * @ORM\DiscriminatorColumn(name="type", type="string", length=30)
+ * @ORM\DiscriminatorColumn(name="checkout_discriminator", type="string", length=30)
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
@@ -38,6 +38,13 @@ class BaseCheckout implements
 {
     use DatesAwareTrait;
     use WorkflowAwareTrait;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="checkout_type", type="string", length=30, nullable=true)
+     */
+    protected $checkoutType = '';
 
     /**
      * @var int
@@ -158,9 +165,9 @@ class BaseCheckout implements
     /**
      * @return string
      */
-    public function getType()
+    public function getCheckoutType()
     {
-        return '';
+        return $this->checkoutType;
     }
 
     /**

@@ -1,1 +1,1 @@
-{{ record.getValue('shippingCost')|oro_format_price }}
+{{ record.getValue('shippingEstimateAmount')|oro_format_currency({'currency': record.getValue('shippingEstimateCurrency')}) }}

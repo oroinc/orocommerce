@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
-use OroB2B\Bundle\AlternativeCheckoutBundle\Model\ExtendAlternativeCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutAddressesTrait;
 
 /**
@@ -39,11 +39,11 @@ use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutAddressesTrait;
  *      }
  * )
  */
-class AlternativeCheckout extends ExtendAlternativeCheckout
+class AlternativeCheckout extends BaseCheckout
 {
     use CheckoutAddressesTrait;
 
-    const TYPE = 'alternative';
+    const CHECKOUT_TYPE = 'alternative';
 
     /**
      * @var int
@@ -81,6 +81,11 @@ class AlternativeCheckout extends ExtendAlternativeCheckout
      * @ORM\Column(name="requested_for_approve", type="boolean")
      */
     protected $requestedForApprove = false;
+
+    public function __construct()
+    {
+        $this->checkoutType = self::CHECKOUT_TYPE;
+    }
 
     /**
      * @return string
@@ -147,13 +152,5 @@ class AlternativeCheckout extends ExtendAlternativeCheckout
     public function setAllowRequestDate($allowRequestDate)
     {
         $this->allowRequestDate = $allowRequestDate;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return self::TYPE;
     }
 }

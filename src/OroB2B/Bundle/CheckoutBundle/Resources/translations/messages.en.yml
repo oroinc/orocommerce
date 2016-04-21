@@ -32,6 +32,7 @@ orob2b:
         shipping_cost.label: Shipping
         pending_orders.label: Pending Orders
         ordered_by.label: Ordered By
+        checkout_type.label: Checkout Type
 
         checkoutsource:
             entity_label: Checkout Source
@@ -122,5 +123,9 @@ orob2b:
             address.manual: Enter other address
             address.select.billing.label: SELECT BILLING ADDRESS
             address.select.shipping.label: SELECT SHIPPING ADDRESS
+
+        grid:
+            total.label: Total
+            subtotal.label: Subtotal
 
 
