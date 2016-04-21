@@ -74,10 +74,8 @@ class ProductControllerTest extends WebTestCase
             LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1
         );
 
-        $result = $this->getProductDataBySku(self::TEST_SKU);
-        $id = (int)$result['id'];
-
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $id]));
+        $product = $this->getProductDataBySku(self::TEST_SKU);
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $product->getId()]));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -136,22 +134,17 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @param string $sku
-     * @return array
+     * @return Product
      */
     private function getProductDataBySku($sku)
     {
-        $response = $this->client->requestGrid(
-            'products-grid',
-            ['products-grid[_filter][sku][value]' => $sku]
-        );
+        /** @var Product $product */
+        $product = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BProductBundle:Product')
+            ->getRepository('OroB2BProductBundle:Product')
+            ->findOneBy(['sku' => $sku]);
+        $this->assertNotEmpty($product);
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayHasKey('data', $result);
-        $this->assertNotEmpty($result['data']);
-
-        $result = reset($result['data']);
-        $this->assertNotEmpty($result);
-
-        return $result;
+        return $product;
     }
 }

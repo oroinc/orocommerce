@@ -89,7 +89,6 @@ services:
             - ["name"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_group, acl_resource: orob2b_account_group_view }
-        lazy: true
 
     orob2b_account.form.autocomplete.account.search_handler:
         parent: oro_form.autocomplete.search_handler
@@ -98,7 +97,6 @@ services:
             - ["name"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_account, acl_resource: orob2b_account_view }
-        lazy: true
 
     orob2b_account.form.autocomplete.account_parent.search_handler:
         parent: oro_form.autocomplete.search_handler
@@ -108,7 +106,6 @@ services:
             - ["name"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_parent, acl_resource: orob2b_account_view }
-        lazy: true
 
     orob2b_account.form.autocomplete.account_user_account.search_handler:
         parent: oro_form.autocomplete.search_handler
