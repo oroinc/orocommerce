@@ -414,7 +414,7 @@ workflows:
                         method_parameters:
                             - $.result.lineItems
                     - '@call_service_method':
-                        service: orob2b_order.model.order_totals_handler
+                        service: orob2b_order.handler.order_totals_handler
                         method: fillSubtotals
                         method_parameters:
                             - $checkout.order
