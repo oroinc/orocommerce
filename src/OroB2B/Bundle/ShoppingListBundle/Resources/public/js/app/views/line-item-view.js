@@ -57,6 +57,11 @@ define(function(require) {
 
             this.pricesComponent.loadLineItemsMatchedPrices([item], _.bind(this.updateMatchedPrice, this));
             mediator.trigger('frontend:shopping-list-item-quantity:update', data);
+            this.trigger('unit-changed', {
+                lineItemId: this.options.lineItemId,
+                product: this.options.product,
+                unit: data.unit
+            });
         },
 
         updateMatchedPrice: function(matchedPrices) {

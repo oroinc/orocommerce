@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Model;
+namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -15,7 +15,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
+use OroB2B\Bundle\OrderBundle\Manager\OrderAddressManager;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider;
 
 class OrderAddressManagerTest extends AbstractAddressManagerTest

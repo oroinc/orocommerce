@@ -11,7 +11,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
+use OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;

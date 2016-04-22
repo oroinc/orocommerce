@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Model;
+namespace OroB2B\Bundle\OrderBundle\Handler;
 
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
