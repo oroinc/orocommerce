@@ -14,7 +14,10 @@ define(function(require) {
         options: {
             authorizedCard: null,
             selectors: {
-                differentCardHandle: '[data-different-card-handle]'
+                differentCard: '[data-different-card]',
+                authorizedCard: '[data-authorized-card]',
+                differentCardHandle: '[data-different-card-handle]',
+                authorizedCardHandle: '[data-authorized-card-handle]'
             }
         },
 
@@ -22,6 +25,16 @@ define(function(require) {
          * @property {jQuery}
          */
         $el: null,
+
+        /**
+         * @property {jQuery}
+         */
+        $authorizedCard: null,
+
+        /**
+         * @property {jQuery}
+         */
+        $differentCard: null,
 
         /**
          * @property bool
@@ -36,24 +49,42 @@ define(function(require) {
 
             this.$el = this.options._sourceElement;
             this.isAuthorizedCard = (this.options.authorizedCard !== null);
+            this.$authorizedCard = this.$el.find(this.options.selectors.authorizedCard);
+            this.$differentCard = this.$el.find(this.options.selectors.differentCard);
 
             this.$el
+                .on('click', this.options.selectors.authorizedCardHandle, _.bind(this.showAuthorizedCard, this))
                 .on('click', this.options.selectors.differentCardHandle, _.bind(this.showDifferentCard, this));
-
-            mediator.on('checkout:payment:credit-card-authorized', _.bind(this.showAuthorizedCard, this));
         },
 
         showDifferentCard: function() {
-            this.$el.hide("slide", { direction: "left" });
+            this.$authorizedCard
+                .css("width", this.$authorizedCard.outerWidth() + "px")
+                .css("position", "absolute");
+            this.$el.effect("size", {to: {height: this.$differentCard.outerHeight()}, scale: "box"}, 100, (function() {
+                this.$authorizedCard.hide("slide", { direction: "left" }, (function() {
+                    this.$authorizedCard.css("position", "relative");
+                }).bind(this));
+                this.$differentCard.show("slide", { direction: "right" });
+            }).bind(this));
             this.isAuthorizedCard = false;
-            mediator.trigger('checkout:payment:credit-card-different');
 
             return false;
         },
 
         showAuthorizedCard: function() {
-            this.$el.show("slide", { direction: "left" });
+            this.$authorizedCard.css("position", "absolute");
+            this.$authorizedCard.show("slide", { direction: "left" }, (function() {
+                this.$el
+                    .css("height", this.$differentCard.outerHeight() + "px")
+                    .effect("size", {to: {height: this.$authorizedCard.outerHeight()}, scale: "box"}, 100);
+            }).bind(this));
+            this.$differentCard.hide("slide", { direction: "right" }, (function() {
+                this.$authorizedCard.css("position", "relative");
+            }).bind(this));
             this.isAuthorizedCard = true;
+
+            return false;
         },
 
         /**
@@ -65,9 +96,8 @@ define(function(require) {
             }
 
             this.$el
+                .off('click', this.options.selectors.authorizedCardHandle, _.bind(this.showAuthorizedCard, this))
                 .off('click', this.options.selectors.differentCardHandle, _.bind(this.showDifferentCard, this));
-
-            mediator.off('checkout:payment:credit-card-authorized', _.bind(this.showAuthorizedCard, this));
 
             AuthorizedCreditCardComponent.__super__.dispose.call(this);
         }

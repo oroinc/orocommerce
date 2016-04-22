@@ -14,7 +14,6 @@ define(function(require) {
          */
         options: {
             paymentMethod: null,
-            authorizedCard: null,
             selectors: {
                 month: '[data-expiration-date-month]',
                 year: '[data-expiration-date-year]',
@@ -23,8 +22,7 @@ define(function(require) {
                 expirationDate: '[data-expiration-date]',
                 cvv: '[data-card-cvv]',
                 cardNumber: '[data-card-number]',
-                validation: '[data-validation]',
-                authorizedCardHandle: '[data-authorized-card-handle]'
+                validation: '[data-validation]'
             }
         },
 
@@ -49,11 +47,6 @@ define(function(require) {
         $form: null,
 
         /**
-         * @property bool
-         */
-        isAuthorizedCard: false,
-
-        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -68,7 +61,6 @@ define(function(require) {
             this.$el = this.options._sourceElement;
 
             this.$form = this.$el.find(this.options.selectors.form);
-            this.isAuthorizedCard = (this.options.authorizedCard !== null);
 
             this.$el
                 .on('change', this.options.selectors.month, _.bind(this.collectMonthDate, this))
@@ -78,11 +70,9 @@ define(function(require) {
                     this.options.selectors.cardNumber,
                     _.bind(this.validate, this, this.options.selectors.cardNumber)
                 )
-                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv))
-                .on('click', this.options.selectors.authorizedCardHandle, _.bind(this.showAuthorizedCard, this));
+                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
 
             mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
-            mediator.on('checkout:payment:credit-card-different', _.bind(this.showDifferentCard, this));
         },
 
         handleSubmit: function(eventData) {
@@ -149,19 +139,6 @@ define(function(require) {
             }
         },
 
-        showAuthorizedCard: function() {
-            this.$el.effect('size', { to: { height: "100%" }}).hide("slide", { direction: "right" }).dequeue();
-            this.isAuthorizedCard = true;
-            mediator.trigger('checkout:payment:credit-card-authorized');
-
-            return false;
-        },
-
-        showDifferentCard: function() {
-            this.$el.show("slide", { direction: "right" }).effect('size', { to: { height: "100%" }}).dequeue();
-            this.isAuthorizedCard = false;
-        },
-
         dispose: function() {
             if (this.disposed) {
                 return;
@@ -177,11 +154,9 @@ define(function(require) {
                     this.options.selectors.cardNumber,
                     _.bind(this.validate, this, this.options.selectors.cardNumber)
                 )
-                .off('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv))
-                .off('click', this.options.selectors.authorizedCardHandle, _.bind(this.showDifferentCard, this));
+                .off('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
 
             mediator.off('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
-            mediator.off('checkout:payment:credit-card-different', _.bind(this.showDifferentCard, this));
 
             CreditCardComponent.__super__.dispose.call(this);
         },
@@ -241,7 +216,7 @@ define(function(require) {
         },
 
         beforeTransit: function(eventData) {
-            if (eventData.data.paymentMethod === this.options.paymentMethod && !this.isAuthorizedCard) {
+            if (eventData.data.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = !this.validate();
             }
         }

@@ -1,7 +1,16 @@
-div.checkout__form__payment-methods-authorized-card a,
-div.checkout__form__payment-methods-different-card a
-{
+a.payment-methods-authorized-card-handle {
     display: block;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+a.payment-methods-different-card-handle {
+    display: block;
+    margin-top: 10px;
+}
+
+div.payment-methods-authorized-card-container {
+    position: relative;
+    background: #fff;
+    padding: 0;
+    border-radius: .5rem;
 }
