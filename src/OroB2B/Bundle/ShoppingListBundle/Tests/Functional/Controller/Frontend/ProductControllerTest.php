@@ -69,10 +69,10 @@ class ProductControllerTest extends WebTestCase
                 ]
             ),
             [
-                'orob2b_shopping_list_frontend_line_item' => [
+                'orob2b_product_frontend_line_item' => [
                     'quantity' => 5,
                     'unit' => 'liter',
-                    '_token' => $tokenManager->getToken('orob2b_shopping_list_frontend_line_item')->getValue()
+                    '_token' => $tokenManager->getToken('orob2b_product_frontend_line_item')->getValue()
                 ]
             ]
         );

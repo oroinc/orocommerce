@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
+use OroB2B\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 
 /**

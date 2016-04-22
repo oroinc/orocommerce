@@ -22,7 +22,8 @@ define(function(require) {
             },
             widgetAlias: 'shopping_list_add_product_form',
             createNewLabel: 'orob2b.shoppinglist.widget.add_to_new_shopping_list',
-            addToShoppingListButtonSelector: '.add-to-shopping-list-button'
+            addToShoppingListButtonSelector: '.add-to-shopping-list-button',
+            onClickElementSelector: 'a[data-id]'
         },
 
         /**
@@ -36,7 +37,15 @@ define(function(require) {
         initialize: function(additionalOptions) {
             _.extend(this.options, additionalOptions || {});
 
-            this.options._sourceElement.on('click', 'a[data-id]', _.bind(this.onClick, this));
+            if (this.options.onClickElementSelector) {
+                this.options._sourceElement.on(
+                    'click',
+                    this.options.onClickElementSelector,
+                    _.bind(this.onClick, this)
+                );
+            } else {
+                this.options._sourceElement.on('click', _.bind(this.onClick, this));
+            }
 
             mediator.on('shopping-list:created', this.transformCreateNewButton, this);
         },
@@ -147,7 +156,7 @@ define(function(require) {
 
         transformCreateNewButton: function() {
             var $button = $(this.options.addToShoppingListButtonSelector)
-                    .filter('[data-id=""]').not('[data-intention="' + this.options.intention.new + '"]');
+                .filter('[data-id=""]').not('[data-intention="' + this.options.intention.new + '"]');
             if ($button.length) {
                 $button.data('intention', this.options.intention.new);
                 $button.html(_.__(this.options.createNewLabel));

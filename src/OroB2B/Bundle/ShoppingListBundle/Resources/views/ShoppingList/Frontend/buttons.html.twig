@@ -16,6 +16,9 @@
         dataId: options.shoppingList.id,
         actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans({'{{ shoppingList }}': options.shoppingList.label})
     } %}
+    {% if options.pageComponent is defined %}
+        {% set btnOptions = btnOptions|merge({'pageComponent': options.pageComponent}) %}
+    {% endif %}
 
     {{ buttons.getButton(btnOptions) }}
 {% endmacro %}
@@ -39,6 +42,9 @@
         dataId: null,
         actionLabel: null
     } %}
+    {% if options.pageComponent is defined %}
+        {% set btnOptions = btnOptions|merge({'pageComponent': options.pageComponent}) %}
+    {% endif %}
 
     {{ buttons.getButton(btnOptions) }}
 {% endmacro %}
@@ -78,6 +84,9 @@
         dataId: shoppingListId,
         actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans({'{{ shoppingList }}': label})
     } %}
+    {% if options.pageComponent is defined %}
+        {% set btnOptions = btnOptions|merge({'pageComponent': options.pageComponent}) %}
+    {% endif %}
     {% if options.aCss is defined %}
         {% set btnOptions = btnOptions|merge({
         'aCss': options.aCss,
@@ -89,24 +98,27 @@
 
 {% macro getButton(options) %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% set buttonOptions = {
+    {% set btnOptions = {
         'dataAttributes': options.dataAttributes,
         'aCss': 'direct-link add-to-shopping-list-button',
         'dataId': options.dataId,
-        'label' : options.actionLabel|default(options.btnLabel)
+        'label': options.actionLabel|default(options.btnLabel)
     } %}
+    {% if options.pageComponent is defined %}
+        {% set btnOptions = btnOptions|merge({'pageComponent': options.pageComponent}) %}
+    {% endif %}
     {% if options.dataUrl %}
-        {% set buttonOptions = buttonOptions|merge({
+        {% set btnOptions = btnOptions|merge({
             'dataUrl': options.dataUrl,
         }) %}
     {% endif %}
 
     {% if options.aCss is defined %}
-        {% set buttonOptions = buttonOptions|merge({
-        'aCss': buttonOptions.aCss ~ ' ' ~ options.aCss,
+        {% set btnOptions = btnOptions|merge({
+        'aCss': btnOptions.aCss ~ ' ' ~ options.aCss,
         }) %}
     {% endif %}
-    {{ UI.clientButton(buttonOptions) }}
+    {{ UI.clientButton(btnOptions) }}
 {% endmacro %}
 
 {% macro createAddToShoppingListButton(options) %}
