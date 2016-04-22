@@ -112,7 +112,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
                 && $lineItem instanceof QuantityAwareInterface
             ) {
                 $productsPriceCriteria =
-                    $this->prepareProductsPriceCriteria($lineItem, $this->getBaseCurrency($entity));
+                    $this->prepareProductsPriceCriteria($lineItem, $baseCurrency);
                 $priceList = $this->priceListTreeHandler->getPriceList($entity->getAccount(), $entity->getWebsite());
                 $price = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList);
                 if (reset($price)) {

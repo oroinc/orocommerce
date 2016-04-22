@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Model;
+namespace OroB2B\Bundle\OrderBundle\Tests\Unit\RequestHandler;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
@@ -8,11 +8,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Component\Testing\Unit\EntityTrait;
+
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
-use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
+use OroB2B\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 
 class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Request
      */
@@ -100,7 +104,7 @@ class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetNotFound($method, $class, $param)
     {
-        $entity = $this->getEntity($class, 42);
+        $entity = $this->getEntity($class, ['id' => 42]);
 
         $this->request->expects($this->once())->method('get')->with(OrderType::NAME)
             ->willReturn([$param => $entity->getId()]);
@@ -122,7 +126,7 @@ class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAccount($method, $class, $param)
     {
-        $entity = $this->getEntity($class, 42);
+        $entity = $this->getEntity($class, ['id' => 42]);
 
         $this->request->expects($this->once())->method('get')->with(OrderType::NAME)
             ->willReturn([$param => $entity->getId()]);
@@ -144,22 +148,5 @@ class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ['getAccount', $this->accountClass, 'account'],
             ['getAccountUser', $this->accountUserClass, 'accountUser']
         ];
-    }
-
-    /**
-     * @param string $class
-     * @param int $id
-     *
-     * @return object
-     */
-    protected function getEntity($class, $id)
-    {
-        $entity = new $class();
-
-        $reflection = new \ReflectionProperty($class, 'id');
-        $reflection->setAccessible(true);
-        $reflection->setValue($entity, $id);
-
-        return $entity;
     }
 }
