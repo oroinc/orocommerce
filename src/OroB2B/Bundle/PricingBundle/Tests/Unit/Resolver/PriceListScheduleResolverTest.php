@@ -213,6 +213,35 @@ class PriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
                     ],
                 ]
             ],
+            [
+                'priceListSchedules' => [
+                    ['id' => 2, PriceListScheduleResolver::ON => null, PriceListScheduleResolver::OFF => 20160102],
+                    ['id' => 3, PriceListScheduleResolver::ON => 20160101, PriceListScheduleResolver::OFF => 20160103],
+                ],
+                'priceListRelations' => [2, 3],
+                'expectedResult' => [
+                    0        => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [2],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160101)
+                    ],
+                    20160101 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [2, 3],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160101),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160102)
+                    ],
+                    20160102 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [3],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160102),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160103)
+                    ],
+                    20160103 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => null
+                    ],
+                ]
+            ],
         ];
 
         foreach ($data as $testCase => $testData) {

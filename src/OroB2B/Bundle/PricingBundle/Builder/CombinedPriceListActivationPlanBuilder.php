@@ -139,7 +139,7 @@ class CombinedPriceListActivationPlanBuilder
     {
         $sequence = [];
         foreach ($priceListRelations as $priceListRelation) {
-            if (in_array($priceListRelation->getPriceList()->getId(), $activePriceListIds)) {
+            if (in_array($priceListRelation->getPriceList()->getId(), $activePriceListIds, true)) {
                 $sequence[] = new PriceListSequenceMember(
                     $priceListRelation->getPriceList(),
                     $priceListRelation->isMergeAllowed()
