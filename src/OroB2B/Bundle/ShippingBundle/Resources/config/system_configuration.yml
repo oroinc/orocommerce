@@ -25,4 +25,3 @@ oro_system_configuration:
                                     shipping_origin_settings:
                                         children:
                                             - orob2b_shipping.shipping_origin
-
