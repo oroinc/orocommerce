@@ -1,0 +1,3 @@
+css:
+    'orob2bpayment':
+        - 'bundles/orob2bpayment/css/style.css'

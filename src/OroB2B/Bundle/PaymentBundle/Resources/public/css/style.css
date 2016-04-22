@@ -1,0 +1,7 @@
+div.checkout__form__payment-methods-authorized-card a,
+div.checkout__form__payment-methods-different-card a
+{
+    display: block;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}

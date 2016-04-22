@@ -24,10 +24,7 @@ define(function(require) {
                 cvv: '[data-card-cvv]',
                 cardNumber: '[data-card-number]',
                 validation: '[data-validation]',
-                dataDifferentCardHandle: '[data-different-card-handle]',
-                dataDifferentCardCancel: '[data-different-card-cancel]',
-                dataAuthorizedCard: '[data-authorized-card]',
-                dataDifferentCard: '[data-different-card]'
+                authorizedCardHandle: '[data-authorized-card-handle]'
             }
         },
 
@@ -71,6 +68,7 @@ define(function(require) {
             this.$el = this.options._sourceElement;
 
             this.$form = this.$el.find(this.options.selectors.form);
+            this.isAuthorizedCard = (this.options.authorizedCard !== null);
 
             this.$el
                 .on('change', this.options.selectors.month, _.bind(this.collectMonthDate, this))
@@ -80,44 +78,15 @@ define(function(require) {
                     this.options.selectors.cardNumber,
                     _.bind(this.validate, this, this.options.selectors.cardNumber)
                 )
-                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
-
-            var $parent = this.$el.parent();
-
-            $parent
-                .on('click', this.options.selectors.dataDifferentCardHandle, _.bind(this.showDifferentCard, this))
-                .on('click', this.options.selectors.dataDifferentCardCancel, _.bind(this.hideDifferentCard, this));
-
-            this.isAuthorizedCard = (this.options.authorizedCard !== null);
+                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv))
+                .on('click', this.options.selectors.authorizedCardHandle, _.bind(this.showAuthorizedCard, this));
 
             mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
-        },
-
-        showDifferentCard: function() {
-            $(this.options.selectors.dataAuthorizedCard).hide();
-            $(this.options.selectors.dataDifferentCard).show();
-            this.isAuthorizedCard = false;
-
-            return false;
-        },
-
-        hideDifferentCard: function() {
-            $(this.options.selectors.dataDifferentCard).hide();
-            $(this.options.selectors.dataAuthorizedCard).show();
-            this.isAuthorizedCard = true;
-
-            return false;
+            mediator.on('checkout:payment:credit-card-different', _.bind(this.showDifferentCard, this));
         },
 
         handleSubmit: function(eventData) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
-                if (this.isAuthorizedCard) {
-                    var data = [{name: 'authorizedCard', value: this.options.authorizedCard }];
-
-                    // TODO: send data
-                    // return this.postUrl(authorizedCardUrl, data);
-                }
-
                 eventData.stopped = true;
                 var data = this.$el.find('[data-gateway]').serializeArray();
                 var resolvedEventData = _.extend(
@@ -180,12 +149,41 @@ define(function(require) {
             }
         },
 
+        showAuthorizedCard: function() {
+            this.$el.effect('size', { to: { height: "100%" }}).hide("slide", { direction: "right" }).dequeue();
+            this.isAuthorizedCard = true;
+            mediator.trigger('checkout:payment:credit-card-authorized');
+
+            return false;
+        },
+
+        showDifferentCard: function() {
+            this.$el.show("slide", { direction: "right" }).effect('size', { to: { height: "100%" }}).dequeue();
+            this.isAuthorizedCard = false;
+        },
+
         dispose: function() {
             if (this.disposed) {
                 return;
             }
 
+            mediator.off('checkout:place-order:response', this.handleSubmit, this);
+
+            this.$el
+                .off('change', this.options.selectors.month, _.bind(this.collectMonthDate, this))
+                .off('change', this.options.selectors.year, _.bind(this.collectYearDate, this))
+                .off(
+                    'focusout',
+                    this.options.selectors.cardNumber,
+                    _.bind(this.validate, this, this.options.selectors.cardNumber)
+                )
+                .off('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv))
+                .off('click', this.options.selectors.authorizedCardHandle, _.bind(this.showDifferentCard, this));
+
             mediator.off('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
+            mediator.off('checkout:payment:credit-card-different', _.bind(this.showDifferentCard, this));
+
+            CreditCardComponent.__super__.dispose.call(this);
         },
 
         validate: function(elementSelector) {
