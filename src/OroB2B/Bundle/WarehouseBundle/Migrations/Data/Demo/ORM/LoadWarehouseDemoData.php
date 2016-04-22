@@ -21,7 +21,8 @@ class LoadWarehouseDemoData extends AbstractFixture implements ContainerAwareInt
     use UserUtilityTrait;
 
     const MAIN_WAREHOUSE = 'warehouse.main';
-    const ADDITIONAL_WAREHOUSE = 'warehouse.additional';
+    const ADDITIONAL_WAREHOUSE = 'warehouse.additional.1';
+    const ADDITIONAL_WAREHOUSE_2 = 'warehouse.additional.2';
 
     /**
      * @var array
@@ -34,6 +35,9 @@ class LoadWarehouseDemoData extends AbstractFixture implements ContainerAwareInt
         self::ADDITIONAL_WAREHOUSE => [
             'name' => 'Additional Warehouse',
         ],
+        self::ADDITIONAL_WAREHOUSE_2 => [
+            'name' => 'Additional Warehouse 2',
+        ]
     ];
 
     /**
