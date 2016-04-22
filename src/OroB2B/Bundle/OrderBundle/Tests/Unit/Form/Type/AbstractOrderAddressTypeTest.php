@@ -14,7 +14,7 @@ use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
-use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
+use OroB2B\Bundle\OrderBundle\Manager\OrderAddressManager;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
@@ -47,7 +47,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->orderAddressManager = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Model\OrderAddressManager')
+        $this->orderAddressManager = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Manager\OrderAddressManager')
             ->disableOriginalConstructor()
             ->getMock();
 
