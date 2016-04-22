@@ -1,6 +1,10 @@
 {% block _shopping_list_view_container_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set attr = attr|merge({class: attr.class|default('') ~ " container-fluid"}) %}
-    <div{{ block('block_attributes') }}>
+    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
+        module: 'orob2bshoppinglist/js/app/components/shoppinglist-view-component'
+    }) }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
