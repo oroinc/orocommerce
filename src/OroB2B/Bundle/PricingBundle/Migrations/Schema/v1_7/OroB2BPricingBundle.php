@@ -29,6 +29,7 @@ class OroB2BPricingBundle implements Migration
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_acc'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_plist_to_acc_gr'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_ws'));
+        $queries->addPostQuery(new UpdateCPLNameQuery());
     }
 
     /**
@@ -60,8 +61,6 @@ class OroB2BPricingBundle implements Migration
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => false]);
         $table->addColumn('expire_at', 'datetime', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['combined_price_list_id'], 'IDX_E71CEADAF4E1C8D4', []);
-        $table->addIndex(['full_combined_price_list_id'], 'IDX_E71CEADA579D9EF', []);
     }
 
     /**

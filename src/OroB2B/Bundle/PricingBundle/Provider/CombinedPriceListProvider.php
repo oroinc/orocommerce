@@ -111,7 +111,7 @@ class CombinedPriceListProvider
             $key[] = $priceListSequenceMember->getPriceList()->getId() . $isMergeAllowed;
         }
 
-        return implode(self::GLUE, $key);
+        return md5(implode(self::GLUE, $key));
     }
 
     /**
