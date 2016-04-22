@@ -37,3 +37,23 @@ services:
         tags:
             - { name: oro_action.action, alias: assign_current_website }
             - { name: oro_workflow.action, alias: assign_current_website }
+
+    orob2b_website.listener.orm.locale_listener:
+        class: 'OroB2B\Bundle\WebsiteBundle\EventListener\ORM\LocaleListener'
+        arguments:
+            - '@orob2b_website.translation.strategy.tree_fallback_strategy'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_website.entity.locale.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_website.entity.locale.class%', event: postUpdate }
+
+    orob2b_website.cache.provider.tree_fallback_strategy:
+        parent: oro.cache.abstract
+        public: false
+        calls:
+            - [ setNamespace, [ 'orob2b_website_tree_fallback_strategy' ] ]
+
+    orob2b_website.translation.strategy.tree_fallback_strategy:
+        class: 'OroB2B\Bundle\WebsiteBundle\Translation\Strategy\LocaleFallbackStrategy'
+        arguments:
+            - '@doctrine'
+            - '@orob2b_website.cache.provider.tree_fallback_strategy'
