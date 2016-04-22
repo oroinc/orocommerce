@@ -95,26 +95,29 @@ class CombinedPriceListActivationPlanBuilder
         $rawRules = $this->schedulerResolver->mergeSchedule($priceListSchedules, $priceListRelations);
         $activationRuleClass = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule';
         $manager = $this->doctrineHelper->getEntityManagerForClass($activationRuleClass);
-        $now = new \DateTime();
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
         foreach ($rawRules as $ruleData) {
-            if ($ruleData['expireAt'] !== null && $now->getTimestamp() > $ruleData['expireAt']) {
+            if ($ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY] !== null
+                && $now > $ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY]) {
                 //rule expired already, no need to add it to activation plan
                 continue;
             }
             $rule = new CombinedPriceListActivationRule();
             $rule->setFullChainPriceList($cpl);
-            if ($ruleData['expireAt']) {
-                $expireAt = new \DateTime();
-                $rule->setExpireAt($expireAt->setTimestamp($ruleData['expireAt']));
+            if ($ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY]) {
+                $rule->setExpireAt($ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY]);
             }
-            if ($ruleData['activateAt']) {
-                $activateAt = new \DateTime();
-                $rule->setActivateAt($activateAt->setTimestamp($ruleData['activateAt']));
+            if ($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY]) {
+                $rule->setActivateAt($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY]);
             }
-            if ($ruleData['activateAt'] === null || $ruleData['activateAt'] < $now->getTimestamp()) {
+            if ($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY] === null
+                || $ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY] < $now) {
                 $rule->setActive(true);
             }
-            $actualCPL = $this->combinedActualCombinedPriceList($priceListRelations, $ruleData['priceLists']);
+            $actualCPL = $this->combinedActualCombinedPriceList(
+                $priceListRelations,
+                $ruleData[PriceListScheduleResolver::PRICE_LISTS_KEY]
+            );
             $rule->setCombinedPriceList($actualCPL);
             $manager->persist($rule);
         }
@@ -126,7 +129,7 @@ class CombinedPriceListActivationPlanBuilder
      * @param array $activePriceListIds
      * @return CombinedPriceList
      */
-    protected function combinedActualCombinedPriceList($priceListRelations, array $activePriceListIds)
+    protected function combinedActualCombinedPriceList(array $priceListRelations, array $activePriceListIds)
     {
         $sequence = [];
         foreach ($priceListRelations as $priceListRelation) {
