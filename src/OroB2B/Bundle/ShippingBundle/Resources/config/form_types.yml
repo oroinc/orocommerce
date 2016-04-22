@@ -3,5 +3,7 @@ services:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginType
         arguments:
             - '@oro_address.form.listener.address'
+        calls:
+            - [setDataClass, ['%orob2b_shipping.model.shipping_origin.class%']]
         tags:
              - { name: form.type, alias: orob2b_shipping_origin }

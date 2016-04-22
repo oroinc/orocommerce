@@ -2,17 +2,61 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Bundle\Tests\Unit\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Processor;
+
 use OroB2B\Bundle\ShippingBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Test Configuration
-     */
+    /** @var Configuration */
+    protected $configuration;
+
+    protected function setUp()
+    {
+        $this->configuration = new Configuration();
+    }
+
+    protected function tearDown()
+    {
+        unset($this->configuration);
+    }
+
     public function testGetConfigTreeBuilder()
     {
-        $configuration = new Configuration();
-        $builder = $configuration->getConfigTreeBuilder();
-        $this->assertInstanceOf('Symfony\Component\Config\Definition\Builder\TreeBuilder', $builder);
+        $this->assertInstanceOf(
+            'Symfony\Component\Config\Definition\Builder\TreeBuilder',
+            $this->configuration->getConfigTreeBuilder()
+        );
+    }
+
+    /**
+     * @dataProvider processConfigurationDataProvider
+     *
+     * @param array $config
+     * @param array $expected
+     */
+    public function testProcessConfiguration(array $config, array $expected)
+    {
+        $processor = new Processor();
+
+        $this->assertEquals($expected, $processor->processConfiguration($this->configuration, $config));
+    }
+
+    /**
+     * @return array
+     */
+    public function processConfigurationDataProvider()
+    {
+        return [
+            [
+                'config'  => [],
+                'expected' => [
+                    'settings' => [
+                        'resolved' => true,
+                        'shipping_origin' => ['value' => [], 'scope' => 'app']
+                    ]
+                ]
+            ]
+        ];
     }
 }
