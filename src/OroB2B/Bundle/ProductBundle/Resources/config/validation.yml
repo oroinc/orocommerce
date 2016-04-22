@@ -14,7 +14,8 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
         organization:
             - NotBlank: ~
         unitPrecisions:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Count:
+            - Count:
+                min: 1
                 minMessage: 'orob2b.product.unit_precisions_items.blank'
         status:
             - NotBlank: ~
