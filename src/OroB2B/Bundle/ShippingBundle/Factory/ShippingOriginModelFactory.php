@@ -15,7 +15,7 @@ class ShippingOriginModelFactory
     /**
      * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct($doctrineHelper)
+    public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
     }

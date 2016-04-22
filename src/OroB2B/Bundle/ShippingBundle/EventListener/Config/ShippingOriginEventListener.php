@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ShippingBundle\EventListener\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
+
 use OroB2B\Bundle\ShippingBundle\DependencyInjection\OroB2BShippingExtension;
 use OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
 use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
@@ -12,9 +13,12 @@ class ShippingOriginEventListener
 {
     const KEY = 'shipping_origin';
 
-    /** @var  ShippingOriginModelFactory */
+    /** @var ShippingOriginModelFactory */
     protected $shippingOriginModelFactory;
 
+    /**
+     * @param ShippingOriginModelFactory $shippingOriginModelFactory
+     */
     public function __construct(ShippingOriginModelFactory $shippingOriginModelFactory)
     {
         $this->shippingOriginModelFactory = $shippingOriginModelFactory;
@@ -50,13 +54,13 @@ class ShippingOriginEventListener
             return;
         }
         $settings[$key]['value'] = [
-            'country'     => $shippingOrigin->getCountry() ? $shippingOrigin->getCountry()->getIso2Code() : null,
-            'region'      => $shippingOrigin->getRegion() ? $shippingOrigin->getRegion()->getCombinedCode() : null,
+            'country' => $shippingOrigin->getCountry() ? $shippingOrigin->getCountry()->getIso2Code() : null,
+            'region' => $shippingOrigin->getRegion() ? $shippingOrigin->getRegion()->getCombinedCode() : null,
             'region_text' => $shippingOrigin->getRegionText(),
-            'postal_code' => $shippingOrigin->getPostalCode(),
-            'city'        => $shippingOrigin->getCity(),
-            'street'      => $shippingOrigin->getStreet(),
-            'street2'     => $shippingOrigin->getStreet2(),
+            'postalCode' => $shippingOrigin->getPostalCode(),
+            'city' => $shippingOrigin->getCity(),
+            'street' => $shippingOrigin->getStreet(),
+            'street2' => $shippingOrigin->getStreet2(),
         ];
         $event->setSettings($settings);
     }

@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShippingBundle\Bundle\Tests\Unit\Factory;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
 use OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
 use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
 
@@ -13,9 +14,7 @@ class ShippingOriginModelFactoryTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
-    /**
-     * @var ShippingOriginModelFactory
-     */
+    /** @var ShippingOriginModelFactory */
     protected $factory;
 
     protected function setUp()
@@ -64,12 +63,12 @@ class ShippingOriginModelFactoryTest extends \PHPUnit_Framework_TestCase
     public function createProvider()
     {
         return [
-            'all'                => [
-                'values'   => [
+            'all' => [
+                'values' => [
                     'country' => 'US',
-                    'region'  => 'US-AL',
-                    'city'    => 'New York',
-                    'street'  => 'Street 1',
+                    'region' => 'US-AL',
+                    'city' => 'New York',
+                    'street' => 'Street 1',
                     'street2' => 'Street 2',
                 ],
                 'expected' => (new ShippingOrigin())
@@ -80,20 +79,20 @@ class ShippingOriginModelFactoryTest extends \PHPUnit_Framework_TestCase
                         ->setStreet2('Street 2')
             ],
             'country and region' => [
-                'values'   => [
+                'values' => [
                     'country' => 'US',
-                    'region'  => 'US-AL',
+                    'region' => 'US-AL',
                 ],
                 'expected' => (new ShippingOrigin())->setCountry(new Country('US'))->setRegion(new Region('US-AL'))
             ],
-            'country only'       => [
-                'values'   => [
+            'country only' => [
+                'values' => [
                     'country' => 'US',
                 ],
                 'expected' => (new ShippingOrigin())->setCountry(new Country('US'))
             ],
-            'without anything'   => [
-                'values'   => [],
+            'without anything' => [
+                'values' => [],
                 'expected' => new ShippingOrigin()
             ],
         ];
