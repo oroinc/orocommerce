@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ShippingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use Oro\Component\PhpUtils\ArrayUtil;
 
 class SystemConfigurationTest extends WebTestCase
@@ -36,8 +37,7 @@ class SystemConfigurationTest extends WebTestCase
             )
         );
 
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $token = $this->getContainer()->get('security.csrf.token_manager')->getToken('shipping_origin')->getValue();
         $form = $crawler->selectButton('Save settings')->form();
@@ -64,8 +64,7 @@ class SystemConfigurationTest extends WebTestCase
         $this->client->followRedirects(true);
         $this->client->request($form->getMethod(), $form->getUri(), $formData);
 
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $this->configManager->reload();
 
