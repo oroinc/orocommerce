@@ -111,7 +111,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'force' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
                 'expected' => [
-                    'name' => '1t_2f_2t',
+                    'name' => md5('1t_2f_2t'),
                     'currencies' => ['EUR', 'USD'],
                     'combineCallsCount' => 2,
                 ]
