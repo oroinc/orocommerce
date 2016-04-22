@@ -140,7 +140,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
             $combinedPriceList = new CombinedPriceList();
 
             $combinedPriceList
-                ->setName($priceListData['name'])
+                ->setName(md5($priceListData['name']))
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now)
                 ->setEnabled($priceListData['enabled']);
