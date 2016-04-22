@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Migrations\Data\Demo\ORM;
 
-use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Sluggable\Fixture\Issue116\Country;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -12,6 +10,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
@@ -22,9 +22,7 @@ class LoadShippingOriginDemoData extends AbstractFixture implements ContainerAwa
 {
     use UserUtilityTrait;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $demoData = [
         [
             'name' => 'Warehouse With ShippingOrigin 1',
