@@ -28,7 +28,7 @@ class PaymentTransactionProvider
     /**
      * @param object $object
      * @param array $filter
-     * @return PaymentTransaction
+     * @return PaymentTransaction|null
      */
     public function getPaymentTransaction($object, array $filter = [])
     {
@@ -71,7 +71,7 @@ class PaymentTransactionProvider
      * @param object $object
      * @param string $amount
      * @param string $currency
-     * @return PaymentTransaction
+     * @return PaymentTransaction|null
      */
     public function getActiveAuthorizePaymentTransaction($object, $amount, $currency)
     {

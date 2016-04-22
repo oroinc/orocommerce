@@ -2,15 +2,8 @@
     {% set attr = {
         "data-page-component-module": "oroui/js/app/components/view-component",
         "data-page-component-options": {
-            view: 'orob2bpricing/js/app/views/base-product-prices-view',
-            elements: {
-                el: ['$el', 'closest', '.grid-row']
-            },
-            prices: {
-                item: [{price: 6, currency: "USD", qty: 1}, {price: 3, currency: "USD", qty: 10}],
-                each: [{price: 10, currency: "USD", qty: 2}, {price: 5, currency: "USD", qty: 10}]
-            }
-            }|json_encode
+            view: 'orob2bpricing/js/app/views/base-product-prices-view'
+        }|json_encode
     }|merge(attr|merge({
         class: attr.class|default('') ~ " product-item__price product-item__price_<%= themeOptions.view %> mb1-md mb1-sm",
     })) %}

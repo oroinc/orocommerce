@@ -3,22 +3,41 @@ define(function(require) {
 
     var BaseProductView;
     var BaseView = require('oroui/js/app/views/base/view');
+    var ElementsHelper = require('orob2bfrontend/js/app/elements-helper');
     var $ = require('jquery');
     var _ = require('underscore');
+    var tools = require('oroui/js/tools');
 
-    BaseProductView = BaseView.extend({
+    BaseProductView = BaseView.extend(_.extend({}, ElementsHelper, {
+        elements: {
+            quantity: '[data-role="field-quantity"]',
+            unit: '[data-role="field-unit"]'
+        },
+
+        modelElements: ['quantity', 'unit'],
+
         defaults: {
-            qty: 0
+            quantity: 0,
+            unit: ''
         },
 
         initialize: function(options) {
             BaseProductView.__super__.initialize.apply(this, arguments);
             if (!this.model) {
+                if (tools.debug) {
+                    throw new Error('Model not defined!');
+                }
                 return;
             }
+            this.initializeElements(options);
 
             $.extend(true, this, _.pick(options, ['defaults']));
             this.setDefaults();
+        },
+
+        dispose: function() {
+            this.disposeElements();
+            BaseProductView.__super__.dispose.apply(this, arguments);
         },
 
         setDefaults: function() {
@@ -29,7 +48,7 @@ define(function(require) {
                 }
             });
         }
-    });
+    }));
 
     return BaseProductView;
 });

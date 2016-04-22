@@ -135,6 +135,12 @@ class PayPalConfigurationEncryptListenerTest extends \PHPUnit_Framework_TestCase
                 'full' => false,
                 'expectedValue' => true
             ],
+            'empty value' => [
+                'key' => $this->getFullConfigKey(Configuration::PAYFLOW_GATEWAY_PARTNER_KEY),
+                'value' => null,
+                'full' => false,
+                'expectedValue' => null
+            ],
         ];
     }
 

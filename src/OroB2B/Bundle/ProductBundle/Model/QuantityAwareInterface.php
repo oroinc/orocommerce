@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace OroB2B\Bundle\ProductBundle\Model;
 
 interface QuantityAwareInterface
 {

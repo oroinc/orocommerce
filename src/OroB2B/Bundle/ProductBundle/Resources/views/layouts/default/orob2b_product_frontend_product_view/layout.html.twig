@@ -292,3 +292,30 @@
         <!-- END Product Tabs -->
     </div>
 {% endblock %}
+
+{% block _line_item_list_form_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " line_item_form_product_view"}) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _line_item_buttons_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " form__col "}) %}
+    {% if block.children is not empty %}
+        <div {{ block('block_attributes') }}>
+            {% import 'OroUIBundle::macros.html.twig' as UI %}
+            {% import _self as buttons %}
+            {% set buttonsHtml %}
+                {{ block_widget(block) }}
+            {% endset %}
+            {{ UI.pinnedDropdownButton({
+                'html': buttonsHtml,
+                'options': {
+                    'truncateLength': 15,
+                    'groupContainer': '<div class="btn btn-block btn-orange btn_has-dropdown btn_has-dropdown_lg"></div>'
+                }
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}
