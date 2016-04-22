@@ -11,14 +11,44 @@
         <div data-role="price">
             {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }}
             <div class="product-item__price_block" data-role="prices-hint" data-placement="bottom" data-close="false" data-trigger="hover">
-                {# TODO: apply correct price in scope of BB-2461 #}
-                <div><span class="fs16 blue" data-role="price-value">$12.99</span> / item</div>
+                <% var firstPrice = model.prices[_.keys(model.prices)[0]]; %>
+                <div>
+                    <span class="fs16 blue" data-role="price-value"><%= firstPrice.formatted_price %></span>
+                    / <%= firstPrice.formatted_unit%>
+                </div>
             </div>
         </div>
-        <div data-role="prices-hint-content" style="display:none;">
-            <% _.each(model.prices, function(price, forField) { %>
-                <div><span class="fs16 blue"><%= price.formatted_price %></span> / <%= price.formatted_unit %></div>
-            <% }) %>
+        <div data-role="prices-hint-content" class="hidden">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="text-uppercase">qty</th>
+                    <th >Unit Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <% var shownUnit = '' %>
+                    <% _.each(model.prices, function(price) { %>
+                        <% if (shownUnit !== price.unit) { %>
+                            <tr>
+                                <td colspan="2">
+                                    <%= shownUnit ? '<br/>' : '' %>
+                                    <b><%= price.formatted_unit %></b>
+                                </td>
+                            </tr>
+                            <% shownUnit = price.unit %>
+                        <% } %>
+                        <tr>
+                            <td>
+                                <%= price.quantity %>
+                            </td>
+                            <td>
+                                <%= price.formatted_price %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
         </div>
         <div data-role="price-not-found">
             <% if (!_.isEmpty(model.prices)) { %>
