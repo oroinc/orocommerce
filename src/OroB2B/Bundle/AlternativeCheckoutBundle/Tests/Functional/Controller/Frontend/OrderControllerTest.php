@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AlternativeCheckoutBundle\CheckoutBundle\Tests\Functional\Controller;
 
+use Doctrine\Common\Util\ClassUtils;
+
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
@@ -139,7 +141,8 @@ class OrderControllerTest extends WebTestCase
             if ($checkout instanceof Checkout) {
                 $result['base'][$checkout->getId()] = $checkout;
             } else {
-                $checkoutType = strtolower(str_replace('Checkout', '', end(explode('\\', get_class($checkout)))));
+                $classNamespace = explode('\\', ClassUtils::getClass($checkout));
+                $checkoutType = strtolower(str_replace('Checkout', '', end($classNamespace)));
                 $result[$checkoutType][$checkout->getId()] = $checkout;
             }
         }
