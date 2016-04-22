@@ -95,7 +95,7 @@ class CombinedPriceListActivationPlanBuilder
         $rawRules = $this->schedulerResolver->mergeSchedule($priceListSchedules, $priceListRelations);
         $activationRuleClass = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule';
         $manager = $this->doctrineHelper->getEntityManagerForClass($activationRuleClass);
-        $now = new \DateTime();
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
         foreach ($rawRules as $ruleData) {
             if ($ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY] !== null
                 && $now > $ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY]) {

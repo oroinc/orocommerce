@@ -42,7 +42,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->cplActivationPlanBuilder = $this->getContainer()
             ->get('orob2b_pricing.builder.combined_price_list_activation_plan_builder');
-        $this->now = new \DateTime();
+        $this->now = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
@@ -58,16 +58,10 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
      * @param $schedule
      * @param $combinedPriceListsChanges
      */
-    public function testA($schedule, $combinedPriceListsChanges)
+    public function testBuildActivationPlan($schedule, $combinedPriceListsChanges)
     {
-        $combinedPriceListsChanges2 = [];
-        foreach ($combinedPriceListsChanges as $cplName => $cplSchedule) {
-            foreach ($cplSchedule as $item) {
-                $combinedPriceListsChanges2[$cplName][$this->getCplName($item['priceLists'])] = $item;
-            }
-        }
         $this->updateSchedule($schedule);
-        $this->comparePlan($combinedPriceListsChanges2);
+        $this->comparePlan($combinedPriceListsChanges);
     }
 
     /**
@@ -83,7 +77,10 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
             [
                 'schedule' => [
                     'price_list_2' => [
-                        ['activateAt' => '+1 day', 'deactivateAt' => '+2 days'],
+                        ['activateAt' => '+1 day', 'deactivateAt' => '+3 days'],
+                    ],
+                    'price_list_3' => [
+                        ['activateAt' => '+2 day', 'deactivateAt' => null],
                     ],
                 ],
                 'combinedPriceListsChanges' => [
@@ -91,18 +88,24 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
                         [
                             'active' => true,
                             'activateAt' => null,
-                            'expireAt' => '+2 days',
-                            'priceLists' => ['price_list_1' => true, 'price_list_3' => true]
+                            'expireAt' => '+1 days',
+                            'priceLists' => ['price_list_1' => true]
                         ],
                         [
                             'active' => false,
                             'activateAt' => '+1 day',
                             'expireAt' => '+2 days',
-                            'priceLists' => ['price_list_1' => true, 'price_list_2' => true, 'price_list_3' => true]
+                            'priceLists' => ['price_list_1' => true, 'price_list_2' => true]
                         ],
                         [
                             'active' => false,
                             'activateAt' => '+2 day',
+                            'expireAt' => '+3 days',
+                            'priceLists' => ['price_list_1' => true, 'price_list_2' => true, 'price_list_3' => true]
+                        ],
+                        [
+                            'active' => false,
+                            'activateAt' => '+3 day',
                             'expireAt' => null,
                             'priceLists' => ['price_list_1' => true, 'price_list_3' => true]
                         ],
@@ -134,6 +137,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
                     $item->setDeactivateAt($activateAt);
                 }
                 $this->manager->persist($item);
+                $this->manager->flush();
             }
             $this->manager->flush();
             $this->cplActivationPlanBuilder->buildByPriceList($priceList);
@@ -145,16 +149,17 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
      */
     protected function comparePlan($combinedPriceListsChanges)
     {
-        $totalRules = 0;
         foreach ($combinedPriceListsChanges as $cplKey => $plan) {
+            $totalRules = 0;
             $cpl = $this->getReference($cplKey);
             /** @var CombinedPriceListActivationRule[] $rules */
             $rules = $this->getActivationRulesRepository()->findBy(
-                ['fullChainPriceList' => $cpl]
+                ['fullChainPriceList' => $cpl],
+                ['id' => 'ASC']
             );
-            foreach ($rules as $rule) {
-                $currentCPLName = $rule->getCombinedPriceList()->getName();
-                $expectedData = $plan[$currentCPLName];
+            foreach ($rules as $i => $rule) {
+                $totalRules++;
+                $expectedData = $plan[$i];
                 $activeAt = null;
                 if ($expectedData['activateAt']) {
                     $activeAt = clone $this->now;
@@ -165,11 +170,15 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
                     $expireAt = clone $this->now;
                     $expireAt->modify($expectedData['expireAt']);
                 }
+                $currentCPLName = $rule->getCombinedPriceList()->getName();
+                $expectedCplName = $this->getCplName($expectedData['priceLists']);
+                $this->assertSame($expectedCplName, $currentCPLName);
                 $this->assertEquals($rule->isActive(), $expectedData['active']);
                 $this->assertEquals($rule->getActivateAt(), $activeAt);
                 $this->assertEquals($rule->getExpireAt(), $expireAt);
 
             }
+            $this->assertSame(count($combinedPriceListsChanges[$cplKey]), $totalRules);
         }
     }
 
