@@ -8,6 +8,8 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+
 /**
  * @dbIsolation
  */
@@ -26,6 +28,7 @@ class WebsiteControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_website_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('websites-grid', $crawler->html());
         $this->assertEquals('Websites', $crawler->filter('h1.oro-subtitle')->html());
     }
 
@@ -60,9 +63,9 @@ class WebsiteControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertWebsiteSaved($crawler, self::WEBSITE_TEST_NAME);
 
-        $result = $this->getWebsiteDataByName(self::WEBSITE_TEST_NAME);
+        $website = $this->getWebsiteDataByName(self::WEBSITE_TEST_NAME);
 
-        return $result['id'];
+        return $website->getId();
     }
 
     /**
@@ -92,18 +95,15 @@ class WebsiteControllerTest extends WebTestCase
             ],
         ];
 
-        $this->client->followRedirects(true);
-
         // Submit form
+        $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
-
-        $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertWebsiteSaved($crawler, self::WEBSITE_UPDATED_TEST_NAME);
 
-        $result = $this->getWebsiteDataByName(self::WEBSITE_UPDATED_TEST_NAME);
-        $this->assertEquals($id, $result['id']);
+        $website = $this->getWebsiteDataByName(self::WEBSITE_UPDATED_TEST_NAME);
+        $this->assertEquals($id, $website->getId());
     }
 
     /**
@@ -116,28 +116,18 @@ class WebsiteControllerTest extends WebTestCase
 
     /**
      * @param string $name
-     *
-     * @return array
+     * @return Website
      */
     protected function getWebsiteDataByName($name)
     {
-        $response = $this->client->requestGrid(
-            'websites-grid',
-            [
-                'websites-grid[_filter][name][value]' => $name,
-            ]
-        );
+        /** @var Website $website */
+        $website = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BWebsiteBundle:Website')
+            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->findOneBy(['name' => $name]);
+        $this->assertNotEmpty($website);
 
-        $result = $this->getJsonResponseContent($response, 200);
-
-        $this->assertArrayHasKey('data', $result);
-        $this->assertNotEmpty($result['data']);
-
-        $result = reset($result['data']);
-
-        $this->assertNotEmpty($result);
-
-        return $result;
+        return $website;
     }
 
     /**

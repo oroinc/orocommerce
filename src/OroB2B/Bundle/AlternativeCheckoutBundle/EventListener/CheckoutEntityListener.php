@@ -2,19 +2,17 @@
 
 namespace OroB2B\Bundle\AlternativeCheckoutBundle\EventListener;
 
-use OroB2B\Bundle\CheckoutBundle\Event\AbstractCheckoutEventListener;
+use OroB2B\Bundle\CheckoutBundle\EventListener\AbstractCheckoutEntityListener;
 use OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout;
 
-class CheckoutEntityListener extends AbstractCheckoutEventListener
+class CheckoutEntityListener extends AbstractCheckoutEntityListener
 {
     /**
      * @return AlternativeCheckout
      */
     protected function createCheckoutEntity()
     {
-        $checkout = new AlternativeCheckout();
-
-        return $checkout;
+        return new AlternativeCheckout();
     }
 
     /**

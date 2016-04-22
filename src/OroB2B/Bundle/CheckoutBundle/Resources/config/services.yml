@@ -110,9 +110,20 @@ services:
         tags:
             - { name: oro_action.action, alias: start_checkout }
 
-    orob2b_checkout..expression.acl_granted:
+    orob2b_checkout.expression.acl_granted:
         class: OroB2B\Bundle\CheckoutBundle\Expression\CheckRequest
         arguments:
             - '@request_stack'
         tags:
             - { name: oro_workflow.condition, alias: check_request }
+
+    orob2b_checkout.event_listener.checkout_entity:
+        class: OroB2B\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener
+        lazy: true
+        arguments:
+            - '@oro_workflow.manager'
+            - '@doctrine'
+        calls:
+            - [setCheckoutClassName, ['%orob2b_checkout.entity.checkout.class%']]
+        tags:
+            - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity}

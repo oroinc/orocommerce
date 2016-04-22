@@ -25,7 +25,9 @@ define(function(require) {
                 load: 'entry-point:order:load',
                 after: 'entry-point:order:load:after',
                 trigger: 'entry-point:order:trigger',
-                init: 'entry-point:order:init'
+                init: 'entry-point:order:init',
+                listenersOff: 'entry-point:listeners:off',
+                listenersOn: 'entry-point:listeners:on',
             },
             triggerTimeout: 1500
         },
@@ -45,6 +47,8 @@ define(function(require) {
 
             mediator.on(this.options.events.init, this.initializeListener, this);
             mediator.on(this.options.events.trigger, this.callEntryPoint, this);
+            mediator.on(this.options.events.listenersOff, this.listenerOff, this);
+            mediator.on(this.options.events.listenersOn, this.listenerOn, this);
         },
 
         initializeListener: function() {
