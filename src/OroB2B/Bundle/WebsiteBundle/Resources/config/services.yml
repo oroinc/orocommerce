@@ -54,13 +54,24 @@ services:
 
     orob2b_website.translation.strategy.locale_fallback_strategy:
         class: 'OroB2B\Bundle\WebsiteBundle\Translation\Strategy\LocaleFallbackStrategy'
+        public: false
         arguments:
             - '@doctrine'
             - '@orob2b_website.cache.provider.tree_fallback_strategy'
 
     orob2b_website.translation.strategy.composite_fallback_strategy:
         class: 'OroB2B\Bundle\WebsiteBundle\Translation\Strategy\CompositeFallbackStrategy'
+        public: false
         arguments:
             - '@orob2b_frontend.request.frontend_helper'
             - '@orob2b_website.translation.strategy.locale_fallback_strategy'
             - '@oro_translation.strategy.default'
+
+    orob2b_website.translation.cache_warmer.composite:
+        class: 'OroB2B\Bundle\WebsiteBundle\Translation\CacheWarmer\CompositeTranslationCacheWarmer'
+        decorates: 'translation.warmer'
+        decoration_inner_name: 'translation.warmer.default'
+        arguments:
+            - '@translation.warmer.default'
+            - '@oro_translation.strategy.provider'
+            - '@orob2b_website.translation.strategy.locale_fallback_strategy'
