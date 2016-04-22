@@ -79,7 +79,7 @@ class PayflowGatewayView implements PaymentMethodViewInterface
 
         $acct = $response->getOffset(Account::ACCT);
 
-        return substr($acct, strlen($acct) - 4, 4);
+        return substr($acct, -4);
     }
 
     /** {@inheritdoc} */
