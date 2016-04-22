@@ -22,26 +22,32 @@ class CombinedPriceListActivationPlanBuilder
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
+
     /**
      * @var PriceListScheduleResolver
      */
     protected $schedulerResolver;
+
     /**
      * @var CombinedPriceListProvider
      */
     protected $combinedPriceListProvider;
+
     /**
      * @var CombinedPriceListRepository
      */
     protected $combinedPriceListRepository;
+
     /**
      * @var PriceListScheduleRepository
      */
     protected $priceListScheduleRepository;
+
     /**
      * @var CombinedPriceListToPriceListRepository
      */
     protected $CPLToPriceListRepository;
+
     /**
      * @var CombinedPriceListActivationRuleRepository
      */

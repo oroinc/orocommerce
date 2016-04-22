@@ -80,7 +80,7 @@ class PriceListScheduleResolver
             $currentDateTime = $changesAtTimeMoment[self::TIME_KEY];
             foreach ($changesAtTimeMoment[self::PRICE_LISTS_KEY] as $priceListId => $action) {
                 $currentName = $baseName;
-                if ($action == self::ON) {
+                if ($action === self::ON) {
                     unset($turnedOffPriceLists[$priceListId]);
                 } else {
                     $turnedOffPriceLists[$priceListId] = true;
