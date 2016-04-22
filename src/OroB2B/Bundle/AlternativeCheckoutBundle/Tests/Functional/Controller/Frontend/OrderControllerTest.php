@@ -2,11 +2,14 @@
 
 namespace OroB2B\Bundle\AlternativeCheckoutBundle\CheckoutBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
 use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
+use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
 
@@ -16,8 +19,8 @@ use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
 class OrderControllerTest extends WebTestCase
 {
     const GRID_NAME = 'frontend-checkouts-grid';
-    const TOTAL_VALUE = 400.123;
-    const SUBTOTAL_VALUE = 400.123;
+    const TOTAL_VALUE = 400;
+    const SUBTOTAL_VALUE = 200;
 
     /**
      * {@inheritdoc}
@@ -40,63 +43,195 @@ class OrderControllerTest extends WebTestCase
 
     public function testCheckoutGrid()
     {
-        //check checkouts without filter
-        $this->assertCount(5, $this->getDatagridData());
+        $checkouts = $this->getDatagridData();
+        $this->assertCount(5, $checkouts);
+        $groupedCheckouts = $this->groupCheckoutsByType($checkouts);
+        $this->assertCount(2, $groupedCheckouts['alternative']);
+        $this->assertCount(3, $groupedCheckouts['base']);
+    }
 
-        //check checkouts with subtotal filter
-        $checkouts = $this->getDatagridData([
-            '[subtotal][value]' => self::SUBTOTAL_VALUE,
-            '[subtotal][type]' => NumberFilterTypeInterface::TYPE_GREATER_THAN
-        ]);
-        $this->assertCount(3, $checkouts);
-        foreach ($checkouts as $checkout) {
-            $this->assertGreaterThan(self::TOTAL_VALUE, $this->getValue($checkout['subtotal']));
-        }
+    /**
+     * @dataProvider filtersDataProvider
+     * @param string $columnName
+     * @param float $value
+     * @param $filterType
+     * @param $expectedCheckouts
+     */
+    public function testFilters($columnName, $value, $filterType, $expectedCheckouts)
+    {
+        $checkouts = $this->getDatagridData(
+            [
+                sprintf('[%s][value]', $columnName) => $value,
+                sprintf('[%s][type]', $columnName) => $filterType
+            ]
+        );
+        $this->assertCount(count($expectedCheckouts), $checkouts);
 
-        //check checkouts with total filter
-        $checkouts = $this->getDatagridData([
-            '[total][value]' => self::TOTAL_VALUE,
-            '[total][type]' => NumberFilterTypeInterface::TYPE_LESS_THAN
-        ]);
-        $this->assertCount(4, $checkouts);
-        foreach ($checkouts as $checkout) {
-            $this->assertLessThan(self::TOTAL_VALUE, $this->getValue($checkout['total']));
-        }
-
-        //check checkouts with Pay flow Gateway filter
-        $checkouts = $this->getDatagridData([
-            '[paymentMethod][value]' => PayflowGateway::TYPE,
-            '[paymentMethod][type]' => TextFilterType::TYPE_CONTAINS
-        ]);
-        $this->assertCount(2, $checkouts);
-        foreach ($checkouts as $checkout) {
-            $this->assertContains('Credit Card', $checkout['paymentMethod']);
-        }
-
-        //check checkouts with Payment Term filter
-        $checkouts = $this->getDatagridData([
-            '[paymentMethod][value]' => PaymentTerm::TYPE,
-            '[paymentMethod][type]' => TextFilterType::TYPE_CONTAINS
-        ]);
-        $this->assertCount(2, $checkouts);
-        foreach ($checkouts as $checkout) {
-            $this->assertContains('Payment Terms', $checkout['paymentMethod']);
+        $expectedGroupedCheckouts = $this->getCheckoutsByReferences($expectedCheckouts);
+        $actualGroupedCheckouts = $this->groupCheckoutsByType($checkouts);
+        $container = $this->getContainer();
+        foreach ($expectedGroupedCheckouts as $checkoutType => $expectedCheckouts) {
+            $this->assertTrue(isset($actualGroupedCheckouts[$checkoutType]));
+            /** @var  BaseCheckout $expectedCheckout */
+            foreach ($expectedCheckouts as $id => $expectedCheckout) {
+                $this->assertTrue(isset($actualGroupedCheckouts[$checkoutType][$id]));
+                if ($columnName != 'paymentMethod') {
+                    $sourceEntity = $expectedCheckout->getSourceEntity();
+                    $propertyAccessor = $container->get('property_accessor');
+                    $currencyField = property_exists($sourceEntity, 'currency') ? 'currency' : 'totalCurrency';
+                    $formattedPrice = $container->get('oro_locale.twig.number')->formatCurrency(
+                        $propertyAccessor->getValue($sourceEntity, $columnName),
+                        ['currency' => $propertyAccessor->getValue($sourceEntity, $currencyField)]
+                    );
+                    $actualCheckout = $actualGroupedCheckouts[$checkoutType][$id];
+                    $this->assertEquals($formattedPrice . "\n", $actualCheckout[$columnName]);
+                }
+            }
         }
     }
 
     /**
-     * @param array $filters
      * @return array
      */
-    protected function getDatagridData(array $filters = [])
+    public function filtersDataProvider()
     {
-        $resultFilters = [];
-        foreach ($filters as $filter => $value) {
-            $resultFilters[self::GRID_NAME . '[_filter]' . $filter] = $value;
+        return [
+            'subtotal' => [
+                'columnName' => 'subtotal',
+                'value' => self::SUBTOTAL_VALUE,
+                'filterType' => NumberFilterTypeInterface::TYPE_GREATER_THAN,
+                'expectedCheckouts' => ['checkout.1', 'checkout.2', 'checkout.3', 'alternative.checkout.2']
+            ],
+            'total' => [
+                'columnName' => 'subtotal',
+                'value' => self::TOTAL_VALUE,
+                'filterType' => NumberFilterTypeInterface::TYPE_LESS_THAN,
+                'expectedCheckouts' => ['alternative.checkout.1', 'alternative.checkout.2']
+            ],
+            'paymentMethodPaymentTerm' => [
+                'columnName' => 'paymentMethod',
+                'value' => PaymentTerm::TYPE,
+                'filterType' => TextFilterType::TYPE_CONTAINS,
+                'expectedCheckouts' => ['checkout.2', 'alternative.checkout.2']
+            ],
+            'paymentMethodPayflowGateway' => [
+                'columnName' => 'paymentMethod',
+                'value' => PayflowGateway::TYPE,
+                'filterType' => TextFilterType::TYPE_CONTAINS,
+                'expectedCheckouts' => ['checkout.1', 'alternative.checkout.1']
+            ],
+        ];
+    }
+
+    /**
+     * @param array $checkoutReferences
+     * @return array
+     */
+    protected function getCheckoutsByReferences(array $checkoutReferences)
+    {
+        $result = [];
+        foreach ($checkoutReferences as $checkoutReference) {
+            /** @var BaseCheckout $checkout */
+            $checkout = $this->getReference($checkoutReference);
+            if ($checkout instanceof Checkout) {
+                $result['base'][$checkout->getId()] = $checkout;
+            } else {
+                $checkoutType = strtolower(str_replace('Checkout', '', end(explode('\\', get_class($checkout)))));
+                $result[$checkoutType][$checkout->getId()] = $checkout;
+            }
         }
-        $response = $this->requestFrontendGrid(['gridName' => self::GRID_NAME], $resultFilters);
+
+        return $result;
+    }
+
+    public function testSorters()
+    {
+        //check checkouts with subtotal sorter
+        $checkouts = $this->getDatagridData(
+            [],
+            [
+                '[subtotal]' => OrmSorterExtension::DIRECTION_ASC,
+            ]
+        );
+        $this->checkSorting($checkouts, 'subtotal', OrmSorterExtension::DIRECTION_ASC);
+
+        //check checkouts with total sorter
+        $checkouts = $this->getDatagridData(
+            [],
+            [
+                '[total]' => OrmSorterExtension::DIRECTION_DESC,
+            ]
+        );
+        $this->checkSorting($checkouts, 'total', OrmSorterExtension::DIRECTION_DESC);
+    }
+
+    /**
+     * @param array $checkouts
+     * @param string $column
+     * @param string $order
+     * @param bool $stringSorting
+     */
+    protected function checkSorting(array $checkouts, $column, $order, $stringSorting = false)
+    {
+        foreach ($checkouts as $checkout) {
+            $actualValue = $stringSorting ? $checkout[$column] : $this->getValue($checkout[$column]);
+            if (isset($lastValue)) {
+                if ($order === OrmSorterExtension::DIRECTION_DESC) {
+                    $this->assertGreaterThanOrEqual($actualValue, $lastValue);
+                } elseif ($order === OrmSorterExtension::DIRECTION_ASC) {
+                    $this->assertLessThanOrEqual($actualValue, $lastValue);
+                }
+            }
+            $lastValue = $actualValue;
+        }
+    }
+
+    /**
+     * @param array $checkout
+     * @return integer
+     */
+    protected function getCheckoutId(array $checkout)
+    {
+        $link = $checkout['view_link'];
+        preg_match('/\d+/', $link, $id);
+
+        return (int)$id[0];
+    }
+
+    /**
+     * @param array $filters
+     * @param array $sorters
+     * @return array
+     */
+    protected function getDatagridData(array $filters = [], array $sorters = [])
+    {
+        $result = [];
+        foreach ($filters as $filter => $value) {
+            $result[self::GRID_NAME . '[_filter]' . $filter] = $value;
+        }
+        foreach ($sorters as $sorter => $value) {
+            $result[self::GRID_NAME . '[_sort_by]' . $sorter] = $value;
+        }
+        $response = $this->requestFrontendGrid(['gridName' => self::GRID_NAME], $result);
 
         return json_decode($response->getContent(), true)['data'];
+    }
+
+    /**
+     * @param array $checkouts
+     * @return array
+     */
+    protected function groupCheckoutsByType(array $checkouts)
+    {
+        $result = [];
+        foreach ($checkouts as $checkout) {
+            $link = $checkout['view_link'];
+            $argument = end(explode('/', $link));
+            $type = (int)$argument ? 'base' : $argument;
+            $result[$type][$this->getCheckoutId($checkout)] = $checkout;
+        }
+
+        return $result;
     }
 
     /**
