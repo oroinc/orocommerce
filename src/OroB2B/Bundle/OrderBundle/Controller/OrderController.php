@@ -18,8 +18,9 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
-use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
+use OroB2B\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
+use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
 
 class OrderController extends AbstractOrderController
 {
@@ -137,16 +138,11 @@ class OrderController extends AbstractOrderController
     protected function update(Order $order, Request $request)
     {
         if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
-            $order->setAccount($this->getOrderHandler()->getAccount());
-            $order->setAccountUser($this->getOrderHandler()->getAccountUser());
+            $order->setAccount($this->getOrderRequestHandler()->getAccount());
+            $order->setAccountUser($this->getOrderRequestHandler()->getAccountUser());
         }
 
         $form = $this->createForm(OrderType::NAME, $order);
-        $handler = new OrderHandler(
-            $form,
-            $request,
-            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order))
-        );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
@@ -164,19 +160,23 @@ class OrderController extends AbstractOrderController
                 ];
             },
             $this->get('translator')->trans('orob2b.order.controller.order.saved.message'),
-            $handler,
+            null,
             function (Order $order, FormInterface $form, Request $request) {
+
+                $submittedData = $request->get($form->getName(), []);
+                $event = new OrderEvent($form, $form->getData(), $submittedData);
+                $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);
+                $orderData = $event->getData()->getArrayCopy();
+
                 return [
                     'form' => $form->createView(),
                     'entity' => $order,
-                    'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order),
                     'isWidgetContext' => (bool)$request->get('_wid', false),
                     'isShippingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_SHIPPING),
                     'isBillingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_BILLING),
-                    'tierPrices' => $this->getTierPrices($order),
-                    'matchedPrices' => $this->getMatchedPrices($order),
+                    'orderData' => $orderData
                 ];
             }
         );
@@ -185,9 +185,9 @@ class OrderController extends AbstractOrderController
     /**
      * @return OrderRequestHandler
      */
-    protected function getOrderHandler()
+    protected function getOrderRequestHandler()
     {
-        return $this->get('orob2b_order.model.order_request_handler');
+        return $this->get('orob2b_order.request_handler.order_request_handler');
     }
 
     /**

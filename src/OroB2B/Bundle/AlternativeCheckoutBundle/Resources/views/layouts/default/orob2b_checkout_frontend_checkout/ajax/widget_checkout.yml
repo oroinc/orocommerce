@@ -7,6 +7,9 @@ layout:
             optionName: visible
             optionValue:
                 '@and':
-                    - '@eq': [$context.workflowName, 'b2b_flow_alternative_checkout']
                     - '@neq': [$context.workflowStepName, 'order_review']
                     - '@neq': [$context.workflowStepName, 'approve_request']
+    conditions:
+        '@and':
+            - '@eq': [$context.workflowName, 'b2b_flow_alternative_checkout']
+
