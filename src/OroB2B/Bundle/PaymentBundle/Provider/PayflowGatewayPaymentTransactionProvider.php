@@ -23,7 +23,7 @@ class PayflowGatewayPaymentTransactionProvider
     /**
      * @param object $object
      * @param string $paymentMethod
-     * @return PaymentTransaction
+     * @return PaymentTransaction|null
      */
     public function getZeroAmountTransaction($object, $paymentMethod)
     {

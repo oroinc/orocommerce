@@ -42,11 +42,12 @@ class PaymentMethodsProvider implements DataProviderInterface
     {
         if (null === $this->data) {
             $views = $this->registry->getPaymentMethodViews();
+            $options = ['entity' => $this->getEntity($context)];
             foreach ($views as $name => $view) {
                 $this->data[$name] = [
                     'label' => $view->getLabel(),
                     'block' => $view->getBlock(),
-                    'options' => $view->getOptions(['entity' => $this->getEntity($context)]),
+                    'options' => $view->getOptions($options),
                 ];
             }
         }

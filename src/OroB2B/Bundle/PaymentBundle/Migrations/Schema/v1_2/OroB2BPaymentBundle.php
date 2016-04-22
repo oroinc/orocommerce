@@ -14,11 +14,28 @@ class OroB2BPaymentBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->updatePaymentTransactionTable($schema);
+        $this->addConstraintsToPaymentTransactionTable($schema);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function updatePaymentTransactionTable(Schema $schema)
+    {
         $table = $schema->getTable('orob2b_payment_transaction');
         $table->addColumn('frontend_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addConstraintsToPaymentTransactionTable(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_payment_transaction');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_user'),
             ['frontend_owner_id'],

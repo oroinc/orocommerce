@@ -41,7 +41,7 @@ class PaymentTransactionProvider
      * @param object $object
      * @param array $filter
      * @param array $orderBy
-     * @return PaymentTransaction
+     * @return PaymentTransaction|null
      */
     public function getPaymentTransaction($object, array $filter = [], array $orderBy = [])
     {
