@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AlternativeCheckoutBundle\CheckoutBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
+use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
 use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
@@ -14,6 +16,8 @@ use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
 class OrderControllerTest extends WebTestCase
 {
     const GRID_NAME = 'frontend-checkouts-grid';
+    const TOTAL_VALUE = 400.123;
+    const SUBTOTAL_VALUE = 400.123;
 
     /**
      * {@inheritdoc}
@@ -36,38 +40,44 @@ class OrderControllerTest extends WebTestCase
 
     public function testCheckoutGrid()
     {
-        $value = 400.123;
-
         //check checkouts without filter
         $this->assertCount(5, $this->getDatagridData());
 
         //check checkouts with subtotal filter
-        $checkouts = $this->getDatagridData(['[subtotal][value]' => $value, '[subtotal][type]' => 2]);
+        $checkouts = $this->getDatagridData([
+            '[subtotal][value]' => self::SUBTOTAL_VALUE,
+            '[subtotal][type]' => NumberFilterTypeInterface::TYPE_GREATER_THAN
+        ]);
         $this->assertCount(3, $checkouts);
         foreach ($checkouts as $checkout) {
-            $this->assertGreaterThan($value, $this->getValue($checkout['subtotal']));
+            $this->assertGreaterThan(self::TOTAL_VALUE, $this->getValue($checkout['subtotal']));
         }
 
         //check checkouts with total filter
-        $checkouts = $this->getDatagridData(['[total][value]' => $value, '[total][type]' => 6]);
+        $checkouts = $this->getDatagridData([
+            '[total][value]' => self::TOTAL_VALUE,
+            '[total][type]' => NumberFilterTypeInterface::TYPE_LESS_THAN
+        ]);
         $this->assertCount(4, $checkouts);
         foreach ($checkouts as $checkout) {
-            $this->assertLessThan($value, $this->getValue($checkout['total']));
+            $this->assertLessThan(self::TOTAL_VALUE, $this->getValue($checkout['total']));
         }
 
         //check checkouts with Pay flow Gateway filter
-        $checkouts = $this->getDatagridData(
-            ['[paymentMethod][value]' => PayflowGateway::TYPE, '[paymentMethod][type]' => 1]
-        );
+        $checkouts = $this->getDatagridData([
+            '[paymentMethod][value]' => PayflowGateway::TYPE,
+            '[paymentMethod][type]' => TextFilterType::TYPE_CONTAINS
+        ]);
         $this->assertCount(2, $checkouts);
         foreach ($checkouts as $checkout) {
             $this->assertContains('Credit Card', $checkout['paymentMethod']);
         }
 
         //check checkouts with Payment Term filter
-        $checkouts = $this->getDatagridData(
-            ['[paymentMethod][value]' => PaymentTerm::TYPE, '[paymentMethod][type]' => 1]
-        );
+        $checkouts = $this->getDatagridData([
+            '[paymentMethod][value]' => PaymentTerm::TYPE,
+            '[paymentMethod][type]' => TextFilterType::TYPE_CONTAINS
+        ]);
         $this->assertCount(2, $checkouts);
         foreach ($checkouts as $checkout) {
             $this->assertContains('Payment Terms', $checkout['paymentMethod']);
