@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm as PaymentTermMethod;
@@ -35,27 +36,72 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->method = new PaymentTermMethod($this->paymentTermProvider, $this->configManager);
     }
 
+    protected function tearDown()
+    {
+        unset($this->method, $this->configManager, $this->paymentTermProvider);
+    }
+
     public function testExecute()
     {
         $transaction = new PaymentTransaction();
+        $this->assertFalse($transaction->isSuccessful());
 
         $this->assertEquals([], $this->method->execute($transaction));
         $this->assertTrue($transaction->isSuccessful());
     }
 
-    public function testIsEnabled()
+    /**
+     * @dataProvider isEnabledProvider
+     * @param bool $paymentTermPresent
+     * @param bool $configValue
+     * @param bool $expected
+     */
+    public function testIsEnabled($paymentTermPresent, $configValue, $expected)
     {
         $this->paymentTermProvider->expects($this->once())
             ->method('getCurrentPaymentTerm')
-            ->willReturn(true);
+            ->willReturn($paymentTermPresent ? new PaymentTerm() : null);
 
-        $this->setConfig($this->once(), Configuration::PAYMENT_TERM_ENABLED_KEY, true);
+        $this->setConfig(
+            $paymentTermPresent ? $this->once() : $this->never(),
+            Configuration::PAYMENT_TERM_ENABLED_KEY,
+            $configValue
+        );
 
-        $this->assertTrue($this->method->isEnabled());
+        $this->assertEquals($expected, $this->method->isEnabled());
+    }
+
+    /**
+     * @return array
+     */
+    public function isEnabledProvider()
+    {
+        return [
+            [
+                'paymentTermPresent' => true,
+                'configValue' => true,
+                'expected' => true
+            ],
+            [
+                'paymentTermPresent' => false,
+                'configValue' => true,
+                'expected' => false
+            ],
+            [
+                'paymentTermPresent' => true,
+                'configValue' => false,
+                'expected' => false
+            ],
+            [
+                'paymentTermPresent' => false,
+                'configValue' => false,
+                'expected' => false
+            ],
+        ];
     }
 
     public function testGetType()
     {
-        $this->assertEquals(PaymentTermMethod::TYPE, $this->method->getType());
+        $this->assertEquals('payment_term', $this->method->getType());
     }
 }

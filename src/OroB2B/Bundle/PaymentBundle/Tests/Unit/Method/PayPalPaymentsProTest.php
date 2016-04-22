@@ -13,8 +13,14 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
 
     protected function setUp()
     {
-        $this->setMocks();
+        parent::setUp();
         $this->method = new PayPalPaymentsPro($this->gateway, $this->configManager, $this->router);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->method);
+        parent::tearDown();
     }
 
     public function testIsEnabled()
@@ -24,11 +30,128 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function configureConfig(array $configs = [])
+    {
+        $configs = array_merge(
+            [
+                Configuration::PAYPAL_PAYMENTS_PRO_VENDOR_KEY => 'test_vendor',
+                Configuration::PAYPAL_PAYMENTS_PRO_USER_KEY => 'test_user',
+                Configuration::PAYPAL_PAYMENTS_PRO_PASSWORD_KEY => 'test_password',
+                Configuration::PAYPAL_PAYMENTS_PRO_PARTNER_KEY => 'test_partner',
+                Configuration::PAYPAL_PAYMENTS_PRO_TEST_MODE_KEY => true,
+            ],
+            $configs
+        );
+
+        parent::configureConfig($configs);
+    }
+
+    /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function executeDataProvider()
     {
         return [
+            'authorize successful' => [
+                [
+                    'gatewayAction' => Option\Transaction::AUTHORIZATION,
+                    'sourceTransactionData' => [],
+                    'transactionData' => [
+                        'action' => 'authorize',
+                        'request' => [],
+                    ],
+                    'configs' => [
+                        Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY => 'authorize',
+                    ],
+                    'requestOptions' => [
+                        'VENDOR' => 'test_vendor',
+                        'USER' => 'test_user',
+                        'PWD' => 'test_password',
+                        'PARTNER' => 'test_partner',
+                    ],
+                    'responseData' => [
+                        'RESULT' => '0',
+                        'PNREF' => 'test_reference',
+                    ],
+                ],
+                []
+            ],
+            'charge successful' => [
+                [
+                    'gatewayAction' => Option\Transaction::SALE,
+                    'sourceTransactionData' => [],
+                    'transactionData' => [
+                        'action' => 'charge',
+                        'request' => [],
+                    ],
+                    'configs' => [
+                        Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY => 'charge',
+                    ],
+                    'requestOptions' => [
+                        'VENDOR' => 'test_vendor',
+                        'USER' => 'test_user',
+                        'PWD' => 'test_password',
+                        'PARTNER' => 'test_partner',
+                    ],
+                    'responseData' => [
+                        'RESULT' => '0',
+                        'PNREF' => 'test_reference',
+                    ],
+                ],
+                []
+            ],
+            'capture successful' => [
+                [
+                    'gatewayAction' => Option\Transaction::DELAYED_CAPTURE,
+                    'sourceTransactionData' => [
+                        'reference' => 'test_reference',
+                        'request' => ['TENDER' => 'source_tender'],
+                    ],
+                    'transactionData' => [
+                        'action' => 'capture',
+                        'request' => [],
+                    ],
+                    'configs' => [
+                        Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY => 'authorize',
+                    ],
+                    'requestOptions' => [
+                        'VENDOR' => 'test_vendor',
+                        'USER' => 'test_user',
+                        'PWD' => 'test_password',
+                        'PARTNER' => 'test_partner',
+                        'TENDER' => 'source_tender',
+                        'ORIGID' => 'test_reference',
+                    ],
+                    'responseData' => [
+                        'RESULT' => '0',
+                        'PNREF' => 'test_reference',
+                        'RESPMSG' => 'test_message',
+                    ],
+                ],
+                [
+                    'message' => 'test_message',
+                    'successful' => true,
+                ]
+            ],
+            'capture without source' => [
+                [
+                    'gatewayAction' => Option\Transaction::DELAYED_CAPTURE,
+                    'sourceTransactionData' => [],
+                    'transactionData' => [
+                        'action' => 'capture',
+                        'request' => [],
+                    ],
+                    'configs' => [
+                        Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY => 'authorize',
+                    ],
+                    'requestOptions' => [],
+                    'responseData' => [],
+                ],
+                []
+            ],
             'purchase successful' => [
                 [
                     'gatewayAction' => Option\Transaction::SALE,
@@ -40,11 +163,6 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
                         'currency' => 'USD',
                     ],
                     'configs' => [
-                        Configuration::PAYPAL_PAYMENTS_PRO_VENDOR_KEY => 'test_vendor',
-                        Configuration::PAYPAL_PAYMENTS_PRO_USER_KEY => 'test_user',
-                        Configuration::PAYPAL_PAYMENTS_PRO_PASSWORD_KEY => 'test_password',
-                        Configuration::PAYPAL_PAYMENTS_PRO_PARTNER_KEY => 'test_partner',
-                        Configuration::PAYPAL_PAYMENTS_PRO_TEST_MODE_KEY => true,
                         Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY => 'charge',
                     ],
                     'requestOptions' => [
@@ -52,9 +170,9 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
                         'USER' => 'test_user',
                         'PWD' => 'test_password',
                         'PARTNER' => 'test_partner',
-                        'CREATESECURETOKEN' => 1,
+                        'CREATESECURETOKEN' => true,
                         'AMT' => 100.0,
-                        'SILENTTRAN' => 1,
+                        'SILENTTRAN' => true,
                         'TENDER' => 'C',
                         'CURRENCY' => 'USD',
                         'RETURNURL' => 'orob2b_payment_callback_return',

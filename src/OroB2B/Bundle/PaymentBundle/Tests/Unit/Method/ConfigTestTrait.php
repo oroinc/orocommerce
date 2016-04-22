@@ -18,6 +18,10 @@ trait ConfigTestTrait
      */
     protected function setConfig($expects, $key, $value)
     {
+        if (null === $this->configManager) {
+            throw new \RuntimeException('ConfigManager is not initialized');
+        }
+
         $this->configManager->expects($expects)
             ->method('get')
             ->with($this->getConfigKey($key))

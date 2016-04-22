@@ -170,7 +170,7 @@ class CaptureActionTest extends AbstractActionTest
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getAction()
     {

@@ -28,6 +28,11 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new PayflowListener($this->session);
     }
 
+    protected function tearDown()
+    {
+        unset($this->listener, $this->session);
+    }
+
     /**
      * @param array $data
      * @param string $paymentTransactionAction

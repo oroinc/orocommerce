@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Model;
+namespace OroB2B\Bundle\OrderBundle\RequestHandler;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 

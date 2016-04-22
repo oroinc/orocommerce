@@ -9,7 +9,6 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use OroB2B\Bundle\PaymentBundle\Method\View\PayflowGatewayView;
 use OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
 use OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 
 class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
@@ -38,26 +37,32 @@ class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
         $this->methodView = new PayflowGatewayView($this->formFactory, $this->configManager);
     }
 
+    protected function tearDown()
+    {
+        unset($this->methodView, $this->configManager, $this->formFactory);
+    }
+
     public function testGetOptions()
     {
         $formView = $this->getMock('Symfony\Component\Form\FormView');
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->any())
+        $form->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
 
-        $this->formFactory->expects($this->any())
+        $this->formFactory->expects($this->once())
             ->method('create')
             ->with(CreditCardType::NAME)
             ->willReturn($form);
 
-        $this->setConfig($this->once(), Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY, 'testValue');
+        $allowedCards = ['visa', 'mastercard'];
+        $this->setConfig($this->once(), Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY, $allowedCards);
 
         $this->assertEquals(
             [
                 'formView' => $formView,
-                'allowedCreditCards' => 'testValue'
+                'allowedCreditCards' => $allowedCards,
             ],
             $this->methodView->getOptions()
         );
@@ -70,15 +75,15 @@ class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
 
     public function testGetOrder()
     {
-        $order = 100;
+        $order = '100';
         $this->setConfig($this->once(), Configuration::PAYFLOW_GATEWAY_SORT_ORDER_KEY, $order);
 
-        $this->assertEquals($order, $this->methodView->getOrder());
+        $this->assertSame((int)$order, $this->methodView->getOrder());
     }
 
     public function testGetPaymentMethodType()
     {
-        $this->assertEquals(PayflowGateway::TYPE, $this->methodView->getPaymentMethodType());
+        $this->assertEquals('payflow_gateway', $this->methodView->getPaymentMethodType());
     }
 
     public function testGetLabel()

@@ -14,8 +14,14 @@ class PayflowGatewayTest extends AbstractPayflowGatewayTest
 
     protected function setUp()
     {
-        $this->setMocks();
+        parent::setUp();
         $this->method = new PayflowGateway($this->gateway, $this->configManager, $this->router);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->method);
+        parent::tearDown();
     }
 
     /**
@@ -38,11 +44,30 @@ class PayflowGatewayTest extends AbstractPayflowGatewayTest
 
     public function testGetType()
     {
-        $this->assertEquals(PayflowGateway::TYPE, $this->method->getType());
+        $this->assertEquals('payflow_gateway', $this->method->getType());
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
+     */
+    protected function configureConfig(array $configs = [])
+    {
+        $configs = array_merge(
+            [
+                Configuration::PAYFLOW_GATEWAY_VENDOR_KEY => 'test_vendor',
+                Configuration::PAYFLOW_GATEWAY_USER_KEY => 'test_user',
+                Configuration::PAYFLOW_GATEWAY_PASSWORD_KEY => 'test_password',
+                Configuration::PAYFLOW_GATEWAY_PARTNER_KEY => 'test_partner',
+                Configuration::PAYFLOW_GATEWAY_TEST_MODE_KEY => true,
+            ],
+            $configs
+        );
+
+        parent::configureConfig($configs);
+    }
+
+    /**
+     * {@inheritdoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function executeDataProvider()
@@ -155,9 +180,9 @@ class PayflowGatewayTest extends AbstractPayflowGatewayTest
                         'USER' => 'test_user',
                         'PWD' => 'test_password',
                         'PARTNER' => 'test_partner',
-                        'CREATESECURETOKEN' => 1,
+                        'CREATESECURETOKEN' => true,
                         'AMT' => 100.0,
-                        'SILENTTRAN' => 1,
+                        'SILENTTRAN' => true,
                         'TENDER' => 'C',
                         'CURRENCY' => 'USD',
                         'RETURNURL' => 'orob2b_payment_callback_return',

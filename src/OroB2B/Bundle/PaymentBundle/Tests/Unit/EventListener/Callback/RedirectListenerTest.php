@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\EventListener\Callback;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
@@ -32,9 +33,18 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new RedirectListener($this->session);
     }
 
-    public function testOnReturn()
+    protected function tearDown()
     {
-        $options = ['successUrl' => 'testUrl'];
+        unset($this->listener, $this->paymentTransaction, $this->session);
+    }
+
+    /**
+     * @dataProvider onReturnProvider
+     * @param array $options
+     * @param RedirectResponse|response $expectedResponse
+     */
+    public function testOnReturn($options, $expectedResponse)
+    {
         $this->paymentTransaction
             ->setTransactionOptions($options)
             ->setActive(true)
@@ -45,18 +55,37 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onReturn($event);
 
-        $this->assertFalse($event->getPaymentTransaction()->isActive());
-        $this->assertTrue($event->getPaymentTransaction()->isSuccessful());
+        $this->assertFalse($this->paymentTransaction->isActive());
+        $this->assertTrue($this->paymentTransaction->isSuccessful());
 
-        /** @var RedirectResponse $response */
-        $response = $event->getResponse();
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
-        $this->assertEquals($options['successUrl'], $response->getTargetUrl());
+        $this->assertResponses($expectedResponse, $event->getResponse());
     }
 
-    public function testOnError()
+    /**
+     * @return array
+     */
+    public function onReturnProvider()
     {
-        $options = ['errorUrl' => 'testUrl'];
+        return [
+            [
+                'options' => [RedirectListener::SUCCESS_URL_KEY => 'testUrl'],
+                'expectedResponse' => new RedirectResponse('testUrl')
+            ],
+            [
+                'options' => ['someAnotherValue'],
+                'expectedResponse' => new Response()
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider onErrorProvider
+     * @param bool $errorAlreadyInFlashBag
+     * @param array $options
+     * @param RedirectResponse|Response $expectedResponse
+     */
+    public function testOnError($errorAlreadyInFlashBag, $options, $expectedResponse)
+    {
         $this->paymentTransaction
             ->setTransactionOptions($options)
             ->setActive(true)
@@ -65,8 +94,15 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $event = new CallbackErrorEvent();
         $event->setPaymentTransaction($this->paymentTransaction);
 
+        /** @var FlashBagInterface|\PHPUnit_Framework_MockObject_MockObject $flashBag */
         $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+
         $flashBag->expects($this->once())
+            ->method('has')
+            ->with('error')
+            ->willReturn($errorAlreadyInFlashBag);
+
+        $flashBag->expects($errorAlreadyInFlashBag ? $this->never() : $this->once())
             ->method('add')
             ->with('error', 'orob2b.payment.result.error');
 
@@ -76,12 +112,39 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onError($event);
 
-        $this->assertFalse($event->getPaymentTransaction()->isActive());
-        $this->assertFalse($event->getPaymentTransaction()->isSuccessful());
+        $this->assertFalse($this->paymentTransaction->isActive());
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
 
-        /** @var RedirectResponse $response */
-        $response = $event->getResponse();
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
-        $this->assertEquals($options['errorUrl'], $response->getTargetUrl());
+        $this->assertResponses($expectedResponse, $event->getResponse());
+    }
+
+    /**
+     * @return array
+     */
+    public function onErrorProvider()
+    {
+        return [
+            [
+                'errorAlreadyInFlashBag' => false,
+                'options' => [RedirectListener::ERROR_URL_KEY => 'testUrl'],
+                'expectedResponse' => new RedirectResponse('testUrl')
+            ],
+            [
+                'errorAlreadyInFlashBag' => true,
+                'options' => ['someAnotherValue'],
+                'expectedResponse' => new Response()
+            ],
+        ];
+    }
+
+    /**
+     * @param Response $expectedResponse
+     * @param Response $actualResponse
+     */
+    private function assertResponses(Response $expectedResponse, Response $actualResponse)
+    {
+        // Hack response datetime because of requests might have different datetime
+        $expectedResponse->setDate($actualResponse->getDate());
+        $this->assertEquals($expectedResponse, $actualResponse);
     }
 }
