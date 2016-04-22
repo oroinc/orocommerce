@@ -108,6 +108,10 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver'
         arguments:
             - '@doctrine'
+        calls:
+            - [addRelationClass, ['%orob2b_pricing.entity.combined_price_list_to_account.class%']]
+            - [addRelationClass, ['%orob2b_pricing.entity.combined_price_list_to_account_group.class%']]
+            - [addRelationClass, ['%orob2b_pricing.entity.combined_price_list_to_website.class%']]
 
     orob2b_pricing.builder.combined_price_list_garbage_collector:
         class: 'OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector'

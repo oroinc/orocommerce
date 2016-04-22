@@ -16,7 +16,9 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
  *          })
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository")
+ * @ORM\Entity(
+ *     repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToAccountGroupRepository"
+ * )
  */
 class CombinedPriceListToAccountGroup extends BaseCombinedPriceListRelation
 {

@@ -3,7 +3,10 @@
 namespace OroB2B\Bundle\PricingBundle\Resolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
+
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
+use OroB2B\Bundle\PricingBundle\Entity\Repository\BasicCombinedRelationRepositoryTrait;
 
 class CombinedPriceListScheduleResolver
 {
@@ -11,6 +14,15 @@ class CombinedPriceListScheduleResolver
      * @var ManagerRegistry
      */
     protected $registry;
+    /**
+     * @var ConfigManager
+     */
+    protected $configManager;
+
+    /**
+     * @var string[]
+     */
+    protected $relationClasses = [];
 
     /**
      * @param ManagerRegistry $registry
@@ -20,22 +32,31 @@ class CombinedPriceListScheduleResolver
         $this->registry = $registry;
     }
 
-    public function updateRelations()
+    /**
+     * @param \DateTime $time
+     */
+    public function updateRelations(\DateTime $time = null)
     {
-        $ruleRepo = $this->registry->getManager()->getRepository('OroB2BPricingBundle:CombinedPriceListActivationRule');
-        $newRulesToApply = $ruleRepo->updateActiveRule(new \DateTime());
-        $entities = [
-            'OroB2BPricingBundle:CombinedPriceListToAccount',
-            'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
-            'OroB2BPricingBundle:CombinedPriceListToWebsite',
-        ];
+        $ruleRepo = $this->registry->getManagerForClass('OroB2BPricingBundle:CombinedPriceListActivationRule')
+            ->getRepository('OroB2BPricingBundle:CombinedPriceListActivationRule');
+        if (!$time) {
+            $time = new \DateTime();
+        }
+        $newRulesToApply = $ruleRepo->updateActiveRule($time);
         if ($newRulesToApply) {
-            foreach ($entities as $entity) {
-                $repo = $this->registry->getManager()->getRepository($entity);
-                /** @var PriceListToAccountRepository $repo */
+            foreach ($this->relationClasses as $className => $val) {
+                /** @var BasicCombinedRelationRepositoryTrait $repo */
+                $repo = $this->registry->getManagerForClass($className)->getRepository($className);
                 $repo->updateActuality($newRulesToApply);
             }
         }
+    }
 
+    /**
+     * @param string $class
+     */
+    public function addRelationClass($class)
+    {
+        $this->relationClasses[$class] = true;
     }
 }

@@ -10,7 +10,6 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -123,22 +122,5 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
             ->setParameter('website', $website)
             ->getQuery()
             ->execute();
-    }
-
-    /**
-     * @param $rules CombinedPriceListActivationRule[]
-     */
-    public function updateActuality($rules)
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->update($this->getEntityName(), 'relation')
-            ->set('relation.priceList', ':actualPriceList')
-            ->where('relation.fullChainPriceList = :fullPriceList');
-        foreach ($rules as $rule) {
-            $qb->setParameter('actualPriceList', $rule->getCombinedPriceList())
-                ->setParameter('fullPriceList', $rule->getFullChainPriceList())
-                ->getQuery()
-                ->execute();
-        }
     }
 }

@@ -23,7 +23,7 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
 
     /**
      * @param \DateTime $now
-     * @return array
+     * @return \OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule[]
      */
     public function updateActiveRule(\DateTime $now)
     {
