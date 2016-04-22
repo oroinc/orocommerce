@@ -194,10 +194,6 @@ datagrid:
                 route: orob2b_product_view
                 params:
                     id: productId
-            delete_link:
-                type: url
-                route: orob2b_api_shopping_list_delete_line_item
-                params: [ id ]
         actions:
             view_product:
                 type:          navigate
@@ -206,9 +202,3 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_product_view
                 rowAction:     true
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_shopping_list_line_item_delete

@@ -43,6 +43,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  * @Config(
  *      routeName="orob2b_account_account_user_index",
  *      routeView="orob2b_account_account_user_view",
+ *      routeUpdate="orob2b_account_account_user_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
