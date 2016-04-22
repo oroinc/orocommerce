@@ -25,12 +25,6 @@ class ShippingOrigin extends AbstractAddress
                 $this->$method($value);
             }
         }
-        if (!empty($data['postal_code'])) {
-            $this->setPostalCode($data['postal_code']);
-        }
-        if (!empty($data['region_text'])) {
-            $this->setRegionText($data['region_text']);
-        }
     }
 
     /** {@inheritdoc} */
