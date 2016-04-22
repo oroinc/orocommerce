@@ -70,6 +70,13 @@ orob2b.pricing:
     pricelist_schedule:
         active_at.label: 'Active At'
         deactivate_at.label: 'Deactivate At'
+        was_activated: Was activated on %date%.
+        was_deactivated: Was deactived on %date%.
+        will_be_acitivated: Will become active on %date%.
+        will_be_deacitivated: Will be deactivated on %date%.
+        active_now: Is active now.
+        not_active_now: Is not active now.
+
 
     add_schedule: 'Add'
 
