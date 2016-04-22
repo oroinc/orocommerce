@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 
@@ -90,7 +92,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
                     'city' => 'city1',
                     'street' => 'street1',
                 ],
-                'expectedData'=> $this->getShippingOrigin(null, 'US', 'US-AL', 'code1', 'city1', 'street1'),
+                'expectedData' => $this->getShippingOrigin(null, 'US', 'US-AL', 'code1', 'city1', 'street1'),
                 'defaultData' => null,
             ],
             'empty region' => [
@@ -101,7 +103,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
                     'city' => 'city1',
                     'street' => 'street1',
                 ],
-                'expectedData'=> $this->getShippingOrigin('US', null, null, 'code1', 'city1', 'street1'),
+                'expectedData' => $this->getShippingOrigin('US', null, null, 'code1', 'city1', 'street1'),
                 'defaultData' => null,
             ],
             'empty postalCode' => [
@@ -112,7 +114,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
                     'city' => 'city1',
                     'street' => 'street1',
                 ],
-                'expectedData'=> $this->getShippingOrigin('US', 'US', 'US-AL', null, 'city1', 'street1'),
+                'expectedData' => $this->getShippingOrigin('US', 'US', 'US-AL', null, 'city1', 'street1'),
                 'defaultData' => null,
             ],
             'empty city' => [
@@ -123,7 +125,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
                     'postalCode' => 'code1',
                     'street' => 'street1',
                 ],
-                'expectedData'=> $this->getShippingOrigin('US', 'US', 'US-AL', 'code1', null, 'street1'),
+                'expectedData' => $this->getShippingOrigin('US', 'US', 'US-AL', 'code1', null, 'street1'),
                 'defaultData' => null,
             ],
             'empty street' => [
@@ -134,7 +136,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
                     'postalCode' => 'code1',
                     'city' => 'city1',
                 ],
-                'expectedData'=> $this->getShippingOrigin('US', 'US', 'US-AL', 'code1', 'city1'),
+                'expectedData' => $this->getShippingOrigin('US', 'US', 'US-AL', 'code1', 'city1'),
                 'defaultData' => null,
             ],
             'full data' => [
@@ -147,7 +149,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
                     'street' => 'street1',
                     'street2' => 'street2',
                 ],
-                'expectedData'=> $this->getShippingOrigin('US', 'US', 'US-AL', 'code1', 'city1', 'street1', 'street2'),
+                'expectedData' => $this->getShippingOrigin('US', 'US', 'US-AL', 'code1', 'city1', 'street1', 'street2'),
                 'defaultData' => null,
             ],
             'full data with default' => [
@@ -171,7 +173,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
      * @param string $regionCountryCode
      * @param string $regionCode
      * @param string $postalCode
-     * @param typstringe $city
+     * @param string $city
      * @param string $street
      * @param string $street2
      * @return ShippingOrigin
@@ -227,5 +229,47 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
     public function getExtensions()
     {
         return array_merge(parent::getExtensions(), [$this->getValidatorExtension(true)]);
+    }
+
+    public function testFinishViewParentScopeValues()
+    {
+        $mockFormView = $this->getMockBuilder('Symfony\Component\Form\FormView')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockFormInterface = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $childView = $this->getMockBuilder('Symfony\Component\Form\FormView')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mockFormView->children = [$childView];
+
+        $optionsStub = [];
+
+        $mockParentForm = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $mockFormInterface->expects($this->once())->method('getParent')->willReturn($mockParentForm);
+
+        $mockParentForm->expects($this->once())->method('has')->with('use_parent_scope_value')->willReturn(true);
+
+        $mockParentScopeValueForm = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $mockParentForm->expects($this->once())
+            ->method('get')
+            ->with('use_parent_scope_value')
+            ->willReturn($mockParentScopeValueForm);
+
+        $mockParentScopeValueForm->expects($this->once())->method('getData')->willReturn('data');
+
+        $this->formType->finishView($mockFormView, $mockFormInterface, $optionsStub);
+
+        $this->assertEquals(
+            [
+                'value' => null,
+                'attr' => array(),
+                'use_parent_scope_value' => 'data'
+            ],
+            $childView->vars
+        );
     }
 }

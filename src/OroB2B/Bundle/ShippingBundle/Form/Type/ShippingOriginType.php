@@ -117,7 +117,7 @@ class ShippingOriginType extends AbstractType
         if (!$parent->has('use_parent_scope_value')) {
             return;
         }
-
+        
         $useParentScopeValue = $parent->get('use_parent_scope_value')->getData();
         foreach ($view->children as $child) {
             $child->vars['use_parent_scope_value'] = $useParentScopeValue;
