@@ -15,7 +15,7 @@ shortDescriptions:
 empty:
     fileName: empty.csv
     contextErrors:
-        - "Error in row #1. SKU: This value should not be blank."
+        - "Error in row #1. SKU: SKU should not be blank."
         - "Error in row #1. Units of Quantity Unit Code: Please add one or more product units."
         - "Error in row #1. Inventory Status Id: This value should not be blank."
 inventory_status:

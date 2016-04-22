@@ -60,7 +60,7 @@ class ProductType extends AbstractType
                 [
                     'label' => 'orob2b.product.names.label',
                     'required' => true,
-                    'options' => ['constraints' => [new NotBlank()]],
+                    'options' => ['constraints' => [new NotBlank(['message' => 'orob2b.product.names.blank'])]],
                 ]
             )
             ->add(
