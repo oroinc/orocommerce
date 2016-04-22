@@ -22,6 +22,9 @@ class OrderControllerTest extends WebTestCase
     const TOTAL_VALUE = 400;
     const SUBTOTAL_VALUE = 200;
 
+    /** @var BaseCheckout[] */
+    protected $allCheckouts;
+
     /**
      * {@inheritdoc}
      */
@@ -174,7 +177,8 @@ class OrderControllerTest extends WebTestCase
     protected function checkSorting(array $checkouts, $column, $order, $stringSorting = false)
     {
         foreach ($checkouts as $checkout) {
-            $actualValue = $stringSorting ? $checkout[$column] : $this->getValue($checkout[$column]);
+            $actualValue = $stringSorting ? $checkout[$column]
+                : $this->getValue($checkout['id'], $column);
             if (isset($lastValue)) {
                 if ($order === OrmSorterExtension::DIRECTION_DESC) {
                     $this->assertGreaterThanOrEqual($actualValue, $lastValue);
@@ -184,18 +188,6 @@ class OrderControllerTest extends WebTestCase
             }
             $lastValue = $actualValue;
         }
-    }
-
-    /**
-     * @param array $checkout
-     * @return integer
-     */
-    protected function getCheckoutId(array $checkout)
-    {
-        $link = $checkout['view_link'];
-        preg_match('/\d+/', $link, $id);
-
-        return (int)$id[0];
     }
 
     /**
@@ -225,24 +217,46 @@ class OrderControllerTest extends WebTestCase
     {
         $result = [];
         foreach ($checkouts as $checkout) {
-            $link = $checkout['view_link'];
-            $argument = end(explode('/', $link));
-            $type = (int)$argument ? 'base' : $argument;
-            $result[$type][$this->getCheckoutId($checkout)] = $checkout;
+            $checkoutType = $checkout['checkoutType'];
+            $type = !$checkoutType ? 'base' : $checkoutType;
+            $result[$type][$checkout['id']] = $checkout;
         }
 
         return $result;
     }
 
     /**
-     * @param $string
+     * @param integer $checkoutId
+     * @param string $columnName
      * @return float
      */
-    protected function getValue($string)
+    protected function getValue($checkoutId, $columnName)
     {
-        $string = str_replace(',', '', $string);
-        preg_match_all('~\d+(?:\.\d+)?~', $string, $matches);
+        $container = $this->getContainer();
+        $checkout = $this->getCheckoutById($checkoutId);
+        $sourceEntity = $checkout->getSourceEntity();
+        $propertyAccessor = $container->get('property_accessor');
 
-        return array_map('floatval', $matches[0])[0];
+        return $propertyAccessor->getValue($sourceEntity, $columnName);
+    }
+
+    /**
+     * @param int $checkoutId
+     * @return BaseCheckout
+     */
+    protected function getCheckoutById($checkoutId)
+    {
+        if (empty($this->allCheckouts)) {
+            $checkouts = $this->getContainer()->get('doctrine')
+                ->getManagerForClass('OroB2BCheckoutBundle:BaseCheckout')
+                ->getRepository('OroB2BCheckoutBundle:BaseCheckout')
+                ->findAll();
+
+            foreach ($checkouts as $checkout) {
+                $this->allCheckouts[$checkout->getId()] = $checkout;
+            }
+        }
+
+        return $this->allCheckouts[$checkoutId];
     }
 }
