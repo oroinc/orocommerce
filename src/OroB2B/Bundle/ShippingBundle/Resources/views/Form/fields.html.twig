@@ -1,11 +1,5 @@
 {% macro shipping_origin_block(form, disabled) %}
-    {% if form.vars.required %}
-        {% set message = form.vars.label|trans ~ 'oro.address.form.choose_region'|trans %}
-        {% set dataValidation = (form.vars.required ? {NotBlank: {message: message}} : {})|json_encode %}
-        {% set attrs = form.vars.attr|merge({'attr': {'data-validation': dataValidation, 'placeholder': form.vars.label|trans}, disabled: disabled }) %}
-    {% else %}
-        {% set attrs = {disabled: disabled} %}
-    {% endif %}
+    {% set attrs = {'attr': {'data-validation': (form.vars.required ? { NotBlank: null } : {})|json_encode }, disabled: disabled } %}
     {{ form_row(form, attrs) }}
 {% endmacro %}
 
