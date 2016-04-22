@@ -12,7 +12,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\ShippingBundle\DependencyInjection\OroB2BShippingExtension;
 
-class LoadShippingOriginConfigurationDemoData13 extends AbstractFixture implements ContainerAwareInterface
+class LoadShippingOriginConfigurationDemoData extends AbstractFixture implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
@@ -20,19 +20,17 @@ class LoadShippingOriginConfigurationDemoData13 extends AbstractFixture implemen
     private static $configurations = [
         'shipping_origin' => [
             'country' => 'US',
-            'region' => 'US-CA', #California
-            'regionText' => null,
-            'postalCode' => '90401', #Santa Monica
+            'region' => 'US-CA',
+            'region_text' => null,
+            'postalCode' => '90401',
             'city' => 'Santa Monica',
-            'street' => 'Street 1',
-            'street2' => 'Street 2',
+            'street' => '1685 Main St.',
+            'street2' => null
         ]
     ];
 
     /**
      * {@inheritdoc}
-     *
-     * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager)
     {
