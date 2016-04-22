@@ -540,12 +540,4 @@ class OrderLineItem extends ExtendOrderLineItem implements
     {
         return $this;
     }
-
-    /**
-     * @return Price
-     */
-    public function getSubtotal()
-    {
-        return Price::create($this->price->getValue() * $this->quantity, $this->currency);
-    }
 }

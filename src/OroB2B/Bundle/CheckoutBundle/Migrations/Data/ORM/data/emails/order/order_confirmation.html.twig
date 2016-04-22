@@ -4,10 +4,11 @@
 @isSystem = 1
 @isEditable = 1
 
-<h1>Hello, {{ entity.accountUser.firstName }} {{ entity.accountUser.lastName }}!</h1>
+<h1>Hello, {{ entity.accountUser|oro_format_name }}!</h1>
 
-<p>Thank you for order from {{ entity.website }}. If you have any questions about your order, please contact us at
-    {{ entity.owner.email }} or call us at 800-555-0199 Monday-Friday, 9am-6pm PST.</p>
+<p>Thank you for order from {{ entity.website }}. If you have any questions about your order,
+    <a href="mailto:{{ entity.owner.email }}">please contact us</a>
+    or call us at 800-555-0199 Monday-Friday, 9am-6pm PST.</p>
 
 <h3>Please see your order details below.</h3>
 
@@ -20,23 +21,27 @@
 <h4>Payment Method</h4>
 {{ entity.paymentTerm }}
 
-<h4>Additional Information</h4>
+{% if entity.shipUntil or entity.customerNotes %}
+    <h4>Additional Information</h4>
+{% endif %}
+
 {% if entity.shipUntil %}
     <strong>Do Not Ship Later Than: </strong>{{ entity.shipUntil }}
 {% endif %}
 
 {% if entity.customerNotes %}
-    <strong>Notes: </strong>{{ entity.customerNotes }}
+    <strong>Notes: </strong>
+    <br>{{ entity.customerNotes }}
 {% endif %}
 
 <table border="1">
     <thead>
-        <tr>
-            <th>Item</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Subtotal</th>
-        </tr>
+    <tr>
+        <th>Item</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Subtotal</th>
+    </tr>
     </thead>
     <tbody>
     {% set data = order_line_items(entity) %}
