@@ -25,6 +25,12 @@ class ShippingOrigin extends AbstractAddress
         if (!empty($data['street2'])) {
             $this->setStreet2($data['street2']);
         }
+        if (!empty($data['postal_code'])) {
+            $this->setPostalCode($data['postal_code']);
+        }
+        if (!empty($data['region_text'])) {
+            $this->setRegionText($data['region_text']);
+        }
     }
 
     /** {@inheritdoc} */

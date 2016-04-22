@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Migrations\Data\Demo\ORM;
 
+use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Sluggable\Fixture\Issue116\Country;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -50,10 +53,11 @@ class LoadShippingOriginDemoData extends AbstractFixture implements ContainerAwa
         ['name' => 'Warehouse No ShippingOrigin']
     ];
 
-    /**
-     * @var ContainerInterface
-     */
+    /** @var ContainerInterface */
     protected $container;
+
+    /** @var  DoctrineHelper */
+    protected $doctrineHelper;
 
     /**
      * {@inheritdoc}
@@ -61,6 +65,7 @@ class LoadShippingOriginDemoData extends AbstractFixture implements ContainerAwa
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
+        $this->doctrineHelper = $this->container->get('oro_entity.doctrine_helper');
     }
 
     /**
@@ -69,7 +74,8 @@ class LoadShippingOriginDemoData extends AbstractFixture implements ContainerAwa
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\WarehouseBundle\Migrations\Data\Demo\ORM\LoadWarehouseDemoData',
+            'Oro\Bundle\AddressBundle\Migrations\Data\ORM\LoadCountryData',
+            'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
         ];
     }
 
@@ -88,11 +94,29 @@ class LoadShippingOriginDemoData extends AbstractFixture implements ContainerAwa
                 ->setOwner($businessUnit)
                 ->setOrganization($organization);
             $manager->persist($warehouse);
+            
             if (isset($row['shipping_origin'])) {
-                $shippingOriginWareHouse = new ShippingOriginWarehouse($row['shipping_origin']);
-                $shippingOriginWareHouse->setWarehouse($warehouse);
-                $manager->persist($shippingOriginWareHouse);
+                $entity = new ShippingOriginWarehouse($row['shipping_origin']);
+                if (!empty($row['shipping_origin']['country'])) {
+                    /** @var Country $country */
+                    $country = $this->doctrineHelper->getEntityReference(
+                        'OroAddressBundle:Country',
+                        $row['shipping_origin']['country']
+                    );
+                    $entity->setCountry($country);
+                }
+                if (!empty($row['shipping_origin']['region'])) {
+                    /** @var Region $region */
+                    $region = $this->doctrineHelper->getEntityReference(
+                        'OroAddressBundle:Region',
+                        $row['shipping_origin']['region']
+                    );
+                    $entity->setRegion($region);
+                }
+                $entity->setWarehouse($warehouse);
+                $manager->persist($entity);
             }
         }
+        $manager->flush();
     }
 }
