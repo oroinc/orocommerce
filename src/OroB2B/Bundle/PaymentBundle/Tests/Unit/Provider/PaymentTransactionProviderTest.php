@@ -10,6 +10,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Psr\Log\LoggerInterface;
 
 class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -226,13 +227,44 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         $em->expects($this->once())
-            ->method('flush')
-            ->with($transaction);
+            ->method('transactional')
+            ->willReturnCallback(function (\Closure $closure) use ($em, $persist, $transaction) {
+                $em->expects($this->exactly($persist ? 1 : 0))
+                    ->method('persist')
+                    ->with($transaction);
+                
+                $closure($em);
+            });
 
-        $em->expects($this->exactly($persist ? 1 : 0))
-            ->method('persist')
-            ->with($transaction);
+        $this->provider->savePaymentTransaction($transaction);
+    }
 
+    public function testSavePaymentTransactionWithException()
+    {
+        $transaction = new PaymentTransaction();
+        
+        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManager')
+            ->with($transaction)
+            ->willReturn($em);
+
+        $exception = new \Exception();
+        $em->expects($this->once())
+            ->method('transactional')
+            ->willThrowException($exception);
+
+        /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
+        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $logger->expects($this->once())
+            ->method('error')
+            ->with($exception->getMessage(), $exception->getTrace());
+
+        $this->provider->setLogger($logger);
         $this->provider->savePaymentTransaction($transaction);
     }
 
