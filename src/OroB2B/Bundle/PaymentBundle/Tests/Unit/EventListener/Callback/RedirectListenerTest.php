@@ -58,7 +58,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->paymentTransaction->isActive());
         $this->assertTrue($this->paymentTransaction->isSuccessful());
 
-        $this->assertEquals($expectedResponse, $event->getResponse());
+        $this->assertResponses($expectedResponse, $event->getResponse());
     }
 
     /**
@@ -115,7 +115,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->paymentTransaction->isActive());
         $this->assertFalse($this->paymentTransaction->isSuccessful());
 
-        $this->assertEquals($expectedResponse, $event->getResponse());
+        $this->assertResponses($expectedResponse, $event->getResponse());
     }
 
     /**
@@ -135,5 +135,16 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
                 'expectedResponse' => new Response()
             ],
         ];
+    }
+
+    /**
+     * @param Response $expectedResponse
+     * @param Response $actualResponse
+     */
+    private function assertResponses(Response $expectedResponse, Response $actualResponse)
+    {
+        // Hack response datetime because of requests might have different datetime
+        $expectedResponse->setDate($actualResponse->getDate());
+        $this->assertEquals($expectedResponse, $actualResponse);
     }
 }
