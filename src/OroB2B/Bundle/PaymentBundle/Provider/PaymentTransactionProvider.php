@@ -105,7 +105,7 @@ class PaymentTransactionProvider
      * @param object $object
      * @param string $amount
      * @param string $currency
-     * @return PaymentTransaction
+     * @return PaymentTransaction|null
      */
     public function getActiveAuthorizePaymentTransaction($object, $amount, $currency)
     {

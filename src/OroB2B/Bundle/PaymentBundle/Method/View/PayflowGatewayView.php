@@ -107,7 +107,7 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getAllowedCreditCards()
     {

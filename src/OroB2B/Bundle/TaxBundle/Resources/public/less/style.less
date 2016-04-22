@@ -54,10 +54,47 @@
   }
 }
 
+.order-line-item-taxes {
+  width: 100%;
+}
+
 .order-line-items-content fieldset {
   min-width: inherit !important;
   .order-line-items-table {
     overflow-x: scroll !important;
     display: block !important;
+  }
+}
+
+.line-item-taxes-container {
+  div ~ div {
+    padding-top: 20px;
+  }
+
+  .line-item-taxes-items {
+    .tax-result-grid {
+      min-width: 325px;
+
+      td:first-child {
+        white-space: nowrap;
+        font-weight: bold;
+        font-size: 11px;
+      }
+    }
+  }
+}
+
+@media (min-width: 2250px) {
+  .line-item-taxes-items, .line-item-taxes-results {
+    display:table-cell;
+  }
+
+  .line-item-taxes-container {
+    display: table-row;
+
+    div ~ div {
+      padding-left: 20px;
+      padding-top: 0;
+    }
   }
 }

@@ -13,7 +13,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\OrderBundle\Tests\Unit\Model\AbstractAddressManagerTest;
+use OroB2B\Bundle\OrderBundle\Tests\Unit\Manager\AbstractAddressManagerTest;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 use OroB2B\Bundle\SaleBundle\Model\QuoteAddressManager;

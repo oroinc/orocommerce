@@ -37,6 +37,8 @@ define(function(require) {
             _.extend(this.options, additionalOptions || {});
 
             this.options._sourceElement.on('click', 'a[data-id]', _.bind(this.onClick, this));
+
+            mediator.on('shopping-list:created', this.transformCreateNewButton, this);
         },
 
         /**
@@ -156,6 +158,8 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
+
+            mediator.off('shopping-list:created', this.transformCreateNewButton, this);
 
             this.options._sourceElement.off();
 
