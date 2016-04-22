@@ -3,8 +3,6 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\DomCrawler\Field\ChoiceFormField;
-use Symfony\Component\DomCrawler\Field\InputFormField;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -66,37 +64,22 @@ class ProductControllerTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_product[sku]'] = self::TEST_SKU;
-        $form['orob2b_product[owner]'] = $this->getBusinessUnitId();
 
-        $doc = new \DOMDocument("1.0");
-        $doc->loadHTML(
-            '<select name="orob2b_product[unitPrecisions][0][unit]" id="orob2b_product_unitPrecisions_0_unit" ' .
-            'tabindex="-1" class="select2-offscreen"> ' .
-            '<option value="" selected="selected"></option> ' .
-            '<option value="item">item</option>'.
-            '<option value="kg">kilogram</option> </select>'
-        );
-        $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
-        $form->set($field);
-        $form['orob2b_product[unitPrecisions][0][unit]'] = self::FIRST_UNIT_CODE;
-
-        $doc->loadHTML(
-            '<input type="text" name="orob2b_product[unitPrecisions][0][precision]" '.
-            'id="orob2b_product_unitPrecisions_0_precision" class="input2-offscreen"> '
-        );
-        $field = new InputFormField($doc->getElementsByTagName('input')->item(0));
-        $form->set($field);
-        $form['orob2b_product[unitPrecisions][0][precision]'] = self::FIRST_UNIT_PRECISION;
-
-        $form['orob2b_product[inventoryStatus]'] = Product::INVENTORY_STATUS_IN_STOCK;
-        $form['orob2b_product[status]'] = Product::STATUS_DISABLED;
-        $form['orob2b_product[names][values][default]'] = self::DEFAULT_NAME;
-        $form['orob2b_product[descriptions][values][default]'] = self::DEFAULT_DESCRIPTION;
-        $form['orob2b_product[shortDescriptions][values][default]'] = self::DEFAULT_SHORT_DESCRIPTION;
+        $formValues = $form->getPhpValues();
+        $formValues['orob2b_product']['sku'] = self::TEST_SKU;
+        $formValues['orob2b_product']['owner'] = $this->getBusinessUnitId();
+        $formValues['orob2b_product']['inventoryStatus'] = Product::INVENTORY_STATUS_IN_STOCK;
+        $formValues['orob2b_product']['status'] = Product::STATUS_DISABLED;
+        $formValues['orob2b_product']['names']['values']['default'] = self::DEFAULT_NAME;
+        $formValues['orob2b_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
+        $formValues['orob2b_product']['shortDescriptions']['values']['default'] = self::DEFAULT_SHORT_DESCRIPTION;
+        $formValues['orob2b_product']['unitPrecisions'][] = [
+            'unit' => self::FIRST_UNIT_CODE,
+            'precision' => self::FIRST_UNIT_PRECISION,
+        ];
 
         $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -106,6 +89,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(self::TEST_SKU, $html);
         $this->assertContains(self::INVENTORY_STATUS, $html);
         $this->assertContains(self::STATUS, $html);
+        $this->assertContains(self::FIRST_UNIT_CODE, $html);
     }
 
     /**
