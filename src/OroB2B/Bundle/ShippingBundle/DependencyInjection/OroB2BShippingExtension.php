@@ -9,15 +9,20 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroB2BShippingExtension extends Extension
 {
-    const ALIAS = 'oro_b2b_shipping';
+    const ALIAS = 'orob2b_shipping';
 
     /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+        $container->prependExtensionConfig($this->getAlias(), $config);
+        
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
+        $loader->load('form_types.yml');
     }
 
     /**

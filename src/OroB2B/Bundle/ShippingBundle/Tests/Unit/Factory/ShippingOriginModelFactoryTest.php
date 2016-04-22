@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShippingBundle\Bundle\Tests\Unit\Factory;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
 use OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
 use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
 
@@ -13,9 +14,7 @@ class ShippingOriginModelFactoryTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
-    /**
-     * @var ShippingOriginModelFactory
-     */
+    /** @var ShippingOriginModelFactory */
     protected $factory;
 
     protected function setUp()
