@@ -2,15 +2,17 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Migrations\Data\Demo\ORM;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\ShippingBundle\DependencyInjection\OroB2BShippingExtension;
 
-class LoadShippingOriginConfigurationDemoData
+class LoadShippingOriginConfigurationDemoData13 extends AbstractFixture implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
@@ -20,7 +22,10 @@ class LoadShippingOriginConfigurationDemoData
             'country' => 'US',
             'region' => 'US-CA', #California
             'regionText' => null,
-            'postalCode' => '90401' #Santa Monica
+            'postalCode' => '90401', #Santa Monica
+            'city' => 'Santa Monica',
+            'street' => 'Street 1',
+            'street2' => 'Street 2',
         ]
     ];
 
