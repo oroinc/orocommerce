@@ -77,8 +77,8 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setFallback('system');
 
         $productUnit = (new ProductUnit())
-            ->setCode(self::UNIT_PRECISION_CODE)
-            ->setDefaultPrecision(self::UNIT_PRECISION_DEFAULT_PRECISION);
+            ->setCode('kg')
+            ->setDefaultPrecision(3);
 
         $productUnitPrecision = (new ProductUnitPrecision())
             ->setUnit($productUnit)

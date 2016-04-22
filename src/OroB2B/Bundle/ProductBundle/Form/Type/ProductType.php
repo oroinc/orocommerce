@@ -117,9 +117,10 @@ class ProductType extends AbstractType
                 'unitPrecisions',
                 ProductUnitPrecisionCollectionType::NAME,
                 [
-                    'label'    => 'orob2b.product.unit_precisions.label',
-                    'tooltip'  => 'orob2b.product.form.tooltip.unit_precision',
-                    'required' => false
+                    'label'          => 'orob2b.product.unit_precisions.label',
+                    'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
+                    'error_bubbling' => false,
+                    'required'       => true,
                 ]
             )
             ->add(
