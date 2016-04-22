@@ -14,9 +14,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class ProductFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
-    const UNIT_PRECISION_CODE = 'kg';
-    const UNIT_PRECISION_DEFAULT_PRECISION = 2;
-
     /**
      * {@inheritdoc}
      */

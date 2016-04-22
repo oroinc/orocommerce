@@ -4,6 +4,7 @@ services:
         parent: orob2b_fallback.importexport.data_converter.localized_fallback_value_aware
         calls:
             - [setEntityName, ['%orob2b_product.entity.product.class%']]
+            - [setEventDispatcher, ['@event_dispatcher']]
 
     orob2b_product.importexport.data_converter.product_template:
         parent: orob2b_product.importexport.data_converter.product
