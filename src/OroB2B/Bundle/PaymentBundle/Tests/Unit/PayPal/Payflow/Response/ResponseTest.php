@@ -24,39 +24,33 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($message, $response->getMessage());
     }
 
-    /**
-     * @dataProvider getErrorMessageProvider
-     * @param int $result
-     */
-    public function testGetErrorMessage($result)
+    public function testGetErrorMessageWithCommunicationError()
     {
-        $response = new Response([Response::RESULT_KEY => $result]);
-        $expectedMessage = (int)$result < 0 ?
-            CommunicationErrorsStatusMap::getMessage($result) :
-            ResponseStatusMap::getMessage($result);
+        $resultValue = CommunicationErrorsStatusMap::FAILED_TO_CONNECT_TO_HOST;
 
-        $this->assertEquals(
-            $expectedMessage,
-            $response->getErrorMessage()
-        );
+        $response = new Response([Response::RESULT_KEY => $resultValue]);
+        $expectedMessage = CommunicationErrorsStatusMap::getMessage($resultValue);
+
+        $this->assertEquals($expectedMessage, $response->getErrorMessage());
+    }
+    public function testGetErrorMessageWithResponseStatusError()
+    {
+        $resultValue = ResponseStatusMap::GENERAL_ERROR;
+
+        $response = new Response([Response::RESULT_KEY => $resultValue]);
+        $expectedMessage = ResponseStatusMap::getMessage($resultValue);
+
+        $this->assertEquals($expectedMessage, $response->getErrorMessage());
     }
 
-    /**
-     * @return array
-     */
-    public function getErrorMessageProvider()
+    public function testGetErrorMessageWithResponseStatusApproved()
     {
-        return [
-            [
-                'result' => CommunicationErrorsStatusMap::FAILED_TO_CONNECT_TO_HOST,
-            ],
-            [
-                'result' => ResponseStatusMap::GENERAL_ERROR,
-            ],
-            [
-                'result' => ResponseStatusMap::APPROVED,
-            ],
-        ];
+        $resultValue = ResponseStatusMap::APPROVED;
+
+        $response = new Response([Response::RESULT_KEY => $resultValue]);
+        $expectedMessage = ResponseStatusMap::getMessage($resultValue);
+
+        $this->assertEquals($expectedMessage, $response->getErrorMessage());
     }
 
     public function testGetData()

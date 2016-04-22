@@ -56,12 +56,14 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->action);
-        unset($this->dispatcher);
-        unset($this->contextAccessor);
-        unset($this->paymentMethodRegistry);
-        unset($this->paymentTransactionProvider);
-        unset($this->router);
+        unset(
+            $this->action,
+            $this->dispatcher,
+            $this->contextAccessor,
+            $this->paymentMethodRegistry,
+            $this->paymentTransactionProvider,
+            $this->router
+        );
     }
 
     /**

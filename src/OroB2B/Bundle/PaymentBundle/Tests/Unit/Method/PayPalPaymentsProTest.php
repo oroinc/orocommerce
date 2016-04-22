@@ -30,7 +30,7 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configureConfig(array $configs = [])
     {

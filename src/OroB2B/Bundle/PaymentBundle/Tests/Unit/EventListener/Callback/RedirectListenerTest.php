@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\EventListener\Callback;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
@@ -40,8 +41,9 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider onReturnProvider
      * @param array $options
+     * @param RedirectResponse|response $expectedResponse
      */
-    public function testOnReturn($options)
+    public function testOnReturn($options, $expectedResponse)
     {
         $this->paymentTransaction
             ->setTransactionOptions($options)
@@ -56,16 +58,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->paymentTransaction->isActive());
         $this->assertTrue($this->paymentTransaction->isSuccessful());
 
-        /** @var RedirectResponse $response */
-        $response = $event->getResponse();
-
-        if (array_key_exists(RedirectListener::SUCCESS_URL_KEY, $options)) {
-            $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
-            $this->assertEquals($options[RedirectListener::SUCCESS_URL_KEY], $response->getTargetUrl());
-        } else {
-            $this->assertNotInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
-            $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
-        }
+        $this->assertEquals($expectedResponse, $event->getResponse());
     }
 
     /**
@@ -75,10 +68,12 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'options' => [RedirectListener::SUCCESS_URL_KEY => 'testUrl']
+                'options' => [RedirectListener::SUCCESS_URL_KEY => 'testUrl'],
+                'expectedResponse' => new RedirectResponse('testUrl')
             ],
             [
-                'options' => ['someAnotherValue']
+                'options' => ['someAnotherValue'],
+                'expectedResponse' => new Response()
             ],
         ];
     }
@@ -87,8 +82,9 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider onErrorProvider
      * @param bool $errorAlreadyInFlashBag
      * @param array $options
+     * @param RedirectResponse|Response $expectedResponse
      */
-    public function testOnError($errorAlreadyInFlashBag, $options)
+    public function testOnError($errorAlreadyInFlashBag, $options, $expectedResponse)
     {
         $this->paymentTransaction
             ->setTransactionOptions($options)
@@ -119,16 +115,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->paymentTransaction->isActive());
         $this->assertFalse($this->paymentTransaction->isSuccessful());
 
-        /** @var RedirectResponse $response */
-        $response = $event->getResponse();
-
-        if (array_key_exists(RedirectListener::ERROR_URL_KEY, $options)) {
-            $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
-            $this->assertEquals($options[RedirectListener::ERROR_URL_KEY], $response->getTargetUrl());
-        } else {
-            $this->assertNotInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
-            $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
-        }
+        $this->assertEquals($expectedResponse, $event->getResponse());
     }
 
     /**
@@ -139,11 +126,13 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'errorAlreadyInFlashBag' => false,
-                'options' => [RedirectListener::ERROR_URL_KEY => 'testUrl']
+                'options' => [RedirectListener::ERROR_URL_KEY => 'testUrl'],
+                'expectedResponse' => new RedirectResponse('testUrl')
             ],
             [
                 'errorAlreadyInFlashBag' => true,
-                'options' => ['someAnotherValue']
+                'options' => ['someAnotherValue'],
+                'expectedResponse' => new Response()
             ],
         ];
     }
