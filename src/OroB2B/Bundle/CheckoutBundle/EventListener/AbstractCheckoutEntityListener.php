@@ -91,7 +91,7 @@ abstract class AbstractCheckoutEntityListener
      */
     protected function isNotAcceptableCheckoutType(CheckoutEntityEvent $event, $checkout)
     {
-        return !is_null($event->getType()) && $checkout->getType() !== $event->getType();
+        return !is_null($event->getType()) && $checkout->getCheckoutType() !== $event->getType();
     }
 
     /**
