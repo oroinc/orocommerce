@@ -2,8 +2,10 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
 class PaymentTransactionTest extends \PHPUnit_Framework_TestCase
@@ -29,6 +31,10 @@ class PaymentTransactionTest extends \PHPUnit_Framework_TestCase
             ['transactionOptions', ['option']],
             ['accessIdentifier', 'accessIdentifier', false],
             ['accessToken', 'accessToken', false],
+            ['organization', new Organization()],
+            ['frontendOwner', new AccountUser()],
+            ['createdAt', new \DateTime()],
+            ['updatedAt', new \DateTime()],
         ];
 
         $this->assertPropertyAccessors($this->createPaymentTransaction(), $properties);
