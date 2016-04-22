@@ -94,7 +94,7 @@ class LoadShippingOriginDemoData extends AbstractFixture implements ContainerAwa
                 ->setOwner($businessUnit)
                 ->setOrganization($organization);
             $manager->persist($warehouse);
-            
+
             if (isset($row['shipping_origin'])) {
                 $entity = new ShippingOriginWarehouse($row['shipping_origin']);
                 if (!empty($row['shipping_origin']['country'])) {
