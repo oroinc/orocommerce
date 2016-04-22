@@ -40,6 +40,17 @@ class PriceListSchedule
     protected $deactivateAt;
 
     /**
+     * @param \DateTime|null $activeAt
+     * @param \DateTime|null $deactivateAt
+     */
+    public function __construct(\DateTime $activeAt = null, \DateTime $deactivateAt = null)
+    {
+        $this->activeAt = $activeAt;
+        $this->deactivateAt = $deactivateAt;
+    }
+
+
+    /**
      * @return int
      */
     public function getId()

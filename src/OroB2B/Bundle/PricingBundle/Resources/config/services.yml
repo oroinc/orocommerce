@@ -291,6 +291,11 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_dates_chain_validator }
 
+    orob2b_pricing.validator.schedules_intersection:
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersectionValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing_schedules_intersection_validator }
+
     orob2b_pricing.model.price_list_request_handler:
         class: 'OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler'
         calls:

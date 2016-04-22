@@ -116,11 +116,15 @@ class PriceList extends BasePriceList
     }
 
     /**
+     * todo tests
      * @param ArrayCollection|PriceListSchedule[] $schedules
+     * @return $this
      */
     public function setSchedules($schedules)
     {
         $this->schedules = $schedules;
+
+        return $this;
     }
 
     /**

@@ -117,7 +117,7 @@
         {% set name = widget.vars.full_name %}
     {% endif %}
 
-    {% set hasErrors = (form.activeAt.vars.errors|length or form.deactivateAt.vars.errors|length) %}{#todo refactor valid#}
+    {% set hasErrors = (form.activeAt.vars.errors|length or form.deactivateAt.vars.errors|length) %}
 
     <tr data-content="{{ name }}" data-validation-optional-group class="pl-schedule__row" {#data-validation="{{ validation|json_encode }}"#}>
         <td>{{ form_widget(form.activeAt) }}</td>

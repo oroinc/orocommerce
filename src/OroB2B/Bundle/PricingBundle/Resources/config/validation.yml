@@ -10,6 +10,7 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
             - NotBlank: ~
             - Valid: ~
         schedules:
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection: ~
             - Valid: ~
 
 OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule:
