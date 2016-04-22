@@ -33,7 +33,8 @@ OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
         priceList:
             - NotBlank: ~
         quantity:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.pricing.validators.product_price.quantity.blank'
             - Range:
                 min: 0
         price:

@@ -12,3 +12,4 @@ config:
         'orob2bshoppinglist/js/app/widget/shopping-list-widget': 'bundles/orob2bshoppinglist/js/app/widget/shopping-list-widget.js'
         'orob2bshoppinglist/js/shopping-list-item-errors-handler': 'bundles/orob2bshoppinglist/js/shopping-list-item-errors-handler.js'
         'orob2bshoppinglist/js/app/components/create-button-component': 'bundles/orob2bshoppinglist/js/app/components/create-button-component.js'
+        'orob2bshoppinglist/js/app/components/shoppinglist-view-component': 'bundles/orob2bshoppinglist/js/app/components/shoppinglist-view-component.js'
