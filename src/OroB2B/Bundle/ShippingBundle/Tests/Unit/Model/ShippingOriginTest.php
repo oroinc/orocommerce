@@ -30,7 +30,7 @@ class ShippingOriginTest extends \PHPUnit_Framework_TestCase
         static::assertPropertyAccessors(
             $this->shippingOrigin,
             [
-                ['country', new Country('us')],
+                ['country', new Country('US')],
                 ['region', new Region('test')],
                 ['regionText', 'test region text'],
                 ['postalCode', 'test postal code'],
@@ -39,6 +39,29 @@ class ShippingOriginTest extends \PHPUnit_Framework_TestCase
                 ['street2', 'test street 2'],
             ]
         );
+    }
+
+    public function testConstructor()
+    {
+        $model = new ShippingOrigin(
+            [
+                'country' => 'US',
+                'region' => 'test',
+                'region_text' => 'test region text',
+                'postal_code' => 'test postal code',
+                'city' => 'test city',
+                'street' => 'test street 1',
+                'street2' => 'test street 2'
+            ]
+        );
+
+        $this->assertEquals('US', $model->getCountry());
+        $this->assertEquals('test', $model->getRegion());
+        $this->assertEquals('test region text', $model->getRegionText());
+        $this->assertEquals('test postal code', $model->getPostalCode());
+        $this->assertEquals('test city', $model->getCity());
+        $this->assertEquals('test street 1', $model->getStreet());
+        $this->assertEquals('test street 2', $model->getStreet2());
     }
 
     public function testIsSystem()

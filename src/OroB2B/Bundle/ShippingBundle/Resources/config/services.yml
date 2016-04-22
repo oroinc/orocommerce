@@ -1,3 +1,6 @@
+parameters:
+    orob2b_shipping.model.shipping_origin.class: OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin
+
 services:
     orob2b_shipping.factory.shipping_origin_model_factory:
         class: OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory

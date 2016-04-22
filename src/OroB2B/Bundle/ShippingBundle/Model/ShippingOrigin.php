@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Model;
 
+use Doctrine\Common\Util\Inflector;
+
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 class ShippingOrigin extends AbstractAddress
@@ -29,16 +31,14 @@ class ShippingOrigin extends AbstractAddress
      */
     public function __construct(array $data = [])
     {
-        $this->data = new \ArrayObject($data);
+        $this->data = new \ArrayObject();
 
-        if (!empty($data['city'])) {
-            $this->setCity($data['city']);
-        }
-        if (!empty($data['street'])) {
-            $this->setStreet($data['street']);
-        }
-        if (!empty($data['street2'])) {
-            $this->setStreet2($data['street2']);
+        foreach ($data as $name => $value) {
+            $method = Inflector::camelize('set' . ucfirst($name));
+
+            if (method_exists($this, $method)) {
+                $this->$method($value);
+            }
         }
     }
 
@@ -51,11 +51,23 @@ class ShippingOrigin extends AbstractAddress
     }
 
     /** {@inheritdoc} */
+    public function getCountry()
+    {
+        return $this->getOffset('country');
+    }
+
+    /** {@inheritdoc} */
     public function setRegion($region)
     {
         $this->data->offsetSet('region', $region);
 
         return parent::setRegion($region);
+    }
+
+    /** {@inheritdoc} */
+    public function getRegion()
+    {
+        return $this->getOffset('region');
     }
 
     /** {@inheritdoc} */
@@ -67,11 +79,23 @@ class ShippingOrigin extends AbstractAddress
     }
 
     /** {@inheritdoc} */
+    public function getRegionText()
+    {
+        return $this->getOffset('region_text');
+    }
+
+    /** {@inheritdoc} */
     public function setPostalCode($postalCode)
     {
-        $this->data->offsetSet('postal_code', $postalCode);
+        $this->data->offsetSet('postalCode', $postalCode);
 
         return parent::setPostalCode($postalCode);
+    }
+
+    /** {@inheritdoc} */
+    public function getPostalCode()
+    {
+        return $this->getOffset('postalCode');
     }
 
     /** {@inheritdoc} */
@@ -83,6 +107,12 @@ class ShippingOrigin extends AbstractAddress
     }
 
     /** {@inheritdoc} */
+    public function getCity()
+    {
+        return $this->getOffset('city');
+    }
+
+    /** {@inheritdoc} */
     public function setStreet($street)
     {
         $this->data->offsetSet('street', $street);
@@ -91,47 +121,17 @@ class ShippingOrigin extends AbstractAddress
     }
 
     /** {@inheritdoc} */
+    public function getStreet()
+    {
+        return $this->getOffset('street');
+    }
+
+    /** {@inheritdoc} */
     public function setStreet2($street2)
     {
         $this->data->offsetSet('street2', $street2);
 
         return parent::setStreet2($street2);
-    }
-
-    /** {@inheritdoc} */
-    public function getCountry()
-    {
-        return $this->getOffset('country');
-    }
-
-    /** {@inheritdoc} */
-    public function getRegion()
-    {
-        return $this->getOffset('region');
-    }
-
-    /** {@inheritdoc} */
-    public function getRegionText()
-    {
-        return $this->getOffset('region_text');
-    }
-
-    /** {@inheritdoc} */
-    public function getPostalCode()
-    {
-        return $this->getOffset('postal_code');
-    }
-
-    /** {@inheritdoc} */
-    public function getCity()
-    {
-        return $this->getOffset('city');
-    }
-
-    /** {@inheritdoc} */
-    public function getStreet()
-    {
-        return $this->getOffset('street');
     }
 
     /** {@inheritdoc} */
