@@ -1,5 +1,11 @@
 orob2b:
     shipping:
+        system_configuration:
+            groups:
+                shipping.title: Shipping
+                shipping_origin.title: Shipping Origin
+            fields:
+                shipping_origin.label: Address
         shipping_origin:
             country.label:       Country
             region.label:        Region/State
