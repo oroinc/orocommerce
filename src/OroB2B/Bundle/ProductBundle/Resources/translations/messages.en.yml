@@ -16,7 +16,6 @@ orob2b:
         owner.label: Owner
         organization.label: Organization
         unit_precisions.label: Units of Quantity
-        image.label: Image
         names.label: Name
         descriptions.label: Description
         short_descriptions.label: Short Description
@@ -73,6 +72,12 @@ orob2b:
             types.label: Types
             product.label: Product
             image.label: Image
+            file.label: File
+            add.label: Add Image
+            type:
+                main.label: Main
+                additional.label: Additional
+                listing.label: Listing
 
         menu:
             products_tab.label: Products

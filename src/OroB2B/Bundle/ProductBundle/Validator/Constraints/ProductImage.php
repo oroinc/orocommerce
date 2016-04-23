@@ -9,7 +9,7 @@ class ProductImage extends Constraint
     /**
      * @var string
      */
-    public $message = 'The file cannot be blank';
+    public $message = 'orob2b.product.product_image.not_blank';
 
     /**
      * {@inheritDoc}

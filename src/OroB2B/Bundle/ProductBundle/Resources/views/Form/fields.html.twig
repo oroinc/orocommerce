@@ -67,7 +67,7 @@
                 <table class="grid table-hover table table-bordered table-condensedo">
                     <thead>
                     <tr>
-                        <th class="file"><span>{{ 'File'|trans }}</span></th>
+                        <th class="file"><span>{{ 'orob2b.product.productimage.file.label'|trans }}</span></th>
                         {% for imageType in form.vars.imageTypes %}
                             <th class="text-center"><span>{{ imageType.label|trans }}</span></th>
                         {% endfor %}
@@ -95,7 +95,7 @@
                 </table>
                 {% if allow_add %}
                     <a class="btn add-list-item" data-container=".image-collection tbody" href="javascript: void(0);">
-                        <i class="icon-plus"></i>{{ 'Add Image'|trans }}
+                        <i class="icon-plus"></i>{{ 'orob2b.product.productimage.add.label'|trans }}
                     </a>
                 {% endif %}
             </div>
