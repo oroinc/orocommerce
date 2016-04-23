@@ -1,11 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var ImageTypeRadioControlComponent;
+    var ProductImageTypeRadioControlComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
     var _ = require('underscore');
 
-    ImageTypeRadioControlComponent = BaseComponent.extend({
+    ProductImageTypeRadioControlComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -29,5 +29,5 @@ define(function(require) {
         }
     });
 
-    return ImageTypeRadioControlComponent;
+    return ProductImageTypeRadioControlComponent;
 });
