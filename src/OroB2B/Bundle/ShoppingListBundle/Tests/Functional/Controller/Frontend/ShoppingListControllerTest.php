@@ -87,7 +87,7 @@ class ShoppingListControllerTest extends WebTestCase
         return [
             'price defined' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                'expectedLineItemPrice' => '$12.20'
+                'expectedLineItemPrice' => '$13.10'
             ],
             'no price for selected quantity' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_3,

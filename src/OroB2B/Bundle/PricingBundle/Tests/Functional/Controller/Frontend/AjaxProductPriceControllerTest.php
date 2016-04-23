@@ -86,6 +86,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
                 'product' => 'product.1',
                 'expected' => [
                     'bottle' => [
+                        ['price' => 13.1, 'currency' => 'USD', 'qty' => 1],
                         ['price' => 12.2, 'currency' => 'EUR', 'qty' => 1],
                         ['price' => 12.2, 'currency' => 'EUR', 'qty' => 11],
                     ],
@@ -101,7 +102,10 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
                     'liter' => [
                         ['price' => 10.0000, 'currency' => 'USD', 'qty' => 1],
                         ['price' => 12.2000, 'currency' => 'USD', 'qty' => 10],
-                    ]
+                    ],
+                    'bottle' => [
+                        ['price' => 13.1, 'currency' => 'USD', 'qty' => 1],
+                    ],
                 ],
                 'currency' => 'USD'
             ]
