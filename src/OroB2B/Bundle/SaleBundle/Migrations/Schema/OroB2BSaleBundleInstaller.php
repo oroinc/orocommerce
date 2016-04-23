@@ -85,7 +85,7 @@ class OroB2BSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
@@ -588,6 +588,17 @@ class OroB2BSaleBundleInstaller implements
         $table = $schema->createTable('orob2b_quote_demand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
+        $table->addColumn(
+            'subtotal',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn(
+            'total',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn('total_currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->setPrimaryKey(['id']);
     }
 

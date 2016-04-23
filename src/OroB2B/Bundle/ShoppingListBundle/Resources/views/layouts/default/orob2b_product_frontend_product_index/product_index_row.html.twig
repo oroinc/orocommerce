@@ -1,32 +1,3 @@
-{% block _add_to_shopping_list_form_start_widget %}
-    {% set attr = attr|merge({
-        'id': form.vars.id ~ '-product-id-<%= model.id %>',
-    }) %}
-    {{ block('form_start_widget') }}
-{% endblock %}
-
-{% block _add_to_shopping_list_form_fields_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " product-item__qty__current-grid"
-    }) %}
-    <% if (!_.isEmpty(model.product_units)) { %>
-        <div {{ block('block_attributes') }}
-            data-page-component-module="orob2bshoppinglist/js/app/components/product-unit-select-component"
-            data-product-units='<%= JSON.stringify(model.product_units) %>'>
-            {{ block_widget(block) }}
-        </div>
-    <% } %>
-{% endblock %}
-
-{% block _add_to_shopping_list_form_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " product-item__qty product-item__qty_<%= themeOptions.view %>"
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _add_to_shopping_list_form_button_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " add-product-from-view-component"

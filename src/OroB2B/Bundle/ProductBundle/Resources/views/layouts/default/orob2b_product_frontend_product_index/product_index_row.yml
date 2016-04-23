@@ -82,6 +82,23 @@ layout:
                     blockType: block
                     options:
                         visible: false
+                add_to_shopping_list_form:
+                    blockType: container
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
+                add_to_shopping_list_form_start:
+                    blockType: form_start
+                    options:
+                        form: { '@value': $data.orob2b_product_line_item_form }
+                add_to_shopping_list_form_fields:
+                    blockType: form
+                    options:
+                        form: { '@value': $data.orob2b_product_line_item_form }
+                add_to_shopping_list_form_end:
+                    blockType: form_end
+                    options:
+                        form: { '@value': $data.orob2b_product_line_item_form }
             tree:
                 scripts_before:
                     product_grid_row_template:
@@ -101,3 +118,7 @@ layout:
                                 product_grid_row_specification_delivery: ~
                             product_grid_row_secondary_content_second_container:
                                 product_grid_row_more_info: ~
+                                add_to_shopping_list_form:
+                                    add_to_shopping_list_form_start: ~
+                                    add_to_shopping_list_form_fields: ~
+                                    add_to_shopping_list_form_end: ~

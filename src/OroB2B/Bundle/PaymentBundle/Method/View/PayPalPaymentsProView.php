@@ -26,10 +26,10 @@ class PayPalPaymentsProView extends PayflowGatewayView
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getAllowedCreditCards()
     {
-        return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_CC_TYPES_KEY);
+        return (array)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_CC_TYPES_KEY);
     }
 }

@@ -234,10 +234,9 @@ class QuoteControllerTest extends WebTestCase
                 $property = $property->format('M j, Y');
             } elseif ($property instanceof Price) {
                 $property = round($property->getValue());
-            } else {
-                $property = (string)$property;
             }
 
+            $property = (string)$property;
             $this->assertContains($label, $control->textContent);
             $this->assertContains($property, $control->textContent);
         }

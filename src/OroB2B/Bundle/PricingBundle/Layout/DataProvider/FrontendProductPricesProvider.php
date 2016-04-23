@@ -7,6 +7,7 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -35,7 +36,8 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * {@inheritDoc}
+     * @param ContextInterface $context
+     * @return ProductPrice[]
      */
     public function getData(ContextInterface $context)
     {

@@ -35,7 +35,7 @@ class PayflowGatewayView implements PaymentMethodViewInterface
 
         return [
             'formView' => $formView,
-            'allowedCreditCards' => $this->getAllowedCreditCards()
+            'allowedCreditCards' => $this->getAllowedCreditCards(),
         ];
     }
 
@@ -64,10 +64,10 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getAllowedCreditCards()
     {
-        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY);
+        return (array)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY);
     }
 }
