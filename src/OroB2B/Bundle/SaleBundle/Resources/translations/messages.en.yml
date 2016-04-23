@@ -182,6 +182,9 @@ orob2b:
             entity_plural_label: 'Quote Demands'
             id.label: 'Id'
             quote.label: 'Quote'
+            total.label: 'Total'
+            subtotal.label: 'Subtotal'
+            total_currency.label: 'Total Currency'
 
         controller:
             quote:
