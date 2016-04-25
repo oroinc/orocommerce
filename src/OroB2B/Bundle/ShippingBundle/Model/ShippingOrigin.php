@@ -11,6 +11,21 @@ class ShippingOrigin extends AbstractAddress
     /** @var \ArrayObject */
     protected $data;
 
+    /** @var  boolean */
+    protected $system;
+
+    /**
+     * @param boolean $system
+     *
+     * @return ShippingOrigin
+     */
+    public function setSystem($system)
+    {
+        $this->system = $system;
+
+        return $this;
+    }
+
     /**
      * @param array $data
      */
@@ -138,5 +153,13 @@ class ShippingOrigin extends AbstractAddress
         }
 
         return $default;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSystem()
+    {
+        return (bool) $this->system;
     }
 }

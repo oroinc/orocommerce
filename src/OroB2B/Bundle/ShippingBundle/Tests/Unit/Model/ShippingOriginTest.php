@@ -41,7 +41,7 @@ class ShippingOriginTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function textContructor()
+    public function testConstructor()
     {
         $model = new ShippingOrigin(
             [
@@ -62,5 +62,12 @@ class ShippingOriginTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('test city', $model->getCity());
         $this->assertEquals('test street 1', $model->getStreet());
         $this->assertEquals('test street 2', $model->getStreet2());
+    }
+
+    public function testIsSystem()
+    {
+        self::assertFalse($this->shippingOrigin->isSystem());
+        $this->shippingOrigin->setSystem(true);
+        self::assertTrue($this->shippingOrigin->isSystem());
     }
 }

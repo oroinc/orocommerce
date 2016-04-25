@@ -14,3 +14,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    orob2b_shipping.shipping_origin.provider:
+        class: OroB2B\Bundle\ShippingBundle\Provider\ShippingOriginProvider
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.global'
+            - '@orob2b_shipping.factory.shipping_origin_model_factory'
