@@ -34,8 +34,7 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
             ->setParameter('now', $now)
             ->setParameter('activity', false);
 
-        $var = $qb->getQuery()->getResult();
-        return $var;
+        return $qb->getQuery()->getResult();
     }
 
     /**
