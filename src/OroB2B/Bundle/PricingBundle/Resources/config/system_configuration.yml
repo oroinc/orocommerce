@@ -57,11 +57,16 @@ oro_system_configuration:
                     scheduled: orob2b.pricing.system_configuration.fields.price_lists_update_mode.choices.scheduled.label
                     real_time: orob2b.pricing.system_configuration.fields.price_lists_update_mode.choices.real_time.label
         oro_b2b_pricing.offset_of_processing_cpl_prices:
-            data_type: integer
-            type: integer
+            data_type: float
+            type: number
             options:
                 label: orob2b.pricing.system_configuration.fields.offset_of_processing_cpl_prices.label
                 tooltip: orob2b.pricing.system_configuration.fields.offset_of_processing_cpl_prices.tooltip
+                constraints:
+                    - NotBlank: ~
+                    - 'OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero': ~
+                    - Type:
+                        type: float
 
     tree:
         system_configuration:
