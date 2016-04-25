@@ -14,6 +14,7 @@ define([
             addToShoppingListButtonSelector: '.add-to-shopping-list-button',
             addButtonEvent: 'shopping-list:created',
             updateButtonEvent: 'shopping-list:updated',
+            updateButtonLabel: true,
             buttonTemplate: '',
             buttonRemoveTemplate: '',
             defaultClass: '',
@@ -121,7 +122,7 @@ define([
         },
 
         toggleButtonsClass: function() {
-            if (!this.product) {
+            if (!this.product || !this.options.updateButtonLabel) {
                 return;
             }
             if (_.isEmpty(this.product.lineItems)) {
@@ -133,7 +134,7 @@ define([
 
         setButtonLabel: function($main) {
             var self = this;
-            if (!this.product) {
+            if (!this.product || !this.options.updateButtonLabel) {
                 return;
             }
             var shoppingList = $main.data('shoppinglist');
@@ -165,7 +166,7 @@ define([
         },
 
         toggleRemoveButton: function() {
-            if (!this.product) {
+            if (!this.product || !this.options.updateButtonLabel) {
                 return;
             }
 

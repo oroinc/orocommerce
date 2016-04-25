@@ -116,6 +116,7 @@
             'widgetModule': 'orob2bshoppinglist/js/content-processor/add-to-shopping-list-dropdown-button',
             'widgetName': 'addToShoppingListDropdownButtonProcessor',
             'addButtonEvent': 'shopping-list:created',
+            'updateButtonLabel': options.updateButtonLabel is defined ? options.updateButtonLabel : true,
             'buttonTemplate': buttons.buttonTemplate(options.current),
             'buttonRemoveTemplate': options.remove is defined ? buttons.buttonTemplate(options.remove) : '',
             'truncateLength': 15
