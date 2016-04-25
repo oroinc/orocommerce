@@ -6,7 +6,7 @@ use OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodSupports;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
-class PaymentMethodEnabledTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
 {
     const PAYMENT_METHOD_KEY = 'payment_method';
     const ACTION_NAME_KEY = 'action';
@@ -58,8 +58,11 @@ class PaymentMethodEnabledTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider evaluateDataProvider
+     * @param array $data
+     * @param bool $supportsData
+     * @param bool $expected
      */
-    public function testEvaluate($data, $supportsData, $expected)
+    public function testEvaluate(array $data, $supportsData, $expected)
     {
         $context = new \stdClass();
         $errors = $this->getMockForAbstractClass('Doctrine\Common\Collections\Collection');

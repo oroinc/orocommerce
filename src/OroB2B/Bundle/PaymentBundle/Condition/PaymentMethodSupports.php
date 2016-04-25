@@ -10,11 +10,11 @@ use Oro\Component\ConfigExpression\Exception;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
 /**
- * Check payment method enabled
+ * Check payment method supports action
  * Usage:
  * @payment_method_supports:
  *      payment_method: 'payment_term'
- *      action: 'method name'
+ *      action: 'validate'
  */
 class PaymentMethodSupports extends AbstractCondition implements ContextAccessorAwareInterface
 {
@@ -72,7 +72,6 @@ class PaymentMethodSupports extends AbstractCondition implements ContextAccessor
         }
 
         return false;
-
     }
 
     /** {@inheritdoc} */
