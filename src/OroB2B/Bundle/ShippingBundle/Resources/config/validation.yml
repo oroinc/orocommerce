@@ -1,0 +1,14 @@
+OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin:
+    properties:
+        country:
+            - NotBlank: ~
+            - Valid: ~
+        region:
+            - NotBlank: ~
+            - Valid: ~
+        postalCode:
+            - NotBlank: ~
+        city:
+            - NotBlank: ~
+        street:
+            - NotBlank: ~
