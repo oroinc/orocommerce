@@ -27,25 +27,25 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <% var shownUnit = '' %>
-                    <% _.each(model.prices, function(price) { %>
-                        <% if (shownUnit !== price.unit) { %>
+                    <% var addNewLine = false %>
+                    <% var modelPrices = _.sortBy(model.prices, 'quantity'); %>
+                    <% _.each(model.product_units, function(label, key) { %>
+                        <% var prices = _.filter(modelPrices, function(price){return price.unit === key}); %>
+                        <% if (prices.length) { %>
                             <tr>
                                 <td colspan="2">
-                                    <%= shownUnit ? '<br/>' : '' %>
-                                    <b><%= price.formatted_unit %></b>
+                                    <%= addNewLine ? '<br/>' : '' %>
+                                    <b><%= label %></b>
                                 </td>
                             </tr>
-                            <% shownUnit = price.unit %>
+                            <% addNewLine = true %>
+                            <% _.each(prices, function(price) { %>
+                                <tr>
+                                    <td><%= price.quantity %></td>
+                                    <td><%= price.formatted_price %></td>
+                                </tr>
+                            <% }) %>
                         <% } %>
-                        <tr>
-                            <td>
-                                <%= price.quantity %>
-                            </td>
-                            <td>
-                                <%= price.formatted_price %>
-                            </td>
-                        </tr>
                     <% }) %>
                 </tbody>
             </table>
