@@ -60,21 +60,18 @@ class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
         $this->totalsProvider->expects($this->once())->method('getSubtotals')->willReturn($subtotals);
         $this->lineItemSubtotalProvider->expects($this->any())->method('getRowTotal')->willReturn($subtotals[0]);
         $order = new Order();
-        $lineItem = new OrderLineItem();
+
         $currency = 'UAH';
         $quantity = 22;
         $priceValue = 123;
         $name = 'Item Name';
         $product = new Product();
-        $lineItem->setCurrency($currency);
-        $lineItem->setQuantity($quantity);
-        $lineItem->setPrice((new Price())->setCurrency($currency)->setValue($priceValue));
-        $lineItem->setProductSku($name);
-        $lineItem->setProduct($product);
-        $order->addLineItem($lineItem);
+        $order->addLineItem($this->createLineItem($currency, $quantity, $priceValue, $name, $product));
+
         $result = $this->extension->getOrderLineItems($order);
         $this->assertCount(1, $result['lineItems']);
         $this->assertCount(2, $result['subtotals']);
+
         $lineItem = $result['lineItems'][0];
         $this->assertEquals($lineItem['product'], $product);
         /** @var Price $price */
@@ -82,16 +79,38 @@ class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($price->getValue(), $priceValue);
         $this->assertEquals($price->getCurrency(), $currency);
         $this->assertEquals($lineItem['quantity'], $quantity);
+
         /** @var Subtotal $subtotal */
         $subtotal = $lineItem['subtotal'];
         $this->assertEquals($subtotal->getAmount(), 321);
         $this->assertEquals($subtotal->getCurrency(), $currency);
         $this->assertNull($lineItem['unit']);
-        $subtotal = $result['subtotals'][0];
-        $this->assertEquals($subtotal['label'], 'label2');
+
+        $firstSubtotal = $result['subtotals'][0];
+        $this->assertEquals($firstSubtotal['label'], 'label2');
         /** @var Price $totalPrice */
-        $totalPrice = $subtotal['totalPrice'];
+        $totalPrice = $firstSubtotal['totalPrice'];
         $this->assertEquals($totalPrice->getValue(), '321');
         $this->assertEquals($totalPrice->getCurrency(), 'UAH');
+    }
+
+    /**
+     * @param string $currency
+     * @param float $quantity
+     * @param float $priceValue
+     * @param string $name
+     * @param Product $product
+     * @return OrderLineItem
+     */
+    protected function createLineItem($currency, $quantity, $priceValue, $name, Product $product)
+    {
+        $lineItem = new OrderLineItem();
+        $lineItem->setCurrency($currency);
+        $lineItem->setQuantity($quantity);
+        $lineItem->setPrice((new Price())->setCurrency($currency)->setValue($priceValue));
+        $lineItem->setProductSku($name);
+        $lineItem->setProduct($product);
+
+        return $lineItem;
     }
 }

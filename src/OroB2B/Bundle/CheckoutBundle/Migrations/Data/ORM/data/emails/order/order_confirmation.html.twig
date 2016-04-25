@@ -24,20 +24,20 @@
     {{ payment_methods[0] }}
 {% elseif payment_methods|length > 1 %}
     <h4>Payment Methods:</h4>
-    {{ payment_methods|join(',') }}
+    {{ payment_methods|join(', ') }}
 {% endif %}
 
 {% if entity.shipUntil or entity.customerNotes %}
     <h4>Additional Information</h4>
-{% endif %}
 
-{% if entity.shipUntil %}
-    <strong>Do Not Ship Later Than: </strong>{{ entity.shipUntil|oro_format_date }}
-{% endif %}
+    {% if entity.shipUntil %}
+        <strong>Do Not Ship Later Than: </strong>{{ entity.shipUntil|oro_format_date }}
+    {% endif %}
 
-{% if entity.customerNotes %}
-    <strong>Notes: </strong>
-    <br>{{ entity.customerNotes }}
+    {% if entity.customerNotes %}
+        <strong>Notes: </strong>
+        <br>{{ entity.customerNotes }}
+    {% endif %}
 {% endif %}
 
 <table border="1">
@@ -53,9 +53,9 @@
     {% set data = order_line_items(entity) %}
     {% for item in data.lineItems %}
         <tr>
-            <td>{{ item.product }}<hr>SKU #: {{ item.product.sku }}</td>
+            <td>{{ item.product }}<br>SKU #: {{ item.product.sku }}</td>
             <td>{{ item.quantity|orob2b_format_short_product_unit_value(item.unit) }}</td>
-            <td> {{ item.price|oro_format_price }}</td>
+            <td>{{ item.price|oro_format_price }}</td>
             <td>{{ item.subtotal|oro_format_price }}</td>
         </tr>
     {% endfor %}
