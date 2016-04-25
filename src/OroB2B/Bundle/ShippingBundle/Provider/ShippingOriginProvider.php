@@ -62,17 +62,6 @@ class ShippingOriginProvider
     }
 
     /**
-     * @param Warehouse $warehouse
-     * @param ShippingOrigin $shippingOrigin
-     * @param bool $useSystem
-     */
-    public function updateWarehouseShippingOrigin(Warehouse $warehouse, ShippingOrigin $shippingOrigin, $useSystem)
-    {
-        if ($useSystem) {
-        }
-    }
-
-    /**
      * @return ShippingOrigin
      */
     public function getSystemShippingOrigin()

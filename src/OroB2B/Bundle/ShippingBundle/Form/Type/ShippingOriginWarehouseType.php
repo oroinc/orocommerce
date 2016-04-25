@@ -1,0 +1,45 @@
+<?php
+
+namespace OroB2B\Bundle\ShippingBundle\Form\Type;
+
+use Symfony\Component\Form\FormBuilderInterface;
+
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class ShippingOriginWarehouseType extends ShippingOriginType
+{
+    const NAME = 'orob2b_shipping_origin_warehouse';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('warehouse')
+            ->add('system', 'checkbox', ['label' => 'orob2b.shipping.warehouse.use_system_configuration']);
+
+        parent::buildForm($builder, $options);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(
+            [
+                'data_class' => 'OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse'
+            ]
+        );
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        //override parent
+    }
+
+    public function getName()
+    {
+        return self::NAME;
+    }
+}

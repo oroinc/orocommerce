@@ -19,15 +19,10 @@ class WarehouseShippingOriginExtension extends AbstractTypeExtension
      */
     private $shippingOriginProvider;
 
-    /**
-     * @var ShippingOriginType
-     */
-    private $shippingOriginType;
 
-    public function __construct(ShippingOriginProvider $shippingOriginProvider, ShippingOriginType $shippingOriginType)
+    public function __construct(ShippingOriginProvider $shippingOriginProvider)
     {
         $this->shippingOriginProvider = $shippingOriginProvider;
-        $this->shippingOriginType = $shippingOriginType;
     }
 
     /**
@@ -36,30 +31,22 @@ class WarehouseShippingOriginExtension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
-            'shipping_origin',
-            $this->shippingOriginType,
+            'shipping_origin_warehouse',
+            'orob2b_shipping_origin_warehouse',
             [
                 'required' => false,
-                'mapped' => false,
                 'label' => 'orob2b.tax.system_configuration.fields.use_as_base.shipping_origin.label'
             ]
         );
 
-        $builder->add(
-            'use_system_shipping_origin',
-            'checkbox',
-            ['mapped' => false, 'label' => 'Use system shipping origin address']
-        );
-
+      
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }
 
     public function postSubmit(FormEvent $formEvent)
     {
-        $data = $formEvent->getData();
-
-        gettype($data);
+        //todo impl
     }
 
     /**
