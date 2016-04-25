@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShippingBundle\Factory;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
 use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
 
 class ShippingOriginModelFactory
@@ -21,12 +22,11 @@ class ShippingOriginModelFactory
     }
 
     /**
-     *
-     * @param $values
+     * @param array $values
      *
      * @return ShippingOrigin
      */
-    public function create($values)
+    public function create(array $values)
     {
         $entity = new ShippingOrigin($values);
 

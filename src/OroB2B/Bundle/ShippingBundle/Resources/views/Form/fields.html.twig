@@ -1,34 +1,39 @@
 {% macro shipping_origin_block(form, disabled) %}
-    {% if form.vars.required %}
-        {% set message = form.vars.label|trans ~ 'oro.address.form.choose_region'|trans %}
-        {% set dataValidation = (form.vars.required ?{ NotBlank: {message : message} }:{} )|json_encode %}
-        {% set attrs = form.vars.attr|merge({'attr': {'data-validation': dataValidation, 'placeholder': form.vars.label|trans}, disabled: disabled }) %}
-    {% else %}
-        {% set attrs = {disabled: disabled } %}
-    {% endif %}
-    <div class="controls shipping-origin-address {{ form.vars.name }}">
-        {{ form_widget(form, attrs) }}
-    </div>
+    {% set attrs = {'attr': {'data-validation': (form.vars.required ? { NotBlank: null } : {})|json_encode }, disabled: disabled } %}
+    {{ form_row(form, attrs) }}
 {% endmacro %}
 
+{% block _shipping_origin_orob2b_shipping___shipping_origin_row %}
+    <div class="controls control-group shipping-origin-address">
+        {{ form_widget(form) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+
 {% block _shipping_origin_orob2b_shipping___shipping_origin_value_country_row %}
-    <div class="control-group">{{ _self.shipping_origin_block(form, use_parent_scope_value) }}</div>
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
+
 {% block _shipping_origin_orob2b_shipping___shipping_origin_value_region_row %}
-    <div class="control-group">{{ _self.shipping_origin_block(form, use_parent_scope_value) }}</div>
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
+
 {% block _shipping_origin_orob2b_shipping___shipping_origin_value_region_text_row %}
-    <div class="control-group">{{ _self.shipping_origin_block(form, use_parent_scope_value) }}</div>
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
+
 {% block _shipping_origin_orob2b_shipping___shipping_origin_value_postalCode_row %}
-    <div class="control-group">{{ _self.shipping_origin_block(form, use_parent_scope_value) }}</div>
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
+
 {% block _shipping_origin_orob2b_shipping___shipping_origin_value_city_row %}
-    <div class="control-group">{{ _self.shipping_origin_block(form, use_parent_scope_value) }}</div>
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
+
 {% block _shipping_origin_orob2b_shipping___shipping_origin_value_street_row %}
-    <div class="control-group">{{ _self.shipping_origin_block(form, use_parent_scope_value) }}</div>
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
+
 {% block _shipping_origin_orob2b_shipping___shipping_origin_value_street2_row %}
-    <div class="control-group">{{ _self.shipping_origin_block(form, use_parent_scope_value) }}</div>
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
