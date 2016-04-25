@@ -15,7 +15,7 @@ shortDescriptions:
 empty:
     fileName: empty.csv
     contextErrors:
-        - "Error in row #1. SKU: This value should not be blank."
+        - "Error in row #1. SKU: SKU should not be blank."
         - "Error in row #1. Inventory Status Id: This value should not be blank."
 inventory_status:
     fileName: inventory_status.csv
@@ -40,20 +40,20 @@ unit_code_precision:
     fileName: unit_code_precision.csv
     contextErrors:
         - 'Error in row #1. Not found entity "Product Unit"'
-        - "Error in row #1. unitPrecisions[0].unit: This value should not be blank."
+        - "Error in row #1. unitPrecisions[0].unit: Unit should not be blank."
         - "Error in row #1. unitPrecisions[0].precision: This value should be a valid number."
         - "Error in row #1. unitPrecisions[0].precision: This value should be integer number."
         - 'Error in row #2. Not found entity "Product Unit"'
-        - "Error in row #2. unitPrecisions[0].unit: This value should not be blank."
+        - "Error in row #2. unitPrecisions[0].unit: Unit should not be blank."
         - "Error in row #2. unitPrecisions[0].precision: This value should be 10 or less."
         - 'Error in row #3. Not found entity "Product Unit"'
-        - "Error in row #3. unitPrecisions[0].unit: This value should not be blank."
+        - "Error in row #3. unitPrecisions[0].unit: Unit should not be blank."
         - "Error in row #4. unitPrecisions[0].precision: This value should be a valid number."
         - "Error in row #4. unitPrecisions[0].precision: This value should be integer number."
         - "Error in row #5. unitPrecisions[0].precision: This value should be 10 or less."
-        - "Error in row #7. unitPrecisions[0].unit: This value should not be blank."
+        - "Error in row #7. unitPrecisions[0].unit: Unit should not be blank."
         - "Error in row #7. unitPrecisions[0].precision: This value should be a valid number."
         - "Error in row #7. unitPrecisions[0].precision: This value should be integer number."
-        - "Error in row #8. unitPrecisions[0].unit: This value should not be blank."
+        - "Error in row #8. unitPrecisions[0].unit: Unit should not be blank."
         - "Error in row #8. unitPrecisions[0].precision: This value should be 10 or less."
-        - "Error in row #9. unitPrecisions[0].unit: This value should not be blank."
+        - "Error in row #9. unitPrecisions[0].unit: Unit should not be blank."

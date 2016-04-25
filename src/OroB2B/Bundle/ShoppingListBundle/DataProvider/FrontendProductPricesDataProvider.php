@@ -63,8 +63,8 @@ class FrontendProductPricesDataProvider
         $result = [];
         foreach ($prices as $key => $price) {
             $identifier = explode('-', $key);
-            $productId = reset($identifier);
-            $result[$productId] = $price;
+            list($productId, $unitId) = $identifier;
+            $result[$productId][$unitId] = $price;
         }
 
         return $result;

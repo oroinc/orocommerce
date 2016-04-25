@@ -60,8 +60,8 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->createOrob2BCmbPlToPlTable($schema);
         $this->createOroB2BPriceListChangeTriggerTable($schema);
         $this->createOroB2BProductPriceChangeTriggerTable($schema);
-        $this->createOrob2BPriceListScheduleTable($schema);
-        $this->createOrob2BCplActivationRuleTable($schema);
+        $this->createOroB2BPriceListScheduleTable($schema);
+        $this->createOroB2BCplActivationRuleTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BPriceListCurrencyForeignKeys($schema);
@@ -80,8 +80,8 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->addOrob2BCmbPlToPlForeignKeys($schema);
         $this->addOrob2BPriceListChangeTriggerForeignKeys($schema);
         $this->addOroB2BProductPriceChangeTriggerForeignKeys($schema);
-        $this->addOrob2BPriceListScheduleForeignKeys($schema);
-        $this->addOrob2BCplActivationRuleForeignKeys($schema);
+        $this->addOroB2BPriceListScheduleForeignKeys($schema);
+        $this->addOroB2BCplActivationRuleForeignKeys($schema);
     }
 
     /**
@@ -377,7 +377,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function createOrob2BPriceListScheduleTable(Schema $schema)
+    protected function createOroB2BPriceListScheduleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list_schedule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -393,13 +393,15 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function createOrob2BCplActivationRuleTable(Schema $schema)
+    protected function createOroB2BCplActivationRuleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_cpl_activation_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => false]);
+        $table->addColumn('activate_at', 'datetime', ['notnull' => false]);
         $table->addColumn('expire_at', 'datetime', ['notnull' => false]);
+        $table->addColumn('is_active', 'boolean', []);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['combined_price_list_id'], 'IDX_E71CEADAF4E1C8D4', []);
         $table->addIndex(['full_combined_price_list_id'], 'IDX_E71CEADA579D9EF', []);
@@ -820,7 +822,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function addOrob2BPriceListScheduleForeignKeys(Schema $schema)
+    protected function addOroB2BPriceListScheduleForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list_schedule');
         $table->addForeignKeyConstraint(
@@ -836,7 +838,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function addOrob2BCplActivationRuleForeignKeys(Schema $schema)
+    protected function addOroB2BCplActivationRuleForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_cpl_activation_rule');
         $table->addForeignKeyConstraint(

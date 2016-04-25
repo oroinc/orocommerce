@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="orob2b_price_list_schedule")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository")
  */
 class PriceListSchedule
 {

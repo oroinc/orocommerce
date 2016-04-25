@@ -34,6 +34,10 @@ class SecureTokenIdentifierTest extends AbstractOptionTest
 
     public function testGenerateUnique()
     {
+        if (extension_loaded('xdebug')) {
+            $this->markTestSkipped('No need to run with xdebug');
+        }
+
         $i = 0;
         $iterations = 1000000;
         $tokens = new \SplDoublyLinkedList();

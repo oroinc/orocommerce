@@ -22,20 +22,49 @@
 </div>
 
 {% macro schedule(schedules) %}
-    <table class="grid table-hover table table-bordered">
-        <thead>
-        <tr>
-            <th><span>{{ 'orob2b.pricing.pricelist_schedule.active_at.label'|trans }}</span></th>
-            <th><span>{{ 'orob2b.pricing.pricelist_schedule.deactivate_at.label'|trans }}</span></th>
-        </tr>
-        </thead>
-        <tbody>
-            {% for schedule in schedules %}
-                <tr>
-                    <td>{% if schedule.activeAt is not null %}{{ schedule.activeAt|oro_format_datetime }}{% endif %}</td>
-                    <td>{% if schedule.deactivateAt is not null %}{{ schedule.deactivateAt|oro_format_datetime }}{% endif %}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% set now = date('now', 'UTC') %}
+    <ul>
+        {% set activityShown = false %}
+        {% for schedule in schedules %}
+            {% if schedule.activeAt %}
+                {% if schedule.activeAt < now %}
+                    <li>
+                        {{ 'orob2b.pricing.pricelist_schedule.was_activated'|trans({'%date%': schedule.activeAt|oro_format_datetime}) }}
+                    </li>
+                    {% if not schedule.deactivateAt or (schedule.deactivateAt and schedule.deactivateAt > now) %}
+                        {% set activityShown = true %}
+                        <li>
+                            {{ 'orob2b.pricing.pricelist_schedule.active_now'|trans }}
+                        </li>
+                    {% endif %}
+                    {% if schedule.deactivateAt %}
+                        {% if schedule.deactivateAt > now %}
+                        <li>
+                            {{ 'orob2b.pricing.pricelist_schedule.will_be_deacitivated'|trans({'%date%': schedule.activeAt|oro_format_datetime}) }}
+                        </li>
+                        {% else %}
+                            <li>
+                                {{ 'orob2b.pricing.pricelist_schedule.was_deactivated'|trans({'%date%': schedule.activeAt|oro_format_datetime}) }}
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    {% if not activityShown %}
+                        {% set activityShown = true %}
+                        <li>
+                            {{ 'orob2b.pricing.pricelist_schedule.not_active_now'|trans }}
+                        </li>
+                    {% endif %}
+                    <li>
+                        {{ 'orob2b.pricing.pricelist_schedule.will_be_acitivated'|trans({'%date%': schedule.activeAt|oro_format_datetime}) }}
+                    </li>
+                    {% if schedule.deactivateAt %}
+                        <li>
+                            {{ 'orob2b.pricing.pricelist_schedule.will_be_deacitivated'|trans({'%date%': schedule.activeAt|oro_format_datetime}) }}
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </ul>
 {% endmacro %}

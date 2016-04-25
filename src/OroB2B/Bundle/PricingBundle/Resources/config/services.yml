@@ -176,6 +176,13 @@ services:
             - '@doctrine'
             - '@orob2b_pricing.resolver.combined_product_price_resolver'
 
+    orob2b_pricing.builder.combined_price_list_activation_plan_builder:
+        class: 'OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@orob2b_pricing.resolver.price_list_schedule_resolver'
+            - '@orob2b_pricing.provider.combined_price_list'
+
     orob2b_pricing.resolver.price_list_schedule_resolver:
         class: OroB2B\Bundle\PricingBundle\Resolver\PriceListScheduleResolver
 
