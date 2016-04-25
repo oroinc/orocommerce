@@ -45,10 +45,10 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     /**
      * @dataProvider CPLSwitchingDataProvider
      * @param array $rules
-     * @param $cplRelationsExpected
-     * @param $now
+     * @param array $cplRelationsExpected
+     * @param \DateTime $now
      */
-    public function testCPLSwitching(array $rules, $cplRelationsExpected, $now)
+    public function testCPLSwitching(array $rules, $cplRelationsExpected, \DateTime $now)
     {
         $cplRelationsEntityNames = [
             'OroB2BPricingBundle:CombinedPriceListToAccount',

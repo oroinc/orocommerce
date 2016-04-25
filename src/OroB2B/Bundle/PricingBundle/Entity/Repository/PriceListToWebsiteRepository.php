@@ -9,7 +9,6 @@ use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -94,22 +93,5 @@ class PriceListToWebsiteRepository extends EntityRepository
             ->setParameter('website', $website)
             ->getQuery()
             ->execute();
-    }
-
-    /**
-     * @param $rules CombinedPriceListActivationRule[]
-     */
-    public function updateActuality($rules)
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->update($this->getEntityName(), 'relation')
-            ->set('relation.priceList', ':actualPriceList')
-            ->where('relation.fullChainPriceList = :fullPriceList');
-        foreach ($rules as $rule) {
-            $qb->setParameter('actualPriceList', $rule->getCombinedPriceList())
-                ->setParameter('fullPriceList', $rule->getFullChainPriceList())
-                ->getQuery()
-                ->execute();
-        }
     }
 }

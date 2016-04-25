@@ -14,6 +14,7 @@ class CombinedPriceListScheduleResolver
      * @var ManagerRegistry
      */
     protected $registry;
+
     /**
      * @var ConfigManager
      */
@@ -40,7 +41,7 @@ class CombinedPriceListScheduleResolver
         $rulesManager = $this->registry->getManagerForClass('OroB2BPricingBundle:CombinedPriceListActivationRule');
         $ruleRepo = $rulesManager->getRepository('OroB2BPricingBundle:CombinedPriceListActivationRule');
         if (!$time) {
-            $time = new \DateTime();
+            $time = new \DateTime('now', new \DateTimeZone('UTC'));
         }
         $ruleRepo->deleteExpiredRules($time);
         $newRulesToApply = $ruleRepo->getNewActualRules($time);

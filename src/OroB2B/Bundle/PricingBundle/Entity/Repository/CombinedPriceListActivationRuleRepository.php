@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 
 class CombinedPriceListActivationRuleRepository extends EntityRepository
@@ -23,7 +24,7 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
 
     /**
      * @param \DateTime $now
-     * @return \OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule[]
+     * @return CombinedPriceListActivationRule[]
      */
     public function getNewActualRules(\DateTime $now)
     {

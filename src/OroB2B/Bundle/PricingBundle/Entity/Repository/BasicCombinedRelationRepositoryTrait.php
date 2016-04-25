@@ -15,9 +15,9 @@ use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 trait BasicCombinedRelationRepositoryTrait
 {
     /**
-     * @param $rules CombinedPriceListActivationRule[]
+     * @param CombinedPriceListActivationRule[] $rules
      */
-    public function updateActuality($rules)
+    public function updateActuality(array $rules)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->update($this->getEntityName(), 'relation')
