@@ -14,3 +14,5 @@ orob2b:
             city.label:          City
             street.label:        Street Address 1
             street2.label:       Street Address 2
+        warehouse:
+            use_system_configuration: Use System Defined Shipping Origin
