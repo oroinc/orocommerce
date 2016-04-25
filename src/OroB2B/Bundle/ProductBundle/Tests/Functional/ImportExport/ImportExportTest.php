@@ -160,7 +160,7 @@ class ImportExportTest extends WebTestCase
             $data['url'],
             [],
             [],
-            $this->client->generateNoHashNavigationHeader()
+            $this->generateNoHashNavigationHeader()
         );
 
         $result = $this->client->getResponse();

@@ -77,7 +77,7 @@ class FrontendControllerTest extends WebTestCase
             $this->getUrl('oro_user_security_login'),
             [],
             [],
-            $this->client->generateNoHashNavigationHeader()
+            $this->generateNoHashNavigationHeader()
         );
         $this->assertEquals('Login', $crawler->filter('h2.title')->html());
 
