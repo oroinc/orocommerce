@@ -11,11 +11,6 @@ layout:
                 - 'orob2b.frontend.order.entity_plural_label'
 
         - '@setOption':
-            id: page_title
-            optionName: text
-            optionValue: 'orob2b.frontend.order.entity_plural_label'
-
-        - '@setOption':
             id: content
             optionName: class_prefix
             optionValue: 'orders'
@@ -24,6 +19,13 @@ layout:
             id: datagrid_toolbar_button_container
             optionName: visible
             optionValue: true
+
+        - '@add':
+            id: orders_title
+            parentId: content
+            blockType: text
+            options:
+                text: 'orob2b.frontend.order.past_orders.label'
 
         - '@add':
             id: orders
