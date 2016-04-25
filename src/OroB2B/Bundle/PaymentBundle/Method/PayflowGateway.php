@@ -12,6 +12,9 @@ use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class PayflowGateway implements PaymentMethodInterface
 {
     use ConfigTrait;
@@ -43,8 +46,8 @@ class PayflowGateway implements PaymentMethodInterface
     {
         $actionName = $paymentTransaction->getAction();
 
-        if (!method_exists($this, $actionName)) {
-            throw new \InvalidArgumentException(sprintf('Unknown action "%s"', $actionName));
+        if (!$this->supports($actionName)) {
+            throw new \InvalidArgumentException(sprintf('Unsupported action "%s"', $actionName));
         }
 
         $this->gateway->setTestMode($this->isTestMode());
@@ -128,15 +131,24 @@ class PayflowGateway implements PaymentMethodInterface
      */
     public function purchase(PaymentTransaction $paymentTransaction)
     {
-        $options = $this->getOptions($paymentTransaction);
+        $options = $this->getPaymentOptions($paymentTransaction);
+
+        $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
+        if (!$sourcePaymentTransaction) {
+            $options = array_merge($options, $this->getSecureTokenOptions($paymentTransaction));
+        }
 
         $paymentTransaction
             ->setRequest($options)
             ->setAction($this->getPurchaseAction());
 
-        $this->execute($paymentTransaction);
+        $response = $this->execute($paymentTransaction);
 
-        return $this->secureTokenResponse($paymentTransaction);
+        if (!$sourcePaymentTransaction) {
+            return $this->secureTokenResponse($paymentTransaction);
+        }
+
+        return $response;
     }
 
     /**
@@ -145,15 +157,23 @@ class PayflowGateway implements PaymentMethodInterface
      */
     public function validate(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setAmount(self::ZERO_AMOUNT);
+        $paymentTransaction
+            ->setAmount(self::ZERO_AMOUNT)
+            ->setCurrency(Option\Currency::US_DOLLAR);
 
-        $options = $this->getOptions($paymentTransaction);
+        $options = array_merge(
+            $this->getPaymentOptions($paymentTransaction),
+            $this->getSecureTokenOptions($paymentTransaction)
+        );
 
         $paymentTransaction
             ->setRequest($options)
             ->setAction(PaymentMethodInterface::AUTHORIZE);
 
         $this->execute($paymentTransaction);
+
+        $paymentTransaction
+            ->setAction(PaymentMethodInterface::VALIDATE);
 
         return $this->secureTokenResponse($paymentTransaction);
     }
@@ -177,15 +197,32 @@ class PayflowGateway implements PaymentMethodInterface
      * @param PaymentTransaction $paymentTransaction
      * @return array
      */
-    protected function getOptions(PaymentTransaction $paymentTransaction)
+    protected function getPaymentOptions(PaymentTransaction $paymentTransaction)
+    {
+        $options = [
+            Option\Amount::AMT => round($paymentTransaction->getAmount(), 2),
+            Option\Tender::TENDER => Option\Tender::CREDIT_CARD,
+            Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
+        ];
+
+        if ($paymentTransaction->getSourcePaymentTransaction()) {
+            $options[Option\OriginalTransaction::ORIGID] =
+                $paymentTransaction->getSourcePaymentTransaction()->getReference();
+        }
+
+        return $options;
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function getSecureTokenOptions(PaymentTransaction $paymentTransaction)
     {
         return [
             Option\SecureTokenIdentifier::SECURETOKENID => Option\SecureTokenIdentifier::generate(),
             Option\CreateSecureToken::CREATESECURETOKEN => true,
-            Option\Amount::AMT => round($paymentTransaction->getAmount(), 2),
             Option\TransparentRedirect::SILENTTRAN => true,
-            Option\Tender::TENDER => Option\Tender::CREDIT_CARD,
-            Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
             Option\ReturnUrl::RETURNURL => $this->router->generate(
                 'orob2b_payment_callback_return',
                 [
@@ -246,5 +283,15 @@ class PayflowGateway implements PaymentMethodInterface
     public function getType()
     {
         return static::TYPE;
+    }
+
+    /** {@inheritdoc} */
+    public function supports($actionName)
+    {
+        return in_array(
+            $actionName,
+            [self::AUTHORIZE, self::CAPTURE, self::CHARGE, self::PURCHASE, self::VALIDATE],
+            true
+        );
     }
 }

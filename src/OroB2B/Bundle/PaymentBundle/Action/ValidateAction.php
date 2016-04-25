@@ -15,7 +15,8 @@ class ValidateAction extends AbstractPaymentMethodAction
 
         $resolver
             ->setRequired('paymentMethod')
-            ->addAllowedTypes('paymentMethod', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface']);
+            ->addAllowedTypes('paymentMethod', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface'])
+            ->remove(['amount', 'currency']);
     }
 
     /** {@inheritdoc} */
@@ -25,7 +26,8 @@ class ValidateAction extends AbstractPaymentMethodAction
 
         $resolver
             ->setRequired('paymentMethod')
-            ->addAllowedTypes('paymentMethod', 'string');
+            ->addAllowedTypes('paymentMethod', 'string')
+            ->remove(['amount', 'currency']);
     }
 
     /**
@@ -40,10 +42,6 @@ class ValidateAction extends AbstractPaymentMethodAction
             PaymentMethodInterface::VALIDATE,
             $options['object']
         );
-
-        $validatePaymentTransaction
-            ->setAmount($options['amount'])
-            ->setCurrency($options['currency']);
 
         if (!empty($options['transactionOptions'])) {
             $validatePaymentTransaction->setTransactionOptions($options['transactionOptions']);

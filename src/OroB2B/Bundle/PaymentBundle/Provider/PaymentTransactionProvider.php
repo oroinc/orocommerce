@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PaymentBundle\Provider;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Psr\Log\LoggerAwareTrait;
@@ -63,7 +64,7 @@ class PaymentTransactionProvider
                     'frontendOwner' => $this->getAccountUser()
                 ]
             ),
-            $orderBy
+            array_merge(['id' => Criteria::DESC], $orderBy)
         );
     }
 
@@ -123,6 +124,23 @@ class PaymentTransactionProvider
                 'action' => PaymentMethodInterface::AUTHORIZE,
                 'amount' => round($amount, 2),
                 'currency' => $currency,
+                'frontendOwner' => $this->getAccountUser()
+            ]
+        );
+    }
+
+    /**
+     * @param object $object
+     * @return PaymentTransaction
+     */
+    public function getActiveValidatePaymentTransaction($object)
+    {
+        return $this->getPaymentTransaction(
+            $object,
+            [
+                'active' => true,
+                'successful' => true,
+                'action' => PaymentMethodInterface::VALIDATE,
                 'frontendOwner' => $this->getAccountUser()
             ]
         );

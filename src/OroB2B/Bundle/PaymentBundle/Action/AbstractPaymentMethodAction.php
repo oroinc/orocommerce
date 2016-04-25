@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\PaymentBundle\Action;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Model\ContextAccessor;
@@ -90,14 +89,14 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 
         $resolver
             ->setRequired(['object', 'amount', 'currency'])
-            ->setDefined(['transactionOptions', 'attribute'])
+            ->setDefined(['transactionOptions', 'attribute', 'conditions'])
             ->setDefault('attribute', null)
             ->setDefault('transactionOptions', [])
             ->addAllowedTypes('object', ['object', $propertyPathType])
             ->addAllowedTypes('amount', ['float', 'string', $propertyPathType])
             ->addAllowedTypes('currency', ['string', $propertyPathType])
             ->setAllowedTypes('transactionOptions', ['array', $propertyPathType])
-            ->setAllowedTypes('attribute', $propertyPathType);
+            ->setAllowedTypes('attribute', ['null', $propertyPathType]);
     }
 
     /**
@@ -127,6 +126,10 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 
         $definedOptions = $this->getOptionsResolver()->getDefinedOptions();
         foreach ($definedOptions as $definedOption) {
+            if (!array_key_exists($definedOption, $this->options)) {
+                continue;
+            }
+
             $values[$definedOption] = $this->contextAccessor->getValue($context, $this->options[$definedOption]);
             if (is_array($values[$definedOption])) {
                 foreach ($values[$definedOption] as &$value) {
