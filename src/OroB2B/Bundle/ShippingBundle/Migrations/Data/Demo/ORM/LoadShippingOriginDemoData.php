@@ -17,8 +17,6 @@ use OroB2B\Bundle\WarehouseBundle\Migrations\Data\Demo\ORM\LoadWarehouseDemoData
 
 class LoadShippingOriginDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    use UserUtilityTrait;
-
     /** @var ContainerInterface */
     protected $container;
 
