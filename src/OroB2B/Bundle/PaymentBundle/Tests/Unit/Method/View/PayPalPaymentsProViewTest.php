@@ -88,18 +88,22 @@ class PayPalPaymentsProViewTest extends \PHPUnit_Framework_TestCase
             ->withConsecutive($data['configsData'][0], $data['configsData'][1])
             ->willReturnOnConsecutiveCalls($data['returnConfigs'][0], $data['returnConfigs'][1]);
 
-        $actual = [
+        $expected = [
             'formView' => $formView,
             'allowedCreditCards' => $data['allowedCards'],
         ];
 
         $entity = new \stdClass();
 
-        /** @var PaymentTransaction $transactionEntity */
-        $transactionEntity = $this->getEntity(
-            'OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction',
-            $data['transactionEntityOptions']
-        );
+        $transactionEntity = null;
+
+        if ($data['transactionEntityOptions'] !== null) {
+            /** @var PaymentTransaction $transactionEntity */
+            $transactionEntity = $this->getEntity(
+                'OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction',
+                $data['transactionEntityOptions']
+            );
+        }
 
         if ($data['zero_amount']) {
             $this->payflowGatewayPaymentTransactionProvider->expects($this->once())
@@ -108,17 +112,17 @@ class PayPalPaymentsProViewTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($transactionEntity);
 
             if ($transactionEntity) {
-                $actual = array_merge(
-                    $actual,
+                $expected = array_merge(
+                    $expected,
                     [
                         'authorizeTransaction' => $transactionEntity->getId(),
-                        'acct' => '1234'
+                        'acct' => $data['last4']
                     ]
                 );
             }
         }
 
-        $this->assertEquals($actual, $this->methodView->getOptions(['entity' => $entity]));
+        $this->assertEquals($expected, $this->methodView->getOptions(['entity' => $entity]));
     }
 
     /**
@@ -146,7 +150,8 @@ class PayPalPaymentsProViewTest extends \PHPUnit_Framework_TestCase
                     'transactionEntityOptions' => [
                         'id' => 5,
                         'response' => [Account::ACCT => '3211234']
-                    ]
+                    ],
+                    'last4' => '1234'
                 ]
             ],
         ];

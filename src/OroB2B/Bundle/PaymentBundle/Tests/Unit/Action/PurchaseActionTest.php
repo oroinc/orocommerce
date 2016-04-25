@@ -134,6 +134,24 @@ class PurchaseActionTest extends AbstractActionTest
                     'testResponse' => 'testResponse',
                 ]
             ],
+            'without transactionOptions' => [
+                'data' => [
+                    'options' => [
+                        'object' => new \stdClass(),
+                        'amount' => 100.0,
+                        'currency' => 'USD',
+                        'attribute' => new PropertyPath('test'),
+                        'paymentMethod' => self::PAYMENT_METHOD,
+                    ],
+                    'response' => ['testResponse' => 'testResponse'],
+                ],
+                'expected' => [
+                    'paymentMethod' => self::PAYMENT_METHOD,
+                    'errorUrl' => 'orob2b_payment_callback_error',
+                    'returnUrl' => 'orob2b_payment_callback_return',
+                    'testResponse' => 'testResponse',
+                ]
+            ],
             'throw exception' => [
                 'data' => [
                     'options' => [

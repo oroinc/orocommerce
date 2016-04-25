@@ -84,7 +84,7 @@ class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
             ->with(CreditCardType::NAME)
             ->willReturn($form);
         
-        $actual = [
+        $expected = [
             'formView' => $formView,
             'allowedCreditCards' => $data['allowedCards'],
         ];
@@ -95,11 +95,15 @@ class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
             ->willReturnOnConsecutiveCalls($data['returnConfigs'][0], $data['returnConfigs'][1]);
         $entity = new \stdClass();
 
-        /** @var PaymentTransaction $transactionEntity */
-        $transactionEntity = $this->getEntity(
-            'OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction',
-            $data['transactionEntityOptions']
-        );
+        $transactionEntity = null;
+
+        if ($data['transactionEntityOptions'] !== null) {
+            /** @var PaymentTransaction $transactionEntity */
+            $transactionEntity = $this->getEntity(
+                'OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction',
+                $data['transactionEntityOptions']
+            );
+        }
 
         if ($data['zero_amount']) {
             $this->payflowGatewayPaymentTransactionProvider->expects($this->once())
@@ -108,17 +112,17 @@ class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($transactionEntity);
 
             if ($transactionEntity) {
-                $actual = array_merge(
-                    $actual,
+                $expected = array_merge(
+                    $expected,
                     [
                         'authorizeTransaction' => $transactionEntity->getId(),
-                        'acct' => '4567'
+                        'acct' => $data['last4']
                     ]
                 );
             }
         }
 
-        $this->assertEquals($actual, $this->methodView->getOptions(['entity' => $entity]));
+        $this->assertEquals($expected, $this->methodView->getOptions(['entity' => $entity]));
     }
 
     /**
@@ -146,7 +150,8 @@ class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
                     'transactionEntityOptions' => [
                         'id' => 5,
                         'response' => [Account::ACCT => '1234567']
-                    ]
+                    ],
+                    'last4' => '4567'
                 ]
             ],
         ];

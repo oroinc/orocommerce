@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Provider;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use Psr\Log\LoggerInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -14,8 +15,11 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
@@ -32,7 +36,7 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
     /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $repository;
 
-    /** @var  TokenStorage|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenStorage|\PHPUnit_Framework_MockObject_MockObject */
     protected $tokenStorage;
 
     protected function setUp()
@@ -81,7 +85,7 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
             ->with($expected)
             ->willReturn($result);
 
-        $this->prepareAccountUser($expected['frontendOwner']);
+        $this->prepareAccountUser($expected['frontendOwner'], $data['frontendOwnerToken']);
 
         $actual = $this->provider->getPaymentTransactions($data['entity'], $data['filter']);
         $this->assertSame($result, $actual);
@@ -104,12 +108,15 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'filter' => [
                         'testOption' => 'testOption',
                     ],
+                    'frontendOwnerToken' => $this->getMock(
+                        'Symfony\Component\Security\Core\Authentication\Token\TokenInterface'
+                    )
                 ],
                 [
                     'testOption' => 'testOption',
                     'entityClass' => $entityClass,
                     'entityIdentifier' => $entityId,
-                    'frontendOwner' => new AccountUser()
+                    'frontendOwner' => new AccountUser(),
                 ],
             ],
             [
@@ -120,12 +127,32 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'filter' => [
                         'testOption' => 'testOption',
                     ],
+                    'frontendOwnerToken' => $this->getMock(
+                        'Symfony\Component\Security\Core\Authentication\Token\TokenInterface'
+                    )
                 ],
                 [
                     'testOption' => 'testOption',
                     'entityClass' => $entityClass,
                     'entityIdentifier' => $entityId,
-                    'frontendOwner' => null
+                    'frontendOwner' => null,
+                ],
+            ],
+            [
+                [
+                    'entity' => new \stdClass(),
+                    'entityId' => $entityId,
+                    'entityClass' => $entityClass,
+                    'filter' => [
+                        'testOption' => 'testOption',
+                    ],
+                    'frontendOwnerToken' => null
+                ],
+                [
+                    'testOption' => 'testOption',
+                    'entityClass' => $entityClass,
+                    'entityIdentifier' => $entityId,
+                    'frontendOwner' => null,
                 ],
             ],
         ];
@@ -147,7 +174,7 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
             ->with($expected)
             ->willReturn($result);
 
-        $this->prepareAccountUser($expected['frontendOwner']);
+        $this->prepareAccountUser($expected['frontendOwner'], $data['frontendOwnerToken']);
 
         $actual = $this->provider->getPaymentTransaction($data['entity'], $data['filter']);
         $this->assertSame($result, $actual);
@@ -160,6 +187,7 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
     {
         $entityId = 10;
         $entityClass = 'TestClass';
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         return [
             [
@@ -170,6 +198,9 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'filter' => [
                         'testOption' => 'testOption',
                     ],
+                    'frontendOwnerToken' => $this->getMock(
+                        'Symfony\Component\Security\Core\Authentication\Token\TokenInterface'
+                    ),
                 ],
                 [
                     'testOption' => 'testOption',
@@ -177,6 +208,8 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'entityIdentifier' => $entityId,
                     'frontendOwner' => new AccountUser(),
                 ],
+            ],
+            [
                 [
                     'entity' => new \stdClass(),
                     'entityId' => $entityId,
@@ -184,6 +217,9 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'filter' => [
                         'testOption' => 'testOption',
                     ],
+                    'frontendOwnerToken' => $this->getMock(
+                        'Symfony\Component\Security\Core\Authentication\Token\TokenInterface'
+                    ),
                 ],
                 [
                     'testOption' => 'testOption',
@@ -192,6 +228,23 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'frontendOwner' => null,
                 ],
             ],
+            [
+                [
+                    'entity' => new \stdClass(),
+                    'entityId' => $entityId,
+                    'entityClass' => $entityClass,
+                    'filter' => [
+                        'testOption' => 'testOption',
+                    ],
+                    'frontendOwnerToken' => null,
+                ],
+                [
+                    'testOption' => 'testOption',
+                    'entityClass' => $entityClass,
+                    'entityIdentifier' => $entityId,
+                    'frontendOwner' => null,
+                ],
+            ]
         ];
     }
 
@@ -211,7 +264,7 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
             ->with($expected)
             ->willReturn($result);
 
-        $this->prepareAccountUser($expected['frontendOwner']);
+        $this->prepareAccountUser($expected['frontendOwner'], $data['frontendOwnerToken']);
 
         $actual = $this->provider->getActiveAuthorizePaymentTransaction(
             $data['entity'],
@@ -239,6 +292,9 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'entityClass' => $entityClass,
                     'currency' => $currency,
                     'amount' => 12.3456,
+                    'frontendOwnerToken' => $this->getMock(
+                        'Symfony\Component\Security\Core\Authentication\Token\TokenInterface'
+                    )
                 ],
                 [
                     'active' => true,
@@ -258,6 +314,29 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'entityClass' => $entityClass,
                     'currency' => $currency,
                     'amount' => 12.3456,
+                    'frontendOwnerToken' => $this->getMock(
+                        'Symfony\Component\Security\Core\Authentication\Token\TokenInterface'
+                    )
+                ],
+                [
+                    'active' => true,
+                    'successful' => true,
+                    'action' => PaymentMethodInterface::AUTHORIZE,
+                    'amount' => 12.35,
+                    'currency' => $currency,
+                    'entityClass' => $entityClass,
+                    'entityIdentifier' => $entityId,
+                    'frontendOwner' => null,
+                ],
+            ],
+            [
+                [
+                    'entity' => new \stdClass(),
+                    'entityId' => $entityId,
+                    'entityClass' => $entityClass,
+                    'currency' => $currency,
+                    'amount' => 12.3456,
+                    'frontendOwnerToken' => null
                 ],
                 [
                     'active' => true,
@@ -408,16 +487,17 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param AccountUser|null $accountUser
+     * @param null|\PHPUnit_Framework_MockObject_MockObject $token
      */
-    protected function prepareAccountUser($accountUser)
+    protected function prepareAccountUser($accountUser, $token)
     {
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        if ($token) {
+            $token->expects($this->any())
+                ->method('getUser')
+                ->willReturn($accountUser);
+        }
 
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn($accountUser);
-
-        $this->tokenStorage->expects($this->once())
+        $this->tokenStorage->expects($this->any())
             ->method('getToken')
             ->willReturn($token);
     }
