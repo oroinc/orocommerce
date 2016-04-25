@@ -68,7 +68,7 @@ class ShippingOriginProvider
     {
         $configData = $this->configManager->get('orob2b_shipping.shipping_origin', false, false)?:[];
 
-        return $this->shippingOriginModelFactory->create($configData)->setSystem(true);
+        return $this->shippingOriginModelFactory->create($configData);
     }
 
     /**

@@ -25,7 +25,7 @@ class ShippingOriginWarehouse extends ShippingOrigin
     /** @var  boolean */
     protected $system = false;
 
-    public function __construct(array $data)
+    public function __construct(array $data = [])
     {
         parent::__construct($data);
     }
