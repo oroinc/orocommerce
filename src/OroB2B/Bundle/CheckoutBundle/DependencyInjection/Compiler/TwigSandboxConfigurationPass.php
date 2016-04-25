@@ -23,9 +23,11 @@ class TwigSandboxConfigurationPass implements CompilerPassInterface
 
             $functions = array_merge($securityPolicyDef->getArgument(4), ['order_line_items']);
             $tags = array_merge($securityPolicyDef->getArgument(0), ['set']);
-
-            $securityPolicyDef->replaceArgument(4, $functions);
+            $filters = $securityPolicyDef->getArgument(1);
+            $filters = array_merge($filters, ['join']);
             $securityPolicyDef->replaceArgument(0, $tags);
+            $securityPolicyDef->replaceArgument(1, $filters);
+            $securityPolicyDef->replaceArgument(4, $functions);
 
             $rendererDef = $container->getDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY);
             $rendererDef->addMethodCall('addExtension', [new Reference('orob2b_checkout.twig.line_items')]);

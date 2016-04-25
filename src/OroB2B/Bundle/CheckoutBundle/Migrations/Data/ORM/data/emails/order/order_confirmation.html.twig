@@ -18,7 +18,7 @@
 <h4>Shipping Information</h4>
 {{ entity.shippingAddress|oro_format_address }}
 
-{% set payment_methods=get_payment_methods(total) %}
+{% set payment_methods = get_payment_methods(entity) %}
 {% if  payment_methods|length == 1 %}
     <h4>Payment Method:</h4>
     {{ payment_methods[0] }}
@@ -53,7 +53,7 @@
     {% set data = order_line_items(entity) %}
     {% for item in data.lineItems %}
         <tr>
-            <td>{{ item.name }}</td>
+            <td>{{ item.product }}<hr>SKU #: {{ item.product.sku }}</td>
             <td>{{ item.quantity|orob2b_format_short_product_unit_value(item.unit) }}</td>
             <td> {{ item.price|oro_format_price }}</td>
             <td>{{ item.subtotal|oro_format_price }}</td>
