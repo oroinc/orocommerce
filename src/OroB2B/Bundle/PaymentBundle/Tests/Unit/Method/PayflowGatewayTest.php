@@ -26,7 +26,7 @@ class PayflowGatewayTest extends AbstractPayflowGatewayTest
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown action "wrong_action"
+     * @expectedExceptionMessage Unsupported action "wrong_action"
      */
     public function testExecuteException()
     {

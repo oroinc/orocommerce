@@ -4,8 +4,13 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\View;
 
 use Symfony\Component\Form\FormFactoryInterface;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Account;
+use OroB2B\Bundle\PaymentBundle\Provider\PayflowGatewayPaymentTransactionProvider;
 use OroB2B\Bundle\PaymentBundle\Method\View\PayflowGatewayView;
 use OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
@@ -14,6 +19,7 @@ use OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
 {
     use ConfigTestTrait;
+    use EntityTrait;
 
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $configManager;
@@ -23,6 +29,9 @@ class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
 
     /** @var PayflowGatewayView */
     protected $methodView;
+
+    /** @var  PayflowGatewayPaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $payflowGatewayPaymentTransactionProvider;
 
     protected function setUp()
     {
@@ -34,19 +43,38 @@ class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->methodView = new PayflowGatewayView($this->formFactory, $this->configManager);
+        $this->payflowGatewayPaymentTransactionProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PayflowGatewayPaymentTransactionProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->methodView = new PayflowGatewayView(
+            $this->formFactory,
+            $this->configManager,
+            $this->payflowGatewayPaymentTransactionProvider
+        );
     }
 
     protected function tearDown()
     {
-        unset($this->methodView, $this->configManager, $this->formFactory);
+        unset(
+            $this->methodView,
+            $this->configManager,
+            $this->formFactory,
+            $this->payflowGatewayPaymentTransactionProvider
+        );
     }
 
-    public function testGetOptions()
+    /**
+     * @dataProvider optionsProvider
+     * @param array $data
+     */
+    public function testGetOptions($data)
     {
         $formView = $this->getMock('Symfony\Component\Form\FormView');
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
         $form->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -55,17 +83,78 @@ class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
             ->method('create')
             ->with(CreditCardType::NAME)
             ->willReturn($form);
+        
+        $expected = [
+            'formView' => $formView,
+            'allowedCreditCards' => $data['allowedCards'],
+        ];
 
-        $allowedCards = ['visa', 'mastercard'];
-        $this->setConfig($this->once(), Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY, $allowedCards);
+        $this->configManager->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive($data['configsData'][0], $data['configsData'][1])
+            ->willReturnOnConsecutiveCalls($data['returnConfigs'][0], $data['returnConfigs'][1]);
+        $entity = new \stdClass();
 
-        $this->assertEquals(
+        $transactionEntity = null;
+
+        if ($data['transactionEntityOptions'] !== null) {
+            /** @var PaymentTransaction $transactionEntity */
+            $transactionEntity = $this->getEntity(
+                'OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction',
+                $data['transactionEntityOptions']
+            );
+        }
+
+        if ($data['zero_amount']) {
+            $this->payflowGatewayPaymentTransactionProvider->expects($this->once())
+                ->method('getZeroAmountTransaction')
+                ->with($entity, PayflowGateway::TYPE)
+                ->willReturn($transactionEntity);
+
+            if ($transactionEntity) {
+                $expected = array_merge(
+                    $expected,
+                    [
+                        'authorizeTransaction' => $transactionEntity->getId(),
+                        'acct' => $data['last4']
+                    ]
+                );
+            }
+        }
+
+        $this->assertEquals($expected, $this->methodView->getOptions(['entity' => $entity]));
+    }
+
+    /**
+     * @return array
+     */
+    public function optionsProvider()
+    {
+        return [
             [
-                'formView' => $formView,
-                'allowedCreditCards' => $allowedCards,
+                [
+                    'allowedCards' => ['visa', 'mastercard'],
+                    'configsData' => [
+                        [
+                            $this->getConfigKey(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY)
+                        ],
+                        [
+                            $this->getConfigKey(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY)
+                        ],
+                    ],
+                    'zero_amount' => true,
+                    'returnConfigs' => [
+                        ['visa', 'mastercard'],
+                        true
+                    ],
+                    'transactionEntityOptions' => [
+                        'id' => 5,
+                        'response' => [Account::ACCT => '1234567']
+                    ],
+                    'last4' => '4567'
+                ]
             ],
-            $this->methodView->getOptions()
-        );
+        ];
     }
 
     public function testGetBlock()
