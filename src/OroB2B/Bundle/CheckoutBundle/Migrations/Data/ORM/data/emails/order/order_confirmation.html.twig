@@ -18,15 +18,21 @@
 <h4>Shipping Information</h4>
 {{ entity.shippingAddress|oro_format_address }}
 
-<h4>Payment Method</h4>
-{{ entity.paymentTerm }}
+{% set payment_methods=get_payment_methods(total) %}
+{% if  payment_methods|length == 1 %}
+    <h4>Payment Method:</h4>
+    {{ payment_methods[0] }}
+{% elseif payment_methods|length > 1 %}
+    <h4>Payment Methods:</h4>
+    {{ payment_methods|join(',') }}
+{% endif %}
 
 {% if entity.shipUntil or entity.customerNotes %}
     <h4>Additional Information</h4>
 {% endif %}
 
 {% if entity.shipUntil %}
-    <strong>Do Not Ship Later Than: </strong>{{ entity.shipUntil }}
+    <strong>Do Not Ship Later Than: </strong>{{ entity.shipUntil|oro_format_date }}
 {% endif %}
 
 {% if entity.customerNotes %}

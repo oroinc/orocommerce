@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\DependencyInjection\Compiler;
+namespace OroB2B\Bundle\PaymentBundle\Bundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -21,14 +21,15 @@ class TwigSandboxConfigurationPass implements CompilerPassInterface
         ) {
             $securityPolicyDef = $container->getDefinition(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY);
 
-            $functions = array_merge($securityPolicyDef->getArgument(4), ['order_line_items']);
-            $tags = array_merge($securityPolicyDef->getArgument(0), ['set']);
+            $functions = array_merge($securityPolicyDef->getArgument(4), ['get_payment_methods']);
 
             $securityPolicyDef->replaceArgument(4, $functions);
-            $securityPolicyDef->replaceArgument(0, $tags);
 
             $rendererDef = $container->getDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY);
-            $rendererDef->addMethodCall('addExtension', [new Reference('orob2b_checkout.twig.line_items')]);
+            $rendererDef->addMethodCall(
+                'addExtension',
+                [new Reference('orob2b_payment.twig.payment_method_extension')]
+            );
         }
     }
 }

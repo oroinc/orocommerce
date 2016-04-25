@@ -122,6 +122,7 @@ services:
         class: 'OroB2B\Bundle\CheckoutBundle\Twig\LineItemsExtension'
         arguments:
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
+            - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
         tags:
             - { name: twig.extension }
 

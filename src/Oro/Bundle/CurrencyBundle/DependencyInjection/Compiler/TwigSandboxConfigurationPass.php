@@ -16,18 +16,22 @@ class TwigSandboxConfigurationPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $securityPolicyDef = $container->getDefinition(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY);
-        $filters = $securityPolicyDef->getArgument(1);
-        $filters = array_merge(
-            $filters,
-            [
-                'oro_format_price',
-            ]
-        );
+        if ($container->hasDefinition(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY) &&
+            $container->hasDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY)
+        ) {
+            $securityPolicyDef = $container->getDefinition(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY);
+            $filters = $securityPolicyDef->getArgument(1);
+            $filters = array_merge(
+                $filters,
+                [
+                    'oro_format_price',
+                ]
+            );
 
-        $securityPolicyDef->replaceArgument(1, $filters);
+            $securityPolicyDef->replaceArgument(1, $filters);
 
-        $rendererDef = $container->getDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY);
-        $rendererDef->addMethodCall('addExtension', [new Reference('oro_currency.twig.currency')]);
+            $rendererDef = $container->getDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY);
+            $rendererDef->addMethodCall('addExtension', [new Reference('oro_currency.twig.currency')]);
+        }
     }
 }

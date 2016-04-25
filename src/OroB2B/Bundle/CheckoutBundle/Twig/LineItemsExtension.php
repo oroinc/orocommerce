@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CheckoutBundle\Twig;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class LineItemsExtension extends \Twig_Extension
@@ -15,11 +16,20 @@ class LineItemsExtension extends \Twig_Extension
     protected $totalsProvider;
 
     /**
-     * @param $totalsProvider
+     * @var LineItemSubtotalProvider
      */
-    public function __construct($totalsProvider)
-    {
+    protected $lineItemSubtotalProvider;
+
+    /**
+     * @param TotalProcessorProvider $totalsProvider
+     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
+     */
+    public function __construct(
+        TotalProcessorProvider $totalsProvider,
+        LineItemSubtotalProvider $lineItemSubtotalProvider
+    ) {
         $this->totalsProvider = $totalsProvider;
+        $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
     }
 
     /**
@@ -42,7 +52,7 @@ class LineItemsExtension extends \Twig_Extension
             $data['quantity'] = $lineItem->getQuantity();
             $data['unit'] = $lineItem->getProductUnit();
             $data['price'] = $lineItem->getPrice();
-            $data['subtotal'] = $lineItem->getSubtotal();
+            $data['subtotal'] = $this->lineItemSubtotalProvider->getRowTotal($lineItem, $lineItem->getCurrency());
             $lineItems[] = $data;
         }
         $result['lineItems'] = $lineItems;
