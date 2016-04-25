@@ -66,6 +66,8 @@ class CombinedProductPriceResolver
                 $product
             );
         }
+
+        $combinedPriceList->setPricesCalculated(true);
     }
 
     /**

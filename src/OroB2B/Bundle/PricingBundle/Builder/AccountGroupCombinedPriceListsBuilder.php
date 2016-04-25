@@ -29,19 +29,22 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
      * @param Website $website
      * @param AccountGroup|null $currentAccountGroup
      * @param int|null $behavior
+     * @param bool $force
      */
-    public function build(Website $website, AccountGroup $currentAccountGroup = null, $behavior = null)
+    public function build(Website $website, AccountGroup $currentAccountGroup = null, $behavior = null, $force = false)
     {
         if (!$this->isBuiltForAccountGroup($website, $currentAccountGroup)) {
             $accountGroups = [$currentAccountGroup];
             if (!$currentAccountGroup) {
+                $fallback = $force ? null : PriceListAccountGroupFallback::WEBSITE;
                 $accountGroups = $this->getPriceListToEntityRepository()
-                    ->getAccountGroupIteratorByDefaultFallback($website, PriceListAccountGroupFallback::WEBSITE);
+                    ->getAccountGroupIteratorByDefaultFallback($website, $fallback);
             }
 
             foreach ($accountGroups as $accountGroup) {
                 $this->updatePriceListsOnCurrentLevel($website, $accountGroup, $behavior);
-                $this->accountCombinedPriceListsBuilder->buildByAccountGroup($website, $accountGroup, $behavior);
+                $this->accountCombinedPriceListsBuilder
+                    ->buildByAccountGroup($website, $accountGroup, $behavior, $force);
             }
 
             if ($currentAccountGroup) {

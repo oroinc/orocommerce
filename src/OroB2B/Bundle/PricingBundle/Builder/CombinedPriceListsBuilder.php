@@ -74,24 +74,25 @@ class CombinedPriceListsBuilder
 
     /**
      * @param int|null $behavior
+     * @param bool $farce
      */
-    public function build($behavior = null)
+    public function build($behavior = null, $farce = false)
     {
         if (!$this->isBuilt) {
             $this->updatePriceListsOnCurrentLevel($behavior);
-            $this->websiteCombinedPriceListBuilder->build(null, $behavior);
+            $this->websiteCombinedPriceListBuilder->build(null, $behavior, $farce);
             $this->garbageCollector->cleanCombinedPriceLists();
             $this->isBuilt = true;
         }
     }
 
     /**
-     * @param boolean $force
+     * @param boolean $behavior
      */
-    protected function updatePriceListsOnCurrentLevel($force)
+    protected function updatePriceListsOnCurrentLevel($behavior)
     {
         $collection = $this->priceListCollectionProvider->getPriceListsByConfig();
-        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
+        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $behavior);
         $this->updateCombinedPriceListConnection($actualCombinedPriceList);
     }
 

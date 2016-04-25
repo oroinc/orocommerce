@@ -30,19 +30,21 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
     /**
      * @param Website|null $currentWebsite
      * @param int|null $behavior
+     * @param bool $force
      */
-    public function build(Website $currentWebsite = null, $behavior = null)
+    public function build(Website $currentWebsite = null, $behavior = null, $force = false)
     {
         if (!$this->isBuiltForWebsite($currentWebsite)) {
             $websites = [$currentWebsite];
             if (!$currentWebsite) {
+                $fallback = $force ? null : PriceListWebsiteFallback::CONFIG;
                 $websites = $this->getPriceListToEntityRepository()
-                    ->getWebsiteIteratorByDefaultFallback(PriceListWebsiteFallback::CONFIG);
+                    ->getWebsiteIteratorByDefaultFallback($fallback);
             }
 
             foreach ($websites as $website) {
                 $this->updatePriceListsOnCurrentLevel($website, $behavior);
-                $this->accountGroupCombinedPriceListsBuilder->build($website, null, $behavior);
+                $this->accountGroupCombinedPriceListsBuilder->build($website, null, $behavior, $force);
             }
 
             if ($currentWebsite) {

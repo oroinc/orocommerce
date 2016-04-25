@@ -270,4 +270,32 @@ class CombinedPriceListRepository extends EntityRepository
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }
+
+    /**
+     * @param int $offsetHours
+     *
+     * @return array
+     */
+    public function getCPLsForPriceCollectByTimeOffset($offsetHours)
+    {
+        $offsetDate = time() + $offsetHours * 3600;
+        $activateData = new \DateTime(date('Y-m-d H:i:s', $offsetDate), new \DateTimeZone("UTC"));
+
+        $qb = $this->createQueryBuilder('cpl');
+        $qb->select('cpl')
+            ->join(
+                'OroB2BPricingBundle:CombinedPriceListActivationRule',
+                'combinedPriceListActivationRule',
+                Join::WITH,
+                $qb->expr()->eq('cpl', 'combinedPriceListActivationRule.combinedPriceList')
+            )
+            ->where($qb->expr()->eq('cpl.pricesCalculated', ':pricesCalculated'))
+            ->andWhere($qb->expr()->lte('combinedPriceListActivationRule.activateAt', ':activateData'))
+            ->setParameters([
+                'pricesCalculated' => false,
+                'activateData' => $activateData
+            ]);
+
+        return $qb->getQuery()->getResult();
+    }
 }
