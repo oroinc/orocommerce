@@ -10,6 +10,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
@@ -64,16 +65,18 @@ class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
         $quantity = 22;
         $priceValue = 123;
         $name = 'Item Name';
+        $product = new Product();
         $lineItem->setCurrency($currency);
         $lineItem->setQuantity($quantity);
         $lineItem->setPrice((new Price())->setCurrency($currency)->setValue($priceValue));
         $lineItem->setProductSku($name);
+        $lineItem->setProduct($product);
         $order->addLineItem($lineItem);
         $result = $this->extension->getOrderLineItems($order);
         $this->assertCount(1, $result['lineItems']);
         $this->assertCount(2, $result['subtotals']);
         $lineItem = $result['lineItems'][0];
-        $this->assertEquals($lineItem['name'], $name);
+        $this->assertEquals($lineItem['product'], $product);
         /** @var Price $price */
         $price = $lineItem['price'];
         $this->assertEquals($price->getValue(), $priceValue);
