@@ -41,6 +41,7 @@ class ShippingOriginType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->addEventSubscriber($this->countryAndRegionSubscriber);
         $builder
             ->add(
                 'country',
@@ -100,7 +101,7 @@ class ShippingOriginType extends AbstractType
                     'label' => 'orob2b.shipping.shipping_origin.region_text.label',
                     'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.region_text.label']
                 ]
-            )->addEventSubscriber($this->countryAndRegionSubscriber);
+            );
     }
 
     /**
