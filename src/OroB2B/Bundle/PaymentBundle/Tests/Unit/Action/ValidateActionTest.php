@@ -65,8 +65,6 @@ class ValidateActionTest extends AbstractActionTest
             ->with($paymentTransaction)
             ->willReturnCallback(
                 function (PaymentTransaction $paymentTransaction) use ($options) {
-                    $this->assertEquals($options['currency'], $paymentTransaction->getCurrency());
-                    $this->assertEquals($options['amount'], $paymentTransaction->getAmount());
                     if (!empty($options['transactionOptions'])) {
                         $this->assertEquals(
                             $options['transactionOptions'],
@@ -117,8 +115,6 @@ class ValidateActionTest extends AbstractActionTest
                 'data' => [
                     'options' => [
                         'object' => new \stdClass(),
-                        'amount' => 100.0,
-                        'currency' => 'USD',
                         'attribute' => new PropertyPath('test'),
                         'paymentMethod' => self::PAYMENT_METHOD,
                         'transactionOptions' => [
@@ -137,8 +133,6 @@ class ValidateActionTest extends AbstractActionTest
                 'data' => [
                     'options' => [
                         'object' => new \stdClass(),
-                        'amount' => 100.0,
-                        'currency' => 'USD',
                         'attribute' => new PropertyPath('test'),
                         'paymentMethod' => self::PAYMENT_METHOD,
                         'transactionOptions' => [
@@ -158,8 +152,6 @@ class ValidateActionTest extends AbstractActionTest
                 'data' => [
                     'options' => [
                         'object' => new \stdClass(),
-                        'amount' => 100.0,
-                        'currency' => 'USD',
                         'attribute' => new PropertyPath('test'),
                         'paymentMethod' => self::PAYMENT_METHOD,
                     ],

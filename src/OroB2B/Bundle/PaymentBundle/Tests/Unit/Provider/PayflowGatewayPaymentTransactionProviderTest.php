@@ -44,10 +44,6 @@ class PayflowGatewayPaymentTransactionProviderTest extends \PHPUnit_Framework_Te
                             'paymentMethod' => 'payflow_type',
                         ]
                     )
-                ),
-                $this->logicalAnd(
-                    $this->isType('array'),
-                    $this->equalTo(['id' => 'DESC'])
                 )
             )
             ->willReturn($transaction);
