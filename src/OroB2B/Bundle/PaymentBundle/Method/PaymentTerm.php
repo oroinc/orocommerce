@@ -48,4 +48,12 @@ class PaymentTerm implements PaymentMethodInterface
     {
         return self::TYPE;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports($actionName)
+    {
+        return false;
+    }
 }

@@ -66,7 +66,11 @@ class PayflowListener
             ->setReference($response->getReference())
             ->setResponse(array_replace($paymentTransactionData, $eventData));
 
-        if ($paymentTransaction->getAction() === PaymentMethodInterface::AUTHORIZE) {
+        if (in_array(
+            $paymentTransaction->getAction(),
+            [PaymentMethodInterface::AUTHORIZE, PaymentMethodInterface::VALIDATE],
+            true
+        )) {
             $paymentTransaction->setActive($response->isSuccessful());
         }
     }

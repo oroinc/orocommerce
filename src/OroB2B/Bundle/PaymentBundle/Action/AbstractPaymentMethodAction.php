@@ -4,10 +4,12 @@ namespace OroB2B\Bundle\PaymentBundle\Action;
 
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Model\ContextAccessor;
 
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
@@ -89,14 +91,14 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 
         $resolver
             ->setRequired(['object', 'amount', 'currency'])
-            ->setDefined(['transactionOptions', 'attribute'])
+            ->setDefined(['transactionOptions', 'attribute', 'conditions'])
             ->setDefault('attribute', null)
             ->setDefault('transactionOptions', [])
             ->addAllowedTypes('object', ['object', $propertyPathType])
             ->addAllowedTypes('amount', ['float', 'string', $propertyPathType])
             ->addAllowedTypes('currency', ['string', $propertyPathType])
             ->setAllowedTypes('transactionOptions', ['array', $propertyPathType])
-            ->setAllowedTypes('attribute', $propertyPathType);
+            ->setAllowedTypes('attribute', ['null', $propertyPathType]);
     }
 
     /**
@@ -126,6 +128,10 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 
         $definedOptions = $this->getOptionsResolver()->getDefinedOptions();
         foreach ($definedOptions as $definedOption) {
+            if (!array_key_exists($definedOption, $this->options)) {
+                continue;
+            }
+
             $values[$definedOption] = $this->contextAccessor->getValue($context, $this->options[$definedOption]);
             if (is_array($values[$definedOption])) {
                 foreach ($values[$definedOption] as &$value) {
@@ -136,6 +142,49 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
         }
 
         return $this->getValuesResolver()->resolve($values);
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function getCallbackUrls(PaymentTransaction $paymentTransaction)
+    {
+        return [
+            'errorUrl' => $this->router->generate(
+                'orob2b_payment_callback_error',
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    'accessToken' => $paymentTransaction->getAccessToken(),
+                ],
+                true
+            ),
+            'returnUrl' => $this->router->generate(
+                'orob2b_payment_callback_return',
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    'accessToken' => $paymentTransaction->getAccessToken(),
+                ],
+                true
+            ),
+        ];
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function executePaymentTransaction(PaymentTransaction $paymentTransaction)
+    {
+        try {
+            return $this->paymentMethodRegistry
+                ->getPaymentMethod($paymentTransaction->getPaymentMethod())
+                ->execute($paymentTransaction);
+        } catch (\Exception $e) {
+            // do not expose sensitive data
+        }
+
+        return [];
     }
 
     /**

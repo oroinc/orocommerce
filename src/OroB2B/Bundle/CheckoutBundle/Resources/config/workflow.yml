@@ -55,6 +55,9 @@ workflows:
             payment_in_progress:
                 type: bool
                 label: Flag indicates that payment is in progress
+            payment_validate:
+                type: bool
+                label: Payment validatation required
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -171,6 +174,8 @@ workflows:
                 form_options:
                     attribute_fields:
                         payment_method: ~
+                        payment_validate:
+                            form_type: checkbox
 
             back_to_billing_address:
                 label: Edit Billing Information
@@ -339,6 +344,7 @@ workflows:
                                   - [[keep], [propertyName, [region]]]
                                   - [[keep], [propertyName, [organization]]]
                             - '@flush_entity': $checkout.shippingAddress
+
             continue_to_order_review_definition:
                 pre_conditions:
                     '@not_equal': [$payment_in_progress, true]
@@ -353,10 +359,33 @@ workflows:
                                 is_ajax: true
                                 expected_key: _wid
                                 expected_value: ajax_checkout
+                post_actions:
+                    - '@tree':
+                        conditions:
+                            '@equal': [$payment_validate, true]
+                        actions:
+                            - '@assign_constant_value': [$.result.validateAction, OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
+                            - '@assign_url':
+                                attribute: $.result.url
+                                route: orob2b_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                            - '@payment_validate':
+                                conditions:
+                                    '@payment_method_supports':
+                                        payment_method: $checkout.paymentMethod
+                                        action: $.result.validateAction
+                                attribute: $.result.responseData
+                                object: $checkout
+                                paymentMethod: $checkout.paymentMethod
+                                transactionOptions:
+                                    successUrl: $.result.url
+                                    errorUrl: $.result.url
 
             verify_payment_definition:
                 pre_conditions:
                     '@and':
+                        - '@equal': [$payment_validate, false]
                         - '@not_equal': [$payment_in_progress, true]
                         - '@not':
                             - '@check_request':
@@ -422,7 +451,9 @@ workflows:
 
                     - '@tree':
                         conditions:
-                            '@not_empty': $checkout.order.id
+                            '@and':
+                                - '@not_empty': $checkout.order.id
+                                - '@equal': [$payment_validate, false]
                         actions:
                             - '@assign_url':
                                 attribute: $.result.successUrl
@@ -446,6 +477,18 @@ workflows:
                                     successUrl: $.result.successUrl
                                     errorUrl: $.result.errorUrl
                             - '@assign_value': [$payment_in_progress, true]
+                    - '@tree':
+                        conditions:
+                            '@and':
+                                - '@not_empty': $checkout.order.id
+                                - '@equal': [$payment_validate, true]
+                        actions:
+                            - '@payment_purchase':
+                                object: $checkout.order
+                                reference: $checkout
+                                amount: $checkout.order.total
+                                currency: $checkout.order.currency
+                                paymentMethod: $payment_method
 
             finish_checkout_definition:
                 conditions:

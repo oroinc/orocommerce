@@ -15,6 +15,8 @@ interface PaymentMethodInterface
      */
     const PURCHASE = 'purchase';
 
+    const VALIDATE = 'validate';
+
     /**
      * @param PaymentTransaction $paymentTransaction
      * @return array
@@ -30,4 +32,10 @@ interface PaymentMethodInterface
      * @return bool
      */
     public function isEnabled();
+
+    /**
+     * @param string $actionName
+     * @return bool
+     */
+    public function supports($actionName);
 }
