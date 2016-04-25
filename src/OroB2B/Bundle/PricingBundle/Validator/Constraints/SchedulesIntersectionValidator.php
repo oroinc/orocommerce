@@ -12,11 +12,16 @@ class SchedulesIntersectionValidator extends ConstraintValidator
 {
     /**
      * @param PriceListSchedule[] $value The value that should be validated
-     * @param Constraint $constraint The constraint for the validation
+     * @param Constraint|SchedulesIntersection $constraint The constraint for the validation
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$this->isIterable($value)) {
+            throw new \InvalidArgumentException('Constraint value should be iterable');
+        }
+
         foreach ($value as $index => $schedule) {
+            /***/
             if ($this->hasIntersection($value, $schedule)) {
                 $path = sprintf('[%d].%s', $index, PriceListScheduleType::ACTIVE_AT_FIELD);
                 $this->context
@@ -67,5 +72,14 @@ class SchedulesIntersectionValidator extends ConstraintValidator
         }
 
         return (null === $aLeft || $aLeft <= $bRight) && (null === $bRight || $aRight >= $bLeft);
+    }
+
+    /**
+     * @param $var
+     * @return bool
+     */
+    protected function isIterable($var)
+    {
+        return is_array($var) || $var instanceof \Traversable;
     }
 }
