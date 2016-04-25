@@ -35,7 +35,7 @@ class CombinedPriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
         $className = 'OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository';
         $activationRuleRepositoryMock = $this->getMockBuilder($className)->disableOriginalConstructor()->getMock();
         $activationRuleRepositoryMock->expects($this->any())
-            ->method('updateActiveRule')
+            ->method('getNewActualRules')
             ->willReturn([new CombinedPriceListActivationRule()]);
 
         $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');

@@ -50,13 +50,13 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
      */
     public function testCPLSwitching(array $rules, $cplRelationsExpected, $now)
     {
-        $this->createActivationRules($rules);
-        $this->resolver->updateRelations($now);
         $cplRelationsEntityNames = [
             'OroB2BPricingBundle:CombinedPriceListToAccount',
             'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
             'OroB2BPricingBundle:CombinedPriceListToWebsite',
         ];
+        $this->createActivationRules($rules);
+        $this->resolver->updateRelations($now);
 
         foreach ($cplRelationsExpected as $fullCPLName => $currentCPLName) {
             /** @var CombinedPriceList $fullCPL */
@@ -79,17 +79,44 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
             [
                 'rules' => [
                     [
-                        'activateAt' => null,
-                        'expireAt' => $this->createDateTime(10006),
+                        'activateAt' => $this->createDateTime(2),
+                        'expireAt' => $this->createDateTime(3),
                         'fullChainPriceList' => '2f_1t_3t',
                         'combinedPriceList' => '2f',
-                        'active' => true,
+                    ],
+                ],
+                'cplRelationsExpected' => [
+                    '2f_1t_3t' => '2f_1t_3t'
+                ],
+                'now' => $this->createDateTime(1),
+            ],
+            [
+                'rules' => [
+                    [
+                        'activateAt' => null,
+                        'expireAt' => $this->createDateTime(5),
+                        'fullChainPriceList' => '2f_1t_3t',
+                        'combinedPriceList' => '2f',
                     ],
                 ],
                 'cplRelationsExpected' => [
                     '2f_1t_3t' => '2f'
                 ],
-                'now' => $this->createDateTime(10005),
+                'now' => $this->createDateTime(4),
+            ],
+            [
+                'rules' => [
+                    [
+                        'activateAt' => $this->createDateTime(7),
+                        'expireAt' => null,
+                        'fullChainPriceList' => '2f_1t_3t',
+                        'combinedPriceList' => '2f',
+                    ],
+                ],
+                'cplRelationsExpected' => [
+                    '2f_1t_3t' => '2f'
+                ],
+                'now' => $this->createDateTime(6),
             ],
         ];
     }
@@ -107,8 +134,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
             $fullCpl = $this->getReference($ruleData['fullChainPriceList']);
 
             $rule = new CombinedPriceListActivationRule();
-            $rule->setActive($ruleData['active'])
-                ->setActivateAt($ruleData['activateAt'])
+            $rule->setActivateAt($ruleData['activateAt'])
                 ->setExpireAt($ruleData['expireAt'])
                 ->setCombinedPriceList($cpl)
                 ->setFullChainPriceList($fullCpl);
@@ -123,7 +149,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
      */
     protected function createDateTime($timestamp)
     {
-        $date = new \DateTime();
+        $date = new \DateTime('now', new \DateTimeZone('UTC'));
         $date->setTimestamp($timestamp);
 
         return $date;

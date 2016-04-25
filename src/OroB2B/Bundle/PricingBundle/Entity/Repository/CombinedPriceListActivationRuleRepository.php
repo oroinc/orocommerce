@@ -25,7 +25,23 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
      * @param \DateTime $now
      * @return \OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule[]
      */
-    public function updateActiveRule(\DateTime $now)
+    public function getNewActualRules(\DateTime $now)
+    {
+        $qb = $this->createQueryBuilder('rule')
+            ->andWhere('rule.active = :activity')
+            ->andWhere('rule.activateAt <= :now OR rule.activateAt IS NULL')
+            ->andWhere('rule.expireAt > :now OR rule.expireAt IS NULL')
+            ->setParameter('now', $now)
+            ->setParameter('activity', false);
+
+        $var = $qb->getQuery()->getResult();
+        return $var;
+    }
+
+    /**
+     * @param \DateTime $now
+     */
+    public function deleteExpiredRules(\DateTime $now)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete($this->getEntityName(), 'rule')
@@ -33,28 +49,5 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
             ->setParameter('now', $now)
             ->getQuery()
             ->execute();
-
-        $newActiveRules = $qb = $this->createQueryBuilder('rule')
-            ->andWhere('rule.active = :activityTrue')
-            ->andWhere('rule.activateAt >= :now')
-            ->andWhere('rule.expireAt < :now')
-            ->setParameter('now', $now)
-            ->setParameter('activityTrue', false)
-            ->getQuery()
-            ->getResult();
-
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->update($this->getEntityName(), 'rule')
-            ->set('rule.active', ':activityTrue')
-            ->andWhere('rule.active = :activity')
-            ->andWhere('rule.activateAt >= :now')
-            ->andWhere('rule.expireAt < :now')
-            ->setParameter('now', $now)
-            ->setParameter('activityTrue', true)
-            ->setParameter('activity', false)
-            ->getQuery()
-            ->execute();
-
-        return $newActiveRules;
     }
 }
