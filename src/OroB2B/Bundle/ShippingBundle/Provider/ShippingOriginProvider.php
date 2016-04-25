@@ -40,8 +40,6 @@ class ShippingOriginProvider
     }
 
     /**
-     * Returns null if Warehouse uses ShippingOrigin from system configuration
-     *
      * @param Warehouse $warehouse
      *
      * @return ShippingOrigin
@@ -63,6 +61,9 @@ class ShippingOriginProvider
         return $this->getSystemShippingOrigin();
     }
 
+    /**
+     * @return ShippingOrigin
+     */
     public function getSystemShippingOrigin()
     {
         $configData = $this->configManager->get('oro_b2b_shipping.shipping_origin', true, true);
