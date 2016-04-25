@@ -127,6 +127,8 @@ services:
             - '@oro_api.doctrine_helper'
             - '@security.token_storage'
             - '%orob2b_payment.entity.payment_transaction.class%'
+        calls:
+            - ['setLogger', ['@logger']]
 
     orob2b_payment.provider.payflow_gateway_payment_transaction:
         class: 'OroB2B\Bundle\PaymentBundle\Provider\PayflowGatewayPaymentTransactionProvider'
@@ -160,6 +162,17 @@ services:
             - { name: oro_workflow.action, alias: payment_purchase }
             - { name: oro_action.action, alias: payment_purchase }
 
+    orob2b_payment.action.validate:
+        class: 'OroB2B\Bundle\PaymentBundle\Action\ValidateAction'
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@orob2b_payment.payment_method.registry'
+            - '@orob2b_payment.provider.payment_transaction'
+            - '@router'
+        tags:
+            - { name: oro_workflow.action, alias: payment_validate }
+            - { name: oro_action.action, alias: payment_validate }
+
     orob2b_payment.event_listener.callback.redirect:
         class: 'OroB2B\Bundle\PaymentBundle\EventListener\Callback\RedirectListener'
         lazy: true
@@ -187,3 +200,11 @@ services:
             - { name: oro_workflow.condition, alias: 'payment_method_enabled' }
             - { name: oro_action.condition, alias: 'payment_method_enabled' }
             - { name: oro_layout.expression, alias: 'payment_method_enabled'  }
+
+    orob2b_payment.condition.payment_method_supports:
+        class: 'OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodSupports'
+        arguments:
+            - '@orob2b_payment.payment_method.registry'
+        tags:
+            - { name: oro_workflow.condition, alias: 'payment_method_supports' }
+            - { name: oro_action.condition, alias: 'payment_method_supports' }

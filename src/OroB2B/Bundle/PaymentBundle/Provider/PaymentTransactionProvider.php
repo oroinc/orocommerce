@@ -2,6 +2,11 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Provider;
 
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
+
+use Psr\Log\LoggerAwareTrait;
+
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -13,6 +18,8 @@ use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class PaymentTransactionProvider
 {
+    use LoggerAwareTrait;
+
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
@@ -41,7 +48,7 @@ class PaymentTransactionProvider
      * @param object $object
      * @param array $filter
      * @param array $orderBy
-     * @return PaymentTransaction
+     * @return PaymentTransaction|null
      */
     public function getPaymentTransaction($object, array $filter = [], array $orderBy = [])
     {
@@ -57,7 +64,7 @@ class PaymentTransactionProvider
                     'frontendOwner' => $this->getAccountUser()
                 ]
             ),
-            $orderBy
+            array_merge(['id' => Criteria::DESC], $orderBy)
         );
     }
 
@@ -105,7 +112,7 @@ class PaymentTransactionProvider
      * @param object $object
      * @param string $amount
      * @param string $currency
-     * @return PaymentTransaction
+     * @return PaymentTransaction|null
      */
     public function getActiveAuthorizePaymentTransaction($object, $amount, $currency)
     {
@@ -117,6 +124,23 @@ class PaymentTransactionProvider
                 'action' => PaymentMethodInterface::AUTHORIZE,
                 'amount' => round($amount, 2),
                 'currency' => $currency,
+                'frontendOwner' => $this->getAccountUser()
+            ]
+        );
+    }
+
+    /**
+     * @param object $object
+     * @return PaymentTransaction
+     */
+    public function getActiveValidatePaymentTransaction($object)
+    {
+        return $this->getPaymentTransaction(
+            $object,
+            [
+                'active' => true,
+                'successful' => true,
+                'action' => PaymentMethodInterface::VALIDATE,
                 'frontendOwner' => $this->getAccountUser()
             ]
         );
@@ -151,9 +175,18 @@ class PaymentTransactionProvider
     public function savePaymentTransaction(PaymentTransaction $paymentTransaction)
     {
         $em = $this->doctrineHelper->getEntityManager($paymentTransaction);
-
-        if (!$paymentTransaction->getId()) {
-            $em->persist($paymentTransaction);
+        try {
+            $em->transactional(
+                function (EntityManagerInterface $em) use ($paymentTransaction) {
+                    if (!$paymentTransaction->getId()) {
+                        $em->persist($paymentTransaction);
+                    }
+                }
+            );
+        } catch (\Exception $e) {
+            if ($this->logger) {
+                $this->logger->error($e->getMessage(), $e->getTrace());
+            }
         }
 
         $em->flush($paymentTransaction);

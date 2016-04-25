@@ -12,11 +12,16 @@ use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class PayflowGateway implements PaymentMethodInterface
 {
     use ConfigTrait;
 
     const TYPE = 'payflow_gateway';
+
+    const ZERO_AMOUNT = 0;
 
     /** @var Gateway */
     protected $gateway;
@@ -41,8 +46,8 @@ class PayflowGateway implements PaymentMethodInterface
     {
         $actionName = $paymentTransaction->getAction();
 
-        if (!method_exists($this, $actionName)) {
-            throw new \InvalidArgumentException(sprintf('Unknown action "%s"', $actionName));
+        if (!$this->supports($actionName)) {
+            throw new \InvalidArgumentException(sprintf('Unsupported action "%s"', $actionName));
         }
 
         $this->gateway->setTestMode($this->isTestMode());
@@ -126,13 +131,98 @@ class PayflowGateway implements PaymentMethodInterface
      */
     public function purchase(PaymentTransaction $paymentTransaction)
     {
+        $options = $this->getPaymentOptions($paymentTransaction);
+
+        $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
+        if (!$sourcePaymentTransaction) {
+            $options = array_merge($options, $this->getSecureTokenOptions($paymentTransaction));
+        }
+
+        $paymentTransaction
+            ->setRequest($options)
+            ->setAction($this->getPurchaseAction());
+
+        $response = $this->execute($paymentTransaction);
+
+        if (!$sourcePaymentTransaction) {
+            return $this->secureTokenResponse($paymentTransaction);
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    public function validate(PaymentTransaction $paymentTransaction)
+    {
+        $paymentTransaction
+            ->setAmount(self::ZERO_AMOUNT)
+            ->setCurrency(Option\Currency::US_DOLLAR);
+
+        $options = array_merge(
+            $this->getPaymentOptions($paymentTransaction),
+            $this->getSecureTokenOptions($paymentTransaction)
+        );
+
+        $paymentTransaction
+            ->setRequest($options)
+            ->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $this->execute($paymentTransaction);
+
+        $paymentTransaction
+            ->setAction(PaymentMethodInterface::VALIDATE);
+
+        return $this->secureTokenResponse($paymentTransaction);
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function secureTokenResponse(PaymentTransaction $paymentTransaction)
+    {
+        $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
+
+        $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
+
+        $response['formAction'] = $this->gateway->getFormAction();
+
+        return $response;
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function getPaymentOptions(PaymentTransaction $paymentTransaction)
+    {
         $options = [
-            Option\SecureTokenIdentifier::SECURETOKENID => Option\SecureTokenIdentifier::generate(),
-            Option\CreateSecureToken::CREATESECURETOKEN => true,
             Option\Amount::AMT => round($paymentTransaction->getAmount(), 2),
-            Option\TransparentRedirect::SILENTTRAN => true,
             Option\Tender::TENDER => Option\Tender::CREDIT_CARD,
             Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
+        ];
+
+        if ($paymentTransaction->getSourcePaymentTransaction()) {
+            $options[Option\OriginalTransaction::ORIGID] =
+                $paymentTransaction->getSourcePaymentTransaction()->getReference();
+        }
+
+        return $options;
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function getSecureTokenOptions(PaymentTransaction $paymentTransaction)
+    {
+        return [
+            Option\SecureTokenIdentifier::SECURETOKENID => Option\SecureTokenIdentifier::generate(),
+            Option\CreateSecureToken::CREATESECURETOKEN => true,
+            Option\TransparentRedirect::SILENTTRAN => true,
             Option\ReturnUrl::RETURNURL => $this->router->generate(
                 'orob2b_payment_callback_return',
                 [
@@ -150,20 +240,6 @@ class PayflowGateway implements PaymentMethodInterface
                 true
             ),
         ];
-
-        $paymentTransaction
-            ->setRequest($options)
-            ->setAction($this->getPurchaseAction());
-
-        $this->execute($paymentTransaction);
-
-        $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
-
-        $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
-
-        $response['formAction'] = $this->gateway->getFormAction();
-
-        return $response;
     }
 
     /**
@@ -207,5 +283,15 @@ class PayflowGateway implements PaymentMethodInterface
     public function getType()
     {
         return static::TYPE;
+    }
+
+    /** {@inheritdoc} */
+    public function supports($actionName)
+    {
+        return in_array(
+            $actionName,
+            [self::AUTHORIZE, self::CAPTURE, self::CHARGE, self::PURCHASE, self::VALIDATE],
+            true
+        );
     }
 }

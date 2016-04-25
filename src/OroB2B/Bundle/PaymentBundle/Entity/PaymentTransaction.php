@@ -12,6 +12,7 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -34,7 +35,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class PaymentTransaction implements DatesAwareInterface
+class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterface
 {
     use DatesAwareTrait;
 

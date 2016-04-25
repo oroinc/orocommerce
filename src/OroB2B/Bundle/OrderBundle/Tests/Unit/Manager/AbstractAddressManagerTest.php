@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Model;
+namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
-use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
+use OroB2B\Bundle\OrderBundle\Manager\OrderAddressManager;
 
 abstract class AbstractAddressManagerTest extends \PHPUnit_Framework_TestCase
 {

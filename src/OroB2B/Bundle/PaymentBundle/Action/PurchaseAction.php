@@ -15,7 +15,9 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $resolver
             ->setRequired('paymentMethod')
-            ->addAllowedTypes('paymentMethod', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface']);
+            ->setDefined('reference')
+            ->addAllowedTypes('paymentMethod', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface'])
+            ->addAllowedTypes('reference', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface']);
     }
 
     /** {@inheritdoc} */
@@ -25,7 +27,9 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $resolver
             ->setRequired('paymentMethod')
-            ->addAllowedTypes('paymentMethod', 'string');
+            ->setDefined('reference')
+            ->addAllowedTypes('paymentMethod', 'string')
+            ->addAllowedTypes('reference', 'object');
     }
 
     /** {@inheritdoc} */
@@ -39,6 +43,17 @@ class PurchaseAction extends AbstractPaymentMethodAction
             $options['object']
         );
 
+        if (!empty($options['reference'])) {
+            $sourcePaymentTransaction = $this->paymentTransactionProvider
+                ->getActiveValidatePaymentTransaction($options['reference']);
+
+            if (!$sourcePaymentTransaction) {
+                throw new \RuntimeException('Payment transaction by reference not found');
+            }
+
+            $paymentTransaction->setSourcePaymentTransaction($sourcePaymentTransaction);
+        }
+
         $paymentTransaction
             ->setAmount($options['amount'])
             ->setCurrency($options['currency']);
@@ -49,39 +64,15 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
-        $response = [];
+        $response = $this->executePaymentTransaction($paymentTransaction);
 
-        try {
-            $response = $this->paymentMethodRegistry
-                ->getPaymentMethod($options['paymentMethod'])
-                ->execute($paymentTransaction);
-
-            $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
-        } catch (\Exception $e) {
-        }
+        $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
         $this->setAttributeValue(
             $context,
             array_merge(
-                [
-                    'paymentMethod' => $options['paymentMethod'],
-                    'errorUrl' => $this->router->generate(
-                        'orob2b_payment_callback_error',
-                        [
-                            'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                            'accessToken' => $paymentTransaction->getAccessToken(),
-                        ],
-                        true
-                    ),
-                    'returnUrl' => $this->router->generate(
-                        'orob2b_payment_callback_return',
-                        [
-                            'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                            'accessToken' => $paymentTransaction->getAccessToken(),
-                        ],
-                        true
-                    ),
-                ],
+                ['paymentMethod' => $options['paymentMethod']],
+                $this->getCallbackUrls($paymentTransaction),
                 $response
             )
         );

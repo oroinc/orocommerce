@@ -11,6 +11,7 @@ config:
 
         'orob2bfrontend/js/app/views/editor/title-editor-view': 'bundles/orob2bfrontend/js/app/views/editor/title-editor-view.js'
         'orob2bfrontend/js/app/views/editor/multiline-text-editor-view': 'bundles/orob2bfrontend/js/app/views/editor/multiline-text-editor-view.js'
+        'orob2bfrontend/js/app/views/scrollable-table': 'bundles/orob2bfrontend/js/app/views/scrollable-table.js'
 
         'orob2bfrontend/js/app/views/inline-editable-wrapper-view': 'bundles/orob2bfrontend/js/app/views/inline-editable-wrapper-view.js'
         'orob2bfrontend/js/app/modules/inline-editor-types-map-module': 'bundles/orob2bfrontend/js/app//modules/inline-editor-types-map-module.js'
