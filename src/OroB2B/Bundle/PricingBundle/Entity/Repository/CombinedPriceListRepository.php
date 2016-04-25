@@ -183,6 +183,13 @@ class CombinedPriceListRepository extends EntityRepository
             );
             $selectQb->andWhere($alias . '.priceList IS NULL');
         }
+        $selectQb->leftJoin(
+            'OroB2BPricingBundle:CombinedPriceListActivationRule',
+            'rule',
+            Join::WITH,
+            $selectQb->expr()->eq('rule.combinedPriceList', 'priceList.id')
+        );
+        $selectQb->andWhere('rule.combinedPriceList IS NULL');
         if ($exceptPriceLists) {
             $selectQb->andWhere($selectQb->expr()->notIn('priceList', ':exceptPriceLists'))
                 ->setParameter('exceptPriceLists', $exceptPriceLists);
