@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShippingBundle\Model;
 
 use Doctrine\Common\Util\Inflector;
+use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
@@ -142,14 +143,14 @@ class ShippingOrigin extends AbstractAddress
 
     /**
      * @param string $offset
-     * @param mixed  $default
+     * @param mixed $default
      *
      * @return mixed
      */
     protected function getOffset($offset, $default = null)
     {
-        if ($this->data->offsetExists((string) $offset)) {
-            return $this->data->offsetGet((string) $offset);
+        if ($this->data->offsetExists((string)$offset)) {
+            return $this->data->offsetGet((string)$offset);
         }
 
         return $default;
@@ -160,6 +161,14 @@ class ShippingOrigin extends AbstractAddress
      */
     public function isSystem()
     {
-        return (bool) $this->system;
+        return (bool)$this->system;
+    }
+
+    /**
+     * @ORM\PostLoad()
+     */
+    public function postLoad()
+    {
+        $this->data = new \ArrayObject();
     }
 }

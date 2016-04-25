@@ -24,9 +24,12 @@ class ShippingOriginProvider
     /** @var ShippingOriginModelFactory */
     protected $shippingOriginModelFactory;
 
+    /** @var EntityRepository */
+    protected $warehouseShippingOriginRepository;
+
     /**
-     * @param DoctrineHelper             $doctrineHelper
-     * @param ConfigManager              $configManager
+     * @param DoctrineHelper $doctrineHelper
+     * @param ConfigManager $configManager
      * @param ShippingOriginModelFactory $shippingOriginModelFactory
      */
     public function __construct(
@@ -48,10 +51,7 @@ class ShippingOriginProvider
      */
     public function getShippingOriginByWarehouse(Warehouse $warehouse)
     {
-        /** @var EntityRepository $repo */
-        $repo = $this->doctrineHelper
-            ->getEntityManagerForClass('OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse')
-            ->getRepository('OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse');
+        $repo = $this->getWarehouseShippingOriginRepository();
 
         /** @var ShippingOriginWarehouse $shippingOriginWarehouse */
         $shippingOriginWarehouse = $repo->findOneBy(['warehouse' => $warehouse]);
@@ -63,10 +63,28 @@ class ShippingOriginProvider
         return $this->getSystemShippingOrigin();
     }
 
+    public function updateWarehouseShippingOrigin(Warehouse $warehouse, ShippingOrigin $shippingOrigin, $useSystem)
+    {
+        if ($useSystem) {
+        }
+    }
+
     public function getSystemShippingOrigin()
     {
         $configData = $this->configManager->get('oro_b2b_shipping.shipping_origin', true, true);
 
         return $this->shippingOriginModelFactory->create($configData)->setSystem(true);
+    }
+
+    /**
+     * @return EntityRepository
+     */
+    protected function getWarehouseShippingOriginRepository()
+    {
+        $repo = $this->doctrineHelper
+            ->getEntityManagerForClass('OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse')
+            ->getRepository('OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse');
+
+        return $repo;
     }
 }
