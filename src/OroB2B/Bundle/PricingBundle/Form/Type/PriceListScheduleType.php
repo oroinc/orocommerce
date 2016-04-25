@@ -15,11 +15,6 @@ class PriceListScheduleType extends AbstractType
     const DEACTIVATE_AT_FIELD = 'deactivateAt';
 
     /**
-     * @var string
-     */
-    protected $dataClass = 'OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule';
-
-    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -40,7 +35,7 @@ class PriceListScheduleType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => $this->dataClass,
+                'data_class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule',
             ]
         );
     }
@@ -51,13 +46,5 @@ class PriceListScheduleType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * @param mixed $dataClass
-     */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
     }
 }

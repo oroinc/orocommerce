@@ -40,7 +40,7 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($builder);
 
             foreach ($intersections as $i => $intersection) {
-                $path = printf('[%d].%s', $intersection, PriceListScheduleType::ACTIVE_AT_FIELD);
+                $path = sprintf('[%d].%s', $intersection, PriceListScheduleType::ACTIVE_AT_FIELD);
                 $builder->expects($this->at($i))
                     ->method('atPath')
                     ->with($path)
