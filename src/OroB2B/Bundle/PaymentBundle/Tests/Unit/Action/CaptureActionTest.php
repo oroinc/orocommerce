@@ -11,6 +11,8 @@ use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class CaptureActionTest extends AbstractActionTest
 {
+    const PAYMENT_METHOD = 'testPaymentMethodType';
+
     public function testExecuteWithoutTransaction()
     {
         $options = [
@@ -61,14 +63,13 @@ class CaptureActionTest extends AbstractActionTest
         $this->paymentTransactionProvider
             ->expects($this->once())
             ->method('getActiveAuthorizePaymentTransaction')
+            ->with($options['object'], $options['amount'], $options['currency'])
             ->willReturn($paymentTransaction);
 
-        $exceptionWillThrow = false;
         $responseValue = $this->returnValue($data['response']);
 
         if ($data['response'] instanceof \Exception) {
             $responseValue = $this->throwException($data['response']);
-            $exceptionWillThrow = true;
         }
 
         $capturePaymentTransaction = new PaymentTransaction();
@@ -86,6 +87,7 @@ class CaptureActionTest extends AbstractActionTest
         $this->paymentTransactionProvider
             ->expects($this->once())
             ->method('createPaymentTransaction')
+            ->with($data['testPaymentMethodType'], PaymentMethodInterface::CAPTURE, $options['object'])
             ->willReturn($capturePaymentTransaction);
 
         $this->paymentMethodRegistry
@@ -95,7 +97,7 @@ class CaptureActionTest extends AbstractActionTest
             ->willReturn($paymentMethod);
 
         $this->paymentTransactionProvider
-            ->expects($this->exactly($exceptionWillThrow ? 2 : 3))
+            ->expects($this->exactly(2))
             ->method('savePaymentTransaction')
             ->withConsecutive(
                 $paymentTransaction,
@@ -116,10 +118,12 @@ class CaptureActionTest extends AbstractActionTest
      */
     public function executeDataProvider()
     {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setPaymentMethod(self::PAYMENT_METHOD);
         return [
             'default' => [
                 'data' => [
-                    'paymentTransaction' => new PaymentTransaction(),
+                    'paymentTransaction' => $paymentTransaction,
                     'options' => [
                         'object' => new \stdClass(),
                         'amount' => 100.0,
@@ -129,7 +133,7 @@ class CaptureActionTest extends AbstractActionTest
                             'testOption' => 'testOption'
                         ],
                     ],
-                    'testPaymentMethodType' => 'testPaymentMethodType',
+                    'testPaymentMethodType' => self::PAYMENT_METHOD,
                     'testEntityIdentifier' => 10,
                     'response' => ['testResponse' => 'testResponse'],
                 ],
@@ -142,7 +146,7 @@ class CaptureActionTest extends AbstractActionTest
             ],
             'throw exception' => [
                 'data' => [
-                    'paymentTransaction' => new PaymentTransaction(),
+                    'paymentTransaction' => $paymentTransaction,
                     'options' => [
                         'object' => new \stdClass(),
                         'amount' => 100.0,
@@ -152,7 +156,7 @@ class CaptureActionTest extends AbstractActionTest
                             'testOption' => 'testOption'
                         ],
                     ],
-                    'testPaymentMethodType' => 'testPaymentMethodType',
+                    'testPaymentMethodType' => self::PAYMENT_METHOD,
                     'testEntityIdentifier' => 10,
                     'response' => new \Exception(),
                 ],
