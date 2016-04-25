@@ -47,6 +47,10 @@ class PurchaseAction extends AbstractPaymentMethodAction
             $sourcePaymentTransaction = $this->paymentTransactionProvider
                 ->getActiveValidatePaymentTransaction($options['reference']);
 
+            if (!$sourcePaymentTransaction) {
+                throw new \RuntimeException('Payment transaction by reference not found');
+            }
+
             $paymentTransaction->setSourcePaymentTransaction($sourcePaymentTransaction);
         }
 
