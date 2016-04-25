@@ -66,16 +66,20 @@ class PriceListScheduleTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * todo validation cases in next ticket
-     *
      * @return array
      */
     public function submitDataProvider()
     {
         return [
             [
-                'submittedData' => [],
-                'expected' => new PriceListSchedule()
+                'submittedData' => [
+                    'activeAt' => '2016-03-01T22:00:00Z',
+                    'deactivateAt' => '2016-03-15T22:00:00Z'
+                ],
+                'expected' => new PriceListSchedule(
+                    new \DateTime('2016-03-01T22:00:00Z'),
+                    new \DateTime('2016-03-15T22:00:00Z')
+                )
             ]
         ];
     }

@@ -4,11 +4,10 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Context\ExecutionContext;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection;
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersectionValidator;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListType;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
 
 class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,7 +40,7 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($builder);
 
             foreach ($intersections as $i => $intersection) {
-                $path = sprintf('%s[%d]', PriceListType::SCHEDULES_FIELD, $intersection);
+                $path = printf('[%d].%s', $intersection, PriceListScheduleType::ACTIVE_AT_FIELD);
                 $builder->expects($this->at($i))
                     ->method('atPath')
                     ->with($path)

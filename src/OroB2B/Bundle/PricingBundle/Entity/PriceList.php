@@ -74,7 +74,7 @@ class PriceList extends BasePriceList
      *      cascade={"all"},
      *      orphanRemoval=true
      * )
-     * @ORM\OrderBy({"activeAt" = "ASC"}) //todo ask PO about proper order
+     * @ORM\OrderBy({"activeAt" = "ASC"})
      */
     protected $schedules;
 
@@ -116,7 +116,6 @@ class PriceList extends BasePriceList
     }
 
     /**
-     * todo tests
      * @param ArrayCollection|PriceListSchedule[] $schedules
      * @return $this
      */

@@ -119,15 +119,16 @@
 
     {% set hasErrors = (form.activeAt.vars.errors|length or form.deactivateAt.vars.errors|length) %}
 
-    <tr data-content="{{ name }}" data-validation-optional-group class="pl-schedule__row" {#data-validation="{{ validation|json_encode }}"#}>
+    <tr data-content="{{ name }}" data-validation-optional-group class="pl-schedule__row {% if hasErrors %}has-row-error{% endif %}">
         <td>{{ form_widget(form.activeAt) }}</td>
         <td>{{ form_widget(form.deactivateAt) }}</td>
         <td>
             <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
         </td>
     </tr>
-    <tr {% if not hasErrors %}style="display: none"{% endif %}>
+    <tr {% if not hasErrors %}style="display: none"{% endif %} class="pl-schedule__error-row">
         <td colspan="3">
+            {{ form_errors(form) }}
             {{ form_errors(form.activeAt) }}
             {{ form_errors(form.deactivateAt) }}
         </td>
@@ -141,7 +142,7 @@
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
-        <div class="row-oro pl_schedule">
+        <div class="row-oro pl_schedule" data-page-component-module="orob2bpricing/js/app/components/price-list-schedule-component">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
                 <table class="grid table-hover table table-bordered table-condensed">
