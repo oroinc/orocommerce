@@ -123,7 +123,6 @@ class PaymentTransactionProvider
                 'action' => PaymentMethodInterface::AUTHORIZE,
                 'amount' => round($amount, 2),
                 'currency' => $currency,
-                'frontendOwner' => $this->getAccountUser()
             ]
         );
     }
