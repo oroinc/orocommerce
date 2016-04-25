@@ -22,6 +22,14 @@ class ShippingOriginWarehouse extends ShippingOrigin
      */
     protected $warehouse;
 
+    /** @var  boolean */
+    protected $system = false;
+
+    public function __construct(array $data)
+    {
+        parent::__construct($data);
+    }
+
     /**
      * @param Warehouse $warehouse
      *
@@ -50,11 +58,13 @@ class ShippingOriginWarehouse extends ShippingOrigin
         $this->updated = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
-    /**
-     * @return boolean
-     */
+    public function setSystem($system)
+    {
+        $this->system = (bool)$system;
+    }
+
     public function isSystem()
     {
-        return false;
+        return (bool)$this->system;
     }
 }
