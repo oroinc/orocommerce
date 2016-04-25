@@ -83,8 +83,9 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
      * @param int $configCPLId
      * @param int $actualCPLId
      * @param int $behavior
+     * @param bool $force
      */
-    public function testBuild($configCPLId, $actualCPLId, $behavior)
+    public function testBuild($configCPLId, $actualCPLId, $behavior, $force = false)
     {
         $callExpects = 1;
         $combinedPriceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList');
@@ -123,10 +124,10 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteBuilder->expects($this->exactly($callExpects))
             ->method('build')
-            ->with(null, $behavior);
+            ->with(null, $behavior, $force);
 
-        $this->builder->build($behavior);
-        $this->builder->build($behavior);
+        $this->builder->build($behavior, $force);
+        $this->builder->build($behavior, $force);
     }
 
     /**
@@ -138,32 +139,35 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             'no changes' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 1,
-                CombinedPriceListProvider::BEHAVIOR_DEFAULT
+                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
+                'force' => true
             ],
             'change cpl' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 2,
-                CombinedPriceListProvider::BEHAVIOR_DEFAULT
+                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
             ],
             'new cpl' => [
                 'configCPLId' => null,
                 'actualCPLId' => 1,
-                CombinedPriceListProvider::BEHAVIOR_DEFAULT
+                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
+                'force' => true
             ],
             'no changes force' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 1,
-                CombinedPriceListProvider::BEHAVIOR_FORCE
+                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE
             ],
             'change cpl force' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 2,
-                CombinedPriceListProvider::BEHAVIOR_FORCE
+                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE
             ],
             'new cpl force' => [
                 'configCPLId' => null,
                 'actualCPLId' => 1,
-                CombinedPriceListProvider::BEHAVIOR_FORCE
+                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE,
+                'force' => true
             ],
         ];
     }

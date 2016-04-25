@@ -88,7 +88,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
         $qb->andWhere($qb->expr()->eq('account.group', ':accountGroup'))
             ->setParameter('accountGroup', $accountGroup);
 
-        if ($fallback) {
+        if ($fallback !== null) {
             $qb->andWhere(
                 $qb->expr()->orX(
                     $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToGroup'),

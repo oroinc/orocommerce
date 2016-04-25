@@ -80,7 +80,7 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
         )
         ->setParameter('website', $website);
 
-        if ($fallback) {
+        if ($fallback !== null) {
             $qb->where(
                 $qb->expr()->orX(
                     $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite'),

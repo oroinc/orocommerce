@@ -106,8 +106,9 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
      * @dataProvider buildDataProviderByAccountGroup
      * @param boolean $behavior
      * @param PriceListToAccountGroup $priceListByAccountGroup
+     * @param bool $force
      */
-    public function testBuildByAccountGroup($behavior, $priceListByAccountGroup)
+    public function testBuildByAccountGroup($behavior, $priceListByAccountGroup, $force = false)
     {
         $callExpects = 1;
         $website = new Website();
@@ -117,9 +118,12 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             ->expects($this->any())
             ->method('findOneBy')
             ->willReturn($priceListByAccountGroup);
+
+        $fallback = $force ? null : PriceListAccountFallback::ACCOUNT_GROUP;
+
         $this->priceListToEntityRepository->expects($this->exactly($callExpects))
             ->method('getAccountIteratorByDefaultFallback')
-            ->with($accountGroup, $website, PriceListAccountFallback::ACCOUNT_GROUP)
+            ->with($accountGroup, $website, $fallback)
             ->will($this->returnValue([$account]));
         $this->garbageCollector->expects($this->never())
             ->method($this->anything());
@@ -137,8 +141,8 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             $this->assertRebuild($behavior, $website, $account);
         }
 
-        $this->builder->buildByAccountGroup($website, $accountGroup, $behavior);
-        $this->builder->buildByAccountGroup($website, $accountGroup, $behavior);
+        $this->builder->buildByAccountGroup($website, $accountGroup, $behavior, $force);
+        $this->builder->buildByAccountGroup($website, $accountGroup, $behavior, $force);
     }
 
     /**
@@ -149,7 +153,8 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
         return [
             [
                 'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE,
-                'priceListByAccountGroup' => null
+                'priceListByAccountGroup' => null,
+                'force' => true
             ],
             [
                 'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
@@ -161,7 +166,8 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             ],
             [
                 'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
-                'priceListByAccountGroup' => new PriceListToAccountGroup()
+                'priceListByAccountGroup' => new PriceListToAccountGroup(),
+                'force' => true
             ]
         ];
     }
