@@ -19,6 +19,9 @@ class ShippingOriginWarehouseType extends AbstractShippingOriginType
         parent::buildForm($builder, $options);
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
