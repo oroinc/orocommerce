@@ -41,7 +41,7 @@ class LoadCombinedPriceListDemoData extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $this->container->get('orob2b_pricing.builder.combined_price_list_builder')
-            ->build(CombinedPriceListProvider::BEHAVIOR_FORCE);
+            ->build(CombinedPriceListProvider::BEHAVIOR_FORCE, true);
     }
 
     /**

@@ -9,6 +9,9 @@ use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Command\CombinedPriceListRecalculateCommand;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 
+/**
+ * @dbIsolation
+ */
 class CombinedPriceListRecalculateCommandTest extends WebTestCase
 {
     /**
@@ -16,25 +19,64 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
      */
     protected $configManager;
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->loadFixtures([
+            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
+            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+        ]);
+
+        $this->clearCombinedPrices();
     }
 
     /**
      * @dataProvider commandDataProvider
      * @param $modeValue
      * @param $expectedMessage
+     * @param array $params
+     * @param int $expectedCount
+     * @param array $websites
+     * @param array $accountGroups
+     * @param array $accounts
      */
-    public function testCommand($modeValue, $expectedMessage)
-    {
+    public function testCommand(
+        $modeValue,
+        $expectedMessage,
+        array $params,
+        $expectedCount,
+        array $websites = [],
+        array $accountGroups = [],
+        array $accounts = []
+    ) {
+        $this->assertCombinedPriceCount(0);
+
+        $this->clearTriggers();
+
         /** @var  $manager */
         $configKey = Configuration::getConfigKeyByName(Configuration::PRICE_LISTS_UPDATE_MODE);
         $this->configManager->set($configKey, $modeValue);
         $this->configManager->flush();
-        $result = $this->runCommand(CombinedPriceListRecalculateCommand::NAME);
+
+        foreach ($websites as $websiteName) {
+            $params[] = '--website='.$this->getReference($websiteName)->getId();
+        }
+
+        foreach ($accountGroups as $accountGroupName) {
+            $params[] = '--account-group='.$this->getReference($accountGroupName)->getId();
+        }
+
+        foreach ($accounts as $accountName) {
+            $params[] = '--account='.$this->getReference($accountName)->getId();
+        }
+
+        $result = $this->runCommand(CombinedPriceListRecalculateCommand::NAME, $params);
         $this->assertContains($expectedMessage, $result);
+        $this->assertCombinedPriceCount($expectedCount);
     }
 
     /**
@@ -45,16 +87,106 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
         return [
             'real_time' => [
                 'mode_value' => CombinedPriceListQueueConsumer::MODE_REAL_TIME,
-                'expected_message' => 'Recalculation is not required, another mode is active'
+                'expected_message' => 'Recalculation is not required, another mode is active',
+                'params' => [],
+                'expectedCount' => 0
             ],
             'none' => [
                 'mode_value' => null,
-                'expected_message' => 'Recalculation is not required, another mode is active'
+                'expected_message' => 'Recalculation is not required, another mode is active',
+                'params' => [],
+                'expectedCount' => 0
             ],
-            'scheduled' => [
+            'scheduled without force' => [
                 'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
-                'expected_message' => 'The cache is updated successfully'
+                'expected_message' => 'The cache is updated successfully',
+                'params' => [],
+                'expectedCount' => 0
+            ],
+            'scheduled with force' => [
+                'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
+                'expected_message' => 'The cache is updated successfully',
+                'params' => ['--force'],
+                'expectedCount' => 64
+            ],
+            'scheduled website US with force' => [
+                'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
+                'expected_message' => 'The cache is updated successfully',
+                'params' => ['--force'],
+                'expectedCount' => 58,
+                'website' => ['US'],
+                'accountGroup' => [],
+                'account' => []
+            ],
+            'scheduled account.level_1_1 with force' => [
+                'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
+                'expected_message' => 'The cache is updated successfully',
+                'params' => ['--force'],
+                'expectedCount' => 6,
+                'website' => [],
+                'accountGroup' => [],
+                'account' => ['account.level_1_1']
+            ],
+            'scheduled account.level_1_1, account.level_1.2, account.level_1.3 with force' => [
+                'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
+                'expected_message' => 'The cache is updated successfully',
+                'params' => ['--force'],
+                'expectedCount' => 34,
+                'website' => [],
+                'accountGroup' => [],
+                'account' => ['account.level_1_1', 'account.level_1.2', 'account.level_1.3']
+            ],
+            'scheduled account_group.group1 with force' => [
+                'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
+                'expected_message' => 'The cache is updated successfully',
+                'params' => ['--force'],
+                'expectedCount' => 24,
+                'website' => [],
+                'accountGroup' => ['account_group.group1'],
+                'account' => []
             ],
         ];
+    }
+
+    protected function clearTriggers()
+    {
+        $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BPricingBundle:ProductPriceChangeTrigger')
+            ->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger')
+            ->createQueryBuilder('productPriceChangeTrigger')
+            ->delete('OroB2BPricingBundle:ProductPriceChangeTrigger', 'productPriceChangeTrigger')
+            ->getQuery()
+            ->execute();
+
+        $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger')
+            ->getRepository('OroB2BPricingBundle:PriceListChangeTrigger')
+            ->createQueryBuilder('priceListChangeTrigger')
+            ->delete('OroB2BPricingBundle:PriceListChangeTrigger', 'priceListChangeTrigger')
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param int $expectedCount
+     */
+    protected function assertCombinedPriceCount($expectedCount)
+    {
+        $combinedPrices = $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BPricingBundle:CombinedProductPrice')
+            ->findAll();
+
+        $this->assertCount($expectedCount, $combinedPrices);
+    }
+
+    protected function clearCombinedPrices()
+    {
+        $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BPricingBundle:CombinedProductPrice')
+            ->getRepository('OroB2BPricingBundle:CombinedProductPrice')
+            ->createQueryBuilder('combinedProductPrice')
+            ->delete('OroB2BPricingBundle:CombinedProductPrice', 'combinedProductPrice')
+            ->getQuery()
+            ->execute();
     }
 }
