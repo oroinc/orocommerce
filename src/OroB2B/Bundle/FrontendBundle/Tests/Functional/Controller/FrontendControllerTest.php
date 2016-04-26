@@ -5,8 +5,6 @@ namespace OroB2B\Bundle\FrontendBundle\Tests\Functional\Controller;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
-use OroB2B\Bundle\FrontendBundle\Test\Client;
-
 /**
  * @dbIsolation
  */
@@ -14,11 +12,6 @@ class FrontendControllerTest extends WebTestCase
 {
     const FRONTEND_THEME_CONFIG_KEY = 'oro_b2b_frontend.frontend_theme';
     const DEFAULT_THEME = '';
-
-    /**
-     * @var Client
-     */
-    protected $client;
 
     protected function setUp()
     {

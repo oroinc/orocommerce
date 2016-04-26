@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData as OroLoadAccountUserData;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -122,7 +122,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $response = $this->requestFrontendGrid('frontend-account-account-user-roles-grid');
+        $response = $this->client->requestGrid('frontend-account-account-user-roles-grid');
 
         $this->assertJsonResponseStatusCodeEquals($response, 200);
         $this->assertContains(LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER, $response->getContent());
@@ -135,7 +135,7 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     public function testUpdate()
     {
-        $response = $this->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-account-account-user-roles-grid',
             [
                 'frontend-account-account-user-roles-grid[_filter][label][value]' => self::ACCOUNT_ROLE
@@ -202,7 +202,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $response = $this->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-account-account-users-grid-view',
             [
                 'frontend-account-account-users-grid-view[role]' => $id,
@@ -258,7 +258,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         $this->assertContains('Account User Role has been saved', $content);
 
         // Find id of new role
-        $response = $this->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-account-account-user-roles-grid',
             [
                 'frontend-account-account-user-roles-grid[_filter][label][value]' => self::CUSTOMIZED_ROLE
@@ -291,7 +291,7 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     public function testIndexFromPredefined()
     {
-        $response = $this->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-account-account-user-roles-grid',
             [
                 'frontend-account-account-user-roles-grid[_filter][label][value]' => self::CUSTOMIZED_ROLE

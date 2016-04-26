@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\ImportExport;
 
 use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
 
-use OroB2B\Bundle\FrontendBundle\Test\Client;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
@@ -27,11 +26,6 @@ class ImportExportTest extends WebTestCase
      * @var PriceList
      */
     protected $priceList;
-
-    /**
-     * @var Client
-     */
-    protected $client;
 
     protected function setUp()
     {

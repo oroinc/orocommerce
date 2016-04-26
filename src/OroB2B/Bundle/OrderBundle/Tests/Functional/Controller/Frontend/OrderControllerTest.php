@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
@@ -250,7 +250,7 @@ class OrderControllerTest extends WebTestCase
      */
     protected function findInGrid($gridName, array $filters)
     {
-        $response = $this->requestFrontendGrid($gridName, $filters);
+        $response = $this->client->requestGrid($gridName, $filters);
 
         $result = $this->getJsonResponseContent($response, 200);
         $result = reset($result['data']);
