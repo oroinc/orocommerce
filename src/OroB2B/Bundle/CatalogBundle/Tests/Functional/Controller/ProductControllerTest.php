@@ -38,7 +38,9 @@ class ProductControllerTest extends WebTestCase
                 'gridName' => 'products-grid',
                 RequestProductHandler::CATEGORY_ID_KEY => $secondLevelCategory->getId(),
                 RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY => $includeSubcategories,
-            ]
+            ],
+            [],
+            true
         );
         $result = $this->getJsonResponseContent($response, 200);
         $count = count($expected);

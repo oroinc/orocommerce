@@ -41,7 +41,8 @@ class ProductPriceFilterTest extends WebTestCase
                 'gridName' => 'products-grid',
                 PriceListRequestHandler::PRICE_LIST_KEY => $priceList->getId(),
             ],
-            $filter
+            $filter,
+            true
         );
         $result = $this->getJsonResponseContent($response, 200);
 
