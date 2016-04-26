@@ -19,6 +19,9 @@ class WarehouseShippingOriginExtension extends AbstractTypeExtension
      */
     private $shippingOriginProvider;
 
+    /**
+     * @param ShippingOriginProvider $shippingOriginProvider
+     */
     public function __construct(ShippingOriginProvider $shippingOriginProvider)
     {
         $this->shippingOriginProvider = $shippingOriginProvider;
@@ -63,10 +66,13 @@ class WarehouseShippingOriginExtension extends AbstractTypeExtension
         $shippingOrigin = $this->shippingOriginProvider->getShippingOriginByWarehouse($entity);
 
         if ($shippingOrigin instanceof ShippingOriginWarehouse) {
-            $form->get('shipping_origin')->setData($shippingOrigin);
+            $form->get('shipping_origin_warehouse')->setData($shippingOrigin);
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getExtendedType()
     {
         return WarehouseType::NAME;
