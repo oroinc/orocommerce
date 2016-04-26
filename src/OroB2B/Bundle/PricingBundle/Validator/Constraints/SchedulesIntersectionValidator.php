@@ -58,6 +58,7 @@ class SchedulesIntersectionValidator extends ConstraintValidator
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @param \DateTime|null $aLeft
      * @param \DateTime|null $aRight
      * @param \DateTime|null $bLeft
@@ -66,11 +67,14 @@ class SchedulesIntersectionValidator extends ConstraintValidator
      */
     protected function isSegmentsIntersected($aLeft, $aRight, $bLeft, $bRight)
     {
-        if ((null === $aRight && $bRight >= $aLeft) || (null === $bRight && $aRight >= $bLeft)) {
+        if (($aRight === null && $bRight === null)
+            || (null === $aRight && $bRight >= $aLeft)
+            || (null === $bRight && $aRight >= $bLeft)
+        ) {
             return true;
         }
 
-        return (null === $aLeft || $aLeft <= $bRight) && (null === $bRight || $aRight >= $bLeft);
+        return ((null === $aLeft || $aLeft <= $bRight) && (null === $bRight || $aRight >= $bLeft));
     }
 
     /**

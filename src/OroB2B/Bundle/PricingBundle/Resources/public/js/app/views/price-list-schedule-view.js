@@ -21,6 +21,12 @@ define(function(require) {
         _handleErrors: function() {
             this.$(this.options.selectors.rowError).remove();
             this.$(this.options.selectors.row).removeClass('has-row-error');
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
         }
     });
 
