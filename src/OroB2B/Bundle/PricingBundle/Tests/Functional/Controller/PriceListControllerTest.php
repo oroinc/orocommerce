@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 use Symfony\Component\Intl\Intl;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
+use Oro\Bundle\FilterBundle\Form\Type\Filter\BooleanFilterType;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -27,10 +29,12 @@ class PriceListControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures([
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
-        ]);
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+            ]
+        );
     }
 
     public function testIndex()
@@ -45,6 +49,80 @@ class PriceListControllerTest extends WebTestCase
         $this->assertContains($this->getPriceList('price_list_3')->getName(), $crawler->html());
         $this->assertContains($this->getPriceList('price_list_4')->getName(), $crawler->html());
         $this->assertContains($this->getPriceList('price_list_5')->getName(), $crawler->html());
+    }
+
+    /**
+     * @dataProvider dataGridFiltersDataProvider
+     * @param boolean $active
+     * @param string[] $priceLists
+     */
+    public function testDataGridFilters($active, $priceLists)
+    {
+        $grid = $this->client->requestGrid(
+            ['gridName' => 'pricing-price-list-grid'],
+            [
+                'pricing-price-list-grid[_filter][activity][value]' =>
+                    $active ? BooleanFilterType::TYPE_YES : BooleanFilterType::TYPE_NO
+            ]
+        );
+        $data = json_decode($grid->getContent(), true)['data'];
+        $this->assertCount(count($priceLists), $data);
+        foreach ($priceLists as $priceListName) {
+            $this->assertTrue($this->hasPriceList($data, $priceListName));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function dataGridFiltersDataProvider()
+    {
+        return [
+            'active' => [
+                'active' => true,
+                'priceLists' => ['priceList1', 'priceList3']
+            ],
+            'not_active' => [
+                'active' => false,
+                'priceLists' => ['priceList2', 'priceList4', 'priceList5', 'Default Price List']
+            ]
+        ];
+    }
+
+    public function testDataGridSorters()
+    {
+        $grid = $this->client->requestGrid(
+            ['gridName' => 'pricing-price-list-grid'],
+            ['pricing-price-list-grid[_sort_by][activity]' => OrmSorterExtension::DIRECTION_ASC]
+        );
+        $data = json_decode($grid->getContent(), true)['data'];
+        $orderedPriceListNames = [
+            'Default Price List',
+            'priceList2',
+            'priceList4',
+            'priceList5',
+            'priceList1',
+            'priceList3'
+        ];
+        foreach ($orderedPriceListNames as $key => $name) {
+            $this->assertEquals($name, $data[$key]['name']);
+        }
+    }
+
+    /**
+     * @param array $rows
+     * @param string $priceListName
+     * @return bool
+     */
+    protected function hasPriceList(array $rows, $priceListName)
+    {
+        foreach ($rows as $row) {
+            if ($row['name'] === $priceListName) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
