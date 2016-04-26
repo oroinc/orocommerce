@@ -10,7 +10,13 @@
     <div {{ block('block_attributes') }}>
         <div data-role="price">
             {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }}
-            <div class="product-item__price_block" data-role="prices-hint" data-placement="bottom" data-close="false" data-trigger="hover">
+            <div class="product-item__price_block"
+                 data-role="prices-hint"
+                 data-placement="bottom"
+                 data-close="false"
+                 data-trigger="hover"
+                 data-container="body"
+                 data-class="prices-hint-content">
                 <% var firstPrice = model.prices[_.keys(model.prices)[0]]; %>
                 <div>
                     <span class="fs16 blue" data-role="price-value"><%= firstPrice.formatted_price %></span>
@@ -33,7 +39,7 @@
                         <% var prices = _.filter(modelPrices, function(price){return price.unit === key}); %>
                         <% if (prices.length) { %>
                             <tr>
-                                <td colspan="2">
+                                <td colspan="2" class="text-capitalize">
                                     <%= addNewLine ? '<br/>' : '' %>
                                     <b><%= label %></b>
                                 </td>
