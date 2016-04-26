@@ -153,12 +153,6 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
                 ),
                 $this->logicalAnd(
                     $this->isType('array'),
-                    $this->arrayHasKey('unitPriceIncludingTax'),
-                    $this->arrayHasKey('unitPriceExcludingTax'),
-                    $this->arrayHasKey('unitPriceTaxAmount'),
-                    $this->arrayHasKey('rowTotalIncludingTax'),
-                    $this->arrayHasKey('rowTotalExcludingTax'),
-                    $this->arrayHasKey('rowTotalTaxAmount'),
                     $this->arrayHasKey('taxes')
                 )
             );
