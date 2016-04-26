@@ -9,6 +9,11 @@ use Oro\Bundle\TestFrameworkBundle\Test\Client as BaseClient;
 class Client extends BaseClient
 {
     /**
+     * @var bool
+     */
+    protected $isHashNavigation = true;
+
+    /**
      * {@inheritdoc}
      */
     public function request(
