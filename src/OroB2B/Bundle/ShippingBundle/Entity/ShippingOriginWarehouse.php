@@ -22,18 +22,13 @@ class ShippingOriginWarehouse extends ShippingOrigin
      */
     protected $warehouse;
 
-    /** @var  boolean */
+    /** @var bool */
     protected $system = false;
-
-    public function __construct(array $data = [])
-    {
-        parent::__construct($data);
-    }
 
     /**
      * @param Warehouse $warehouse
      *
-     * @return ShippingOriginWarehouse
+     * @return $this
      */
     public function setWarehouse(Warehouse $warehouse)
     {
@@ -51,20 +46,37 @@ class ShippingOriginWarehouse extends ShippingOrigin
     }
 
     /**
-     * @ORM\PreUpdate
+     * @ORM\PostLoad()
      */
-    public function preUpdate()
+    public function postLoad()
     {
-        $this->updated = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->data = new \ArrayObject(
+            [
+                'country' => $this->country,
+                'region' => $this->region,
+                'region_text' => $this->regionText,
+                'postalCode' => $this->postalCode,
+                'city' => $this->city,
+                'street' => $this->street,
+                'street2' => $this->street2
+            ]
+        );
     }
 
-    public function setSystem($system)
+    /**
+     * @param ShippingOrigin $shippingOrigin
+     * @return $this
+     */
+    public function import(ShippingOrigin $shippingOrigin)
     {
-        $this->system = (bool)$system;
-    }
+        $this->setCountry($shippingOrigin->getCountry())
+            ->setRegion($shippingOrigin->getRegion())
+            ->setRegionText($shippingOrigin->getRegionText())
+            ->setPostalCode($shippingOrigin->getPostalCode())
+            ->setCity($shippingOrigin->getCity())
+            ->setStreet($shippingOrigin->getStreet())
+            ->setStreet2($shippingOrigin->getStreet2());
 
-    public function isSystem()
-    {
-        return (bool)$this->system;
+        return $this;
     }
 }

@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 
-abstract class AbstractShippingOriginType extends AbstractType
+class ShippingOriginType extends AbstractType
 {
     const NAME = 'orob2b_shipping_origin';
 
@@ -113,5 +113,13 @@ abstract class AbstractShippingOriginType extends AbstractType
                 'intention' => 'shipping_origin'
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return self::NAME;
     }
 }

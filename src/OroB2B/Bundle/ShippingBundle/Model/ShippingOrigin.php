@@ -12,6 +12,9 @@ class ShippingOrigin extends AbstractAddress
     /** @var \ArrayObject */
     protected $data;
 
+    /** @var bool */
+    protected $system = true;
+
     /**
      * @param array $data
      */
@@ -146,14 +149,18 @@ class ShippingOrigin extends AbstractAddress
      */
     public function isSystem()
     {
-        return true;
+        return $this->system;
     }
 
     /**
-     * @ORM\PostLoad()
+     * @param bool $system
+     *
+     * @return $this
      */
-    public function postLoad()
+    public function setSystem($system)
     {
-        $this->data = new \ArrayObject();
+        $this->system = (bool)$system;
+
+        return $this;
     }
 }

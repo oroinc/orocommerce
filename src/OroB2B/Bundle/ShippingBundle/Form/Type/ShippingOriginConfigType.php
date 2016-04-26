@@ -2,11 +2,14 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class ShippingOriginConfigType extends AbstractShippingOriginType
+class ShippingOriginConfigType extends AbstractType
 {
+    const NAME = 'orob2b_shipping_origin_config';
+
     /**
      * {@inheritdoc}
      */
@@ -33,5 +36,13 @@ class ShippingOriginConfigType extends AbstractShippingOriginType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return ShippingOriginType::NAME;
     }
 }

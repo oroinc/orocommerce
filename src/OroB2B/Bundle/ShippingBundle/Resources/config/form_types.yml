@@ -1,26 +1,27 @@
 services:
-    orob2b_shipping.form.type.shipping_origin_config:
-        class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType
+    orob2b_shipping.form.type.shipping_origin:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginType
         arguments:
             - '@oro_address.form.listener.address'
         calls:
             - [setDataClass, ['%orob2b_shipping.model.shipping_origin.class%']]
         tags:
-            - {name: form.type, alias: orob2b_shipping_origin}
+            - { name: form.type, alias: orob2b_shipping_origin }
+
+    orob2b_shipping.form.type.shipping_origin_config:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType
+        tags:
+            - {name: form.type, alias: orob2b_shipping_origin_config}
 
     orob2b_shipping.form.type.shipping_origin_warehouse:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType
-        arguments:
-            - '@oro_address.form.listener.address'
-        calls:
-            - [setDataClass, ['%orob2b_shipping.entity.shipping_origin_warehouse.class%']]
         tags:
-            - { name: form.type, alias: orob2b_shipping_origin_warehouse }
+            - {name: form.type, alias: orob2b_shipping_origin_warehouse}
 
     orob2b_shipping.form.extension.warehouse_shipping_origin:
         class: OroB2B\Bundle\ShippingBundle\Form\Extension\WarehouseShippingOriginExtension
         arguments:
             - '@orob2b_shipping.shipping_origin.provider'
+            - '@doctrine'
         tags:
-            - { name: form.type_extension, alias: orob2b_warehouse }
-
+            - {name: form.type_extension, alias: orob2b_warehouse}
