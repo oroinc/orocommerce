@@ -7,7 +7,7 @@ datagrid:
             type:              orm
             query:
                 select:
-                    - priceList.id
+                    - DISTINCT priceList.id
                     - priceList.name
                     - priceList.default
                     - priceList.createdAt
@@ -19,7 +19,7 @@ datagrid:
                     left:
                         - { join: %orob2b_pricing.entity.price_list_schedule.class%, alias: schedule, conditionType: 'WITH', condition: '(schedule.priceList = priceList) AND ((schedule.activeAt IS NOT NULL AND schedule.deactivateAt IS NOT NULL AND :now BETWEEN schedule.activeAt AND schedule.deactivateAt) OR (schedule.activeAt IS NULL AND :now < schedule.deactivateAt) OR (schedule.deactivateAt IS NULL AND :now > schedule.activeAt))'}
                         - { join: %orob2b_pricing.entity.price_list_schedule.class%, alias: any_schedule, conditionType: 'WITH', condition: 'any_schedule.priceList = priceList'}
-                groupBy: priceList.id
+                groupBy: priceList.id, schedule.id
             bind_parameters:
                 - now
 
