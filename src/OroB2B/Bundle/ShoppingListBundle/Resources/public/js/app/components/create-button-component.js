@@ -16,7 +16,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            widgetAlias: 'shopping_lists_frontend_widget',
+            widgetAlias: 'shopping_lists_frontend_widget'
         },
 
         /**
@@ -33,9 +33,9 @@ define(function(require) {
             this.options._sourceElement.on('click', 'a', _.bind(this.onClick, this));
 
             mediator
-                .on('shopping-list:created', _.bind(this.renderWidget, this))
-                .on('shopping-list:updated', _.bind(this.renderWidget, this))
-                .on('frontend:item:delete', _.bind(this.renderWidget, this));
+                .on('shopping-list:created', this.renderWidget, this)
+                .on('shopping-list:updated', this.renderWidget, this)
+                .on('frontend:item:delete', this.renderWidget, this);
         },
 
         renderWidget: function() {
@@ -48,10 +48,6 @@ define(function(require) {
             this.dialog = new ShoppingListWidget({});
             this.dialog.setUrl(routing.generate('orob2b_shopping_list_frontend_create', {createOnly: true}));
 
-            this.dialog.on('formSave', _.bind(function() {
-                mediator.execute('redirectTo', {url: window.location.href}, {redirect: true});
-            }, this));
-
             this.dialog.render();
         },
 
@@ -61,9 +57,9 @@ define(function(require) {
             }
 
             mediator
-                .off('shopping-list:created')
-                .off('shopping-list:updated')
-                .off('frontend:item:delete');
+                .off('shopping-list:created', this.renderWidget, this)
+                .off('shopping-list:updated', this.renderWidget, this)
+                .off('frontend:item:delete', this.renderWidget, this);
 
             this.options._sourceElement.off();
 

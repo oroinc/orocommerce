@@ -31,7 +31,7 @@
         {{ form_errors(form) }}
         {{ form_start(form, {
             'method': 'post',
-            'action': path('orob2b_checkout_frontend_checkout', {'id': checkout.id, 'type': checkout.type}),
+            'action': path('orob2b_checkout_frontend_checkout', {'id': checkout.id, 'checkoutType': checkout.checkoutType}),
             'attr' : {
                 'class': 'checkout__form',
                 'data-nohash': 'true',

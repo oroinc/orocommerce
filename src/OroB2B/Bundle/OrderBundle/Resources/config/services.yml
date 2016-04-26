@@ -58,7 +58,7 @@ services:
             - '%orob2b_account.entity.account_user_address.class%'
 
     orob2b_order.manager.order_address:
-        class: 'OroB2B\Bundle\OrderBundle\Model\OrderAddressManager'
+        class: 'OroB2B\Bundle\OrderBundle\Manager\OrderAddressManager'
         arguments:
             - '@orob2b_order.order.provider.order_address'
             - '@doctrine'
@@ -67,21 +67,29 @@ services:
             - [addEntity, ['a', '%orob2b_account.entity.account_address.class%']]
             - [addEntity, ['au', '%orob2b_account.entity.account_user_address.class%']]
 
-    orob2b_order.model.order_request_handler:
-        class: 'OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler'
+    orob2b_order.request_handler.order_request_handler:
+        class: 'OroB2B\Bundle\OrderBundle\RequestHandler\OrderRequestHandler'
         arguments:
             - '@doctrine'
             - '@request_stack'
             - '%orob2b_account.entity.account.class%'
             - '%orob2b_account.entity.account_user.class%'
 
-    orob2b_order.model.order_currency_handler:
-        class: 'OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler'
+    orob2b_order.request_handler.frontend_order_data_handler:
+        class: 'OroB2B\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler'
+        arguments:
+            - '@doctrine'
+            - '@request_stack'
+            - '@oro_security.security_facade'
+            - '@orob2b_payment.provider.payment_term'
+
+    orob2b_order.handler.order_currency_handler:
+        class: 'OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler'
         arguments:
             - '@oro_locale.settings'
 
-    orob2b_order.model.order_totals_handler:
-        class: 'OroB2B\Bundle\OrderBundle\Model\OrderTotalsHandler'
+    orob2b_order.handler.order_totals_handler:
+        class: 'OroB2B\Bundle\OrderBundle\Handler\OrderTotalsHandler'
         arguments:
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
