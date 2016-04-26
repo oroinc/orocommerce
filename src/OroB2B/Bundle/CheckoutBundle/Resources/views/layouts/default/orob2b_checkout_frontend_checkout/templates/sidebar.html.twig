@@ -14,14 +14,14 @@
                 {% if isCurrent %}
                     {% set isComplete = false %}
                 {% endif %}
-                <li {{ isComplete ? 'class="past-step"' : '' }}>
+                <li {{ isComplete ? 'class="past-step"' : '' }} data-role="transition-trigger-container">
                     {% set badgeClass = 'badge_ll_gray' %}
                     {% if isComplete %}
                         {% set badgeClass = 'badge_complete' %}
                     {% elseif isCurrent %}
                         {% set badgeClass = 'badge_orange' %}
                     {% endif %}
-                    <span class="badge badge_xmd badge_circle {{ badgeClass }}">
+                    <span class="badge badge_xmd badge_circle {{ badgeClass }}" data-role="transition-trigger">
                         {% if isComplete %}
                             <i class="cf-check"></i>
                         {% else %}
@@ -29,7 +29,7 @@
                         {% endif %}
                     </span>
                     <h3 class="checkout-navigation__title">
-                        {{ step.label }}
+                        <span data-role="transition-trigger">{{ step.label }}</span>
                         {% if isComplete and editTransitions[step.name] is defined and block.step_edit_button is defined %}
                             {% set editTransitionData = editTransitions[step.name] %}
                             {{ block_widget(block.step_edit_button,
