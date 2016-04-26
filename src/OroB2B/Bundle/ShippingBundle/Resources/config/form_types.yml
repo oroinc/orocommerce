@@ -1,6 +1,6 @@
 services:
     orob2b_shipping.form.type.shipping_origin_config:
-        class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginType
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType
         arguments:
             - '@oro_address.form.listener.address'
         calls:

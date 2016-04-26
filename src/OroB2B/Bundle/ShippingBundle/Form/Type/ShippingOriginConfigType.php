@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class ShippingOriginType extends AbstractShippingOriginType
+class ShippingOriginConfigType extends AbstractShippingOriginType
 {
     /**
      * {@inheritdoc}
