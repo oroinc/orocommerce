@@ -305,6 +305,7 @@ operations:
             - account-accounts-select-grid
             - account-category-visibility-grid
             - account-group-product-visibility-grid
+            - account-groups-select-grid
             - account-product-visibility-grid
             - account-user-by-account-grid
     DELETE:

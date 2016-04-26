@@ -83,7 +83,6 @@ datagrid:
                 rowAction:    true
 
     account-groups-select-grid:
-        entity_name: %orob2b_account.entity.account_group.class%
         acl_resource: orob2b_account_group_view
         options:
             entityHint:        account group
@@ -151,7 +150,6 @@ datagrid:
                 acl_resource:  orob2b_account_group_delete
 
     account-group-accounts-grid-basic:
-        entity_name: %orob2b_account.entity.account.class%
         acl_resource: orob2b_account_view
         source:
             type: orm
@@ -550,7 +548,6 @@ datagrid:
                     data_name: user.email
 
     account-account-users-grid-view-basic:
-        entity_name: %orob2b_account.entity.account_user.class%
         extends: account-account-users-grid-basic
         source:
             query:
