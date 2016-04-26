@@ -11,14 +11,14 @@ use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 
 use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType;
+use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginType;
 
 class ShippingOriginTypeTest extends AddressFormExtensionTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin';
 
     /**
-     * @var ShippingOriginConfigType
+     * @var ShippingOriginType
      */
     protected $formType;
 
@@ -29,7 +29,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
     {
         parent::setUp();
 
-        $this->formType = new ShippingOriginConfigType(new AddressCountryAndRegionSubscriberStub());
+        $this->formType = new ShippingOriginType(new AddressCountryAndRegionSubscriberStub());
         $this->formType->setDataClass(self::DATA_CLASS);
     }
 
@@ -49,7 +49,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(ShippingOriginConfigType::NAME, $this->formType->getName());
+        $this->assertEquals(ShippingOriginType::NAME, $this->formType->getName());
     }
 
     /**
