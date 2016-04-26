@@ -19,13 +19,9 @@
                 'title': 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.cms.child_page.entity_label'|trans})
             }) }}
         {% endif %}
-
-        {{ parent() }}
-
-        {% if resource_granted('orob2b_cms_page_create') or resource_granted('DELETE', entity) %}
-            {{ UI.buttonSeparator() }}
-        {% endif %}
     {% endif %}
+
+    {{ parent() }}
 
     {{ UI.cancelButton(path('orob2b_cms_page_index')) }}
     {% set html = UI.saveAndCloseButton() %}

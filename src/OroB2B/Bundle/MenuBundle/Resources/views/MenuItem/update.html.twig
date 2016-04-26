@@ -22,13 +22,10 @@
                 'title': 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.menu.menuitem.entity_label'|trans})
             }) }}
         {% endif %}
-
-        {{ parent() }}
-
-        {% if resource_granted('orob2b_menu_item_create') or resource_granted('DELETE', entity) %}
-            {{ UI.buttonSeparator() }}
-        {% endif %}
     {% endif %}
+
+    {{ parent() }}
+
     {{ UI.cancelButton(path('orob2b_menu_item_view', {'id': root.id})) }}
     {% set html = UI.saveAndStayButton() %}
     {{ UI.dropdownSaveButton({'html': html}) }}

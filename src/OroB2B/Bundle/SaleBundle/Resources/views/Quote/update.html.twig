@@ -21,10 +21,8 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
-    {% if entity.id and resource_granted('DELETE', entity) %}
-        {{ parent() }}
-        {{ UI.buttonSeparator() }}
-    {% endif %}
+    {{ parent() }}
+
     {{ UI.cancelButton(path('orob2b_sale_quote_index')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_sale_quote_create') %}

@@ -5,10 +5,8 @@
 {% oro_title_set({params : {"%taxCode%": entity.code|default('N/A'|trans), '%entityName%': 'orob2b.tax.entity_label'|trans} }) %}
 
 {% block navButtons %}
-    {% if entity.id and resource_granted('DELETE', entity) %}
-        {{ parent() }}
-        {{ UI.buttonSeparator() }}
-    {% endif %}
+    {{ parent() }}
+
     {{ UI.cancelButton(path('orob2b_tax_index')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_tax_update') %}

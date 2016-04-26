@@ -60,15 +60,15 @@ datagrid:
         options:
             entity_pagination: true
         properties:
+            default_link:
+                type: url
+                route: orob2b_pricing_price_list_default
+                params: [ id ]
             view_link:
                 type:  url
                 route: orob2b_pricing_price_list_view
                 params:
                     - id
-            update_link:
-                type: url
-                route: orob2b_pricing_price_list_update
-                params: [ id ]
         actions:
             default:
                 type:          ajax

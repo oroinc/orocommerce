@@ -7,10 +7,8 @@
 {% set formAction = entity.id ? path('orob2b_pricing_price_list_update', { 'id': entity.id }) : path('orob2b_pricing_price_list_create')  %}
 
 {% block navButtons %}
-    {% if entity.id and resource_granted('DELETE', entity) %}
-        {{ parent() }}
-        {{ UI.buttonSeparator() }}
-    {% endif %}
+    {{ parent() }}
+
     {{ UI.cancelButton(path('orob2b_pricing_price_list_index')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_pricing_price_list_update') %}

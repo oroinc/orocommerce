@@ -246,6 +246,8 @@ operations:
                     route: orob2b_rfp_frontend_request_create
                     route_parameters: {'storage': true}
     DELETE:
+        exclude_entities:
+            - OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
         exclude_datagrids:
             - shopping-list-grid
 

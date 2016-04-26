@@ -6,9 +6,7 @@ operations:
         for_all_datagrids: false
         routes:
             - orob2b_menu_item_update
-        preactions:
-            - '@assign_value': [$.rootId, $root]
         actions:
             - '@redirect':
                 route: 'orob2b_menu_item_view'
-                route_parameters: {id: $.rootId}
+                route_parameters: {id: $root}

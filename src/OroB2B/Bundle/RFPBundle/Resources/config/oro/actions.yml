@@ -288,6 +288,7 @@ operations:
     DELETE:
         exclude_entities:
             - OroB2B\Bundle\RFPBundle\Entity\Request
+            - OroB2B\Bundle\RFPBundle\Entity\RequestStatus
         exclude_datagrids:
             - rfp-requests-grid
 

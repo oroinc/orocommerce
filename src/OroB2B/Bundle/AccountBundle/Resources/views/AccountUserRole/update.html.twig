@@ -29,10 +29,8 @@
          data-page-component-options="{{ options|json_encode }}">
     </div>
 
-    {% if entity.id and resource_granted('DELETE', entity) %}
-        {{ parent() }}
-        {{ UI.buttonSeparator() }}
-    {% endif %}
+    {{ parent() }}
+
     {{ UI.cancelButton(path('orob2b_account_account_user_role_index')) }}
     {% set html = UI.buttonType({'type': 'button', 'class': 'btn-success role-submit', 'label': 'Save and Close'|trans}) %}
     {% if entity.id or resource_granted('orob2b_account_account_user_role_update') %}
