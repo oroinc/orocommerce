@@ -156,4 +156,19 @@ class PriceList extends BasePriceList
     {
         return new PriceListCurrency();
     }
+
+    /**
+     * @param PriceListSchedule $needle
+     * @return bool
+     */
+    public function hasSchedule(PriceListSchedule $needle)
+    {
+        foreach ($this->getSchedules() as $schedule) {
+            if ($schedule->equals($needle)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

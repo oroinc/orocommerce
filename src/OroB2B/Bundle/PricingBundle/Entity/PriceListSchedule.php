@@ -114,4 +114,27 @@ class PriceListSchedule
 
         return $this;
     }
+
+    /**
+     * @param PriceListSchedule $compared
+     * @return bool
+     */
+    public function equals(PriceListSchedule $compared)
+    {
+        return $compared->getPriceList() === $this->getPriceList()
+            && $compared->getActiveAt() == $this->getActiveAt()
+            && $compared->getDeactivateAt() == $this->getDeactivateAt();
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash()
+    {
+        return md5(json_encode([
+            'priceList' => $this->priceList ? spl_object_hash($this->priceList) : null,
+            'activeAt' => $this->activeAt,
+            'deactivateAt' => $this->deactivateAt
+        ]));
+    }
 }

@@ -406,6 +406,15 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
             - { name: kernel.event_listener, event: oro_config.update_after, method: updateAfter }
 
+    orob2b_pricing.event_listener.price_list:
+        class: 'OroB2B\Bundle\PricingBundle\EventListener\PriceListListener'
+        lazy: true
+        arguments:
+            - '@orob2b_pricing.builder.combined_price_list_activation_plan_builder'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit, method: beforeSubmit }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush, method: beforeFlush }
+
     orob2b_pricing.system_config_converter:
         class: 'OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter'
         public: false
