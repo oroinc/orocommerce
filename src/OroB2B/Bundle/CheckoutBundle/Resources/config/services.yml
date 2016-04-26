@@ -118,6 +118,15 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: check_request }
 
+
+    orob2b_checkout.twig.line_items:
+        class: 'OroB2B\Bundle\CheckoutBundle\Twig\LineItemsExtension'
+        arguments:
+            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
+            - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
+        tags:
+            - { name: twig.extension }
+
     orob2b_checkout.event_listener.checkout_entity:
         class: OroB2B\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener
         lazy: true
