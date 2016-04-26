@@ -27,7 +27,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules',
             ]
         );
     }
@@ -323,6 +323,34 @@ class CombinedPriceListRepositoryTest extends WebTestCase
                 'priceList' => 'price_list_4',
                 'result' => 0,
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCPLsForPriceCollectByTimeOffsetDataProvider
+     * @param $offsetHours
+     * @param $result
+     */
+    public function testGetCPLsForPriceCollectByTimeOffset($offsetHours, $result)
+    {
+        $cPriceLists = $this->getRepository()->getCPLsForPriceCollectByTimeOffset($offsetHours);
+        $this->assertCount($result, $cPriceLists);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCPLsForPriceCollectByTimeOffsetDataProvider()
+    {
+        return [
+            [
+                'offsetHours' => 11,
+                'result' => 0
+            ],
+            [
+                'offsetHours' => 13,
+                'result' => 1
+            ]
         ];
     }
 
