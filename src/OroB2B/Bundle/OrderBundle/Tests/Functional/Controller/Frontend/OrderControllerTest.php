@@ -56,7 +56,7 @@ class OrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals('Orders', $crawler->filter('h1.orders-page-title')->html());
+        $this->assertContains('Orders', $crawler->filter('h1.page-title')->html());
     }
 
     /**

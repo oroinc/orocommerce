@@ -68,7 +68,7 @@ define(function(require) {
                 if (lineItem.lineItemId === data.lineItemId) {
                     lineItem.unit = data.unit;
                 } else if (lineItem.product === data.product && lineItem.unit === data.unit) {
-                    mediator.execute('refreshPage');
+                    mediator.execute('redirectTo', {url: window.location.href});
                 }
             });
         }
