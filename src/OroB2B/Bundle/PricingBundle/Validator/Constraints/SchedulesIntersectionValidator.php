@@ -21,7 +21,6 @@ class SchedulesIntersectionValidator extends ConstraintValidator
         }
 
         foreach ($value as $index => $schedule) {
-            /***/
             if ($this->hasIntersection($value, $schedule)) {
                 $path = sprintf('[%d].%s', $index, PriceListScheduleType::ACTIVE_AT_FIELD);
                 $this->context
@@ -75,7 +74,7 @@ class SchedulesIntersectionValidator extends ConstraintValidator
     }
 
     /**
-     * @param $var
+     * @param mixed $var
      * @return bool
      */
     protected function isIterable($var)
