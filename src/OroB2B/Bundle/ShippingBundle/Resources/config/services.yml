@@ -22,3 +22,14 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_config.global'
             - '@orob2b_shipping.factory.shipping_origin_model_factory'
+
+    orob2b_shipping.event_listener.form_view:
+        class: OroB2B\Bundle\ShippingBundle\EventListener\FormViewListener
+        arguments:
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@orob2b_shipping.shipping_origin.provider'
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-view, method: onWarehouseView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-edit, method: onWarehouseEdit }
