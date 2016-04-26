@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Twig;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -52,7 +53,10 @@ class LineItemsExtension extends \Twig_Extension
             $data['quantity'] = $lineItem->getQuantity();
             $data['unit'] = $lineItem->getProductUnit();
             $data['price'] = $lineItem->getPrice();
-            $data['subtotal'] = $this->lineItemSubtotalProvider->getRowTotal($lineItem, $lineItem->getCurrency());
+            $data['subtotal'] = Price::create(
+                $this->lineItemSubtotalProvider->getRowTotal($lineItem, $order->getCurrency()),
+                $order->getCurrency()
+            );
             $lineItems[] = $data;
         }
         $result['lineItems'] = $lineItems;

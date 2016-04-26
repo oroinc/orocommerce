@@ -40,13 +40,13 @@
     {% endif %}
 {% endif %}
 
-<table border="1">
+<table style="border: 1px solid black;margin-top: 10px">
     <thead>
     <tr>
-        <th>Item</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th>Subtotal</th>
+        <th><strong>Item</strong></th>
+        <th><strong>Quantity</strong></th>
+        <th><strong>Price</strong></th>
+        <th><strong>Subtotal</strong></th>
     </tr>
     </thead>
     <tbody>
@@ -66,8 +66,9 @@
     {% for total in data.subtotals %}
         <tr>
             <td>{{ total.label }}</td>
-            <td class="text-right">{{ total.totalPrice|oro_format_price }}</td>
+            <td align="right">{{ total.totalPrice|oro_format_price }}</td>
         </tr>
     {% endfor %}
 </table>
+<br>
 Thank you.
