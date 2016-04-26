@@ -14,9 +14,7 @@ class ShippingOriginWarehouseType extends AbstractShippingOriginType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('warehouse')
-            ->add('system', 'checkbox', ['label' => 'orob2b.shipping.warehouse.use_system_configuration']);
+        $builder->add('system', 'checkbox', ['label' => 'orob2b.shipping.warehouse.use_system_configuration']);
 
         parent::buildForm($builder, $options);
     }

@@ -45,6 +45,9 @@ class WarehouseShippingOriginExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }
 
+    /**
+     * @param FormEvent $formEvent
+     */
     public function postSubmit(FormEvent $formEvent)
     {
         //todo impl
