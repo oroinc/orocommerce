@@ -34,7 +34,8 @@ class LocaleFallbackStrategyTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->doctrine = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->cache = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
+        $this->cache = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
+            ->setMethods(['fetch', 'contains', 'save', 'delete'])->getMockForAbstractClass();
         $this->strategy = new LocaleFallbackStrategy($this->doctrine, $this->cache);
     }
 
