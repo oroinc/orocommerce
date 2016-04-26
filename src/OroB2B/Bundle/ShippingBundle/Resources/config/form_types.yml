@@ -1,17 +1,19 @@
 services:
-    orob2b_shipping.form.type.shipping_origin:
+    orob2b_shipping.form.type.shipping_origin_config:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginType
         arguments:
             - '@oro_address.form.listener.address'
         calls:
             - [setDataClass, ['%orob2b_shipping.model.shipping_origin.class%']]
         tags:
-             - { name: form.type, alias: orob2b_shipping_origin }
+            - {name: form.type, alias: orob2b_shipping_origin}
 
     orob2b_shipping.form.type.shipping_origin_warehouse:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType
         arguments:
             - '@oro_address.form.listener.address'
+        calls:
+            - [setDataClass, ['%orob2b_shipping.entity.shipping_origin_warehouse.class%']]
         tags:
             - { name: form.type, alias: orob2b_shipping_origin_warehouse }
 

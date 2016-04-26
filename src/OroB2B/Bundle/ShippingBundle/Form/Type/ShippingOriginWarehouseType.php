@@ -3,12 +3,9 @@
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
-
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ShippingOriginWarehouseType extends ShippingOriginType
+class ShippingOriginWarehouseType extends AbstractShippingOriginType
 {
     const NAME = 'orob2b_shipping_origin_warehouse';
 
@@ -28,14 +25,9 @@ class ShippingOriginWarehouseType extends ShippingOriginType
     {
         $resolver->setDefaults(
             [
-                'data_class' => 'OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse'
+                'data_class' => $this->dataClass
             ]
         );
-    }
-
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        //override parent
     }
 
     public function getName()
