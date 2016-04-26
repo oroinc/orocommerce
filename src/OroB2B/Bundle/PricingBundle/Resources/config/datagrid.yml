@@ -12,12 +12,14 @@ datagrid:
                     - priceList.default
                     - priceList.createdAt
                     - priceList.updatedAt
-                    - CASE WHEN schedule.id IS NOT NULL THEN true ELSE false END as activity
+                    - CASE WHEN COUNT(any_schedule.id) > 0 THEN CASE WHEN schedule.id IS NOT NULL THEN true ELSE false END ELSE true END as activity
                 from:
                     - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
                 join:
                     left:
                         - { join: %orob2b_pricing.entity.price_list_schedule.class%, alias: schedule, conditionType: 'WITH', condition: '(schedule.priceList = priceList) AND ((schedule.activeAt IS NOT NULL AND schedule.deactivateAt IS NOT NULL AND :now BETWEEN schedule.activeAt AND schedule.deactivateAt) OR (schedule.activeAt IS NULL AND :now < schedule.deactivateAt) OR (schedule.deactivateAt IS NULL AND :now > schedule.activeAt))'}
+                        - { join: %orob2b_pricing.entity.price_list_schedule.class%, alias: any_schedule, conditionType: 'WITH', condition: 'any_schedule.priceList = priceList'}
+                groupBy: priceList.id
             bind_parameters:
                 - now
 
