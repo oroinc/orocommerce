@@ -62,5 +62,9 @@ class ShippingOriginWarehouseTest extends \PHPUnit_Framework_TestCase
     {
         $shippingOriginWarehouse = new ShippingOriginWarehouse();
         $this->assertFalse($shippingOriginWarehouse->isSystem());
+
+        //form type mapping purpose
+        $shippingOriginWarehouse->setSystem(true);
+        $this->assertTrue($shippingOriginWarehouse->isSystem());
     }
 }
