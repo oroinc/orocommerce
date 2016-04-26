@@ -212,6 +212,9 @@ datagrid:
         sorters:
             default:
                 name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        actions:
+            view:
+                rowAction: true
 
     account-group-accounts-grid-update:
         extends: account-group-accounts-grid-basic
