@@ -78,7 +78,8 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
                 $qb->expr()->eq('priceListFallBack.website', ':website')
             )
         )
-        ->setParameter('website', $website);
+        ->setParameter('website', $website)
+        ->orderBy('accountGroup.id', Criteria::ASC);
 
         if ($fallback !== null) {
             $qb->where(
