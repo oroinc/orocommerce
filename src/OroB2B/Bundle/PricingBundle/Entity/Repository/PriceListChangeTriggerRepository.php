@@ -44,4 +44,12 @@ class PriceListChangeTriggerRepository extends EntityRepository
             $queryBuilder
         );
     }
+
+    public function deleteAll()
+    {
+        $this->createQueryBuilder('priceListChangeTrigger')
+        ->delete('OroB2BPricingBundle:PriceListChangeTrigger', 'priceListChangeTrigger')
+        ->getQuery()
+        ->execute();
+    }
 }

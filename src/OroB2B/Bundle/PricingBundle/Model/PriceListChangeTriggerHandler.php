@@ -66,6 +66,7 @@ class PriceListChangeTriggerHandler
     {
         $trigger = $this->createTrigger();
         $trigger->setAccount($account)
+            ->setAccountGroup($account->getGroup())
             ->setWebsite($website);
         $this->getManager()->persist($trigger);
         $this->triggerChangeListener();

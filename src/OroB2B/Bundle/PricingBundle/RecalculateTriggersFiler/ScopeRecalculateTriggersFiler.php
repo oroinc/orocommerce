@@ -41,15 +41,59 @@ class ScopeRecalculateTriggersFiler
 
         if ($force) {
             if (empty($websites) && empty($accountGroups) && empty($accounts)) {
+                $this->clearAllExistingTriggers();
                 $priceListChangeTrigger = new PriceListChangeTrigger();
 
                 $em->persist($priceListChangeTrigger);
             }
         } else {
+            if ($accountGroups && $accounts) {
+                $this->clearExistingScopesPriceListChangeTriggers($websites, $accountGroups, []);
+                $this->clearExistingScopesPriceListChangeTriggers($websites, [], $accounts);
+            } else {
+                $this->clearExistingScopesPriceListChangeTriggers($websites, $accountGroups, $accounts);
+            }
             $this->preparePriceListChangeTriggersForScopes($em, $websites, $accountGroups, $accounts);
         }
 
         $em->flush();
+    }
+
+    protected function clearAllExistingTriggers()
+    {
+        $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger')
+            ->getRepository('OroB2BPricingBundle:PriceListChangeTrigger')
+            ->deleteAll();
+
+        $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPriceChangeTrigger')
+            ->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger')
+            ->deleteAll();
+    }
+
+    /**
+     * @param Website[] $websites
+     * @param AccountGroup[] $accountGroups
+     * @param Account[] $accounts
+     */
+    protected function clearExistingScopesPriceListChangeTriggers($websites = [], $accountGroups = [], $accounts = [])
+    {
+        $qb = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger')
+            ->getRepository('OroB2BPricingBundle:PriceListChangeTrigger')
+            ->createQueryBuilder('priceListChangeTrigger');
+
+        $qb->delete('OroB2BPricingBundle:PriceListChangeTrigger', 'priceListChangeTrigger');
+
+        if ($websites) {
+            $qb->andWhere($qb->expr()->in('priceListChangeTrigger.website', $websites));
+        }
+        if ($accountGroups) {
+            $qb->andWhere($qb->expr()->in('priceListChangeTrigger.website', $accountGroups));
+        }
+        if ($accounts) {
+            $qb->andWhere($qb->expr()->in('priceListChangeTrigger.website', $accounts));
+        }
+
+        $qb->getQuery()->execute();
     }
 
     /**

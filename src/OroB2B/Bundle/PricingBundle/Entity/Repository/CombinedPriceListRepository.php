@@ -295,7 +295,7 @@ class CombinedPriceListRepository extends EntityRepository
     public function getCPLsForPriceCollectByTimeOffset($offsetHours)
     {
         $activateDate = new \DateTime('now', new \DateTimeZone("UTC"));
-        $activateDate->add(new \DateInterval(sprintf('PT%fM', $offsetHours * 60)));
+        $activateDate->add(new \DateInterval(sprintf('PT%dM', $offsetHours * 60)));
 
         $qb = $this->createQueryBuilder('cpl');
         $qb->select('cpl')
