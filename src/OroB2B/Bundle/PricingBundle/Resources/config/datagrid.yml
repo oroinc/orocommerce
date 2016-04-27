@@ -74,6 +74,7 @@ datagrid:
                     type:      boolean
                     data_name: activity
                     label: orob2b.pricing.pricelist_schedule.active.labal
+                    filter_by_having: true
 
     pricing-price-list-grid:
         extends: pricing-price-list-select-grid

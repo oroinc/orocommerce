@@ -67,8 +67,8 @@ class PriceListControllerTest extends WebTestCase
         );
         $data = json_decode($grid->getContent(), true)['data'];
         $this->assertCount(count($priceLists), $data);
-        foreach ($priceLists as $priceListName) {
-            $this->assertTrue($this->hasPriceList($data, $priceListName));
+        foreach ($data as $priceList) {
+            $this->assertContains($priceList['name'], $priceLists);
         }
     }
 
@@ -80,11 +80,11 @@ class PriceListControllerTest extends WebTestCase
         return [
             'active' => [
                 'active' => true,
-                'priceLists' => ['priceList1', 'priceList3']
+                'priceLists' => ['priceList1', 'priceList3', 'priceList5', 'Default Price List']
             ],
             'not_active' => [
                 'active' => false,
-                'priceLists' => ['priceList2', 'priceList4', 'priceList5', 'Default Price List']
+                'priceLists' => ['priceList2', 'priceList4']
             ]
         ];
     }
@@ -96,33 +96,14 @@ class PriceListControllerTest extends WebTestCase
             ['pricing-price-list-grid[_sort_by][activity]' => OrmSorterExtension::DIRECTION_ASC]
         );
         $data = json_decode($grid->getContent(), true)['data'];
-        $orderedPriceListNames = [
-            'Default Price List',
-            'priceList2',
-            'priceList4',
-            'priceList5',
-            'priceList1',
-            'priceList3'
-        ];
-        foreach ($orderedPriceListNames as $key => $name) {
-            $this->assertEquals($name, $data[$key]['name']);
-        }
-    }
-
-    /**
-     * @param array $rows
-     * @param string $priceListName
-     * @return bool
-     */
-    protected function hasPriceList(array $rows, $priceListName)
-    {
-        foreach ($rows as $row) {
-            if ($row['name'] === $priceListName) {
-                return true;
+        $this->assertCount(6, $data);
+        foreach ($data as $key => $priceList) {
+            if ($key <= 1) {
+                $this->assertContains("Is not active now.", $priceList['activity']);
+            } else {
+                $this->assertContains("Is active now.", $priceList['activity']);
             }
         }
-
-        return false;
     }
 
     /**
