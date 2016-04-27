@@ -16,3 +16,37 @@
 {% macro image(file, filter) -%}
     <img src="{{ _self.url(file, filter) }}"/>
 {%- endmacro -%}
+
+{% macro renderProductImages(productImages) %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {# @TODO replace with macros param! #}
+    {% set allImageTypes = ['main', 'additional', 'listing'] %}
+
+    <table style="padding: 10px;" border="1" class="image-collection">
+        <tr>
+            <th>{{ 'orob2b.product.productimage.file.label'|trans }}</th>
+            {% for imageType in allImageTypes %}
+                <th >{{ ('orob2b.product.productimage.type.'~imageType~'.label')|trans }}</th>
+            {% endfor %}
+        </tr>
+
+        {% for productImage in productImages %}
+            <tr>
+                <td>
+                    {{ oro_image_view(productImage, productImage.image, null, 'image') }}
+                    {{ oro_file_view(productImage, 'image', productImage.image) }}
+                </td>
+
+                {% for imageType in allImageTypes %}
+                    <td class="text-center">
+                        {% if imageType in productImage.types %}
+                        <i class="icon-check"></i>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+
+            </tr>
+        {% endfor %}
+    </table>
+{% endmacro %}
