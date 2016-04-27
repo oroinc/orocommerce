@@ -57,7 +57,7 @@ workflows:
                 label: Flag indicates that payment is in progress
             payment_validate:
                 type: bool
-                label: Payment validatation required
+                label: Payment validation required
         steps:
             enter_billing_address:
                 label: Billing Information

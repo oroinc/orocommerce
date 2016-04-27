@@ -216,7 +216,7 @@ define(function(require) {
         },
 
         beforeTransit: function(eventData) {
-            if (eventData.data.paymentMethod === this.options.paymentMethod) {
+            if (eventData.data.paymentMethod === this.options.paymentMethod && eventData.data.paymentValidate) {
                 eventData.stopped = !this.validate();
             }
         }

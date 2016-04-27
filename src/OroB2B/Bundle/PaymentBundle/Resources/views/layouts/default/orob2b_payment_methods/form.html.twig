@@ -28,11 +28,12 @@
 
 {% block _orob2b_payment_credit_card_widget %}
     {% set isAuthorizedCard = options.authorizeTransaction is defined and options.acct is defined %}
-    {% set componentOptions = {paymentMethod: paymentMethod, authorizedCard: (options.acct is defined ? options.acct : null) } %}
+    {% set authorizedCreditCardComponentOptions = {paymentMethod: paymentMethod, authorizedCard: (options.acct is defined ? options.acct : null) } %}
+    {% set creditCardComponentOptions = {paymentMethod: paymentMethod} %}
     {% if isAuthorizedCard %}
         <div class="payment-methods-authorized-card-container"
                 data-page-component-module="orob2bpayment/js/app/components/authorized-credit-card-component"
-                data-page-component-options="{{ componentOptions|json_encode }}">
+                data-page-component-options="{{ authorizedCreditCardComponentOptions|json_encode }}">
             <div class="{{ class_prefix }}__form__payment-methods {{ class_prefix }}__form__payment-methods-authorized-card payment-methods-authorized-card" data-authorized-card>
                 <p>
                     {{ 'orob2b.payment.payflow.authorized_card'|trans({'{{ last4 }}': options.acct}) }}
@@ -44,7 +45,7 @@
     {% endif %}
     <div class="{{ class_prefix }}__form__payment-methods"
         data-page-component-module="orob2bpayment/js/app/components/credit-card-component"
-        data-page-component-options="{{ componentOptions|json_encode }}"
+        data-page-component-options="{{ creditCardComponentOptions|json_encode }}"
         {{ options.authorizeTransaction is defined and options.acct is defined ? 'style="display: none;" data-different-card' }}>
         {% if isAuthorizedCard %}
             <div class="{{ class_prefix }}__form__payment-methods-different-card">

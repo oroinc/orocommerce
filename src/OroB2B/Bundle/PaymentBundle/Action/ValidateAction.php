@@ -14,8 +14,6 @@ class ValidateAction extends AbstractPaymentMethodAction
         parent::configureOptionsResolver($resolver);
 
         $resolver
-            ->setRequired('paymentMethod')
-            ->addAllowedTypes('paymentMethod', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface'])
             ->remove(['amount', 'currency']);
     }
 
@@ -25,8 +23,6 @@ class ValidateAction extends AbstractPaymentMethodAction
         parent::configureValuesResolver($resolver);
 
         $resolver
-            ->setRequired('paymentMethod')
-            ->addAllowedTypes('paymentMethod', 'string')
             ->remove(['amount', 'currency']);
     }
 

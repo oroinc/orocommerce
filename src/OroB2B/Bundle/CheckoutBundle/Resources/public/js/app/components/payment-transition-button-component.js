@@ -17,6 +17,7 @@ define(function(require) {
             this.defaults.selectors.paymentForm = '[data-content="payment_method_form"]';
             this.defaults.selectors.paymentMethodSelector = '[name="paymentMethod"]';
             this.defaults.selectors.paymentMethod = '[name$="[payment_method]"]';
+            this.defaults.selectors.paymentValidate = '[name$="[payment_validate]"]';
 
             PaymentTransitionButtonComponent.__super__.initialize.call(this, options);
 
@@ -50,7 +51,13 @@ define(function(require) {
          */
         transit: function(e, data) {
             var paymentMethod = this.getPaymentMethodElement().val();
-            var eventData = {stopped: false, data: {paymentMethod: paymentMethod}};
+            var paymentValidate = this.getPaymentValidateElement().prop('checked');
+            var transitData = {
+                paymentMethod: paymentMethod,
+                paymentValidate: paymentValidate
+            };
+
+            var eventData = {stopped: false, data: transitData};
 
             mediator.trigger('checkout:payment:before-transit', eventData);
             if (eventData.stopped) {
@@ -83,7 +90,9 @@ define(function(require) {
          */
         onPaymentMethodChange: function(event) {
             var target = $(event.target);
-            this.getPaymentMethodElement().val(target.val());
+            var paymentMethod = target.val();
+            this.getPaymentMethodElement().val(paymentMethod);
+            mediator.trigger('checkout:payment:method:changed', {paymentMethod: paymentMethod});
         },
 
         /**
@@ -128,6 +137,17 @@ define(function(require) {
             }
 
             return this.$paymentMethodElement;
+        },
+
+        /**
+         * @returns {jQuery|HTMLElement}
+         */
+        getPaymentValidateElement: function() {
+            if (!this.hasOwnProperty('$paymentValidateElement')) {
+                this.$paymentValidateElement = this.getContent().find(this.options.selectors.paymentValidate);
+            }
+
+            return this.$paymentValidateElement;
         }
     });
 

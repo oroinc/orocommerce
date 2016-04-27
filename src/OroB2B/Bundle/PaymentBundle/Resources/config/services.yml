@@ -130,11 +130,6 @@ services:
         calls:
             - ['setLogger', ['@logger']]
 
-    orob2b_payment.provider.payflow_gateway_payment_transaction:
-        class: 'OroB2B\Bundle\PaymentBundle\Provider\PayflowGatewayPaymentTransactionProvider'
-        arguments:
-            - '@orob2b_payment.provider.payment_transaction'
-
     orob2b_payment.provider.payment_status:
         class: 'OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider'
         arguments:
