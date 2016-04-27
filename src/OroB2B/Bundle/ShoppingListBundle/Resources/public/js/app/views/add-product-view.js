@@ -40,8 +40,6 @@ define(function(require) {
             var product = this.$el.data('product');
             this.$el.find('.pinned-dropdown').data('product', product);
             this.initLayout();
-
-            mediator.on('shopping-list:created', this.transformCreateNewButton, this);
         },
 
         /**
@@ -153,7 +151,6 @@ define(function(require) {
             }
 
             this.$el.off();
-            mediator.off('shopping-list:created', this.transformCreateNewButton, this);
 
             AddProductView.__super__.dispose.call(this);
         }
