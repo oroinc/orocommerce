@@ -18,6 +18,7 @@ services:
     orob2b_website.website.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
+        public: true
         arguments:
             - '%orob2b_website.entity.website.class%'
             - "@doctrine.orm.entity_manager"

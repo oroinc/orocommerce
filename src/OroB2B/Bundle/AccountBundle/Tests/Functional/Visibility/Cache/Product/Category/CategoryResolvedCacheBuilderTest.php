@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\
 
 use Doctrine\ORM\AbstractQuery;
 
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
@@ -28,8 +30,32 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
         parent::setUp();
 
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-        $this->builder = $this->getContainer()
-            ->get('orob2b_account.visibility.cache.product.category.category_resolved_cache_builder');
+
+        $container = $this->client->getContainer();
+
+        $this->builder = new CategoryResolvedCacheBuilder(
+            $container->get('doctrine'),
+            $container->get('oro_entity.orm.insert_from_select_query_executor')
+        );
+        $this->builder->setCacheClass(
+            $container->getParameter('orob2b_account.entity.category_visibility_resolved.class')
+        );
+
+        $subtreeBuilder = new VisibilityChangeCategorySubtreeCacheBuilder(
+            $container->get('doctrine'),
+            $container->get('orob2b_account.visibility.resolver.category_visibility_resolver'),
+            $container->get('oro_config.manager')
+        );
+
+        $this->builder->setVisibilityChangeCategorySubtreeCacheBuilder($subtreeBuilder);
+
+        $positionChangeBuilder = new PositionChangeCategorySubtreeCacheBuilder(
+            $container->get('doctrine'),
+            $container->get('orob2b_account.visibility.resolver.category_visibility_resolver'),
+            $container->get('oro_config.manager')
+        );
+
+        $this->builder->setPositionChangeCategorySubtreeCacheBuilder($positionChangeBuilder);
     }
 
     public function testChangeCategoryVisibilityToHidden()
