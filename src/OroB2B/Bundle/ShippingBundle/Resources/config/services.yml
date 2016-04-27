@@ -1,5 +1,8 @@
 parameters:
     orob2b_shipping.model.shipping_origin.class: OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin
+    orob2b_shipping.entity.dimension_unit.class: OroB2B\Bundle\ShippingBundle\Entity\DimensionUnit
+    orob2b_shipping.entity.freight_class.class: OroB2B\Bundle\ShippingBundle\Entity\FreightClass
+    orob2b_shipping.entity.weight_unit.class: OroB2B\Bundle\ShippingBundle\Entity\WeightUnit
 
 services:
     orob2b_shipping.factory.shipping_origin_model_factory:
