@@ -5,11 +5,10 @@ namespace OroB2B\Bundle\ShippingBundle\Bundle\Tests\Unit\Entity;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\RFPBundle\Tests\Unit\Entity\AbstractTest;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
 use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
 
-class ShippingOriginWarehouseTest extends AbstractTest
+class ShippingOriginWarehouseTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;

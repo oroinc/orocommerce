@@ -2,13 +2,7 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
-
 use Symfony\Component\Form\PreloadedExtension;
-
-use Oro\Bundle\AddressBundle\Form\Type\CountryType;
-use Oro\Bundle\AddressBundle\Form\Type\RegionType;
-use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
 
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
@@ -101,22 +95,17 @@ class ShippingOriginWarehouseTypeTest extends AddressFormExtensionTestCase
      */
     protected function getExtensions()
     {
-        $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
-            ->setMethods(['setDefaultOptions', 'buildForm'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        return [
-            new PreloadedExtension(
-                [
-                    ShippingOriginType::NAME => new ShippingOriginType(new AddressCountryAndRegionSubscriberStub()),
-                    'oro_country' => new CountryType(),
-                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
-                    'translatable_entity' => $translatableEntity,
-                    'oro_region' => new RegionType(),
-                ],
-                ['form' => [new RandomIdExtension()]]
-            )
-        ];
+        return array_merge(
+            parent::getExtensions(),
+            [
+                new PreloadedExtension(
+                    [
+                        ShippingOriginType::NAME => new ShippingOriginType(new AddressCountryAndRegionSubscriberStub()),
+                        $this->getValidatorExtension(true)
+                    ],
+                    []
+                )
+            ]
+        );
     }
 }
