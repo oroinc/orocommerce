@@ -52,7 +52,6 @@ class ShippingOriginConfigTypeTest extends AddressFormExtensionTestCase
     }
 
     /**
-     * @param bool $isValid
      * @param array $submittedData
      * @param mixed $expectedData
      * @param mixed $defaultData
@@ -60,14 +59,14 @@ class ShippingOriginConfigTypeTest extends AddressFormExtensionTestCase
      *
      * @dataProvider submitProvider
      */
-    public function testSubmit($isValid, $submittedData, $expectedData, $defaultData = null, $options = [])
+    public function testSubmit($submittedData, $expectedData, $defaultData = null, $options = [])
     {
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
-        $this->assertEquals($isValid, $form->isValid());
+        $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -78,13 +77,11 @@ class ShippingOriginConfigTypeTest extends AddressFormExtensionTestCase
     {
         return [
             'empty data' => [
-                'isValid' => false,
                 'submittedData' => [],
                 'expectedData' => $this->getShippingOrigin(),
                 'defaultData' => null,
             ],
             'empty country' => [
-                'isValid' => false,
                 'submittedData' => [
                     'region' => 'US-AL',
                     'postalCode' => 'code1',
@@ -95,7 +92,6 @@ class ShippingOriginConfigTypeTest extends AddressFormExtensionTestCase
                 'defaultData' => null,
             ],
             'empty region' => [
-                'isValid' => false,
                 'submittedData' => [
                     'country' => 'US',
                     'postalCode' => 'code1',
@@ -106,7 +102,6 @@ class ShippingOriginConfigTypeTest extends AddressFormExtensionTestCase
                 'defaultData' => null,
             ],
             'empty postalCode' => [
-                'isValid' => false,
                 'submittedData' => [
                     'country' => 'US',
                     'region' => 'US-AL',
@@ -117,7 +112,6 @@ class ShippingOriginConfigTypeTest extends AddressFormExtensionTestCase
                 'defaultData' => null,
             ],
             'empty city' => [
-                'isValid' => false,
                 'submittedData' => [
                     'country' => 'US',
                     'region' => 'US-AL',
@@ -128,7 +122,6 @@ class ShippingOriginConfigTypeTest extends AddressFormExtensionTestCase
                 'defaultData' => null,
             ],
             'empty street' => [
-                'isValid' => false,
                 'submittedData' => [
                     'country' => 'US',
                     'region' => 'US-AL',
@@ -139,7 +132,6 @@ class ShippingOriginConfigTypeTest extends AddressFormExtensionTestCase
                 'defaultData' => null,
             ],
             'full data' => [
-                'isValid' => true,
                 'submittedData' => [
                     'country' => 'US',
                     'region' => 'US-AL',
@@ -152,7 +144,6 @@ class ShippingOriginConfigTypeTest extends AddressFormExtensionTestCase
                 'defaultData' => null,
             ],
             'full data with default' => [
-                'isValid' => true,
                 'submittedData' => [
                     'country' => 'US',
                     'region' => 'US-AL',
