@@ -49,7 +49,7 @@ class PriceListListener
         /** @var PriceList $priceList */
         $priceList = $event->getData();
 
-        if ($this->isCollectionChanged($priceList)) {
+        if ($priceList->getId() && $this->isCollectionChanged($priceList)) {
             $this->activationPlanBuilder->buildByPriceList($priceList);
         }
     }
