@@ -11,7 +11,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
  */
 class PostgresqlDistinctGridModifierTest extends PostgresqlGridModifierTest
 {
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
 

@@ -60,8 +60,8 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
         $qb = $this->getEntityManager()
             ->createQueryBuilder();
         $qb->update($this->getEntityName(), 'rule')
-            ->set('rule.active = :activity')
-            ->where($qb->expr()->in('rule', ':rules'))
+            ->set('rule.active', ':activity')
+            ->where($qb->expr()->in('rule.id', ':rules'))
             ->setParameter('activity', $isActive)
             ->setParameter('rules', $rules)
             ->getQuery()->execute();
