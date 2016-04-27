@@ -3,27 +3,27 @@
         <div class="row">
             <div class="small-row">
                 <div>
-                        <div class="group-label">{{ form_label(form.priceList) }}</div>
-                        <div>{{ form_widget(form.priceList, { 'attr': {'class': 'priceList'} }) }}</div>
-                        <div>{{ form_errors(form.priceList) }}</div>
+                    <div class="group-label">{{ form_label(form.priceList) }}</div>
+                    <div>{{ form_widget(form.priceList, { 'attr': {'class': 'priceList'} }) }}</div>
+                    <div>{{ form_errors(form.priceList) }}</div>
                 </div>
             </div>
             <div class="small-row">
                 <div class="grouped-fields">
-                        <div class="group-label">{{ form_label(form.quantity) }}</div>
-                        <div class="col-widget">{{ form_widget(form.quantity, { 'attr': {'class': 'quantity'} }) }}</div>
-                        <div>{{ form_errors(form.quantity) }}</div>
-                        <div>{{ form_widget(form.unit, { 'attr': {'class': 'unit'} }) }}</div>
-                        <div>{{ form_errors(form.unit) }}</div>
+                    <div class="group-label">{{ form_label(form.quantity) }}</div>
+                    <div class="col-widget">{{ form_widget(form.quantity, { 'attr': {'class': 'quantity'} }) }}</div>
+                    <div>{{ form_errors(form.quantity) }}</div>
+                    <div>{{ form_widget(form.unit, { 'attr': {'class': 'unit'} }) }}</div>
+                    <div>{{ form_errors(form.unit) }}</div>
                 </div>
             </div>
             <div class="small-row">
                 <div class="grouped-fields">
-                        <div class="group-label">{{ form_label(form.price.value) }}</div>
-                        <div class="col-widget">{{ form_widget(form.price.value, { 'attr': {'class': 'price-value'} }) }}</div>
-                        <div>{{ form_errors(form.price.value) }}</div>
-                        <div class="price-currency-div">{{ form_widget(form.price.currency, { 'attr': {'class': 'price-currency'} }) }}</div>
-                        <div>{{ form_errors(form.price.currency) }}</div>
+                    <div class="group-label">{{ form_label(form.price.value) }}</div>
+                    <div class="col-widget">{{ form_widget(form.price.value, { 'attr': {'class': 'price-value'} }) }}</div>
+                    <div>{{ form_errors(form.price.value) }}</div>
+                    <div class="price-currency-div">{{ form_widget(form.price.currency, { 'attr': {'class': 'price-currency'} }) }}</div>
+                    <div>{{ form_errors(form.price.currency) }}</div>
                 </div>
             </div>
         </div>
@@ -107,10 +107,6 @@
 {% endblock %}
 
 {# --------------------------- Price List Schedule ------------------------------------------------------ #}
-{% block orob2b_pricing_price_list_schedule_widget %}
-    <td>{{ form_widget(form.activeAt) }}</td>
-    <td>{{ form_widget(form.deactivateAt) }}</td>
-{% endblock %}
 
 {% macro pl_schedule_collection_item_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
@@ -120,10 +116,21 @@
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
     {% endif %}
-    <tr data-content="{{ name }}" data-validation-optional-group class="pl-schedule__row">
-        {{ form_widget(form) }}
-        <td class="">
+
+    {% set hasErrors = (form.activeAt.vars.errors|length or form.deactivateAt.vars.errors|length) %}
+
+    <tr data-content="{{ name }}" data-validation-optional-group class="pl-schedule__row {% if hasErrors %}has-row-error{% endif %}" data-role="schedule-row">
+        <td>{{ form_widget(form.activeAt) }}</td>
+        <td>{{ form_widget(form.deactivateAt) }}</td>
+        <td>
             <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
+        </td>
+    </tr>
+    <tr {% if not hasErrors %}style="display: none"{% endif %} class="pl-schedule__error-row" data-role="schedule-row-error">
+        <td colspan="3">
+            {{ form_errors(form) }}
+            {{ form_errors(form.activeAt) }}
+            {{ form_errors(form.deactivateAt) }}
         </td>
     </tr>
 {% endmacro %}
@@ -135,10 +142,14 @@
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
-        <div class="row-oro pl_schedule">
+        <div class="row-oro pl_schedule"
+             data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'orob2bpricing/js/app/views/price-list-schedule-view',
+             }|json_encode }}">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
-                <table class="grid table-hover table table-bordered">
+                <table class="grid table-hover table table-bordered table-condensed">
                     <thead>
                         <tr>
                             <th><span>{{ 'orob2b.pricing.pricelist_schedule.active_at.label'|trans }}</span></th>
