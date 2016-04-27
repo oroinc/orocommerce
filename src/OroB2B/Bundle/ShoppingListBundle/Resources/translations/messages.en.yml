@@ -41,6 +41,7 @@ orob2b:
             set_current: Set as current
             view: view shopping list
             add_to_shopping_list: Add to {{ shoppingList }}
+            remove_from_shopping_list: Remove From {{ shoppingList }}
             add_to_new_shopping_list: Create New Shopping List
             add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"
             failed_mesage: "You can't add these products to shopping list"
