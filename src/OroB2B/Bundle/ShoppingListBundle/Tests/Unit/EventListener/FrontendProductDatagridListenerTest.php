@@ -4,46 +4,73 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\Query\Expr\Join;
 
+use Symfony\Bridge\Doctrine\RegistryInterface;
+
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
-    use EntityTrait;
-
+    const SHOPPING_LIST_CLASS_NAME = 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList';
     const SHOPPING_LIST_LINE_ITEM_CLASS_NAME = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
 
-    /** @var ShoppingListManager|\PHPUnit_Framework_MockObject_MockObject */
-    protected $shoppingListManager;
+    use EntityTrait;
 
-    /** @var FrontendProductDatagridListener */
+    /**
+     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $securityFacade;
+
+    /**
+     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
+     * @var ShoppingListRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $repository;
+
+    /**
+     * @var FrontendProductDatagridListener
+     */
     protected $listener;
 
     public function setUp()
     {
-        $this->shoppingListManager = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
+        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
+
+        $this->repository = $this
+            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->listener = new FrontendProductDatagridListener(
-            $this->shoppingListManager,
+            $this->securityFacade,
+            $this->registry,
+            self::SHOPPING_LIST_CLASS_NAME,
             self::SHOPPING_LIST_LINE_ITEM_CLASS_NAME
         );
     }
 
     protected function tearDown()
     {
-        unset($this->shoppingListManager, $this->listener);
+        unset($this->securityFacade, $this->registry, $this->repository, $this->listener);
     }
 
     public function testOnPreBuild()
@@ -89,13 +116,30 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider onResultAfterDataProvider
      *
-     * @param ShoppingList|null $shoppingList
+     * @param object|AccountUser|null $accountUser
      * @param array $data
      * @param array $expected
      */
-    public function testOnResultAfter($shoppingList, array $data, array $expected = [])
+    public function testOnResultAfter($accountUser, array $data, array $expected = [])
     {
-        $this->shoppingListManager->expects($this->once())->method('getCurrent')->willReturn($shoppingList);
+        $this->securityFacade->expects($this->once())->method('getLoggedUser')->willReturn($accountUser);
+
+        if ($accountUser instanceof AccountUser) {
+            $this->registry->expects($this->once())
+                ->method('getRepository')
+                ->with(self::SHOPPING_LIST_CLASS_NAME)
+                ->willReturn($this->repository);
+
+            /** @var ShoppingList $shoppingList */
+            $shoppingList = $this->getEntity(self::SHOPPING_LIST_CLASS_NAME, ['id' => 42]);
+
+            $this->repository->expects($this->once())
+                ->method('findAvailableForAccountUser')
+                ->with($accountUser)
+                ->willReturn($shoppingList);
+        } else {
+            $this->registry->expects($this->never())->method($this->anything());
+        }
 
         $records = array_map(
             function ($record) {
@@ -159,10 +203,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         return [
             [
-                'shoppingList' => $this->getEntity(
-                    'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList',
-                    ['id' => 42]
-                ),
+                'accountUser' => new AccountUser(),
                 'data' => $data,
                 'expected' => [
                     [
@@ -177,14 +218,13 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
             [
-                'shoppingList' => null,
-                'data' => $data,
-                'expected' => [
-                    [FrontendProductDatagridListener::COLUMN_LINE_ITEMS => []],
-                    [FrontendProductDatagridListener::COLUMN_LINE_ITEMS => []],
-                    [FrontendProductDatagridListener::COLUMN_LINE_ITEMS => []]
-                ]
-            ]
+                'accountUser' => new \stdClass(),
+                'data' => $data
+            ],
+            [
+                'accountUser' => null,
+                'data' => $data
+            ],
         ];
     }
 
