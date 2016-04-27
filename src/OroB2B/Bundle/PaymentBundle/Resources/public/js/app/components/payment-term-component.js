@@ -26,7 +26,7 @@ define(function(require) {
         handleSubmit: function(eventData) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = true;
-                mediator.execute('redirectTo', {url: eventData.responseData.returnUrl}, {redirect: true});
+                mediator.execute('redirectTo', {url: eventData.responseData.successUrl}, {redirect: true});
             }
         },
 
