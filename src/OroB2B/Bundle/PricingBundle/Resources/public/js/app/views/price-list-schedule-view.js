@@ -27,6 +27,8 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
+
+            this.undelegate('change content:remove', this._handleErrors);
         }
     });
 
