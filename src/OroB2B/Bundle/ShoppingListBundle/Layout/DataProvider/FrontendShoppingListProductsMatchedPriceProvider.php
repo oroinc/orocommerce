@@ -2,15 +2,13 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
 
 use OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use OroB2B\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 
-class FrontendShoppingListProductsPricesDataProvider implements DataProviderInterface
+class FrontendShoppingListProductsMatchedPriceProvider extends AbstractServerRenderDataProvider
 {
     /**
      * @var FrontendProductPricesDataProvider
@@ -18,28 +16,20 @@ class FrontendShoppingListProductsPricesDataProvider implements DataProviderInte
     protected $productPriceProvider;
 
     /**
-     * @var ManagerRegistry
+     * @var ShoppingListLineItemsDataProvider
      */
-    protected $registry;
+    protected $shoppingListLineItemsDataProvider;
 
     /**
      * @param FrontendProductPricesDataProvider $productPriceProvider
-     * @param ManagerRegistry $registry
+     * @param ShoppingListLineItemsDataProvider $shoppingListLineItemsDataProvider
      */
     public function __construct(
         FrontendProductPricesDataProvider $productPriceProvider,
-        ManagerRegistry $registry
+        ShoppingListLineItemsDataProvider $shoppingListLineItemsDataProvider
     ) {
         $this->productPriceProvider = $productPriceProvider;
-        $this->registry = $registry;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        throw new \BadMethodCallException('Not implemented');
+        $this->shoppingListLineItemsDataProvider = $shoppingListLineItemsDataProvider;
     }
 
     /**
@@ -51,11 +41,7 @@ class FrontendShoppingListProductsPricesDataProvider implements DataProviderInte
         if (!$shoppingList) {
             return null;
         }
-        /** @var LineItemRepository $repository */
-        $repository = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem')
-            ->getRepository('OroB2BShoppingListBundle:LineItem');
-        $lineItems = $repository->getItemsWithProductByShoppingList($shoppingList);
-
+        $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
         return $this->productPriceProvider->getProductsMatchedPrice($lineItems);
     }
 }

@@ -157,9 +157,10 @@
                 </tr>
                 </thead>
                 {% for lineItem in shoppingList.lineItems %}
-                {% set productPrice = lineItem is defined and productsPrices[lineItem.product.id] is not empty ? productsPrices[lineItem.product.id] : null %}
-                {% set currency = productPrice ? productPrice.currency : defaultCurrency %}
-                <tbody class="line_item">
+                {% set productMatchedPrice = lineItem is defined and productsMatchedPrice[lineItem.product.id] is not empty ? productsMatchedPrice[lineItem.product.id] : null %}
+                {% set productAllPrices = lineItem is defined and productsAllPrices[lineItem.product.id] is not empty ? productsAllPrices[lineItem.product.id] : null %}
+                {% set currency = productMatchedPrice ? productMatchedPrice.currency : defaultCurrency %}
+                <tbody class="line_item" data-all-prices="{{ productAllPrices|json_encode }}">
                     <tr class="line_item_view" data-product-id="{{ lineItem.product.id }}" data-id="{{ lineItem.id }}" data-quantity="{{ lineItem.quantity }}" data-unit-code="{{ lineItem.unit.code }}" data-currency="{{ currency }}">
                         <td class="va-t_md" colspan="2">
                             <div class="product-item product-item_in-cart">
@@ -205,7 +206,7 @@
                                 <tbody>
                                 <tr>
                                     <td>{{ 'orob2b.frontend.shoppinglist.view.your_price.label'|trans }}</td>
-                                    <td class="text-right" data-container="matched-price">{% if productPrice %}{{ productPrice.value|oro_format_currency({'currency': currency}) }}{% else %}{{ 'oro.ui.empty'|trans }}{% endif %}</td>
+                                    <td class="text-right" data-container="matched-price">{% if productMatchedPrice %}{{ productMatchedPrice.value|oro_format_currency({'currency': currency}) }}{% else %}{{ 'oro.ui.empty'|trans }}{% endif %}</td>
                                 </tr>
                                 </tbody>
                             </table>
