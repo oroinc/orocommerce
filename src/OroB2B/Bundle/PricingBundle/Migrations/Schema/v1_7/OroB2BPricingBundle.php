@@ -3,16 +3,27 @@
 namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
+use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroB2BPricingBundle implements Migration
+class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 10;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -25,6 +36,7 @@ class OroB2BPricingBundle implements Migration
         $this->alterOrob2BCmbPriceListToAccTable($schema);
         $this->alterOroB2BCmbPriceListToAccGrTable($schema);
         $this->alterOroB2BCmbPriceListToWsTable($schema);
+        $this->alterOroB2BPriceListTable($schema, $queries);
 
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_acc'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_plist_to_acc_gr'));
@@ -151,6 +163,29 @@ class OroB2BPricingBundle implements Migration
             ['full_combined_price_list_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function alterOroB2BPriceListTable(Schema $schema, QueryBag $queries)
+    {
+        $table = $schema->getTable('orob2b_price_list');
+        $table->addColumn('contain_schedule', 'boolean', ['notnull' => false]);
+
+        $queries->addQuery(
+            new ParametrizedSqlMigrationQuery(
+                'UPDATE orob2b_price_list SET contain_schedule = :checkout_discriminator',
+                [
+                    'contain_schedule'  => false,
+                ],
+                [
+                    'checkout_discriminator'  => Type::BOOLEAN
+                ]
+            )
         );
     }
 }
