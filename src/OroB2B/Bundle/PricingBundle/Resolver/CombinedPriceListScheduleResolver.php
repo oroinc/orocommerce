@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\BasicCombinedRelationRepositoryTrait;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
@@ -62,6 +63,24 @@ class CombinedPriceListScheduleResolver
             $this->getCombinedPriceListActivationRuleRepository()->updateRulesActivity($newRulesToApply, true);
         }
         $this->updateCombinedPriceListConnection();
+    }
+
+    /**
+     * @param CombinedPriceList $fullCPl
+     * @param \DateTime|null $time
+     * @return null|CombinedPriceList
+     */
+    public function getActiveCplByFullCPL(CombinedPriceList $fullCPl, \DateTime $time = null)
+    {
+        if (!$time) {
+            $time = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
+        $activeRule = $this->getCombinedPriceListActivationRuleRepository()->getActualRuleByCpl($fullCPl, $time);
+        if ($activeRule) {
+            return $activeRule->getCombinedPriceList();
+        }
+
+        return null;
     }
 
     /**

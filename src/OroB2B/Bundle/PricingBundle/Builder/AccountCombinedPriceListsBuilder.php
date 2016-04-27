@@ -65,10 +65,7 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByAccount($account, $website);
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $behavior);
-        //TODO: Same for ALL builders
-        //TODO: get currently active CPL, switch to it, resolve prices for active CPL only, remove code below
-        $this->getCombinedPriceListRepository()
-            ->updateCombinedPriceListConnection($combinedPriceList, $website, $account);
+        $this->updateRelationsAndPrices($combinedPriceList, $website, $account);
     }
 
     /**

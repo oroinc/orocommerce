@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 
@@ -31,9 +31,9 @@ class CombinedPriceListProvider
     protected $className;
 
     /**
-     * @var CombinedProductPriceResolver
+     * @var CombinedPriceListActivationPlanBuilder
      */
-    protected $resolver;
+    protected $activationPlanBuilder;
 
     /**
      * @var EntityManager
@@ -62,11 +62,11 @@ class CombinedPriceListProvider
     }
 
     /**
-     * @param CombinedProductPriceResolver $resolver
+     * @param CombinedPriceListActivationPlanBuilder $activationPlanBuilder
      */
-    public function setResolver(CombinedProductPriceResolver $resolver)
+    public function setActivationPlanBuilder(CombinedPriceListActivationPlanBuilder $activationPlanBuilder)
     {
-        $this->resolver = $resolver;
+        $this->activationPlanBuilder = $activationPlanBuilder;
     }
 
     /**
@@ -83,16 +83,10 @@ class CombinedPriceListProvider
         $identifier = $this->getCombinedPriceListIdentifier($normalizedCollection);
         $combinedPriceList = $this->getRepository()->findOneBy(['name' => $identifier]);
 
-        if (!$combinedPriceList || $behavior == self::BEHAVIOR_FORCE) {
-            if (!$combinedPriceList) {
-                $combinedPriceList = $this->createCombinedPriceList($identifier);
-            }
+        if (!$combinedPriceList) {
+            $combinedPriceList = $this->createCombinedPriceList($identifier);
             $this->updateCombinedPriceList($combinedPriceList, $normalizedCollection);
-
-            //TODO: Move this to one level UP
-            if ($behavior !== self::BEHAVIOR_EMPTY) {
-                $this->resolver->combinePrices($combinedPriceList);
-            }
+            $this->activationPlanBuilder->buildByCombinedPriceList($combinedPriceList);
         }
 
         return $combinedPriceList;
@@ -152,8 +146,6 @@ class CombinedPriceListProvider
 
         $manager = $this->getManager();
         $manager->persist($combinedPriceList);
-
-        //TODO: build activation plan here with CombinedPriceListActivationPlanBuilder
 
         return $combinedPriceList;
     }

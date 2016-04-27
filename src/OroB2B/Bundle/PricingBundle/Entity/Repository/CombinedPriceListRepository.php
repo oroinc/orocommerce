@@ -204,11 +204,13 @@ class CombinedPriceListRepository extends EntityRepository
 
     /**
      * @param CombinedPriceList $combinedPriceList
+     * @param CombinedPriceList $activeCpl
      * @param Website $website
      * @param Account|AccountGroup $targetEntity
      */
     public function updateCombinedPriceListConnection(
         CombinedPriceList $combinedPriceList,
+        CombinedPriceList $activeCpl,
         Website $website,
         $targetEntity = null
     ) {
@@ -251,8 +253,13 @@ class CombinedPriceListRepository extends EntityRepository
             throw new \InvalidArgumentException(sprintf('Unknown target "%s"', get_class($targetEntity)));
         }
 
-        if ($isNew || $relation->getPriceList()->getId() !== $combinedPriceList->getId()) {
-            $relation->setPriceList($combinedPriceList);
+        if ($isNew
+            || $relation->getFullChainPriceList()->getId() !== $combinedPriceList->getId()
+            || $relation->getPriceList()->getId() !== $activeCpl->getId()
+        ) {
+            $relation->setFullChainPriceList($combinedPriceList);
+            $relation->setPriceList($activeCpl);
+
             $em->flush($relation);
         }
     }
@@ -298,7 +305,7 @@ class CombinedPriceListRepository extends EntityRepository
                 $qb->expr()->eq('cpl', 'combinedPriceListActivationRule.combinedPriceList')
             )
             ->where($qb->expr()->eq('cpl.pricesCalculated', ':pricesCalculated'))
-            ->andWhere($qb->expr()->lte('combinedPriceListActivationRule.activateAt', ':activateData'))
+            ->andWhere('combinedPriceListActivationRule.activateAt < :activateData OR combinedPriceListActivationRule.activateAt IS NULL')
             ->setParameters([
                 'pricesCalculated' => false,
                 'activateData' => $activateDate

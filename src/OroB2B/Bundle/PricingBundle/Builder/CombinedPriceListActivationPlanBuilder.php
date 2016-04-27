@@ -56,15 +56,20 @@ class CombinedPriceListActivationPlanBuilder
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param PriceListScheduleResolver $schedulerResolver
-     * @param CombinedPriceListProvider $combinedPriceListProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        PriceListScheduleResolver $schedulerResolver,
-        CombinedPriceListProvider $combinedPriceListProvider
+        PriceListScheduleResolver $schedulerResolver
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->schedulerResolver = $schedulerResolver;
+    }
+
+    /**
+     * @param CombinedPriceListProvider $combinedPriceListProvider
+     */
+    public function setProvider(CombinedPriceListProvider $combinedPriceListProvider)
+    {
         $this->combinedPriceListProvider = $combinedPriceListProvider;
     }
 
@@ -118,7 +123,7 @@ class CombinedPriceListActivationPlanBuilder
             }
             if ($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY] === null
                 || $ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY] < $now) {
-                $rule->setActive(true);
+//                $rule->setActive(true);
             }
             $actualCPL = $this->combinedActualCombinedPriceList(
                 $priceListRelations,

@@ -70,12 +70,9 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
             return;
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByWebsite($website);
-        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $behavior);
-
-        $this->getCombinedPriceListRepository()
-            ->updateCombinedPriceListConnection($actualCombinedPriceList, $website);
+        $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $behavior);
+        $this->updateRelationsAndPrices($combinedPriceList, $website);
     }
-
 
     /**
      * @param Website|null $website

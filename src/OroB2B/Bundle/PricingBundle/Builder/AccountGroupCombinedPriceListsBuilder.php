@@ -48,6 +48,7 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
             }
 
             if ($currentAccountGroup) {
+                $this->scheduleResolver->updateRelations();
                 $this->garbageCollector->cleanCombinedPriceLists();
             }
             $this->setBuiltForAccountGroup($website, $currentAccountGroup);
@@ -72,9 +73,7 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByAccountGroup($accountGroup, $website);
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $behavior);
-
-        $this->getCombinedPriceListRepository()
-            ->updateCombinedPriceListConnection($combinedPriceList, $website, $accountGroup);
+        $this->updateRelationsAndPrices($combinedPriceList, $website, $accountGroup);
     }
 
     /**
