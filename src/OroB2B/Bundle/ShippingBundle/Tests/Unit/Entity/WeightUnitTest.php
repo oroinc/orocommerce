@@ -11,7 +11,7 @@ class WeightUnitTest extends \PHPUnit_Framework_TestCase
     use EntityTestCaseTrait;
 
     /**
-     * @var  WeightUnit $entity
+     * @var WeightUnit $entity
      */
     protected $entity;
 
@@ -27,22 +27,11 @@ class WeightUnitTest extends \PHPUnit_Framework_TestCase
 
     public function testAccessors()
     {
-        $date = new \DateTime();
-
         $properties = [
-            ['id', 1],
             ['code', '123'],
-            ['conversionRates', []],
-            ['createdAt', $date, false],
-            ['updatedAt', $date, false],
+            ['conversionRates', ['rate1' => 'rateValue']],
         ];
 
-        $this->assertPropertyAccessors(new WeightUnit(), $properties);
-    }
-
-    public function testConstruct()
-    {
-        $this->assertInternalType('array', $this->entity->getConversionRates());
-        $this->assertEmpty($this->entity->getConversionRates());
+        $this->assertPropertyAccessors($this->entity, $properties);
     }
 }
