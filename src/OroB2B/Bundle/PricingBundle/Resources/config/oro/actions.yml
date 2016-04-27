@@ -63,7 +63,6 @@ operations:
             '@equal': [$active, false]
         actions:
             - '@assign_value': [$.entity.active, true]
-            - '@flush_entity': $.entity
 
     orob2b_pricing_price_list_disable:
         label: orob2b.pricing.pricelist.status.disable
@@ -77,7 +76,6 @@ operations:
             '@equal': [$active, true]
         actions:
             - '@assign_value': [$.entity.active, false]
-            - '@flush_entity': $.entity
 
 action_groups:
     orob2b_pricing_add_product_price:
