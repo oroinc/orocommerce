@@ -66,6 +66,7 @@ class CombinedPriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->configManager->expects($this->once())->method('set');
+        $this->configManager->expects($this->any())->method('get')->willReturn(1);
         $this->configManager->expects($this->once())->method('flush');
     }
 
