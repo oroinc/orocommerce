@@ -412,8 +412,8 @@ services:
         arguments:
             - '@orob2b_pricing.builder.combined_price_list_activation_plan_builder'
         tags:
-            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit, method: beforeSubmit }
-            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush, method: beforeFlush }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit.orob2b_pricing_price_list, method: beforeSubmit }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_pricing_price_list, method: beforeFlush }
 
     orob2b_pricing.system_config_converter:
         class: 'OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter'
