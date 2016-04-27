@@ -1,16 +1,24 @@
 {% block _add_to_shopping_list_form_button_widget %}
     {% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
     {% set commonOptions = {
-        dataAttributes: {},
         dataUrl: 'orob2b_shopping_list_frontend_add_product',
         dataUrlOptions: {
             productId: product.id
-        }
+        },
+        dataAttributes: {}
     } %}
+    {% set removeOptions = commonOptions|merge({
+        dataU1rl: 'orob2b_shopping_list_frontend_remove_product',
+        actionLabel: 'orob2b.shoppinglist.actions.remove_from_shopping_list'|trans
+    }) %}
+    {% set units = {} %}
+    {% for unitCode in product.availableUnitCodes %}
+        {% set units = units|merge({(unitCode): unitCode}) %}
+    {% endfor %}
     {% set pageComponent = {
-        module: 'orob2bshoppinglist/js/app/components/add-product-from-view-component',
+        module: 'oroui/js/app/components/view-component',
         options: {
-            onClickElementSelector: null,
+            view: 'orob2bshoppinglist/js/app/views/add-product-view'
         }|merge(commonOptions)
     } %}
     {% set commonOptions = commonOptions|merge({pageComponent: pageComponent}) %}
@@ -19,23 +27,26 @@
         current: commonOptions,
         existing: commonOptions,
         shoppingLists: shoppingLists,
-        singleButtonACss: 'btn-block btn-orange btn_lg'
+        remove: removeOptions,
+        singleButtonACss: 'btn-block btn-orange btn_lg',
+        defaultClass: 'btn-orange',
+        addedClass: 'btn-green'
     } %}
     {% set existingShoppingLists = [] %}
     {% for shoppingList in options.shoppingLists %}
         {% if shoppingList.current %}
-            {{ buttons.addToCurrentShoppingListButton(options.current|merge({shoppingList: shoppingList})) }}
+            {{ buttons.addToCurrentButton(options.current|merge({shoppingList: shoppingList})) }}
         {% else %}
             {%  set existingShoppingLists = existingShoppingLists|merge([shoppingList]) %}
         {% endif %}
     {% else %}
         {% set aCss = options.singleButtonACss is defined ? options.singleButtonACss : "" %}
-        {{ buttons.addToCurrentShoppingListButton(options.current|merge({shoppingList: null, aCss: aCss})) }}
+        {{ buttons.addToCurrentButton(options.current|merge({shoppingList: null, aCss: aCss})) }}
     {% endfor %}
     {% for shoppingList in existingShoppingLists %}
-        {{ buttons.addToShoppingListButton(options.existing|merge({shoppingList: shoppingList})) }}
+        {{ buttons.addToButton(options.existing|merge({shoppingList: shoppingList})) }}
     {% endfor %}
     {% if options.shoppingLists is not empty %}
-        {{ buttons.addToNewShoppingListButton(options.new) }}
+        {{ buttons.addToNewButton(options.new) }}
     {% endif %}
 {% endblock %}

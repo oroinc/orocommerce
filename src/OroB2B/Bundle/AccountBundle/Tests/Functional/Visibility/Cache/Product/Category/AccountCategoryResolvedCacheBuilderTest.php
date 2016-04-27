@@ -11,6 +11,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountCategoryResolvedCacheBuilder;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
@@ -35,8 +36,23 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $this->account = $this->getReference('account.level_1');
 
-        $this->builder = $this->getContainer()
-            ->get('orob2b_account.visibility.cache.product.category.account_category_resolved_cache_builder');
+        $container = $this->client->getContainer();
+
+        $this->builder = new AccountCategoryResolvedCacheBuilder(
+            $container->get('doctrine'),
+            $container->get('oro_entity.orm.insert_from_select_query_executor')
+        );
+        $this->builder->setCacheClass(
+            $container->getParameter('orob2b_account.entity.account_category_visibility_resolved.class')
+        );
+
+        $subtreeBuilder = new VisibilityChangeAccountSubtreeCacheBuilder(
+            $container->get('doctrine'),
+            $container->get('orob2b_account.visibility.resolver.category_visibility_resolver'),
+            $container->get('oro_config.manager')
+        );
+
+        $this->builder->setVisibilityChangeAccountSubtreeCacheBuilder($subtreeBuilder);
     }
 
     public function testChangeAccountCategoryVisibilityToHidden()
