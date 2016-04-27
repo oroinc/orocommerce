@@ -3,13 +3,10 @@
 namespace OroB2B\Bundle\ShippingBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.ExcessiveClassLength)
- */
 class OroB2BShippingBundleInstaller implements Installation
 {
     /**
@@ -39,13 +36,9 @@ class OroB2BShippingBundleInstaller implements Installation
     protected function createOrob2BShippingDimensionUnitTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_shipping_dimension_unit');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('conversion_rates', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['code']);
+        $table->setPrimaryKey(['code']);
     }
 
     /**
@@ -56,12 +49,8 @@ class OroB2BShippingBundleInstaller implements Installation
     protected function createOrob2BShippingFreightClassTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_shipping_freight_class');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['code']);
+        $table->setPrimaryKey(['code']);
     }
 
     /**
@@ -72,12 +61,8 @@ class OroB2BShippingBundleInstaller implements Installation
     protected function createOrob2BShippingWeightUnitTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_shipping_weight_unit');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('conversion_rates', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['code']);
+        $table->setPrimaryKey(['code']);
     }
 }
