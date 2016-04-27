@@ -5,11 +5,10 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Action;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
-use OroB2B\Bundle\PaymentBundle\Action\PurchaseAction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use OroB2B\Bundle\PaymentBundle\Action\ValidateAction;
 
-class PurchaseActionTest extends AbstractActionTest
+class ValidateActionTest extends AbstractActionTest
 {
     const PAYMENT_METHOD = 'testPaymentMethod';
 
@@ -18,7 +17,7 @@ class PurchaseActionTest extends AbstractActionTest
      * @param array $data
      * @param array $expected
      */
-    public function testExecute(array $data, array $expected)
+    public function testExecuteAction(array $data, array $expected)
     {
         $context = [];
         $options = $data['options'];
@@ -29,19 +28,20 @@ class PurchaseActionTest extends AbstractActionTest
             $responseValue = $this->throwException($data['response']);
         }
 
-        $this->action->initialize($options);
-
         $this->contextAccessor
             ->expects($this->any())
             ->method('getValue')
             ->will($this->returnArgument(1));
 
+        $this->action->initialize($options);
+
+        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+
         /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod($options['paymentMethod']);
 
-        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->with($paymentTransaction)
@@ -50,7 +50,7 @@ class PurchaseActionTest extends AbstractActionTest
         $this->paymentTransactionProvider
             ->expects($this->once())
             ->method('createPaymentTransaction')
-            ->with($options['paymentMethod'], PaymentMethodInterface::PURCHASE, $options['object'])
+            ->with($options['paymentMethod'], PaymentMethodInterface::VALIDATE, $options['object'])
             ->willReturn($paymentTransaction);
 
         $this->paymentMethodRegistry
@@ -60,13 +60,11 @@ class PurchaseActionTest extends AbstractActionTest
             ->willReturn($paymentMethod);
 
         $this->paymentTransactionProvider
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('savePaymentTransaction')
             ->with($paymentTransaction)
             ->willReturnCallback(
                 function (PaymentTransaction $paymentTransaction) use ($options) {
-                    $this->assertEquals($options['amount'], $paymentTransaction->getAmount());
-                    $this->assertEquals($options['currency'], $paymentTransaction->getCurrency());
                     if (!empty($options['transactionOptions'])) {
                         $this->assertEquals(
                             $options['transactionOptions'],
@@ -75,6 +73,11 @@ class PurchaseActionTest extends AbstractActionTest
                     }
                 }
             );
+
+        $this->contextAccessor
+            ->expects($this->once())
+            ->method('setValue')
+            ->with($context, $options['attribute'], $expected);
 
         $this->router
             ->expects($this->any())
@@ -99,11 +102,6 @@ class PurchaseActionTest extends AbstractActionTest
             )
             ->will($this->returnArgument(0));
 
-        $this->contextAccessor
-            ->expects($this->once())
-            ->method('setValue')
-            ->with($context, $options['attribute'], $expected);
-
         $this->action->execute($context);
     }
 
@@ -113,12 +111,28 @@ class PurchaseActionTest extends AbstractActionTest
     public function executeDataProvider()
     {
         return [
+            'throw exception' => [
+                'data' => [
+                    'options' => [
+                        'object' => new \stdClass(),
+                        'attribute' => new PropertyPath('test'),
+                        'paymentMethod' => self::PAYMENT_METHOD,
+                        'transactionOptions' => [
+                            'testOption' => 'testOption'
+                        ],
+                    ],
+                    'response' => new \Exception(),
+                ],
+                'expected' => [
+                    'paymentMethod' => self::PAYMENT_METHOD,
+                    'errorUrl' => 'orob2b_payment_callback_error',
+                    'returnUrl' => 'orob2b_payment_callback_return',
+                ]
+            ],
             'default' => [
                 'data' => [
                     'options' => [
                         'object' => new \stdClass(),
-                        'amount' => 100.0,
-                        'currency' => 'USD',
                         'attribute' => new PropertyPath('test'),
                         'paymentMethod' => self::PAYMENT_METHOD,
                         'transactionOptions' => [
@@ -138,8 +152,6 @@ class PurchaseActionTest extends AbstractActionTest
                 'data' => [
                     'options' => [
                         'object' => new \stdClass(),
-                        'amount' => 100.0,
-                        'currency' => 'USD',
                         'attribute' => new PropertyPath('test'),
                         'paymentMethod' => self::PAYMENT_METHOD,
                     ],
@@ -152,26 +164,6 @@ class PurchaseActionTest extends AbstractActionTest
                     'testResponse' => 'testResponse',
                 ]
             ],
-            'throw exception' => [
-                'data' => [
-                    'options' => [
-                        'object' => new \stdClass(),
-                        'amount' => 100.0,
-                        'currency' => 'USD',
-                        'attribute' => new PropertyPath('test'),
-                        'paymentMethod' => self::PAYMENT_METHOD,
-                        'transactionOptions' => [
-                            'testOption' => 'testOption'
-                        ],
-                    ],
-                    'response' => new \Exception(),
-                ],
-                'expected' => [
-                    'paymentMethod' => self::PAYMENT_METHOD,
-                    'errorUrl' => 'orob2b_payment_callback_error',
-                    'returnUrl' => 'orob2b_payment_callback_return',
-                ]
-            ],
         ];
     }
 
@@ -180,7 +172,7 @@ class PurchaseActionTest extends AbstractActionTest
      */
     protected function getAction()
     {
-        return new PurchaseAction(
+        return new ValidateAction(
             $this->contextAccessor,
             $this->paymentMethodRegistry,
             $this->paymentTransactionProvider,

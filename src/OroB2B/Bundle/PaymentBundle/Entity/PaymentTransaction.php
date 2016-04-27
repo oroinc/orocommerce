@@ -515,7 +515,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      * @param AccountUser $frontendOwner
      * @return PaymentTransaction
      */
-    public function setFrontendOwner(AccountUser $frontendOwner)
+    public function setFrontendOwner(AccountUser $frontendOwner = null)
     {
         $this->frontendOwner = $frontendOwner;
 

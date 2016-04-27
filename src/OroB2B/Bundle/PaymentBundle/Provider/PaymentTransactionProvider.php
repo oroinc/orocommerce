@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Provider;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Psr\Log\LoggerAwareTrait;
-
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -188,7 +188,5 @@ class PaymentTransactionProvider
                 $this->logger->error($e->getMessage(), $e->getTrace());
             }
         }
-
-        $em->flush($paymentTransaction);
     }
 }
