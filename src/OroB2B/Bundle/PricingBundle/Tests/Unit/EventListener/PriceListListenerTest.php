@@ -6,6 +6,7 @@ use Symfony\Component\Form\Test\FormInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -14,6 +15,8 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
 
 class PriceListListenerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var PriceList
      */
@@ -81,7 +84,8 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function createPriceList()
     {
-        $priceList = new PriceList();
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => 1]);
         $schedule1 = new PriceListSchedule(
             new \DateTime('2016-03-01T22:00:00Z'),
             new \DateTime('2016-04-01T22:00:00Z')
