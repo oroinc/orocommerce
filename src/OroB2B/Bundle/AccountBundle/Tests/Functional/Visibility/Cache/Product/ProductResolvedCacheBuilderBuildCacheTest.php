@@ -35,8 +35,14 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         ]);
 
         $container = $this->client->getContainer();
-        $this->cacheBuilder = $container
-            ->get('orob2b_account.visibility.cache.product.product_resolved_cache_builder');
+
+        $this->cacheBuilder = new ProductResolvedCacheBuilder(
+            $container->get('doctrine'),
+            $container->get('oro_entity.orm.insert_from_select_query_executor')
+        );
+        $this->cacheBuilder->setCacheClass(
+            $container->getParameter('orob2b_account.entity.product_visibility_resolved.class')
+        );
     }
 
     public function testBuildCache()

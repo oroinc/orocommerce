@@ -1,6 +1,7 @@
 services:
     orob2b_frontend.form.type.theme_select:
         class: 'OroB2B\Bundle\FrontendBundle\Form\Type\ThemeSelectType'
+        public: true
         arguments:
             - '@oro_layout.theme_manager'
         tags:
@@ -8,10 +9,12 @@ services:
 
     orob2b_frontend.form.type.country:
         class: 'OroB2B\Bundle\FrontendBundle\Form\Type\CountryType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_country }
 
     orob2b_frontend.form.type.region:
         class: 'OroB2B\Bundle\FrontendBundle\Form\Type\RegionType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_region }

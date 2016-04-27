@@ -22,26 +22,32 @@ class CombinedPriceListActivationPlanBuilder
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
+
     /**
      * @var PriceListScheduleResolver
      */
     protected $schedulerResolver;
+
     /**
      * @var CombinedPriceListProvider
      */
     protected $combinedPriceListProvider;
+
     /**
      * @var CombinedPriceListRepository
      */
     protected $combinedPriceListRepository;
+
     /**
      * @var PriceListScheduleRepository
      */
     protected $priceListScheduleRepository;
+
     /**
      * @var CombinedPriceListToPriceListRepository
      */
     protected $CPLToPriceListRepository;
+
     /**
      * @var CombinedPriceListActivationRuleRepository
      */
@@ -133,7 +139,7 @@ class CombinedPriceListActivationPlanBuilder
     {
         $sequence = [];
         foreach ($priceListRelations as $priceListRelation) {
-            if (in_array($priceListRelation->getPriceList()->getId(), $activePriceListIds)) {
+            if (in_array($priceListRelation->getPriceList()->getId(), $activePriceListIds, true)) {
                 $sequence[] = new PriceListSequenceMember(
                     $priceListRelation->getPriceList(),
                     $priceListRelation->isMergeAllowed()

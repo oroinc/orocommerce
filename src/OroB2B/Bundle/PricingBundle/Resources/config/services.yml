@@ -1,5 +1,6 @@
 parameters:
     orob2b_pricing.entity.price_list.class: OroB2B\Bundle\PricingBundle\Entity\PriceList
+    orob2b_pricing.entity.price_list_schedule.class: OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule
     orob2b_pricing.entity.combined_price_list.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList
     orob2b_pricing.entity.price_list_to_account.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount
     orob2b_pricing.entity.price_list_to_account_group.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup
@@ -305,6 +306,11 @@ services:
             - @property_accessor
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_dates_chain_validator }
+
+    orob2b_pricing.validator.schedules_intersection:
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersectionValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing_schedules_intersection_validator }
 
     orob2b_pricing.model.price_list_request_handler:
         class: 'OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler'

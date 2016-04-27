@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Action;
 
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Action\Action\AbstractAction;
@@ -10,7 +11,6 @@ use Oro\Component\Action\Model\ContextAccessor;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
-use Symfony\Component\Routing\RouterInterface;
 
 abstract class AbstractPaymentMethodAction extends AbstractAction
 {
@@ -131,6 +131,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
                 foreach ($values[$definedOption] as &$value) {
                     $value = $this->contextAccessor->getValue($context, $value);
                 }
+                unset($value);
             }
         }
 
