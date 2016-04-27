@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
@@ -187,7 +188,6 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
     {
         $entityId = 10;
         $entityClass = 'TestClass';
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         return [
             [
@@ -284,6 +284,9 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
         $entityClass = 'TestClass';
         $currency = 'USD';
 
+        $accountUser = new AccountUser();
+        $order = (new Order())->setAccountUser($accountUser);
+
         return [
             [
                 [
@@ -347,6 +350,28 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'entityClass' => $entityClass,
                     'entityIdentifier' => $entityId,
                     'frontendOwner' => null,
+                ],
+            ],
+            [
+                [
+                    'entity' => $order,
+                    'entityId' => $entityId,
+                    'entityClass' => $entityClass,
+                    'currency' => $currency,
+                    'amount' => 12.3456,
+                    'frontendOwnerToken' => $this->getMock(
+                        'Symfony\Component\Security\Core\Authentication\Token\TokenInterface'
+                    )
+                ],
+                [
+                    'active' => true,
+                    'successful' => true,
+                    'action' => PaymentMethodInterface::AUTHORIZE,
+                    'amount' => 12.35,
+                    'currency' => $currency,
+                    'entityClass' => $entityClass,
+                    'entityIdentifier' => $entityId,
+                    'frontendOwner' => $accountUser,
                 ],
             ],
         ];

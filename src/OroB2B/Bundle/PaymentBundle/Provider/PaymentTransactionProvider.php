@@ -11,6 +11,7 @@ use Psr\Log\LoggerAwareTrait;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -57,11 +58,13 @@ class PaymentTransactionProvider
 
         return $this->doctrineHelper->getEntityRepository($this->paymentTransactionClass)->findOneBy(
             array_merge(
+                [
+                    'frontendOwner' => $this->getAccountUser()
+                ],
                 $filter,
                 [
                     'entityClass' => $className,
                     'entityIdentifier' => $identifier,
-                    'frontendOwner' => $this->getAccountUser()
                 ]
             ),
             array_merge(['id' => Criteria::DESC], $orderBy)
@@ -69,10 +72,15 @@ class PaymentTransactionProvider
     }
 
     /**
+     * @param object|null $object
      * @return AccountUser|null
      */
-    protected function getAccountUser()
+    protected function getAccountUser($object = null)
     {
+        if ($object instanceof AccountOwnerAwareInterface) {
+            return $object->getAccountUser();
+        }
+
         $token = $this->tokenStorage->getToken();
         if (!$token) {
             return null;
@@ -98,11 +106,13 @@ class PaymentTransactionProvider
 
         return $this->doctrineHelper->getEntityRepository($this->paymentTransactionClass)->findBy(
             array_merge(
+                [
+                    'frontendOwner' => $this->getAccountUser()
+                ],
                 $filter,
                 [
                     'entityClass' => $className,
                     'entityIdentifier' => $identifier,
-                    'frontendOwner' => $this->getAccountUser()
                 ]
             )
         );
@@ -124,7 +134,7 @@ class PaymentTransactionProvider
                 'action' => PaymentMethodInterface::AUTHORIZE,
                 'amount' => round($amount, 2),
                 'currency' => $currency,
-                'frontendOwner' => $this->getAccountUser()
+                'frontendOwner' => $this->getAccountUser($object)
             ]
         );
     }
