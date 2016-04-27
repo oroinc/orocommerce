@@ -4,7 +4,6 @@ define(function(require) {
     var PriceListScheduleView;
     var BaseView = require('oroui/js/app/views/base/view');
     var _ = require('underscore');
-    var $ = require('jquery');
 
     PriceListScheduleView = BaseView.extend({
         options: {
@@ -16,20 +15,20 @@ define(function(require) {
 
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            this.$el = options.el;
-            this.$el.on('change content:remove', _.bind(this._handleErrors, this));
+            this.delegate('change content:remove', this._handleErrors);
         },
 
-        _handleErrors: function () {
-            this.$el.find(this.options.selectors.rowError).remove();
-            this.$el.find(this.options.selectors.row).removeClass("has-row-error")
+        _handleErrors: function() {
+            this.$(this.options.selectors.rowError).remove();
+            this.$(this.options.selectors.row).removeClass('has-row-error');
         },
 
         dispose: function() {
             if (this.disposed) {
                 return;
             }
-            this.$el.off('change content:remove', _.bind(this._handleErrors, this));
+
+            this.undelegate('change content:remove', this._handleErrors);
         }
     });
 

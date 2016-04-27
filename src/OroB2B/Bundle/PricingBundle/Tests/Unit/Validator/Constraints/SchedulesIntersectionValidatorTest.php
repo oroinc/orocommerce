@@ -87,7 +87,9 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
 
         $validator = new SchedulesIntersectionValidator();
         $validator->initialize($context);
-        $validator->validate(12, $constraint);
+        /** @var array $notIterable */
+        $notIterable = 12;
+        $validator->validate($notIterable, $constraint);
     }
 
     /**
@@ -150,6 +152,13 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
             'intersects, right = null' => [
                 'collection' => [
                     ['2016-01-01', '2016-02-01'],
+                    ['2016-01-15', null],
+                ],
+                'intersections' => [0, 1]
+            ],
+            'intersects, both right = null' => [
+                'collection' => [
+                    ['2016-01-01', null],
                     ['2016-01-15', null],
                 ],
                 'intersections' => [0, 1]

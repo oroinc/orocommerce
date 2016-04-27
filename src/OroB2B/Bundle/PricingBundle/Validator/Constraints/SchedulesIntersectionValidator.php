@@ -21,7 +21,6 @@ class SchedulesIntersectionValidator extends ConstraintValidator
         }
 
         foreach ($value as $index => $schedule) {
-            /***/
             if ($this->hasIntersection($value, $schedule)) {
                 $path = sprintf('[%d].%s', $index, PriceListScheduleType::ACTIVE_AT_FIELD);
                 $this->context
@@ -59,6 +58,7 @@ class SchedulesIntersectionValidator extends ConstraintValidator
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @param \DateTime|null $aLeft
      * @param \DateTime|null $aRight
      * @param \DateTime|null $bLeft
@@ -67,7 +67,10 @@ class SchedulesIntersectionValidator extends ConstraintValidator
      */
     protected function isSegmentsIntersected($aLeft, $aRight, $bLeft, $bRight)
     {
-        if ((null === $aRight && $bRight >= $aLeft) || (null === $bRight && $aRight >= $bLeft)) {
+        if (($aRight === null && $bRight === null)
+            || (null === $aRight && $bRight >= $aLeft)
+            || (null === $bRight && $aRight >= $bLeft)
+        ) {
             return true;
         }
 
@@ -75,11 +78,11 @@ class SchedulesIntersectionValidator extends ConstraintValidator
             return false;
         }
 
-        return (null === $aLeft || $aLeft <= $bRight) && (null === $bRight || $aRight >= $bLeft);
+        return ((null === $aLeft || $aLeft <= $bRight) && (null === $bRight || $aRight >= $bLeft));
     }
 
     /**
-     * @param $var
+     * @param mixed $var
      * @return bool
      */
     protected function isIterable($var)
