@@ -62,32 +62,30 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         $this->setConfigCPL($cplConfig);
         $this->createActivationRules($rules);
         $this->resolver->updateRelations($now);
-
-        foreach ($cplRelationsExpected as $fullCPLName => $currentCPLName) {
-            /** @var CombinedPriceList $fullCPL */
-            $fullCPL = $this->getReference($fullCPLName);
-            /** @var CombinedPriceList $currentCPL */
-            $currentCPL = $this->getReference($currentCPLName);
-            $relations = $this->getInvalidRelations(
-                'OroB2BPricingBundle:CombinedPriceListToAccount',
-                $fullCPL,
-                $currentCPL
-            );
-            $this->assertEmpty($relations);
-            $relations = $this->getInvalidRelations(
-                'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
-                $fullCPL,
-                $currentCPL
-            );
-            $this->assertEmpty($relations);
-            $relations = $this->getInvalidRelations(
-                'OroB2BPricingBundle:CombinedPriceListToWebsite',
-                $fullCPL,
-                $currentCPL
-            );
-            $this->assertEmpty($relations);
-
-        }
+        $fullCPLName = $cplRelationsExpected['full'];
+        $currentCPLName = $cplRelationsExpected['actual'];
+        /** @var CombinedPriceList $fullCPL */
+        $fullCPL = $this->getReference($fullCPLName);
+        /** @var CombinedPriceList $currentCPL */
+        $currentCPL = $this->getReference($currentCPLName);
+        $relations = $this->getInvalidRelations(
+            'OroB2BPricingBundle:CombinedPriceListToAccount',
+            $fullCPL,
+            $currentCPL
+        );
+        $this->assertEmpty($relations);
+        $relations = $this->getInvalidRelations(
+            'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
+            $fullCPL,
+            $currentCPL
+        );
+        $this->assertEmpty($relations);
+        $relations = $this->getInvalidRelations(
+            'OroB2BPricingBundle:CombinedPriceListToWebsite',
+            $fullCPL,
+            $currentCPL
+        );
+        $this->assertEmpty($relations);
         $this->checkConfigCPL($cplConfig);
     }
 
@@ -107,7 +105,8 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
                     ],
                 ],
                 'cplRelationsExpected' => [
-                    '2f_1t_3t' => '2f_1t_3t'
+                    'full' => '2f_1t_3t',
+                    'actual' => '2f_1t_3t',
                 ],
                 'cplConfig' => [
                     'actualCpl' => '2f_1t_3t',
@@ -127,7 +126,8 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
                     ],
                 ],
                 'cplRelationsExpected' => [
-                    '2f_1t_3t' => '2f'
+                    'full' => '2f_1t_3t',
+                    'actual' => '2f',
                 ],
                 'cplConfig' => [
                     'actualCpl' => '2f_1t_3t',
@@ -147,7 +147,8 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
                     ],
                 ],
                 'cplRelationsExpected' => [
-                    '2f_1t_3t' => '2f'
+                    'full' => '2f_1t_3t',
+                    'actual' => '2f',
                 ],
                 'cplConfig' => [
                     'actualCpl' => '2f_1t_3t',
