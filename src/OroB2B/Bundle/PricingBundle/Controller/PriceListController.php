@@ -109,7 +109,7 @@ class PriceListController extends Controller
     {
         $form = $this->createForm(PriceListType::NAME, $priceList);
 
-        $res = $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get('oro_form.model.update_handler')->handleUpdate(
             $priceList,
             $form,
             function (PriceList $priceList) {
@@ -126,10 +126,5 @@ class PriceListController extends Controller
             },
             $this->get('translator')->trans('orob2b.pricing.controller.price_list.saved.message')
         );
-        if ($this->get('request')->isMethod('POST')) {
-            $this->get('orob2b_pricing.builder.combined_price_list_activation_plan_builder')
-                ->buildByPriceList($priceList);
-        }
-        return $res;
     }
 }

@@ -78,7 +78,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
                 $this->assertEmpty($relations);
             }
         }
-        $this->assetConfigCPL($cplConfig);
+        $this->checkConfigCPL($cplConfig);
     }
 
     /**
@@ -240,7 +240,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     /**
      * @param array $cplConfig
      */
-    protected function assetConfigCPL(array $cplConfig)
+    protected function checkConfigCPL(array $cplConfig)
     {
         $this->configManager->reload();
         $fullCPLConfigKey = Configuration::getConfigKeyToFullPriceList();
@@ -253,7 +253,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         if ($cplConfig['expectedFullCpl']) {
             $expectedFullCpl = $this->getReference($cplConfig['expectedFullCpl'])->getId();
         }
-        $this->assertSame($this->configManager->get($actualCPLConfigKey), $expectedActualCpl);
-        $this->assertSame($this->configManager->get($fullCPLConfigKey), $expectedFullCpl);
+        $this->assertSame($expectedActualCpl, $this->configManager->get($actualCPLConfigKey));
+        $this->assertSame($expectedFullCpl, $this->configManager->get($fullCPLConfigKey));
     }
 }
