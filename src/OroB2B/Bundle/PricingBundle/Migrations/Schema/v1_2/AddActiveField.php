@@ -15,6 +15,6 @@ class AddActiveField implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_price_list');
-        $table->addColumn('active', 'boolean', []);
+        $table->addColumn('active', 'boolean', ['default' => true]);
     }
 }
