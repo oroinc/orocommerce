@@ -94,9 +94,9 @@ define([
                 this.main = $mainButton;
 
                 this.dropdown.prepend(this._prepareButtons($filteredButton));
-            }
 
-            this.toggleRemoveButton();
+                this.toggleRemoveButton();
+            }
         },
 
         transformCreateNewButton: function() {

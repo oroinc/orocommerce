@@ -2,56 +2,34 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class FrontendShoppingListProductUnitsQuantityDataProvider implements DataProviderInterface
 {
     /**
-     * @var SecurityFacade
+     * @var ShoppingListManager
      */
-    protected $securityFacade;
+    protected $shoppingListManager;
 
     /**
-     * @var RegistryInterface
+     * @var LineItemRepository
      */
-    protected $registry;
+    protected $lineItemRepository;
 
     /**
-     * @var string
+     * @param ShoppingListManager $shoppingListManager
+     * @param LineItemRepository $lineItemRepository
      */
-    protected $shoppingListClassName;
-
-    /**
-     * @var string
-     */
-    protected $lineItemClassName;
-
-    /**
-     * @param SecurityFacade $securityFacade
-     * @param RegistryInterface $registry
-     * @param string $shoppingListClassName
-     * @param string $lineItemClassName
-     */
-    public function __construct(
-        SecurityFacade $securityFacade,
-        RegistryInterface $registry,
-        $shoppingListClassName,
-        $lineItemClassName
-    ) {
-        $this->securityFacade = $securityFacade;
-        $this->registry = $registry;
-        $this->shoppingListClassName = $shoppingListClassName;
-        $this->lineItemClassName = $lineItemClassName;
+    public function __construct(ShoppingListManager $shoppingListManager, LineItemRepository $lineItemRepository)
+    {
+        $this->shoppingListManager = $shoppingListManager;
+        $this->lineItemRepository = $lineItemRepository;
     }
 
     /**
@@ -72,7 +50,7 @@ class FrontendShoppingListProductUnitsQuantityDataProvider implements DataProvid
             return null;
         }
 
-        $shoppingList = $this->getCurrentShoppingList();
+        $shoppingList = $this->shoppingListManager->getCurrent();
         if (!$shoppingList) {
             return null;
         }
@@ -87,10 +65,7 @@ class FrontendShoppingListProductUnitsQuantityDataProvider implements DataProvid
      */
     protected function getProductUnitsQuantity(ShoppingList $shoppingList, Product $product)
     {
-        /* @var LineItemRepository $repository */
-        $repository = $this->registry->getRepository($this->lineItemClassName);
-
-        $items = $repository->getItemsByShoppingListAndProduct($shoppingList, $product);
+        $items = $this->lineItemRepository->getItemsByShoppingListAndProduct($shoppingList, $product);
         $units = [];
 
         foreach ($items as $item) {
@@ -98,23 +73,5 @@ class FrontendShoppingListProductUnitsQuantityDataProvider implements DataProvid
         }
 
         return $units;
-    }
-
-    /**
-     * @return null|ShoppingList
-     */
-    protected function getCurrentShoppingList()
-    {
-        $shoppingList = null;
-
-        $user = $this->securityFacade->getLoggedUser();
-        if ($user instanceof AccountUser) {
-            /* @var ShoppingListRepository $repository */
-            $repository = $this->registry->getRepository($this->shoppingListClassName);
-
-            $shoppingList = $repository->findAvailableForAccountUser($user);
-        }
-
-        return $shoppingList;
     }
 }
