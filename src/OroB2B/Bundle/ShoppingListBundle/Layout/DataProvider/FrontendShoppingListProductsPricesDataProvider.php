@@ -18,6 +18,11 @@ class FrontendShoppingListProductsPricesDataProvider implements DataProviderInte
     protected $productPriceProvider;
 
     /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
      * @param FrontendProductPricesDataProvider $productPriceProvider
      * @param ManagerRegistry $registry
      */
@@ -51,6 +56,6 @@ class FrontendShoppingListProductsPricesDataProvider implements DataProviderInte
             ->getRepository('OroB2BShoppingListBundle:LineItem');
         $lineItems = $repository->getItemsWithProductByShoppingList($shoppingList);
 
-        return $this->productPriceProvider->getProductsPrices($lineItems);
+        return $this->productPriceProvider->getProductsMatchedPrice($lineItems);
     }
 }

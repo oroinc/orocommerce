@@ -97,7 +97,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        $result = $this->provider->getProductsPrices($lineItems);
+        $result = $this->provider->getProductsMatchedPrice($lineItems);
         $this->assertEquals($expected, $result);
     }
 

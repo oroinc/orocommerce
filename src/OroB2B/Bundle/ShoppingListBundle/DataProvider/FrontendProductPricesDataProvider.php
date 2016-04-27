@@ -48,7 +48,7 @@ class FrontendProductPricesDataProvider
      * @param LineItem[] $lineItems
      * @return array|null
      */
-    public function getProductsPrices(array $lineItems)
+    public function getProductsMatchedPrice(array $lineItems)
     {
         /** @var AccountUser $accountUser */
         $accountUser = $this->securityFacade->getLoggedUser();

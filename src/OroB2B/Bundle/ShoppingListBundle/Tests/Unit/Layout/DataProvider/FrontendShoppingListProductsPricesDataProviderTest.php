@@ -90,7 +90,7 @@ class FrontendShoppingListProductsPricesDataProviderTest extends \PHPUnit_Framew
             $expected = 'expectedData';
             $this->frontendProductPricesDataProvider
                 ->expects($this->once())
-                ->method('getProductsPrices')
+                ->method('getProductsMatchedPrice')
                 ->with($lineItems)
                 ->willReturn($expected);
         }
