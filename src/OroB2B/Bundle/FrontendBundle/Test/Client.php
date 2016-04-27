@@ -3,11 +3,14 @@
 namespace OroB2B\Bundle\FrontendBundle\Test;
 
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\BrowserKit\Request as InternalRequest;
 use Symfony\Component\BrowserKit\Response as InternalResponse;
 
 use Oro\Bundle\NavigationBundle\Event\ResponseHashnavListener;
+use Oro\Bundle\DataGridBundle\Exception\UserInputErrorExceptionInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\Client as BaseClient;
 
 class Client extends BaseClient
@@ -30,6 +33,7 @@ class Client extends BaseClient
 
     /**
      * {@inheritdoc}
+     * @todo Move to platform in scope of BAP-10170
      */
     public function request(
         $method,
@@ -94,6 +98,67 @@ class Client extends BaseClient
 
         return $this->crawler;
     }
+
+    /**
+     * {@inheritdoc}
+     * @todo Move to platform in scope of BAP-10170
+     */
+    public function requestGrid($gridParameters, $filter = array(), $isRealRequest = false)
+    {
+        if ($isRealRequest) {
+            return parent::requestGrid($gridParameters, $filter);
+        }
+
+        if (is_string($gridParameters)) {
+            $gridName = $gridParameters;
+            $gridParameters = ['gridName' => $gridName];
+        } else {
+            $gridName = $gridParameters['gridName'];
+        }
+
+        //transform parameters to nested array
+        $parameters = [];
+        foreach ($filter as $param => $value) {
+            $param .= '=' . $value;
+            parse_str($param, $output);
+            $parameters = array_merge_recursive($parameters, $output);
+        }
+
+        $gridParameters = array_merge_recursive($gridParameters, $parameters);
+
+        $container = $this->getContainer();
+
+        $request = Request::create($this->getUrl('oro_datagrid_index', $gridParameters));
+        $container->get('oro_datagrid.datagrid.request_parameters_factory')->setRequest($request);
+        $gridManager = $container->get('oro_datagrid.datagrid.manager');
+        $gridConfig  = $gridManager->getConfigurationForGrid($gridName);
+        $acl         = $gridConfig->getAclResource();
+
+        if ($acl && !$container->get('oro_security.security_facade')->isGranted($acl)) {
+            return new Response('Access denied.', 403);
+        }
+
+        $grid = $gridManager->getDatagridByRequestParams($gridName);
+
+        try {
+            $result = $grid->getData();
+            return new JsonResponse($result->toArray());
+        } catch (\Exception $e) {
+            if ($e instanceof UserInputErrorExceptionInterface) {
+                return new JsonResponse(
+                    [
+                        'type'    => UserInputErrorExceptionInterface::TYPE,
+                        'message' =>
+                            $container->get('translator')->trans($e->getMessageTemplate(), $e->getMessageParams())
+                    ],
+                    500
+                );
+            } else {
+                return new Response($e->getMessage(), 500);
+            }
+        }
+    }
+
 
     /**
      * @param null|array $content

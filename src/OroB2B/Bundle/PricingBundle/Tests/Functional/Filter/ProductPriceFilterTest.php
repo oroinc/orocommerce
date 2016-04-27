@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Filter;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\FrontendBundle\Test\Client;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
@@ -13,6 +14,11 @@ use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
  */
 class ProductPriceFilterTest extends WebTestCase
 {
+    /**
+     * @var Client
+     */
+    protected $client;
+
     /**
      * {@inheritDoc}
      */
@@ -41,7 +47,8 @@ class ProductPriceFilterTest extends WebTestCase
                 'gridName' => 'products-grid',
                 PriceListRequestHandler::PRICE_LIST_KEY => $priceList->getId(),
             ],
-            $filter
+            $filter,
+            true
         );
         $result = $this->getJsonResponseContent($response, 200);
 

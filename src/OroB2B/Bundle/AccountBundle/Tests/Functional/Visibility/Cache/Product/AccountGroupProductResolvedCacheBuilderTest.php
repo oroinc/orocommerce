@@ -11,6 +11,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -200,8 +201,16 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
      */
     protected function getCacheBuilder()
     {
-        return $this->client
-            ->getContainer()
-            ->get('orob2b_account.visibility.cache.product.account_group_product_resolved_cache_builder');
+        $container = $this->client->getContainer();
+
+        $builder = new AccountGroupProductResolvedCacheBuilder(
+            $container->get('doctrine'),
+            $container->get('oro_entity.orm.insert_from_select_query_executor')
+        );
+        $builder->setCacheClass(
+            $container->getParameter('orob2b_account.entity.account_group_product_visibility_resolved.class')
+        );
+
+        return $builder;
     }
 }
