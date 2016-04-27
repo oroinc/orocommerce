@@ -88,6 +88,8 @@ class CombinedPriceListProvider
                 $combinedPriceList = $this->createCombinedPriceList($identifier);
             }
             $this->updateCombinedPriceList($combinedPriceList, $normalizedCollection);
+
+            //TODO: Move this to one level UP
             if ($behavior !== self::BEHAVIOR_EMPTY) {
                 $this->resolver->combinePrices($combinedPriceList);
             }
@@ -150,6 +152,8 @@ class CombinedPriceListProvider
 
         $manager = $this->getManager();
         $manager->persist($combinedPriceList);
+
+        //TODO: build activation plan here with CombinedPriceListActivationPlanBuilder
 
         return $combinedPriceList;
     }
