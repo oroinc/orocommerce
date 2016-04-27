@@ -33,7 +33,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -91,6 +91,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('is_default', 'boolean', []);
+        $table->addColumn('active', 'boolean', ['notnull' => true, 'default' => true]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
