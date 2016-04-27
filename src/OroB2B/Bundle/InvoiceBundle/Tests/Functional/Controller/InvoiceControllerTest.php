@@ -237,7 +237,6 @@ class InvoiceControllerTest extends WebTestCase
 
         $invoice = $this->fetchInvoice(['id' => $id]);
         $this->assertEquals($expectedLineItems, $actualLineItems);
-        $this->assertNotEquals($invoice->getCreatedAt(), $invoice->getUpdatedAt());
         $this->assertSame('210.0000', $invoice->getSubtotal());
     }
 
