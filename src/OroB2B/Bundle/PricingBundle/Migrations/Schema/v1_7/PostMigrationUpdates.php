@@ -24,6 +24,7 @@ class PostMigrationUpdates implements Migration, OrderedMigrationInterface
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->updatePriceListTable($schema);
+        $this->updatePriceListCombinedTable($schema);
     }
 
     /**
@@ -34,5 +35,15 @@ class PostMigrationUpdates implements Migration, OrderedMigrationInterface
     {
         $table = $schema->getTable('orob2b_price_list');
         $table->getColumn('contain_schedule')->setNotnull(true);
+    }
+
+    /**
+     * @param Schema $schema
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function updatePriceListCombinedTable(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list_combined');
+        $table->getColumn('is_prices_calculated')->setNotnull(true);
     }
 }

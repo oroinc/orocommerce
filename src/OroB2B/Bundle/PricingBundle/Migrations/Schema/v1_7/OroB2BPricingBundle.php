@@ -37,6 +37,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
         $this->alterOroB2BCmbPriceListToAccGrTable($schema);
         $this->alterOroB2BCmbPriceListToWsTable($schema);
         $this->alterOroB2BPriceListTable($schema, $queries);
+        $this->alterOroB2BPriceListCombinedTable($schema, $queries);
 
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_acc'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_plist_to_acc_gr'));
@@ -178,13 +179,32 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
 
         $queries->addQuery(
             new ParametrizedSqlMigrationQuery(
-                'UPDATE orob2b_price_list SET contain_schedule = :checkout_discriminator',
+                'UPDATE orob2b_price_list SET contain_schedule = :contain_schedule',
                 [
                     'contain_schedule'  => false,
                 ],
                 [
-                    'checkout_discriminator'  => Type::BOOLEAN
+                    'contain_schedule'  => Type::BOOLEAN
                 ]
+            )
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function alterOroB2BPriceListCombinedTable(Schema $schema, QueryBag $queries)
+    {
+        $table = $schema->getTable('orob2b_price_list_combined');
+        $table->addColumn('is_prices_calculated', 'boolean', ['notnull' => false]);
+
+        $queries->addQuery(
+            new ParametrizedSqlMigrationQuery(
+                'UPDATE orob2b_price_list_combined as cpl SET is_prices_calculated = 
+                (SELECT p.id IS NOT NULL FROM orob2b_price_product_combined as p 
+                WHERE p.combined_price_list_id = cpl.id LIMIT 1)'
             )
         );
     }
