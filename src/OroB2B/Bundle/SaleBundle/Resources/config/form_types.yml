@@ -76,6 +76,8 @@ services:
 
     orob2b_sale.form.type.quote_demand:
         class: 'OroB2B\Bundle\SaleBundle\Form\Type\QuoteDemandType'
+        arguments:
+            - "@orob2b_sale.manager.quote_demand_manager"
         tags:
             - { name: form.type, alias: orob2b_sale_quote_demand }
 

@@ -13,3 +13,4 @@ config:
         'orob2bshoppinglist/js/shopping-list-item-errors-handler': 'bundles/orob2bshoppinglist/js/shopping-list-item-errors-handler.js'
         'orob2bshoppinglist/js/app/components/create-button-component': 'bundles/orob2bshoppinglist/js/app/components/create-button-component.js'
         'orob2bshoppinglist/js/content-processor/add-to-shopping-list-dropdown-button': 'bundles/orob2bshoppinglist/js/content-processor/add-to-shopping-list-dropdown-button.js'
+        'orob2bshoppinglist/js/app/components/shoppinglist-view-component': 'bundles/orob2bshoppinglist/js/app/components/shoppinglist-view-component.js'
