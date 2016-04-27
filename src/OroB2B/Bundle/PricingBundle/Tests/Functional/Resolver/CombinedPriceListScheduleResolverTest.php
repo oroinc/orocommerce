@@ -60,11 +60,6 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     public function testCPLSwitching(array $rules, array $cplRelationsExpected, array $cplConfig, \DateTime $now)
     {
         $this->setConfigCPL($cplConfig);
-        $cplRelationsEntityNames = [
-            'OroB2BPricingBundle:CombinedPriceListToAccount',
-            'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
-            'OroB2BPricingBundle:CombinedPriceListToWebsite',
-        ];
         $this->createActivationRules($rules);
         $this->resolver->updateRelations($now);
 
@@ -73,10 +68,25 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
             $fullCPL = $this->getReference($fullCPLName);
             /** @var CombinedPriceList $currentCPL */
             $currentCPL = $this->getReference($currentCPLName);
-            foreach ($cplRelationsEntityNames as $entityName) {
-                $relations = $this->getInvalidRelations($entityName, $fullCPL, $currentCPL);
-                $this->assertEmpty($relations);
-            }
+            $relations = $this->getInvalidRelations(
+                'OroB2BPricingBundle:CombinedPriceListToAccount',
+                $fullCPL,
+                $currentCPL
+            );
+            $this->assertEmpty($relations);
+            $relations = $this->getInvalidRelations(
+                'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
+                $fullCPL,
+                $currentCPL
+            );
+            $this->assertEmpty($relations);
+            $relations = $this->getInvalidRelations(
+                'OroB2BPricingBundle:CombinedPriceListToWebsite',
+                $fullCPL,
+                $currentCPL
+            );
+            $this->assertEmpty($relations);
+
         }
         $this->checkConfigCPL($cplConfig);
     }
@@ -210,8 +220,8 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         $qb->select('r')
             ->from($entityName, 'r')
             ->where('r.fullChainPriceList = :fullCPl AND r.priceList != :currentCPL')
-        ->setParameter('fullCPl', $fullCPL)
-        ->setParameter('currentCPL', $currentCPL);
+            ->setParameter('fullCPl', $fullCPL)
+            ->setParameter('currentCPL', $currentCPL);
 
         return $qb->getQuery()->getResult();
     }
