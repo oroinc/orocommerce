@@ -14,6 +14,7 @@ class DimensionUnit
      * @var string
      *
      * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\Column(name="code", type="string", length=255, nullable=false)
      */
     protected $code;
@@ -24,14 +25,6 @@ class DimensionUnit
      * @ORM\Column(name="conversion_rates", type="array", nullable=true)
      */
     protected $conversionRates = [];
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->code;
-    }
 
     /**
      * @param string $code
@@ -71,5 +64,13 @@ class DimensionUnit
     public function getConversionRates()
     {
         return $this->conversionRates;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->code;
     }
 }

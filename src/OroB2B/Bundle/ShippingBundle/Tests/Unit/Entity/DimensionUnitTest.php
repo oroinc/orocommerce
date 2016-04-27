@@ -27,7 +27,7 @@ class DimensionUnitTest extends \PHPUnit_Framework_TestCase
     {
         $properties = [
             ['code', '123'],
-            ['conversionRates', []],
+            ['conversionRates', ['rate1' => 'rateValue']],
         ];
 
         $this->assertPropertyAccessors($this->entity, $properties);

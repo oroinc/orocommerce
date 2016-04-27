@@ -14,17 +14,10 @@ class FreightClass
      * @var string
      *
      * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\Column(name="code", type="string", length=255, nullable=false)
      */
     protected $code;
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->code;
-    }
 
     /**
      * @param string $code
@@ -44,5 +37,13 @@ class FreightClass
     public function getCode()
     {
         return $this->code;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->code;
     }
 }
