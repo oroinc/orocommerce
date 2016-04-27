@@ -71,6 +71,10 @@ class SchedulesIntersectionValidator extends ConstraintValidator
             return true;
         }
 
+        if ($aLeft === null && $bRight === null && $aRight < $bLeft) {
+            return false;
+        }
+
         return (null === $aLeft || $aLeft <= $bRight) && (null === $bRight || $aRight >= $bLeft);
     }
 

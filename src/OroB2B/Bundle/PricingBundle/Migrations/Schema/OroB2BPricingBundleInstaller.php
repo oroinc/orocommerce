@@ -416,6 +416,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     {
         $table = $schema->createTable('orob2b_price_list_ch_trigger');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('is_force', 'boolean', ['notnull' => false]);
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);

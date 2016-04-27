@@ -60,6 +60,20 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
                 ],
                 'intersections' => []
             ],
+            'without intersections, right = null and left = null' => [
+                'collection' => [
+                    [null, '2016-01-31'],
+                    ['2016-02-01', null],
+                ],
+                'intersections' => []
+            ],
+            'without intersections, right = null and left = null(inverse)' => [
+                'collection' => [
+                    ['2016-02-01', null],
+                    [null, '2016-01-03'],
+                ],
+                'intersections' => []
+            ],
         ];
     }
 

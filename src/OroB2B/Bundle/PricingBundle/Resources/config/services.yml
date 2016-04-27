@@ -239,9 +239,11 @@ services:
             - '@event_dispatcher'
             - '@oro_entity.orm.insert_from_select_query_executor'
 
-    orob2b_pricing.price_list_delete_handler:
-        class: 'OroB2B\Bundle\PricingBundle\Model\PriceListDeleteHandler'
+    orob2b_pricing.price_list_handler:
+        class: 'OroB2B\Bundle\PricingBundle\Model\PriceListHandler'
+        lazy: true
         arguments:
+            - '@orob2b_pricing.price_list_change_trigger_handler'
 
     orob2b_pricing.event_listener.combined_price_list_queue:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener'

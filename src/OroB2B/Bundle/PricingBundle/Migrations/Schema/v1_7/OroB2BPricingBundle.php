@@ -26,6 +26,8 @@ class OroB2BPricingBundle implements Migration
         $this->alterOroB2BCmbPriceListToAccGrTable($schema);
         $this->alterOroB2BCmbPriceListToWsTable($schema);
 
+        $this->updatePriceListChangeTriggerTable($schema);
+
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_acc'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_plist_to_acc_gr'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_ws'));
@@ -63,6 +65,17 @@ class OroB2BPricingBundle implements Migration
         $table->addColumn('expire_at', 'datetime', ['notnull' => false]);
         $table->addColumn('is_active', 'boolean', []);
         $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create orob2b_cpl_activation_rule table
+     *
+     * @param Schema $schema
+     */
+    protected function updatePriceListChangeTriggerTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list_ch_trigger');
+        $table->addColumn('is_force', 'boolean', ['notnull' => false]);
     }
 
     /**

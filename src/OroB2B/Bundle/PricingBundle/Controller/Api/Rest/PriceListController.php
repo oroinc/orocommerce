@@ -34,6 +34,7 @@ class PriceListController extends RestController implements ClassResourceInterfa
      */
     public function deleteAction($id)
     {
+        $this->get('orob2b_pricing.price_list_handler')->handleDelete();
         return $this->handleDeleteRequest($id);
     }
 
