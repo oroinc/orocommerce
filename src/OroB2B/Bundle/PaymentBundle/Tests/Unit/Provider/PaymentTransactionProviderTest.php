@@ -71,7 +71,7 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getPaymentTransactionsDataProvider
+     * @dataProvider paymentTransactionsDataProvider
      *
      * @param array $data
      * @param array $expected
@@ -95,7 +95,7 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function getPaymentTransactionsDataProvider()
+    public function paymentTransactionsDataProvider()
     {
         $entityId = 10;
         $entityClass = 'TestClass';
@@ -160,7 +160,7 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getPaymentTransactionDataProvider
+     * @dataProvider paymentTransactionsDataProvider
      *
      * @param array $data
      * @param array $expected
@@ -180,74 +180,7 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
         $actual = $this->provider->getPaymentTransaction($data['entity'], $data['filter']);
         $this->assertSame($result, $actual);
     }
-
-    /**
-     * @return array
-     */
-    public function getPaymentTransactionDataProvider()
-    {
-        $entityId = 10;
-        $entityClass = 'TestClass';
-
-        return [
-            [
-                [
-                    'entity' => new \stdClass(),
-                    'entityId' => $entityId,
-                    'entityClass' => $entityClass,
-                    'filter' => [
-                        'testOption' => 'testOption',
-                    ],
-                    'frontendOwnerToken' => $this->getMock(
-                        'Symfony\Component\Security\Core\Authentication\Token\TokenInterface'
-                    ),
-                ],
-                [
-                    'testOption' => 'testOption',
-                    'entityClass' => $entityClass,
-                    'entityIdentifier' => $entityId,
-                    'frontendOwner' => new AccountUser(),
-                ],
-            ],
-            [
-                [
-                    'entity' => new \stdClass(),
-                    'entityId' => $entityId,
-                    'entityClass' => $entityClass,
-                    'filter' => [
-                        'testOption' => 'testOption',
-                    ],
-                    'frontendOwnerToken' => $this->getMock(
-                        'Symfony\Component\Security\Core\Authentication\Token\TokenInterface'
-                    ),
-                ],
-                [
-                    'testOption' => 'testOption',
-                    'entityClass' => $entityClass,
-                    'entityIdentifier' => $entityId,
-                    'frontendOwner' => null,
-                ],
-            ],
-            [
-                [
-                    'entity' => new \stdClass(),
-                    'entityId' => $entityId,
-                    'entityClass' => $entityClass,
-                    'filter' => [
-                        'testOption' => 'testOption',
-                    ],
-                    'frontendOwnerToken' => null,
-                ],
-                [
-                    'testOption' => 'testOption',
-                    'entityClass' => $entityClass,
-                    'entityIdentifier' => $entityId,
-                    'frontendOwner' => null,
-                ],
-            ]
-        ];
-    }
-
+    
     /**
      * @dataProvider getActiveAuthorizePaymentTransactionDataProvider
      *
