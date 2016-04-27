@@ -15,13 +15,6 @@ services:
         tags:
             - { name: twig.extension }
 
-    orob2b_website.website.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%orob2b_website.entity.website.class%'
-            - "@doctrine.orm.entity_manager"
-
     orob2b_website.locale_helper:
         class: 'OroB2B\Bundle\WebsiteBundle\Locale\LocaleHelper'
         arguments:

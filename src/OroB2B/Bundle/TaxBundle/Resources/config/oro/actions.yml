@@ -1,0 +1,20 @@
+operations:
+    UPDATE:
+      exclude_datagrids:
+          - tax-product-grid
+          - products-tax-code-select-grid
+          - accounts-tax-code-select-grid
+          - tax-taxes-select-grid
+          - tax-jurisdiction-select-grid
+          - tax-account-group-grid
+          - tax-account-grid
+
+    DELETE:
+      exclude_datagrids:
+          - tax-product-grid
+          - products-tax-code-select-grid
+          - accounts-tax-code-select-grid
+          - tax-taxes-select-grid
+          - tax-jurisdiction-select-grid
+          - tax-account-group-grid
+          - tax-account-grid
