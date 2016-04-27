@@ -10,7 +10,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductLineItemFormProvider;
 use OroB2B\Bundle\ProductBundle\Model\ProductLineItem;
 
-class FrontendLineItemFormProviderTest extends WebTestCase
+class ProductLineItemFormProviderTest extends WebTestCase
 {
     /** @var ProductLineItemFormProvider */
     protected $dataProvider;

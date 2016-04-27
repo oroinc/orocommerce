@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Model;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
-class ProductLineItem implements ProductHolderInterface, ProductUnitHolderInterface, QuantityAwareInterface
+class ProductLineItem implements ProductLineItemInterface
 {
     /**
      * @var mixed
@@ -115,7 +115,7 @@ class ProductLineItem implements ProductHolderInterface, ProductUnitHolderInterf
      * @param Product $product
      * @return $this
      */
-    public function setProduct($product)
+    public function setProduct(Product $product)
     {
         $this->product = $product;
         return $this;
