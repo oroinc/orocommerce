@@ -14,15 +14,31 @@
         },
         dataAttributes: {}
     } %}
+    {% set removeOptions = commonOptions|merge({
+        dataUrl: 'orob2b_shopping_list_frontend_remove_product',
+        actionLabel: 'orob2b.shoppinglist.actions.remove_from_shopping_list'|trans
+    }) %}
+    {% set units = {} %}
+    {% for unitCode in product.availableUnitCodes %}
+        {% set units = units|merge({(unitCode): unitCode}) %}
+    {% endfor %}
+
     <div class="form__col "
-         data-page-component-module="orob2bshoppinglist/js/app/components/add-product-from-view-component">
+         data-product='{"id": {{ product.id }}, "units": {{ units|json_encode }}, "lineItems": {{ unitsQuantity|json_encode }}}'
+         data-page-component-module="oroui/js/app/components/view-component"
+         data-page-component-options='{"view": "orob2bshoppinglist/js/app/views/add-product-view"}'
+         data-layout="separate"
+    >
         {{ buttons.createAddToShoppingListButton({
             groupContainer: '<div class="btn btn-block btn-orange btn_has-dropdown btn_has-dropdown_lg"></div>',
             new: commonOptions,
             current: commonOptions,
+            remove: removeOptions,
             existing: commonOptions,
             shoppingLists: shoppingLists,
-            singleButtonACss: 'btn-block btn-orange btn_lg'
+            singleButtonACss: 'btn-block btn-orange btn_lg',
+            defaultClass: 'btn-orange',
+            addedClass: 'btn-green'
         }) }}
     </div>
 {% endblock %}
