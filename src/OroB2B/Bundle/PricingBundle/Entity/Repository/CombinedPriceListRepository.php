@@ -19,6 +19,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class CombinedPriceListRepository extends EntityRepository
 {
+    const CPL_BATCH_SIZE = 100;
+
     /**
      * @param CombinedPriceList $combinedPriceList
      * @return CombinedPriceListToPriceList[]
@@ -288,13 +290,12 @@ class CombinedPriceListRepository extends EntityRepository
     /**
      * @param int $offsetHours
      *
-     * @return array
+     * @return BufferedQueryResultIterator|CombinedPriceList[]
      */
     public function getCPLsForPriceCollectByTimeOffset($offsetHours)
     {
-        $offsetDate = time() + $offsetHours * 3600;
         $activateDate = new \DateTime('now', new \DateTimeZone("UTC"));
-        $activateDate->setTimestamp($offsetDate);
+        $activateDate->add(new \DateInterval(sprintf('PT%fM', $offsetHours * 60)));
 
         $qb = $this->createQueryBuilder('cpl');
         $qb->select('cpl')
@@ -311,6 +312,9 @@ class CombinedPriceListRepository extends EntityRepository
                 'activateData' => $activateDate
             ]);
 
-        return $qb->getQuery()->getResult();
+        $iterator = new BufferedQueryResultIterator($qb);
+        $iterator->setBufferSize(self::CPL_BATCH_SIZE);
+
+        return $iterator;
     }
 }

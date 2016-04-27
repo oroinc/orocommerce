@@ -510,3 +510,8 @@ services:
             - '@oro_security.security_facade'
             - '@oro_entity.routing_helper'
             - '@doctrine'
+
+    orob2b_pricing.recalculate_triggers_filer.scope_recalculate_triggers_filer:
+        class: 'OroB2B\Bundle\PricingBundle\RecalculateTriggersFiler\ScopeRecalculateTriggersFiler'
+        arguments:
+            - @doctrine
