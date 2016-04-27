@@ -24,30 +24,39 @@ class PriceListScheduleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider testEqualsDataProvider
-     * @param array $schedule
-     * @param array $compared
-     * @param bool $result
+     * @dataProvider schedulesDataProvider
+     * @param PriceListSchedule $schedule1
+     * @param PriceListSchedule $schedule2
+     * @param bool $isEquivalent
      */
-    public function testEquals(array $schedule, array $compared, $result)
+    public function testEquals(PriceListSchedule $schedule1, PriceListSchedule $schedule2, $isEquivalent)
     {
-        $comparedSchedule = (new PriceListSchedule(
-            new \DateTime($compared['dates'][0]),
-            new \DateTime($compared['dates'][1])
-        ))
-            ->setPriceList($compared['priceList']);
-        $plSchedule = (new PriceListSchedule(
-            new \DateTime($schedule['dates'][0]),
-            new \DateTime($schedule['dates'][1])
-        ))
-            ->setPriceList($schedule['priceList']);
-        $this->assertSame($plSchedule->equals($comparedSchedule), $result);
+        $this->assertSame($schedule1->equals($schedule2), $isEquivalent);
+    }
+
+    /**
+     * @dataProvider schedulesDataProvider
+     * @param PriceListSchedule $schedule1
+     * @param PriceListSchedule $schedule2
+     * @param bool $isEquivalent
+     */
+    public function testGetHash(PriceListSchedule $schedule1, PriceListSchedule $schedule2, $isEquivalent)
+    {
+        $hash1 = $schedule1->getHash();
+        $hash2 = $schedule2->getHash();
+
+        // hash should be same for two equivalent objects
+        if ($isEquivalent) {
+            $this->assertSame($hash1, $hash2);
+        } else {
+            $this->assertNotSame($hash1, $hash2);
+        }
     }
 
     /**
      * @return array
      */
-    public function testEqualsDataProvider()
+    public function schedulesDataProvider()
     {
         $priceList1 = new PriceList();
         $priceList2 = new PriceList();
@@ -55,51 +64,66 @@ class PriceListScheduleTest extends \PHPUnit_Framework_TestCase
         $date2 = '2016-04-01T22:00:00Z';
         $date3 = '2016-05-01T22:00:00Z';
 
-        return [
-            'true' => [
-                'schedule' => [
+        $data = [
+            'equivalent objects' => [
+                'schedule1' => [
                     'priceList' => $priceList1,
                     'dates' => [$date1, $date2]
                 ],
-                'compared' => [
+                'schedule2' => [
                     'priceList' => $priceList1,
                     'dates' => [$date1, $date2]
                 ],
-                'result' => true
+                'isEquivalent' => true
             ],
             'false: different price lists' => [
-                'schedule' => [
+                'schedule1' => [
                     'priceList' => $priceList1,
                     'dates' => [$date1, $date2]
                 ],
-                'compared' => [
+                'schedule2' => [
                     'priceList' => $priceList2,
                     'dates' => [$date1, $date2]
                 ],
-                'result' => false
+                'isEquivalent' => false
             ],
             'false: different activeAt' => [
-                'schedule' => [
+                'schedule1' => [
                     'priceList' => $priceList1,
                     'dates' => [$date1, $date2]
                 ],
-                'compared' => [
+                'schedule2' => [
                     'priceList' => $priceList1,
                     'dates' => [$date3, $date2]
                 ],
-                'result' => false
+                'isEquivalent' => false
             ],
             'false: different deactivateAt' => [
-                'schedule' => [
+                'schedule1' => [
                     'priceList' => $priceList1,
                     'dates' => [$date1, $date2]
                 ],
-                'compared' => [
+                'schedule2' => [
                     'priceList' => $priceList1,
                     'dates' => [$date1, $date3]
                 ],
-                'result' => false
+                'isEquivalent' => false
             ]
         ];
+
+        foreach ($data as &$item) {
+            $item['schedule1'] = (new PriceListSchedule(
+                new \DateTime($item['schedule1']['dates'][0]),
+                new \DateTime($item['schedule1']['dates'][1])
+            ))
+                ->setPriceList($item['schedule1']['priceList']);
+            $item['schedule2'] = (new PriceListSchedule(
+                new \DateTime($item['schedule2']['dates'][0]),
+                new \DateTime($item['schedule2']['dates'][1])
+            ))
+                ->setPriceList($item['schedule2']['priceList']);
+        };
+
+        return $data;
     }
 }

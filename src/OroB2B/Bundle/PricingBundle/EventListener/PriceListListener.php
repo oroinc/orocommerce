@@ -14,7 +14,7 @@ class PriceListListener
     /**
      * @var PriceListSchedule[]
      */
-    protected $collection = [];
+    protected $priceListSchedules = [];
 
     /**
      * @var CombinedPriceListActivationPlanBuilder
@@ -37,7 +37,7 @@ class PriceListListener
         /** @var PriceList $priceList */
         $priceList = $event->getData();
         foreach ($priceList->getSchedules() as $schedule) {
-            $this->collection[] = $schedule->getHash();
+            $this->priceListSchedules[] = $schedule->getHash();
         }
     }
 
@@ -60,7 +60,7 @@ class PriceListListener
      */
     protected function isCollectionChanged(PriceList $priceList)
     {
-        if (count($this->collection) !== $priceList->getSchedules()->count()) {
+        if (count($this->priceListSchedules) !== $priceList->getSchedules()->count()) {
             return true;
         }
 
@@ -71,7 +71,7 @@ class PriceListListener
             $priceList->getSchedules()->toArray()
         );
 
-        foreach ($this->collection as $existing) {
+        foreach ($this->priceListSchedules as $existing) {
             if (!in_array($existing, $submitted, true)) {
                 return true;
             }
