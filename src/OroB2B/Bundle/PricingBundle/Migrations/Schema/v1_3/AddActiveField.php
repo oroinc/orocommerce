@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_2;
+namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -15,6 +15,6 @@ class AddActiveField implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_price_list');
-        $table->addColumn('active', 'boolean', ['default' => true]);
+        $table->addColumn('active', 'boolean', ['notnull' => true , 'default' => true]);
     }
 }
