@@ -4,18 +4,13 @@ namespace OroB2B\Bundle\ShoppingListBundle\EventListener;
 
 use Doctrine\ORM\Query\Expr;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class FrontendProductDatagridListener
 {
@@ -24,41 +19,19 @@ class FrontendProductDatagridListener
     const BLOCK_SEPARATOR = '{blk}';
     const DATA_SEPARATOR = '{unt}';
 
-    /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
+    /** @var ShoppingListManager */
+    protected $shoppingListManager;
 
-    /**
-     * @var RegistryInterface
-     */
-    protected $registry;
-
-    /**
-     * @var string
-     */
-    protected $shoppingListClassName;
-
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $lineItemClassName;
 
     /**
-     * @param SecurityFacade $securityFacade
-     * @param RegistryInterface $registry
-     * @param string $shoppingListClassName
+     * @param ShoppingListManager $shoppingListManager
      * @param string $lineItemClassName
      */
-    public function __construct(
-        SecurityFacade $securityFacade,
-        RegistryInterface $registry,
-        $shoppingListClassName,
-        $lineItemClassName
-    ) {
-        $this->securityFacade = $securityFacade;
-        $this->registry = $registry;
-        $this->shoppingListClassName = $shoppingListClassName;
+    public function __construct(ShoppingListManager $shoppingListManager, $lineItemClassName)
+    {
+        $this->shoppingListManager = $shoppingListManager;
         $this->lineItemClassName = $lineItemClassName;
     }
 
@@ -119,7 +92,7 @@ class FrontendProductDatagridListener
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
 
-        $shoppingList = $this->getCurrentShoppingList();
+        $shoppingList = $this->shoppingListManager->getCurrent();
 
         // handle line item units
         foreach ($records as $record) {
@@ -147,23 +120,5 @@ class FrontendProductDatagridListener
 
             $record->addData([self::COLUMN_LINE_ITEMS => $units]);
         }
-    }
-
-    /**
-     * @return null|ShoppingList
-     */
-    protected function getCurrentShoppingList()
-    {
-        $shoppingList = null;
-
-        $user = $this->securityFacade->getLoggedUser();
-        if ($user instanceof AccountUser) {
-            /** @var ShoppingListRepository $repository */
-            $repository = $this->registry->getRepository($this->shoppingListClassName);
-
-            $shoppingList = $repository->findAvailableForAccountUser($user);
-        }
-
-        return $shoppingList;
     }
 }
