@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\ImportExport;
 
 use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
 
+use OroB2B\Bundle\FrontendBundle\Test\Client;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
@@ -26,6 +27,11 @@ class ImportExportTest extends WebTestCase
      * @var PriceList
      */
     protected $priceList;
+
+    /**
+     * @var Client
+     */
+    protected $client;
 
     protected function setUp()
     {
@@ -113,7 +119,7 @@ class ImportExportTest extends WebTestCase
         $this->assertErrors(
             $strategy,
             '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/invalid_product_unit.csv',
-            'Error in row #1. unit: Unit "box" is not allowed for product "product.1".'
+            'Error in row #1. Unit Code: Unit "box" is not allowed for product "product.1".'
         );
     }
 
@@ -126,7 +132,7 @@ class ImportExportTest extends WebTestCase
         $this->assertErrors(
             $strategy,
             '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/unavailable_product_unit.csv',
-            'Error in row #1. unit: Product unit is not exist.'
+            'Error in row #1. Unit Code: Product unit does not exist.'
         );
     }
 
@@ -139,7 +145,7 @@ class ImportExportTest extends WebTestCase
         $this->assertErrors(
             $strategy,
             '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/unavailable_product.csv',
-            'Error in row #1. product: Product is not exist.'
+            'Error in row #1. Product SKU: Product does not exist.'
         );
     }
 
@@ -292,7 +298,10 @@ class ImportExportTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $data['url']
+            $data['url'],
+            [],
+            [],
+            $this->client->generateNoHashNavigationHeader()
         );
 
         $result = $this->client->getResponse();

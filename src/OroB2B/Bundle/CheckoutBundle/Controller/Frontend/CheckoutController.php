@@ -19,7 +19,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvent;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 
@@ -34,9 +34,9 @@ class CheckoutController extends Controller
      * Create checkout form
      *
      * @Route(
-     *     "/{id}/{type}",
+     *     "/{id}/{checkoutType}",
      *     name="orob2b_checkout_frontend_checkout",
-     *     requirements={"id"="\d+", "type"="\w+"}
+     *     requirements={"id"="\d+", "checkoutType"="\w+"}
      * )
      * @Layout(vars={"workflowStepName", "workflowName"})
      * @Acl(
@@ -49,13 +49,13 @@ class CheckoutController extends Controller
      *
      * @param Request $request
      * @param int $id
-     * @param null|string $type
+     * @param null|string $checkoutType
      * @return array|Response
      * @throws \Exception
      */
-    public function checkoutAction(Request $request, $id, $type = null)
+    public function checkoutAction(Request $request, $id, $checkoutType = null)
     {
-        $checkout = $this->getCheckout($id, $type);
+        $checkout = $this->getCheckout($id, $checkoutType);
 
         if (!$checkout) {
             throw new NotFoundHttpException(sprintf('Checkout not found'));
@@ -187,18 +187,12 @@ class CheckoutController extends Controller
      */
     protected function getCheckout($id, $type)
     {
-        if (!$type) {
-            $checkout = $this->getDoctrine()->getRepository('OroB2BCheckoutBundle:Checkout')
-                ->find($id);
-        } else {
-            $event = new CheckoutEvent();
-            $event->setCheckoutId($id)
-                ->setType($type);
-            $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
+        $type = (string)$type;
+        $event = new CheckoutEntityEvent();
+        $event->setCheckoutId($id)
+            ->setType($type);
+        $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
 
-            $checkout = $event->getCheckoutEntity();
-        }
-
-        return $checkout;
+        return $event->getCheckoutEntity();
     }
 }

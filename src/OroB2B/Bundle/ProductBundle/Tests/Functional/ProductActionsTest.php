@@ -14,7 +14,7 @@ class ProductActionsTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures(
             [
@@ -53,14 +53,17 @@ class ProductActionsTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_api_action_execute_operations',
+                'oro_action_operation_execute',
                 [
                     'operationName' => $operationName,
                     'route' => 'orob2b_product_view',
                     'entityId' => $product->getId(),
                     'entityClass' => 'OroB2B\Bundle\ProductBundle\Entity\Product'
                 ]
-            )
+            ),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
     }
 }

@@ -5,7 +5,7 @@ oro_menu_config:
             uri:             '#'
             extras:
                 icon:        icon-briefcase
-                position:    100
+                position:    300
 
         product_list:
             label:           'orob2b.product.entity_plural_label'

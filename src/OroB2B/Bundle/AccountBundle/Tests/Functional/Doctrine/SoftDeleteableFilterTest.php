@@ -7,8 +7,8 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\QueryTracker;
 
-use OroB2B\Bundle\AccountBundle\Doctrine\QueryTracker;
 use OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableFilter;
 use OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableInterface;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
@@ -21,7 +21,6 @@ use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 class SoftDeleteableFilterTest extends WebTestCase
 {
     /**
-     * todo: change class import after BB-1561
      * @var QueryTracker
      */
     protected $queryTracker;

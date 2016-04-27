@@ -1,0 +1,6 @@
+services:
+    default_publicity_service_1:
+        class: 'stdClass'
+
+    default_publicity_service_2:
+        class: 'stdClass'

@@ -225,6 +225,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @var Collection|ProductUnitPrecision[]
      *
      * @ORM\OneToMany(targetEntity="ProductUnitPrecision", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OrderBy({"id" = "ASC"})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -382,7 +383,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     {
         try {
             if ($this->getDefaultName()) {
-                return (string)$this->getDefaultName()->__toString();
+                return (string)$this->getDefaultName();
             } else {
                 return (string)$this->sku;
             }

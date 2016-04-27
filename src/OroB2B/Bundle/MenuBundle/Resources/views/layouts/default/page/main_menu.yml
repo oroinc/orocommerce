@@ -1,8 +1,8 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BMenuBundle:layouts:default/page/main_menu.html.twig'
-        - @addTree:
+        - '@addTree':
             items:
                 main_menu_container:
                     blockType: container
@@ -26,4 +26,4 @@ layout:
                         main_menu_widgets:
                             #main_menu_messages_widget: ~
     conditions:
-        @neq: [ $context.logged_user, null ]
+        '@neq': [ $context.logged_user, null ]

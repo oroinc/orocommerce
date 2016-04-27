@@ -59,7 +59,7 @@ class ShoppingListController extends Controller
         return [
             'title' => $shoppingList ? $shoppingList->getLabel() : null,
             'data' => [
-                'shoppingList' => $shoppingList,
+                'entity' => $shoppingList,
                 'totals' => [
                     'identifier' => 'totals',
                     'data' => $totalWithSubtotalsAsArray
@@ -101,6 +101,16 @@ class ShoppingListController extends Controller
         ];
 
         return ['data' => array_merge($defaultResponse, $response)];
+    }
+
+    /**
+     * @Route("/widget", name="orob2b_shopping_list_frontend_widget")
+     * @Layout
+     * @return array
+     */
+    public function widgetAction()
+    {
+        return [];
     }
 
     /**

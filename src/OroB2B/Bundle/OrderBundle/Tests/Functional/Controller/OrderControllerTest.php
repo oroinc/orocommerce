@@ -14,6 +14,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 
 /**
  * @dbIsolation
@@ -74,6 +75,7 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('orders-grid', $crawler->html());
         $this->assertEquals('Orders', $crawler->filter('h1.oro-subtitle')->html());
     }
 
@@ -160,13 +162,14 @@ class OrderControllerTest extends WebTestCase
             $this->assertContains($item, $expectedDiscountItems);
         }
 
-        $ordersGridFilter = ['orders-grid[_filter][poNumber][value]' => self::ORDER_PO_NUMBER];
-        $response = $this->client->requestGrid('orders-grid', $ordersGridFilter);
+        /** @var Order $order */
+        $order = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BOrderBundle:Order')
+            ->getRepository('OroB2BOrderBundle:Order')
+            ->findOneBy(['poNumber' => self::ORDER_PO_NUMBER]);
+        $this->assertNotEmpty($order);
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        return $result['id'];
+        return $order->getId();
     }
 
     /**
