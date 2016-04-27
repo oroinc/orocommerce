@@ -51,7 +51,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'offset_of_processing_cpl_prices' => [
                     'value' => 12,
                     'scope' => 'app'
-                ]
+                ],
+                'full_combined_price_list' => [
+                    'value' => null,
+                    'scope' => 'app'
+                ],
             ]
         ];
 

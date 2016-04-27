@@ -150,9 +150,12 @@ class CombinedPriceListActivationRule
 
     /**
      * @param boolean $active
+     * @return $this
      */
     public function setActive($active)
     {
         $this->active = $active;
+
+        return $this;
     }
 }
