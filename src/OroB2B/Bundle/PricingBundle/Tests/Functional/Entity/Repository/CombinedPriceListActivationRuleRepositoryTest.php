@@ -102,6 +102,31 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
         $this->assertCount(0, $rules);
     }
 
+    public function testUpdateRulesActivity()
+    {
+        $data = [
+            [
+                'cplName' => '1f',
+                'fullCPLName' => '2f',
+            ],
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2f',
+            ],
+        ];
+        $this->createRules($data);
+        $cpl = $this->getReference('2f');
+        $rules = $this->repository->findBy(['fullChainPriceList' => $cpl]);
+        $this->assertCount(2, $rules);
+        $this->assertSame(false, $rules[0]->isActive());
+        $this->assertSame(false, $rules[1]->isActive());
+        $this->repository->updateRulesActivity($rules, true);
+        $rules = $this->repository->findBy(['fullChainPriceList' => $cpl]);
+        $this->assertCount(2, $rules);
+        $this->assertSame(true, $rules[0]->isActive());
+        $this->assertSame(true, $rules[1]->isActive());
+    }
+
     /**
      * @param array $rulesData
      */

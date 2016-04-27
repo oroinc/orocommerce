@@ -48,8 +48,6 @@ class CombinedPriceListScheduleResolver
      */
     public function updateRelations(\DateTime $time = null)
     {
-        $className = 'OroB2BPricingBundle:CombinedPriceListActivationRule';
-        $rulesManager = $this->registry->getManagerForClass($className);
         if (!$time) {
             $time = new \DateTime('now', new \DateTimeZone('UTC'));
         }
@@ -61,10 +59,7 @@ class CombinedPriceListScheduleResolver
                 $repo = $this->registry->getManagerForClass($className)->getRepository($className);
                 $repo->updateActuality($newRulesToApply);
             }
-            foreach ($newRulesToApply as $rule) {
-                $rule->setActive(true);
-            }
-            $rulesManager->flush();
+            $this->getCombinedPriceListActivationRuleRepository()->updateRulesActivity($newRulesToApply, true);
         }
         $this->updateCombinedPriceListConnection();
     }

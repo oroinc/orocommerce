@@ -50,4 +50,20 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
+
+    /**
+     * @param CombinedPriceListActivationRule[] $rules
+     * @param boolean $isActive
+     */
+    public function updateRulesActivity(array $rules, $isActive)
+    {
+        $qb = $this->getEntityManager()
+            ->createQueryBuilder();
+        $qb->update($this->getEntityName(), 'rule')
+            ->set('rule.active = :activity')
+            ->where($qb->expr()->in('rule', ':rules'))
+            ->setParameter('activity', $isActive)
+            ->setParameter('rules', $rules)
+            ->getQuery()->execute();
+    }
 }
