@@ -13,8 +13,6 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 /**
  * @dbIsolation
- *
- * todo: in BB-1499 test submit with schedules
  */
 class PriceListControllerTest extends WebTestCase
 {
@@ -59,6 +57,8 @@ class PriceListControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form(
             [
                 'orob2b_pricing_price_list[name]' => self::PRICE_LIST_NAME,
+                'orob2b_pricing_price_list[schedules][0][activeAt]' => '2016-03-01T22:00:00Z',
+                'orob2b_pricing_price_list[schedules][0][deactivateAt]' => '2016-03-15T22:00:00Z'
             ]
         );
 
