@@ -73,6 +73,7 @@ class PriceListSchedule
     public function setPriceList(PriceList $priceList)
     {
         $this->priceList = $priceList;
+        $this->priceList->setContainSchedule(true);
 
         return $this;
     }
