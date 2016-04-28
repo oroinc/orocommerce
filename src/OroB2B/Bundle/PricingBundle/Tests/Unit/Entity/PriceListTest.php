@@ -53,4 +53,28 @@ class PriceListTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $priceList->getSchedules());
         $this->assertSame($priceList->getSchedules()->first(), $schedule2);
     }
+
+    public function testHasSchedule()
+    {
+        $date1 = '2016-03-01T22:00:00Z';
+        $date2 = '2016-04-01T22:00:00Z';
+        $date3 = '2016-05-01T22:00:00Z';
+
+        $priceList = new PriceList();
+        $priceList
+            ->addSchedule(new PriceListSchedule(new \DateTime($date1), new \DateTime($date2)))
+            ->addSchedule(new PriceListSchedule());
+
+        $needle = new PriceListSchedule(
+            new \DateTime($date1),
+            new \DateTime($date2)
+        );
+        $needle->setPriceList($priceList);
+
+        $this->assertTrue($priceList->hasSchedule($needle));
+        $this->assertFalse($priceList->hasSchedule(new PriceListSchedule(
+            new \DateTime($date1),
+            new \DateTime($date3)
+        )));
+    }
 }
