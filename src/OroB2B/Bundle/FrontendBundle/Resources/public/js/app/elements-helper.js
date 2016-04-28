@@ -114,6 +114,9 @@ define(function(require) {
             var $element = this.getElement(key);
             var element = $element.get(0);
             var validator = $element.closest('form').validate();
+            if (!$element.length) {
+                return false;
+            }
             if (!validator || validator.element(element)) {
                 this.model.set(key, element.value);
             }

@@ -10,8 +10,8 @@ define(function(require) {
 
     BaseProductView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
-            quantity: '[data-name="field-quantity"]',
-            unit: '[data-name="field-unit"]'
+            quantity: '[data-name="field__quantity"]',
+            unit: '[data-name="field__unit"]'
         },
 
         modelElements: ['quantity', 'unit'],
