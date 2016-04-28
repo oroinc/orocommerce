@@ -6,7 +6,7 @@ use OroB2B\Bundle\ProductBundle\Formatter\AbstractUnitValueFormatter;
 
 class WeightUnitValueExtension extends \Twig_Extension
 {
-    const NAME = 'orob2b_product_unit_value';
+    const NAME = 'orob2b_weight_unit_value';
 
     /** @var AbstractUnitValueFormatter */
     protected $formatter;
