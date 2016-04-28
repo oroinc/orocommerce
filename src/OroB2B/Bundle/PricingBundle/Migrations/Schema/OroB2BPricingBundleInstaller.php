@@ -303,12 +303,13 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     protected function createOrob2BCmbPriceListToAccTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_cmb_price_list_to_acc');
-        $table->addColumn('account_id', 'integer', []);
-        $table->addColumn('combined_price_list_id', 'integer', []);
-        $table->addColumn('website_id', 'integer', []);
-        $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_id', 'integer', ['notnull' => true]);
+        $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('website_id', 'integer', ['notnull' => true]);
+        $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addUniqueIndex(['website_id', 'account_id'], 'orob2b_cpl_to_acc_ws_unq');
-        $table->setPrimaryKey(['account_id', 'combined_price_list_id', 'website_id']);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -319,12 +320,13 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     protected function createOrob2BCmbPriceListToAccGrTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_cmb_plist_to_acc_gr');
-        $table->addColumn('account_group_id', 'integer', []);
-        $table->addColumn('website_id', 'integer', []);
-        $table->addColumn('combined_price_list_id', 'integer', []);
-        $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_group_id', 'integer', ['notnull' => true]);
+        $table->addColumn('website_id', 'integer', ['notnull' => true]);
+        $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addUniqueIndex(['website_id', 'account_group_id'], 'orob2b_cpl_to_acc_gr_ws_unq');
-        $table->setPrimaryKey(['account_group_id', 'website_id']);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -335,10 +337,12 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     protected function createOrob2BCmbPriceListToWsTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_cmb_price_list_to_ws');
-        $table->addColumn('combined_price_list_id', 'integer', []);
-        $table->addColumn('website_id', 'integer', []);
-        $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);
-        $table->setPrimaryKey(['combined_price_list_id', 'website_id']);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('website_id', 'integer', ['notnull' => true]);
+        $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addUniqueIndex(['website_id'], 'orob2b_cpl_to_ws_unq');
+        $table->setPrimaryKey(['id']);
     }
 
     /**

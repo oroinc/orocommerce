@@ -23,9 +23,8 @@ class CombinedPriceListToAccount extends BaseCombinedPriceListRelation
     /**
      * @var Account
      *
-     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $account;
 
