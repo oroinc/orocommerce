@@ -383,7 +383,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         $this->descriptions = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
         $this->variantLinks = new ArrayCollection();
-        $this->images         = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     /**
@@ -918,6 +918,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
             $this->names = new ArrayCollection();
             $this->descriptions = new ArrayCollection();
             $this->shortDescriptions = new ArrayCollection();
+            $this->images = new ArrayCollection();
             $this->variantLinks = new ArrayCollection();
             $this->variantFields = [];
         }
