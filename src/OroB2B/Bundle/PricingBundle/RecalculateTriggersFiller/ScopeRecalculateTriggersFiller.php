@@ -26,15 +26,15 @@ class ScopeRecalculateTriggersFiller
     }
 
     /**
-     * @param array|null $websiteIds
-     * @param array|null $accountGroupIds
-     * @param array|null $accountIds
-     * @param bool|false $force
+     * @param array $websiteIds
+     * @param array $accountGroupIds
+     * @param array $accountIds
+     * @param bool $force
      */
     public function fillTriggersForRecalculate(
-        array $websiteIds = null,
-        array $accountGroupIds = null,
-        array $accountIds = null,
+        array $websiteIds = [],
+        array $accountGroupIds = [],
+        array $accountIds = [],
         $force = false
     ) {
         $websites = $this->getRecalculatedWebsites($websiteIds);
