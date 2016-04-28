@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\PaymentBundle\Action;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyPath;
 
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
@@ -69,14 +68,16 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
+        $callbackUrls = $this->getCallbackUrls($paymentTransaction);
+        if (!empty($options['transactionOptions']) && !empty($options['transactionOptions']['successUrl'])) {
+            $callbackUrls['successUrl'] = $options['transactionOptions']['successUrl'];
+        }
+
         $this->setAttributeValue(
             $context,
             array_merge(
-                [
-                    'paymentMethod' => $options['paymentMethod'],
-                    'checkoutId' => (string)$this->contextAccessor->getValue($context, new PropertyPath('id'))
-                ],
-                $this->getCallbackUrls($paymentTransaction),
+                ['paymentMethod' => $options['paymentMethod']],
+                $callbackUrls,
                 $response
             )
         );
