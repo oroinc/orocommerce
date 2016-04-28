@@ -15,25 +15,39 @@ class CombinedPriceListQueueConsumer
     const MODE_REAL_TIME = 'real_time';
     const MODE_SCHEDULED = 'scheduled';
 
-    /** @var ObjectManager */
+    /**
+     * @var ObjectManager
+     */
     protected $manager;
 
-    /** @var ManagerRegistry */
+    /**
+     * @var ManagerRegistry
+     */
     protected $registry;
 
-    /** @var CombinedPriceListsBuilder */
+    /**
+     * @var CombinedPriceListsBuilder
+     */
     protected $commonPriceListsBuilder;
 
-    /** @var WebsiteCombinedPriceListsBuilder */
+    /**
+     * @var WebsiteCombinedPriceListsBuilder
+     */
     protected $websitePriceListsBuilder;
 
-    /** @var AccountGroupCombinedPriceListsBuilder */
+    /**
+     * @var AccountGroupCombinedPriceListsBuilder
+     */
     protected $accountGroupPriceListsBuilder;
 
-    /** @var AccountCombinedPriceListsBuilder */
+    /**
+     * @var AccountCombinedPriceListsBuilder
+     */
     protected $accountPriceListsBuilder;
 
-    /** @var  PriceListChangeTriggerRepository */
+    /**
+     * @var  PriceListChangeTriggerRepository
+     */
     protected $queueRepository;
 
     /**
@@ -57,15 +71,22 @@ class CombinedPriceListQueueConsumer
         $this->accountPriceListsBuilder = $accountPriceListsBuilder;
     }
 
-    /**
-     * @param int|null $behavior
-     */
-    public function process($behavior = null)
+    public function process()
     {
         $manager = $this->getManager();
+
+        $forceTrigger = $this->findBuildAllForceTrigger();
+        if ($forceTrigger) {
+            $this->handlePriceListChangeTrigger($forceTrigger, $forceTrigger->isForce());
+            $this->getRepository()->removeAll();
+            $manager->flush();
+
+            return;
+        }
+
         $i = 0;
         foreach ($this->getUniqueTriggersIterator() as $changeItem) {
-            $this->handlePriceListChangeTrigger($changeItem, $behavior);
+            $this->handlePriceListChangeTrigger($changeItem, $changeItem->isForce());
             $manager->remove($changeItem);
             if (++$i % 100 === 0) {
                 $manager->flush();
@@ -131,5 +152,21 @@ class CombinedPriceListQueueConsumer
         }
 
         return $this->queueRepository;
+    }
+
+    /**
+     * @return PriceListChangeTrigger
+     */
+    protected function findBuildAllForceTrigger()
+    {
+        $forceTrigger = $this->getRepository()
+            ->findOneBy([
+                'account' => null,
+                'accountGroup' => null,
+                'website' => null,
+                'isForce' => true
+            ]);
+
+        return $forceTrigger;
     }
 }

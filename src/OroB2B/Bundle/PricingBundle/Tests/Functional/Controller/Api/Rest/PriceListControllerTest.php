@@ -19,22 +19,20 @@ class PriceListControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader());
-
         $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+    }
+
+    protected function tearDown()
+    {
+        $this->restoreConfig();
+        parent::tearDown();
     }
 
     public function testDelete()
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
-
-        $key = OroB2BPricingExtension::ALIAS
-            . ConfigManager::SECTION_MODEL_SEPARATOR
-            . Configuration::PRICE_LISTS_UPDATE_MODE;
-
-        $configManager = $this->getContainer()->get('oro_config.scope.global');
-        $defaultMode = $configManager->getSettingValue($key);
-        $configManager->set($key, CombinedPriceListQueueConsumer::MODE_SCHEDULED);
+        $this->updateConfig();
 
         $this->client->request(
             'DELETE',
@@ -47,8 +45,6 @@ class PriceListControllerTest extends WebTestCase
             ->findBy(['account' => null, 'accountGroup' => null, 'website' => null, 'force' => true]);
 
         $this->assertCount(1, $triggers);
-
-        $configManager->set($key, $defaultMode);
     }
 
     public function testDeleteDefault()
@@ -70,5 +66,33 @@ class PriceListControllerTest extends WebTestCase
     protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:PriceList');
+    }
+
+    protected function updateConfig()
+    {
+        $key = OroB2BPricingExtension::ALIAS
+            . ConfigManager::SECTION_MODEL_SEPARATOR
+            . Configuration::PRICE_LISTS_UPDATE_MODE;
+
+        $this->getConfigManager()->set($key, CombinedPriceListQueueConsumer::MODE_SCHEDULED);
+    }
+
+    /**
+     * @return \Oro\Bundle\ConfigBundle\Config\GlobalScopeManager
+     */
+    protected function getConfigManager()
+    {
+        $configManager = $this->getContainer()->get('oro_config.scope.global');
+
+        return $configManager;
+    }
+
+    protected function restoreConfig()
+    {
+        $key = OroB2BPricingExtension::ALIAS
+            . ConfigManager::SECTION_MODEL_SEPARATOR
+            . Configuration::PRICE_LISTS_UPDATE_MODE;
+
+        $this->getConfigManager()->reset($key);
     }
 }
