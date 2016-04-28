@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\Method;
 class PaymentMethodRegistry
 {
     /** @var PaymentMethodInterface[] */
-    protected $paymentMethods;
+    protected $paymentMethods = [];
 
     /**
      * @param PaymentMethodInterface $paymentMethod

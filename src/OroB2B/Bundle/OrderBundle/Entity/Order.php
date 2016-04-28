@@ -33,7 +33,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *      routeView="orob2b_order_view",
  *      routeCreate="orob2b_order_create",
  *      routeUpdate="orob2b_order_update",
- *      routeDelete="orob2b_api_delete_order",
  *      routeCommerceName="orob2b_order_frontend_index",
  *      routeCommerceView="orob2b_order_frontend_view",
  *      routeCommerceCreate="orob2b_order_frontend_create",

@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
@@ -51,6 +52,48 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
      * @ORM\OrderBy({"id" = "ASC"})
      */
     protected $demandProducts;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="subtotal", type="money", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "is_subtotal"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $subtotal;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="total", type="money", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "is_total"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $total;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="total_currency", type="string", length=3, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "is_total_currency"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $totalCurrency;
 
     public function __construct()
     {
@@ -171,5 +214,77 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
     public function getSourceDocumentIdentifier()
     {
         return $this->quote->getPoNumber();
+    }
+
+    /**
+     * Set currency
+     *
+     * @param string $currency
+     *
+     * @return $this
+     */
+    public function setTotalCurrency($currency)
+    {
+        $this->totalCurrency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * Get currency
+     *
+     * @return string
+     */
+    public function getTotalCurrency()
+    {
+        return $this->totalCurrency;
+    }
+
+    /**
+     * Set subtotal
+     *
+     * @param float $subtotal
+     *
+     * @return $this
+     */
+    public function setSubtotal($subtotal)
+    {
+        $this->subtotal = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * Get subtotal
+     *
+     * @return float
+     */
+    public function getSubtotal()
+    {
+        return $this->subtotal;
+    }
+
+    /**
+     * Set total
+     *
+     * @param float $total
+     *
+     * @return $this
+     */
+    public function setTotal($total)
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    /**
+     * Get total
+     *
+     * @return float
+     */
+    public function getTotal()
+    {
+        return $this->total;
     }
 }

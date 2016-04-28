@@ -1,3 +1,0 @@
-orob2b_sale_api:
-    resource: '@OroB2BSaleBundle/Controller/Api/Rest/QuoteController.php'
-    type:     rest

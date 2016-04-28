@@ -157,7 +157,7 @@
                 </tr>
                 </thead>
                 {% for lineItem in shoppingList.lineItems %}
-                {% set productMatchedPrice = lineItem is defined and productsMatchedPrice[lineItem.product.id] is not empty ? productsMatchedPrice[lineItem.product.id] : null %}
+                {% set productMatchedPrice = lineItem is defined and productsMatchedPrice[lineItem.product.id][lineItem.unit.code] is not empty ? productsMatchedPrice[lineItem.product.id][lineItem.unit.code] : null %}
                 {% set productAllPrices = lineItem is defined and productsAllPrices[lineItem.product.id] is not empty ? productsAllPrices[lineItem.product.id] : null %}
                 {% set currency = productMatchedPrice ? productMatchedPrice.currency : defaultCurrency %}
                 <tbody class="line_item" data-all-prices="{{ productAllPrices|json_encode }}">

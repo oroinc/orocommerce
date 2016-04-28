@@ -18,7 +18,7 @@ class OroB2BCheckoutBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -27,11 +27,13 @@ class OroB2BCheckoutBundleInstaller implements Installation
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BCheckoutSourceTable($schema);
-        $this->createOrob2BCheckoutTable($schema);
+        $this->createOroB2BCheckoutSourceTable($schema);
+        $this->createOroB2BCheckoutTable($schema);
+        $this->createOroB2BDefaultCheckoutTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BCheckoutForeignKeys($schema);
+        $this->addOroB2BCheckoutForeignKeys($schema);
+        $this->addOroB2BDefaultCheckoutForeignKeys($schema);
     }
 
     /**
@@ -39,7 +41,7 @@ class OroB2BCheckoutBundleInstaller implements Installation
      *
      * @param Schema $schema
      */
-    protected function createOrob2BCheckoutSourceTable(Schema $schema)
+    protected function createOroB2BCheckoutSourceTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_checkout_source');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -51,7 +53,7 @@ class OroB2BCheckoutBundleInstaller implements Installation
      *
      * @param Schema $schema
      */
-    protected function createOrob2BCheckoutTable(Schema $schema)
+    protected function createOroB2BCheckoutTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_checkout');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -63,13 +65,8 @@ class OroB2BCheckoutBundleInstaller implements Installation
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
-        $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
-        $table->addColumn('billing_address_id', 'integer', ['notnull' => false]);
-        $table->addColumn('order_id', 'integer', ['notnull' => false]);
-        $table->addColumn('save_billing_address', 'boolean', []);
-        $table->addColumn('ship_to_billing_address', 'boolean', []);
-        $table->addColumn('save_shipping_address', 'boolean', []);
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('checkout_type', 'string', ['notnull' => false, 'length' => 30]);
         $table->addColumn('customer_notes', 'text', ['notnull' => false]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('ship_until', 'date', ['notnull' => false, 'comment' => '(DC2Type:date)']);
@@ -83,11 +80,9 @@ class OroB2BCheckoutBundleInstaller implements Installation
         ]);
         $table->addColumn('shipping_estimate_currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('payment_method', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addUniqueIndex(['billing_address_id'], 'uniq_e56b559d79d0c0e4');
+        $table->addColumn('checkout_discriminator', 'string', ['notnull' => true, 'length' => 30]);
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');
         $table->addUniqueIndex(['workflow_item_id'], 'uniq_e56b559d1023c4ee');
-        $table->addUniqueIndex(['shipping_address_id'], 'uniq_e56b559d4d4cff2b');
-        $table->addUniqueIndex(['order_id'], 'uniq_e56b559d8d9f6d38');
         $table->setPrimaryKey(['id']);
     }
 
@@ -96,15 +91,9 @@ class OroB2BCheckoutBundleInstaller implements Installation
      *
      * @param Schema $schema
      */
-    protected function addOrob2BCheckoutForeignKeys(Schema $schema)
+    protected function addOroB2BCheckoutForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_checkout');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order'),
-            ['order_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => null]
-        );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_workflow_step'),
             ['workflow_step_id'],
@@ -153,15 +142,62 @@ class OroB2BCheckoutBundleInstaller implements Installation
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
+    }
+
+    /**
+     * Create orob2b_default_checkout table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BDefaultCheckoutTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_default_checkout');
+
+        $table->addColumn('id', 'integer', ['notnull' => true]);
+        $table->addColumn('order_id', 'integer', ['notnull' => false]);
+        $table->addColumn('billing_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('save_billing_address', 'boolean', []);
+        $table->addColumn('ship_to_billing_address', 'boolean', []);
+        $table->addColumn('save_shipping_address', 'boolean', []);
+
+        $table->setPrimaryKey(['id']);
+
+        $table->addUniqueIndex(['billing_address_id'], 'uniq_def_checkout_bill_addr');
+        $table->addUniqueIndex(['shipping_address_id'], 'uniq_def_checkout_shipp_addr');
+        $table->addUniqueIndex(['order_id'], 'uniq_def_checkout_order');
+    }
+
+    /**
+     * Add orob2b_default_checkout foreign keys
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BDefaultCheckoutForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_default_checkout');
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_checkout'),
+            ['id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_order'),
+            ['order_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => null]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_order_address'),
-            ['shipping_address_id'],
+            ['billing_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_order_address'),
-            ['billing_address_id'],
+            ['shipping_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );

@@ -43,13 +43,6 @@ services:
         tags:
             - { name: twig.extension }
 
-    orob2b_menu.menu_item.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%orob2b_menu.entity.menu_item.class%'
-            - "@doctrine.orm.entity_manager"
-
     orob2b_menu.menu_array_loader:
         class: Knp\Menu\Loader\ArrayLoader
         arguments:

@@ -1,3 +1,13 @@
+orob2b_account_delete:
+    type: entity
+    permission: DELETE
+    class: OroB2BAccountBundle:Account
+
+orob2b_account_account_user_delete:
+    type: entity
+    permission: DELETE
+    class: OroB2BAccountBundle:AccountUser
+
 orob2b_account_frontend_account_user_view:
     type: entity
     permission: VIEW

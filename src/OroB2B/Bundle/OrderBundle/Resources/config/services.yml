@@ -107,6 +107,7 @@ services:
     orob2b_order.event_listener.product_select_db_query:
         class: '%orob2b_product.event_listener.scoped_product_select_db_query.common_class%'
         parent: orob2b_product.event_listener.abstract_product_select_db_query
+        public: true
         calls:
             - [setScope, ['order']]
             - [setFrontendSystemConfigurationPath, ['oro_b2b_order.frontend_product_visibility']]
