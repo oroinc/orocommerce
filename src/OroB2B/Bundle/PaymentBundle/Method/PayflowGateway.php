@@ -173,7 +173,8 @@ class PayflowGateway implements PaymentMethodInterface
         $this->execute($paymentTransaction);
 
         $paymentTransaction
-            ->setAction(PaymentMethodInterface::VALIDATE);
+            ->setAction(PaymentMethodInterface::VALIDATE)
+            ->setSuccessful(false);
 
         return $this->secureTokenResponse($paymentTransaction);
     }

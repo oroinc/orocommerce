@@ -22,9 +22,15 @@ define(function(require) {
                 expirationDate: '[data-expiration-date]',
                 cvv: '[data-card-cvv]',
                 cardNumber: '[data-card-number]',
-                validation: '[data-validation]'
+                validation: '[data-validation]',
+                paymentValidateRequired: '[name$="[payment_validate]"]'
             }
         },
+
+        /**
+         * @property {Boolean}
+         */
+        paymentValidationRequiredComponentState: true,
 
         /**
          * @property {jQuery}
@@ -52,8 +58,6 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            mediator.on('checkout:place-order:response', this.handleSubmit, this);
-
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardNumberLuhnCheck');
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDate');
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDateNotBlank');
@@ -72,6 +76,8 @@ define(function(require) {
                 )
                 .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
 
+            mediator.on('checkout:place-order:response', _.bind(this.handleSubmit, this));
+            mediator.on('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
             mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
         },
 
@@ -144,8 +150,6 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('checkout:place-order:response', this.handleSubmit, this);
-
             this.$el
                 .off('change', this.options.selectors.month, _.bind(this.collectMonthDate, this))
                 .off('change', this.options.selectors.year, _.bind(this.collectYearDate, this))
@@ -156,6 +160,8 @@ define(function(require) {
                 )
                 .off('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
 
+            mediator.off('checkout:place-order:response', _.bind(this.handleSubmit, this));
+            mediator.off('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
             mediator.off('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
 
             CreditCardComponent.__super__.dispose.call(this);
@@ -215,8 +221,46 @@ define(function(require) {
             return isValid;
         },
 
+        /**
+         * @returns {jQuery|HTMLElement}
+         */
+        getPaymentValidateElement: function() {
+            if (!this.hasOwnProperty('$paymentValidateElement')) {
+                this.$paymentValidateElement = $(this.options.selectors.paymentValidateRequired);
+            }
+
+            return this.$paymentValidateElement;
+        },
+
+        /**
+         * @param {Boolean} state
+         */
+        setPaymentValidateRequired: function(state) {
+            this.paymentValidationRequiredComponentState = state;
+            this.getPaymentValidateElement().prop('checked', state);
+        },
+
+        /**
+         * @returns {Boolean}
+         */
+        getPaymentValidateRequired: function() {
+            return this.getPaymentValidateElement().prop('checked');
+        },
+
+        /**
+         * @param {Object} eventData
+         */
+        onPaymentMethodChanged: function(eventData) {
+            if (eventData.paymentMethod === this.options.paymentMethod) {
+                this.setPaymentValidateRequired(this.paymentValidationRequiredComponentState);
+            }
+        },
+
+        /**
+         * @param {Object} eventData
+         */
         beforeTransit: function(eventData) {
-            if (eventData.data.paymentMethod === this.options.paymentMethod && eventData.data.paymentValidate) {
+            if (eventData.data.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = !this.validate();
             }
         }
