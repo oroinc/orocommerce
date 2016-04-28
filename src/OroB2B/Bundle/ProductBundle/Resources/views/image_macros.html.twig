@@ -40,8 +40,8 @@
 
                         {% for imageType in imageTypes %}
                             <td class="text-center">
-                                {% if imageType.name in productImage.types %}
-                                <i class="icon-check"></i>
+                                {% if productImage.hasType(imageType.name) %}
+                                    <i class="icon-check"></i>
                                 {% endif %}
                             </td>
                         {% endfor %}
