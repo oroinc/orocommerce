@@ -9,11 +9,8 @@
 {% endblock %}
 
 {% block block_attributes_underscore %}
-    {% set attributes = block('block_attributes_base')|replace({
-        '&lt;%': '<%',
-        '%&gt;': '%>'
-    }) %}
-    {{ attributes|raw }}
+    {% import 'OroB2BFrontendBundle:layouts/default:utils.html.twig' as utils %}
+    {{ utils.underscoreRaw(block('block_attributes_base')) }}
 {%- endblock %}
 
 {% block form_start_widget %}

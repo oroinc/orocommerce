@@ -48,7 +48,7 @@
         <div class="subtotal-error"></div>
         {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
             pageComponent: 'orob2border/js/app/components/totals-component',
-            options: {totals: totals}
+            options: {totals: orderData.totals}
         } only %}
     {% endset %}
 
@@ -75,17 +75,20 @@
              data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
                  view: 'orob2border/js/app/views/line-items-view',
-                 tierPrices: tierPrices|default({}),
-                 matchedPrices: matchedPrices|default({}),
+                 tierPrices: orderData.tierPrices|default({}),
+                 matchedPrices: orderData.matchedPrices|default({}),
                  currency: entity.currency,
                  account: entity.account is null ? null : entity.account.id,
-                 account: entity.website is null ? null : entity.website.id,
+                 website: entity.website is null ? null : entity.website.id,
                  subtotalType: subtotalType
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.lineItems) }}
             {{ form_errors(form.lineItems) }}
         </div>
+        <div
+                data-page-component-module="orob2border/js/app/components/data-load-component"
+                data-page-component-options="{{ orderData|json_encode }}"></div>
     {% endset %}
 
     {% set dataBlocks = [

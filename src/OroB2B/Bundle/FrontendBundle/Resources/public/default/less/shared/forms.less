@@ -5,7 +5,9 @@ label, select, button, input[type="button"], input[type="reset"], input[type="su
 input[type="text"],
 input[type="number"],
 textarea {
-    .input();
+    &.input_block {
+        width: 100%;
+    }
 }
 
 .__form__row {
@@ -29,7 +31,8 @@ label {
     margin: 0 0 1.5rem;
 }
 
-.input {
+.input,
+input.hasDatepicker {
     .input();
     line-height: 1.9rem;
 }
