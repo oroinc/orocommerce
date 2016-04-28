@@ -2,9 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\EntityBundle\ORM\Registry;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -42,7 +41,7 @@ class ScopeRecalculateTriggersFiller
         $accountGroups = $this->getRecalculatedAccountGroups($accountGroupIds);
         $accounts = $this->getRecalculatedAccounts($accountIds);
 
-        if (!$websites && !$accountGroups && !$accounts) {
+        if (!$websites && !$accountGroups && !$accounts && !$force) {
             return;
         }
 
@@ -50,9 +49,7 @@ class ScopeRecalculateTriggersFiller
         $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger');
 
         if ($force) {
-            if (empty($websites) && empty($accountGroups) && empty($accounts)) {
-                $this->createForceTriggers($em);
-            }
+            $this->createForceTriggers($em);
         } else {
             $this->createWithoutForceTriggers($em, $websites, $accountGroups, $accounts);
         }

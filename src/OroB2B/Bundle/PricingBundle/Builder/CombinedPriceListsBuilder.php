@@ -141,4 +141,14 @@ class CombinedPriceListsBuilder
             $this->configManager->flush();
         }
     }
+
+    /**
+     * @return $this
+     */
+    public function resetCache()
+    {
+        $this->isBuilt = false;
+
+        return $this;
+    }
 }

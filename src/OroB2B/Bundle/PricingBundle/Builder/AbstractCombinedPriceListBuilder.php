@@ -187,6 +187,16 @@ abstract class AbstractCombinedPriceListBuilder
     }
 
     /**
+     * @return $this
+     */
+    public function resetCache()
+    {
+        $this->builtList = [];
+
+        return $this;
+    }
+
+    /**
      * @param CombinedPriceList $cpl
      * @param Website $website
      * @param $targetEntity

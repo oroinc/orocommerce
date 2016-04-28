@@ -30,8 +30,6 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
             'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
             'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
         ]);
-
-        $this->clearCombinedPrices();
     }
 
     /**
@@ -53,7 +51,13 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
         array $accountGroups = [],
         array $accounts = []
     ) {
+        $this->clearCombinedPrices();
         $this->assertCombinedPriceCount(0);
+
+        $this->getContainer()->get('orob2b_pricing.builder.combined_price_list_builder')->resetCache();
+        $this->getContainer()->get('orob2b_pricing.builder.website_combined_price_list_builder')->resetCache();
+        $this->getContainer()->get('orob2b_pricing.builder.account_group_combined_price_list_builder')->resetCache();
+        $this->getContainer()->get('orob2b_pricing.builder.account_combined_price_list_builder')->resetCache();
 
         $this->clearTriggers();
 
@@ -113,7 +117,7 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
                 'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
                 'expected_message' => 'The cache is updated successfully',
                 'params' => ['--force'],
-                'expectedCount' => 58,
+                'expectedCount' => 64,
                 'website' => ['US'],
                 'accountGroup' => [],
                 'account' => []
@@ -121,17 +125,18 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
             'scheduled account.level_1_1 with force' => [
                 'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
                 'expected_message' => 'The cache is updated successfully',
-                'params' => ['--force'],
+                'params' => [],
                 'expectedCount' => 6,
-                'website' => [],
+                'website' => ['US'],
                 'accountGroup' => [],
                 'account' => ['account.level_1_1']
             ],
+
             'scheduled account.level_1_1, account.level_1.2, account.level_1.3 with force' => [
                 'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
                 'expected_message' => 'The cache is updated successfully',
                 'params' => ['--force'],
-                'expectedCount' => 34,
+                'expectedCount' => 64,
                 'website' => [],
                 'accountGroup' => [],
                 'account' => ['account.level_1_1', 'account.level_1.2', 'account.level_1.3']
@@ -140,7 +145,7 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
                 'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
                 'expected_message' => 'The cache is updated successfully',
                 'params' => ['--force'],
-                'expectedCount' => 24,
+                'expectedCount' => 64,
                 'website' => [],
                 'accountGroup' => ['account_group.group1'],
                 'account' => []
