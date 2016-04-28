@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\RecalculateTriggersFiler;
+namespace OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller;
 
 use Doctrine\ORM\EntityManager;
 
@@ -27,39 +27,66 @@ class ScopeRecalculateTriggersFiller
     }
 
     /**
-     * @param Website[] $websiteIds
-     * @param AccountGroup[] $accountGroupIds
-     * @param Account[] $accountIds
-     * @param $force
+     * @param array|null $websiteIds
+     * @param array|null $accountGroupIds
+     * @param array|null $accountIds
+     * @param bool|false $force
      */
-    public function fillTriggersForRecalculate($websiteIds, $accountGroupIds, $accountIds, $force)
-    {
+    public function fillTriggersForRecalculate(
+        array $websiteIds = null,
+        array $accountGroupIds = null,
+        array $accountIds = null,
+        $force = false
+    ) {
         $websites = $this->getRecalculatedWebsites($websiteIds);
         $accountGroups = $this->getRecalculatedAccountGroups($accountGroupIds);
         $accounts = $this->getRecalculatedAccounts($accountIds);
 
+        if (!$websites && !$accountGroups && !$accounts) {
+            return;
+        }
 
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger');
 
         if ($force) {
             if (empty($websites) && empty($accountGroups) && empty($accounts)) {
-                $this->clearAllExistingTriggers();
-                $priceListChangeTrigger = new PriceListChangeTrigger();
-
-                $em->persist($priceListChangeTrigger);
+                $this->createForceTriggers($em);
             }
         } else {
-            if ($accountGroups && $accounts) {
-                $this->clearExistingScopesPriceListChangeTriggers($websites, $accountGroups, []);
-                $this->clearExistingScopesPriceListChangeTriggers($websites, [], $accounts);
-            } else {
-                $this->clearExistingScopesPriceListChangeTriggers($websites, $accountGroups, $accounts);
-            }
-            $this->preparePriceListChangeTriggersForScopes($em, $websites, $accountGroups, $accounts);
+            $this->createWithoutForceTriggers($em, $websites, $accountGroups, $accounts);
         }
 
         $em->flush();
+    }
+
+    /**
+     * @param EntityManager $em
+     */
+    protected function createForceTriggers(EntityManager $em)
+    {
+        $this->clearAllExistingTriggers();
+        $priceListChangeTrigger = new PriceListChangeTrigger();
+
+        $em->persist($priceListChangeTrigger);
+    }
+
+    /**
+     * @param EntityManager $em
+     * @param Website[] $websites
+     * @param AccountGroup[] $accountGroups
+     * @param Account[] $accounts
+     */
+    protected function createWithoutForceTriggers(EntityManager $em, $websites, $accountGroups, $accounts)
+    {
+        if ($accountGroups && $accounts) {
+            $this->clearExistingScopesPriceListChangeTriggers($websites, $accountGroups, []);
+            $this->clearExistingScopesPriceListChangeTriggers($websites, [], $accounts);
+        } else {
+            $this->clearExistingScopesPriceListChangeTriggers($websites, $accountGroups, $accounts);
+        }
+
+        $this->preparePriceListChangeTriggersForScopes($em, $websites, $accountGroups, $accounts);
     }
 
     protected function clearAllExistingTriggers()

@@ -12,7 +12,6 @@ parameters:
     orob2b_pricing.entity.combined_product_price.class: OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice
     orob2b_pricing.entity.product_price_change_trigger.class: OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger
     orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
-    orob2b_pricing.entity.price_list_schedule.class: OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule
 
 services:
     orob2b_pricing.acl.voter.product_list:
@@ -523,7 +522,7 @@ services:
             - '@oro_entity.routing_helper'
             - '@doctrine'
 
-    orob2b_pricing.recalculate_triggers_filer.scope_recalculate_triggers_filer:
-        class: 'OroB2B\Bundle\PricingBundle\RecalculateTriggersFiler\ScopeRecalculateTriggersFiller'
+    orob2b_pricing.recalculate_triggers_filler.scope_recalculate_triggers_filler:
+        class: 'OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller'
         arguments:
             - @doctrine
