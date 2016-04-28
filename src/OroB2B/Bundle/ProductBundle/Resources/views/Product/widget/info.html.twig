@@ -10,7 +10,10 @@
             {{ UI.renderHtmlProperty('orob2b.product.inventory_status.label'|trans, product.inventoryStatus) }}
 
             {% if product.images.count %}
-                {{ UI.renderHtmlProperty('orob2b.product.images.label'|trans, Image.renderProductImages(product.images)) }}
+                {{ UI.renderHtmlProperty(
+                    'orob2b.product.images.label'|trans,
+                    Image.renderProductImages(product.images, imageTypes)
+                ) }}
             {% endif %}
 
             {% if product.unitPrecisions.count %}

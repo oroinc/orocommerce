@@ -17,36 +17,37 @@
     <img src="{{ _self.url(file, filter) }}"/>
 {%- endmacro -%}
 
-{% macro renderProductImages(productImages) %}
+{% macro renderProductImages(productImages, imageTypes) %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <div class="grid-container">
+        <table class="grid table-hover table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th><span>{{ 'orob2b.product.productimage.file.label'|trans }}</span></th>
+                    {% for imageType in imageTypes %}
+                        <th><span>{{ imageType.label|trans }}</span></th>
+                    {% endfor %}
+                </tr>
+            </thead>
 
-    {# @TODO replace with macros param! #}
-    {% set allImageTypes = ['main', 'additional', 'listing'] %}
+            <tbody>
+                {% for productImage in productImages %}
+                    <tr>
+                        <td>
+                            {{ oro_image_view(productImage, productImage.image, null, 'image') }}
+                            {{ oro_file_view(productImage, 'image', productImage.image) }}
+                        </td>
 
-    <table style="padding: 10px;" border="1" class="image-collection">
-        <tr>
-            <th>{{ 'orob2b.product.productimage.file.label'|trans }}</th>
-            {% for imageType in allImageTypes %}
-                <th >{{ ('orob2b.product.productimage.type.'~imageType~'.label')|trans }}</th>
-            {% endfor %}
-        </tr>
-
-        {% for productImage in productImages %}
-            <tr>
-                <td>
-                    {{ oro_image_view(productImage, productImage.image, null, 'image') }}
-                    {{ oro_file_view(productImage, 'image', productImage.image) }}
-                </td>
-
-                {% for imageType in allImageTypes %}
-                    <td class="text-center">
-                        {% if imageType in productImage.types %}
-                        <i class="icon-check"></i>
-                        {% endif %}
-                    </td>
+                        {% for imageType in imageTypes %}
+                            <td class="text-center">
+                                {% if imageType.name in productImage.types %}
+                                <i class="icon-check"></i>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
                 {% endfor %}
-
-            </tr>
-        {% endfor %}
-    </table>
+            </tbody>
+        </table>
+    </div>
 {% endmacro %}
