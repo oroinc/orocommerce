@@ -151,10 +151,7 @@ class CombinedPriceListActivationPlanBuilder
                 );
             }
         }
-        return $this->combinedPriceListProvider->getCombinedPriceList(
-            $sequence,
-            CombinedPriceListProvider::BEHAVIOR_EMPTY
-        );
+        return $this->combinedPriceListProvider->getCombinedPriceList($sequence);
     }
 
     /**

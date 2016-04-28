@@ -58,15 +58,14 @@ class CombinedPriceListQueueConsumer
     }
 
     /**
-     * @param int|null $behavior
      * @param bool $force
      */
-    public function process($behavior = null, $force = false)
+    public function process($force = false)
     {
         $manager = $this->getManager();
         $i = 0;
         foreach ($this->getUniqueTriggersIterator() as $changeItem) {
-            $this->handlePriceListChangeTrigger($changeItem, $behavior, $force);
+            $this->handlePriceListChangeTrigger($changeItem, $force);
             $manager->remove($changeItem);
             if (++$i % 100 === 0) {
                 $manager->flush();
@@ -85,29 +84,27 @@ class CombinedPriceListQueueConsumer
 
     /**
      * @param PriceListChangeTrigger $trigger
-     * @param null $behavior
      * @param bool $force
      */
-    protected function handlePriceListChangeTrigger(PriceListChangeTrigger $trigger, $behavior, $force)
+    protected function handlePriceListChangeTrigger(PriceListChangeTrigger $trigger, $force)
     {
         switch (true) {
             case !is_null($trigger->getAccount()):
                 $this->accountPriceListsBuilder
-                    ->build($trigger->getWebsite(), $trigger->getAccount(), $behavior);
+                    ->build($trigger->getWebsite(), $trigger->getAccount(), $force);
                 break;
             case !is_null($trigger->getAccountGroup()):
                 $this->accountGroupPriceListsBuilder->build(
                     $trigger->getWebsite(),
                     $trigger->getAccountGroup(),
-                    $behavior,
                     $force
                 );
                 break;
             case !is_null($trigger->getWebsite()):
-                $this->websitePriceListsBuilder->build($trigger->getWebsite(), $behavior, $force);
+                $this->websitePriceListsBuilder->build($trigger->getWebsite(), $force);
                 break;
             default:
-                $this->commonPriceListsBuilder->build($behavior, $force);
+                $this->commonPriceListsBuilder->build($force);
         }
     }
 

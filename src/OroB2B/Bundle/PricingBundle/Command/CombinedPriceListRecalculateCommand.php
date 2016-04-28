@@ -9,7 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 
-use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 
@@ -74,11 +73,9 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
 
         if ($force || $mode === CombinedPriceListQueueConsumer::MODE_SCHEDULED) {
             $output->writeln('<info>Start the process recalculation</info>');
-            $behavior = $force ? CombinedPriceListProvider::BEHAVIOR_FORCE : null;
-
             /** @var CombinedPriceListQueueConsumer $consumer */
             $priceListCollectionConsumer = $container->get('orob2b_pricing.builder.queue_consumer');
-            $priceListCollectionConsumer->process($behavior, $force);
+            $priceListCollectionConsumer->process($force);
             $productPriceConsumer = $container->get('orob2b_pricing.builder.combined_product_price_queue_consumer');
             $productPriceConsumer->process();
 

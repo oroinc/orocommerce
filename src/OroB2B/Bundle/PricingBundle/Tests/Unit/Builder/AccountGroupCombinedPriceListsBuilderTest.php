@@ -8,7 +8,6 @@ use OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTest
@@ -93,8 +92,8 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
             $this->assertRebuild($behavior, $website, $accountGroup, $force);
         }
 
-        $this->builder->build($website, null, $behavior, $force);
-        $this->builder->build($website, null, $behavior, $force);
+        $this->builder->build($website, null, $force);
+        $this->builder->build($website, null, $force);
     }
 
     /**
@@ -104,20 +103,16 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
     {
         return [
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE,
                 'priceListByAccountGroup' => null,
                 'force' => true
             ],
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
                 'priceListByAccountGroup' => null
             ],
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE,
                 'priceListByAccountGroup' => new PriceListToAccountGroup()
             ],
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
                 'priceListByAccountGroup' => new PriceListToAccountGroup(),
                 'force' => true
             ]
@@ -157,8 +152,8 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
             $this->assertRebuild($behavior, $website, $accountGroup, $force);
         }
 
-        $this->builder->build($website, $accountGroup, $behavior, $force);
-        $this->builder->build($website, $accountGroup, $behavior, $force);
+        $this->builder->build($website, $accountGroup, $force);
+        $this->builder->build($website, $accountGroup, $force);
     }
 
     /**

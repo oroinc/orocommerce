@@ -91,27 +91,26 @@ class CombinedPriceListsBuilder
     }
 
     /**
-     * @param int|null $behavior
      * @param bool $force
      */
-    public function build($behavior = null, $force = false)
+    public function build($force = false)
     {
         if (!$this->isBuilt) {
-            $this->updatePriceListsOnCurrentLevel($behavior);
-            $this->websiteCombinedPriceListBuilder->build(null, $behavior, $force);
+            $this->updatePriceListsOnCurrentLevel($force);
+            $this->websiteCombinedPriceListBuilder->build(null, $force);
             $this->garbageCollector->cleanCombinedPriceLists();
             $this->isBuilt = true;
         }
     }
 
     /**
-     * @param boolean $behavior
+     * @param bool $force
      */
-    protected function updatePriceListsOnCurrentLevel($behavior)
+    protected function updatePriceListsOnCurrentLevel($force)
     {
         $collection = $this->priceListCollectionProvider->getPriceListsByConfig();
-        $fullCpl = $this->combinedPriceListProvider->getCombinedPriceList($collection, $behavior);
-        $this->updateCombinedPriceListConnection($fullCpl);
+        $fullCpl = $this->combinedPriceListProvider->getCombinedPriceList($collection);
+        $this->updateCombinedPriceListConnection($fullCpl, $force);
     }
 
     /**
@@ -126,9 +125,6 @@ class CombinedPriceListsBuilder
         }
         if ($force || !$activeCpl->isPricesCalculated()) {
             $this->priceResolver->combinePrices($activeCpl);
-        }
-        if (!$cpl->isPricesCalculated()) {
-            $this->priceResolver->combinePrices($cpl);
         }
         $fullCplConfigKey = Configuration::getConfigKeyToPriceList();
         $actualCplConfigKey = Configuration::getConfigKeyToFullPriceList();

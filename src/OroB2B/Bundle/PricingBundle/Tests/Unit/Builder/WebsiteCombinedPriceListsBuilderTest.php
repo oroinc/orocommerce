@@ -7,7 +7,6 @@ use OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
-use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTest
@@ -91,8 +90,8 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             $this->assertRebuild($behavior, $website);
         }
 
-        $this->builder->build(null, $behavior, $force);
-        $this->builder->build(null, $behavior, $force);
+        $this->builder->build(null, $force);
+        $this->builder->build(null, $force);
     }
 
     /**
@@ -127,8 +126,8 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             $this->assertRebuild($behavior, $website);
         }
 
-        $this->builder->build($website, $behavior, $force);
-        $this->builder->build($website, $behavior, $force);
+        $this->builder->build($website, $force);
+        $this->builder->build($website, $force);
     }
 
     /**
@@ -138,20 +137,19 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     {
         return [
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE,
                 'priceListByWebsite' => null,
-                'force' => true
+                'force' => true,
             ],
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
-                'priceListByWebsite' => null
+                'priceListByWebsite' => null,
+                'force' => false,
             ],
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE,
-                'priceListByWebsite' => new PriceListToWebsite()
+                'priceListByWebsite' => new PriceListToWebsite(),
+                'force' => true,
             ],
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
+
                 'priceListByWebsite' => new PriceListToWebsite(),
                 'force' => true
             ]

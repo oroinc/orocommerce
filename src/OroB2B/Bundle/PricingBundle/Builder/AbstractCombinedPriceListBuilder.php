@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\PricingBundle\Builder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
@@ -205,9 +207,6 @@ abstract class AbstractCombinedPriceListBuilder
             ->updateCombinedPriceListConnection($cpl, $activeCpl, $website, $targetEntity);
         if ($force || !$activeCpl->isPricesCalculated()) {
             $this->priceResolver->combinePrices($activeCpl);
-        }
-        if (!$cpl->isPricesCalculated()) {
-            $this->priceResolver->combinePrices($cpl);
         }
     }
 }

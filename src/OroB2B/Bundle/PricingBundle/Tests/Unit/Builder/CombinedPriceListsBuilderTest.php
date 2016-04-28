@@ -126,8 +126,8 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             ->method('build')
             ->with(null, $behavior, $force);
 
-        $this->builder->build($behavior, $force);
-        $this->builder->build($behavior, $force);
+        $this->builder->build($force);
+        $this->builder->build($force);
     }
 
     /**
@@ -139,34 +139,28 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             'no changes' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 1,
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
                 'force' => true
             ],
             'change cpl' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 2,
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
             ],
             'new cpl' => [
                 'configCPLId' => null,
                 'actualCPLId' => 1,
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
                 'force' => true
             ],
             'no changes force' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 1,
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE
             ],
             'change cpl force' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 2,
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE
             ],
             'new cpl force' => [
                 'configCPLId' => null,
                 'actualCPLId' => 1,
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE,
                 'force' => true
             ],
         ];

@@ -9,7 +9,6 @@ use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTest
@@ -84,19 +83,19 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     {
         return [
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE,
+                'force' => true,
                 'priceListByAccount' => null
             ],
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
+                'force' => false,
                 'priceListByAccount' => null
             ],
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE,
+                'force' => true,
                 'priceListByAccount' => new PriceListToAccount()
             ],
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
+                'force' => false,
                 'priceListByAccount' => new PriceListToAccount()
             ],
         ];
@@ -152,22 +151,20 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     {
         return [
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE,
                 'priceListByAccountGroup' => null,
                 'force' => true
             ],
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
-                'priceListByAccountGroup' => null
+                'priceListByAccountGroup' => null,
+                'force' => false
             ],
             [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_FORCE,
-                'priceListByAccountGroup' => new PriceListToAccountGroup()
-            ],
-            [
-                'behavior' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
                 'priceListByAccountGroup' => new PriceListToAccountGroup(),
                 'force' => true
+            ],
+            [
+                'priceListByAccountGroup' => new PriceListToAccountGroup(),
+                'force' => false
             ]
         ];
     }

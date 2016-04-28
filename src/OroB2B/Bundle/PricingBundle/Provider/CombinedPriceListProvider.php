@@ -16,10 +16,6 @@ class CombinedPriceListProvider
     const MERGE_NOT_ALLOWED_FLAG = 'f';
     const MERGE_ALLOWED_FLAG = 't';
 
-    const BEHAVIOR_DEFAULT = 1;
-    const BEHAVIOR_FORCE = 2;
-    const BEHAVIOR_EMPTY = 3;
-
     /**
      * @var ManagerRegistry
      */
@@ -71,14 +67,10 @@ class CombinedPriceListProvider
 
     /**
      * @param PriceListSequenceMember[] $priceListsRelations
-     * @param int|null $behavior
      * @return CombinedPriceList
      */
-    public function getCombinedPriceList(array $priceListsRelations, $behavior = null)
+    public function getCombinedPriceList(array $priceListsRelations)
     {
-        if ($behavior === null) {
-            $behavior = self::BEHAVIOR_DEFAULT;
-        }
         $normalizedCollection = $this->normalizeCollection($priceListsRelations);
         $identifier = $this->getCombinedPriceListIdentifier($normalizedCollection);
         $combinedPriceList = $this->getRepository()->findOneBy(['name' => $identifier]);
