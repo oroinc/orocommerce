@@ -31,7 +31,7 @@
         {{ form_errors(form) }}
         {{ form_start(form, {
             'method': 'post',
-            'action': path('orob2b_checkout_frontend_checkout', {'id': checkout.id, 'type': checkout.type}),
+            'action': path('orob2b_checkout_frontend_checkout', {'id': checkout.id, 'checkoutType': checkout.checkoutType}),
             'attr' : {
                 'class': 'checkout__form',
                 'data-nohash': 'true',
@@ -55,7 +55,7 @@
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-order-summary"}) %}
     {% set workfowItem = checkout.workflowItem %}
     <div{{ block('block_attributes') }}>
-        <div class="checkout-order-summary__tab" data-tab="">
+        <div class="checkout-order-summary__tab {% if app.request.cookies.has('order-tab:state') %}active{% endif %}" data-tab="">
             <div class="checkout-order-summary__header">
                 <div data-tab-trigger="" data-allow-tab-toggle="true">
                     <div class="checkout-order-summary__header__icon-group">
@@ -86,87 +86,101 @@
 {% block _checkout_order_summary_table_widget %}
     {% set workfowItem = checkout.workflowItem %}
     <div class="checkout-order-summary__tab__content">
-        <table class="oro-grid-table">
+        <table class="oro-grid-table table-scrollable"  
+               data-page-component-module="oroui/js/app/components/view-component"  
+               data-page-component-options="{{ {view: 'orob2bfrontend/js/app/views/scrollable-table'}|json_encode }}">
             <thead class="hidden-xs">
-            <tr>
-                <th>{{ 'orob2b.checkout.order_summary.item'|trans }}</th>
-                <th class="text-center">{{ 'orob2b.checkout.order_summary.quantity'|trans }}</th>
-                <th class="text-right">{{ 'orob2b.checkout.order_summary.price'|trans }}</th>
-            </tr>
+                <tr data-scrollable-content-head>
+                    <th>{{ 'orob2b.checkout.order_summary.item'|trans }}</th>
+                    <th class="text-center">{{ 'orob2b.checkout.order_summary.quantity'|trans }}</th>
+                    <th class="text-right" data-scrollable-item-has-offset>{{ 'orob2b.checkout.order_summary.price'|trans }}</th>
+                </tr>
             </thead>
 
             <tbody>
-            {% for lineItem in summary.lineItemsWithTotals %}
-                {% set lineItemInfo = summary.lineItemsWithTotals.getInfo() %}
-                {% set productSku = lineItem.productSku %}
-                {% if lineItem.product is not null %}
-                    {% set productSku = lineItem.product.sku %}
-                {% endif %}
-                <tr>
-                    <td class="va-t_md">
-                        <h3 class="product-item__title product-item__title_in-cart mb1-md">
-                            {% if lineItem.product is not null %}
-                                <a href="{{ path('orob2b_product_frontend_product_view', {'id':lineItem.product.id}) }}">{{ lineItem.product.defaultName }}</a>
-                            {% else %}
-                                {{ lineItem.freeFormProduct }}
-                            {% endif %}
-                        </h3>
-                        <div>{{ 'orob2b.checkout.order_summary.item'|trans }} #: <span class="red">{{ productSku }}</span></div>
-                    </td>
-                    {% set quantity = lineItem.quantity %}
-                    <td class="text-center va-t_md">{{ quantity ? quantity|orob2b_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
-                    <td class="va-t_md text-right">
-                        <div class="checkout-order-summary__price-table">
-                            <table class="table">
-                                <tbody>
-                                <tr>
-                                    <td>{{ 'orob2b.checkout.order_summary.price_per_item'|trans }}:</td>
-                                    <td>{{ lineItem.price|oro_format_price }}</td>
-                                </tr>
-                                <tr>
-                                    <td><span>{{ 'orob2b.checkout.order_summary.total_price'|trans }}</span></td>
-                                    <td><span class="fs16 blue">{{ lineItemInfo.total|oro_format_price }}</span></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-            {% endfor %}
             <tr>
-                {% set editLink = workfowItem.data.get('edit_order_link') %}
-                {% set hasEditList = editLink and workflowStep.name == 'order_review' %}
-                {% if hasEditList %}
-                <td class="va-t_md hidden-xs">
-                    <a href="{{ editLink }}">
-                        <i class="cf-pencil"></i>
-                        {{ 'orob2b.checkout.order_summary.edit_order'|trans }}
-                    </a>
-                </td>
-                {% endif %}
-                <td colspan="{% if hasEditList %}2{% else %}3{% endif %}" class="va-t_md text-right">
-                    <div class="checkout-order-summary__price-table">
-                        <table class="table">
-                            <tbody>
-                                {% for total in summary.subtotals %}
-                                    {% if total.visible %}
-                                        <tr>
-                                            <td>{{ total.label }}</td>
-                                            <td class="text-right">{{ total.totalPrice|oro_format_price }}</td>
-                                        </tr>
-                                    {% endif %}
-                                {% endfor %}
-                                <tr>
-                                    <td><span class="fs18 text-uppercase">{{ summary.generalTotal.label }}</span></td>
-                                    <td class="text-right"><span class="fs18">{{ summary.generalTotal.totalPrice|oro_format_price }}</span></td>
+                <td colspan="3">
+                    <div data-scrollable-content class="scrollable-content">
+                        <table data-scrollable-inner-content class="scrollable-content__table">
+                            {% for lineItem in summary.lineItemsWithTotals %}
+                                {% set lineItemInfo = summary.lineItemsWithTotals.getInfo() %}
+                                {% set productSku = lineItem.productSku %}
+                                {% if lineItem.product is not null %}
+                                    {% set productSku = lineItem.product.sku %}
+                                {% endif %}
+                                <tr data-scrollable-content-body>
+                                    <td class="va-t_md">
+                                        <h3 class="product-item__title product-item__title_in-cart mb1-md">
+                                            {% if lineItem.product is not null %}
+                                                <a href="{{ path('orob2b_product_frontend_product_view', {'id':lineItem.product.id}) }}">{{ lineItem.product.defaultName }}</a>
+                                            {% else %}
+                                                {{ lineItem.freeFormProduct }}
+                                            {% endif %}
+                                        </h3>
+                                        <div>{{ 'orob2b.checkout.order_summary.item'|trans }} #: <span
+                                                    class="red">{{ productSku }}</span></div>
+                                    </td>
+                                    {% set quantity = lineItem.quantity %}
+                                    <td class="text-center va-t_md">{{ quantity ? quantity|orob2b_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
+                                    <td class="va-t_md text-right">
+                                        <div class="checkout-order-summary__price-table">
+                                            <table class="table">
+                                                <tbody>
+                                                <tr>
+                                                    <td>{{ 'orob2b.checkout.order_summary.price_per_item'|trans }}:</td>
+                                                    <td data-scrollable-item-has-offset>{{ lineItem.price is not null ? lineItem.price|oro_format_price : 'N/A'|trans }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>{{ 'orob2b.checkout.order_summary.total_price'|trans }}</span>
+                                                    </td>
+                                                    <td data-scrollable-item-has-offset>
+                                                        <span class="fs16 blue">{{ lineItemInfo.total|oro_format_price }}</span>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </tbody>
+                            {% endfor %}
+
                         </table>
                     </div>
                 </td>
             </tr>
+            <tr>
+                {% set editLink = workfowItem.data.get('edit_order_link') %}
+                {% set hasEditList = editLink and workflowStep.name == 'order_review' %}
+                {% if hasEditList %}
+                    <td class="va-t_md hidden-xs">
+                        <a href="{{ editLink }}">
+                            <i class="cf-pencil"></i>
+                            {{ 'orob2b.checkout.order_summary.edit_order'|trans }}
+                        </a>
+                    </td>
+                {% endif %}
+            </tr>
             </tbody>
         </table>
+        <div class="checkout-order-summary__price-table checkout-order-summary__price-table-total">
+            <table class="table">
+                <tbody>
+                {% for total in summary.subtotals %}
+                    {% if total.visible %}
+                        <tr>
+                            <td>{{ total.label }}</td>
+                            <td class="text-right">{{ total.totalPrice|oro_format_price }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                <tr>
+                    <td><span class="fs18 text-uppercase">{{ summary.generalTotal.label }}</span></td>
+                    <td class="text-right"><span class="fs18">{{ summary.generalTotal.totalPrice|oro_format_price }}</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}
 

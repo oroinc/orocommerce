@@ -8,7 +8,7 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
-use OroB2B\Bundle\OrderBundle\Model\AbstractAddressManager;
+use OroB2B\Bundle\OrderBundle\Manager\AbstractAddressManager;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressProvider;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;

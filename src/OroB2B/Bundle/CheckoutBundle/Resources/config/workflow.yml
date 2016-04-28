@@ -414,7 +414,7 @@ workflows:
                         method_parameters:
                             - $.result.lineItems
                     - '@call_service_method':
-                        service: orob2b_order.model.order_totals_handler
+                        service: orob2b_order.handler.order_totals_handler
                         method: fillSubtotals
                         method_parameters:
                             - $checkout.order
@@ -445,7 +445,14 @@ workflows:
                                 transactionOptions:
                                     successUrl: $.result.successUrl
                                     errorUrl: $.result.errorUrl
+                            - '@send_email_template':
+                                parameters:
+                                    from: $checkout.order.owner.email
+                                    to: $checkout.order.accountUser.email
+                                    template: 'order_confirmation_email'
+                                    entity: $checkout.order
                             - '@assign_value': [$payment_in_progress, true]
+
 
             finish_checkout_definition:
                 conditions:

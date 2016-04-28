@@ -63,14 +63,6 @@ datagrid:
                 type:  url
                 route: orob2b_sale_quote_view
                 params: [ id ]
-            update_link:
-                type: url
-                route: orob2b_sale_quote_update
-                params: [ id ]
-            delete_link:
-                type: url
-                route: orob2b_api_sale_delete_quote
-                params: [ id ]
         sorters:
             columns:
                 qid:
@@ -140,18 +132,6 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_sale_quote_view
                 rowAction:     true
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_sale_quote_update
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_sale_quote_delete
 
     frontend-quotes-grid:
         acl_resource: orob2b_sale_quote_frontend_index
