@@ -95,10 +95,10 @@ define(function(require) {
 
             var $context;
             if (!_.isArray(selector)) {
-                //selector = '[data-role="element"]'
+                //selector = '[data-name="element"]'
                 $context = this.getElement('$el');
             } else {
-                //selector = ['$el', '[data-role="element"]']
+                //selector = ['$el', '[data-name="element"]']
                 $context = this.getElement(selector[0]);
                 selector = selector[1] || null;
             }
