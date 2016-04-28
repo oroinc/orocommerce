@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\ProductBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
-
 use Doctrine\DBAL\Types\Type;
+
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

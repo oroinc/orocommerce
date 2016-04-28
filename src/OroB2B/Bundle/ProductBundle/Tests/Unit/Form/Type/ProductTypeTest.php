@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
@@ -33,6 +34,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
 use OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomFieldsChoiceTypeStub;
@@ -61,6 +63,11 @@ class ProductTypeTest extends FormIntegrationTestCase
     ];
 
     /**
+     * @var array
+     */
+    protected $images = [];
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
@@ -69,6 +76,14 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $this->type = new ProductType($this->roundingService);
         $this->type->setDataClass(self::DATA_CLASS);
+
+        $image1 = new StubProductImage();
+        $image1->setImage(new File());
+
+        $image2 = new StubProductImage();
+        $image2->setImage(new File());
+
+        $this->images = [$image1, $image2];
 
         parent::setUp();
     }
@@ -248,6 +263,19 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'expectedData'  => $this->createExpectedProductEntity(false, false, false),
                 'rounding' => false
             ],
+            'simple product with images' => [
+                'defaultData'   => $this->createDefaultProductEntity(false),
+                'submittedData' => [
+                    'sku' => 'test sku',
+                    'unitPrecisions' => [],
+                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'visible' => 1,
+                    'status' => Product::STATUS_DISABLED,
+                    'images' => $this->images
+                ],
+                'expectedData'  => $this->createExpectedProductEntity(false, false, false),
+                'rounding' => false
+            ],
         ];
     }
 
@@ -260,7 +288,8 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected function createExpectedProductEntity(
         $withProductUnitPrecision = false,
         $withNamesAndDescriptions = false,
-        $hasVariants = true
+        $hasVariants = true,
+        $hasImages = false
     ) {
         $expectedProduct = new StubProduct();
 
@@ -291,6 +320,12 @@ class ProductTypeTest extends FormIntegrationTestCase
                 ->addDescription($this->createLocalizedValue(null, 'second description'))
                 ->addShortDescription($this->createLocalizedValue(null, 'first short description'))
                 ->addShortDescription($this->createLocalizedValue(null, 'second short description'));
+        }
+
+        if ($hasImages) {
+            foreach ($this->images as $image) {
+                $expectedProduct->addImage($image);
+            }
         }
 
         return $expectedProduct->setSku('test sku');
