@@ -6,7 +6,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
@@ -28,6 +30,11 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     protected $manager;
 
     /**
+     * @var ConfigManager
+     */
+    protected $configManager;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -40,34 +47,46 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
             ]
         );
         $this->resolver = $this->getContainer()->get('orob2b_pricing.resolver.combined_product_schedule_resolver');
+        $this->configManager = $this->getContainer()->get('oro_config.manager');
     }
 
     /**
      * @dataProvider CPLSwitchingDataProvider
      * @param array $rules
      * @param array $cplRelationsExpected
+     * @param array $cplConfig
      * @param \DateTime $now
      */
-    public function testCPLSwitching(array $rules, $cplRelationsExpected, \DateTime $now)
+    public function testCPLSwitching(array $rules, array $cplRelationsExpected, array $cplConfig, \DateTime $now)
     {
-        $cplRelationsEntityNames = [
-            'OroB2BPricingBundle:CombinedPriceListToAccount',
-            'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
-            'OroB2BPricingBundle:CombinedPriceListToWebsite',
-        ];
+        $this->setConfigCPL($cplConfig);
         $this->createActivationRules($rules);
         $this->resolver->updateRelations($now);
-
-        foreach ($cplRelationsExpected as $fullCPLName => $currentCPLName) {
-            /** @var CombinedPriceList $fullCPL */
-            $fullCPL = $this->getReference($fullCPLName);
-            /** @var CombinedPriceList $currentCPL */
-            $currentCPL = $this->getReference($currentCPLName);
-            foreach ($cplRelationsEntityNames as $entityName) {
-                $relations = $this->getInvalidRelations($entityName, $fullCPL, $currentCPL);
-                $this->assertEmpty($relations);
-            }
-        }
+        $fullCPLName = $cplRelationsExpected['full'];
+        $currentCPLName = $cplRelationsExpected['actual'];
+        /** @var CombinedPriceList $fullCPL */
+        $fullCPL = $this->getReference($fullCPLName);
+        /** @var CombinedPriceList $currentCPL */
+        $currentCPL = $this->getReference($currentCPLName);
+        $relations = $this->getInvalidRelations(
+            'OroB2BPricingBundle:CombinedPriceListToAccount',
+            $fullCPL,
+            $currentCPL
+        );
+        $this->assertEmpty($relations);
+        $relations = $this->getInvalidRelations(
+            'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
+            $fullCPL,
+            $currentCPL
+        );
+        $this->assertEmpty($relations);
+        $relations = $this->getInvalidRelations(
+            'OroB2BPricingBundle:CombinedPriceListToWebsite',
+            $fullCPL,
+            $currentCPL
+        );
+        $this->assertEmpty($relations);
+        $this->checkConfigCPL($cplConfig);
     }
 
     /**
@@ -86,7 +105,14 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
                     ],
                 ],
                 'cplRelationsExpected' => [
-                    '2f_1t_3t' => '2f_1t_3t'
+                    'full' => '2f_1t_3t',
+                    'actual' => '2f_1t_3t',
+                ],
+                'cplConfig' => [
+                    'actualCpl' => '2f_1t_3t',
+                    'fullCpl' => '2f_1t_3t',
+                    'expectedActualCpl' => '2f_1t_3t',
+                    'expectedFullCpl' => '2f_1t_3t',
                 ],
                 'now' => $this->createDateTime(1),
             ],
@@ -100,21 +126,35 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
                     ],
                 ],
                 'cplRelationsExpected' => [
-                    '2f_1t_3t' => '2f'
+                    'full' => '2f_1t_3t',
+                    'actual' => '2f',
+                ],
+                'cplConfig' => [
+                    'actualCpl' => '2f_1t_3t',
+                    'fullCpl' => '2f_1t_3t',
+                    'expectedActualCpl' => '2f',
+                    'expectedFullCpl' => '2f_1t_3t',
                 ],
                 'now' => $this->createDateTime(4),
             ],
             [
                 'rules' => [
                     [
-                        'activateAt' => $this->createDateTime(7),
+                        'activateAt' => $this->createDateTime(5),
                         'expireAt' => null,
                         'fullChainPriceList' => '2f_1t_3t',
                         'combinedPriceList' => '2f',
                     ],
                 ],
                 'cplRelationsExpected' => [
-                    '2f_1t_3t' => '2f'
+                    'full' => '2f_1t_3t',
+                    'actual' => '2f',
+                ],
+                'cplConfig' => [
+                    'actualCpl' => '2f_1t_3t',
+                    'fullCpl' => '2f_1t_3t',
+                    'expectedActualCpl' => '2f',
+                    'expectedFullCpl' => '2f_1t_3t',
                 ],
                 'now' => $this->createDateTime(6),
             ],
@@ -181,9 +221,50 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         $qb->select('r')
             ->from($entityName, 'r')
             ->where('r.fullChainPriceList = :fullCPl AND r.priceList != :currentCPL')
-        ->setParameter('fullCPl', $fullCPL)
-        ->setParameter('currentCPL', $currentCPL);
+            ->setParameter('fullCPl', $fullCPL)
+            ->setParameter('currentCPL', $currentCPL);
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param array $cplConfig
+     */
+    protected function setConfigCPL(array $cplConfig)
+    {
+        $actualCPLConfigKey = Configuration::getConfigKeyToPriceList();
+        $fullCPLConfigKey = Configuration::getConfigKeyToFullPriceList();
+        $fullCpl = null;
+        $actualCpl = null;
+        if ($cplConfig['actualCpl']) {
+            $actualCpl = $this->getReference($cplConfig['actualCpl'])->getId();
+        }
+        if ($cplConfig['fullCpl']) {
+            $fullCpl = $this->getReference($cplConfig['fullCpl'])->getId();
+        }
+        $this->configManager->set($actualCPLConfigKey, $actualCpl);
+        $this->configManager->set($fullCPLConfigKey, $fullCpl);
+
+        $this->configManager->flush();
+    }
+
+    /**
+     * @param array $cplConfig
+     */
+    protected function checkConfigCPL(array $cplConfig)
+    {
+        $this->configManager->reload();
+        $fullCPLConfigKey = Configuration::getConfigKeyToFullPriceList();
+        $actualCPLConfigKey = Configuration::getConfigKeyToPriceList();
+        $expectedActualCpl = null;
+        $expectedFullCpl = null;
+        if ($cplConfig['expectedActualCpl']) {
+            $expectedActualCpl = $this->getReference($cplConfig['expectedActualCpl'])->getId();
+        }
+        if ($cplConfig['expectedFullCpl']) {
+            $expectedFullCpl = $this->getReference($cplConfig['expectedFullCpl'])->getId();
+        }
+        $this->assertSame($expectedActualCpl, $this->configManager->get($actualCPLConfigKey));
+        $this->assertSame($expectedFullCpl, $this->configManager->get($fullCPLConfigKey));
     }
 }
