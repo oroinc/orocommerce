@@ -4,18 +4,18 @@ namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-use OroB2B\Bundle\ShippingBundle\Entity\DimensionUnit;
+use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
 
-class DimensionUnitTest extends \PHPUnit_Framework_TestCase
+class LengthUnitTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 
-    /** @var DimensionUnit $entity */
+    /** @var LengthUnit $entity */
     protected $entity;
 
     public function setUp()
     {
-        $this->entity = new DimensionUnit();
+        $this->entity = new LengthUnit();
     }
 
     public function tearDown()

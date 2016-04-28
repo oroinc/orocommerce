@@ -16,7 +16,7 @@ class OroB2BShippingBundle implements Migration
     {
         /** Tables generation **/
         $this->createOrob2BShippingOrigWarehouseTable($schema);
-        $this->createOrob2BShippingDimensionUnitTable($schema);
+        $this->createOrob2BShippingLengthUnitTable($schema);
         $this->createOrob2BShippingFreightClassTable($schema);
         $this->createOrob2BShippingWeightUnitTable($schema);
 
@@ -57,13 +57,13 @@ class OroB2BShippingBundle implements Migration
     }
 
     /**
-     * Create orob2b_shipping_dimension_unit table
+     * Create orob2b_shipping_length_unit table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BShippingDimensionUnitTable(Schema $schema)
+    protected function createOrob2BShippingLengthUnitTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_shipping_dimension_unit');
+        $table = $schema->createTable('orob2b_shipping_length_unit');
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('conversion_rates', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['code']);

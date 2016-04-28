@@ -13,7 +13,7 @@ class LoadUnitsAndFreightClassesData extends AbstractUnitsAndFreightClassesFixtu
     ];
 
     /** @var array */
-    protected $dimensionUnits = [
+    protected $lengthUnits = [
         ['code' => 'inch', 'conversion_rates' => []],
         ['code' => 'ft', 'conversion_rates' => []],
         ['code' => 'cm', 'conversion_rates' => []],
@@ -31,7 +31,7 @@ class LoadUnitsAndFreightClassesData extends AbstractUnitsAndFreightClassesFixtu
     public function load(ObjectManager $manager)
     {
         $this->addWeightUnits($manager, $this->weightUnits);
-        $this->addDimensionUnits($manager, $this->dimensionUnits);
+        $this->addLengthUnits($manager, $this->lengthUnits);
         $this->addFreightClasses($manager, $this->freightClasses);
 
         $manager->flush();

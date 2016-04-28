@@ -13,6 +13,20 @@ orob2b:
             city.label:          City
             street.label:        Street Address 1
             street2.label:       Street Address 2
+        weightunit:
+            entity_label: Unit Of Weight
+            entity_plural_label: Units Of Weight
+            code.label: Code
+            conversion_rates.label: Conversion Rates
+        lengthunit:
+            entity_label: Unit Of Length
+            entity_plural_label: Units Of Length
+            code.label: Code
+            conversion_rates.label: Conversion Rates
+        freightclass:
+            entity_label: Freight Class
+            entity_plural_label: Freight Classes
+            code.label: Code
         warehouse:
             use_system_configuration: Use System Configuration
             system_configuration.label: '(system configuration)'

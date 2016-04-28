@@ -5,10 +5,10 @@ namespace OroB2B\Bundle\ShippingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="orob2b_shipping_dimension_unit")
+ * @ORM\Table(name="orob2b_shipping_length_unit")
  * @ORM\Entity
  */
-class DimensionUnit
+class LengthUnit
 {
     /**
      * @var string
@@ -49,7 +49,7 @@ class DimensionUnit
     /**
      * @param array $conversionRates
      *
-     * @return DimensionUnit
+     * @return $this
      */
     public function setConversionRates(array $conversionRates = [])
     {
