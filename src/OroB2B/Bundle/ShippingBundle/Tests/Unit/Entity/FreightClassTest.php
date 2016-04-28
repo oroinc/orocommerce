@@ -31,4 +31,11 @@ class FreightClassTest extends \PHPUnit_Framework_TestCase
 
         $this->assertPropertyAccessors($this->entity, $properties);
     }
+
+    public function testToString()
+    {
+        $this->entity->setCode('test');
+
+        $this->assertEquals('test', (string)$this->entity);
+    }
 }

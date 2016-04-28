@@ -4,44 +4,35 @@ namespace OroB2B\Bundle\ShippingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
-use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
+use OroB2B\Bundle\ShippingBundle\Model\Weight;
 
 /**
  * @ORM\Table(
- *      name="orob2b_shipping_prod_unit_opts",
+ *      name="orob2b_shipping_product_opts",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="shipping_product_unit_options__product_id__unit_code__uidx",
- *              columns={"product_id","unit_code"}
+ *              name="shipping_product_opts__product_id__product_unit_code__uidx",
+ *              columns={"product_id","product_unit_code"}
  *          )
  *      }
  * )
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  * @Config(mode="hidden")
  */
-class ProductShippingOptions implements DatesAwareInterface
+class ProductShippingOptions
 {
-    use DatesAwareTrait;
-
     /**
      * @var integer
      *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
      */
     protected $id;
 
@@ -50,13 +41,6 @@ class ProductShippingOptions implements DatesAwareInterface
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
      */
     protected $product;
 
@@ -64,130 +48,156 @@ class ProductShippingOptions implements DatesAwareInterface
      * @var ProductUnit
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=10,
-     *              "identity"=true
-     *          }
-     *      }
-     * )
+     * @ORM\JoinColumn(name="product_unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
      */
-    protected $unit;
+    protected $productUnit;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="weight_value", type="float")
+     */
+    protected $weightValue;
 
     /**
      * @var WeightUnit
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\WeightUnit")
-     * @ORM\JoinColumn(name="weght_unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=20,
-     *              "identity"=true
-     *          }
-     *      }
-     * )
+     * @ORM\JoinColumn(name="weight_unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
      */
     protected $weightUnit;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="weight",type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=21
-     *          }
-     *      }
-     * )
+     * @var Weight
      */
     protected $weight;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="dimensions_length",type="float")
+     */
+    protected $dimensionsLength;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="dimensions_width",type="float")
+     */
+    protected $dimensionsWidth;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="dimensions_height",type="float")
+     */
+    protected $dimensionsHeight;
 
     /**
      * @var LengthUnit
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\LengthUnit")
-     * @ORM\JoinColumn(name="length_unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=30,
-     *              "identity"=true
-     *          }
-     *      }
-     * )
+     * @ORM\JoinColumn(name="dimensions_unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
      */
-    protected $lengthUnit;
+    protected $dimensionsUnit;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="length",type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=31
-     *          }
-     *      }
-     * )
+     * @var Dimensions
      */
-    protected $length;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="width",type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=32
-     *          }
-     *      }
-     * )
-     */
-    protected $width;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="height",type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=33
-     *          }
-     *      }
-     * )
-     */
-    protected $height;
+    protected $dimensions;
 
     /**
      * @var FreightClass
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\FreightClass")
      * @ORM\JoinColumn(name="freight_class_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=40,
-     *              "identity"=true
-     *          }
-     *      }
-     * )
      */
     protected $freightClass;
 
     /**
-     * @param FreightClass $freightClass
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return Product
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * @param Product $product
      *
      * @return $this
      */
-    public function setFreightClass($freightClass)
+    public function setProduct(Product $product = null)
     {
-        $this->freightClass = $freightClass;
+        $this->product = $product;
+
+        return $this;
+    }
+
+    /**
+     * @return ProductUnit
+     */
+    public function getProductUnit()
+    {
+        return $this->productUnit;
+    }
+
+    /**
+     * @param ProductUnit $productUnit
+     *
+     * @return $this
+     */
+    public function setProductUnit(ProductUnit $productUnit = null)
+    {
+        $this->productUnit = $productUnit;
+
+        return $this;
+    }
+
+    /**
+     * @return Weight
+     */
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+    /**
+     * @param Weight $weight
+     *
+     * @return $this
+     */
+    public function setWeight(Weight $weight = null)
+    {
+        $this->weight = $weight;
+
+        return $this;
+    }
+
+    /**
+     * @return Dimensions
+     */
+    public function getDimensions()
+    {
+        return $this->dimensions;
+    }
+
+    /**
+     * @param Dimensions $dimensions
+     *
+     * @return $this
+     */
+    public function setDimensions(Dimensions $dimensions = null)
+    {
+        $this->dimensions = $dimensions;
 
         return $this;
     }
@@ -201,182 +211,60 @@ class ProductShippingOptions implements DatesAwareInterface
     }
 
     /**
-     * @param float $height
-     *
+     * @param FreightClass $freightClass
      * @return $this
      */
-    public function setHeight($height)
+    public function setFreightClass(FreightClass $freightClass = null)
     {
-        $this->height = $height;
+        $this->freightClass = $freightClass;
 
         return $this;
     }
 
     /**
-     * @return float
+     * @ORM\PostLoad
      */
-    public function getHeight()
+    public function loadWeight()
     {
-        return $this->height;
+        $this->weight = Weight::create($this->weightValue, $this->weightUnit);
     }
 
     /**
-     * @param int $id
-     *
-     * @return $this
+     * @ORM\PostLoad
      */
-    public function setId($id)
+    public function loadDimensions()
     {
-        $this->id = $id;
-
-        return $this;
+        $this->dimensions = Dimensions::create(
+            $this->dimensionsLength,
+            $this->dimensionsWidth,
+            $this->dimensionsHeight,
+            $this->dimensionsUnit
+        );
     }
 
     /**
-     * @return int
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
      */
-    public function getId()
+    public function updateWeight()
     {
-        return $this->id;
+        if ($this->weight) {
+            $this->weightValue = $this->weight->getValue();
+            $this->weightUnit = $this->weight->getUnit();
+        }
     }
 
     /**
-     * @param float $length
-     *
-     * @return $this
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
      */
-    public function setLength($length)
+    public function updateDimensions()
     {
-        $this->length = $length;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getLength()
-    {
-        return $this->length;
-    }
-
-    /**
-     * @param LengthUnit $lengthUnit
-     *
-     * @return $this
-     */
-    public function setLengthUnit(LengthUnit $lengthUnit)
-    {
-        $this->lengthUnit = $lengthUnit;
-
-        return $this;
-    }
-
-    /**
-     * @return LengthUnit
-     */
-    public function getLengthUnit()
-    {
-        return $this->lengthUnit;
-    }
-
-    /**
-     * @param Product $product
-     *
-     * @return $this
-     */
-    public function setProduct(Product $product)
-    {
-        $this->product = $product;
-
-        return $this;
-    }
-
-    /**
-     * @return Product
-     */
-    public function getProduct()
-    {
-        return $this->product;
-    }
-
-    /**
-     * @param ProductUnit $unit
-     *
-     * @return $this
-     */
-    public function setUnit(ProductUnit $unit)
-    {
-        $this->unit = $unit;
-
-        return $this;
-    }
-
-    /**
-     * @return ProductUnit
-     */
-    public function getUnit()
-    {
-        return $this->unit;
-    }
-
-    /**
-     * @param float $weight
-     *
-     * @return $this
-     */
-    public function setWeight($weight)
-    {
-        $this->weight = $weight;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getWeight()
-    {
-        return $this->weight;
-    }
-
-    /**
-     * @param WeightUnit $weightUnit
-     *
-     * @return $this
-     */
-    public function setWeightUnit(WeightUnit $weightUnit)
-    {
-        $this->weightUnit = $weightUnit;
-
-        return $this;
-    }
-
-    /**
-     * @return WeightUnit
-     */
-    public function getWeightUnit()
-    {
-        return $this->weightUnit;
-    }
-
-    /**
-     * @param float $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getWidth()
-    {
-        return $this->width;
+        if ($this->dimensions) {
+            $this->dimensionsLength = $this->dimensions->getLength();
+            $this->dimensionsWidth = $this->dimensions->getWidth();
+            $this->dimensionsHeight = $this->dimensions->getHeight();
+            $this->dimensionsUnit = $this->dimensions->getUnit();
+        }
     }
 }

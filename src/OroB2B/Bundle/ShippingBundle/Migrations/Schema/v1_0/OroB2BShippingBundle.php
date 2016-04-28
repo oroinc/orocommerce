@@ -19,11 +19,11 @@ class OroB2BShippingBundle implements Migration
         $this->createOrob2BShippingLengthUnitTable($schema);
         $this->createOrob2BShippingFreightClassTable($schema);
         $this->createOrob2BShippingWeightUnitTable($schema);
-        $this->createOrob2BShippingProdUnitOptsTable($schema);
+        $this->createOrob2BShippingProductOptionsTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BShippingOrigWarehouseForeignKeys($schema);
-        $this->addOrob2BShippingProdUnitOptsForeignKeys($schema);
+        $this->addOrob2BShippingProductOptionsForeignKeys($schema);
     }
 
     /**
@@ -84,35 +84,28 @@ class OroB2BShippingBundle implements Migration
     }
 
     /**
-     * Create orob2b_shipping_prod_unit_opts table
+     * Create orob2b_shipping_product_opts table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BShippingProdUnitOptsTable(Schema $schema)
+    protected function createOrob2BShippingProductOptionsTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_shipping_prod_unit_opts');
+        $table = $schema->createTable('orob2b_shipping_product_opts');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer');
+        $table->addColumn('product_unit_code', 'string', ['length' => 255]);
+        $table->addColumn('weight_value', 'float');
+        $table->addColumn('weight_unit_code', 'string', ['length' => 255]);
+        $table->addColumn('dimensions_length', 'float');
+        $table->addColumn('dimensions_width', 'float');
+        $table->addColumn('dimensions_height', 'float');
+        $table->addColumn('dimensions_unit_code', 'string', ['length' => 255]);
         $table->addColumn('freight_class_code', 'string', ['length' => 255]);
-        $table->addColumn('length_unit_code', 'string', ['length' => 255]);
-        $table->addColumn('weght_unit_code', 'string', ['length' => 255]);
-        $table->addColumn('unit_code', 'string', ['length' => 255]);
-        $table->addColumn('product_id', 'integer', []);
-        $table->addColumn('weight', 'float', []);
-        $table->addColumn('length', 'float', []);
-        $table->addColumn('width', 'float', []);
-        $table->addColumn('height', 'float', []);
-        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addIndex(['product_id']);
-        $table->addIndex(['weght_unit_code']);
-        $table->addIndex(['length_unit_code']);
-        $table->addUniqueIndex(
-            ['product_id', 'unit_code'],
-            'shipping_product_unit_options__product_id__unit_code__uidx'
-        );
-        $table->addIndex(['freight_class_code']);
-        $table->addIndex(['unit_code']);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(
+            ['product_id', 'product_unit_code'],
+            'shipping_product_opts__product_id__product_unit_code__uidx'
+        );
     }
 
     /**
@@ -157,13 +150,13 @@ class OroB2BShippingBundle implements Migration
     }
 
     /**
-     * Add orob2b_shipping_prod_unit_opts foreign keys.
+     * Add orob2b_shipping_product_opts foreign keys
      *
      * @param Schema $schema
      */
-    protected function addOrob2BShippingProdUnitOptsForeignKeys(Schema $schema)
+    protected function addOrob2BShippingProductOptionsForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_shipping_prod_unit_opts');
+        $table = $schema->getTable('orob2b_shipping_product_opts');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_shipping_freight_class'),
             ['freight_class_code'],
@@ -172,19 +165,19 @@ class OroB2BShippingBundle implements Migration
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_shipping_length_unit'),
-            ['length_unit_code'],
+            ['dimensions_unit_code'],
             ['code'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_shipping_weight_unit'),
-            ['weght_unit_code'],
+            ['weight_unit_code'],
             ['code'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_product_unit'),
-            ['unit_code'],
+            ['product_unit_code'],
             ['code'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
