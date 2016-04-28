@@ -74,9 +74,15 @@ class PriceList extends BasePriceList
      *      cascade={"all"},
      *      orphanRemoval=true
      * )
-     * @ORM\OrderBy({"activeAt" = "ASC"}) //todo ask PO about proper order
+     * @ORM\OrderBy({"activeAt" = "ASC"})
      */
     protected $schedules;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="contain_schedule", type="boolean")
+     */
+    protected $containSchedule = false;
 
     /**
      * {@inheritdoc}
@@ -117,10 +123,13 @@ class PriceList extends BasePriceList
 
     /**
      * @param ArrayCollection|PriceListSchedule[] $schedules
+     * @return $this
      */
     public function setSchedules($schedules)
     {
         $this->schedules = $schedules;
+
+        return $this;
     }
 
     /**
@@ -142,6 +151,26 @@ class PriceList extends BasePriceList
     public function removeSchedule(PriceListSchedule $schedule)
     {
         $this->schedules->removeElement($schedule);
+        $this->containSchedule = !$this->schedules->isEmpty();
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isContainSchedule()
+    {
+        return $this->containSchedule;
+    }
+
+    /**
+     * @param boolean $containSchedule
+     * @return PriceList
+     */
+    public function setContainSchedule($containSchedule)
+    {
+        $this->containSchedule = $containSchedule;
 
         return $this;
     }

@@ -22,7 +22,7 @@ class PriceListSchedule
     /**
      * @var PriceList
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList", inversedBy="schedules")
      * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $priceList;
@@ -38,6 +38,17 @@ class PriceListSchedule
      * @ORM\Column(name="deactivate_at", type="datetime", nullable=true)
      */
     protected $deactivateAt;
+
+    /**
+     * @param \DateTime|null $activeAt
+     * @param \DateTime|null $deactivateAt
+     */
+    public function __construct(\DateTime $activeAt = null, \DateTime $deactivateAt = null)
+    {
+        $this->activeAt = $activeAt;
+        $this->deactivateAt = $deactivateAt;
+    }
+
 
     /**
      * @return int
@@ -62,6 +73,7 @@ class PriceListSchedule
     public function setPriceList(PriceList $priceList)
     {
         $this->priceList = $priceList;
+        $this->priceList->setContainSchedule(true);
 
         return $this;
     }

@@ -21,7 +21,9 @@ class QuickAddCopyPasteFormProviderTest extends WebTestCase
         $this->initClient();
 
         $this->context = new LayoutContext();
-        $this->dataProvider = $this->getContainer()->get('orob2b_product.provider.quick_add_copy_paste_form_provider');
+        $this->dataProvider = new QuickAddCopyPasteFormProvider(
+            $this->getContainer()->get('form.factory')
+        );
     }
 
     public function testGetIdentifier()
