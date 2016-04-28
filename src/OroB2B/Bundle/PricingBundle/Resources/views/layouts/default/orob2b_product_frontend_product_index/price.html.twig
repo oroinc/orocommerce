@@ -8,10 +8,10 @@
         class: attr.class|default('') ~ " product-item__price product-item__price_<%= themeOptions.view %> mb1-md mb1-sm",
     })) %}
     <div {{ block('block_attributes') }}>
-        <div data-role="price">
+        <div data-name="price">
             {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }}
             <div class="product-item__price_block"
-                 data-role="prices-hint"
+                 data-name="prices-hint"
                  data-placement="bottom"
                  data-close="false"
                  data-trigger="hover"
@@ -19,12 +19,12 @@
                  data-class="prices-hint-content">
                 <% var firstPrice = model.prices[_.keys(model.prices)[0]]; %>
                 <div>
-                    <span class="fs16 blue" data-role="price-value"><%= firstPrice.formatted_price %></span>
+                    <span class="fs16 blue" data-name="price-value"><%= firstPrice.formatted_price %></span>
                     / <%= firstPrice.formatted_unit%>
                 </div>
             </div>
         </div>
-        <div data-role="prices-hint-content" class="hidden">
+        <div data-name="prices-hint-content" class="hidden">
             <table class="table">
                 <thead>
                 <tr>
@@ -56,7 +56,7 @@
                 </tbody>
             </table>
         </div>
-        <div data-role="price-not-found">
+        <div data-name="price-not-found">
             <% if (!_.isEmpty(model.prices)) { %>
                 {{ 'orob2b.pricing.frontend.product_prices.price_not_found'|trans }}
             <% } else { %>

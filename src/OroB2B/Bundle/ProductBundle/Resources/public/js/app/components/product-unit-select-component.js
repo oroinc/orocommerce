@@ -41,7 +41,7 @@ define(function(require) {
         },
 
         initQuantityInput: function() {
-            $('[data-role="field-quantity"]', this.options._sourceElement).val(this.defaultQuantity);
+            $('[data-name="field-quantity"]', this.options._sourceElement).val(this.defaultQuantity);
         },
 
         calculateDefaultQuantity: function() {

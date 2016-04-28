@@ -95,10 +95,10 @@ define(function(require) {
 
             var $context;
             if (!_.isArray(selector)) {
-                //selector = '[data-role="element"]'
+                //selector = '[data-name="element"]'
                 $context = this.getElement('$el');
             } else {
-                //selector = ['$el', '[data-role="element"]']
+                //selector = ['$el', '[data-name="element"]']
                 $context = this.getElement(selector[0]);
                 selector = selector[1] || null;
             }
@@ -114,6 +114,9 @@ define(function(require) {
             var $element = this.getElement(key);
             var element = $element.get(0);
             var validator = $element.closest('form').validate();
+            if (!$element.length) {
+                return false;
+            }
             if (!validator || validator.element(element)) {
                 this.model.set(key, element.value);
             }

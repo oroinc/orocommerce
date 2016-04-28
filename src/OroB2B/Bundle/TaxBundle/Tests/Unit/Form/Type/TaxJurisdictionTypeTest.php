@@ -9,7 +9,7 @@ use Symfony\Component\Form\PreloadedExtension;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
+use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
@@ -198,7 +198,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
                     CollectionType::NAME => new CollectionType(),
                 ],
                 [
-                    'hidden' => [new RandomIdExtension()],
+                    'hidden' => [new AdditionalAttrExtension()],
                     'form' => [new TooltipFormExtension($configProvider, $translator)],
                 ]
             )
