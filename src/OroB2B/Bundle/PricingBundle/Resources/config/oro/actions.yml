@@ -50,6 +50,19 @@ operations:
             - '@flash_message':
                 message: orob2b.pricing.productprice.save.success
                 type: 'success'
+    UPDATE:
+        exclude_datagrids:
+            - price-list-accounts-grid
+            - price-list-account-groups-grid
+            - price-list-websites-grid
+            - pricing-price-list-select-grid
+    DELETE:
+        exclude_datagrids:
+            - price-list-accounts-grid
+            - price-list-account-groups-grid
+            - price-list-websites-grid
+            - pricing-price-list-select-grid
+            - product-prices-grid
 
 action_groups:
     orob2b_pricing_add_product_price:

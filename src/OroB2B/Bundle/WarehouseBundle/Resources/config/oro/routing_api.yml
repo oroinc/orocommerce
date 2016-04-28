@@ -1,3 +1,0 @@
-orob2b_warehouse_api:
-    resource: "@OroB2BWarehouseBundle/Controller/Api/Rest/WarehouseController.php"
-    type:     rest

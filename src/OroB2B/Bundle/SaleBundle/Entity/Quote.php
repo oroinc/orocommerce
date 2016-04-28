@@ -28,6 +28,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @Config(
  *      routeName="orob2b_sale_quote_index",
  *      routeView="orob2b_sale_quote_view",
+ *      routeUpdate="orob2b_sale_quote_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-list-alt"

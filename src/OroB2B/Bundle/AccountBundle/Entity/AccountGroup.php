@@ -20,6 +20,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @Config(
  *      routeName="orob2b_account_group_index",
  *      routeView="orob2b_account_group_view",
+ *      routeUpdate="orob2b_account_group_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-group"

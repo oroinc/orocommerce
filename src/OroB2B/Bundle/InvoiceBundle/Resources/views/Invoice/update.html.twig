@@ -10,17 +10,8 @@
 {% form_theme form with ['OroB2BInvoiceBundle:Form:fields.html.twig'] %}
 
 {% block navButtons %}
-    {% if entity.id and resource_granted('DELETE', entity) %}
-        {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_delete_invoice', {'id': entity.id}),
-            'dataRedirect': path('orob2b_invoice_index'),
-            'aCss': 'no-hash remove-button',
-            'dataId': entity.id,
-            'id': 'btn-remove-account',
-            'entity_label': 'orob2b.invoice.entity_label'|trans,
-        }) }}
-        {{ UI.buttonSeparator() }}
-    {% endif %}
+    {{ parent() }}
+
     {{ UI.cancelButton(path('orob2b_invoice_index')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_invoice_update') %}
