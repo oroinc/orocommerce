@@ -25,9 +25,9 @@ orob2b.pricing:
             pricelist_required: Please select a price list first...
         status:
             label: Status
-            activate: Activate
             disable: Disable
-            activated: Activated
+            enable: Enable
+            enabled: Enabled
             disabled: Disabled
 
     quantity.label: Quantity

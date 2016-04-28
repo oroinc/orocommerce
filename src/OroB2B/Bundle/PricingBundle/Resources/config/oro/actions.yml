@@ -52,7 +52,7 @@ operations:
                 type: 'success'
 
     orob2b_pricing_price_list_set_active:
-        label: orob2b.pricing.pricelist.status.activate
+        label: orob2b.pricing.pricelist.status.enable
         routes: [orob2b_pricing_price_list_view]
         datagrids:
             - pricing-price-list-grid
