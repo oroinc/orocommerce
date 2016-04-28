@@ -164,7 +164,7 @@ class CombinedPriceListQueueConsumer
                 'account' => null,
                 'accountGroup' => null,
                 'website' => null,
-                'isForce' => true
+                'force' => true
             ]);
 
         return $forceTrigger;
