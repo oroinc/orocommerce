@@ -32,3 +32,58 @@ orob2b:
             system_configuration.label: '(system configuration)'
             section:
                 shipping_origin: Shipping Origin
+
+    weight_unit.lbs:
+        label:
+            full: pound
+            full_plural: pounds
+            short: lbs
+            short_plural: lbs
+        value:
+            full: '{0} none|{1} %count% pound|]1,Inf] %count% pounds'
+            short: '{0} none|{1} %count% lbs|]1,Inf] %count% lbs'
+
+    weight_unit.kg:
+        label:
+            full: kilogram
+            full_plural: kilograms
+            short: kg
+            short_plural: kgs
+        value:
+            full: '{0} none|{1} %count% kilogram|]1,Inf] %count% kilograms'
+            short: '{0} none|{1} %count% kg|]1,Inf] %count% kg'
+
+    length_unit.inch:
+        label:
+            full: inch
+            full_plural: inches
+            short: in
+            short_plural: in
+
+    length_unit.feet:
+        label:
+            full: feet
+            full_plural: feets
+            short: ft
+            short_plural: ft
+
+    length_unit.cm:
+        label:
+            full: centimeter
+            full_plural: centimeters
+            short: cm
+            short_plural: cm
+
+    length_unit.m:
+        label:
+            full: meter
+            full_plural: meters
+            short: m
+            short_plural: m
+
+    freight_class.parcel:
+        label:
+            full: parcel
+            full_plural: parcels
+            short: pel
+            short_plural: pels

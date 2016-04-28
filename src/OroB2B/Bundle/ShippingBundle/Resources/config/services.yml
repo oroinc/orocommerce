@@ -36,3 +36,39 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-view, method: onWarehouseView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-edit, method: onWarehouseEdit }
+
+    orob2b_shipping.formatter.length_unit_label:
+        class: OroB2B\Bundle\ShippingBundle\Formatter\LengthUnitLabelFormatter
+        arguments:
+            - '@translator'
+
+    orob2b_shipping.formatter.weight_unit_label:
+        class: OroB2B\Bundle\ShippingBundle\Formatter\WeightUnitLabelFormatter
+        arguments:
+            - '@translator'
+
+    orob2b_shipping.formatter.freight_class_label:
+        class: OroB2B\Bundle\ShippingBundle\Formatter\FreightClassLabelFormatter
+        arguments:
+            - '@translator'
+
+    orob2b_shipping.formatter.weight_unit_value:
+        class: OroB2B\Bundle\ShippingBundle\Formatter\WeightUnitValueFormatter
+        arguments:
+            - '@translator'
+
+    orob2b_shipping.twig.shipping_option_label:
+        class: OroB2B\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension
+        arguments:
+            - '@orob2b_shipping.formatter.length_unit_label'
+            - '@orob2b_shipping.formatter.weight_unit_label'
+            - '@orob2b_shipping.formatter.freight_class_label'
+        tags:
+            - { name: twig.extension }
+
+    orob2b_shipping.twig.weight_unit_value:
+        class: OroB2B\Bundle\ShippingBundle\Twig\WeightUnitValueExtension
+        arguments:
+            - '@orob2b_shipping.formatter.weight_unit_value'
+        tags:
+            - { name: twig.extension }
