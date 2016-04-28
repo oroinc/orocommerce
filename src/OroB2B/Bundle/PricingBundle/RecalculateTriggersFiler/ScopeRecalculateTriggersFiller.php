@@ -11,13 +11,16 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class ScopeRecalculateTriggersFiler
+class ScopeRecalculateTriggersFiller
 {
     /**
      * @var Registry
      */
     protected $registry;
 
+    /**
+     * @param Registry $registry
+     */
     public function __construct(Registry $registry)
     {
         $this->registry = $registry;

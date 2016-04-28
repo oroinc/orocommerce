@@ -110,8 +110,8 @@ class CombinedPriceListsBuilder
     protected function updatePriceListsOnCurrentLevel($behavior)
     {
         $collection = $this->priceListCollectionProvider->getPriceListsByConfig();
-        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $behavior);
-        $this->updateCombinedPriceListConnection($actualCombinedPriceList);
+        $fullCpl = $this->combinedPriceListProvider->getCombinedPriceList($collection, $behavior);
+        $this->updateCombinedPriceListConnection($fullCpl);
     }
 
     /**

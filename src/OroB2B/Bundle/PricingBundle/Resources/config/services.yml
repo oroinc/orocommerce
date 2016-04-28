@@ -512,6 +512,6 @@ services:
             - '@doctrine'
 
     orob2b_pricing.recalculate_triggers_filer.scope_recalculate_triggers_filer:
-        class: 'OroB2B\Bundle\PricingBundle\RecalculateTriggersFiler\ScopeRecalculateTriggersFiler'
+        class: 'OroB2B\Bundle\PricingBundle\RecalculateTriggersFiler\ScopeRecalculateTriggersFiller'
         arguments:
             - @doctrine
