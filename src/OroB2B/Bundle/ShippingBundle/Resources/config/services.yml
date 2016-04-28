@@ -1,5 +1,6 @@
 parameters:
     orob2b_shipping.model.shipping_origin.class: OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin
+    orob2b_shipping.entity.shipping_origin_warehouse.class: OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse
     orob2b_shipping.entity.dimension_unit.class: OroB2B\Bundle\ShippingBundle\Entity\DimensionUnit
     orob2b_shipping.entity.freight_class.class: OroB2B\Bundle\ShippingBundle\Entity\FreightClass
     orob2b_shipping.entity.weight_unit.class: OroB2B\Bundle\ShippingBundle\Entity\WeightUnit
@@ -11,9 +12,27 @@ services:
             - '@oro_entity.doctrine_helper'
 
     orob2b_shipping.event_listener.config.shipping_origin:
-        class:  OroB2B\Bundle\ShippingBundle\EventListener\Config\ShippingOriginEventListener
+        class: OroB2B\Bundle\ShippingBundle\EventListener\Config\ShippingOriginEventListener
         arguments:
             - '@orob2b_shipping.factory.shipping_origin_model_factory'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    orob2b_shipping.shipping_origin.provider:
+        class: OroB2B\Bundle\ShippingBundle\Provider\ShippingOriginProvider
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.global'
+            - '@orob2b_shipping.factory.shipping_origin_model_factory'
+
+    orob2b_shipping.event_listener.form_view:
+        class: OroB2B\Bundle\ShippingBundle\EventListener\FormViewListener
+        arguments:
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@orob2b_shipping.shipping_origin.provider'
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-view, method: onWarehouseView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-edit, method: onWarehouseEdit }
