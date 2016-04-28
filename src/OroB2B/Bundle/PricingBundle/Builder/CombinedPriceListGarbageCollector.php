@@ -44,9 +44,10 @@ class CombinedPriceListGarbageCollector
     public function cleanCombinedPriceLists()
     {
         $configCombinedPriceList = $this->configManager->get(Configuration::getConfigKeyToPriceList());
-        $this->registry->getRepository('OroB2BPricingBundle:CombinedPriceListToAccount')->deleteInvalidRelations();
-        $this->registry->getRepository('OroB2BPricingBundle:CombinedPriceListToAccountGroup')->deleteInvalidRelations();
-        $this->registry->getRepository('OroB2BPricingBundle:CombinedPriceListToWebsite')->deleteInvalidRelations();
+        $manager = $this->registry->getManager();
+        $manager->getRepository('OroB2BPricingBundle:CombinedPriceListToAccount')->deleteInvalidRelations();
+        $manager->getRepository('OroB2BPricingBundle:CombinedPriceListToAccountGroup')->deleteInvalidRelations();
+        $manager->getRepository('OroB2BPricingBundle:CombinedPriceListToWebsite')->deleteInvalidRelations();
         $exceptPriceLists = [];
         if ($configCombinedPriceList) {
             $exceptPriceLists[] = $configCombinedPriceList;

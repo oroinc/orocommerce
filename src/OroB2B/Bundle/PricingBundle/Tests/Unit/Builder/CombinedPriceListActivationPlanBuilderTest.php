@@ -65,9 +65,9 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
 
         $this->builder = new CombinedPriceListActivationPlanBuilder(
             $this->doctrineHelper,
-            $this->schedulerResolver,
-            $this->combinedPriceListProvider
+            $this->schedulerResolver
         );
+        $this->builder->setProvider($this->combinedPriceListProvider);
     }
 
     public function test()
@@ -150,7 +150,7 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
             ->disableOriginalConstructor()
             ->getMock();
         $this->combinedPriceListProvider->method('getCombinedPriceList')
-            ->with([], CombinedPriceListProvider::BEHAVIOR_EMPTY)
+            ->with([])
             ->willReturn(new CombinedPriceList());
     }
 }

@@ -103,7 +103,8 @@ class CombinedPriceListScheduleResolver
                 'active' => true,
             ]);
             if ($currentRule) {
-                if ((int)$this->configManager->get($currentCPLConfigKey) !== $currentRule->getId()) {
+                $currentFullCplId = (int)$this->configManager->get($currentCPLConfigKey);
+                if ($currentFullCplId !== $currentRule->getCombinedPriceList()->getId()) {
                     $this->configManager->set($currentCPLConfigKey, $currentRule->getCombinedPriceList()->getId());
                 }
             } else {

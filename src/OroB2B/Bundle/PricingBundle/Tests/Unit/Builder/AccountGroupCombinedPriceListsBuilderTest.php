@@ -46,7 +46,9 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
             $this->registry,
             $this->priceListCollectionProvider,
             $this->combinedPriceListProvider,
-            $this->garbageCollector
+            $this->garbageCollector,
+            $this->cplScheduleResolver,
+            $this->priceResolver
         );
         $this->builder->setPriceListToEntityClassName($this->priceListToEntityClass);
         $this->builder->setCombinedPriceListClassName($this->combinedPriceListClass);
@@ -56,11 +58,10 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
 
     /**
      * @dataProvider testBuildDataProvider
-     * @param int $behavior
      * @param PriceListToAccountGroup $priceListByAccountGroup
      * @param bool $force
      */
-    public function testBuildForAll($behavior, $priceListByAccountGroup, $force = false)
+    public function testBuildForAll($priceListByAccountGroup, $force = false)
     {
         $callExpects = 1;
         $website = new Website();
@@ -89,7 +90,7 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
                 ->expects($this->never())
                 ->method('delete');
 
-            $this->assertRebuild($behavior, $website, $accountGroup, $force);
+            $this->assertRebuild($website, $accountGroup, $force);
         }
 
         $this->builder->build($website, null, $force);
@@ -107,10 +108,12 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
                 'force' => true
             ],
             [
-                'priceListByAccountGroup' => null
+                'priceListByAccountGroup' => null,
+                'force' => false
             ],
             [
-                'priceListByAccountGroup' => new PriceListToAccountGroup()
+                'priceListByAccountGroup' => new PriceListToAccountGroup(),
+                'force' => false
             ],
             [
                 'priceListByAccountGroup' => new PriceListToAccountGroup(),
@@ -121,11 +124,10 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
 
     /**
      * @dataProvider testBuildDataProvider
-     * @param int $behavior
      * @param PriceListToAccountGroup $priceListByAccountGroup
      * @param bool $force
      */
-    public function testBuildForAccountGroup($behavior, $priceListByAccountGroup, $force = false)
+    public function testBuildForAccountGroup($priceListByAccountGroup, $force = false)
     {
         $callExpects = 1;
         $website = new Website();
@@ -149,7 +151,7 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
                 ->expects($this->never())
                 ->method('delete');
 
-            $this->assertRebuild($behavior, $website, $accountGroup, $force);
+            $this->assertRebuild($website, $accountGroup, $force);
         }
 
         $this->builder->build($website, $accountGroup, $force);
@@ -157,12 +159,11 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
     }
 
     /**
-     * @param int $behavior
      * @param Website $website
      * @param AccountGroup $accountGroup
      * @param bool $force
      */
-    protected function assertRebuild($behavior, Website $website, AccountGroup $accountGroup, $force)
+    protected function assertRebuild(Website $website, AccountGroup $accountGroup, $force)
     {
         $callExpects = 1;
         $priceListCollection = [$this->getPriceListSequenceMember()];
@@ -175,15 +176,15 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
 
         $this->combinedPriceListProvider->expects($this->exactly($callExpects))
             ->method('getCombinedPriceList')
-            ->with($priceListCollection, $behavior)
+            ->with($priceListCollection)
             ->will($this->returnValue($combinedPriceList));
 
         $this->combinedPriceListRepository->expects($this->exactly($callExpects))
             ->method('updateCombinedPriceListConnection')
-            ->with($combinedPriceList, $website, $accountGroup);
+            ->with($combinedPriceList, $combinedPriceList, $website, $accountGroup);
 
         $this->accountBuilder->expects($this->exactly($callExpects))
             ->method('buildByAccountGroup')
-            ->with($website, $accountGroup, $behavior, $force);
+            ->with($website, $accountGroup, $force);
     }
 }

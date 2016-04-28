@@ -60,7 +60,7 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
         $force = (bool)$input->getOption(self::FORCE);
 
         $container = $this->getContainer();
-        $container->get('orob2b_pricing.recalculate_triggers_filer.scope_recalculate_triggers_filer')
+        $container->get('orob2b_pricing.recalculate_triggers_filler.scope_recalculate_triggers_filler')
             ->fillTriggersForRecalculate(
                 $input->getOption(self::WEBSITE),
                 $input->getOption(self::ACCOUNT_GROUP),
