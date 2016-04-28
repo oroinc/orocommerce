@@ -5,7 +5,7 @@ define([
 ], function($, _, mediator) {
     'use strict';
 
-    $.widget('oroui.addToShoppingListDropdownButtonProcessor', $.oroui.pinnedDropdownButtonProcessor, {
+    $.widget('oroui.productAddToDropdownButtonProcessor', $.oroui.pinnedDropdownButtonProcessor, {
         options: {
             intention: {
                 new: 'new'
@@ -21,7 +21,7 @@ define([
             addedClass: ''
         },
 
-        keyPreffix: 'add-to-shopping-list-dropdown-button-processor-',
+        keyPreffix: 'product-add-to-dropdown-button-processor-',
 
         product: null,
 
