@@ -37,17 +37,32 @@
         dataUrlOptions: {},
         dataAttributes: {}
     } %}
+    {% set removeOptions = commonOptions|merge({
+        dataUrl: 'orob2b_shopping_list_frontend_remove_product',
+        actionLabel: 'orob2b.shoppinglist.actions.remove_from_shopping_list'|trans
+    }) %}
+    {% set productData = '{"id": <%= model.id %>, '
+        ~ '"units": <% if (!_.isUndefined(model.product_units)) { %><%= JSON.stringify(model.product_units) %><% } else { %>{}<% } %>,'
+        ~ '"lineItems": <% if (!_.isUndefined(model.current_shopping_list_line_items)) { %><%= JSON.stringify(model.current_shopping_list_line_items) %><% } else { %>{}<% } %>'
+        ~ '}'
+    %}
     <% if (!_.isEmpty(model.product_units)) { %>
         <div {{ block('block_attributes') }}
-                data-page-component-module="orob2bshoppinglist/js/app/components/add-product-from-index-component" data-product-id="<%= model.id %>">
+             data-product='{{ productData|raw }}'
+             data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options='{"view": "orob2bshoppinglist/js/app/views/add-product-from-grid-view"}'
+             data-layout="separate">
             {{ buttons.createAddToShoppingListButton({
                 groupContainer: '<div class="btn btn-block btn-dark btn_has-dropdown btn_has-dropdown_lg width-auto"></div>',
                 new: commonOptions,
                 current: commonOptions,
                 existing: commonOptions,
+                remove: removeOptions,
                 shoppingLists: shoppingLists,
                 truncateLabelLength: 25,
-                singleButtonACss: 'btn-block btn-dark btn_lg'
+                singleButtonACss: 'btn-block btn-dark btn_lg',
+                defaultClass: 'btn-dark',
+                addedClass: 'btn-green'
             }) }}
         </div>
     <% } %>

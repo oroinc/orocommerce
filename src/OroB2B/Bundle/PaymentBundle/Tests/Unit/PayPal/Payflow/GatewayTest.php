@@ -95,4 +95,13 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseInterface', $response);
         $this->assertEquals($responseData, $response->getData());
     }
+
+    public function testGetFormAction()
+    {
+        $this->gateway->setTestMode(true);
+        $this->assertEquals(Gateway::PILOT_FORM_ACTION, $this->gateway->getFormAction());
+
+        $this->gateway->setTestMode(false);
+        $this->assertEquals(Gateway::PRODUCTION_FORM_ACTION, $this->gateway->getFormAction());
+    }
 }
