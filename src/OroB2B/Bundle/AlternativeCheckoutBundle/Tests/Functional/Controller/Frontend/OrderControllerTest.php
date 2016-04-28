@@ -7,11 +7,12 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\FrontendBundle\Test\Client;
 use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
 
@@ -48,6 +49,8 @@ class OrderControllerTest extends WebTestCase
 
     public function testCheckoutGrid()
     {
+        $this->client->request('GET', '/about'); // any page to authorize a user, CMS is used as the fastest one
+
         $checkouts = $this->getDatagridData();
         $this->assertCount(5, $checkouts);
         $groupedCheckouts = $this->groupCheckoutsByType($checkouts);
@@ -80,7 +83,7 @@ class OrderControllerTest extends WebTestCase
             /** @var  BaseCheckout $expectedCheckout */
             foreach ($expectedCheckouts as $id => $expectedCheckout) {
                 $this->assertTrue(isset($actualGroupedCheckouts[$checkoutType][$id]));
-                if ($columnName != 'paymentMethod') {
+                if ($columnName !== 'paymentMethod') {
                     $sourceEntity = $expectedCheckout->getSourceEntity();
                     $propertyAccessor = $container->get('property_accessor');
                     $currencyField = property_exists($sourceEntity, 'currency') ? 'currency' : 'totalCurrency';
@@ -207,7 +210,7 @@ class OrderControllerTest extends WebTestCase
         foreach ($sorters as $sorter => $value) {
             $result[self::GRID_NAME . '[_sort_by]' . $sorter] = $value;
         }
-        $response = $this->requestFrontendGrid(['gridName' => self::GRID_NAME], $result);
+        $response = $this->client->requestGrid(['gridName' => self::GRID_NAME], $result);
 
         return json_decode($response->getContent(), true)['data'];
     }
