@@ -43,7 +43,7 @@ class PriceList extends BasePriceList
     /**
      * @var bool
      *
-     * @ORM\Column(name="active", type="boolean")
+     * @ORM\Column(name="active", type="boolean", options={"default"=true})
      */
     protected $active = true;
 

@@ -93,7 +93,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
                         $criteria->getIdentifier() => $price
                     ]);
 
-                $expected = ['42' => $price];
+                $expected = ['42' => ['test' => $price]];
             }
         }
 
