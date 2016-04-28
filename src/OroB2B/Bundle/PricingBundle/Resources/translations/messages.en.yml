@@ -20,6 +20,7 @@ orob2b.pricing:
         merge_allowed.label: Merge Allowed
         merge_allowed.yes.label: Yes
         merge_allowed.no.label: No
+        contain_schedule.label: Contain Schedules
 
         form:
             pricelist_required: Please select a price list first...
