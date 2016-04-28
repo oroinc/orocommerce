@@ -56,7 +56,7 @@ class LoadPriceListSchedules extends AbstractFixture implements DependentFixture
 
             foreach ($schedulesData['schedules'] as $scheduleData) {
                 $schedule = new PriceListSchedule();
-                $schedule->setPriceList($priceList);
+                $priceList->addSchedule($schedule);
                 if ($scheduleData['activateAt']) {
                     $scheduleDate = clone $now;
                     $scheduleDate->modify($scheduleData['activateAt']);
@@ -67,9 +67,9 @@ class LoadPriceListSchedules extends AbstractFixture implements DependentFixture
                     $scheduleDate->modify($scheduleData['deactivateAt']);
                     $schedule->setDeactivateAt($scheduleDate);
                 }
-                $manager->persist($schedule);
                 $this->setReference($scheduleData['name'], $schedule);
             }
+            $manager->persist($priceList);
         }
 
         $manager->flush();
