@@ -79,6 +79,12 @@ class PriceList extends BasePriceList
     protected $schedules;
 
     /**
+     * @var bool
+     * @ORM\Column(name="contain_schedule", type="boolean")
+     */
+    protected $containSchedule = false;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -145,6 +151,26 @@ class PriceList extends BasePriceList
     public function removeSchedule(PriceListSchedule $schedule)
     {
         $this->schedules->removeElement($schedule);
+        $this->containSchedule = !$this->schedules->isEmpty();
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isContainSchedule()
+    {
+        return $this->containSchedule;
+    }
+
+    /**
+     * @param boolean $containSchedule
+     * @return PriceList
+     */
+    public function setContainSchedule($containSchedule)
+    {
+        $this->containSchedule = $containSchedule;
 
         return $this;
     }

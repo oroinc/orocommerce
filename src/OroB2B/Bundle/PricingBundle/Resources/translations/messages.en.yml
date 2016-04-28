@@ -20,6 +20,7 @@ orob2b.pricing:
         merge_allowed.label: Merge Allowed
         merge_allowed.yes.label: Yes
         merge_allowed.no.label: No
+        contain_schedule.label: Contain Schedules
 
         form:
             pricelist_required: Please select a price list first...
@@ -68,6 +69,8 @@ orob2b.pricing:
         unit: 'per unit'
 
     pricelist_schedule:
+        active.labal: Active
+        activity.labal: Activity
         active_at.label: 'Active At'
         deactivate_at.label: 'Deactivate At'
         was_activated: Was activated on %date%.
