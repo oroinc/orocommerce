@@ -5,6 +5,7 @@ define(function(require) {
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var routing = require('routing');
 
     PaymentTermComponent = BaseComponent.extend({
         /**
@@ -26,7 +27,19 @@ define(function(require) {
         handleSubmit: function(eventData) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = true;
-                mediator.execute('redirectTo', {url: eventData.responseData.successUrl}, {redirect: true});
+                mediator.execute(
+                    'redirectTo',
+                    {
+                        url: routing.generate(
+                            'orob2b_checkout_frontend_checkout',
+                            {
+                                id: eventData.responseData.checkoutId,
+                                transition: 'finish_checkout'
+                            }
+                        )
+                    },
+                    {redirect: true}
+                );
             }
         },
 

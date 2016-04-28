@@ -129,6 +129,7 @@ class PurchaseActionTest extends AbstractActionTest
                 ],
                 'expected' => [
                     'paymentMethod' => self::PAYMENT_METHOD,
+                    'checkoutId' => 'id',
                     'errorUrl' => 'orob2b_payment_callback_error',
                     'returnUrl' => 'orob2b_payment_callback_return',
                     'testResponse' => 'testResponse',
@@ -147,6 +148,7 @@ class PurchaseActionTest extends AbstractActionTest
                 ],
                 'expected' => [
                     'paymentMethod' => self::PAYMENT_METHOD,
+                    'checkoutId' => 'id',
                     'errorUrl' => 'orob2b_payment_callback_error',
                     'returnUrl' => 'orob2b_payment_callback_return',
                     'testResponse' => 'testResponse',
@@ -168,6 +170,7 @@ class PurchaseActionTest extends AbstractActionTest
                 ],
                 'expected' => [
                     'paymentMethod' => self::PAYMENT_METHOD,
+                    'checkoutId' => 'id',
                     'errorUrl' => 'orob2b_payment_callback_error',
                     'returnUrl' => 'orob2b_payment_callback_return',
                 ]
