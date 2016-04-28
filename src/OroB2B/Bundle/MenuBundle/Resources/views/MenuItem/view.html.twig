@@ -18,19 +18,9 @@
                 'title': 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.menu.menuitem.entity_label'|trans})
             }) }}
         {% endif %}
-        {% set canBeDeleted = resource_granted('DELETE', entity) %}
-        {% if canBeDeleted %}
-            {{ UI.deleteButton({
-                'dataUrl': path('orob2b_api_delete_menu_item', {'id': entityId}),
-                'dataRedirect': path('orob2b_menu_item_roots'),
-                'aCss': 'no-hash remove-button',
-                'dataId': entityId,
-                'id': 'btn-remove-account',
-                'entity_label': 'orob2b.menu.menuitem.entity_label'|trans,
-            }) }}
-        {% endif %}
     {% endif %}
 
+    {{ parent() }}
 {% endblock navButtons %}
 
 {% block pageHeader %}

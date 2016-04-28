@@ -1,0 +1,2 @@
+bundles:
+    - OroB2BShippingBundle:Form:fields.html.twig
