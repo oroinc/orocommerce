@@ -22,7 +22,7 @@ class PriceListSchedule
     /**
      * @var PriceList
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList", inversedBy="schedules")
      * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $priceList;
@@ -72,6 +72,7 @@ class PriceListSchedule
     public function setPriceList(PriceList $priceList)
     {
         $this->priceList = $priceList;
+        $this->priceList->setContainSchedule(true);
 
         return $this;
     }
