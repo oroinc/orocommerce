@@ -384,7 +384,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     {
         try {
             if ($this->getDefaultName()) {
-                return (string)$this->getDefaultName()->__toString();
+                return (string)$this->getDefaultName();
             } else {
                 return (string)$this->sku;
             }

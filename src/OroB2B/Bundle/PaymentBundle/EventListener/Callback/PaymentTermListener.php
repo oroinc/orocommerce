@@ -56,6 +56,10 @@ class PaymentTermListener
 
         $paymentTerm = $this->paymentTermProvider->getCurrentPaymentTerm();
 
+        if (!$paymentTerm) {
+            return;
+        }
+
         try {
             $this->propertyAccessor->setValue($entity, 'paymentTerm', $paymentTerm);
             $this->doctrineHelper->getEntityManager($entity)->flush($entity);

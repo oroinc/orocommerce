@@ -1,10 +1,8 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
-    var AddProductFromViewComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    var AddProductView;
+    var BaseView = require('oroui/js/app/views/base/view');
     var ShoppingListWidget = require('orob2bshoppinglist/js/app/widget/shopping-list-widget');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
@@ -12,7 +10,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
 
-    AddProductFromViewComponent = BaseComponent.extend({
+    AddProductView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -31,14 +29,17 @@ define(function(require) {
         dialog: null,
 
         /**
-         * @param {Object} additionalOptions
+         * @param {Object} options
          */
-        initialize: function(additionalOptions) {
-            _.extend(this.options, additionalOptions || {});
+        initialize: function(options) {
+            AddProductView.__super__.initialize.apply(this, arguments);
 
-            this.options._sourceElement.on('click', 'a[data-id]', _.bind(this.onClick, this));
+            _.extend(this.options, options || {});
+            this.$el.on('click', 'a[data-id]', _.bind(this.onClick, this));
 
-            mediator.on('shopping-list:created', this.transformCreateNewButton, this);
+            var product = this.$el.data('product');
+            this.$el.find('.pinned-dropdown').data('product', product);
+            this.initLayout();
         },
 
         /**
@@ -125,10 +126,9 @@ define(function(require) {
                         );
                     }
                     if (!self.buttonExists(urlOptions.shoppingListId)) {
-                        self.transformCreateNewButton();
-                        mediator.trigger('shopping-list:created', response.shoppingList);
+                        mediator.trigger('shopping-list:created', response.shoppingList, response.product);
                     } else {
-                        mediator.trigger('shopping-list:updated', response.shoppingList);
+                        mediator.trigger('shopping-list:updated', response.shoppingList, response.product);
                     }
                 },
                 error: function(xhr) {
@@ -142,16 +142,7 @@ define(function(require) {
          * @param {String} id
          */
         buttonExists: function(id) {
-            return Boolean(this.options._sourceElement.find('[data-id="' + id + '"]').length);
-        },
-
-        transformCreateNewButton: function() {
-            var $button = $(this.options.addToShoppingListButtonSelector)
-                    .filter('[data-id=""]').not('[data-intention="' + this.options.intention.new + '"]');
-            if ($button.length) {
-                $button.data('intention', this.options.intention.new);
-                $button.html(_.__(this.options.createNewLabel));
-            }
+            return Boolean(this.$el.find('[data-id="' + id + '"]').length);
         },
 
         dispose: function() {
@@ -159,13 +150,11 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('shopping-list:created', this.transformCreateNewButton, this);
+            this.$el.off();
 
-            this.options._sourceElement.off();
-
-            AddProductFromViewComponent.__super__.dispose.call(this);
+            AddProductView.__super__.dispose.call(this);
         }
     });
 
-    return AddProductFromViewComponent;
+    return AddProductView;
 });
