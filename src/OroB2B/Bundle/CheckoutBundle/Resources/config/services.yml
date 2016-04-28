@@ -1,4 +1,5 @@
 parameters:
+    orob2b_checkout.entity.base_checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout
     orob2b_checkout.entity.checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
     orob2b_checkout.entity.checkout_source.class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
 
@@ -117,6 +118,15 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: check_request }
 
+
+    orob2b_checkout.twig.line_items:
+        class: 'OroB2B\Bundle\CheckoutBundle\Twig\LineItemsExtension'
+        arguments:
+            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
+            - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
+        tags:
+            - { name: twig.extension }
+
     orob2b_checkout.event_listener.checkout_entity:
         class: OroB2B\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener
         lazy: true
@@ -127,3 +137,18 @@ services:
             - [setCheckoutClassName, ['%orob2b_checkout.entity.checkout.class%']]
         tags:
             - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity}
+
+    orob2b_checkout.grid_totals_metadata.cache:
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'orob2b_checkout_grid_totals_metadata' ] ]
+
+    orob2b_checkout.datagrid.checkout_grid_listener:
+        class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener
+        arguments:
+            - '@oro_entity_config.provider.entity'
+            - '@oro_query_designer.entity_field_provider'
+        calls:
+            - [setCache, ['@orob2b_checkout.grid_totals_metadata.cache']]
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
