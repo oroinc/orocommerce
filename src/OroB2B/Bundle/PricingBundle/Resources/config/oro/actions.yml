@@ -64,6 +64,15 @@ operations:
         actions:
             - '@assign_value': [$.entity.active, true]
             - '@flush_entity': $.entity
+            - '@redirect':
+                conditions:
+                    '@empty': $.gridName
+                parameters:
+                    route: orob2b_pricing_price_list_index
+            - '@refresh_grid':
+                conditions:
+                    '@not_empty': $.gridName
+                parameters: [$.gridName]
 
     orob2b_pricing_price_list_disable:
         label: orob2b.pricing.pricelist.status.disable
@@ -78,6 +87,15 @@ operations:
         actions:
             - '@assign_value': [$.entity.active, false]
             - '@flush_entity': $.entity
+            - '@redirect':
+                conditions:
+                    '@empty': $.gridName
+                parameters:
+                    route: orob2b_pricing_price_list_index
+            - '@refresh_grid':
+                conditions:
+                    '@not_empty': $.gridName
+                parameters: [$.gridName]
 
 action_groups:
     orob2b_pricing_add_product_price:
