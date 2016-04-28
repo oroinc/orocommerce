@@ -320,11 +320,11 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     {
         $table = $schema->createTable('orob2b_cmb_plist_to_acc_gr');
         $table->addColumn('account_group_id', 'integer', []);
-        $table->addColumn('combined_price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('combined_price_list_id', 'integer', []);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['website_id', 'account_group_id'], 'orob2b_cpl_to_acc_gr_ws_unq');
-        $table->setPrimaryKey(['account_group_id', 'combined_price_list_id', 'website_id']);
+        $table->setPrimaryKey(['account_group_id', 'website_id']);
     }
 
     /**

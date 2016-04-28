@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="orob2b_cmb_price_list_to_ws")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository")
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToWebsiteRepository")
  */
 class CombinedPriceListToWebsite extends BaseCombinedPriceListRelation
 {

@@ -86,8 +86,8 @@ class CombinedPriceListProvider
         if (!$combinedPriceList || $behavior == self::BEHAVIOR_FORCE) {
             if (!$combinedPriceList) {
                 $combinedPriceList = $this->createCombinedPriceList($identifier);
+                $this->updateCombinedPriceList($combinedPriceList, $normalizedCollection);
             }
-            $this->updateCombinedPriceList($combinedPriceList, $normalizedCollection);
             if ($behavior !== self::BEHAVIOR_EMPTY) {
                 $this->resolver->combinePrices($combinedPriceList);
             }

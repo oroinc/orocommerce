@@ -106,6 +106,15 @@ services:
             - '@doctrine'
             - '@oro_entity.orm.insert_from_select_query_executor'
 
+    orob2b_pricing.resolver.combined_product_schedule_resolver:
+        class: 'OroB2B\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver'
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+        calls:
+            - [addRelationClass, ['%orob2b_pricing.entity.combined_price_list_to_account.class%']]
+            - [addRelationClass, ['%orob2b_pricing.entity.combined_price_list_to_account_group.class%']]
+            - [addRelationClass, ['%orob2b_pricing.entity.combined_price_list_to_website.class%']]
 
     orob2b_pricing.builder.combined_price_list_garbage_collector:
         class: 'OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector'
