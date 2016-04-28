@@ -11,3 +11,6 @@ orob2b:
             add_to_new_shopping_list: Create New Shopping List
         datagrid:
             add_to_shopping_list: Add To Shopping List
+        actions:
+            add_to_shopping_list: Add to {{ shoppingList }}
+            added_to_shopping_list: Added {{ lineItems }} to {{ shoppingList }}
