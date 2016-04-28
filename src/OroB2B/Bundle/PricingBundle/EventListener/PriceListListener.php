@@ -55,7 +55,7 @@ class PriceListListener
     }
 
     /**
-     * @param $priceList
+     * @param PriceList $priceList
      * @return bool
      */
     protected function isCollectionChanged(PriceList $priceList)

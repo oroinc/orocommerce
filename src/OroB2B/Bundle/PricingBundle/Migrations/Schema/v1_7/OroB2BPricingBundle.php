@@ -130,8 +130,6 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * Create orob2b_cmb_price_list_to_acc table
-     *
      * @param Schema $schema
      */
     protected function alterOrob2BCmbPriceListToAccTable(Schema $schema)
@@ -147,8 +145,6 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * Create orob2b_cmb_plist_to_acc_gr table
-     *
      * @param Schema $schema
      */
     protected function alterOroB2BCmbPriceListToAccGrTable(Schema $schema)
@@ -164,8 +160,6 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * Create orob2b_cmb_price_list_to_ws table
-     *
      * @param Schema $schema
      */
     protected function alterOroB2BCmbPriceListToWsTable(Schema $schema)
