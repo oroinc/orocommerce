@@ -306,7 +306,12 @@ class CombinedPriceListRepository extends EntityRepository
                 $qb->expr()->eq('cpl', 'combinedPriceListActivationRule.combinedPriceList')
             )
             ->where($qb->expr()->eq('cpl.pricesCalculated', ':pricesCalculated'))
-            ->andWhere('combinedPriceListActivationRule.activateAt < :activateData OR combinedPriceListActivationRule.activateAt IS NULL')
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->lt('combinedPriceListActivationRule.activateAt', ':activateData'),
+                    $qb->expr()->isNull('combinedPriceListActivationRule.activateAt')
+                )
+            )
             ->setParameters([
                 'pricesCalculated' => false,
                 'activateData' => $activateDate

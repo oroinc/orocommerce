@@ -47,7 +47,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
             ]
         );
         $this->resolver = $this->getContainer()->get('orob2b_pricing.resolver.combined_product_schedule_resolver');
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = $this->getContainer()->get('oro_config.global');
     }
 
     /**
