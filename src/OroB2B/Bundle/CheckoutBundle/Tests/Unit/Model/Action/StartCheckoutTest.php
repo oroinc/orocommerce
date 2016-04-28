@@ -206,7 +206,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     'route' => 'orob2b_checkout_frontend_checkout',
-                    'route_parameters' => ['id' => $checkout->getId(), 'type' => $checkout->getType()]
+                    'route_parameters' => ['id' => $checkout->getId(), 'checkoutType' => $checkout->getCheckoutType()]
                 ]
             );
         $this->redirect->expects($this->once())

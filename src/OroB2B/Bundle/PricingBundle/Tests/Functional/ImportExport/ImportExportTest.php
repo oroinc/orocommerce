@@ -132,7 +132,7 @@ class ImportExportTest extends WebTestCase
         $this->assertErrors(
             $strategy,
             '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/unavailable_product_unit.csv',
-            'Error in row #1. Unit Code: Product unit is not exist.'
+            'Error in row #1. Unit Code: Product unit does not exist.'
         );
     }
 
@@ -145,7 +145,7 @@ class ImportExportTest extends WebTestCase
         $this->assertErrors(
             $strategy,
             '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/unavailable_product.csv',
-            'Error in row #1. Product SKU: Product is not exist.'
+            'Error in row #1. Product SKU: Product does not exist.'
         );
     }
 
