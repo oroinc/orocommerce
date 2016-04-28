@@ -804,6 +804,17 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
+     * @param string $type
+     * @return ProductImage[]|Collection
+     */
+    public function getImagesByType($type)
+    {
+        return $this->getImages()->filter(function (ProductImage $image) use ($type) {
+            return $image->hasType($type);
+        });
+    }
+
+    /**
      * @param ProductImage $image
      * @return $this
      */

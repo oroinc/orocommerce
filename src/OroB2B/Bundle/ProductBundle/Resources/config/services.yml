@@ -49,11 +49,6 @@ services:
         tags:
             - { name: twig.extension }
 
-    orob2b_product.twig.product_image:
-        class: 'OroB2B\Bundle\ProductBundle\Twig\ProductImageExtension'
-        tags:
-            - { name: twig.extension }
-
     orob2b_product.form.autocomplete.product.search_handler:
         parent: oro_form.autocomplete.search_handler
         arguments:

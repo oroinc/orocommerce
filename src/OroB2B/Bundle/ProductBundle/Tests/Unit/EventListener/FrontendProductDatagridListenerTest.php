@@ -274,7 +274,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $products = [];
         foreach ($productWithImages as $index => $productId) {
-            $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product', ['getId', 'getImages']);
+            $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product', ['getId', 'getImagesByType']);
             $product->expects($this->any())
                 ->method('getId')
                 ->willReturn($productId);
@@ -287,7 +287,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($image);
 
             $product->expects($this->once())
-                ->method('getImages')
+                ->method('getImagesByType')
                 ->willReturn(new ArrayCollection([$productImage]));
             $products[] = $product;
 

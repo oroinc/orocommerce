@@ -214,11 +214,14 @@ class FrontendProductDatagridListener
             $productId = $record->getValue('id');
             foreach ($products as $product) {
                 if ($product->getId() === $productId) {
-                    $imageUrl = $this->attachmentManager->getFilteredImageUrl(
-                        //@TODO  filter images by type, e.g. listing
-                        $product->getImages()->first()->getImage(),
-                        self::PRODUCT_IMAGE_FILTER
-                    );
+                    $listingImages = $product->getImagesByType('listing');
+
+                    if ($listingImages->count() > 0) {
+                        $imageUrl = $this->attachmentManager->getFilteredImageUrl(
+                            $listingImages->first()->getImage(),
+                            self::PRODUCT_IMAGE_FILTER
+                        );
+                    }
                     break;
                 }
             }

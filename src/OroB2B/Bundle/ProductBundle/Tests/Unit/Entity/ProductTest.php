@@ -353,4 +353,23 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('array', Product::getStatuses());
         $this->assertNotEmpty('array', Product::getStatuses());
     }
+
+    public function testGetImagesByType()
+    {
+        $product = new Product();
+
+        $this->assertCount(0, $product->getImagesByType('main'));
+
+        $image1 = new ProductImage();
+        $image1->setTypes(['main', 'additional']);
+
+        $image2 = new ProductImage();
+        $image2->setTypes(['main']);
+
+        $product->addImage($image1);
+        $product->addImage($image2);
+
+        $this->assertCount(2, $product->getImagesByType('main'));
+        $this->assertCount(1, $product->getImagesByType('additional'));
+    }
 }
