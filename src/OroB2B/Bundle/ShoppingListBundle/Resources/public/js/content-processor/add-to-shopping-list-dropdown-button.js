@@ -165,6 +165,12 @@ define([
             $main.attr('title', label).html(label);
         },
 
+        _moreButton: function() {
+            var $button = this._super();
+            $button.data('container', 'body');
+            return $button;
+        },
+
         toggleRemoveButton: function() {
             if (!this.product || !this.options.updateButtonLabel) {
                 return;
