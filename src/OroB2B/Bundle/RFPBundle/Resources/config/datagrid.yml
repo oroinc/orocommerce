@@ -70,10 +70,6 @@ datagrid:
                 type:   url
                 route:  orob2b_rfp_request_view
                 params: [ id ]
-            update_link:
-                type: url
-                route: orob2b_rfp_request_update
-                params: [ id ]
         sorters:
             columns:
                 id:
@@ -163,12 +159,6 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_rfp_request_view
                 rowAction:     true
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_rfp_request_update
 
     rfp-request-statuses-grid:
         acl_resource: orob2b_rfp_request_status_view
