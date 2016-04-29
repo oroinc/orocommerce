@@ -68,6 +68,7 @@ class ProductShippingOptionsDatagridListener
         ];
 
         $this->addConfigElement($config, '[columns]', $column, $columnName);
+
     }
 
     /**
