@@ -1,0 +1,7 @@
+operations:
+    UPDATE:
+        exclude_datagrids:
+            - frontend-checkouts-grid
+    DELETE:
+        exclude_datagrids:
+            - frontend-checkouts-grid
