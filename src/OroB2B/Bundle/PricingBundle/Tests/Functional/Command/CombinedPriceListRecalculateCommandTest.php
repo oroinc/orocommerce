@@ -179,7 +179,7 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
     {
         $combinedPrices = $this->getContainer()->get('doctrine')
             ->getRepository('OroB2BPricingBundle:CombinedProductPrice')
-            ->findAll();
+            ->createQueryBuilder('a')->getQuery()->getResult();
 
         $this->assertCount($expectedCount, $combinedPrices);
     }

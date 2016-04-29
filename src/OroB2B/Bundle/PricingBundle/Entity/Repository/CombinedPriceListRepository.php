@@ -218,7 +218,6 @@ class CombinedPriceListRepository extends EntityRepository
     ) {
         $em = $this->getEntityManager();
         $relation = null;
-        $isNew = false;
         if ($targetEntity instanceof Account) {
             $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToAccount')
                 ->findOneBy(['account' => $targetEntity, 'website' => $website]);
@@ -227,8 +226,8 @@ class CombinedPriceListRepository extends EntityRepository
                 $relation->setAccount($targetEntity);
                 $relation->setWebsite($website);
                 $relation->setPriceList($combinedPriceList);
+                $relation->setFullChainPriceList($combinedPriceList);
                 $em->persist($relation);
-                $isNew = true;
             }
         } elseif ($targetEntity instanceof AccountGroup) {
             $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToAccountGroup')
@@ -238,8 +237,8 @@ class CombinedPriceListRepository extends EntityRepository
                 $relation->setAccountGroup($targetEntity);
                 $relation->setWebsite($website);
                 $relation->setPriceList($combinedPriceList);
+                $relation->setFullChainPriceList($combinedPriceList);
                 $em->persist($relation);
-                $isNew = true;
             }
         } elseif (!$targetEntity) {
             $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToWebsite')
@@ -248,22 +247,15 @@ class CombinedPriceListRepository extends EntityRepository
                 $relation = new CombinedPriceListToWebsite();
                 $relation->setWebsite($website);
                 $relation->setPriceList($combinedPriceList);
+                $relation->setFullChainPriceList($combinedPriceList);
                 $em->persist($relation);
-                $isNew = true;
             }
         } else {
             throw new \InvalidArgumentException(sprintf('Unknown target "%s"', get_class($targetEntity)));
         }
-
-        if ($isNew
-            || $relation->getFullChainPriceList()->getId() !== $combinedPriceList->getId()
-            || $relation->getPriceList()->getId() !== $activeCpl->getId()
-        ) {
-            $relation->setFullChainPriceList($combinedPriceList);
-            $relation->setPriceList($activeCpl);
-
-            $em->flush($relation);
-        }
+        $relation->setFullChainPriceList($combinedPriceList);
+        $relation->setPriceList($activeCpl);
+        $em->flush($relation);
     }
 
     /**

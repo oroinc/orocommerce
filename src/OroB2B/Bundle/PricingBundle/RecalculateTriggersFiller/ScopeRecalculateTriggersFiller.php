@@ -111,13 +111,16 @@ class ScopeRecalculateTriggersFiller
         $qb->delete('OroB2BPricingBundle:PriceListChangeTrigger', 'priceListChangeTrigger');
 
         if ($websites) {
-            $qb->andWhere($qb->expr()->in('priceListChangeTrigger.website', $websites));
+            $qb->andWhere($qb->expr()->in('priceListChangeTrigger.website', ':websites'))
+                ->setParameter('websites', $websites);
         }
         if ($accountGroups) {
-            $qb->andWhere($qb->expr()->in('priceListChangeTrigger.website', $accountGroups));
+            $qb->andWhere($qb->expr()->in('priceListChangeTrigger.website', ':accountGroups'))
+                ->setParameter('accountGroups', $accountGroups);
         }
         if ($accounts) {
-            $qb->andWhere($qb->expr()->in('priceListChangeTrigger.website', $accounts));
+            $qb->andWhere($qb->expr()->in('priceListChangeTrigger.website', ':accounts'))
+                ->setParameter('accounts', $accounts);
         }
 
         $qb->getQuery()->execute();
