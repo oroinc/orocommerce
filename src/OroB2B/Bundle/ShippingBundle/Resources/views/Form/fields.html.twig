@@ -59,3 +59,41 @@
         {{ form_rest(form) }}
     </div>
 {% endblock %}
+
+{% block orob2b_shipping_weight_widget %}
+    <div class="float-holder">
+        <table>
+            <tr>
+                <td>{{ form_widget(form.value) }}</td>
+                <td>{{ form_widget(form.unit) }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_errors(form.value) }}</td>
+                <td>{{ form_errors(form.unit) }}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
+
+{% block orob2b_shipping_dimensions_widget %}
+    <div class="float-holder">
+        <table>
+            <tr>
+                <td>{{ form_widget(form.length) }}</td>
+                <td>X</td>
+                <td>{{ form_widget(form.width) }}</td>
+                <td>X</td>
+                <td>{{ form_widget(form.height) }}</td>
+                <td>{{ form_widget(form.unit) }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_errors(form.length) }}</td>
+                <td></td>
+                <td>{{ form_errors(form.width) }}</td>
+                <td></td>
+                <td>{{ form_errors(form.height) }}</td>
+                <td>{{ form_errors(form.unit) }}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

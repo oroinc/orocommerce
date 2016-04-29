@@ -30,7 +30,10 @@ services:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType
         arguments:
             - '@orob2b_shipping.repository.length_unit'
+            - '@oro_config.manager'
             - '@orob2b_shipping.formatter.length_unit_label'
+        calls:
+            - [setConfigParameterName, ['orob2b_shipping.length_units']]
         tags:
             - { name: form.type, alias: orob2b_shipping_length_unit_select }
 
@@ -38,7 +41,10 @@ services:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType
         arguments:
             - '@orob2b_shipping.repository.weight_unit'
+            - '@oro_config.manager'
             - '@orob2b_shipping.formatter.weight_unit_label'
+        calls:
+            - [setConfigParameterName, ['orob2b_shipping.weight_units']]
         tags:
             - { name: form.type, alias: orob2b_shipping_weight_unit_select }
 
@@ -46,6 +52,23 @@ services:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\FreightClassSelectType
         arguments:
             - '@orob2b_shipping.repository.freight_class'
+            - '@oro_config.manager'
             - '@orob2b_shipping.formatter.freight_class_label'
+        calls:
+            - [setConfigParameterName, ['orob2b_shipping.freight_classes']]
         tags:
             - { name: form.type, alias: orob2b_shipping_freight_class_select }
+
+    orob2b_shipping.form.type.weight:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\WeightType
+        arguments:
+            - '%orob2b_shipping.model.weight.class%'
+        tags:
+            - { name: form.type, alias: orob2b_shipping_weight }
+
+    orob2b_shipping.form.type.dimensions:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType
+        arguments:
+            - '%orob2b_shipping.model.dimensions.class%'
+        tags:
+            - { name: form.type, alias: orob2b_shipping_dimensions }
