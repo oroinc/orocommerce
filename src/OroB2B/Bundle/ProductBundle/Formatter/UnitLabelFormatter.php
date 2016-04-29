@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\ProductBundle\Formatter;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasurementUnitInterface;
+use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
-abstract class AbstractLabelFormatter extends AbstractFormatter
+class UnitLabelFormatter extends AbstractUnitFormatter
 {
     /**
      * @param string $code
@@ -27,7 +27,7 @@ abstract class AbstractLabelFormatter extends AbstractFormatter
     }
 
     /**
-     * @param array|MeasurementUnitInterface[] $units
+     * @param array|MeasureUnitInterface[] $units
      * @param bool $isShort
      * @param bool $isPlural
      *

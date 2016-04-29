@@ -2,7 +2,10 @@
 
 namespace OroB2B\Bundle\ProductBundle\Formatter;
 
-class ProductUnitLabelFormatter extends AbstractLabelFormatter
+/**
+ * @deprecated Use orob2b_product.formatter.unit_label and setTranslationPrefix to define you own service with needed translation prefix
+ */
+class ProductUnitLabelFormatter extends UnitLabelFormatter
 {
     /**
      * {@inheritdoc}
