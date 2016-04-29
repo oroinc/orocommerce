@@ -66,8 +66,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_plist_to_acc_gr'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_ws'));
         $queries->addPostQuery(new UpdateCPLNameQuery());
-        $this->container->get('orob2b_pricing.builder.combined_price_list_builder')
-            ->build(CombinedPriceListProvider::BEHAVIOR_FORCE);
+        //TODO: Trigger recalculation
     }
 
     /**
