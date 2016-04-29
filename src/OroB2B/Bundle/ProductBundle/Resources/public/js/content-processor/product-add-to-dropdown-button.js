@@ -7,7 +7,7 @@ define([
     'use strict';
 
     $.widget('oroui.productAddToDropdownButtonProcessor', $.oroui.pinnedDropdownButtonProcessor, {
-        keyPrefix: 'product-add-to-dropdown-button-processor-',
+        keyPreffix: 'product-add-to-dropdown-button-processor-',
 
         model: null,
 
@@ -32,6 +32,11 @@ define([
             this.initButtons(_.bind(function() {
                 _super.apply(this, args);
             }, this));
+        },
+
+        _moreButton: function() {
+            var $button = this._super().data('container', 'body');
+            return $button;
         },
 
         initButtons: function(callback) {

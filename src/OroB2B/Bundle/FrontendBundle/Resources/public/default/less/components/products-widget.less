@@ -65,6 +65,29 @@
   }
 }
 
+.prices-hint-content {
+  .popover-title {
+    display: none;
+  }
+
+  .popover-content {
+    padding: .5rem;
+  }
+
+  .table {
+    text-align: center;
+    margin-bottom: 0;
+    th {
+      text-align: center;
+      border-bottom-width: 1px;
+    }
+    td {
+      padding: .4rem .8rem;
+      width: 50%;
+    }
+  }
+}
+
 .product-item {
   @product-item-gallery-view-offset-x: 1.5rem;
   @product-item-gallery-view-offset-bottom: 3rem;
@@ -93,28 +116,6 @@
     .validation-failed {
       position: absolute;
       z-index: 1;
-    }
-
-    .popover-title {
-      display: none;
-    }
-
-    .popover-content {
-      padding: .5rem;
-    }
-
-    .product-item__price_gallery-view {
-      .table {
-        text-align: center;
-        margin-bottom: 0;
-        th {
-          text-align: center;
-        }
-        td {
-          padding: .4rem .8rem;
-          width: 50%;
-        }
-      }
     }
 
     @media (min-width: 843px) and (max-width: 991px) {

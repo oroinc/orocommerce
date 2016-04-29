@@ -9,11 +9,11 @@ define(function(require) {
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
-            price: '[data-role="price"]',
-            priceValue: '[data-role="price-value"]',
-            priceNotFound: '[data-role="price-not-found"]',
-            pricesHint: '[data-role="prices-hint"]',
-            pricesHintContent: '[data-role="prices-hint-content"]'
+            price: '[data-name="price"]',
+            priceValue: '[data-name="price-value"]',
+            priceNotFound: '[data-name="price-not-found"]',
+            pricesHint: '[data-name="prices-hint"]',
+            pricesHintContent: '[data-name="prices-hint-content"]'
         },
 
         prices: {},
