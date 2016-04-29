@@ -4,11 +4,13 @@ namespace OroB2B\Bundle\ShippingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+
 /**
  * @ORM\Table(name="orob2b_shipping_weight_unit")
  * @ORM\Entity
  */
-class WeightUnit
+class WeightUnit implements MeasureUnitInterface
 {
     /**
      * @var string
