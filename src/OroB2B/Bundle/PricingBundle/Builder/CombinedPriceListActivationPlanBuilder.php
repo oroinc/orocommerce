@@ -121,10 +121,6 @@ class CombinedPriceListActivationPlanBuilder
             if ($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY]) {
                 $rule->setActivateAt($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY]);
             }
-            if ($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY] === null
-                || $ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY] < $now) {
-//                $rule->setActive(true);
-            }
             $actualCPL = $this->combinedActualCombinedPriceList(
                 $priceListRelations,
                 $ruleData[PriceListScheduleResolver::PRICE_LISTS_KEY]

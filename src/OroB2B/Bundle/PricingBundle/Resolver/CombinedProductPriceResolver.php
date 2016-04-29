@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Resolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -20,7 +20,7 @@ class CombinedProductPriceResolver
     protected $registry;
 
     /**
-     * @var ObjectManager
+     * @var EntityManager
      */
     protected $manager;
 
@@ -72,10 +72,15 @@ class CombinedProductPriceResolver
                 $product
             );
         }
-        $combinedPriceList->setPricesCalculated(true);
-        $this->getManager()->flush($combinedPriceList);
+        if (!$product) {
+            $combinedPriceList->setPricesCalculated(true);
+            $this->getManager()->flush($combinedPriceList);
+        }
     }
 
+    /**
+     * @return EntityManager
+     */
     protected function getManager()
     {
         if (!$this->manager) {
