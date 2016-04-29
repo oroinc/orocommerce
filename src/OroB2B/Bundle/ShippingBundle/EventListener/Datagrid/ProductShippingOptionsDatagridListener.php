@@ -3,12 +3,14 @@
 namespace OroB2B\Bundle\ShippingBundle\EventListener\Datagrid;
 
 use Doctrine\ORM\Query\Expr;
+
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductShippingOptionsDatagridListener
 {
@@ -54,11 +56,11 @@ class ProductShippingOptionsDatagridListener
 
         $this->addConfigProductShippingOptionsJoin($config);
 
-        $message = 'orob2b.shipping.datagrid.shipping_options.column.label';
+        $columnLabel = 'orob2b.shipping.datagrid.shipping_options.column.label';
         $params = [];
 
         $column = [
-            'label' => $this->translator->trans($message, $params),
+            'label' => $this->translator->trans($columnLabel, $params),
             'type' => 'twig',
             'template' => $this->getColumnTemplate(),
             'frontend_type' => 'html',
@@ -161,7 +163,6 @@ class ProductShippingOptionsDatagridListener
      */
     protected function getColumnTemplate()
     {
-        // TODO: Override for frontend-products-grid if required
         return 'OroB2BShippingBundle:Datagrid:Column/productShippingOptions.html.twig';
     }
 }
