@@ -8,7 +8,7 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class DropCombinedRelationsTables implements Migration, OrderedMigrationInterface
+class DropCombinedPriceListRelationsTables implements Migration, OrderedMigrationInterface
 {
     /**
      * {@inheritdoc}
