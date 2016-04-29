@@ -33,7 +33,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_2';
     }
 
     /**
@@ -62,7 +62,6 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->createOroB2BProductPriceChangeTriggerTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroB2BPriceListForeignKeys($schema);
         $this->addOrob2BPriceListCurrencyForeignKeys($schema);
         $this->addOrob2BPriceListToAccGrForeignKeys($schema);
         $this->addOrob2BPriceListToAccountForeignKeys($schema);
@@ -94,8 +93,6 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('is_default', 'boolean', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
-        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
 
         $this->noteExtension->addNoteAssociation($schema, 'orob2b_price_list');
@@ -755,26 +752,6 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
             ['price_list_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    protected function addOroB2BPriceListForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_price_list');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_user'),
-            ['user_owner_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_organization'),
-            ['organization_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 }
