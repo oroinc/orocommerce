@@ -172,6 +172,8 @@ workflows:
                     is_checkout_continue: true
                     page_component_module: 'orob2bcheckout/js/app/components/payment-transition-button-component'
                 form_options:
+                    init_actions:
+                        - '@assign_value': [$payment_validate, true]
                     attribute_fields:
                         payment_method: ~
                         payment_validate:
