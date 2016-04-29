@@ -104,7 +104,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $websiteUs = $this->getReference(LoadWebsiteData::WEBSITE1);
 
         /** @var Website $websiteCa */
-        $websiteCa = $this->getReference(LoadWebsiteData::WEBSITE2);
+        $websiteCa = $this->getReference(LoadWebsiteData::WEBSITE3);
 
         $this->assertEquals(
             $priceList->getId(),
@@ -319,7 +319,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
             ],
             [
                 'priceList' => 'price_list_3',
-                'result' => 3,
+                'result' => 0,
                 'calculatedPrices' => false,
             ],
             [
@@ -337,6 +337,13 @@ class CombinedPriceListRepositoryTest extends WebTestCase
      */
     public function testGetCPLsForPriceCollectByTimeOffset($offsetHours, $result)
     {
+        /** @var CombinedPriceList $cpl */
+        $cpl = $this->getReference('2f');
+        $cpl->setPricesCalculated(false);
+        $this->getManager()->flush();
+        $cpl = $this->getReference('1f');
+        $cpl->setPricesCalculated(false);
+        $this->getManager()->flush();
         $cPriceLists = $this->getRepository()->getCPLsForPriceCollectByTimeOffset($offsetHours);
         $this->assertCount($result, $cPriceLists);
     }
@@ -349,11 +356,11 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         return [
             [
                 'offsetHours' => 11,
-                'result' => 0
+                'result' => 1
             ],
             [
-                'offsetHours' => 13,
-                'result' => 1
+                'offsetHours' => 7 * 24,
+                'result' => 2
             ]
         ];
     }

@@ -295,7 +295,7 @@ class CombinedPriceListRepository extends EntityRepository
         $activateDate->add(new \DateInterval(sprintf('PT%dM', $offsetHours * 60)));
 
         $qb = $this->createQueryBuilder('cpl');
-        $qb->select('cpl')
+        $qb->select('distinct cpl')
             ->join(
                 'OroB2BPricingBundle:CombinedPriceListActivationRule',
                 'combinedPriceListActivationRule',

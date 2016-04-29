@@ -38,7 +38,7 @@ class LoadCombinedPriceListsActivationRules extends AbstractFixture implements D
         ],
         [
             'fullCombinedPriceList' => '1f',
-            'combinedPriceList' => '2f',
+            'combinedPriceList' => '1f',
             'activateAtOffset' => '+6 days',
             'expiredAtOffset' => null,
             'active' => false,
