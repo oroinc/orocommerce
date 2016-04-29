@@ -75,7 +75,7 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
             $output->writeln('<info>Start the process recalculation</info>');
             /** @var CombinedPriceListQueueConsumer $consumer */
             $priceListCollectionConsumer = $container->get('orob2b_pricing.builder.queue_consumer');
-            $priceListCollectionConsumer->process($force);
+            $priceListCollectionConsumer->process();
             $productPriceConsumer = $container->get('orob2b_pricing.builder.combined_product_price_queue_consumer');
             $productPriceConsumer->process();
 

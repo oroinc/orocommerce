@@ -1,8 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller;
+namespace OroB2B\Bundle\PricingBundle\Tests\Functional\RecalculateTriggersFiller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
+use OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller;
 
 /**
  * @dbIsolation
@@ -19,7 +21,6 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->markTestSkipped('Need correction after BB-2795');
         $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures(
@@ -79,7 +80,7 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
                 'websites' => ['US'],
                 'accountGroups' => ['account_group.group1'],
                 'accounts' => ['account.level_1_1'],
-                'force' => false,
+                'force' => true,
                 'priceListChangeTriggersCount' => 2,
             ],
             [
@@ -100,7 +101,7 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
                 'websites' => ['Canada', 'US'],
                 'accountGroups' => [],
                 'accounts' => [],
-                'force' => false,
+                'force' => true,
                 'priceListChangeTriggersCount' => 2,
             ],
             [

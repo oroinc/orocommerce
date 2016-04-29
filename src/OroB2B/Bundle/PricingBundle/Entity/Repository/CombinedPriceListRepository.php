@@ -260,9 +260,10 @@ class CombinedPriceListRepository extends EntityRepository
 
     /**
      * @param PriceList $priceList
+     * @param null $hasCalculatedPrices
      * @return BufferedQueryResultIterator
      */
-    public function getCombinedPriceListsByPriceList(PriceList $priceList)
+    public function getCombinedPriceListsByPriceList(PriceList $priceList, $hasCalculatedPrices = null)
     {
         $qb = $this->createQueryBuilder('cpl');
 
@@ -275,6 +276,10 @@ class CombinedPriceListRepository extends EntityRepository
             )
             ->where($qb->expr()->eq('priceListRelations.priceList', ':priceList'))
             ->setParameter('priceList', $priceList);
+        if ($hasCalculatedPrices !== null) {
+            $qb->andWhere($qb->expr()->eq('cpl.pricesCalculated', ':hasCalculatedPrices'))
+                ->setParameter('hasCalculatedPrices', $hasCalculatedPrices);
+        }
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }

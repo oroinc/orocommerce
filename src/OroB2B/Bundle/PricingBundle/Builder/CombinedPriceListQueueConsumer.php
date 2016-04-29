@@ -78,7 +78,7 @@ class CombinedPriceListQueueConsumer
         $forceTrigger = $this->findBuildAllForceTrigger();
         if ($forceTrigger) {
             $this->handlePriceListChangeTrigger($forceTrigger);
-            $this->getRepository()->removeAll();
+            $this->getRepository()->deleteAll();
             $manager->flush();
 
             return;
@@ -112,8 +112,7 @@ class CombinedPriceListQueueConsumer
             case !is_null($trigger->getAccount()):
                 $this->accountPriceListsBuilder->build(
                     $trigger->getWebsite(),
-                    $trigger->getAccount(),
-                    $trigger->isForce()
+                    $trigger->getAccount()
                 );
                 break;
             case !is_null($trigger->getAccountGroup()):

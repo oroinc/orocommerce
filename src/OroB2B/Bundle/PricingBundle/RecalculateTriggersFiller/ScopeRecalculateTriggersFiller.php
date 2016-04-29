@@ -41,18 +41,10 @@ class ScopeRecalculateTriggersFiller
         $accountGroups = $this->getRecalculatedAccountGroups($accountGroupIds);
         $accounts = $this->getRecalculatedAccounts($accountIds);
 
-        if (!$websites && !$accountGroups && !$accounts && !$force) {
-            return;
-        }
-
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger');
 
-        if ($force) {
-            $this->createForceTriggers($em);
-        } else {
-            $this->createWithoutForceTriggers($em, $websites, $accountGroups, $accounts);
-        }
+        $this->createWithoutForceTriggers($em, $websites, $accountGroups, $accounts, $force);
 
         $em->flush();
     }
@@ -64,7 +56,7 @@ class ScopeRecalculateTriggersFiller
     {
         $this->clearAllExistingTriggers();
         $priceListChangeTrigger = new PriceListChangeTrigger();
-
+        $priceListChangeTrigger->setForce(true);
         $em->persist($priceListChangeTrigger);
     }
 
@@ -73,8 +65,9 @@ class ScopeRecalculateTriggersFiller
      * @param Website[] $websites
      * @param AccountGroup[] $accountGroups
      * @param Account[] $accounts
+     * @param bool $force
      */
-    protected function createWithoutForceTriggers(EntityManager $em, $websites, $accountGroups, $accounts)
+    protected function createWithoutForceTriggers(EntityManager $em, $websites, $accountGroups, $accounts, $force)
     {
         if ($accountGroups && $accounts) {
             $this->clearExistingScopesPriceListChangeTriggers($websites, $accountGroups, []);
@@ -83,7 +76,7 @@ class ScopeRecalculateTriggersFiller
             $this->clearExistingScopesPriceListChangeTriggers($websites, $accountGroups, $accounts);
         }
 
-        $this->preparePriceListChangeTriggersForScopes($em, $websites, $accountGroups, $accounts);
+        $this->preparePriceListChangeTriggersForScopes($em, $websites, $accountGroups, $accounts, $force);
     }
 
     protected function clearAllExistingTriggers()
@@ -131,24 +124,30 @@ class ScopeRecalculateTriggersFiller
      * @param Website[] $websites
      * @param AccountGroup[] $accountGroups
      * @param Account[] $accounts
+     * @param bool $force
      */
-    protected function preparePriceListChangeTriggersForScopes(EntityManager $em, $websites, $accountGroups, $accounts)
-    {
+    protected function preparePriceListChangeTriggersForScopes(
+        EntityManager $em,
+        $websites,
+        $accountGroups,
+        $accounts,
+        $force
+    ) {
         if (empty($websites) && (!empty($accountGroups) || !empty($accounts))) {
             $websites = $this->registry->getRepository('OroB2BWebsiteBundle:Website')->findAll();
         }
 
         foreach ($websites as $website) {
             if (empty($accountGroups) && empty($accounts)) {
-                $this->persistWebsiteScopeTrigger($em, $website);
+                $this->persistWebsiteScopeTrigger($em, $website, $force);
             }
 
             if ($accountGroups) {
-                $this->persistAccountGroupScopeTriggers($em, $website, $accountGroups);
+                $this->persistAccountGroupScopeTriggers($em, $website, $accountGroups, $force);
             }
 
             if ($accounts) {
-                $this->persistAccountScopeTriggers($em, $website, $accounts);
+                $this->persistAccountScopeTriggers($em, $website, $accounts, $force);
             }
         }
     }
@@ -156,11 +155,13 @@ class ScopeRecalculateTriggersFiller
     /**
      * @param EntityManager $em
      * @param Website $website
+     * @param bool $force
      */
-    protected function persistWebsiteScopeTrigger(EntityManager $em, Website $website)
+    protected function persistWebsiteScopeTrigger(EntityManager $em, Website $website, $force)
     {
         $priceListChangeTriggerForWebsite = new PriceListChangeTrigger();
         $priceListChangeTriggerForWebsite->setWebsite($website);
+        $priceListChangeTriggerForWebsite->setForce($force);
 
         $em->persist($priceListChangeTriggerForWebsite);
     }
@@ -169,13 +170,19 @@ class ScopeRecalculateTriggersFiller
      * @param EntityManager $em
      * @param Website $website
      * @param AccountGroup[] $accountGroups
+     * @param bool $force
      */
-    protected function persistAccountGroupScopeTriggers(EntityManager $em, Website $website, array $accountGroups)
-    {
+    protected function persistAccountGroupScopeTriggers(
+        EntityManager $em,
+        Website $website,
+        array $accountGroups,
+        $force
+    ) {
         foreach ($accountGroups as $accountGroup) {
             $priceListChangeTriggerForAccountGroup = new PriceListChangeTrigger();
             $priceListChangeTriggerForAccountGroup->setWebsite($website);
             $priceListChangeTriggerForAccountGroup->setAccountGroup($accountGroup);
+            $priceListChangeTriggerForAccountGroup->setForce($force);
 
             $em->persist($priceListChangeTriggerForAccountGroup);
         }
@@ -185,13 +192,15 @@ class ScopeRecalculateTriggersFiller
      * @param EntityManager $em
      * @param Website $website
      * @param Account[] $accounts
+     * @param bool $force
      */
-    protected function persistAccountScopeTriggers(EntityManager $em, Website $website, array $accounts)
+    protected function persistAccountScopeTriggers(EntityManager $em, Website $website, array $accounts, $force)
     {
         foreach ($accounts as $account) {
             $priceListChangeTriggerForAccount = new PriceListChangeTrigger();
             $priceListChangeTriggerForAccount->setWebsite($website);
             $priceListChangeTriggerForAccount->setAccount($account);
+            $priceListChangeTriggerForAccount->setForce($force);
 
             $em->persist($priceListChangeTriggerForAccount);
         }
