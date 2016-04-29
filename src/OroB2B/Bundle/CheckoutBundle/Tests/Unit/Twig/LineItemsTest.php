@@ -132,7 +132,6 @@ class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
         $lineItem->setCurrency($currency);
         $lineItem->setQuantity($quantity);
         $lineItem->setPrice(Price::create($priceValue, $currency));
-        $lineItem->setProductSku($name);
         $lineItem->setProductSku($sku);
         if (!$product) {
             $lineItem->setFreeFormProduct($name);
