@@ -7,8 +7,8 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasurementUnitInterface;
-use OroB2B\Bundle\ProductBundle\Formatter\AbstractLabelFormatter;
+use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 
 abstract class AbstractShippingOptionSelectType extends AbstractType
 {
@@ -17,14 +17,14 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
     /** @var EntityRepository */
     protected $repository;
 
-    /** @var AbstractLabelFormatter */
+    /** @var UnitLabelFormatter */
     protected $formatter;
 
     /**
      * @param EntityRepository $repository
-     * @param AbstractLabelFormatter $formatter
+     * @param UnitLabelFormatter $formatter
      */
-    public function __construct(EntityRepository $repository, AbstractLabelFormatter $formatter)
+    public function __construct(EntityRepository $repository, UnitLabelFormatter $formatter)
     {
         $this->repository = $repository;
         $this->formatter = $formatter;
@@ -63,7 +63,7 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
      */
     protected function getChoices()
     {
-        /** @var MeasurementUnitInterface[] $entities */
+        /** @var MeasureUnitInterface[] $entities */
         $entities = $this->repository->findAll();
         $choices = [];
 
