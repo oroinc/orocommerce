@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
  * @ORM\Table(name="orob2b_price_list")
@@ -21,6 +23,13 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *          "dataaudit"={
  *              "auditable"=true
  *          },
+ *          "ownership"={
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="user_owner_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
+ *          },
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
@@ -32,8 +41,10 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      }
  * )
  */
-class PriceList extends BasePriceList
+class PriceList extends BasePriceList implements OrganizationAwareInterface
 {
+    use UserAwareTrait;
+
     /**
      * @var bool
      *

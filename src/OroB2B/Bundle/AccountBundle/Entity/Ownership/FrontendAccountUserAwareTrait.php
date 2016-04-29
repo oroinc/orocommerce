@@ -32,6 +32,10 @@ trait FrontendAccountUserAwareTrait
     {
         $this->accountUser = $accountUser;
 
+        if ($accountUser && $accountUser->getAccount()) {
+            $this->setAccount($accountUser->getAccount());
+        }
+
         return $this;
     }
 }

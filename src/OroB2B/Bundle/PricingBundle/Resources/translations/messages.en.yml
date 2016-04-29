@@ -19,6 +19,8 @@ orob2b.pricing:
         merge_allowed.label: Merge Allowed
         merge_allowed.yes.label: Yes
         merge_allowed.no.label: No
+        owner.label: 'Owner'
+        organization.label: 'Organization'
 
         form:
             pricelist_required: Please select a price list first...
