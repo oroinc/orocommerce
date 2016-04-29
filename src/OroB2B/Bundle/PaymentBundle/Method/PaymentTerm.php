@@ -22,6 +22,12 @@ class PaymentTerm implements PaymentMethodInterface
     /** @var PaymentTermProvider */
     protected $paymentTermProvider;
 
+   /** @var PropertyAccessor */
+    protected $propertyAccessor;
+
+    /** @var DoctrineHelper */
+    protected $doctrineHelper;
+
     /**
      * @param PaymentTermProvider $paymentTermProvider
      * @param ConfigManager $configManager
@@ -45,7 +51,7 @@ class PaymentTerm implements PaymentMethodInterface
     {
         $paymentTransaction->setSuccessful(true);
 
-        $entity = $this->doctrineHelper->getEntity(
+        $entity = $this->doctrineHelper->getEntityReference(
             $paymentTransaction->getEntityClass(),
             $paymentTransaction->getEntityIdentifier()
         );

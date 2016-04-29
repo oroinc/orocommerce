@@ -7,7 +7,6 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -18,9 +17,6 @@ use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 class PaymentTermTest extends \PHPUnit_Framework_TestCase
 {
     use ConfigTestTrait;
-
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
-    protected $configManager;
 
     /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentTermProvider;
@@ -86,7 +82,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->setEntityIdentifier($entityId);
 
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntity')
+            ->method('getEntityReference')
             ->with($entityClass, $entityId)
             ->willReturn(null);
 
@@ -107,7 +103,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->setEntityIdentifier($entityId);
 
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntity')
+            ->method('getEntityReference')
             ->with($entityClass, $entityId)
             ->willReturn($entity);
 
@@ -135,7 +131,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->setSuccessful(true);
 
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntity')
+            ->method('getEntityReference')
             ->with($entityClass, $entityId)
             ->willReturn($entity);
 

@@ -5,13 +5,15 @@ define(function(require) {
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var routing = require('routing');
 
     PaymentTermComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
         options: {
-            paymentMethod: null
+            paymentMethod: null,
+            successUrl: ''
         },
 
         /**
@@ -26,8 +28,23 @@ define(function(require) {
         handleSubmit: function(eventData) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = true;
-                mediator.execute('redirectTo', {url: eventData.responseData.successUrl}, {redirect: true});
+
+                var responseData = _.extend({successUrl: this.getSuccessUrl}, eventData.responseData);
+
+                if (!responseData.successUrl) {
+                    return;
+                }
+
+                mediator.execute('redirectTo', {url: responseData.successUrl}, {redirect: true});
             }
+        },
+
+        getSuccessUrl: function() {
+            if (this.options.successUrl) {
+                return routing.generate(this.options.successUrl);
+            }
+
+            return null;
         },
 
         dispose: function() {
