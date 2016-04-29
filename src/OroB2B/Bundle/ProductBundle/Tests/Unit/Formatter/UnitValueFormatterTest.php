@@ -3,9 +3,9 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Formatter;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 
-class ProductUnitValueFormatterTest extends UnitValueFormatterTestCase
+class UnitValueFormatterTest extends UnitValueFormatterTestCase
 {
     const TRANSLATION_PREFIX = 'orob2b.product_unit';
 
@@ -16,12 +16,8 @@ class ProductUnitValueFormatterTest extends UnitValueFormatterTestCase
     {
         parent::setUp();
 
-        $this->formatter = new ProductUnitValueFormatter($this->translator);
-    }
-
-    public function testGetTranslationPrefix()
-    {
-        $this->assertEquals(static::TRANSLATION_PREFIX, $this->formatter->getTranslationPrefix());
+        $this->formatter = new UnitValueFormatter($this->translator);
+        $this->formatter->setTranslationPrefix(static::TRANSLATION_PREFIX);
     }
 
     /**

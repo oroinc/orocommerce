@@ -2,12 +2,15 @@
 
 namespace OroB2B\Bundle\ProductBundle\Formatter;
 
-class ProductUnitLabelFormatter extends AbstractLabelFormatter
+/**
+ * @deprecated
+ */
+class ProductUnitLabelFormatter extends UnitLabelFormatter
 {
     /**
      * {@inheritdoc}
      */
-    protected function getTranslationPrefix()
+    public function getTranslationPrefix()
     {
         return 'orob2b.product_unit';
     }
