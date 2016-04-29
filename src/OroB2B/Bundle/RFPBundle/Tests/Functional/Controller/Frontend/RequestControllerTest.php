@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
@@ -58,7 +58,7 @@ class RequestControllerTest extends WebTestCase
 
         static::assertContains('frontend-requests-grid', $crawler->html());
 
-        $response = $this->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             [
                 'gridName' => 'frontend-requests-grid',
                 'frontend-requests-grid[_sort_by][id]' => 'ASC',
@@ -339,7 +339,7 @@ class RequestControllerTest extends WebTestCase
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
 
-        $response = $this->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-requests-grid',
             [
                 'frontend-requests-grid[_filter][poNumber][value]' => static::PO_NUMBER

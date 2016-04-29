@@ -129,7 +129,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testUpdate()
     {
-        $response = $this->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-account-account-user-grid',
             [
                 'frontend-account-account-user-grid[_filter][firstName][value]' => self::FIRST_NAME,
