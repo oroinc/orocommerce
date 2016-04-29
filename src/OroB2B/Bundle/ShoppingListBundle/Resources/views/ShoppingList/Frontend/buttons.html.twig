@@ -57,11 +57,6 @@
             label: shoppingListLabel
         }
     }) %}
-    {% if options.dataUrl %}
-        {% set dataAttributes = dataAttributes|merge({
-            urlOptions: (options.dataUrlOptions|merge({shoppingListId: shoppingListId}))|json_encode
-        }) %}
-    {% endif %}
 
     {% set buttonOptions = {
         'dataAttributes': dataAttributes,
@@ -85,46 +80,24 @@
     {{ UI.clientButton(buttonOptions) }}
 {% endmacro %}
 
-{% macro createAddToShoppingListButton(options) %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+{% macro getButtonsHtml(options) %}
     {% import _self as buttons %}
-    {% set buttonsHtml %}
-        {% set existingShoppingLists = [] %}
-        {% for shoppingList in options.shoppingLists %}
-            {% if shoppingList.current %}
-                {{ buttons.addToCurrentButton(options.current|merge({shoppingList: shoppingList})) }}
-            {% else %}
-                {%  set existingShoppingLists = existingShoppingLists|merge([shoppingList]) %}
-            {% endif %}
+    {% set existingShoppingLists = [] %}
+    {% for shoppingList in options.shoppingLists %}
+        {% if shoppingList.current %}
+            {{ buttons.addToCurrentButton(options.current|merge({shoppingList: shoppingList})) }}
         {% else %}
-            {% set aCss = options.singleButtonACss is defined ? options.singleButtonACss : "" %}
-            {{ buttons.addToCurrentButton(options.current|merge({shoppingList: null, aCss: aCss})) }}
-        {% endfor %}
-        {% for shoppingList in existingShoppingLists %}
-            {{ buttons.addToButton(options.existing|merge({shoppingList: shoppingList})) }}
-        {% endfor %}
-        {% if options.shoppingLists is not empty %}
-            {{ buttons.addToNewButton(options.new) }}
+            {%  set existingShoppingLists = existingShoppingLists|merge([shoppingList]) %}
         {% endif %}
-    {% endset %}
-    {% set customOptions = {
-        defaultClass: options.defaultClass|default(''),
-        addedClass: options.addedClass|default(''),
-    } %}
-    {% set customOptions = customOptions
-        |merge(options.groupContainer|default(false) ? {'groupContainer': options.groupContainer} : {} )
-        |merge(options.truncateLabelLength|default(false) ? {'truncateLength': options.truncateLabelLength} : {} )
-    %}
-    {{ UI.pinnedDropdownButton({
-        'html': buttonsHtml,
-        'options': {
-            'widgetModule': 'orob2bproduct/js/content-processor/product-add-to-dropdown-button',
-            'widgetName': 'productAddToDropdownButtonProcessor',
-            'addButtonEvent': 'shopping-list:created',
-            'updateButtonLabel': options.updateButtonLabel is defined ? options.updateButtonLabel : true,
-            'buttonTemplate': buttons.buttonTemplate(options.current),
-            'buttonRemoveTemplate': options.remove is defined ? buttons.buttonTemplate(options.remove) : '',
-            'truncateLength': 15
-        }|merge(customOptions)
-    }) }}
+    {% else %}
+        {% set aCss = options.singleButtonACss is defined ? options.singleButtonACss : "" %}
+        {{ buttons.addToCurrentButton(options.current|merge({shoppingList: null, aCss: aCss})) }}
+    {% endfor %}
+    {% for shoppingList in existingShoppingLists %}
+        {{ buttons.addToButton(options.existing|merge({shoppingList: shoppingList})) }}
+    {% endfor %}
+    {% if options.shoppingLists is not empty %}
+        {{ buttons.addToNewButton(options.new) }}
+    {% endif %}
 {% endmacro %}
+

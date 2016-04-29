@@ -4,9 +4,9 @@ define(function(require) {
     var BaseProductView;
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orob2bfrontend/js/app/elements-helper');
+    var BaseModel = require('oroui/js/app/models/base/model');
     var $ = require('jquery');
     var _ = require('underscore');
-    var tools = require('oroui/js/tools');
 
     BaseProductView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
@@ -16,37 +16,42 @@ define(function(require) {
 
         modelElements: ['quantity', 'unit'],
 
-        defaults: {
+        modelAttr: {
+            id: 0,
             quantity: 0,
             unit: ''
         },
 
         initialize: function(options) {
             BaseProductView.__super__.initialize.apply(this, arguments);
-            if (!this.model) {
-                if (tools.debug) {
-                    throw new Error('Model not defined!');
-                }
-                return;
-            }
-            this.initializeElements(options);
 
-            $.extend(true, this, _.pick(options, ['defaults']));
-            this.setDefaults();
+            this.initModel(options);
+            this.initializeElements(options);
+            this.initLayout({
+                productModel: this.model
+            });
+        },
+
+        initModel: function(options) {
+            this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
+            if (options.productModel) {
+                this.model = options.productModel;
+            }
+            if (!this.model) {
+                this.model = new BaseModel();
+            }
+
+            _.each(this.modelAttr, function(value, attribute) {
+                if (!this.model.has(attribute)) {
+                    this.model.set(attribute, value);
+                }
+            }, this);
         },
 
         dispose: function() {
+            delete this.modelAttr;
             this.disposeElements();
             BaseProductView.__super__.dispose.apply(this, arguments);
-        },
-
-        setDefaults: function() {
-            var model = this.model;
-            _.each(this.defaults, function(value, attribute) {
-                if (!model.has(attribute)) {
-                    model.set(attribute, value);
-                }
-            });
         }
     }));
 

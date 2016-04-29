@@ -20,13 +20,7 @@
         'aCss': 'direct-link btn-block btn-orange btn_lg',
         'dataUrl': 'orob2b_rfp_frontend_request_create',
         'dataAttributes': {
-            'urlOptions': {
-                'product_id': product.id
-            }
-        },
-        'pageComponent': {
-            module: 'orob2bsale/js/app/components/request-quote-from-product-view-component',
-            options: {}
+            'product-add-to-button': 'orob2bsale/js/handlers/product-add-to-rfq-handler'
         }
     } %}
     {{ UI.clientButton(btnOptions) }}

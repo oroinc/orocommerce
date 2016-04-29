@@ -239,7 +239,7 @@ class RequestController extends Controller
 
         $lineItems = $request->query->get('product_items', []);
         foreach ($lineItems as $lineItem) {
-            if (!array_diff($fields, array_keys($lineItem))) { // line item has all required fields
+            if (array_diff($fields, array_keys($lineItem))) { // line item has all required fields
                 continue;
             }
             $rfpRequestManager->addProductItemToRequest(

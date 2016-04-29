@@ -6,7 +6,6 @@ define(function(require) {
     var ElementsHelper = require('orob2bfrontend/js/app/elements-helper');
     var _ = require('underscore');
     var NumberFormatter = require('orolocale/js/formatter/number');
-    var tools = require('oroui/js/tools');
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
@@ -21,10 +20,9 @@ define(function(require) {
 
         initialize: function(options) {
             BaseProductPricesView.__super__.initialize.apply(this, arguments);
+
+            this.initModel(options);
             if (!this.model) {
-                if (tools.debug) {
-                    throw new Error('Model not defined!');
-                }
                 return;
             }
             this.initializeElements(options);
@@ -45,6 +43,12 @@ define(function(require) {
         render: function() {
             this.updatePrice();
             this.renderHint();
+        },
+
+        initModel: function(options) {
+            if (options.productModel) {
+                this.model = options.productModel;
+            }
         },
 
         renderHint: function() {
