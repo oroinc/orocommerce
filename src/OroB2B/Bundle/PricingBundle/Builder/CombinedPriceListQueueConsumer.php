@@ -77,7 +77,7 @@ class CombinedPriceListQueueConsumer
 
         $forceTrigger = $this->findBuildAllForceTrigger();
         if ($forceTrigger) {
-            $this->handlePriceListChangeTrigger($forceTrigger, $forceTrigger->isForce());
+            $this->handlePriceListChangeTrigger($forceTrigger);
             $this->getRepository()->removeAll();
             $manager->flush();
 
@@ -86,7 +86,7 @@ class CombinedPriceListQueueConsumer
 
         $i = 0;
         foreach ($this->getUniqueTriggersIterator() as $changeItem) {
-            $this->handlePriceListChangeTrigger($changeItem, $changeItem->isForce());
+            $this->handlePriceListChangeTrigger($changeItem);
             $manager->remove($changeItem);
             if (++$i % 100 === 0) {
                 $manager->flush();
@@ -105,26 +105,29 @@ class CombinedPriceListQueueConsumer
 
     /**
      * @param PriceListChangeTrigger $trigger
-     * @param null $behavior
      */
-    protected function handlePriceListChangeTrigger(PriceListChangeTrigger $trigger, $behavior)
+    protected function handlePriceListChangeTrigger(PriceListChangeTrigger $trigger)
     {
         switch (true) {
             case !is_null($trigger->getAccount()):
-                $this->accountPriceListsBuilder->build($trigger->getWebsite(), $trigger->getAccount(), $behavior);
+                $this->accountPriceListsBuilder->build(
+                    $trigger->getWebsite(),
+                    $trigger->getAccount(),
+                    $trigger->isForce()
+                );
                 break;
             case !is_null($trigger->getAccountGroup()):
                 $this->accountGroupPriceListsBuilder->build(
                     $trigger->getWebsite(),
                     $trigger->getAccountGroup(),
-                    $behavior
+                    $trigger->isForce()
                 );
                 break;
             case !is_null($trigger->getWebsite()):
-                $this->websitePriceListsBuilder->build($trigger->getWebsite(), $behavior);
+                $this->websitePriceListsBuilder->build($trigger->getWebsite(), $trigger->isForce());
                 break;
             default:
-                $this->commonPriceListsBuilder->build($behavior);
+                $this->commonPriceListsBuilder->build($trigger->isForce());
         }
     }
 
