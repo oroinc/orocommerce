@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Formatter;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
-class ProductUnitLabelFormatterTest extends LabelFormatterTestCase
+class UnitLabelFormatterTest extends LabelFormatterTestCase
 {
     const TRANSLATION_PREFIX = 'orob2b.product_unit';
 
@@ -14,6 +14,7 @@ class ProductUnitLabelFormatterTest extends LabelFormatterTestCase
         parent::setUp();
 
         $this->formatter = new ProductUnitLabelFormatter($this->translator);
+        $this->formatter->setTranslationPrefix(static::TRANSLATION_PREFIX);
     }
 
     /**

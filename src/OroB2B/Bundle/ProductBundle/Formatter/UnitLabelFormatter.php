@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\ProductBundle\Formatter;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasurementUnitInterface;
+use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
-abstract class AbstractLabelFormatter extends AbstractFormatter
+class UnitLabelFormatter extends AbstractUnitFormatter
 {
     /**
      * @param string $code
@@ -15,10 +15,12 @@ abstract class AbstractLabelFormatter extends AbstractFormatter
      */
     public function format($code, $isShort = false, $isPlural = false)
     {
+        $this->assertTranslationPrefix();
+
         return $this->translator->trans(
             sprintf(
                 '%s.%s.label.%s%s',
-                $this->getTranslationPrefix(),
+                $this->translationPrefix,
                 $code,
                 $isShort ? 'short' : 'full',
                 $isPlural ? '_plural' : ''
@@ -27,7 +29,7 @@ abstract class AbstractLabelFormatter extends AbstractFormatter
     }
 
     /**
-     * @param array|MeasurementUnitInterface[] $units
+     * @param array|MeasureUnitInterface[] $units
      * @param bool $isShort
      * @param bool $isPlural
      *

@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasurementUnitInterface;
+use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use OroB2B\Bundle\ProductBundle\Formatter\AbstractUnitValueFormatter;
 
 abstract class UnitValueFormatterTestCase extends \PHPUnit_Framework_TestCase
@@ -80,7 +80,7 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $code
-     * @return MeasurementUnitInterface
+     * @return MeasureUnitInterface
      */
     abstract protected function createObject($code);
 }

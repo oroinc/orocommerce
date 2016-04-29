@@ -2,12 +2,20 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasurementUnitInterface;
+use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 
 abstract class UnitValueExtensionTestCase extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var UnitValueFormatter|\PHPUnit_Framework_MockObject_MockObject */
     protected $formatter;
+
+    protected function setUp()
+    {
+        $this->formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
 
     public function testGetFilters()
     {
@@ -80,7 +88,7 @@ abstract class UnitValueExtensionTestCase extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $code
-     * @return MeasurementUnitInterface
+     * @return MeasureUnitInterface
      */
     abstract protected function createObject($code);
 }

@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Twig;
 
-use OroB2B\Bundle\ProductBundle\Formatter\AbstractUnitValueFormatter;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 
 class WeightUnitValueExtension extends \Twig_Extension
 {
@@ -12,9 +12,9 @@ class WeightUnitValueExtension extends \Twig_Extension
     protected $formatter;
 
     /**
-     * @param AbstractUnitValueFormatter $formatter
+     * @param UnitValueFormatter $formatter
      */
-    public function __construct(AbstractUnitValueFormatter $formatter)
+    public function __construct(UnitValueFormatter $formatter)
     {
         $this->formatter = $formatter;
     }
@@ -26,17 +26,17 @@ class WeightUnitValueExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter(
-                'orob2b_format_weight_unit_value',
+                'orob2b_weight_unit_format_value',
                 [$this->formatter, 'format'],
                 ['is_safe' => ['html']]
             ),
             new \Twig_SimpleFilter(
-                'orob2b_format_short_weight_unit_value',
+                'orob2b_weight_unit_format_value_short',
                 [$this->formatter, 'formatShort'],
                 ['is_safe' => ['html']]
             ),
             new \Twig_SimpleFilter(
-                'orob2b_format_weight_unit_code',
+                'orob2b_weight_unit_format_code',
                 [$this->formatter, 'formatCode'],
                 ['is_safe' => ['html']]
             ),

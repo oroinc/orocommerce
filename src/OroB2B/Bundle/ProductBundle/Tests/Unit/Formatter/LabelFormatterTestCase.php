@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasurementUnitInterface;
+use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use OroB2B\Bundle\ProductBundle\Formatter\AbstractLabelFormatter;
 
 abstract class LabelFormatterTestCase extends \PHPUnit_Framework_TestCase
@@ -144,7 +144,7 @@ abstract class LabelFormatterTestCase extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $code
-     * @return MeasurementUnitInterface
+     * @return MeasureUnitInterface
      */
     abstract protected function createObject($code);
 }

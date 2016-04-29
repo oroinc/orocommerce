@@ -2,28 +2,28 @@
 
 namespace OroB2B\Bundle\ProductBundle\Formatter;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasurementUnitInterface;
+use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
-abstract class AbstractUnitValueFormatter extends AbstractFormatter
+class UnitValueFormatter extends AbstractUnitFormatter
 {
     /**
      * @param float|integer $value
-     * @param MeasurementUnitInterface $unit
+     * @param MeasureUnitInterface $unit
      *
      * @return string
      */
-    public function format($value, MeasurementUnitInterface $unit)
+    public function format($value, MeasureUnitInterface $unit)
     {
         return $this->formatCode($value, $unit->getCode());
     }
 
     /**
      * @param float|integer $value
-     * @param MeasurementUnitInterface $unit
+     * @param MeasureUnitInterface $unit
      *
      * @return string
      */
-    public function formatShort($value, MeasurementUnitInterface $unit)
+    public function formatShort($value, MeasureUnitInterface $unit)
     {
         return $this->formatCode($value, $unit->getCode(), true);
     }
@@ -43,8 +43,10 @@ abstract class AbstractUnitValueFormatter extends AbstractFormatter
             );
         }
 
+        $this->assertTranslationPrefix();
+
         return $this->translator->transChoice(
-            sprintf('%s.%s.value.%s', $this->getTranslationPrefix(), $unitCode, $isShort ? 'short' : 'full'),
+            sprintf('%s.%s.value.%s', $this->translationPrefix, $unitCode, $isShort ? 'short' : 'full'),
             $value,
             [
                 '%count%' => $value
