@@ -433,6 +433,14 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener }
 
+    #TODO: refactor after BB-1289
+    orob2b_pricing.entity_listener.price_list:
+        class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener'
+        arguments:
+            - '@orob2b_pricing.price_list_change_trigger_handler'
+        tags:
+            - { name: doctrine.orm.entity_listener }
+
     orob2b_pricing.provider.matching_price:
         class: 'OroB2B\Bundle\PricingBundle\Provider\MatchingPriceProvider'
         arguments:
