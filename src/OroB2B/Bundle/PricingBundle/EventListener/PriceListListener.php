@@ -44,7 +44,7 @@ class PriceListListener
     /**
      * @param AfterFormProcessEvent $event
      */
-    public function beforeFlush(AfterFormProcessEvent $event)
+    public function afterFlush(AfterFormProcessEvent $event)
     {
         /** @var PriceList $priceList */
         $priceList = $event->getData();

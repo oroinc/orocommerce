@@ -105,7 +105,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
                     'expectedActualCpl' => '2f_1t_3t',
                     'expectedFullCpl' => '2f_1t_3t',
                 ],
-                'now' => $this->createDateTime('+1 day'),
+                'now' => $this->createDateTime('+2 day'),
             ],
             [
                 'cplRelationsExpected' => [
@@ -117,21 +117,21 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
                     'fullCpl' => '2f_1t_3t',
                     'expectedActualCpl' => '2f',
                     'expectedFullCpl' => '2f_1t_3t',
+                ],
+                'now' => $this->createDateTime('+50 hours'),
+            ],
+            [
+                'cplRelationsExpected' => [
+                    'full' => '1f',
+                    'actual' => '2f',
+                ],
+                'cplConfig' => [
+                    'actualCpl' => '1f',
+                    'fullCpl' => '1f',
+                    'expectedActualCpl' => '2f',
+                    'expectedFullCpl' => '1f',
                 ],
                 'now' => $this->createDateTime('+4 days'),
-            ],
-            [
-                'cplRelationsExpected' => [
-                    'full' => '2f_1t_3t',
-                    'actual' => '2f',
-                ],
-                'cplConfig' => [
-                    'actualCpl' => '2f_1t_3t',
-                    'fullCpl' => '2f_1t_3t',
-                    'expectedActualCpl' => '2f',
-                    'expectedFullCpl' => '2f_1t_3t',
-                ],
-                'now' => $this->createDateTime('+7 days'),
             ],
         ];
     }
