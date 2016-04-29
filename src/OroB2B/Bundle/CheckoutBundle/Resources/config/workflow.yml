@@ -385,8 +385,11 @@ workflows:
             verify_payment_definition:
                 pre_conditions:
                     '@and':
-                        - '@equal': [$payment_validate, false]
                         - '@not_equal': [$payment_in_progress, true]
+                        - '@not':
+                            - '@payment_method_supports':
+                                payment_method: $payment_method
+                                action: 'validate'
                         - '@not':
                             - '@check_request':
                                 is_ajax: true
@@ -453,7 +456,10 @@ workflows:
                         conditions:
                             '@and':
                                 - '@not_empty': $checkout.order.id
-                                - '@equal': [$payment_validate, false]
+                                - '@not':
+                                    - '@payment_method_supports':
+                                        payment_method: $payment_method
+                                        action: 'validate'
                         actions:
                             - '@assign_url':
                                 attribute: $.result.successUrl
@@ -481,7 +487,9 @@ workflows:
                         conditions:
                             '@and':
                                 - '@not_empty': $checkout.order.id
-                                - '@equal': [$payment_validate, true]
+                                - '@payment_method_supports':
+                                    payment_method: $payment_method
+                                    action: 'validate'
                         actions:
                             - '@payment_purchase':
                                 object: $checkout.order
