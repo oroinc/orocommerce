@@ -489,6 +489,12 @@ workflows:
                                 amount: $checkout.order.total
                                 currency: $checkout.order.currency
                                 paymentMethod: $payment_method
+                            - '@assign_value': [$payment_in_progress, true]
+                            - '@redirect':
+                                route: orob2b_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: 'finish_checkout'
 
             finish_checkout_definition:
                 conditions:
