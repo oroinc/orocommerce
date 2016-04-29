@@ -56,5 +56,10 @@ class UpdateCPLNameQuery implements MigrationQuery, ConnectionAwareInterface
         if (!$dryRun) {
             $this->connection->executeQuery($query);
         }
+        $query  = 'INSERT INTO orob2b_price_list_ch_trigger (is_force) VALUES (TRUE)';
+        $logger->info($query);
+        if (!$dryRun) {
+            $this->connection->executeQuery($query);
+        }
     }
 }
