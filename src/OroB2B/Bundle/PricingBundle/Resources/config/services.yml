@@ -57,7 +57,6 @@ services:
         abstract: true
         arguments:
             - '@doctrine'
-            - '@orob2b_pricing.model.price_list_request_handler'
 
     orob2b_pricing.provider.product_price:
         parent: orob2b_pricing.provider.abstract_product_price
