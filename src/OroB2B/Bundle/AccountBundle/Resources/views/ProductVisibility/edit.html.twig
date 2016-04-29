@@ -58,7 +58,7 @@
             {{ tabPanel(tabs, {'useDropdown': true}) }}
         </div>
     {% endset %}
-    
+
     {% set dataBlocks = [
         {
             'title': 'Product visibility',
@@ -67,7 +67,7 @@
             ]
         }
     ] %}
-    
+
     {% set data = {
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks

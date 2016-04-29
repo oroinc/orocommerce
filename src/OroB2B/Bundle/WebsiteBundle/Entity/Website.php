@@ -27,6 +27,7 @@ use OroB2B\Bundle\WebsiteBundle\Model\ExtendWebsite;
  * @Config(
  *      routeName="orob2b_website_index",
  *      routeView="orob2b_website_view",
+ *      routeUpdate="orob2b_website_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"

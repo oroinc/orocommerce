@@ -32,9 +32,7 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.view = new FormView(this.options);
 
-            this.options._sourceElement
-                .on('change', this.options.selectors.accountUser, _.bind(this.onChangeAccountUser, this));
-
+            mediator.on('account-account-user:change', this.onChangeAccountUser, this);
             mediator.on('entry-point:order:load', this.loadRelatedData, this);
         },
 
@@ -59,10 +57,8 @@ define(function(require) {
                 return;
             }
 
+            mediator.off('account-account-user:change', this.onChangeAccountUser, this);
             mediator.off('entry-point:order:load', this.loadRelatedData, this);
-
-            this.options._sourceElement
-                .off('change', this.options.selectors.accountUser, _.bind(this.onChangeAccountUser, this));
 
             RelatedDataComponent.__super__.dispose.call(this);
         }
