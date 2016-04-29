@@ -40,15 +40,22 @@ class CheckoutLineItemsManager
 
     /**
      * @param CheckoutInterface $checkout
+     * @param bool $onlyWithPrices
      * @return Collection|OrderLineItem[]
      */
-    public function getData(CheckoutInterface $checkout)
+    public function getData(CheckoutInterface $checkout, $onlyWithPrices = true)
     {
         $entity = $checkout->getSourceEntity();
 
         foreach ($this->providers as $provider) {
             if ($provider->isEntitySupported($entity)) {
-                return $this->checkoutLineItemsConverter->convert($provider->getData($entity));
+                $lineItems = $this->checkoutLineItemsConverter->convert($provider->getData($entity));
+                if ($onlyWithPrices) {
+                    $lineItems = $lineItems->filter(function (OrderLineItem $lineItem) {
+                        return $lineItem->getPrice();
+                    });
+                }
+                return $lineItems;
             }
         }
 
