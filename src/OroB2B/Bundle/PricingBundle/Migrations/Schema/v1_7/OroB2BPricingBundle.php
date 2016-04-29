@@ -12,7 +12,6 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -30,7 +29,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
      */
     public function getOrder()
     {
-        return 10;
+        return 20;
     }
 
     /**
@@ -51,9 +50,9 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
         $this->addOrob2BPriceListScheduleForeignKeys($schema);
         $this->addOrob2BCplActivationRuleForeignKeys($schema);
 
-        $this->recreateOroB2BCmbPriceListToAccTable($schema);
-        $this->recreateOroB2BCmbPriceListToAccGrTable($schema);
-        $this->recreateOroB2BCmbPriceListToWsTable($schema);
+        $this->createOroB2BCmbPriceListToAccTable($schema);
+        $this->createOroB2BCmbPriceListToAccGrTable($schema);
+        $this->createOroB2BCmbPriceListToWsTable($schema);
 
         $this->addOrob2BCmbPriceListToAccGrForeignKeys($schema);
         $this->addOrob2BCmbPriceListToWsForeignKeys($schema);
@@ -157,9 +156,8 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
      *
      * @param Schema $schema
      */
-    protected function recreateOroB2BCmbPriceListToAccTable(Schema $schema)
+    protected function createOroB2BCmbPriceListToAccTable(Schema $schema)
     {
-        $schema->dropTable('orob2b_cmb_price_list_to_acc');
         $table = $schema->createTable('orob2b_cmb_price_list_to_acc');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->setPrimaryKey(['id']);
@@ -175,9 +173,8 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
      *
      * @param Schema $schema
      */
-    protected function recreateOroB2BCmbPriceListToAccGrTable(Schema $schema)
+    protected function createOroB2BCmbPriceListToAccGrTable(Schema $schema)
     {
-        $schema->dropTable('orob2b_cmb_plist_to_acc_gr');
         $table = $schema->createTable('orob2b_cmb_plist_to_acc_gr');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->setPrimaryKey(['id']);
@@ -193,9 +190,8 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
      *
      * @param Schema $schema
      */
-    protected function recreateOroB2BCmbPriceListToWsTable(Schema $schema)
+    protected function createOroB2BCmbPriceListToWsTable(Schema $schema)
     {
-        $schema->dropTable('orob2b_cmb_price_list_to_ws');
         $table = $schema->createTable('orob2b_cmb_price_list_to_ws');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->setPrimaryKey(['id']);
