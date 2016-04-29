@@ -15,12 +15,10 @@ class UnitLabelFormatter extends AbstractUnitFormatter
      */
     public function format($code, $isShort = false, $isPlural = false)
     {
-        $this->assertTranslationPrefix();
-
         return $this->translator->trans(
             sprintf(
                 '%s.%s.label.%s%s',
-                $this->translationPrefix,
+                $this->getTranslationPrefix(),
                 $code,
                 $isShort ? 'short' : 'full',
                 $isPlural ? '_plural' : ''

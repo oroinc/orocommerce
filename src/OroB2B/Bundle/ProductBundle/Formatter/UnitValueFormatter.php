@@ -43,10 +43,8 @@ class UnitValueFormatter extends AbstractUnitFormatter
             );
         }
 
-        $this->assertTranslationPrefix();
-
         return $this->translator->transChoice(
-            sprintf('%s.%s.value.%s', $this->translationPrefix, $unitCode, $isShort ? 'short' : 'full'),
+            sprintf('%s.%s.value.%s', $this->getTranslationPrefix(), $unitCode, $isShort ? 'short' : 'full'),
             $value,
             [
                 '%count%' => $value

@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Formatter;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 
 class UnitValueFormatterTest extends UnitValueFormatterTestCase
 {
@@ -13,7 +13,7 @@ class UnitValueFormatterTest extends UnitValueFormatterTestCase
     {
         parent::setUp();
 
-        $this->formatter = new ProductUnitValueFormatter($this->translator);
+        $this->formatter = new UnitValueFormatter($this->translator);
         $this->formatter->setTranslationPrefix(static::TRANSLATION_PREFIX);
     }
 

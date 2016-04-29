@@ -10,7 +10,7 @@ abstract class AbstractUnitFormatter
     protected $translator;
 
     /** @var string */
-    protected $translationPrefix;
+    private $translationPrefix;
 
     /**
      * @param TranslatorInterface $translator
@@ -29,12 +29,16 @@ abstract class AbstractUnitFormatter
     }
 
     /**
+     * @return string
+     *
      * @throws \Exception
      */
-    protected function assertTranslationPrefix()
+    public function getTranslationPrefix()
     {
         if (!$this->translationPrefix) {
             throw new \Exception('Translation prefix must be defined.');
         }
+
+        return $this->translationPrefix;
     }
 }

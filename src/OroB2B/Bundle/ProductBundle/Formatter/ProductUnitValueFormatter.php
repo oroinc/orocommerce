@@ -7,5 +7,11 @@ namespace OroB2B\Bundle\ProductBundle\Formatter;
  */
 class ProductUnitValueFormatter extends UnitValueFormatter
 {
-    protected $translationPrefix = 'orob2b.product_unit';
+    /**
+     * {@inheritdoc}
+     */
+    public function getTranslationPrefix()
+    {
+        return 'orob2b.product_unit';
+    }
 }
