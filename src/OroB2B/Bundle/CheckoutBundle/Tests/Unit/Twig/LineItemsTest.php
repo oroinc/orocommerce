@@ -61,6 +61,7 @@ class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
         $quantity = 22;
         $priceValue = 123;
         $name = 'Item Name';
+        $sku = 'Item Sku';
 
         $subtotals = [
             (new Subtotal())->setLabel('label2')->setAmount(321)->setCurrency('UAH'),
@@ -71,8 +72,8 @@ class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
         $order->setCurrency($currency);
 
-        $product = $freeForm ? null : (new Product())->setSku($name);
-        $order->addLineItem($this->createLineItem($currency, $quantity, $priceValue, $name, $product));
+        $product = $freeForm ? null : (new Product())->setSku($sku);
+        $order->addLineItem($this->createLineItem($currency, $quantity, $priceValue, $name, $sku, $product));
 
         $result = $this->extension->getOrderLineItems($order);
         $this->assertArrayHasKey('lineItems', $result);
@@ -81,8 +82,10 @@ class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $result['subtotals']);
 
         $lineItem = $result['lineItems'][0];
+        $productName = $freeForm ? $name : $sku;
+        $this->assertEquals($productName, $lineItem['product_name']);
+        $this->assertEquals($sku, $lineItem['product_sku']);
 
-        $this->assertEquals($name, $lineItem['product_name']);
         $this->assertEquals($quantity, $lineItem['quantity']);
         /** @var Price $price */
         $price = $lineItem['price'];
@@ -119,16 +122,18 @@ class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
      * @param float $quantity
      * @param float $priceValue
      * @param string $name
+     * @param string $sku
      * @param Product|null $product
      * @return OrderLineItem
      */
-    protected function createLineItem($currency, $quantity, $priceValue, $name, Product $product = null)
+    protected function createLineItem($currency, $quantity, $priceValue, $name, $sku, Product $product = null)
     {
         $lineItem = new OrderLineItem();
         $lineItem->setCurrency($currency);
         $lineItem->setQuantity($quantity);
         $lineItem->setPrice(Price::create($priceValue, $currency));
         $lineItem->setProductSku($name);
+        $lineItem->setProductSku($sku);
         if (!$product) {
             $lineItem->setFreeFormProduct($name);
         } else {
