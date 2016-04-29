@@ -16,11 +16,12 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
     /**
      * @param Website $website
      * @param Account $account
+     * @param bool|false $force
      */
-    public function build(Website $website, Account $account)
+    public function build(Website $website, Account $account, $force = false)
     {
         if (!$this->isBuiltForAccount($website, $account)) {
-            $this->updatePriceListsOnCurrentLevel($website, $account);
+            $this->updatePriceListsOnCurrentLevel($website, $account, $force);
             $this->garbageCollector->cleanCombinedPriceLists();
             $this->setBuiltForAccount($website, $account);
         }
@@ -39,7 +40,7 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
                 ->getAccountIteratorByDefaultFallback($accountGroup, $website, $fallback);
 
             foreach ($accounts as $account) {
-                $this->updatePriceListsOnCurrentLevel($website, $account);
+                $this->updatePriceListsOnCurrentLevel($website, $account, $force);
             }
             $this->setBuiltForAccountGroup($website, $accountGroup);
         }
@@ -48,8 +49,9 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
     /**
      * @param Website $website
      * @param Account $account
+     * @param bool $force
      */
-    protected function updatePriceListsOnCurrentLevel(Website $website, Account $account)
+    protected function updatePriceListsOnCurrentLevel(Website $website, Account $account, $force)
     {
         $priceListsToAccount = $this->getPriceListToEntityRepository()
             ->findOneBy(['website' => $website, 'account' => $account]);
@@ -62,7 +64,7 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByAccount($account, $website);
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
-        $this->updateRelationsAndPrices($combinedPriceList, $website, $account);
+        $this->updateRelationsAndPrices($combinedPriceList, $website, $account, $force);
     }
 
     /**

@@ -44,19 +44,20 @@ class ScopeRecalculateTriggersFiller
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger');
 
-        $this->createWithoutForceTriggers($em, $websites, $accountGroups, $accounts, $force);
+        $this->createTriggers($em, $websites, $accountGroups, $accounts, $force);
 
         $em->flush();
     }
 
     /**
      * @param EntityManager $em
+     * @param bool $force
      */
-    protected function createForceTriggers(EntityManager $em)
+    protected function createConfigTriggers(EntityManager $em, $force)
     {
         $this->clearAllExistingTriggers();
         $priceListChangeTrigger = new PriceListChangeTrigger();
-        $priceListChangeTrigger->setForce(true);
+        $priceListChangeTrigger->setForce($force);
         $em->persist($priceListChangeTrigger);
     }
 
@@ -67,16 +68,22 @@ class ScopeRecalculateTriggersFiller
      * @param Account[] $accounts
      * @param bool $force
      */
-    protected function createWithoutForceTriggers(EntityManager $em, $websites, $accountGroups, $accounts, $force)
+    protected function createTriggers(EntityManager $em, $websites, $accountGroups, $accounts, $force)
     {
-        if ($accountGroups && $accounts) {
-            $this->clearExistingScopesPriceListChangeTriggers($websites, $accountGroups, []);
+        if ($accounts) {
             $this->clearExistingScopesPriceListChangeTriggers($websites, [], $accounts);
-        } else {
-            $this->clearExistingScopesPriceListChangeTriggers($websites, $accountGroups, $accounts);
         }
-
-        $this->preparePriceListChangeTriggersForScopes($em, $websites, $accountGroups, $accounts, $force);
+        if ($accountGroups) {
+            $this->clearExistingScopesPriceListChangeTriggers($websites, $accountGroups, []);
+        }
+        if (empty($accountGroups) && empty($accounts)) {
+            $this->clearExistingScopesPriceListChangeTriggers($websites, [], []);
+        }
+        if (empty($websites) && empty($accountGroups) && empty($accounts)) {
+            $this->createConfigTriggers($em, $force);
+        } else {
+            $this->preparePriceListChangeTriggersForScopes($em, $websites, $accountGroups, $accounts, $force);
+        }
     }
 
     protected function clearAllExistingTriggers()

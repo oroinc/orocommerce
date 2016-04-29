@@ -21,7 +21,28 @@ class LoadCombinedPriceListsActivationRules extends AbstractFixture implements D
             'activateAtOffset' => '+12 hours',
             'expiredAtOffset' => '+24 hours',
             'active' => true
-        ]
+        ],
+        [
+            'fullCombinedPriceList' => '2f_1t_3t',
+            'combinedPriceList' => '2f',
+            'activateAtOffset' => '+2 days',
+            'expiredAtOffset' => '+3 days',
+            'active' => false,
+        ],
+        [
+            'fullCombinedPriceList' => '1f',
+            'combinedPriceList' => '2f',
+            'activateAtOffset' => null,
+            'expiredAtOffset' => '+5 days',
+            'active' => false,
+        ],
+        [
+            'fullCombinedPriceList' => '1f',
+            'combinedPriceList' => '2f',
+            'activateAtOffset' => '+6 days',
+            'expiredAtOffset' => null,
+            'active' => false,
+        ],
     ];
 
     /**
@@ -41,10 +62,14 @@ class LoadCombinedPriceListsActivationRules extends AbstractFixture implements D
             $combinedPriceListRule->setCombinedPriceList($combinedPriceList);
 
             $combinedPriceListRule->setActive($priceLisRuleData['active']);
-            $combinedPriceListRule->setActivateAt((new \DateTime('now', new \DateTimeZone("UTC")))
-                ->modify($priceLisRuleData['activateAtOffset']));
-            $combinedPriceListRule->setExpireAt((new \DateTime('now', new \DateTimeZone("UTC")))
-                ->modify($priceLisRuleData['expiredAtOffset']));
+            if ($priceLisRuleData['activateAtOffset']) {
+                $combinedPriceListRule->setActivateAt((new \DateTime('now', new \DateTimeZone("UTC")))
+                    ->modify($priceLisRuleData['activateAtOffset']));
+            }
+            if ($priceLisRuleData['expiredAtOffset']) {
+                $combinedPriceListRule->setExpireAt((new \DateTime('now', new \DateTimeZone("UTC")))
+                    ->modify($priceLisRuleData['expiredAtOffset']));
+            }
 
             $manager->persist($combinedPriceListRule);
         }

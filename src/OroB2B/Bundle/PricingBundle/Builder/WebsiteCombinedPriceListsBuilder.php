@@ -42,7 +42,7 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
             }
 
             foreach ($websites as $website) {
-                $this->updatePriceListsOnCurrentLevel($website);
+                $this->updatePriceListsOnCurrentLevel($website, $force);
                 $this->accountGroupCombinedPriceListsBuilder->build($website, null, $force);
             }
 
@@ -55,8 +55,9 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
     /**
      * @param Website $website
+     * @param bool $force
      */
-    protected function updatePriceListsOnCurrentLevel(Website $website)
+    protected function updatePriceListsOnCurrentLevel(Website $website, $force)
     {
         $priceListsToWebsite = $this->getPriceListToEntityRepository()
             ->findOneBy(['website' => $website]);
@@ -69,7 +70,7 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByWebsite($website);
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
-        $this->updateRelationsAndPrices($combinedPriceList, $website);
+        $this->updateRelationsAndPrices($combinedPriceList, $website, null, $force);
     }
 
     /**

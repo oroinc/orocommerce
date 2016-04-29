@@ -116,7 +116,7 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
                 'accountGroups' => [],
                 'accounts' => [],
                 'force' => true,
-                'priceListChangeTriggersCount' => 0,
+                'priceListChangeTriggersCount' => 1,
             ],
         ];
     }

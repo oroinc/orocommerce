@@ -8,6 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Command\CombinedPriceListRecalculateCommand;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -28,7 +29,8 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
         $this->configManager = $this->getContainer()->get('oro_config.manager');
         $this->loadFixtures([
             'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
         ]);
     }
 
@@ -89,14 +91,14 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
     public function commandDataProvider()
     {
         return [
+            'scheduled with force' => [
+                'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
+                'expected_message' => 'The cache is updated successfully',
+                'params' => ['--force'],
+                'expectedCount' => 40
+            ],
             'real_time' => [
                 'mode_value' => CombinedPriceListQueueConsumer::MODE_REAL_TIME,
-                'expected_message' => 'Recalculation is not required, another mode is active',
-                'params' => [],
-                'expectedCount' => 0
-            ],
-            'none' => [
-                'mode_value' => null,
                 'expected_message' => 'Recalculation is not required, another mode is active',
                 'params' => [],
                 'expectedCount' => 0
@@ -107,18 +109,12 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
                 'params' => [],
                 'expectedCount' => 0
             ],
-            'scheduled with force' => [
-                'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
-                'expected_message' => 'The cache is updated successfully',
-                'params' => ['--force'],
-                'expectedCount' => 64
-            ],
             'scheduled website US with force' => [
                 'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
                 'expected_message' => 'The cache is updated successfully',
                 'params' => ['--force'],
-                'expectedCount' => 64,
-                'website' => ['US'],
+                'expectedCount' => 38,
+                'website' => [LoadWebsiteData::WEBSITE1],
                 'accountGroup' => [],
                 'account' => []
             ],
@@ -131,21 +127,11 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
                 'accountGroup' => [],
                 'account' => ['account.level_1_1']
             ],
-
-            'scheduled account.level_1_1, account.level_1.2, account.level_1.3 with force' => [
-                'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
-                'expected_message' => 'The cache is updated successfully',
-                'params' => ['--force'],
-                'expectedCount' => 64,
-                'website' => [],
-                'accountGroup' => [],
-                'account' => ['account.level_1_1', 'account.level_1.2', 'account.level_1.3']
-            ],
             'scheduled account_group.group1 with force' => [
                 'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
                 'expected_message' => 'The cache is updated successfully',
                 'params' => ['--force'],
-                'expectedCount' => 64,
+                'expectedCount' => 24,
                 'website' => [],
                 'accountGroup' => ['account_group.group1'],
                 'account' => []
@@ -170,6 +156,7 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
             ->delete('OroB2BPricingBundle:PriceListChangeTrigger', 'priceListChangeTrigger')
             ->getQuery()
             ->execute();
+
     }
 
     /**

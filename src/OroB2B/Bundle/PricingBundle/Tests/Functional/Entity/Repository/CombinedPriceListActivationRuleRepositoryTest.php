@@ -65,7 +65,6 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
         $this->repository->deleteRulesByCPL($cpl);
         $rules = $this->repository->findBy(['fullChainPriceList' => $cpl]);
         $this->assertEmpty($rules);
-
     }
 
     public function testGetNewActualRules()
