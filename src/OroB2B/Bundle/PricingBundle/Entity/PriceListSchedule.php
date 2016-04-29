@@ -49,7 +49,6 @@ class PriceListSchedule
         $this->deactivateAt = $deactivateAt;
     }
 
-
     /**
      * @return int
      */

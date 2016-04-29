@@ -44,4 +44,12 @@ class PriceListChangeTriggerRepository extends EntityRepository
             $queryBuilder
         );
     }
+
+    public function removeAll()
+    {
+        $this->createQueryBuilder('t')
+            ->delete()
+            ->getQuery()
+            ->execute();
+    }
 }

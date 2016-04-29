@@ -15,25 +15,39 @@ class CombinedPriceListQueueConsumer
     const MODE_REAL_TIME = 'real_time';
     const MODE_SCHEDULED = 'scheduled';
 
-    /** @var ObjectManager */
+    /**
+     * @var ObjectManager
+     */
     protected $manager;
 
-    /** @var ManagerRegistry */
+    /**
+     * @var ManagerRegistry
+     */
     protected $registry;
 
-    /** @var CombinedPriceListsBuilder */
+    /**
+     * @var CombinedPriceListsBuilder
+     */
     protected $commonPriceListsBuilder;
 
-    /** @var WebsiteCombinedPriceListsBuilder */
+    /**
+     * @var WebsiteCombinedPriceListsBuilder
+     */
     protected $websitePriceListsBuilder;
 
-    /** @var AccountGroupCombinedPriceListsBuilder */
+    /**
+     * @var AccountGroupCombinedPriceListsBuilder
+     */
     protected $accountGroupPriceListsBuilder;
 
-    /** @var AccountCombinedPriceListsBuilder */
+    /**
+     * @var AccountCombinedPriceListsBuilder
+     */
     protected $accountPriceListsBuilder;
 
-    /** @var  PriceListChangeTriggerRepository */
+    /**
+     * @var  PriceListChangeTriggerRepository
+     */
     protected $queueRepository;
 
     /**
@@ -57,15 +71,22 @@ class CombinedPriceListQueueConsumer
         $this->accountPriceListsBuilder = $accountPriceListsBuilder;
     }
 
-    /**
-     * @param int|null $behavior
-     */
-    public function process($behavior = null)
+    public function process()
     {
         $manager = $this->getManager();
+
+        $forceTrigger = $this->findBuildAllForceTrigger();
+        if ($forceTrigger) {
+            $this->handlePriceListChangeTrigger($forceTrigger);
+            $this->getRepository()->removeAll();
+            $manager->flush();
+
+            return;
+        }
+
         $i = 0;
         foreach ($this->getUniqueTriggersIterator() as $changeItem) {
-            $this->handlePriceListChangeTrigger($changeItem, $behavior);
+            $this->handlePriceListChangeTrigger($changeItem);
             $manager->remove($changeItem);
             if (++$i % 100 === 0) {
                 $manager->flush();
@@ -84,26 +105,29 @@ class CombinedPriceListQueueConsumer
 
     /**
      * @param PriceListChangeTrigger $trigger
-     * @param null $behavior
      */
-    protected function handlePriceListChangeTrigger(PriceListChangeTrigger $trigger, $behavior)
+    protected function handlePriceListChangeTrigger(PriceListChangeTrigger $trigger)
     {
         switch (true) {
             case !is_null($trigger->getAccount()):
-                $this->accountPriceListsBuilder->build($trigger->getWebsite(), $trigger->getAccount(), $behavior);
+                $this->accountPriceListsBuilder->build(
+                    $trigger->getWebsite(),
+                    $trigger->getAccount(),
+                    $trigger->isForce()
+                );
                 break;
             case !is_null($trigger->getAccountGroup()):
                 $this->accountGroupPriceListsBuilder->build(
                     $trigger->getWebsite(),
                     $trigger->getAccountGroup(),
-                    $behavior
+                    $trigger->isForce()
                 );
                 break;
             case !is_null($trigger->getWebsite()):
-                $this->websitePriceListsBuilder->build($trigger->getWebsite(), $behavior);
+                $this->websitePriceListsBuilder->build($trigger->getWebsite(), $trigger->isForce());
                 break;
             default:
-                $this->commonPriceListsBuilder->build($behavior);
+                $this->commonPriceListsBuilder->build($trigger->isForce());
         }
     }
 
@@ -131,5 +155,21 @@ class CombinedPriceListQueueConsumer
         }
 
         return $this->queueRepository;
+    }
+
+    /**
+     * @return PriceListChangeTrigger
+     */
+    protected function findBuildAllForceTrigger()
+    {
+        $forceTrigger = $this->getRepository()
+            ->findOneBy([
+                'account' => null,
+                'accountGroup' => null,
+                'website' => null,
+                'force' => true
+            ]);
+
+        return $forceTrigger;
     }
 }

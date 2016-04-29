@@ -62,6 +62,8 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
         $this->alterOroB2BPriceListTable($schema, $queries);
         $this->alterOroB2BPriceListCombinedTable($schema, $queries);
 
+        $this->updatePriceListChangeTriggerTable($schema);
+
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_acc'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_plist_to_acc_gr'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_ws'));
@@ -102,6 +104,17 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
         $table->setPrimaryKey(['id']);
     }
 
+     /**
+     * Create orob2b_cpl_activation_rule table
+     *
+     * @param Schema $schema
+     */
+    protected function updatePriceListChangeTriggerTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list_ch_trigger');
+        $table->addColumn('is_force', 'boolean', ['notnull' => false]);
+    }
+    
     /**
      * Add orob2b_price_list_schedule foreign keys.
      *
