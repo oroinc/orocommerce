@@ -27,6 +27,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  * @Config(
  *      routeName="orob2b_rfp_request_status_index",
  *      routeView="orob2b_rfp_request_status_view",
+ *      routeUpdate="orob2b_rfp_request_status_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-file-text"

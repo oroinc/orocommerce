@@ -60,9 +60,16 @@ class OrderPaymentTermEventListener
     protected function validateRelation(Order $order)
     {
         $accountUser = $order->getAccountUser();
-        $account = $order->getAccount();
+        if (!$accountUser) {
+            return;
+        }
 
-        if ($accountUser && $accountUser->getAccount() && $accountUser->getAccount()->getId() !== $account->getId()) {
+        $account = $order->getAccount();
+        if (!$account || !$accountUser->getAccount()) {
+            throw new BadRequestHttpException('AccountUser without Account is not allowed');
+        }
+
+        if ($accountUser->getAccount()->getId() !== $account->getId()) {
             throw new BadRequestHttpException('AccountUser must belong to Account');
         }
     }

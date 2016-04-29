@@ -23,6 +23,16 @@ orob2b.pricing:
 
         form:
             pricelist_required: Please select a price list first...
+        status:
+            label: Status
+            disable: Disable
+            enable: Enable
+            enabled: Enabled
+            disabled: Disabled
+            message:
+              enabled: Price List was enabled successfully
+              disabled: Price List was disabled successfully
+
     quantity.label: Quantity
     fallback:
         label: Fallback

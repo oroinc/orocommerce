@@ -2,12 +2,3 @@ orob2b_website:
     resource:     "@OroB2BWebsiteBundle/Controller/WebsiteController.php"
     type:         annotation
     prefix:       /website
-
-orob2b_website_bundle_api:
-    resource:     "@OroB2BWebsiteBundle/Resources/config/oro/routing_api.yml"
-    prefix:       api/rest/{version}/
-    requirements:
-        version:  latest|v1
-        _format:  json
-    defaults:
-        version:  latest

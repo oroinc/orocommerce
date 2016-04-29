@@ -26,6 +26,7 @@ use OroB2B\Bundle\WarehouseBundle\Model\ExtendWarehouse;
  * @Config(
  *      routeName="orob2b_warehouse_index",
  *      routeView="orob2b_warehouse_view",
+ *      routeUpdate="orob2b_warehouse_update",
  *      defaultValues={
  *          "ownership"={
  *              "owner_type"="BUSINESS_UNIT",

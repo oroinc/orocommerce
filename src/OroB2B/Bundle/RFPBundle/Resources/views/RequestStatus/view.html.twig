@@ -80,12 +80,7 @@
         {% endif %}
     {% endif %}
 
-    {% if resource_granted('EDIT', entity) %}
-        {{ UI.editButton({
-            'path': path('orob2b_rfp_request_status_update', {'id': entity.id}),
-            'entity_label': 'orob2b.rfp.requeststatus.entity_label'|trans
-        }) }}
-    {% endif %}
+    {{ parent() }}
 {% endblock %}
 
 {% block stats %}
