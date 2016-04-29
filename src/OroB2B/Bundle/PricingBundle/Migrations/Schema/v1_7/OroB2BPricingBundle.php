@@ -79,10 +79,10 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
     {
         $table = $schema->createTable('orob2b_price_list_schedule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->setPrimaryKey(['id']);
         $table->addColumn('price_list_id', 'integer', ['notnull' => false]);
         $table->addColumn('active_at', 'datetime', ['notnull' => false]);
         $table->addColumn('deactivate_at', 'datetime', ['notnull' => false]);
-        $table->setPrimaryKey(['id']);
         $table->addIndex(['price_list_id'], 'IDX_C706756E5688DED7', []);
     }
 
@@ -95,12 +95,12 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
     {
         $table = $schema->createTable('orob2b_cpl_activation_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->setPrimaryKey(['id']);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => false]);
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => false]);
         $table->addColumn('activate_at', 'datetime', ['notnull' => false]);
         $table->addColumn('expire_at', 'datetime', ['notnull' => false]);
         $table->addColumn('is_active', 'boolean', []);
-        $table->setPrimaryKey(['id']);
     }
 
      /**
@@ -110,7 +110,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
      */
     protected function updatePriceListChangeTriggerTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_price_list_ch_trigger');
+        $table = $schema->getTable('orob2b_price_list_ch_trigger');
         $table->addColumn('is_force', 'boolean', ['notnull' => false]);
     }
     
@@ -162,12 +162,12 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
         $schema->dropTable('orob2b_cmb_price_list_to_acc');
         $table = $schema->createTable('orob2b_cmb_price_list_to_acc');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->setPrimaryKey(['id']);
         $table->addColumn('account_id', 'integer', ['notnull' => true]);
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addUniqueIndex(['website_id', 'account_id'], 'orob2b_cpl_to_acc_ws_unq');
-        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -180,12 +180,12 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
         $schema->dropTable('orob2b_cmb_plist_to_acc_gr');
         $table = $schema->createTable('orob2b_cmb_plist_to_acc_gr');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->setPrimaryKey(['id']);
         $table->addColumn('account_group_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addUniqueIndex(['website_id', 'account_group_id'], 'orob2b_cpl_to_acc_gr_ws_unq');
-        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -198,11 +198,11 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
         $schema->dropTable('orob2b_cmb_price_list_to_ws');
         $table = $schema->createTable('orob2b_cmb_price_list_to_ws');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->setPrimaryKey(['id']);
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addUniqueIndex(['website_id'], 'orob2b_cpl_to_ws_unq');
-        $table->setPrimaryKey(['id']);
     }
 
     /**
