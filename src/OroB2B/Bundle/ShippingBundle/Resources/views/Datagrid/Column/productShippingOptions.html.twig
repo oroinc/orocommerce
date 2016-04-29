@@ -1,33 +1,27 @@
 {% if value and value|length > 0 %}
-    <table>
+    <table class="grid table table-condensed table-bordered">
         <tr>
-            <th class="renderable">
-                <div class="text-center">{{ 'orob2b.shipping.datagrid.shipping_options.unit.label'|trans }}</div>
-            </th>
-            <th class="renderable">
-                <div class="text-center">{{ 'orob2b.shipping.datagrid.shipping_options.weight.label'|trans }}</div>
-            </th>
-            <th class="renderable">
-                <div class="text-center">{{ 'orob2b.shipping.datagrid.shipping_options.dimensions.label'|trans }}</div>
-            </th>
-            <th class="renderable">
-                <div class="text-center">{{ 'orob2b.shipping.datagrid.shipping_options.freight_class.label'|trans }}</div>
-            </th>
+            <th class="renderable">{{ 'orob2b.shipping.datagrid.shipping_options.unit.label'|trans }}</th>
+            <th class="renderable">{{ 'orob2b.shipping.datagrid.shipping_options.weight.label'|trans }}</th>
+            <th class="renderable">{{ 'orob2b.shipping.datagrid.shipping_options.dimensions.label'|trans }}</th>
+            <th class="renderable">{{ 'orob2b.shipping.datagrid.shipping_options.freight_class.label'|trans }}</th>
         </tr>
         <tbody>
         {% for key, shippingOptions in value %}
             <tr>
                 <td class="renderable">
-                    <div class="text-center">{{ shippingOptions.productUnit }}</div>
+                    <div class="text-center">{{ shippingOptions.productUnit|orob2b_format_product_unit_label(false, true) }}</div>
                 </td>
                 <td class="renderable">
-                    <div class="text-center">{{ shippingOptions.weight.value }} {{ shippingOptions.weight.unit }}</div>
+                    <div class="text-center">{{ shippingOptions.weight.value|orob2b_weight_unit_format_value_short(shippingOptions.weight.unit) }}</div>
                 </td>
                 <td class="renderable">
-                    <div class="text-center">{{ shippingOptions.dimensions.length }} x {{ shippingOptions.dimensions.width }} x {{ shippingOptions.dimensions.height }} {{ shippingOptions.dimensions.unit }}</div>
+                    <div class="text-center">{{ shippingOptions.dimensions.length }}
+                        x {{ shippingOptions.dimensions.width }}
+                        x {{ shippingOptions.dimensions.height }} {{ shippingOptions.dimensions.unit|orob2b_length_unit_format_label(true,true) }}</div>
                 </td>
                 <td class="renderable">
-                    <div class="text-center">{{ shippingOptions.freightClass }}</div>
+                    <div class="text-center">{{ shippingOptions.freightClass|orob2b_freight_class_format_label(false,false) }}</div>
                 </td>
             </tr>
         {% endfor %}
