@@ -79,9 +79,7 @@ class ThemeSelectType extends AbstractType
      */
     protected function getChoices()
     {
-        $choices = [
-            '' => 'orob2b_frontend.theme.demo.title'
-        ];
+        $choices = [];
 
         foreach ($this->getThemes() as $theme) {
             $choices[$theme->getName()] = $theme->getLabel();

@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Security;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
