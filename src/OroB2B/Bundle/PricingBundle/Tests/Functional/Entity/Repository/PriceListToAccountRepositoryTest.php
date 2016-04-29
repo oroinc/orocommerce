@@ -115,8 +115,9 @@ class PriceListToAccountRepositoryTest extends WebTestCase
      * @param string $accountGroup
      * @param string $website
      * @param array $expectedAccounts
+     * @param int $fallback
      */
-    public function testGetAccountIteratorByFallback($accountGroup, $website, $expectedAccounts)
+    public function testGetAccountIteratorByFallback($accountGroup, $website, $expectedAccounts, $fallback = null)
     {
         /** @var $accountGroup  AccountGroup */
         $accountGroup = $this->getReference($accountGroup);
@@ -124,7 +125,7 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $website = $this->getReference($website);
 
         $iterator = $this->getRepository()
-            ->getAccountIteratorByDefaultFallback($accountGroup, $website, PriceListAccountFallback::ACCOUNT_GROUP);
+            ->getAccountIteratorByDefaultFallback($accountGroup, $website, $fallback);
 
         $actualSiteMap = [];
         foreach ($iterator as $account) {
@@ -139,10 +140,27 @@ class PriceListToAccountRepositoryTest extends WebTestCase
     public function getPriceListIteratorDataProvider()
     {
         return [
-            [
+            'with fallback group1' => [
+                'accountGroup' => 'account_group.group1',
+                'website' => 'US',
+                'expectedAccounts' => ['account.level_1.3'],
+                'fallback' => PriceListAccountFallback::ACCOUNT_GROUP
+            ],
+            'without fallback group1' => [
                 'accountGroup' => 'account_group.group1',
                 'website' => 'US',
                 'expectedAccounts' => ['account.level_1.3']
+            ],
+            'with fallback group2' => [
+                'accountGroup' => 'account_group.group2',
+                'website' => 'US',
+                'expectedAccounts' => [],
+                'fallback' => PriceListAccountFallback::ACCOUNT_GROUP
+            ],
+            'without fallback group2' => [
+                'accountGroup' => 'account_group.group2',
+                'website' => 'US',
+                'expectedAccounts' => ['account.level_1.2'],
             ],
         ];
     }

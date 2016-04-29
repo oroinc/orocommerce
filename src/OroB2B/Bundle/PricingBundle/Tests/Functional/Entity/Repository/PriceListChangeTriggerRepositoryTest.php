@@ -27,13 +27,11 @@ class PriceListChangeTriggerRepositoryTest extends WebTestCase
         $this->assertCount(count($allChanges), $iterator);
     }
 
-    public function testRemoveAll()
+    public function testDeleteAll()
     {
-        $repository = $this->getRepository();
-        $this->assertGreaterThan(1, count($repository->findAll()));
-        $repository->removeAll();
-
-        $this->assertCount(0, $repository->findBy([]));
+        $this->assertNotEmpty($this->getRepository()->findAll());
+        $this->getRepository()->deleteAll();
+        $this->assertEmpty($this->getRepository()->findAll());
     }
 
     /**

@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 
@@ -15,10 +15,6 @@ class CombinedPriceListProvider
     const GLUE = '_';
     const MERGE_NOT_ALLOWED_FLAG = 'f';
     const MERGE_ALLOWED_FLAG = 't';
-
-    const BEHAVIOR_DEFAULT = 1;
-    const BEHAVIOR_FORCE = 2;
-    const BEHAVIOR_EMPTY = 3;
 
     /**
      * @var ManagerRegistry
@@ -31,9 +27,9 @@ class CombinedPriceListProvider
     protected $className;
 
     /**
-     * @var CombinedProductPriceResolver
+     * @var CombinedPriceListActivationPlanBuilder
      */
-    protected $resolver;
+    protected $activationPlanBuilder;
 
     /**
      * @var EntityManager
@@ -62,35 +58,27 @@ class CombinedPriceListProvider
     }
 
     /**
-     * @param CombinedProductPriceResolver $resolver
+     * @param CombinedPriceListActivationPlanBuilder $activationPlanBuilder
      */
-    public function setResolver(CombinedProductPriceResolver $resolver)
+    public function setActivationPlanBuilder(CombinedPriceListActivationPlanBuilder $activationPlanBuilder)
     {
-        $this->resolver = $resolver;
+        $this->activationPlanBuilder = $activationPlanBuilder;
     }
 
     /**
      * @param PriceListSequenceMember[] $priceListsRelations
-     * @param int|null $behavior
      * @return CombinedPriceList
      */
-    public function getCombinedPriceList(array $priceListsRelations, $behavior = null)
+    public function getCombinedPriceList(array $priceListsRelations)
     {
-        if ($behavior === null) {
-            $behavior = self::BEHAVIOR_DEFAULT;
-        }
         $normalizedCollection = $this->normalizeCollection($priceListsRelations);
         $identifier = $this->getCombinedPriceListIdentifier($normalizedCollection);
         $combinedPriceList = $this->getRepository()->findOneBy(['name' => $identifier]);
 
-        if (!$combinedPriceList || $behavior == self::BEHAVIOR_FORCE) {
-            if (!$combinedPriceList) {
-                $combinedPriceList = $this->createCombinedPriceList($identifier);
-                $this->updateCombinedPriceList($combinedPriceList, $normalizedCollection);
-            }
-            if ($behavior !== self::BEHAVIOR_EMPTY) {
-                $this->resolver->combinePrices($combinedPriceList);
-            }
+        if (!$combinedPriceList) {
+            $combinedPriceList = $this->createCombinedPriceList($identifier);
+            $this->updateCombinedPriceList($combinedPriceList, $normalizedCollection);
+            $this->activationPlanBuilder->buildByCombinedPriceList($combinedPriceList);
         }
 
         return $combinedPriceList;

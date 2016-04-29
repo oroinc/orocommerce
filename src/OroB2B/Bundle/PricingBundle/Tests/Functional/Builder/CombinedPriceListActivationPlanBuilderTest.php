@@ -86,7 +86,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
                 'combinedPriceListsChanges' => [
                     '1t_2t_3t' => [
                         [
-                            'active' => true,
+                            'active' => false,
                             'activateAt' => null,
                             'expireAt' => '+1 days',
                             'priceLists' => ['price_list_1' => true]

@@ -146,7 +146,7 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
 
         $this->priceListChangeTriggerRepository
             ->expects($this->once())
-            ->method('removeAll');
+            ->method('deleteAll');
 
         $this->priceListChangeTriggerRepository
             ->expects($this->never())

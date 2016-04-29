@@ -56,15 +56,20 @@ class CombinedPriceListActivationPlanBuilder
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param PriceListScheduleResolver $schedulerResolver
-     * @param CombinedPriceListProvider $combinedPriceListProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        PriceListScheduleResolver $schedulerResolver,
-        CombinedPriceListProvider $combinedPriceListProvider
+        PriceListScheduleResolver $schedulerResolver
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->schedulerResolver = $schedulerResolver;
+    }
+
+    /**
+     * @param CombinedPriceListProvider $combinedPriceListProvider
+     */
+    public function setProvider(CombinedPriceListProvider $combinedPriceListProvider)
+    {
         $this->combinedPriceListProvider = $combinedPriceListProvider;
     }
 
@@ -116,10 +121,6 @@ class CombinedPriceListActivationPlanBuilder
             if ($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY]) {
                 $rule->setActivateAt($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY]);
             }
-            if ($ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY] === null
-                || $ruleData[PriceListScheduleResolver::ACTIVATE_AT_KEY] < $now) {
-                $rule->setActive(true);
-            }
             $actualCPL = $this->combinedActualCombinedPriceList(
                 $priceListRelations,
                 $ruleData[PriceListScheduleResolver::PRICE_LISTS_KEY]
@@ -146,10 +147,7 @@ class CombinedPriceListActivationPlanBuilder
                 );
             }
         }
-        return $this->combinedPriceListProvider->getCombinedPriceList(
-            $sequence,
-            CombinedPriceListProvider::BEHAVIOR_EMPTY
-        );
+        return $this->combinedPriceListProvider->getCombinedPriceList($sequence);
     }
 
     /**

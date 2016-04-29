@@ -28,14 +28,39 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
      */
     public function getNewActualRules(\DateTime $now)
     {
-        $qb = $this->createQueryBuilder('rule')
+        $qb = $this->getActualRuleQb($now)
             ->andWhere('rule.active = :activity')
-            ->andWhere('rule.activateAt <= :now OR rule.activateAt IS NULL')
-            ->andWhere('rule.expireAt > :now OR rule.expireAt IS NULL')
-            ->setParameter('now', $now)
             ->setParameter('activity', false);
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param CombinedPriceList $cpl
+     * @param \DateTime $now
+     * @return \OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule
+     */
+    public function getActualRuleByCpl(CombinedPriceList $cpl, \DateTime $now)
+    {
+        $qb = $this->getActualRuleQb($now)
+            ->andWhere('rule.fullChainPriceList = :cpl')
+            ->setParameter('cpl', $cpl);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param \DateTime $now
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    protected function getActualRuleQb(\DateTime $now)
+    {
+        $qb = $this->createQueryBuilder('rule')
+            ->andWhere('rule.activateAt <= :now OR rule.activateAt IS NULL')
+            ->andWhere('rule.expireAt > :now OR rule.expireAt IS NULL')
+            ->setParameter('now', $now);
+
+        return $qb;
     }
 
     /**

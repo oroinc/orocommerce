@@ -49,7 +49,6 @@ class PriceListScheduleResolver
         }
         $lines = $this->processSchedule($schedule, $baseSetOfPriceLists, $turnedOffPriceLists);
 
-
         return $lines;
     }
 
