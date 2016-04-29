@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\View;
 use Symfony\Component\Form\FormFactoryInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
@@ -20,9 +19,6 @@ class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
 {
     use ConfigTestTrait;
     use EntityTrait;
-
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
-    protected $configManager;
 
     /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $formFactory;
