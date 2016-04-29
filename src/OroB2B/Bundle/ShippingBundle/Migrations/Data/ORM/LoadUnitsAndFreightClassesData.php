@@ -22,7 +22,7 @@ class LoadUnitsAndFreightClassesData extends AbstractUnitsAndFreightClassesFixtu
 
     /** @var array */
     protected $freightClasses = [
-        ['code' => 'pel'] // parcel
+        ['code' => 'parcel']
     ];
 
     /**

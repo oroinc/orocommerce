@@ -5,6 +5,12 @@ orob2b:
                 shipping.title: Shipping
                 shipping_origin.label: Shipping Origin
                 shipping_origin.title: Address
+                shipping_options.label: Shipping Options
+                shipping_options.title: Shipping Options
+            fields:
+                length_units.label: Allowed Units Of Length
+                weight_units.label: Allowed Units Of Weight
+                freight_classes.label: Allowed Freight Classes
         shipping_origin:
             country.label:       Country
             region.label:        Region/State

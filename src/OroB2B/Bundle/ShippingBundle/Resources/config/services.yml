@@ -72,3 +72,21 @@ services:
             - '@orob2b_shipping.formatter.weight_unit_value'
         tags:
             - { name: twig.extension }
+
+    orob2b_shipping.repository.length_unit:
+        class: Doctrine\ORM\EntityRepository
+        factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
+        arguments:
+            - '%orob2b_shipping.entity.length_unit.class%'
+
+    orob2b_shipping.repository.weight_unit:
+        class: Doctrine\ORM\EntityRepository
+        factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
+        arguments:
+            - '%orob2b_shipping.entity.weight_unit.class%'
+
+    orob2b_shipping.repository.freight_class:
+        class: Doctrine\ORM\EntityRepository
+        factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
+        arguments:
+            - '%orob2b_shipping.entity.freight_class.class%'
