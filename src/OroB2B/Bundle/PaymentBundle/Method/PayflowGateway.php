@@ -173,8 +173,7 @@ class PayflowGateway implements PaymentMethodInterface
         $this->execute($paymentTransaction);
 
         $paymentTransaction
-            ->setAction(PaymentMethodInterface::VALIDATE)
-            ->setSuccessful(false);
+            ->setAction(PaymentMethodInterface::VALIDATE);
 
         return $this->secureTokenResponse($paymentTransaction);
     }
@@ -185,6 +184,10 @@ class PayflowGateway implements PaymentMethodInterface
      */
     protected function secureTokenResponse(PaymentTransaction $paymentTransaction)
     {
+        // Mark successful false for generate token transaction
+        // PayPal callback should update transaction
+        $paymentTransaction->setSuccessful(false);
+
         $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
 
         $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
