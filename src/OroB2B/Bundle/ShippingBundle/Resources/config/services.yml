@@ -48,3 +48,41 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
+
+    # formatters
+    orob2b_shipping.formatter.length_unit_label:
+        parent: orob2b_product.formatter.unit_label
+        calls:
+            - [setTranslationPrefix, ['orob2b.length_unit']]
+
+    orob2b_shipping.formatter.weight_unit_label:
+        parent: orob2b_product.formatter.unit_label
+        calls:
+            - [setTranslationPrefix, ['orob2b.weight_unit']]
+
+    orob2b_shipping.formatter.freight_class_label:
+        parent: orob2b_product.formatter.unit_label
+        calls:
+            - [setTranslationPrefix, ['orob2b.freight_class']]
+
+    orob2b_shipping.formatter.weight_unit_value:
+        parent: orob2b_product.formatter.unit_value
+        calls:
+            - [setTranslationPrefix, ['orob2b.weight_unit']]
+
+    # twig extensions
+    orob2b_shipping.twig.shipping_option_label:
+        class: OroB2B\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension
+        arguments:
+            - '@orob2b_shipping.formatter.length_unit_label'
+            - '@orob2b_shipping.formatter.weight_unit_label'
+            - '@orob2b_shipping.formatter.freight_class_label'
+        tags:
+            - { name: twig.extension }
+
+    orob2b_shipping.twig.weight_unit_value:
+        class: OroB2B\Bundle\ShippingBundle\Twig\WeightUnitValueExtension
+        arguments:
+            - '@orob2b_shipping.formatter.weight_unit_value'
+        tags:
+            - { name: twig.extension }
