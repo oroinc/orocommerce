@@ -744,7 +744,7 @@ class Quote extends ExtendQuote implements
      *
      * @return Quote
      */
-    public function setShipUntil($shipUntil)
+    public function setShipUntil(\DateTime $shipUntil = null)
     {
         $this->shipUntil = $shipUntil;
 
