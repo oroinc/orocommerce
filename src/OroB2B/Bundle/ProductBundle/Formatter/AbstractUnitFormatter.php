@@ -33,7 +33,7 @@ abstract class AbstractUnitFormatter
      *
      * @throws \Exception
      */
-    public function getTranslationPrefix()
+    protected function getTranslationPrefix()
     {
         if (!$this->translationPrefix) {
             throw new \Exception('Translation prefix must be defined.');

@@ -19,11 +19,6 @@ class ProductUnitLabelFormatterTest extends UnitLabelFormatterTestCase
         $this->formatter = new ProductUnitLabelFormatter($this->translator);
     }
 
-    public function testGetTranslationPrefix()
-    {
-        $this->assertEquals(static::TRANSLATION_PREFIX, $this->formatter->getTranslationPrefix());
-    }
-
     /**
      * {@inheritdoc}
      */

@@ -19,11 +19,6 @@ class ProductUnitValueFormatterTest extends UnitValueFormatterTestCase
         $this->formatter = new ProductUnitValueFormatter($this->translator);
     }
 
-    public function testGetTranslationPrefix()
-    {
-        $this->assertEquals(static::TRANSLATION_PREFIX, $this->formatter->getTranslationPrefix());
-    }
-
     /**
      * {@inheritdoc}
      */
