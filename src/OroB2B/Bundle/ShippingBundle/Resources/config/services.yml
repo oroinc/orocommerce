@@ -44,7 +44,6 @@ services:
             - '@translator'
             - '@oro_entity.doctrine_helper'
         calls:
-            - [setProductUnitClass, ['%orob2b_product.entity.product_unit.class%']]
             - [setProductShippingOptionsClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }

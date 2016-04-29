@@ -8,19 +8,18 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductShippingOptionsDatagridListener
 {
+    const SHIPPING_OPTIONS_COLUMN = 'product_shipping_options';
+    const DATA_SEPARATOR = '{sep}';
+
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
     /** @var TranslatorInterface */
     protected $translator;
-
-    /** @var string */
-    protected $productUnitClass;
 
     /** @var string */
     protected $productShippingOptionsClass;
@@ -41,14 +40,32 @@ class ProductShippingOptionsDatagridListener
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
-        $this->addProductShippingOptionsColumn($config);
+        $columnName = $this->buildColumnName();
+        $joinAlias = $this->buildJoinAlias($columnName);
 
-        $units = $this->getAllUnits();
+        $selectPattern = 'GROUP_CONCAT(%s.id SEPARATOR %s) as %s';
+        $separator = (new Expr())->literal(self::DATA_SEPARATOR);
 
-        // add shipping options for product units
-        foreach ($units as $unit) {
-            $this->addProductShippingOptionsColumn($config, $unit);
-        }
+        $this->addConfigElement(
+            $config,
+            '[source][query][select]',
+            sprintf($selectPattern, $joinAlias, $separator, $columnName)
+        );
+
+        $this->addConfigProductShippingOptionsJoin($config);
+
+        $message = 'orob2b.shipping.datagrid.shipping_options.column.label';
+        $params = [];
+
+        $column = [
+            'label' => $this->translator->trans($message, $params),
+            'type' => 'twig',
+            'template' => $this->getColumnTemplate(),
+            'frontend_type' => 'html',
+            'renderable' => true,
+        ];
+
+        $this->addConfigElement($config, '[columns]', $column, $columnName);
     }
 
     /**
@@ -58,54 +75,32 @@ class ProductShippingOptionsDatagridListener
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
+
+        foreach ($records as $record) {
+            $data = [];
+            $shippingOptions = $record->getValue(static::SHIPPING_OPTIONS_COLUMN);
+            $shippingOptions = $shippingOptions ? explode(self::DATA_SEPARATOR, $shippingOptions) : [];
+            foreach ($shippingOptions as $optionId) {
+                $options = $this->doctrineHelper->getEntityReference($this->productShippingOptionsClass, $optionId);
+                if ($options) {
+                    $data[$optionId] = $options;
+                }
+            }
+            $record->addData([static::SHIPPING_OPTIONS_COLUMN => $data]);
+        }
     }
 
     /**
      * @param DatagridConfiguration $config
-     * @param ProductUnit $unit
      */
-    protected function addProductShippingOptionsColumn(DatagridConfiguration $config, ProductUnit $unit = null)
+    protected function addConfigProductShippingOptionsJoin(DatagridConfiguration $config)
     {
-        $columnName = $this->buildColumnName($unit);
-        $joinAlias = $this->buildJoinAlias($columnName);
-
-        $selectPattern = '%s.id as %s';
-
-        if (!$unit) {
-            $selectPattern = 'GROUP_CONCAT(%s.id) as %s';
-        }
-
-
-
-        $this->addConfigElement($config, '[source][query][select]', sprintf($selectPattern, $joinAlias, $columnName));
-
-        $this->addConfigProductShippingOptionsJoin($config, $unit);
-
-        $renderable = true;
-
-        if ($unit) {
-            $renderable = true;
-        }
-
-        $column = $this->createShippingOriginColumn($renderable, $unit);
-
-        $this->addConfigElement($config, '[columns]', $column, $columnName);
-    }
-
-    /**
-     * @param DatagridConfiguration $config
-     * @param ProductUnit|null $unit
-     */
-    protected function addConfigProductShippingOptionsJoin(DatagridConfiguration $config, $unit = null)
-    {
-        $columnName = $this->buildColumnName($unit);
+        $columnName = $this->buildColumnName();
         $joinAlias = $this->buildJoinAlias($columnName);
         $expr = new Expr();
         $joinExpr = $expr
             ->andX(sprintf('%s.product = product.id', $joinAlias));
-        if ($unit) {
-            $joinExpr->add($expr->eq(sprintf('%s.productUnit', $joinAlias), $expr->literal($unit)));
-        }
+
         $this->addConfigElement(
             $config,
             '[source][query][join][left]',
@@ -136,51 +131,11 @@ class ProductShippingOptionsDatagridListener
     }
 
     /**
-     * @param bool $renderable
-     * @param ProductUnit $unit
-     *
-     * @return array
-     */
-    protected function createShippingOriginColumn($renderable = true, ProductUnit $unit = null)
-    {
-        $message = 'shipping_options';
-        $params = [];
-        if ($unit) {
-            $message = 'shipping_options_%unit%';
-            $params['%unit%'] = $unit->getCode();
-        }
-
-        return [
-            'label' => $this->translator->trans($message, $params),
-            'type' => 'twig',
-            'template' => 'OroB2BShippingBundle:Datagrid:Column/productShippingOptions.html.twig',
-            'frontend_type' => 'html',
-            'renderable' => $renderable,
-        ];
-    }
-
-    /**
-     * @param string $productUnitClass
-     */
-    public function setProductUnitClass($productUnitClass)
-    {
-        $this->productUnitClass = $productUnitClass;
-    }
-
-    /**
      * @param string $productShippingOptionsClass
      */
     public function setProductShippingOptionsClass($productShippingOptionsClass)
     {
         $this->productShippingOptionsClass = $productShippingOptionsClass;
-    }
-
-    /**
-     * @return array|ProductUnit[]
-     */
-    protected function getAllUnits()
-    {
-        return $this->doctrineHelper->getEntityRepository($this->productUnitClass)->findBy([], ['code' => 'ASC']);
     }
 
     /**
@@ -194,14 +149,19 @@ class ProductShippingOptionsDatagridListener
     }
 
     /**
-     * @param string $unitCode
-     *
      * @return string
      */
-    protected function buildColumnName($unitCode = null)
+    protected function buildColumnName()
     {
-        $result = 'product_shipping_options';
+        return static::SHIPPING_OPTIONS_COLUMN;
+    }
 
-        return $unitCode ? sprintf('%s_%s', $result, strtolower($unitCode)) : $result;
+    /**
+     * @return string
+     */
+    protected function getColumnTemplate()
+    {
+        // TODO: Override for frontend-products-grid if required
+        return 'OroB2BShippingBundle:Datagrid:Column/productShippingOptions.html.twig';
     }
 }
