@@ -9,6 +9,9 @@ class UnitLabelFormatterTest extends UnitLabelFormatterTestCase
 {
     const TRANSLATION_PREFIX = 'orob2b.product_unit';
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         parent::setUp();
