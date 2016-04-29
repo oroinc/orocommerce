@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
 

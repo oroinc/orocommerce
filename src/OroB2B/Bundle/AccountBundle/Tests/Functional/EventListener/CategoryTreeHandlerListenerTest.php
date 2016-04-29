@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\EventListener;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
