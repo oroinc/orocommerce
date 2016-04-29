@@ -43,4 +43,12 @@ class PayPalPaymentsPro extends PayflowGateway
     {
         return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY);
     }
+
+    /**
+     * @return bool
+     */
+    protected function getRequiredAmountEnabled()
+    {
+        return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
+    }
 }

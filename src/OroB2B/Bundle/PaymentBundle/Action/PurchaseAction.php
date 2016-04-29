@@ -62,8 +62,6 @@ class PurchaseAction extends AbstractPaymentMethodAction
             $paymentTransaction->setTransactionOptions($options['transactionOptions']);
         }
 
-        $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
-
         $response = $this->executePaymentTransaction($paymentTransaction);
 
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);

@@ -7,15 +7,16 @@ use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 interface PaymentMethodInterface
 {
     const AUTHORIZE = 'authorize';
-    const CAPTURE = 'capture';
     const CHARGE = 'charge';
+    const VALIDATE = 'validate';
+    const DELAYED_CAPTURE = 'delayedCapture';
 
     /**
      * Action to wrap action combination - charge, authorize, authorize and capture
      */
     const PURCHASE = 'purchase';
 
-    const VALIDATE = 'validate';
+    const CAPTURE = 'capture';
 
     /**
      * @param PaymentTransaction $paymentTransaction

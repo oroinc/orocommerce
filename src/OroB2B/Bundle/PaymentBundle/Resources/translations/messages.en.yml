@@ -89,6 +89,7 @@ orob2b:
                 require_cvv.label: 'Require CVV Entry'
                 validate_cvv.label: 'Validate CVV'
                 zero_amount_authorization.label: 'Zero Amount Authorization'
+                authorization_for_required_amount.label: 'Authorization For Required Amount'
 
         security.transaction: Work with payments
         capture: Capture

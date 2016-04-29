@@ -60,7 +60,7 @@ class PurchaseActionTest extends AbstractActionTest
             ->willReturn($paymentMethod);
 
         $this->paymentTransactionProvider
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('savePaymentTransaction')
             ->with($paymentTransaction)
             ->willReturnCallback(

@@ -120,11 +120,9 @@ class PaymentTransactionProvider
 
     /**
      * @param object $object
-     * @param string $amount
-     * @param string $currency
      * @return PaymentTransaction|null
      */
-    public function getActiveAuthorizePaymentTransaction($object, $amount, $currency)
+    public function getActiveAuthorizePaymentTransaction($object)
     {
         return $this->getPaymentTransaction(
             $object,
@@ -132,8 +130,6 @@ class PaymentTransactionProvider
                 'active' => true,
                 'successful' => true,
                 'action' => PaymentMethodInterface::AUTHORIZE,
-                'amount' => round($amount, 2),
-                'currency' => $currency,
                 'frontendOwner' => $this->getAccountUser($object)
             ]
         );
