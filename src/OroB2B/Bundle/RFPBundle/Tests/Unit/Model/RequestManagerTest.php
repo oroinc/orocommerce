@@ -60,26 +60,42 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testAddProductItemToRequest()
     {
-        $request = new Request();
         $productId = 1;
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
         $unitCode = 'bottle';
-        $unit = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => $unitCode]);
         $quantity = 10;
+        $data = [
+            $productId => [[
+                'unit' => $unitCode,
+                'quantity' => $quantity,
+            ]],
+        ];
+        $request = new Request();
+        
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
+        $unit = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => $unitCode]);
 
-        $repo = $this->getMock('\Doctrine\Common\Persistence\ObjectRepository');
-        $this->doctrineHelper->expects($this->once())
+        $productReposiotry = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+            ->disableOriginalConstructor()->getMock();
+        $this->doctrineHelper->expects($this->at(0))
             ->method('getEntityRepositoryForClass')
-            ->willReturn($repo);
-        $repo->expects($this->once())
-            ->method('find')
-            ->willReturn($product);
+            ->willReturn($productReposiotry);
+        $productReposiotry->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [$productId]])
+            ->willReturn([$product]);
 
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->willReturn($unit);
+        $unitRepository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
+            ->disableOriginalConstructor()->getMock();
+        $this->doctrineHelper->expects($this->at(1))
+            ->method('getEntityRepositoryForClass')
+            ->willReturn($unitRepository);
+        $unitRepository->expects($this->once())
+            ->method('getProductsUnitsByCodes')
+            ->with([$productId], [$unitCode])
+            ->willReturn([$unitCode => $unit]);
         $this->assertEmpty($request->getRequestProducts());
-        $this->requestManager->addProductItemToRequest($request, $productId, $unit, $quantity);
+
+        $this->requestManager->addProductLineItemsToRequest($request, $data);
 
         $this->assertNotEmpty($request->getRequestProducts());
     }
