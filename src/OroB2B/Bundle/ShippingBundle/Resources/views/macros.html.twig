@@ -1,0 +1,35 @@
+{% macro renderProductShippingOptionRow(shippingOption) %}
+    <tr>
+        <td class="renderable">
+            <div class="text-center">{{ shippingOption.productUnit|orob2b_format_product_unit_label(false, true) }}</div>
+        </td>
+        <td class="renderable">
+            <div class="text-center">{{ shippingOption.weight.value|orob2b_weight_unit_format_value_short(shippingOption.weight.unit) }}</div>
+        </td>
+        <td class="renderable">
+            <div class="text-center">{{ shippingOption.dimensions.length }} x {{ shippingOption.dimensions.width }}
+                x {{ shippingOption.dimensions.height }} {{ shippingOption.dimensions.unit|orob2b_length_unit_format_label(true,true) }}</div>
+        </td>
+        <td class="renderable">
+            <div class="text-center">{{ shippingOption.freightClass|orob2b_freight_class_format_label(false,false) }}</div>
+        </td>
+    </tr>
+{% endmacro %}
+
+{% macro renderProductShippingOptions(shippingOptions) %}
+    {% if shippingOptions and shippingOptions|length > 0 %}
+        <table class="grid table table-condensed table-bordered">
+            <tr>
+                <th class="renderable">{{ 'orob2b.shipping.product_shipping_options.unit.label'|trans }}</th>
+                <th class="renderable">{{ 'orob2b.shipping.product_shipping_options.weight.label'|trans }}</th>
+                <th class="renderable">{{ 'orob2b.shipping.product_shipping_options.dimensions.label'|trans }}</th>
+                <th class="renderable">{{ 'orob2b.shipping.product_shipping_options.freight_class.label'|trans }}</th>
+            </tr>
+            <tbody>
+            {% for key, options in shippingOptions %}
+                {{ _self.renderProductShippingOptionRow(options) }}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endmacro %}

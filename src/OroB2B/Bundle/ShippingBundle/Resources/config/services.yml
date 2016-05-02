@@ -4,6 +4,7 @@ parameters:
     orob2b_shipping.entity.length_unit.class: OroB2B\Bundle\ShippingBundle\Entity\LengthUnit
     orob2b_shipping.entity.freight_class.class: OroB2B\Bundle\ShippingBundle\Entity\FreightClass
     orob2b_shipping.entity.weight_unit.class: OroB2B\Bundle\ShippingBundle\Entity\WeightUnit
+    orob2b_shipping.entity.product_shipping_options.class: OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions
 
 services:
     orob2b_shipping.factory.shipping_origin_model_factory:
@@ -36,6 +37,26 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-view, method: onWarehouseView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-edit, method: onWarehouseEdit }
+
+    orob2b_shipping.event_listener.product_form_view:
+        class: OroB2B\Bundle\ShippingBundle\EventListener\ProductFormViewListener
+        arguments:
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+
+    orob2b_shipping.event_listener.product_shipping_options_datagrid:
+        class: 'OroB2B\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener'
+        arguments:
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+        calls:
+            - [setProductShippingOptionsClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
 
     # formatters
     orob2b_shipping.formatter.length_unit_label:
