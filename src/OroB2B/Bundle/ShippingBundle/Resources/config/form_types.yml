@@ -11,12 +11,12 @@ services:
     orob2b_shipping.form.type.shipping_origin_config:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType
         tags:
-            - {name: form.type, alias: orob2b_shipping_origin_config}
+            - { name: form.type, alias: orob2b_shipping_origin_config }
 
     orob2b_shipping.form.type.shipping_origin_warehouse:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType
         tags:
-            - {name: form.type, alias: orob2b_shipping_origin_warehouse}
+            - { name: form.type, alias: orob2b_shipping_origin_warehouse }
 
     orob2b_shipping.form.extension.warehouse_shipping_origin:
         class: OroB2B\Bundle\ShippingBundle\Form\Extension\WarehouseShippingOriginExtension
@@ -24,4 +24,28 @@ services:
             - '@orob2b_shipping.shipping_origin.provider'
             - '@doctrine'
         tags:
-            - {name: form.type_extension, alias: orob2b_warehouse}
+            - { name: form.type_extension, alias: orob2b_warehouse }
+
+    orob2b_shipping.form.type.length_unit_select:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType
+        arguments:
+            - '@orob2b_shipping.repository.length_unit'
+            - '@orob2b_shipping.formatter.length_unit_label'
+        tags:
+            - { name: form.type, alias: orob2b_shipping_length_unit_select }
+
+    orob2b_shipping.form.type.weight_unit_select:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType
+        arguments:
+            - '@orob2b_shipping.repository.weight_unit'
+            - '@orob2b_shipping.formatter.weight_unit_label'
+        tags:
+            - { name: form.type, alias: orob2b_shipping_weight_unit_select }
+
+    orob2b_shipping.form.type.freight_class_select:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\FreightClassSelectType
+        arguments:
+            - '@orob2b_shipping.repository.freight_class'
+            - '@orob2b_shipping.formatter.freight_class_label'
+        tags:
+            - { name: form.type, alias: orob2b_shipping_freight_class_select }
