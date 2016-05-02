@@ -4,14 +4,13 @@ namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Doctrine\ORM\EntityRepository;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use OroB2B\Bundle\ShippingBundle\Form\Type\AbstractShippingOptionSelectType;
-use OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type\Stub\ShippingOptionSelectTypeStub;
 
-class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestCase
+abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestCase
 {
     /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $repository;
@@ -33,8 +32,6 @@ class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestCase
         $this->formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->formType = new ShippingOptionSelectTypeStub($this->repository, $this->formatter);
     }
 
     protected function tearDown()
