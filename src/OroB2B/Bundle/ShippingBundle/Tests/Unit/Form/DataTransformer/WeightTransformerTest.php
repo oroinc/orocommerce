@@ -47,6 +47,10 @@ class WeightTransformerTest extends \PHPUnit_Framework_TestCase
                 'value' => $this->getWeight($this->getWeightUnit('kg'), 'bad', 4, 6),
                 'expected' => null,
             ],
+            'bad type' => [
+                'value' => 'string',
+                'expected' => null,
+            ],
         ];
     }
 
@@ -80,6 +84,10 @@ class WeightTransformerTest extends \PHPUnit_Framework_TestCase
             'bad data' => [
                 'value' => $this->getWeight($this->getWeightUnit('kg'), 'bad', 4, 6),
                 'expected' => $this->getWeight($this->getWeightUnit('kg'), 'bad', 4, 6),
+            ],
+            'bad type' => [
+                'value' => 'string',
+                'expected' => 'string',
             ],
         ];
     }

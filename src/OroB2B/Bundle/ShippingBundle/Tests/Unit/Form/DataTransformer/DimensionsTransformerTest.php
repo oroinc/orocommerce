@@ -47,6 +47,10 @@ class DimensionsTransformerTest extends \PHPUnit_Framework_TestCase
                 'value' => $this->getDimensions($this->getLengthUnit('m'), 'bad', 4, 6),
                 'expected' => null,
             ],
+            'bad type' => [
+                'value' => 'string',
+                'expected' => null,
+            ],
         ];
     }
 
@@ -80,6 +84,10 @@ class DimensionsTransformerTest extends \PHPUnit_Framework_TestCase
             'bad data' => [
                 'value' => $this->getDimensions($this->getLengthUnit('m'), 'bad', 4, 6),
                 'expected' => $this->getDimensions($this->getLengthUnit('m'), 'bad', 4, 6),
+            ],
+            'bad type' => [
+                'value' => 'string',
+                'expected' => 'string',
             ],
         ];
     }
