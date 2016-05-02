@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\EventListener;
 
-use Doctrine\ORM\EntityRepository;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -12,9 +9,9 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\EventListener\ProductFormViewListener;
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class ProductFormViewListenerTest extends FormViewListenerTestCase
 {
