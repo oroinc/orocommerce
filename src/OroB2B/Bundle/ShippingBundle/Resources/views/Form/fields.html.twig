@@ -1,0 +1,39 @@
+{% macro shipping_origin_block(form, disabled) %}
+    {% set attrs = {'attr': {'data-validation': (form.vars.required ? { NotBlank: null } : {})|json_encode }, disabled: disabled } %}
+    {{ form_row(form, attrs) }}
+{% endmacro %}
+
+{% block _shipping_origin_orob2b_shipping___shipping_origin_row %}
+    <div class="controls control-group shipping-origin-address">
+        {{ form_widget(form) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+
+{% block _shipping_origin_orob2b_shipping___shipping_origin_value_country_row %}
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+{% endblock %}
+
+{% block _shipping_origin_orob2b_shipping___shipping_origin_value_region_row %}
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+{% endblock %}
+
+{% block _shipping_origin_orob2b_shipping___shipping_origin_value_region_text_row %}
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+{% endblock %}
+
+{% block _shipping_origin_orob2b_shipping___shipping_origin_value_postalCode_row %}
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+{% endblock %}
+
+{% block _shipping_origin_orob2b_shipping___shipping_origin_value_city_row %}
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+{% endblock %}
+
+{% block _shipping_origin_orob2b_shipping___shipping_origin_value_street_row %}
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+{% endblock %}
+
+{% block _shipping_origin_orob2b_shipping___shipping_origin_value_street2_row %}
+    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+{% endblock %}

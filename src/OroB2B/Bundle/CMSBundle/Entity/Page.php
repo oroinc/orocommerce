@@ -22,6 +22,7 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
  * @Config(
  *      routeName="orob2b_cms_page_index",
  *      routeView="orob2b_cms_page_view",
+ *      routeUpdate="orob2b_cms_page_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-book"

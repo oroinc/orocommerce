@@ -1,0 +1,7 @@
+operations:
+    UPDATE:
+        exclude_datagrids:
+            - category-products-grid
+    DELETE:
+        exclude_datagrids:
+            - category-products-grid

@@ -41,6 +41,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     * @expectedExceptionMessage AccountUser must belong to Account
      */
     public function testThrowExceptionWhenAccountUserHasWrongAccount()
     {
@@ -60,6 +61,79 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
         $order
             ->setAccount($account2)
             ->setAccountUser($accountUser1);
+
+        $event = new OrderEvent($form, $order);
+        $this->listener->onOrderEvent($event);
+    }
+
+    public function testSkipValidationWithoutAccountUser()
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $order = new Order();
+
+        $event = new OrderEvent($form, $order);
+        $this->listener->onOrderEvent($event);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     * @expectedExceptionMessage AccountUser without Account is not allowed
+     */
+    public function testAccountUserWithoutOrderAccount()
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $accountUser = new AccountUser();
+        $accountUser->setAccount(new Account());
+
+        $order = new Order();
+        $order
+            ->setAccountUser($accountUser);
+
+        $this->setValue($order, 'account', null);
+
+        $event = new OrderEvent($form, $order);
+        $this->listener->onOrderEvent($event);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     * @expectedExceptionMessage AccountUser without Account is not allowed
+     */
+    public function testAccountUserWithoutAccount()
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $accountUser = new AccountUser();
+
+        $order = new Order();
+        $order
+            ->setAccount(new Account())
+            ->setAccountUser($accountUser);
+
+        $event = new OrderEvent($form, $order);
+        $this->listener->onOrderEvent($event);
+    }
+
+    public function testAccountUserAccountValid()
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        /** @var Account $account */
+        $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 1]);
+
+        $accountUser = new AccountUser();
+        $accountUser->setAccount($account);
+
+        $order = new Order();
+        $order
+            ->setAccountUser($accountUser)
+            ->setAccount($account);
 
         $event = new OrderEvent($form, $order);
         $this->listener->onOrderEvent($event);
