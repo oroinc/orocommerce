@@ -12,6 +12,8 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+
 class ProductShippingOptionsDatagridListener
 {
     const SHIPPING_OPTIONS_COLUMN = 'product_shipping_options';
@@ -42,32 +44,19 @@ class ProductShippingOptionsDatagridListener
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
-        $columnName = $this->buildColumnName();
-        $joinAlias = $this->buildJoinAlias($columnName);
 
-        $selectPattern = 'GROUP_CONCAT(%s.id SEPARATOR %s) as %s';
-        $separator = (new Expr())->literal(self::DATA_SEPARATOR);
-
-        $this->addConfigElement(
-            $config,
-            '[source][query][select]',
-            sprintf($selectPattern, $joinAlias, $separator, $columnName)
-        );
-
-        $this->addConfigProductShippingOptionsJoin($config);
-
-        $columnLabel = 'orob2b.shipping.datagrid.shipping_options.column.label';
-        $params = [];
+        $this->addConfigSelect($config, static::SHIPPING_OPTIONS_COLUMN);
+        $this->addConfigJoin($config, static::SHIPPING_OPTIONS_COLUMN);
 
         $column = [
-            'label' => $this->translator->trans($columnLabel, $params),
+            'label' => $this->translator->trans('orob2b.shipping.datagrid.shipping_options.column.label'),
             'type' => 'twig',
-            'template' => $this->getColumnTemplate(),
+            'template' => 'OroB2BShippingBundle:Datagrid:Column/productShippingOptions.html.twig',
             'frontend_type' => 'html',
             'renderable' => false,
         ];
 
-        $this->addConfigElement($config, '[columns]', $column, $columnName);
+        $this->addConfigElement($config, '[columns]', $column, static::SHIPPING_OPTIONS_COLUMN);
 
     }
 
@@ -84,6 +73,7 @@ class ProductShippingOptionsDatagridListener
             $shippingOptions = $record->getValue(static::SHIPPING_OPTIONS_COLUMN);
             $shippingOptions = $shippingOptions ? explode(self::DATA_SEPARATOR, $shippingOptions) : [];
             foreach ($shippingOptions as $optionId) {
+                /* @var $options ProductShippingOptions */
                 $options = $this->doctrineHelper->getEntityReference($this->productShippingOptionsClass, $optionId);
                 if ($options) {
                     $data[$optionId] = $options;
@@ -95,14 +85,31 @@ class ProductShippingOptionsDatagridListener
 
     /**
      * @param DatagridConfiguration $config
+     * @param string $columnName
      */
-    protected function addConfigProductShippingOptionsJoin(DatagridConfiguration $config)
+    protected function addConfigSelect(DatagridConfiguration $config, $columnName)
     {
-        $columnName = $this->buildColumnName();
         $joinAlias = $this->buildJoinAlias($columnName);
-        $expr = new Expr();
-        $joinExpr = $expr
-            ->andX(sprintf('%s.product = product.id', $joinAlias));
+
+        $selectPattern = 'GROUP_CONCAT(%s.id SEPARATOR %s) as %s';
+        $separator = (new Expr())->literal(self::DATA_SEPARATOR);
+
+        $this->addConfigElement(
+            $config,
+            '[source][query][select]',
+            sprintf($selectPattern, $joinAlias, $separator, $columnName)
+        );
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param string $columnName
+     */
+    protected function addConfigJoin(DatagridConfiguration $config, $columnName)
+    {
+        $joinAlias = $this->buildJoinAlias($columnName);
+
+        $joinExpr = (new Expr())->andX(sprintf('%s.product = product.id', $joinAlias));
 
         $this->addConfigElement(
             $config,
@@ -111,7 +118,7 @@ class ProductShippingOptionsDatagridListener
                 'join' => $this->productShippingOptionsClass,
                 'alias' => $joinAlias,
                 'conditionType' => Expr\Join::WITH,
-                'condition' => (string) $joinExpr,
+                'condition' => (string)$joinExpr,
             ]
         );
     }
@@ -149,21 +156,5 @@ class ProductShippingOptionsDatagridListener
     protected function buildJoinAlias($columnName)
     {
         return $columnName . '_table';
-    }
-
-    /**
-     * @return string
-     */
-    protected function buildColumnName()
-    {
-        return static::SHIPPING_OPTIONS_COLUMN;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getColumnTemplate()
-    {
-        return 'OroB2BShippingBundle:Datagrid:Column/productShippingOptions.html.twig';
     }
 }

@@ -1,13 +1,29 @@
-{% if value and value|length > 0 %}
+{% if value|length > 0 %}
     <table class="grid table table-condensed table-bordered">
         <tr>
-            <th class="renderable">{{ 'orob2b.shipping.datagrid.shipping_options.unit.label'|trans }}</th>
-            <th class="renderable">{{ 'orob2b.shipping.datagrid.shipping_options.weight.label'|trans }}</th>
-            <th class="renderable">{{ 'orob2b.shipping.datagrid.shipping_options.dimensions.label'|trans }}</th>
-            <th class="renderable">{{ 'orob2b.shipping.datagrid.shipping_options.freight_class.label'|trans }}</th>
+            <td class="renderable">
+                <div class="text-center">
+                    <strong>{{ 'orob2b.shipping.datagrid.shipping_options.unit.label'|trans }}</strong>
+                </div>
+            </td>
+            <td class="renderable">
+                <div class="text-center">
+                    <strong>{{ 'orob2b.shipping.datagrid.shipping_options.weight.label'|trans }}</strong>
+                </div>
+            </td>
+            <td class="renderable">
+                <div class="text-center">
+                    <strong>{{ 'orob2b.shipping.datagrid.shipping_options.dimensions.label'|trans }}</strong>
+                </div>
+            </td>
+            <td class="renderable">
+                <div class="text-center">
+                    <strong>{{ 'orob2b.shipping.datagrid.shipping_options.freight_class.label'|trans }}</strong>
+                </div>
+            </td>
         </tr>
         <tbody>
-        {% for key, shippingOptions in value %}
+        {% for shippingOptions in value %}
             <tr>
                 <td class="renderable">
                     <div class="text-center">{{ shippingOptions.productUnit|orob2b_format_product_unit_label(false, true) }}</div>
@@ -27,5 +43,4 @@
         {% endfor %}
         </tbody>
     </table>
-
 {% endif %}

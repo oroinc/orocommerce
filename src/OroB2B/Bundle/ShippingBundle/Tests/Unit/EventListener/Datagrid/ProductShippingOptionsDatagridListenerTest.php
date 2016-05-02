@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Bundle\Tests\Unit\EventListener\Datagrid;
+namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\EventListener\Datagrid;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -16,7 +16,7 @@ use OroB2B\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDa
 
 class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
-    const PRODUCT_SHIPPING_OPTIONS_CLASS = 'OroB2B\\Bundle\\ShippingBundle\\Entity\\ProductShippingOptions';
+    const PRODUCT_SHIPPING_OPTIONS_CLASS = 'OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions';
 
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -56,23 +56,20 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
             ->getMock();
 
         $this->listener = $this->createListener();
-        $this->listener->setProductShippingOptionsClass(static::PRODUCT_SHIPPING_OPTIONS_CLASS);
     }
 
     protected function tearDown()
     {
-        unset($this->doctrineHelper, $this->translator, $this->listener, $this->config, $this->productShippingOptions);
+        unset($this->doctrineHelper, $this->translator, $this->listener, $this->config);
     }
 
     public function testSetProductShippingOptionsClass()
     {
-        $listener = $this->createListener();
-        $this->assertNull($this->getProperty($listener, 'productShippingOptionsClass'));
-        $listener->setProductShippingOptionsClass(static::PRODUCT_SHIPPING_OPTIONS_CLASS);
-        $this->assertEquals(
-            static::PRODUCT_SHIPPING_OPTIONS_CLASS,
-            $this->getProperty($listener, 'productShippingOptionsClass')
-        );
+        $this->assertNull($this->getProperty($this->listener, 'productShippingOptionsClass'));
+
+        $this->listener->setProductShippingOptionsClass('TestClass');
+
+        $this->assertEquals('TestClass', $this->getProperty($this->listener, 'productShippingOptionsClass'));
     }
 
     /**
@@ -82,15 +79,14 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
      */
     public function testOnBuildBefore(array $expectedConfig = [])
     {
-
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $config = DatagridConfiguration::create([]);
 
-        $event = new BuildBefore($datagrid, $config);
-        $this->listener->onBuildBefore($event);
+        $this->listener->setProductShippingOptionsClass(static::PRODUCT_SHIPPING_OPTIONS_CLASS);
 
-        $this->assertEquals($expectedConfig, $config->toArray());
+        $this->listener->onBuildBefore(new BuildBefore($datagrid, $this->config));
+
+        $this->assertEquals($expectedConfig, $this->config->toArray());
     }
 
     /**
@@ -101,29 +97,16 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
      */
     public function testOnResultAfter(array $sourceResults = [], array $expectedResults = [])
     {
-        $sourceResultRecords = [];
-        foreach ($sourceResults as $sourceResult) {
-            $sourceResultRecords[] = new ResultRecord($sourceResult);
-        }
-
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
             ->willReturn(new ProductShippingOptions());
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $event = new OrmResultAfter($datagrid, $sourceResultRecords);
+        $event = new OrmResultAfter($datagrid, $sourceResults);
         $this->listener->onResultAfter($event);
-        $actualResults = $event->getRecords();
 
-        $this->assertSameSize($expectedResults, $actualResults);
-
-        foreach ($expectedResults as $key => $expectedResult) {
-            $actualResult = $actualResults[$key];
-            foreach ($expectedResult as $name => $value) {
-                $this->assertEquals($value, $actualResult->getValue($name));
-            }
-        }
+        $this->assertEquals($expectedResults, $event->getRecords());
     }
 
     /**
@@ -132,21 +115,28 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
     public function onResultAfterDataProvider()
     {
         return [
-            'valid data' => [
+            [
                 'sourceResults' => [
-                    [
-                        'id' => 2,
-                        'product_shipping_options' => '1{sep}2'
-                    ],
+                    $this->getResultRecord([
+                        [
+                            'id' => 2,
+                            'product_shipping_options' => '1{sep}2'
+                        ],
+                    ]),
                 ],
                 'expectedResults' => [
-                    [
-                        'id' => 2,
-                        'product_shipping_options' => [
-                            '1' => new ProductShippingOptions(),
-                            '2' => new ProductShippingOptions()
+                    $this->getResultRecord([
+                        [
+                            'id' => 2,
+                            'product_shipping_options' => '1{sep}2'
+                        ],
+                        [
+                            'product_shipping_options' => [
+                                1 => new ProductShippingOptions(),
+                                2 => new ProductShippingOptions(),
+                            ],
                         ]
-                    ],
+                    ]),
                 ],
             ],
         ];
@@ -158,17 +148,18 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
     public function onBuildBeforeDataProvider()
     {
         return [
-            'valid' => [
+            [
                 'expectedConfig' => [
                     'source' => [
                         'query' => [
                             'select' => [
-                                0 => 'GROUP_CONCAT(product_shipping_options_table.id SEPARATOR \'{sep}\') as product_shipping_options',
+                                0 => 'GROUP_CONCAT(product_shipping_options_table.id SEPARATOR \'{sep}\')'
+                                    . ' as product_shipping_options',
                             ],
                             'join' => [
                                 'left' => [
                                     0 => [
-                                        'join' => 'OroB2B\\Bundle\\ShippingBundle\\Entity\\ProductShippingOptions',
+                                        'join' => 'OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions',
                                         'alias' => 'product_shipping_options_table',
                                         'conditionType' => 'WITH',
                                         'condition' => 'product_shipping_options_table.product = product.id',
@@ -211,5 +202,20 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
         $reflection->setAccessible(true);
 
         return $reflection->getValue($object);
+    }
+
+    /**
+     * @param array $data
+     * @return ResultRecord
+     */
+    protected function getResultRecord(array $data = [])
+    {
+        $resultRecord = new ResultRecord([]);
+
+        foreach ($data as $value) {
+            $resultRecord->addData($value);
+        }
+
+        return $resultRecord;
     }
 }
