@@ -96,9 +96,9 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
                 'full_list' => false
             ]
         );
-        $resolver->setAllowedTypes('compact', ['bool']);
-        $resolver->setAllowedTypes('additional_codes', ['array']);
-        $resolver->setAllowedTypes('full_list', ['bool']);
+        $resolver->setAllowedTypes('compact', ['bool'])
+            ->setAllowedTypes('additional_codes', ['array'])
+            ->setAllowedTypes('full_list', ['bool']);
     }
 
     /**
