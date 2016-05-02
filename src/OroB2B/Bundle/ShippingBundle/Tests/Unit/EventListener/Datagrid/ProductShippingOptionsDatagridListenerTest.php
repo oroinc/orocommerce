@@ -2,12 +2,17 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Bundle\Tests\Unit\EventListener\Datagrid;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
+use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -56,7 +61,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
 
     protected function tearDown()
     {
-        unset($this->doctrineHelper, $this->translator, $this->listener, $this->config);
+        unset($this->doctrineHelper, $this->translator, $this->listener, $this->config, $this->productShippingOptions);
     }
 
     public function testSetProductShippingOptionsClass()
@@ -89,6 +94,65 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
     }
 
     /**
+     * @param array $sourceResults
+     * @param array $expectedResults
+     *
+     * @dataProvider onResultAfterDataProvider
+     */
+    public function testOnResultAfter(array $sourceResults = [], array $expectedResults = [])
+    {
+        $sourceResultRecords = [];
+        foreach ($sourceResults as $sourceResult) {
+            $sourceResultRecords[] = new ResultRecord($sourceResult);
+        }
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityReference')
+            ->willReturn(new ProductShippingOptions());
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $event = new OrmResultAfter($datagrid, $sourceResultRecords);
+        $this->listener->onResultAfter($event);
+        $actualResults = $event->getRecords();
+
+        $this->assertSameSize($expectedResults, $actualResults);
+
+        foreach ($expectedResults as $key => $expectedResult) {
+            $actualResult = $actualResults[$key];
+            foreach ($expectedResult as $name => $value) {
+                $this->assertEquals($value, $actualResult->getValue($name));
+            }
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function onResultAfterDataProvider()
+    {
+        return [
+            'valid data' => [
+                'sourceResults' => [
+                    [
+                        'id' => 2,
+                        'product_shipping_options' => '1{sep}2'
+                    ],
+                ],
+                'expectedResults' => [
+                    [
+                        'id' => 2,
+                        'product_shipping_options' => [
+                            '1' => new ProductShippingOptions(),
+                            '2' => new ProductShippingOptions()
+                        ]
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
      * @return array
      */
     public function onBuildBeforeDataProvider()
@@ -113,15 +177,15 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
                             ],
                         ],
                     ],
-                    'columns' => array(
-                        'product_shipping_options' => array(
+                    'columns' => [
+                        'product_shipping_options' => [
                             'label' => 'orob2b.shipping.datagrid.shipping_options.column.label.trans',
                             'type' => 'twig',
                             'template' => 'OroB2BShippingBundle:Datagrid:Column/productShippingOptions.html.twig',
                             'frontend_type' => 'html',
-                            'renderable' => true,
-                        ),
-                    ),
+                            'renderable' => false,
+                        ],
+                    ],
                 ]
             ]
         ];
