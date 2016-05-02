@@ -64,7 +64,7 @@ class ProductShippingOptionsDatagridListener
             'type' => 'twig',
             'template' => $this->getColumnTemplate(),
             'frontend_type' => 'html',
-            'renderable' => true,
+            'renderable' => false,
         ];
 
         $this->addConfigElement($config, '[columns]', $column, $columnName);
