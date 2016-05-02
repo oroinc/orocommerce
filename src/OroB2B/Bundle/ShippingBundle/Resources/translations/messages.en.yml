@@ -1,5 +1,12 @@
 orob2b:
     shipping:
+        datagrid:
+            shipping_options:
+                column.label:         Shipping Options
+                unit.label:           Units
+                weight.label:         Weight
+                dimensions.label:     Dimensions
+                freight_class.label:  Freight Class
         system_configuration:
             groups:
                 shipping.title: Shipping
