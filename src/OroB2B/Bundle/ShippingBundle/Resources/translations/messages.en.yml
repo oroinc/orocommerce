@@ -25,10 +25,11 @@ orob2b:
         product_shipping_options:
             entity_label: Shipping Option
             entity_plural_label: Shipping Options
-            unit.label: Units
+            add_label: Add Options
+            product_unit.label: Unit
             weight.label: Weight
             dimensions.label: Dimensions
-            freight_class.label: Freight Class
+            freight_class.label: Freight Class            
         weightunit:
             entity_label: Unit Of Weight
             entity_plural_label: Units Of Weight

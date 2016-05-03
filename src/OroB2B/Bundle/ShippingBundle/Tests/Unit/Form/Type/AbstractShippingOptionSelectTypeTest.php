@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
@@ -21,6 +23,9 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
     /** @var AbstractShippingOptionSelectType */
     protected $formType;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
+    protected $configManager;
+
     protected function setUp()
     {
         parent::setUp();
@@ -32,11 +37,15 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         $this->formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     protected function tearDown()
     {
-        unset($this->formType, $this->repository, $this->formatter);
+        unset($this->formType, $this->repository, $this->formatter, $this->configManager);
 
         parent::tearDown();
     }
@@ -60,12 +69,18 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
      */
     public function testSubmit($submittedData, $expectedData, array $options = [])
     {
-        $this->repository->expects($this->once())
-            ->method('findAll')
-            ->willReturn([
-                $this->createUnit('kg'),
-                $this->createUnit('lbs')
-            ]);
+        if (!empty($options['full_list'])) {
+            $this->repository->expects($this->once())
+                ->method('findAll')
+                ->willReturn([
+                    $this->createUnit('kg'),
+                    $this->createUnit('lbs')
+                ]);
+        } else {
+            $this->configManager->expects($this->once())
+                ->method('get')
+                ->willReturn(['kg', 'lbs']);
+        }
 
         $this->formatter->expects($this->at(0))
             ->method('format')
@@ -98,16 +113,21 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         return [
             [
                 'submittedData' => null,
-                'expectedData' => null
+                'expectedData' => null,
             ],
             [
                 'submittedData' => 'lbs',
-                'expectedData' => 'lbs'
+                'expectedData' => 'lbs',
             ],
             [
                 'submittedData' => ['lbs', 'kg'],
                 'expectedData' => ['lbs', 'kg'],
-                'options' => ['multiple' => true]
+                'options' => ['multiple' => true],
+            ],
+            [
+                'submittedData' => 'lbs',
+                'expectedData' => 'lbs',
+                'options' => ['full_list' => true],
             ],
         ];
     }
