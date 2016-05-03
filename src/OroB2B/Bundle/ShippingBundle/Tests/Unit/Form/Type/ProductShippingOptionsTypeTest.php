@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Doctrine\ORM\EntityRepository;
-
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -14,20 +12,16 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\FreightClassSelectType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
+use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\WeightType;
 
 class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
 {
-    //use QuantityTypeTrait;
     use EntityTrait;
-
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
-    protected $repository;
 
     /** @var ProductShippingOptionsType */
     protected $formType;
@@ -38,10 +32,6 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $this->formType = new ProductShippingOptionsType($this->quoteProductOfferFormatter);
         $this->formType->setDataClass('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions');
@@ -90,6 +80,8 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * @return array
      */
     public function submitProvider()
@@ -100,6 +92,27 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                 'submittedData' => [],
                 'expectedData' => $this->getProductShippingOptions(),
                 'defaultData' => $this->getProductShippingOptions(),
+            ],
+            'empty product' => [
+                'isValid' => false,
+                'submittedData' => [
+                    'productUnit' => 'item',
+                    'weight' => [
+                        'value' => 1,
+                        'unit' => 'kg',
+                    ],
+                    'dimensions' => [
+                        'length' => 2,
+                        'width' => 3,
+                        'height' => 4,
+                        'unit' => 'mm',
+                    ],
+                    'freightClass' => 'pl',
+                ],
+                'expectedData' => $this->getProductShippingOptions('item', [1, 'kg'], [2, 3, 4, 'mm'], 'pl')
+                    ->setProduct(null),
+                'defaultData' => $this->getProductShippingOptions()
+                    ->setProduct(null),
             ],
             'empty unit' => [
                 'isValid' => false,
@@ -201,12 +214,8 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         array $dimensions = null,
         $freightClass = null
     ) {
-        $product = new Product();
-
         $productShippingOptions = new ProductShippingOptions();
-        $productShippingOptions
-            ->setProduct($product)
-        ;
+        $productShippingOptions->setProduct(new Product());
 
         if ($unitCode) {
             $productShippingOptions->setProductUnit(

@@ -7,8 +7,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
+use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
 
 class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
 {
