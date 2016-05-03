@@ -53,6 +53,8 @@ class ProductShippingOptionsType extends AbstractType
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
             'intention' => 'shipping_product_shipping_origin',
+            'page_component' => 'oroui/js/app/components/view-component',
+            'page_component_options' => ['view' => 'orob2bshipping/js/app/views/line-item-view'],
         ]);
     }
 

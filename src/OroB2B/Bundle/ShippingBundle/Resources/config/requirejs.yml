@@ -1,3 +1,4 @@
 config:
     paths:
         'orob2bshipping/js/app/views/shipping-origin-view': 'bundles/orob2bshipping/js/app/views/shipping-origin-view.js'
+        'orob2bshipping/js/app/views/product-shipping-options-view': 'bundles/orob2bshipping/js/app/views/product-shipping-options-view.js'
