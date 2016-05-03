@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
+use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,10 +15,14 @@ use Symfony\Component\Form\FormEvents;
 
 class ProductFormExtension extends AbstractTypeExtension
 {
+    const FORM_ELEMENT_NAME = 'product_shipping_options';
+
     /**
      * @var ManagerRegistry
      */
     protected $registry;
+    /** @var string */
+    protected $productShippingOptionsClass = 'OroB2BShippingBundle:ProductShippingOptions';
 
     /**
      * @param ManagerRegistry $registry
@@ -65,7 +70,7 @@ class ProductFormExtension extends AbstractTypeExtension
 
         $shippingOptions = $this->getProductShippingOptionsRepository()->findBy(['product' => $product->getId()]);
 
-        $event->getForm()->get('product_shipping_options')->setData($shippingOptions);
+        $event->getForm()->get(static::FORM_ELEMENT_NAME)->setData($shippingOptions);
     }
 
     /**
@@ -77,6 +82,40 @@ class ProductFormExtension extends AbstractTypeExtension
         $product = $event->getData();
         if (!$product) {
             return;
+        }
+
+        $form = $event->getForm();
+        /** @var ProductShippingOptions[] $options */
+        $options = (array) $form->get(static::FORM_ELEMENT_NAME)->getData();
+        foreach ($options as $option) {
+            $option->setProduct($product);
+        }
+
+        if (!$form->isValid()) {
+            return;
+        }
+
+        $entityManager = $this->registry->getManagerForClass($this->productShippingOptionsClass);
+
+        // persist existing prices
+        $persistedOptionsIds = [];
+        foreach ($options as $option) {
+            $priceId = $option->getId();
+            if ($priceId) {
+                $persistedOptionsIds[] = $priceId;
+            }
+            $entityManager->persist($option);
+        }
+
+        // remove deleted prices
+        if ($product->getId()) {
+            /** @var ProductShippingOptions[] $existingOptions */
+            $existingOptions = $this->getProductShippingOptionsRepository()->findBy(['product' => $product->getId()]);
+            foreach ($existingOptions as $option) {
+                if (!in_array($option->getId(), $persistedOptionsIds, true)) {
+                    $entityManager->remove($option);
+                }
+            }
         }
     }
 
