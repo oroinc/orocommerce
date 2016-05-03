@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
