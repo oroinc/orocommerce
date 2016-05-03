@@ -108,7 +108,8 @@ class AccountUserController extends Controller
             $form,
             $request,
             $this->get('orob2b_account_user.manager'),
-            $this->get('oro_security.security_facade')
+            $this->get('oro_security.security_facade'),
+            $this->get('translator')
         );
         if (!$accountUser->getOwner()) {
             $user = $accountUser->getAccount()->getOwner();

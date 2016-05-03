@@ -10,6 +10,8 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class AccountUserHandler
 {
@@ -25,22 +27,28 @@ class AccountUserHandler
     /** @var SecurityFacade */
     protected $securityFacade;
 
+    /** @var TranslatorInterface */
+    protected $translator;
+
     /**
      * @param FormInterface $form
      * @param Request $request
      * @param AccountUserManager $userManager
      * @param SecurityFacade $securityFacade
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         FormInterface $form,
         Request $request,
         AccountUserManager $userManager,
-        SecurityFacade $securityFacade
+        SecurityFacade $securityFacade,
+        TranslatorInterface $translator
     ) {
         $this->form = $form;
         $this->request = $request;
         $this->userManager = $userManager;
         $this->securityFacade = $securityFacade;
+        $this->translator = $translator;
     }
 
     /**
@@ -62,7 +70,18 @@ class AccountUserHandler
                     }
 
                     if ($this->form->get('sendEmail')->getData()) {
-                        $this->userManager->sendWelcomeEmail($accountUser);
+                        try {
+                            $this->userManager->sendWelcomeEmail($accountUser);
+                        } catch (\Exception $e) {
+                            /** @var Session $session */
+                            $session = $this->request->getSession();
+                            $session->getFlashBag()->add(
+                                'error',
+                                $this->translator
+                                     ->trans('orob2b.account.controller.accountuser.confirmation_failed.message')
+                            );
+                        }
+
                     }
                 }
 

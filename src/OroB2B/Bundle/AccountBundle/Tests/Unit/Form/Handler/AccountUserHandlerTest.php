@@ -34,6 +34,11 @@ class AccountUserHandlerTest extends FormHandlerTestCase
     protected $securityFacade;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $translator;
+
+    /**
      * @var AccountUser
      */
     protected $entity;
@@ -63,11 +68,14 @@ class AccountUserHandlerTest extends FormHandlerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        
         $this->handler = new AccountUserHandler(
             $this->form,
             $this->request,
             $this->userManager,
-            $this->securityFacade
+            $this->securityFacade,
+            $this->translator
         );
     }
 
