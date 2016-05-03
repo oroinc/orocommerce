@@ -12,6 +12,17 @@ class WeightType extends AbstractType
 {
     const NAME = 'orob2b_shipping_weight';
 
+    /** @var string */
+    protected $dataClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -32,7 +43,7 @@ class WeightType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => 'OroB2B\Bundle\ShippingBundle\Model\Weight',
+                'data_class' => $this->dataClass,
                 'compact' => false
             ]
         );

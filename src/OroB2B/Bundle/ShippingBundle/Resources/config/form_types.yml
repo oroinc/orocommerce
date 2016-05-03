@@ -61,14 +61,14 @@ services:
 
     orob2b_shipping.form.type.weight:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\WeightType
-        arguments:
-            - '%orob2b_shipping.model.weight.class%'
+        calls:
+            - [setDataClass, ['%orob2b_shipping.model.weight.class%']]
         tags:
             - { name: form.type, alias: orob2b_shipping_weight }
 
     orob2b_shipping.form.type.dimensions:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType
-        arguments:
-            - '%orob2b_shipping.model.dimensions.class%'
+        calls:
+            - [setDataClass, ['%orob2b_shipping.model.dimensions.class%']]
         tags:
             - { name: form.type, alias: orob2b_shipping_dimensions }
