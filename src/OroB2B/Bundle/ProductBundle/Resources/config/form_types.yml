@@ -135,13 +135,14 @@ services:
 
     orob2b_product.form.type.product_image:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductImageType'
+        public: true
         tags:
             - { name: form.type, alias: 'orob2b_product_image' }
 
     orob2b_product.form.type.product_image_collection:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductImageCollectionType'
+        public: true
         arguments:
             - "@oro_layout.provider.image_type"
         tags:
             - { name: form.type, alias: 'orob2b_product_image_collection' }
-
