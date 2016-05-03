@@ -40,6 +40,15 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-view, method: onWarehouseView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-edit, method: onWarehouseEdit }
 
+    orob2b_shipping.event_listener.product_form_view:
+        class: OroB2B\Bundle\ShippingBundle\EventListener\ProductFormViewListener
+        arguments:
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+
     orob2b_shipping.event_listener.product_shipping_options_datagrid:
         class: 'OroB2B\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener'
         arguments:
