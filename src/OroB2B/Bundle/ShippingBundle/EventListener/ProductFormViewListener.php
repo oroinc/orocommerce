@@ -38,6 +38,8 @@ class ProductFormViewListener
     }
 
     /**
+     * Displays ShippingOptions blocks at Product View page
+     *
      * @param BeforeListRenderEvent $event
      */
     public function onProductView(BeforeListRenderEvent $event)
@@ -72,6 +74,18 @@ class ProductFormViewListener
                 'entity' => $product,
                 'shippingOptions' => $shippingOptions
             ]
+        );
+        $this->addShippingOptionsBlock($event->getScrollData(), $template);
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     */
+    public function onProductEdit(BeforeListRenderEvent $event)
+    {
+        $template = $event->getEnvironment()->render(
+            'OroB2BShippingBundle:Product:shipping_options_update.html.twig',
+            ['form' => $event->getFormView()]
         );
         $this->addShippingOptionsBlock($event->getScrollData(), $template);
     }

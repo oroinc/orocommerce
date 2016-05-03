@@ -61,26 +61,41 @@ services:
 
     orob2b_shipping.form.type.weight:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\WeightType
+        arguments:
+          - '@orob2b_shipping.shipping_options.provider'
         calls:
             - [setDataClass, ['%orob2b_shipping.model.weight.class%']]
+            - [setEntityClass, ['%orob2b_shipping.entity.weight_unit.class%']]
         tags:
             - { name: form.type, alias: orob2b_shipping_weight }
 
     orob2b_shipping.form.type.dimensions:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType
+        arguments:
+          - '@orob2b_shipping.shipping_options.provider'
         calls:
             - [setDataClass, ['%orob2b_shipping.model.dimensions.class%']]
+            - [setEntityClass, ['%orob2b_shipping.entity.length_unit.class%']]
         tags:
             - { name: form.type, alias: orob2b_shipping_dimensions }
 
-    orob2b_shipping.form.product_shipping_option.weight:
+    orob2b_shipping.form.product_shipping_option:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType
+        arguments:
+          - '@orob2b_shipping.shipping_options.provider'
         calls:
             - [setDataClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]
         tags:
             - { name: form.type, alias: orob2b_shipping_product_shipping_options }
 
-    orob2b_shipping.form.product_shipping_option_collection.weight:
+    orob2b_shipping.form.product_shipping_option_collection:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType
         tags:
             - { name: form.type, alias: orob2b_shipping_product_shipping_options_collection }
+
+    orob2b_shipping.form.extension.product_type:
+        class: 'OroB2B\Bundle\ShippingBundle\Form\Extension\ProductFormExtension'
+        arguments:
+            - "@doctrine"
+        tags:
+            - { name: form.type_extension, alias: orob2b_product }

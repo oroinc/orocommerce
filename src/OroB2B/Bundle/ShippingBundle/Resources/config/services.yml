@@ -48,6 +48,7 @@ services:
             - '@request_stack'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
 
     orob2b_shipping.event_listener.product_shipping_options_datagrid:
         class: 'OroB2B\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener'
@@ -115,3 +116,13 @@ services:
         factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
         arguments:
             - '%orob2b_shipping.entity.freight_class.class%'
+
+    orob2b_shipping.shipping_options.provider:
+        class: OroB2B\Bundle\ShippingBundle\Provider\ShippingOptionsProvider
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.global'
+        calls:
+            - [setWeightUnitClass, ['%orob2b_shipping.entity.weight_unit.class%']]
+            - [setLengthUnitClass, ['%orob2b_shipping.entity.length_unit.class%']]
+            - [setFreightClassClass, ['%orob2b_shipping.entity.freight_class.class%']]
