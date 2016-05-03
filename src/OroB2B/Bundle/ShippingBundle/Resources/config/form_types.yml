@@ -72,3 +72,15 @@ services:
             - [setDataClass, ['%orob2b_shipping.model.dimensions.class%']]
         tags:
             - { name: form.type, alias: orob2b_shipping_dimensions }
+
+    orob2b_shipping.form.product_shipping_option.weight:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType
+        calls:
+            - [setDataClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]
+        tags:
+            - { name: form.type, alias: orob2b_shipping_product_shipping_options }
+
+    orob2b_shipping.form.product_shipping_option_collection.weight:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType
+        tags:
+            - { name: form.type, alias: orob2b_shipping_product_shipping_options_collection }

@@ -61,7 +61,7 @@
 {% endblock %}
 
 {% block orob2b_shipping_weight_widget %}
-    <div class="float-holder">
+    <div class="float-holder shipping-weight">
         <table>
             <tr>
                 <td>{{ form_widget(form.value) }}</td>
@@ -76,13 +76,13 @@
 {% endblock %}
 
 {% block orob2b_shipping_dimensions_widget %}
-    <div class="float-holder">
+    <div class="float-holder shipping-dimensions">
         <table>
             <tr>
                 <td>{{ form_widget(form.length) }}</td>
-                <td>X</td>
+                <td class="separator">X</td>
                 <td>{{ form_widget(form.width) }}</td>
-                <td>X</td>
+                <td class="separator">X</td>
                 <td>{{ form_widget(form.height) }}</td>
                 <td>{{ form_widget(form.unit) }}</td>
             </tr>
@@ -94,6 +94,38 @@
                 <td>{{ form_errors(form.height) }}</td>
                 <td>{{ form_errors(form.unit) }}</td>
             </tr>
+        </table>
+    </div>
+{% endblock %}
+
+{% block orob2b_shipping_freight_class_select_widget %}
+    <div class="float-holder shipping-freight-class">
+        <table>
+            <tr><td>{{ form_widget(form) }}</td></tr>
+            <tr><td>{{ form_errors(form) }}</td></tr>
+        </table>
+    </div>
+{% endblock %}
+
+{% block orob2b_shipping_product_shipping_options_widget %}
+    <div class="product-shipping-options">
+        <table class="grid table table-bordered">
+            <thead>
+            <tr>
+                <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.product_unit.label'|trans }}</span></th>
+                <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.weight.label'|trans }}</span></th>
+                <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.dimensions.label'|trans }}</span></th>
+                <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.freight_class.label'|trans }}</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ form_widget(form.productUnit) }}</td>
+                <td>{{ form_widget(form.weight) }}</td>
+                <td>{{ form_widget(form.dimensions) }}</td>
+                <td>{{ form_widget(form.freightClass) }}</td>
+            </tr>
+            </tbody>
         </table>
     </div>
 {% endblock %}

@@ -8,6 +8,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
+use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
 use OroB2B\Bundle\ShippingBundle\Model\Weight;
 
@@ -25,7 +27,7 @@ use OroB2B\Bundle\ShippingBundle\Model\Weight;
  * @ORM\HasLifecycleCallbacks()
  * @Config(mode="hidden")
  */
-class ProductShippingOptions
+class ProductShippingOptions implements ProductUnitHolderInterface, ProductHolderInterface
 {
     /**
      * @var integer
@@ -113,6 +115,38 @@ class ProductShippingOptions
      * @ORM\JoinColumn(name="freight_class_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
      */
     protected $freightClass;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->getId();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductUnitCode()
+    {
+        return $this->getProductUnit()->getCode();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductSku()
+    {
+        return $this->getProduct()->getSku();
+    }
 
     /**
      * @return int

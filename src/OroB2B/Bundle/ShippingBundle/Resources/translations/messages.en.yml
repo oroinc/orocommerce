@@ -45,6 +45,12 @@ orob2b:
             system_configuration.label: '(system configuration)'
             section:
                 shipping_origin: Shipping Origin
+        product_shipping_options:
+            add_label: Add Options
+            product_unit.label: Unit
+            weight.label: Weight
+            dimensions.label: Dimensions
+            freight_class.label: Freight Class
 
     weight_unit.lbs:
         label:

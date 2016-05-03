@@ -30,9 +30,21 @@ class DimensionsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('length', 'number')
-            ->add('width', 'number')
-            ->add('height', 'number')
+            ->add('length', 'number', [
+                'attr' => [
+                    'class' => 'length',
+                ],
+            ])
+            ->add('width', 'number', [
+                'attr' => [
+                    'class' => 'width',
+                ],
+            ])
+            ->add('height', 'number', [
+                'attr' => [
+                    'class' => 'height',
+                ],
+            ])
             ->add('unit', LengthUnitSelectType::NAME, ['compact' => $options['compact']]);
 
         $builder->addViewTransformer(new DimensionsTransformer());
