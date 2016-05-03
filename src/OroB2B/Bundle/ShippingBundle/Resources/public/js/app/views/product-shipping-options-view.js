@@ -19,7 +19,7 @@ define(function(require) {
         /**
          * @property {jQuery}
          */
-        itemsContainer: null,
+        $itemsContainer: null,
 
         /**
          * @inheritdoc
@@ -30,7 +30,7 @@ define(function(require) {
         },
 
         handleLayoutInit: function() {
-            this.itemsContainer = this.$el.find(this.options.selectors.itemsContainer);
+            this.$itemsContainer = this.$el.find(this.options.selectors.itemsContainer);
 
             this.$el
                 .on('content:changed', _.bind(this.onContentChanged, this))
@@ -43,15 +43,17 @@ define(function(require) {
         onContentChanged: function() {
             var items = this.$el.find(this.options.selectors.itemContainer);
 
-            this.itemsContainer.toggle(items.length > 0);
+            if (items.length > 0) {
+                this.$itemsContainer.show();
+            }
         },
 
         onContentRemoved: function() {
             var items = this.$el.find(this.options.selectors.itemContainer);
 
             if (items.length <= 1) {
-                this.itemsContainer.hide();
+                this.$itemsContainer.hide();
             }
-        },
+        }
     });
 });

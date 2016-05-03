@@ -32,7 +32,7 @@ class ProductShippingOptionsType extends AbstractType
     {
         $builder
             ->add('productUnit', ProductUnitSelectionType::NAME, [
-                'label' => 'orob2b.shipping.product_shipping_options.product_unit.label',
+                'label' => 'orob2b.shipping.product_shipping_options.unit.label',
             ])
             ->add('weight', WeightType::NAME, [
                 'label' => 'orob2b.shipping.product_shipping_options.weight.label',
@@ -52,9 +52,7 @@ class ProductShippingOptionsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
-            'intention' => 'shipping_product_shipping_origin',
-            'page_component' => 'oroui/js/app/components/view-component',
-            'page_component_options' => ['view' => 'orob2bshipping/js/app/views/line-item-view'],
+            'intention' => 'product_shipping_options',
         ]);
     }
 
