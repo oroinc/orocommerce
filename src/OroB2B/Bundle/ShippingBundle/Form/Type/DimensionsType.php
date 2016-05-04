@@ -2,21 +2,24 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingOptionsProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ShippingBundle\Form\DataTransformer\DimensionsTransformer;
+use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 
 class DimensionsType extends AbstractType
 {
     /**
-     * @var ShippingOptionsProvider
+     * @var AbstractMeasureUnitProvider
      */
     protected $provider;
 
-    public function __construct(ShippingOptionsProvider $provider)
+    /**
+     * @param AbstractMeasureUnitProvider $provider
+     */
+    public function __construct(AbstractMeasureUnitProvider $provider)
     {
         $this->provider = $provider;
     }
@@ -25,17 +28,6 @@ class DimensionsType extends AbstractType
 
     /** @var string */
     protected $dataClass;
-
-    /** @var string */
-    protected $entityClass = 'OroB2B\Bundle\ShippingBundle\Entity\LengthUnit';
-
-    /**
-     * @param $entityClass
-     */
-    public function setEntityClass($entityClass)
-    {
-        $this->entityClass = $entityClass;
-    }
 
     /**
      * @param string $dataClass
@@ -55,7 +47,11 @@ class DimensionsType extends AbstractType
             ->add('length', 'number', ['attr' => ['class' => 'length',],])
             ->add('width', 'number', ['attr' => ['class' => 'width',],])
             ->add('height', 'number', ['attr' => ['class' => 'height',],])
-            ->add('unit', 'entity', ['class' => $this->entityClass, 'choices' => $this->provider->getLengthUnits()]);
+            ->add(
+                'unit',
+                'entity',
+                ['class' => $this->provider->getEntityClass(), 'choices' => $this->provider->getUnits()]
+            );
 
         $builder->addViewTransformer(new DimensionsTransformer());
     }

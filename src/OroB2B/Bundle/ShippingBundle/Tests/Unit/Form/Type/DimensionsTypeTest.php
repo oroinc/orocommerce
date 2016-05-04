@@ -11,7 +11,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
 use OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType;
 use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingOptionsProvider;
+use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 
 class DimensionsTypeTest extends FormIntegrationTestCase
 {
@@ -23,7 +23,7 @@ class DimensionsTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var ShippingOptionsProvider
+     * @var AbstractMeasureUnitProvider
      */
     protected $provider;
 
@@ -36,11 +36,11 @@ class DimensionsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return ShippingOptionsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @return AbstractMeasureUnitProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function initProvider()
     {
-        $this->provider = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\ShippingOptionsProvider')
+        $this->provider = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

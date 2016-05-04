@@ -8,14 +8,14 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingOptionsProvider;
+use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 
-class ShippingOptionsProviderTest extends \PHPUnit_Framework_TestCase
+class AbstractMeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrineHelper;
 
-    /** @var ShippingOptionsProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AbstractMeasureUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $provider;
 
     /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
@@ -45,11 +45,6 @@ class ShippingOptionsProviderTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->provider = new ShippingOptionsProvider(
-            $this->doctrineHelper,
-            $this->configManager
-        );
     }
 
     public function tearDown()
@@ -58,25 +53,13 @@ class ShippingOptionsProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param mixed $method
-     * @param mixed $property
-     * @param mixed $class
-     *
-     * @dataProvider classesProvider
-     */
-    public function testSetClasses($method, $property, $class)
-    {
-        $this->provider->{$method}($class);
-        $this->assertEquals($class, $this->getProperty($this->provider, $property));
-    }
-
-    /**
-     * @param mixed $method
+     * @param mixed $entityClass
+     * @param $configEntryName
      * @param mixed $expected
      *
      * @dataProvider unitsProvider
      */
-    public function testGetOptions($method, $expected)
+    public function testGetOptions($entityClass, $configEntryName, $expected)
     {
         $this->repo->expects($this->atLeastOnce())
             ->method('findAll')
@@ -84,9 +67,26 @@ class ShippingOptionsProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
+            ->with($entityClass)
             ->willReturn($this->repo);
 
-        $this->assertEquals($this->provider->{$method}(), $expected);
+        $this->assertEquals($this->createProvider($entityClass, $configEntryName)->getUnits(), $expected);
+    }
+
+    /**
+     * @param mixed $entityClass
+     * @param mixed $configEntryName
+     *
+     * @return AbstractMeasureUnitProvider
+     */
+    private function createProvider($entityClass, $configEntryName)
+    {
+        $provider = new AbstractMeasureUnitProvider($this->doctrineHelper, $this->configManager);
+        $provider->setEntityClass($entityClass);
+        $provider->setConfigEntryName($configEntryName);
+        $this->assertEquals($configEntryName, $this->getProperty($provider, 'configEntryName'));
+        $this->assertEquals($entityClass, $this->getProperty($provider, 'entityClass'));
+        return $provider;
     }
 
     /**
@@ -95,32 +95,22 @@ class ShippingOptionsProviderTest extends \PHPUnit_Framework_TestCase
     public function unitsProvider()
     {
         return [
-            ['method' => 'getWeightUnits', 'expected' => []],
-            ['method' => 'getLengthUnits', 'expected' => []],
-            ['method' => 'getFreightClasses', 'expected' => []],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function classesProvider()
-    {
-        return [
             [
-                'method' => 'setWeightUnitClass',
-                'property' => 'weightUnitClass',
-                'class' => 'OroB2B\Bundle\ShippingBundle\Entity\WeightUnit',
+                'entityClass' => 'OroB2B\Bundle\ShippingBundle\Entity\WeightUnit',
+                'configEntryName' => 'orob2b_shipping.weight_units',
+                'expected' => []
             ],
             [
-                'method' => 'setLengthUnitClass',
-                'property' => 'lengthUnitClass',
-                'class' => 'OroB2B\Bundle\ShippingBundle\Entity\LengthUnit',
+                'method' => 'getUnits',
+                'entityClass' => 'OroB2B\Bundle\ShippingBundle\Entity\LengthUnit',
+                'configEntryName' => 'orob2b_shipping.length_units',
+                'expected' => []
             ],
             [
-                'method' => 'setFreightClassClass',
-                'property' => 'freightClassClass',
-                'class' => 'OroB2B\Bundle\ShippingBundle\Entity\FreightClass',
+                'method' => 'getUnits',
+                'entityClass' => 'OroB2B\Bundle\ShippingBundle\Entity\FreightClass',
+                'configEntryName' => 'orob2b_shipping.freight_classes',
+                'expected' => []
             ],
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
+
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -10,9 +11,8 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
 use OroB2B\Bundle\ShippingBundle\Form\Type\WeightType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
 use OroB2B\Bundle\ShippingBundle\Model\Weight;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingOptionsProvider;
+use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 
 class WeightTypeTest extends FormIntegrationTestCase
 {
@@ -24,7 +24,7 @@ class WeightTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var ShippingOptionsProvider
+     * @var AbstractMeasureUnitProvider
      */
     protected $provider;
 
@@ -38,11 +38,11 @@ class WeightTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return ShippingOptionsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @return AbstractMeasureUnitProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function initProvider()
     {
-        $this->provider = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\ShippingOptionsProvider')
+        $this->provider = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider')
             ->disableOriginalConstructor()
             ->getMock();
         return $this->provider;

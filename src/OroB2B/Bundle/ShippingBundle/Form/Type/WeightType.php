@@ -2,21 +2,24 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingOptionsProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ShippingBundle\Form\DataTransformer\WeightTransformer;
+use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 
 class WeightType extends AbstractType
 {
     /**
-     * @var ShippingOptionsProvider
+     * @var AbstractMeasureUnitProvider
      */
     protected $provider;
 
-    public function __construct(ShippingOptionsProvider $provider)
+    /**
+     * @param AbstractMeasureUnitProvider $provider
+     */
+    public function __construct(AbstractMeasureUnitProvider $provider)
     {
         $this->provider = $provider;
     }
@@ -26,20 +29,12 @@ class WeightType extends AbstractType
     /** @var string */
     protected $dataClass;
 
-    /** @var string */
-    protected $entityClass = 'OroB2B\Bundle\ShippingBundle\Entity\WeightUnit';
-
     /**
      * @param string $dataClass
      */
     public function setDataClass($dataClass)
     {
         $this->dataClass = $dataClass;
-    }
-
-    public function setEntityClass($entityClass)
-    {
-        $this->entityClass = $entityClass;
     }
 
     /**
@@ -50,7 +45,11 @@ class WeightType extends AbstractType
     {
         $builder
             ->add('value', 'number', ['attr' => ['class' => 'value',],])
-            ->add('unit', 'entity', ['class' => $this->entityClass, 'choices' => $this->provider->getWeightUnits()]);
+            ->add(
+                'unit',
+                'entity',
+                ['class' => $this->provider->getEntityClass(), 'choices' => $this->provider->getUnits()]
+            );
 
         $builder->addViewTransformer(new WeightTransformer());
     }
