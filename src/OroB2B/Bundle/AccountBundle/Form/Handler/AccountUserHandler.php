@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 
+use Psr\Log\LoggerInterface;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -30,25 +32,31 @@ class AccountUserHandler
     /** @var TranslatorInterface */
     protected $translator;
 
+    /** @var LoggerInterface */
+    protected $logger;
+
     /**
      * @param FormInterface $form
      * @param Request $request
      * @param AccountUserManager $userManager
      * @param SecurityFacade $securityFacade
      * @param TranslatorInterface $translator
+     * @param LoggerInterface $logger
      */
     public function __construct(
         FormInterface $form,
         Request $request,
         AccountUserManager $userManager,
         SecurityFacade $securityFacade,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        LoggerInterface $logger
     ) {
         $this->form = $form;
         $this->request = $request;
         $this->userManager = $userManager;
         $this->securityFacade = $securityFacade;
         $this->translator = $translator;
+        $this->logger = $logger;
     }
 
     /**
@@ -72,13 +80,14 @@ class AccountUserHandler
                     if ($this->form->get('sendEmail')->getData()) {
                         try {
                             $this->userManager->sendWelcomeEmail($accountUser);
-                        } catch (\Exception $e) {
+                        } catch (\Exception $ex) {
+                            $this->logger->error('Welcome email sending failed.', ['exception' => $ex]);
                             /** @var Session $session */
                             $session = $this->request->getSession();
                             $session->getFlashBag()->add(
                                 'error',
                                 $this->translator
-                                     ->trans('orob2b.account.controller.accountuser.confirmation_failed.message')
+                                    ->trans('orob2b.account.controller.accountuser.confirmation_failed.message')
                             );
                         }
 
