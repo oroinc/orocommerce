@@ -25,20 +25,6 @@ services:
     orob2b_pricing.datagrid.price_list_permissions_provider:
         class: 'OroB2B\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider'
 
-    orob2b_pricing.price_list.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%orob2b_pricing.entity.price_list.class%'
-            - '@doctrine.orm.entity_manager'
-
-    orob2b_pricing.product_price.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%orob2b_pricing.entity.product_price.class%'
-            - '@doctrine.orm.entity_manager'
-
     orob2b_pricing.form.autocomplete.price_list.search_handler:
         parent: oro_form.autocomplete.search_handler
         arguments:
@@ -71,7 +57,6 @@ services:
         abstract: true
         arguments:
             - '@doctrine'
-            - '@orob2b_pricing.model.price_list_request_handler'
 
     orob2b_pricing.provider.product_price:
         parent: orob2b_pricing.provider.abstract_product_price

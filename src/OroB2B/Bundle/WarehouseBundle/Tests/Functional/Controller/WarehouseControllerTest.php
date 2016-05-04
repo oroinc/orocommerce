@@ -112,15 +112,29 @@ class WarehouseControllerTest extends WebTestCase
     public function testDelete($id)
     {
         $this->client->request(
-            'DELETE',
-            $this->getUrl('orob2b_api_delete_warehouse', ['id' => $id]),
+            'GET',
+            $this->getUrl(
+                'oro_action_operation_execute',
+                [
+                    'operationName' => 'DELETE',
+                    'entityId' => $id,
+                    'entityClass' => $this->getContainer()->getParameter('orob2b_warehouse.entity.warehouse.class'),
+                ]
+            ),
             [],
             [],
-            $this->generateWsseAuthHeader()
+            ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
-
-        $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertEquals(
+            [
+                'success' => true,
+                'message' => '',
+                'messages' => [],
+                'redirectUrl' => $this->getUrl('orob2b_warehouse_index')
+            ],
+            json_decode($this->client->getResponse()->getContent(), true)
+        );
 
         $this->client->request('GET', $this->getUrl('orob2b_warehouse_view', ['id' => $id]));
 

@@ -18,6 +18,7 @@ use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
  * @Config(
  *      routeName="orob2b_tax_product_tax_code_index",
  *      routeView="orob2b_tax_product_tax_code_view",
+ *      routeUpdate="orob2b_tax_product_tax_code_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-list-alt"

@@ -97,6 +97,7 @@ services:
     orob2b_shopping_list.event_listener.product_select_db_query:
         class: '%orob2b_product.event_listener.scoped_product_select_db_query.common_class%'
         parent: orob2b_product.event_listener.abstract_product_select_db_query
+        public: true
         calls:
             - [setScope, ['shopping_list']]
             - [setBackendSystemConfigurationPath, ['oro_b2b_shopping_list.backend_product_visibility']]
@@ -143,6 +144,7 @@ services:
             - '@orob2b_pricing.provider.combined_product_price'
             - '@oro_security.security_facade'
             - '@orob2b_pricing.provider.user_currency'
+            - '@orob2b_pricing.model.price_list_request_handler'
 
     orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_units:
         class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsUnitsDataProvider'
@@ -173,3 +175,28 @@ services:
              - '@doctrine'
         tags:
              - { name: checkout.data_provider.line_item }
+
+    orob2b_shopping_list.event_listener.frontend_product_datagrid:
+        class: 'OroB2B\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener'
+        arguments:
+            - "@oro_security.security_facade"
+            - "@doctrine"
+            - "%orob2b_shopping_list.entity.shopping_list.class%"
+            - "%orob2b_shopping_list.entity.line_item.class%"
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
+
+    orob2b_shopping_list.layout.data_provider.frontend_shopping_list_product_units:
+        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityDataProvider'
+        arguments:
+            - '@orob2b_shopping_list.shopping_list.manager'
+            - '@orob2b_shopping_list.repository.line_item'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_shopping_list_product_units_quantity }
+
+    orob2b_shopping_list.repository.line_item:
+        class: Doctrine\ORM\EntityRepository
+        factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
+        arguments:
+            - '%orob2b_shopping_list.entity.line_item.class%'

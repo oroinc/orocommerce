@@ -10,7 +10,6 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
 use OroB2B\Bundle\WarehouseBundle\Migrations\Data\Demo\ORM\LoadWarehouseDemoData;

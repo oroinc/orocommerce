@@ -82,56 +82,6 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
                 'expectedData' => $this->getShippingOrigin(),
                 'defaultData' => null,
             ],
-            'empty country' => [
-                'submittedData' => [
-                    'region' => 'US-AL',
-                    'postalCode' => 'code1',
-                    'city' => 'city1',
-                    'street' => 'street1',
-                ],
-                'expectedData' => $this->getShippingOrigin(null, 'US', 'US-AL', 'code1', 'city1', 'street1'),
-                'defaultData' => null,
-            ],
-            'empty region' => [
-                'submittedData' => [
-                    'country' => 'US',
-                    'postalCode' => 'code1',
-                    'city' => 'city1',
-                    'street' => 'street1',
-                ],
-                'expectedData' => $this->getShippingOrigin('US', null, null, 'code1', 'city1', 'street1'),
-                'defaultData' => null,
-            ],
-            'empty postalCode' => [
-                'submittedData' => [
-                    'country' => 'US',
-                    'region' => 'US-AL',
-                    'city' => 'city1',
-                    'street' => 'street1',
-                ],
-                'expectedData' => $this->getShippingOrigin('US', 'US', 'US-AL', null, 'city1', 'street1'),
-                'defaultData' => null,
-            ],
-            'empty city' => [
-                'submittedData' => [
-                    'country' => 'US',
-                    'region' => 'US-AL',
-                    'postalCode' => 'code1',
-                    'street' => 'street1',
-                ],
-                'expectedData' => $this->getShippingOrigin('US', 'US', 'US-AL', 'code1', null, 'street1'),
-                'defaultData' => null,
-            ],
-            'empty street' => [
-                'submittedData' => [
-                    'country' => 'US',
-                    'region' => 'US-AL',
-                    'postalCode' => 'code1',
-                    'city' => 'city1',
-                ],
-                'expectedData' => $this->getShippingOrigin('US', 'US', 'US-AL', 'code1', 'city1'),
-                'defaultData' => null,
-            ],
             'full data' => [
                 'submittedData' => [
                     'country' => 'US',

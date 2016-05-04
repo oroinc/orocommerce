@@ -157,7 +157,7 @@
                 </tr>
                 </thead>
                 {% for lineItem in shoppingList.lineItems %}
-                {% set productPrice = lineItem is defined and productsPrices[lineItem.product.id] is not empty ? productsPrices[lineItem.product.id] : null %}
+                {% set productPrice = lineItem is defined and productsPrices[lineItem.product.id][lineItem.unit.code] is not empty ? productsPrices[lineItem.product.id][lineItem.unit.code] : null %}
                 {% set currency = productPrice ? productPrice.currency : defaultCurrency %}
                 <tbody class="line_item">
                     <tr class="line_item_view" data-product-id="{{ lineItem.product.id }}" data-id="{{ lineItem.id }}" data-quantity="{{ lineItem.quantity }}" data-unit-code="{{ lineItem.unit.code }}" data-currency="{{ currency }}">

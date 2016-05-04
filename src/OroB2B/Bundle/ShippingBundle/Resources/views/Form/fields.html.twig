@@ -50,12 +50,12 @@
     >
         {{ form_row(form.system) }}
         {{ _self.shipping_origin_block(form.country, form.system.vars.data) }}
-        {{ _self.shipping_origin_block(form.street, form.system.vars.data) }}
-        {{ _self.shipping_origin_block(form.street2, form.system.vars.data) }}
-        {{ _self.shipping_origin_block(form.city, form.system.vars.data) }}
         {{ _self.shipping_origin_block(form.region_text, form.system.vars.data) }}
         {{ _self.shipping_origin_block(form.region, form.system.vars.data) }}
         {{ _self.shipping_origin_block(form.postalCode, form.system.vars.data) }}
+        {{ _self.shipping_origin_block(form.city, form.system.vars.data) }}
+        {{ _self.shipping_origin_block(form.street, form.system.vars.data) }}
+        {{ _self.shipping_origin_block(form.street2, form.system.vars.data) }}
         {{ form_rest(form) }}
     </div>
 {% endblock %}

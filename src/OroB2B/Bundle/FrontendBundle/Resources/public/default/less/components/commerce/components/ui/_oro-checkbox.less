@@ -1,0 +1,54 @@
+.oro-checkbox {
+  position: relative;
+
+  display: inline-block;
+
+
+  input[type="checkbox"] {
+    position: absolute;
+
+    z-index: -1;
+
+    visibility: hidden;
+
+
+    &:checked {
+      ~ label {
+
+        &:before {
+            content: '\e834';
+
+            color: #348fc6;
+        }
+      }
+    }
+  }
+
+  label {
+    display: inline-block;
+    vertical-align: middle;
+
+    margin: auto;
+
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    text-transform: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'liga';
+
+    &:before {
+      content: '\e835';
+
+      display: inline-block;
+      margin-right: 5px;
+
+      font-family: 'custom-font-icon';
+      font-size: 17px;
+      line-height: 1;
+      color: #d1d1d1;
+    }
+  }
+}
