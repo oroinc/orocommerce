@@ -124,11 +124,11 @@ class CombinedPriceListActivationPlanBuilder
      */
     protected function generateActivationRules(CombinedPriceList $cpl)
     {
-        $priceListSchedules = $this->getPriceListScheduleRepository()->getSchedulesByCPL($cpl);
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $priceListSchedules = $this->getPriceListScheduleRepository()->getSchedulesByCPL($cpl, $now);
         $priceListRelations = $this->getCPLToPriceListRepository()->getPriceListRelations($cpl);
 
         $rawRules = $this->schedulerResolver->mergeSchedule($priceListSchedules, $priceListRelations);
-        $now = new \DateTime('now', new \DateTimeZone('UTC'));
         foreach ($rawRules as $ruleData) {
             if ($ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY] !== null
                 && $now > $ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY]) {
