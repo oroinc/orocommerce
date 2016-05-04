@@ -73,7 +73,7 @@ class PriceList extends BasePriceList
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule",
      *      mappedBy="priceList",
-     *      cascade={"all"},
+     *      cascade={"persist"},
      *      orphanRemoval=true
      * )
      * @ORM\OrderBy({"activeAt" = "ASC"})
