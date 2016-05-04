@@ -35,6 +35,16 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     protected $configManager;
 
     /**
+     * @var int|null
+     */
+    protected $defaultPriceListId;
+
+    /**
+     * @var int|null
+     */
+    protected $defaultFullPriceListId;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -49,6 +59,13 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         );
         $this->resolver = $this->getContainer()->get('orob2b_pricing.resolver.combined_product_schedule_resolver');
         $this->configManager = $this->getContainer()->get('oro_config.global');
+        $this->saveDefaultConfigValue();
+    }
+
+    protected function tearDown()
+    {
+        $this->restoreConfigValue();
+        parent::tearDown();
     }
 
     /**
@@ -219,5 +236,18 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         }
         $this->assertSame($expectedActualCpl, $this->configManager->get($actualCPLConfigKey));
         $this->assertSame($expectedFullCpl, $this->configManager->get($fullCPLConfigKey));
+    }
+
+    protected function saveDefaultConfigValue()
+    {
+        $this->defaultPriceListId = $this->configManager->get(Configuration::getConfigKeyToPriceList());
+        $this->defaultFullPriceListId = $this->configManager->get(Configuration::getConfigKeyToFullPriceList());
+    }
+
+    protected function restoreConfigValue()
+    {
+        $this->configManager->set(Configuration::getConfigKeyToPriceList(), $this->defaultPriceListId);
+        $this->configManager->set(Configuration::getConfigKeyToFullPriceList(), $this->defaultFullPriceListId);
+        $this->configManager->flush();
     }
 }

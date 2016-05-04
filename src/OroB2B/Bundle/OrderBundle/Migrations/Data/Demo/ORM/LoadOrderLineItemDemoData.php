@@ -61,6 +61,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     /**
      * @param EntityManager $manager
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function load(ObjectManager $manager)
     {
