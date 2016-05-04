@@ -8,6 +8,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 
 class AbstractMeasureUnitProvider
 {
@@ -24,6 +25,9 @@ class AbstractMeasureUnitProvider
      * @var string
      */
     protected $configEntryName;
+
+    /** @var UnitLabelFormatter */
+    protected $labelFormatter;
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
@@ -64,6 +68,14 @@ class AbstractMeasureUnitProvider
     }
 
     /**
+     * @param UnitLabelFormatter $labelFormatter
+     */
+    public function setLabelFormatter(UnitLabelFormatter $labelFormatter)
+    {
+        $this->labelFormatter = $labelFormatter;
+    }
+
+    /**
      * Returns list of units, if $onlyEnabled is false then returns full list of registered units
      *
      * @param bool $onlyEnabled
@@ -74,9 +86,47 @@ class AbstractMeasureUnitProvider
     {
         $dbUnits = $this->getRepositoryForClass($this->entityClass)->findAll();
 
-        // Intersect with enabled from config if $enabled is true
+        if ($onlyEnabled) {
+            $configCodes = $this->getSysConfigValues();
+            $dbUnits = array_filter($dbUnits, function (MeasureUnitInterface $item) use ($configCodes) {
+                return in_array($item->getCode(), $configCodes);
+            });
+        }
 
         return $dbUnits;
+    }
+
+    /**
+     * @param bool $onlyEnabled
+     * @return array
+     */
+    public function getUnitsCodes($onlyEnabled = true)
+    {
+        $codes = array_map(
+            function (MeasureUnitInterface $entity) {
+                return $entity->getCode();
+            },
+            $this->getUnits($onlyEnabled)
+        );
+
+        return $codes;
+    }
+
+    /**
+     * @param array $codes
+     * @param bool $isShort
+     * @return array
+     */
+    public function formatUnitsCodes(array $codes = [], $isShort = false)
+    {
+        ksort($codes);
+
+        return array_map(
+            function ($code) use ($isShort) {
+                return $this->labelFormatter->format($code, $isShort);
+            },
+            $codes
+        );
     }
 
     /**

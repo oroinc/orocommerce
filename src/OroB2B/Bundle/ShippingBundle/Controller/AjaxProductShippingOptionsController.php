@@ -11,8 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 
 class AjaxProductShippingOptionsController extends Controller
 {
@@ -28,35 +27,14 @@ class AjaxProductShippingOptionsController extends Controller
      */
     public function getAvailableProductUnitFreightClasses(Request $request)
     {
-        // ToDo: use service instead
-        $isShort = (bool)$request->get('short', false);
-        $className = $this->getParameter('orob2b_shipping.entity.freight_class.class');
-        $repository = $this
-            ->getDoctrine()
-            ->getManagerForClass($className)
-            ->getRepository($className);
+        /* @var $provider AbstractMeasureUnitProvider */
+        $provider = $this->get('orob2b_shipping.provider.measure_units.freight');
 
-        /** @var UnitLabelFormatter $formatter */
-        $formatter = $this->get('orob2b_shipping.formatter.freight_class_label');
-        $codes = array_map(
-            function (MeasureUnitInterface $entity) {
-                return $entity->getCode();
-            },
-            $repository->findAll()
-        );
-        $codes = array_combine($codes, $codes);
-        $codes = array_map(
-            function ($code) use ($formatter, $isShort) {
-                return $formatter->format($code, $isShort);
-            },
-            $codes
-        );
-
-        ksort($codes);
+        $codes = $provider->formatUnitsCodes($provider->getUnitsCodes(), (bool)$request->get('short', false));
 
         return new JsonResponse(
             [
-                'units' => $codes,
+                'units' => array_combine($codes, $codes),
             ]
         );
     }

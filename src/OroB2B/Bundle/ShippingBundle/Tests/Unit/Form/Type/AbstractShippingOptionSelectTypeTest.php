@@ -2,43 +2,25 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Doctrine\ORM\EntityRepository;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use OroB2B\Bundle\ShippingBundle\Form\Type\AbstractShippingOptionSelectType;
+use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 
 abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestCase
 {
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
-    protected $repository;
-
-    /** @var UnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
-    protected $formatter;
+    /** @var AbstractMeasureUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $unitProvider;
 
     /** @var AbstractShippingOptionSelectType */
     protected $formType;
-
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
-    protected $configManager;
 
     protected function setUp()
     {
         parent::setUp();
 
-        $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+        $this->unitProvider = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -69,27 +51,18 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
      */
     public function testSubmit($submittedData, $expectedData, array $options = [])
     {
-        if (!empty($options['full_list'])) {
-            $this->repository->expects($this->once())
-                ->method('findAll')
-                ->willReturn([
-                    $this->createUnit('kg'),
-                    $this->createUnit('lbs')
-                ]);
-        } else {
-            $this->configManager->expects($this->once())
-                ->method('get')
-                ->willReturn(['kg', 'lbs']);
-        }
+        $this->unitProvider->expects($this->once())
+            ->method('getUnitsCodes')
+            ->with(empty($options['full_list']))
+            ->willReturn(['kg', 'lbs']);
 
-        $this->formatter->expects($this->at(0))
-            ->method('format')
-            ->with('kg', false, false)
-            ->willReturn('formatted.kg');
-        $this->formatter->expects($this->at(1))
-            ->method('format')
-            ->with('lbs', false, false)
-            ->willReturn('formatted.lbs');
+        $this->unitProvider->expects($this->once())
+            ->method('formatUnitsCodes')
+            ->with(['kg' => 'kg', 'lbs' => 'lbs'], false)
+            ->willReturn([
+                'kg' => 'formatted.kg',
+                'lbs' => 'formatted.lbs',
+            ]);
 
         $form = $this->factory->create($this->formType, null, $options);
 

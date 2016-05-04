@@ -99,24 +99,6 @@ services:
         tags:
             - { name: twig.extension }
 
-    orob2b_shipping.repository.length_unit:
-        class: Doctrine\ORM\EntityRepository
-        factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
-        arguments:
-            - '%orob2b_shipping.entity.length_unit.class%'
-
-    orob2b_shipping.repository.weight_unit:
-        class: Doctrine\ORM\EntityRepository
-        factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
-        arguments:
-            - '%orob2b_shipping.entity.weight_unit.class%'
-
-    orob2b_shipping.repository.freight_class:
-        class: Doctrine\ORM\EntityRepository
-        factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
-        arguments:
-            - '%orob2b_shipping.entity.freight_class.class%'
-
     orob2b_shipping.provider.measure_units.abstract:
         class: 'OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider'
         abstract: true
@@ -129,15 +111,18 @@ services:
         calls:
             - [setEntityClass, ['%orob2b_shipping.entity.weight_unit.class%']]
             - [setConfigEntryName, ['orob2b_shipping.weight_units']]
+            - [setLabelFormatter, ['@orob2b_shipping.formatter.weight_unit_label']]
 
     orob2b_shipping.provider.measure_units.length:
         parent: orob2b_shipping.provider.measure_units.abstract
         calls:
             - [setEntityClass, ['%orob2b_shipping.entity.length_unit.class%']]
             - [setConfigEntryName, ['orob2b_shipping.length_units']]
+            - [setLabelFormatter, ['@orob2b_shipping.formatter.length_unit_label']]
 
     orob2b_shipping.provider.measure_units.freight:
         parent: orob2b_shipping.provider.measure_units.abstract
         calls:
             - [setEntityClass, ['%orob2b_shipping.entity.freight_class.class%']]
             - [setConfigEntryName, ['orob2b_shipping.freight_classes']]
+            - [setLabelFormatter, ['@orob2b_shipping.formatter.freight_class_label']]
