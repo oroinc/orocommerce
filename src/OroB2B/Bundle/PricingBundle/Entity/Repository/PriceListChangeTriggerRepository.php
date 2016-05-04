@@ -52,4 +52,17 @@ class PriceListChangeTriggerRepository extends EntityRepository
         ->getQuery()
         ->execute();
     }
+
+    /**
+     * @return PriceListChangeTrigger
+     */
+    public function findBuildAllForceTrigger()
+    {
+        return $this->findOneBy([
+                'account' => null,
+                'accountGroup' => null,
+                'website' => null,
+                'force' => true
+            ]);
+    }
 }
