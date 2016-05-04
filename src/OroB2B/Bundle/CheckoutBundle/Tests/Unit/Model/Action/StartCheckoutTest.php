@@ -138,7 +138,6 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
         $this->action->initialize($options);
 
         $checkoutSourceRepository = $this->getMockWithoutConstructor('Doctrine\ORM\EntityRepository');
-        $baseCheckoutRepository = $this->getMockWithoutConstructor('Doctrine\ORM\EntityRepository');
         $checkoutSourceRepository->expects($this->once())
             ->method('findOneBy')
             ->with([$options[StartCheckout::SOURCE_FIELD_KEY] => $options[StartCheckout::SOURCE_ENTITY_KEY]])
@@ -150,12 +149,8 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->any())
             ->method('getRepository')
-            ->willReturnMap(
-                [
-                    ['OroB2BCheckoutBundle:CheckoutSource', $checkoutSourceRepository],
-                    ['OroB2BCheckoutBundle:BaseCheckout', $baseCheckoutRepository]
-                ]
-            );
+            ->with('OroB2BCheckoutBundle:CheckoutSource')
+            ->willReturn($checkoutSourceRepository);
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
@@ -188,9 +183,6 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             $em->expects($this->exactly(2))->method('flush');
         } else {
             $checkout->setWorkflowItem(new WorkflowItem());
-            $baseCheckoutRepository->expects($this->once())
-                ->method('findOneBy')
-                ->willReturn($checkout);
         }
 
         $this->redirect

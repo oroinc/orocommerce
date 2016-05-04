@@ -110,7 +110,7 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
         $actual = $event->getCheckoutEntity();
         $this->assertEquals($expected, $actual);
         if ($source) {
-            $this->assertSame($source, $actual->getSource());
+            $this->assertSame($expected->getSource(), $actual->getSource());
         }
     }
 
@@ -119,7 +119,15 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function onGetCheckoutEntityDataProvider()
     {
+        $checkoutSource = (new CheckoutSource())->setId(1);
         return [
+            'find existing by source' => [
+                'isStartWorkflowAllowed' => true,
+                'type' => '',
+                'id' => null,
+                'source' => $checkoutSource,
+                'expected' => (new Checkout())->setSource($checkoutSource)
+            ],
             'start workflow not allowed' => [
                 'isStartWorkflowAllowed' => false,
                 'type' => '',
@@ -139,13 +147,6 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
                 'type' => '',
                 'id' => 1,
                 'source' => null,
-                'expected' => new Checkout()
-            ],
-            'find existing by source' => [
-                'isStartWorkflowAllowed' => true,
-                'type' => '',
-                'id' => null,
-                'source' => new CheckoutSource(),
                 'expected' => new Checkout()
             ],
             'new instance' => [

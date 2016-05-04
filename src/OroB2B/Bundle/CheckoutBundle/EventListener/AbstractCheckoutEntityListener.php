@@ -44,6 +44,14 @@ abstract class AbstractCheckoutEntityListener
      */
     public function onGetCheckoutEntity(CheckoutEntityEvent $event)
     {
+        $this->addCheckoutToEvent($event);
+    }
+
+    /**
+     * @param CheckoutEntityEvent $event
+     */
+    protected function addCheckoutToEvent(CheckoutEntityEvent $event)
+    {
         $checkout = $this->createCheckoutEntity();
 
         $className = get_class($checkout);
