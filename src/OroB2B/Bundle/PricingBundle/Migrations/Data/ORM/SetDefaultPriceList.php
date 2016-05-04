@@ -54,6 +54,6 @@ class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInter
             [new PriceListConfig($defaultPriceList, 100, true)]
         );
         $configManager->flush();
-        $this->container->get('orob2b_pricing.builder.combined_price_list_builder')->build(true);
+        $this->container->get('orob2b_pricing.builder.queue_consumer')->process();
     }
 }
