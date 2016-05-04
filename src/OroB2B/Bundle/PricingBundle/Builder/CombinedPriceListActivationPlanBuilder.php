@@ -229,8 +229,8 @@ class CombinedPriceListActivationPlanBuilder
     public function getManager()
     {
         if (!$this->manager) {
-            $activationRuleClass = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule';
-            $this->manager = $this->doctrineHelper->getEntityManagerForClass($activationRuleClass);
+            $this->manager = $this->doctrineHelper
+                ->getEntityManagerForClass('OroB2BPricingBundle:CombinedPriceListActivationRule');
         }
 
         return $this->manager;
@@ -242,7 +242,7 @@ class CombinedPriceListActivationPlanBuilder
      */
     protected function isPriceListProcessed(PriceList $priceList)
     {
-        return in_array($priceList->getId(), $this->processedPriceLists);
+        return !empty($this->processedPriceLists[$priceList->getId()]);
     }
 
     /**
@@ -251,7 +251,7 @@ class CombinedPriceListActivationPlanBuilder
      */
     protected function isCPLProcessed(CombinedPriceList $cpl)
     {
-        return in_array($cpl->getId(), $this->processedCPLs);
+        return !empty($this->processedCPLs[$cpl->getId()]);
     }
 
     /**
@@ -259,7 +259,7 @@ class CombinedPriceListActivationPlanBuilder
      */
     protected function addPriceListProcessed(PriceList $priceList)
     {
-        $this->processedPriceLists[] = $priceList->getId();
+        $this->processedPriceLists[$priceList->getId()] = true;
     }
 
     /**
@@ -267,6 +267,6 @@ class CombinedPriceListActivationPlanBuilder
      */
     protected function addCPLProcessed(CombinedPriceList $cpl)
     {
-        $this->processedCPLs[] = $cpl->getId();
+        $this->processedCPLs[$cpl->getId()] = true;
     }
 }
