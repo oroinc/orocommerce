@@ -33,7 +33,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new ProductShippingOptionsType($this->quoteProductOfferFormatter);
+        $this->formType = new ProductShippingOptionsType();
         $this->formType->setDataClass('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions');
     }
 
