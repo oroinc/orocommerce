@@ -5,8 +5,8 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 
+use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
-use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 
 class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,9 +16,9 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|CombinedProductPriceResolver
+     * @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListActivationPlanBuilder
      */
-    protected $resolver;
+    protected $planBuilder;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
@@ -33,13 +33,14 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->getRegistryMockWithRepository();
-        $this->resolver = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver')
+        $className = 'OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder';
+        $this->planBuilder = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->provider = new CombinedPriceListProvider($this->registry);
         $this->provider->setClassName('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList');
-        $this->provider->setResolver($this->resolver);
+        $this->provider->setActivationPlanBuilder($this->planBuilder);
     }
 
     protected function tearDown()
@@ -50,16 +51,15 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getCombinedPriceListDataProvider
      * @param array $data
-     * @param int $behavior
      * @param array $expected
      */
-    public function testGetCombinedPriceList(array $data, $behavior, array $expected)
+    public function testGetCombinedPriceList(array $data, array $expected)
     {
         $this->repository->expects($this->any())
             ->method('findOneBy')
             ->willReturn($data['priceListFromRepository']);
 
-        $this->resolver->expects($this->exactly($expected['combineCallsCount']))->method('combinePrices');
+        $this->planBuilder->expects($this->exactly($expected['combineCallsCount']))->method('buildByCombinedPriceList');
 
         $priceListsRelations = $this->getPriceListsRelationMocks($data['priceListsRelationsData']);
         $combinedPriceList = $this->provider->getCombinedPriceList($priceListsRelations);
@@ -70,7 +70,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected['name'], $combinedPriceList->getName());
         $this->assertEquals($expected['currencies'], $combinedPriceList->getCurrencies());
 
-        $this->provider->getCombinedPriceList($priceListsRelations, $behavior);
+        $this->provider->getCombinedPriceList($priceListsRelations);
     }
 
     /**
@@ -109,7 +109,6 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     'priceListFromRepository' => null,
                 ],
-                'force' => CombinedPriceListProvider::BEHAVIOR_DEFAULT,
                 'expected' => [
                     'name' => md5('1t_2f_2t'),
                     'currencies' => ['EUR', 'USD'],
@@ -121,19 +120,6 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
                     'priceListsRelationsData' => [],
                     'priceListFromRepository' => $priceList,
                 ],
-                'force' => CombinedPriceListProvider::BEHAVIOR_FORCE,
-                'expected' => [
-                    'name' => '',
-                    'currencies' => [],
-                    'combineCallsCount' => 1,
-                ]
-            ],
-            'empty price lists empty call' => [
-                'data' => [
-                    'priceListsRelationsData' => [],
-                    'priceListFromRepository' => $priceList,
-                ],
-                'force' => CombinedPriceListProvider::BEHAVIOR_EMPTY,
                 'expected' => [
                     'name' => '',
                     'currencies' => [],

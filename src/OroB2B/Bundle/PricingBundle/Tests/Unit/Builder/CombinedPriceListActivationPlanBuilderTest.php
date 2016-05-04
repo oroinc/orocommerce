@@ -19,30 +19,37 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
+
     /**
      * @var PriceListScheduleResolver
      */
     protected $schedulerResolver;
+
     /**
      * @var CombinedPriceListProvider
      */
     protected $combinedPriceListProvider;
+
     /**
      * @var CombinedPriceListRepository
      */
     protected $combinedPriceListRepository;
+
     /**
      * @var PriceListScheduleRepository
      */
     protected $priceListScheduleRepository;
+
     /**
      * @var CombinedPriceListToPriceListRepository
      */
     protected $CPLToPriceListRepository;
+
     /**
      * @var CombinedPriceListActivationRuleRepository
      */
     protected $CPLActivationRuleRepository;
+
     /**
      * @var CombinedPriceListActivationPlanBuilder
      */
@@ -65,9 +72,9 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
 
         $this->builder = new CombinedPriceListActivationPlanBuilder(
             $this->doctrineHelper,
-            $this->schedulerResolver,
-            $this->combinedPriceListProvider
+            $this->schedulerResolver
         );
+        $this->builder->setProvider($this->combinedPriceListProvider);
     }
 
     public function test()
@@ -150,7 +157,7 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
             ->disableOriginalConstructor()
             ->getMock();
         $this->combinedPriceListProvider->method('getCombinedPriceList')
-            ->with([], CombinedPriceListProvider::BEHAVIOR_EMPTY)
+            ->with([])
             ->willReturn(new CombinedPriceList());
     }
 }

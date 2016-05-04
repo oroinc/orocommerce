@@ -19,6 +19,15 @@ class PriceListChangeTriggerRepositoryTest extends WebTestCase
         ]);
     }
 
+    public function testFindBuildAllForceTrigger()
+    {
+        $trigger = $this->getRepository()->findBuildAllForceTrigger();
+        $this->assertEmpty($trigger->getWebsite());
+        $this->assertEmpty($trigger->getAccountGroup());
+        $this->assertEmpty($trigger->getAccount());
+        $this->assertTrue($trigger->isForce());
+    }
+
     public function testGetPriceListChangeTriggersIterator()
     {
         $iterator = $this->getRepository()->getPriceListChangeTriggersIterator();
@@ -27,13 +36,11 @@ class PriceListChangeTriggerRepositoryTest extends WebTestCase
         $this->assertCount(count($allChanges), $iterator);
     }
 
-    public function testRemoveAll()
+    public function testDeleteAll()
     {
-        $repository = $this->getRepository();
-        $this->assertGreaterThan(1, count($repository->findAll()));
-        $repository->removeAll();
-
-        $this->assertCount(0, $repository->findBy([]));
+        $this->assertNotEmpty($this->getRepository()->findAll());
+        $this->getRepository()->deleteAll();
+        $this->assertEmpty($this->getRepository()->findAll());
     }
 
     /**

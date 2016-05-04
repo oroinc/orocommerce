@@ -52,7 +52,7 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
         $this->builder->expects($this->never())
             ->method('buildByPriceList');
 
-        $this->listener->beforeFlush($this->createAfterFormProcessEvent($this->priceList));
+        $this->listener->afterFlush($this->createAfterFormProcessEvent($this->priceList));
     }
 
     public function testWhenScheduleCollectionWasChanged()
@@ -65,7 +65,7 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
             ->method('buildByPriceList')
             ->with($this->priceList);
 
-        $this->listener->beforeFlush($this->createAfterFormProcessEvent($this->priceList));
+        $this->listener->afterFlush($this->createAfterFormProcessEvent($this->priceList));
     }
 
     public function testWhenScheduleCollectionElementDeleted()
@@ -76,7 +76,7 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
             ->method('buildByPriceList')
             ->with($this->priceList);
 
-        $this->listener->beforeFlush($this->createAfterFormProcessEvent($this->priceList));
+        $this->listener->afterFlush($this->createAfterFormProcessEvent($this->priceList));
     }
 
     /**
