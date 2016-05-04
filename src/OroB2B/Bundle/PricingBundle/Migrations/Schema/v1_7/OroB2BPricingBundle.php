@@ -102,7 +102,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
         $table->addColumn('is_active', 'boolean', []);
     }
 
-     /**
+    /**
      * Create orob2b_cpl_activation_rule table
      *
      * @param Schema $schema
@@ -112,7 +112,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
         $table = $schema->getTable('orob2b_price_list_ch_trigger');
         $table->addColumn('is_force', 'boolean', ['notnull' => false]);
     }
-    
+
     /**
      * Add orob2b_price_list_schedule foreign keys.
      *
@@ -165,7 +165,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
-        $table->addUniqueIndex(['website_id', 'account_id'], 'orob2b_cpl_to_acc_ws_unq');
+        $table->addUniqueIndex(['account_id', 'website_id'], 'orob2b_cpl_to_acc_ws_unq');
     }
 
     /**
@@ -182,7 +182,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
-        $table->addUniqueIndex(['website_id', 'account_group_id'], 'orob2b_cpl_to_acc_gr_ws_unq');
+        $table->addUniqueIndex(['account_group_id', 'website_id'], 'orob2b_cpl_to_acc_gr_ws_unq');
     }
 
     /**

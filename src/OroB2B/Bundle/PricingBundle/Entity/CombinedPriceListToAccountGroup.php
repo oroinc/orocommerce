@@ -11,8 +11,8 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
  *      name="orob2b_cmb_plist_to_acc_gr",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(name="orob2b_cpl_to_acc_gr_ws_unq", columns={
- *              "website_id",
- *              "account_group_id"
+ *              "account_group_id",
+ *              "website_id"
  *          })
  *      }
  * )

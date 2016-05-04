@@ -11,8 +11,8 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
  *      name="orob2b_cmb_price_list_to_acc",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(name="orob2b_cpl_to_acc_ws_unq", columns={
- *              "website_id",
- *              "account_id"
+ *              "account_id",
+ *              "website_id"
  *          })
  *      }
  * )
