@@ -10,9 +10,8 @@ class CombinedPriceListToAccountGroupRepository extends PriceListToAccountGroupR
 
     public function deleteInvalidRelations()
     {
-        //TODO: remove multi-column PK, delete relations by condition IN(:ids)
         $qb = $this->createQueryBuilder('relation');
-        $qb->select('relation')
+        $qb->select('relation.id')
             ->leftJoin(
                 'OroB2BPricingBundle:PriceListToAccountGroup',
                 'baseRelation',
@@ -23,13 +22,12 @@ class CombinedPriceListToAccountGroupRepository extends PriceListToAccountGroupR
                 )
             )
             ->where($qb->expr()->isNull('baseRelation.accountGroup'));
-        $invalidRelations = $qb->getQuery()->getResult();
-        if ($invalidRelations) {
-            $manager = $this->getEntityManager();
-            foreach ($invalidRelations as $relation) {
-                $manager->remove($relation);
-            }
-            $manager->flush();
+        $result = $qb->getQuery()->getScalarResult();
+        $invalidRelationIds = array_map('current', $result);
+        if ($invalidRelationIds) {
+            $qb = $this->createQueryBuilder('relation');
+            $qb->delete()->where($qb->expr()->in('relation.id', $invalidRelationIds));
+            $qb->getQuery()->execute();
         }
     }
 }

@@ -10,7 +10,6 @@ class CombinedPriceListToAccountRepository extends PriceListToAccountRepository
 
     public function deleteInvalidRelations()
     {
-        //TODO: remove multi-column PK, delete relations by condition IN(:ids)
         $qb = $this->createQueryBuilder('relation');
         $qb->select('relation')
             ->leftJoin(
@@ -23,13 +22,12 @@ class CombinedPriceListToAccountRepository extends PriceListToAccountRepository
                 )
             )
         ->where($qb->expr()->isNull('baseRelation.account'));
-        $invalidRelations = $qb->getQuery()->getResult();
-        if ($invalidRelations) {
-            $manager = $this->getEntityManager();
-            foreach ($invalidRelations as $relation) {
-                $manager->remove($relation);
-            }
-            $manager->flush();
+        $result = $qb->getQuery()->getScalarResult();
+        $invalidRelationIds = array_map('current', $result);
+        if ($invalidRelationIds) {
+            $qb = $this->createQueryBuilder('relation');
+            $qb->delete()->where($qb->expr()->in('relation.id', $invalidRelationIds));
+            $qb->getQuery()->execute();
         }
     }
 }
