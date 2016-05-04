@@ -131,13 +131,7 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
 
         $this->priceListChangeTriggerRepository
             ->expects($this->once())
-            ->method('findOneBy')
-            ->with([
-                'account' => null,
-                'accountGroup' => null,
-                'website' => null,
-                'force' => true
-            ])
+            ->method('findBuildAllForceTrigger')
             ->willReturn($forceTrigger);
 
         $this->cplBuilder->expects($this->once())

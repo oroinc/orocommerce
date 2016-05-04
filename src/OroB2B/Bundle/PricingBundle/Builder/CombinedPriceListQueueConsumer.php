@@ -75,7 +75,7 @@ class CombinedPriceListQueueConsumer
     {
         $manager = $this->getManager();
 
-        $forceTrigger = $this->findBuildAllForceTrigger();
+        $forceTrigger = $this->getRepository()->findBuildAllForceTrigger();
         if ($forceTrigger) {
             $this->handlePriceListChangeTrigger($forceTrigger);
             $this->getRepository()->deleteAll();
@@ -155,21 +155,5 @@ class CombinedPriceListQueueConsumer
         }
 
         return $this->queueRepository;
-    }
-
-    /**
-     * @return PriceListChangeTrigger
-     */
-    protected function findBuildAllForceTrigger()
-    {
-        $forceTrigger = $this->getRepository()
-            ->findOneBy([
-                'account' => null,
-                'accountGroup' => null,
-                'website' => null,
-                'force' => true
-            ]);
-
-        return $forceTrigger;
     }
 }

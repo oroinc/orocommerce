@@ -19,6 +19,15 @@ class PriceListChangeTriggerRepositoryTest extends WebTestCase
         ]);
     }
 
+    public function testFindBuildAllForceTrigger()
+    {
+        $trigger = $this->getRepository()->findBuildAllForceTrigger();
+        $this->assertEmpty($trigger->getWebsite());
+        $this->assertEmpty($trigger->getAccountGroup());
+        $this->assertEmpty($trigger->getAccount());
+        $this->assertTrue($trigger->isForce());
+    }
+
     public function testGetPriceListChangeTriggersIterator()
     {
         $iterator = $this->getRepository()->getPriceListChangeTriggersIterator();

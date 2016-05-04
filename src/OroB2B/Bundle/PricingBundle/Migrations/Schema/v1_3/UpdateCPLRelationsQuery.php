@@ -1,28 +1,25 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_7;
-
-use Doctrine\DBAL\Connection;
+namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_3;
 
 use Psr\Log\LoggerInterface;
 
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
-use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
-use Oro\Bundle\MigrationBundle\Migration\MigrationQuery;
+use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 
-class UpdateCPLNameQuery implements MigrationQuery, ConnectionAwareInterface
+class UpdateCPLRelationsQuery extends ParametrizedMigrationQuery
 {
     /**
-     * @var Connection
+     * @var string
      */
-    protected $connection;
+    protected $tableName;
 
     /**
-     * {@inheritdoc}
+     * @param string $className
      */
-    public function setConnection(Connection $connection)
+    public function __construct($className)
     {
-        $this->connection = $connection;
+        $this->tableName = $className;
     }
 
     /**
@@ -51,13 +48,8 @@ class UpdateCPLNameQuery implements MigrationQuery, ConnectionAwareInterface
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
-        $query  = 'UPDATE orob2b_price_list_combined SET name=MD5(name)';
-        $logger->info($query);
-        if (!$dryRun) {
-            $this->connection->executeQuery($query);
-        }
-        $query  = 'INSERT INTO orob2b_price_list_ch_trigger (is_force) VALUES (TRUE)';
-        $logger->info($query);
+        $query  = 'UPDATE ' . $this->tableName . ' SET full_combined_price_list_id = combined_price_list_id';
+        $this->logQuery($logger, $query);
         if (!$dryRun) {
             $this->connection->executeQuery($query);
         }
