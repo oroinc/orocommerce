@@ -72,6 +72,19 @@ class ShippingOriginWarehouseTypeTest extends AddressFormExtensionTestCase
                 'expectedData' => $this->getShippingOriginWarehouse(),
                 'defaultData' => $this->getShippingOriginWarehouse(),
             ],
+            'empty warehouse' => [
+                'isValid' => false,
+                'submittedData' => [
+                    'system' => false,
+                    'country' => 'US',
+                    'region' => 'US-AL',
+                    'postalCode' => 'code1',
+                    'city' => 'city1',
+                    'street' => 'street1',
+                ],
+                'expectedData' => $this->getShippingOriginWarehouse(true, 'warehouse'),
+                'defaultData' => $this->getShippingOriginWarehouse(false, 'warehouse'),
+            ],
             'empty country' => [
                 'isValid' => false,
                 'submittedData' => [
@@ -174,7 +187,10 @@ class ShippingOriginWarehouseTypeTest extends AddressFormExtensionTestCase
     protected function getShippingOriginWarehouse($fill = false, $exclude = '')
     {
         $shippingOriginWarehouse = new ShippingOriginWarehouse();
-        $shippingOriginWarehouse->setWarehouse(new Warehouse());
+
+        if ($exclude !== 'warehouse') {
+            $shippingOriginWarehouse->setWarehouse(new Warehouse());
+        }
 
         if ($fill) {
             if ($exclude !== 'country') {

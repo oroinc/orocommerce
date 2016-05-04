@@ -97,7 +97,7 @@ class FormViewListener
     protected function addWarehouseBlock(ScrollData $scrollData, $html)
     {
         $blockLabel = $this->translator->trans('orob2b.shipping.warehouse.section.shipping_origin');
-        $blockId    = $scrollData->addBlock($blockLabel, -50);
+        $blockId    = $scrollData->addBlock($blockLabel, 100);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);
     }
