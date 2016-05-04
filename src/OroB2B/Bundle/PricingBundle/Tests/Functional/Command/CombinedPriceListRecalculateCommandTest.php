@@ -118,11 +118,12 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
                 'accountGroup' => [],
                 'account' => []
             ],
-            'scheduled account.level_1_1 with force' => [
+            'scheduled account.level_1_1 without force' => [
                 'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
-                'expected_message' => 'The cache is updated successfully',
+                'expected_message' => 'ATTENTION: To force execution run command with --force option:
+    oro:cron:price-lists:recalculate --force',
                 'params' => [],
-                'expectedCount' => 6,
+                'expectedCount' => 0,
                 'website' => ['US'],
                 'accountGroup' => [],
                 'account' => ['account.level_1_1']

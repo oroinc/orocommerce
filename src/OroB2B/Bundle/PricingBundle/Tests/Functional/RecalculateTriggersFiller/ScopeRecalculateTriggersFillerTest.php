@@ -40,14 +40,12 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
      * @param array $websites
      * @param array $accountGroups
      * @param array $accounts
-     * @param bool $force
      * @param $expectedPriceListChangeTriggersCount
      */
     public function testFillTriggersForRecalculate(
         array $websites,
         array $accountGroups,
         array $accounts,
-        $force,
         $expectedPriceListChangeTriggersCount
     ) {
         $websiteIds = [];
@@ -66,7 +64,7 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
             $accountIds[] = $this->getReference($account)->getId();
         }
 
-        $this->triggersFiller->fillTriggersForRecalculate($websiteIds, $accountGroupIds, $accountIds, $force);
+        $this->triggersFiller->fillTriggersForRecalculate($websiteIds, $accountGroupIds, $accountIds);
         $this->assertPriceListChangeTriggersCount($expectedPriceListChangeTriggersCount);
     }
 
@@ -80,42 +78,30 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
                 'websites' => ['US'],
                 'accountGroups' => ['account_group.group1'],
                 'accounts' => ['account.level_1_1'],
-                'force' => true,
                 'priceListChangeTriggersCount' => 2,
             ],
             [
                 'websites' => ['US'],
                 'accountGroups' => [],
                 'accounts' => ['account.level_1_1', 'account.level_1.3'],
-                'force' => false,
                 'priceListChangeTriggersCount' => 2,
-            ],
-            [
-                'websites' => ['US'],
-                'accountGroups' => [],
-                'accounts' => [],
-                'force' => false,
-                'priceListChangeTriggersCount' => 1,
             ],
             [
                 'websites' => ['Canada', 'US'],
                 'accountGroups' => [],
                 'accounts' => [],
-                'force' => true,
                 'priceListChangeTriggersCount' => 2,
             ],
             [
                 'websites' => ['US'],
                 'accountGroups' => [],
                 'accounts' => [],
-                'force' => true,
                 'priceListChangeTriggersCount' => 1,
             ],
             [
                 'websites' => [],
                 'accountGroups' => [],
                 'accounts' => [],
-                'force' => true,
                 'priceListChangeTriggersCount' => 1,
             ],
         ];
