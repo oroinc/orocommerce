@@ -7,7 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 
-class AbstractCombinedPriceListRelationRepositoryTest extends WebTestCase
+abstract class AbstractCombinedPriceListRelationRepositoryTest extends WebTestCase
 {
     protected function setUp()
     {
