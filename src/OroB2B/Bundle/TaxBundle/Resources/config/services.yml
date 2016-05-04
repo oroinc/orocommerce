@@ -14,20 +14,6 @@ parameters:
     orob2b_tax.event.resolver_event_connector.common_class: OroB2B\Bundle\TaxBundle\Event\ResolverEventConnector
 
 services:
-    orob2b_tax.manager.product_tax_code.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%orob2b_tax.entity.product_tax_code.class%'
-            - "@doctrine.orm.entity_manager"
-
-    orob2b_tax.manager.account_tax_code.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%orob2b_tax.entity.account_tax_code.class%'
-            - "@doctrine.orm.entity_manager"
-
     orob2b_tax.form.autocomplete.product_tax_code.search_handler:
         parent: oro_form.autocomplete.search_handler
         arguments:
@@ -82,27 +68,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onEdit }
-
-    orob2b_tax.manager.tax.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%orob2b_tax.entity.tax.class%'
-            - "@doctrine.orm.entity_manager"
-
-    orob2b_tax.manager.tax_rule.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%orob2b_tax.entity.tax_rule.class%'
-            - "@doctrine.orm.entity_manager"
-
-    orob2b_tax.manager.tax_jurisdiction.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%orob2b_tax.entity.tax_jurisdiction.class%'
-            - "@doctrine.orm.entity_manager"
 
     orob2b_tax.form.autocomplete.tax.search_handler:
         parent: oro_form.autocomplete.search_handler

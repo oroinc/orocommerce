@@ -1,0 +1,65 @@
+@oro-grid-offset: 4%;
+
+.oro-grid {
+  &__row {
+    margin-bottom: @offset-y;
+
+    .clearfix();
+
+    &--offset {
+      &-none {
+        margin-bottom: 0;
+      }
+
+      &-s {
+        margin-bottom: 5px;
+      }
+
+      &-m {
+        margin-bottom: @offset-y-m;
+      }
+    }
+  }
+
+  &__column {
+    &-half {
+      width: (100% - @oro-grid-offset) / 2%;
+
+      float: left;
+
+      &:first-child {
+        margin-right: @oro-grid-offset;
+      }
+
+      @media (max-width: 991px) {
+        width: 100%;
+        margin-right: auto;
+
+        clear: left;
+      }
+    }
+
+    &--both {
+      clear: both;
+    }
+
+    &--offset {
+      &-m {
+        margin-right: @oro-grid-offset;
+      }
+    }
+  }
+
+  .oro-grid-columns(12);
+  .oro-grid-columns(@n, @i: 1) when (@i =< @n) {
+    @item: @i * 100% / @n;
+
+    &__column-@{i} {
+      width: (@i * 100% / @n);
+
+      float: left;
+    }
+
+    .oro-grid-columns(@n, (@i + 1));
+  }
+}

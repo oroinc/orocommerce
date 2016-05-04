@@ -1,6 +1,7 @@
 services:
     orob2b_website.form.type.websiite_entity_visibility_type:
         class: 'OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType'
+        public: true
         arguments:
             - "@doctrine"
         tags:
@@ -10,6 +11,7 @@ services:
 
     orob2b_website.form.type.website:
         class: 'OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteType'
+        public: true
         calls:
             - [setDataClass, ['%orob2b_website.entity.website.class%']]
         tags:

@@ -209,7 +209,8 @@ class InvoiceController extends Controller
 
         if ($productsPriceCriteria) {
             $matchedPrices = $this->get('orob2b_pricing.provider.combined_product_price')->getMatchedPrices(
-                $productsPriceCriteria->toArray()
+                $productsPriceCriteria->toArray(),
+                $this->get('orob2b_pricing.model.price_list_request_handler')->getPriceListByAccount()
             );
         }
 

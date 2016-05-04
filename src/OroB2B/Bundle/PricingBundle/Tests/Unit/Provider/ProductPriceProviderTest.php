@@ -6,8 +6,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -23,11 +23,6 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var  \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
-     */
-    protected $requestHandler;
-
-    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
     protected $registry;
@@ -36,12 +31,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        $this->requestHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->provider = new ProductPriceProvider($this->registry, $this->requestHandler, self::CLASS_NAME);
+        $this->provider = new ProductPriceProvider($this->registry);
         $this->provider->setClassName('\stdClass');
     }
 
@@ -181,23 +171,15 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getMatchedPricesDataProvider
      *
      * @param array $productPriceCriteria
-     * @param bool $withPriceList
      * @param array $repositoryData
      * @param array $expectedData
      */
     public function testGetMatchedPrices(
         array $productPriceCriteria,
-        $withPriceList,
         array $repositoryData,
         array $expectedData
     ) {
         $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 12);
-
-        if ($withPriceList) {
-            $this->requestHandler->expects($this->never())->method('getPriceListByAccount');
-        } else {
-            $this->requestHandler->expects($this->once())->method('getPriceListByAccount')->willReturn($priceList);
-        }
 
         $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
             ->disableOriginalConstructor()
@@ -215,10 +197,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
             ->with(self::CLASS_NAME)
             ->willReturn($em);
 
-        $prices = $this->provider->getMatchedPrices(
-            $productPriceCriteria,
-            $withPriceList ? $priceList : null
-        );
+        $prices = $this->provider->getMatchedPrices($productPriceCriteria, $priceList);
 
         $this->assertInternalType('array', $prices);
         $this->assertEquals(count($productPriceCriteria), count($prices));
@@ -234,31 +213,18 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         $prodUnitQty1 = $this->getProductPriceCriteria(1, $currency);
         $prodUnitQty105 = $this->getProductPriceCriteria(10.5, $currency);
         $prodUnitQty50 = $this->getProductPriceCriteria(50, $currency);
-        $prodUnitQty200 = $this->getProductPriceCriteria(200, $currency);
-        $prodUnitQty01 = $this->getProductPriceCriteria(0.1, $currency);
 
         $repositoryData = $this->getRepositoryData($prodUnitQty50);
 
         return [
-            'with priceList' => [
+            [
                 'productPriceCriteria' => [$prodUnitQty1, $prodUnitQty105],
-                'withPriceList' => true,
                 'repositoryData' => $repositoryData,
                 'expectedData' => [
                     $prodUnitQty1->getIdentifier() => null,
                     $prodUnitQty105->getIdentifier() => Price::create(15, $currency),
                 ]
             ],
-            'without priceList' => [
-                'productPriceCriteria' => [$prodUnitQty50, $prodUnitQty200, $prodUnitQty01],
-                'withPriceList' => false,
-                'repositoryData' => $repositoryData,
-                'expectedData' => [
-                    $prodUnitQty50->getIdentifier() => Price::create(300, $currency),
-                    $prodUnitQty200->getIdentifier() => Price::create(1400, $currency),
-                    $prodUnitQty01->getIdentifier() => null,
-                ]
-            ]
         ];
     }
 
@@ -322,7 +288,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $className
      * @param int $id
-     * @return object
+     * @return BasePriceList
      */
     protected function getEntity($className, $id)
     {

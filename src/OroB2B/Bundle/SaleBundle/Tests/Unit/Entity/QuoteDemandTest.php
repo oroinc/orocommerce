@@ -19,7 +19,10 @@ class QuoteDemandTest extends AbstractTest
     {
         $properties = [
             ['id', '123'],
-            ['quote', new Quote()]
+            ['quote', new Quote()],
+            ['total', 100.1],
+            ['subtotal', 100.1],
+            ['totalCurrency', 'USD']
         ];
 
         static::assertPropertyAccessors(new QuoteDemand(), $properties);

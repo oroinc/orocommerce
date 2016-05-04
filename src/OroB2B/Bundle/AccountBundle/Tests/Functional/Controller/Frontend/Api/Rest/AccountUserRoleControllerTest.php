@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend\Api\R
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;

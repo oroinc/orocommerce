@@ -9,6 +9,8 @@
 %}
 
 {% block navButtons %}
+    {{ parent() }}
+
     {% if entity.id %}
         {{ UI.cancelButton(path('orob2b_rfp_request_status_view', {'id': entity.id})) }}
     {% else %}

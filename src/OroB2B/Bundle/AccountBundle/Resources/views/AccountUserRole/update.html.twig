@@ -28,17 +28,9 @@
     <div data-page-component-module="orob2baccount/js/app/views/account-role-view"
          data-page-component-options="{{ options|json_encode }}">
     </div>
-    {% if entity.id and resource_granted('DELETE', entity) %}
-        {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_account_delete_accountuserrole', {'id': entity.id}),
-            'dataRedirect': path('orob2b_account_account_user_role_index'),
-            'aCss': 'no-hash remove-button',
-            'dataId': entity.id,
-            'id': 'btn-remove-attribute',
-            'entity_label': 'orob2b.account.accountuserrole.entity_label'|trans,
-        }) }}
-        {{ UI.buttonSeparator() }}
-    {% endif %}
+
+    {{ parent() }}
+
     {{ UI.cancelButton(path('orob2b_account_account_user_role_index')) }}
     {% set html = UI.buttonType({'type': 'button', 'class': 'btn-success role-submit', 'label': 'Save and Close'|trans}) %}
     {% if entity.id or resource_granted('orob2b_account_account_user_role_update') %}

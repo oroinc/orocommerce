@@ -6,7 +6,7 @@ operations:
             - orob2b_account_account_user_view
         datagrids:
             - account-account-user-grid
-        order: 10
+        order: 30
         button_options:
             icon: icon-remove
         acl_resource: [EDIT, $.data]
@@ -29,7 +29,7 @@ operations:
             - orob2b_account_account_user_view
         datagrids:
             - account-account-user-grid
-        order: 10
+        order: 30
         button_options:
             icon: icon-ok
         acl_resource: [EDIT, $.data]
@@ -215,7 +215,7 @@ operations:
                 attribute: $.entityLabel
             - '@flash_message':
                 message: oro.action.delete_message
-                type: 'info'
+                type: 'success'
                 message_parameters:
                     entityLabel: $.entityLabel
             - '@redirect': {route: orob2b_account_frontend_account_user_index}
@@ -293,10 +293,38 @@ operations:
                 attribute: $.entityLabel
             - '@flash_message':
                 message: oro.action.delete_message
-                type: 'info'
+                type: 'success'
                 message_parameters:
                     entityLabel: $.entityLabel
             - '@redirect': {route: orob2b_account_frontend_account_user_role_index}
+    UPDATE:
+        exclude_datagrids:
+            - account-account-user-select-grid
+            - account-account-users-grid-view
+            - account-account-users-grid-update
+            - account-accounts-select-grid
+            - account-category-visibility-grid
+            - account-group-product-visibility-grid
+            - account-groups-select-grid
+            - account-product-visibility-grid
+            - account-user-by-account-grid
+    DELETE:
+        exclude_entities:
+            - OroB2B\Bundle\AccountBundle\Entity\AccountGroup
+        exclude_datagrids:
+            - account-account-user-select-grid
+            - account-account-users-grid-view
+            - account-account-users-grid-update
+            - account-accounts-select-grid
+            - account-category-visibility-grid
+            - account-group-accounts-grid-basic
+            - account-group-accounts-grid-view
+            - account-group-accounts-grid-update
+            - account-groups-select-grid
+            - account-group-category-visibility-grid
+            - account-group-product-visibility-grid
+            - account-product-visibility-grid
+            - account-user-by-account-grid
 
 action_groups:
     orob2b_account_accountuser_set_enabled:

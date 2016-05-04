@@ -108,14 +108,6 @@ datagrid:
                 route: orob2b_product_view
                 params:
                     - id
-            update_link:
-                type: url
-                route: orob2b_product_update
-                params: [ id ]
-            delete_link:
-                type: url
-                route: orob2b_api_delete_product
-                params: [ id ]
         actions:
             view:
                 type:          navigate
@@ -124,18 +116,6 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_product_view
                 rowAction:     true
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_product_update
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_product_delete
 
     frontend-products-grid:
         extended_entity_name: %orob2b_product.entity.product.class%
