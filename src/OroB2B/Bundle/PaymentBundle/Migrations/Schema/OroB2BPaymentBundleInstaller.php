@@ -30,7 +30,7 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_2l';
+        return 'v1_2';
     }
 
     /**
