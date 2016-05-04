@@ -53,7 +53,7 @@ class PriceListTreeHandler
     /**
      * @param Account|null $account
      * @param Website|null $website
-     * @return BasePriceList
+     * @return BasePriceList|null
      */
     public function getPriceList(Account $account = null, Website $website = null)
     {

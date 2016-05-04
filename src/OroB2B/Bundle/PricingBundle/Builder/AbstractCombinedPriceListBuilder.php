@@ -199,7 +199,6 @@ abstract class AbstractCombinedPriceListBuilder
     /**
      * @param CombinedPriceList $cpl
      * @param Website $website
-     * @param $targetEntity
      * @param Account|AccountGroup $targetEntity
      * @param bool|false $force
      */

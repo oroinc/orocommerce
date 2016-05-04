@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Builder;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 
 use Oro\Component\Testing\WebTestCase;
 
@@ -28,7 +28,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
     protected $now;
 
     /**
-     * @var ObjectManager
+     * @var EntityManager
      */
     protected $manager;
 
@@ -137,9 +137,12 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
                     $item->setDeactivateAt($activateAt);
                 }
                 $this->manager->persist($item);
-                $this->manager->flush();
+                $this->manager->flush($item);
             }
-            $this->manager->flush();
+        }
+        foreach ($scheduleData as $priceListKey => $schedule) {
+            /** @var PriceList $priceList */
+            $priceList = $this->getReference($priceListKey);
             $this->cplActivationPlanBuilder->buildByPriceList($priceList);
         }
     }

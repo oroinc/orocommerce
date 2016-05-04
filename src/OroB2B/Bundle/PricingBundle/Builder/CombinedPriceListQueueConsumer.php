@@ -112,7 +112,8 @@ class CombinedPriceListQueueConsumer
             case !is_null($trigger->getAccount()):
                 $this->accountPriceListsBuilder->build(
                     $trigger->getWebsite(),
-                    $trigger->getAccount()
+                    $trigger->getAccount(),
+                    $trigger->isForce()
                 );
                 break;
             case !is_null($trigger->getAccountGroup()):

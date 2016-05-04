@@ -191,7 +191,7 @@ class CombinedPriceListRepository extends EntityRepository
             Join::WITH,
             $selectQb->expr()->eq('rule.combinedPriceList', 'priceList.id')
         );
-        $selectQb->andWhere('rule.combinedPriceList IS NULL');
+        $selectQb->andWhere($selectQb->expr()->isNull('rule.combinedPriceList'));
         if ($exceptPriceLists) {
             $selectQb->andWhere($selectQb->expr()->notIn('priceList', ':exceptPriceLists'))
                 ->setParameter('exceptPriceLists', $exceptPriceLists);
