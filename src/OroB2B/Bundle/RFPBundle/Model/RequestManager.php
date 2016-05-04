@@ -7,6 +7,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -56,43 +57,69 @@ class RequestManager
 
     /**
      * @param Request $request
-     * @param int $productId
-     * @param string $unit
-     * @param string $quantity
+     * @param array $productLineItems
      */
-    public function addProductItemToRequest(Request $request, $productId, $unit, $quantity)
+    public function addProductLineItemsToRequest(Request $request, array $productLineItems)
     {
-        $product = $this->getProduct($productId);
-        $unit = $this->getUnitReference($unit);
+        $units = [];
+        foreach ($productLineItems as $productId => $items) {
+            $filteredItems = [];
+            foreach ($items as $item) {
+                $units[$item['unit']] = true;
+                $filteredItems[$item['unit']] = $item['quantity'];
+            }
+            $productLineItems[$productId] = $filteredItems;
+        }
+        $productIds = array_keys($productLineItems);
+        $products = $this->getProducts($productIds);
+        $units = $this->getUnits($productIds, array_keys($units));
+        foreach ($productLineItems as $productId => $requestProductItems) {
+            if (!array_key_exists($productId, $products)) {
+                continue;
+            }
+            $requestProduct = new RequestProduct();
+            $requestProduct->setProduct($products[$productId]);
 
-        $requestProductItem = new RequestProductItem();
-        $requestProductItem->setQuantity($quantity);
-        $requestProductItem->setProductUnit($unit);
+            foreach ($requestProductItems as $unit => $quantity) {
+                if (!array_key_exists($unit, $units)) {
+                    continue;
+                }
+                $requestProductItem = new RequestProductItem();
+                $requestProductItem->setQuantity($quantity);
+                $requestProductItem->setProductUnit($units[$unit]);
+                $requestProduct->addRequestProductItem($requestProductItem);
+            }
 
-        $requestProduct = new RequestProduct();
-        $requestProduct->setProduct($product);
-        $requestProduct->addRequestProductItem($requestProductItem);
-
-        $request->addRequestProduct($requestProduct);
+            if (!$requestProduct->getRequestProductItems()->isEmpty()) {
+                $request->addRequestProduct($requestProduct);
+            }
+        }
     }
 
     /**
-     * @param $id
-     * @return Product
+     * @param array $ids
+     * @return Product[]
      */
-    protected function getProduct($id)
+    protected function getProducts(array $ids)
     {
-        return $this->doctrineHelper
+        $products = $this->doctrineHelper
             ->getEntityRepositoryForClass('OroB2BProductBundle:Product')
-            ->find($id);
+            ->findBy(['id' => $ids]);
+        return array_reduce($products, function ($result, Product $product) {
+            $result[$product->getId()] = $product;
+            return $result;
+        }, []);
     }
 
     /**
-     * @param $id
-     * @return ProductUnit
+     * @param array $productIds
+     * @param array $codes
+     * @return ProductUnit[]
      */
-    protected function getUnitReference($id)
+    protected function getUnits(array $productIds, array $codes)
     {
-        return $this->doctrineHelper->getEntityReference('OroB2BProductBundle:ProductUnit', $id);
+        /** @var ProductUnitRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepositoryForClass('OroB2BProductBundle:ProductUnit');
+        return $repository->getProductsUnitsByCodes($productIds, $codes);
     }
 }
