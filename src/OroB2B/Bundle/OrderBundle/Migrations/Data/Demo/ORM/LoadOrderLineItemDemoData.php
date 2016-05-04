@@ -94,14 +94,15 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
             if ($product) {
                 $priceList = $this->container->get('orob2b_pricing.model.price_list_tree_handler')
                     ->getPriceList($order->getAccount(), $order->getWebsite());
-
-                $price = $this->getPrice(
-                    $product,
-                    $productUnit,
-                    $quantity,
-                    $order->getCurrency(),
-                    $priceList
-                );
+                if ($priceList) {
+                    $price = $this->getPrice(
+                        $product,
+                        $productUnit,
+                        $quantity,
+                        $order->getCurrency(),
+                        $priceList
+                    );
+                }
             }
 
             $date = null;

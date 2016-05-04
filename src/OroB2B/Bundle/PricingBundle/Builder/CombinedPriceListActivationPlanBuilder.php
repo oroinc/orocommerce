@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Builder;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -54,6 +55,21 @@ class CombinedPriceListActivationPlanBuilder
     protected $CPLActivationRuleRepository;
 
     /**
+     * @var ObjectManager
+     */
+    protected $manager;
+
+    /**
+     * @var array
+     */
+    protected $processedPriceLists = [];
+
+    /**
+     * @var array
+     */
+    protected $processedCPLs = [];
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param PriceListScheduleResolver $schedulerResolver
      */
@@ -78,11 +94,15 @@ class CombinedPriceListActivationPlanBuilder
      */
     public function buildByPriceList(PriceList $priceList)
     {
+        if ($this->isPriceListProcessed($priceList)) {
+            return;
+        }
         $cplIterator = $this->getCombinedPriceListRepository()->getCombinedPriceListsByPriceList($priceList);
 
         foreach ($cplIterator as $cpl) {
             $this->buildByCombinedPriceList($cpl);
         }
+        $this->addPriceListProcessed($priceList);
     }
 
     /**
@@ -90,8 +110,12 @@ class CombinedPriceListActivationPlanBuilder
      */
     public function buildByCombinedPriceList(CombinedPriceList $cpl)
     {
+        if ($this->isCPLProcessed($cpl)) {
+            return;
+        }
         $this->getCPLActivationRuleRepository()->deleteRulesByCPL($cpl);
         $this->generateActivationRules($cpl);
+        $this->addCPLProcessed($cpl);
     }
 
     /**
@@ -100,13 +124,11 @@ class CombinedPriceListActivationPlanBuilder
      */
     protected function generateActivationRules(CombinedPriceList $cpl)
     {
-        $priceListSchedules = $this->getPriceListScheduleRepository()->getSchedulesByCPL($cpl);
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $priceListSchedules = $this->getPriceListScheduleRepository()->getSchedulesByCPL($cpl, $now);
         $priceListRelations = $this->getCPLToPriceListRepository()->getPriceListRelations($cpl);
 
         $rawRules = $this->schedulerResolver->mergeSchedule($priceListSchedules, $priceListRelations);
-        $activationRuleClass = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule';
-        $manager = $this->doctrineHelper->getEntityManagerForClass($activationRuleClass);
-        $now = new \DateTime('now', new \DateTimeZone('UTC'));
         foreach ($rawRules as $ruleData) {
             if ($ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY] !== null
                 && $now > $ruleData[PriceListScheduleResolver::EXPIRE_AT_KEY]) {
@@ -126,9 +148,9 @@ class CombinedPriceListActivationPlanBuilder
                 $ruleData[PriceListScheduleResolver::PRICE_LISTS_KEY]
             );
             $rule->setCombinedPriceList($actualCPL);
-            $manager->persist($rule);
+            $this->getManager()->persist($rule);
         }
-        $manager->flush();
+        $this->getManager()->flush();
     }
 
     /**
@@ -199,5 +221,52 @@ class CombinedPriceListActivationPlanBuilder
                 ->getEntityRepository('OroB2BPricingBundle:CombinedPriceListActivationRule');
         }
         return $this->CPLActivationRuleRepository;
+    }
+
+    /**
+     * @return ObjectManager
+     */
+    public function getManager()
+    {
+        if (!$this->manager) {
+            $activationRuleClass = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule';
+            $this->manager = $this->doctrineHelper->getEntityManagerForClass($activationRuleClass);
+        }
+
+        return $this->manager;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return bool
+     */
+    protected function isPriceListProcessed(PriceList $priceList)
+    {
+        return in_array($priceList->getId(), $this->processedPriceLists);
+    }
+
+    /**
+     * @param CombinedPriceList $cpl
+     * @return bool
+     */
+    protected function isCPLProcessed(CombinedPriceList $cpl)
+    {
+        return in_array($cpl->getId(), $this->processedCPLs);
+    }
+
+    /**
+     * @param PriceList $priceList
+     */
+    protected function addPriceListProcessed(PriceList $priceList)
+    {
+        $this->processedPriceLists[] = $priceList->getId();
+    }
+
+    /**
+     * @param CombinedPriceList $cpl
+     */
+    protected function addCPLProcessed(CombinedPriceList $cpl)
+    {
+        $this->processedCPLs[] = $cpl->getId();
     }
 }
