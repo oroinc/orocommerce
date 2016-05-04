@@ -8,10 +8,10 @@
         </td>
         <td class="renderable">
             <div class="text-center">{{ shippingOption.dimensions.length }} x {{ shippingOption.dimensions.width }}
-                x {{ shippingOption.dimensions.height }} {{ shippingOption.dimensions.unit|orob2b_length_unit_format_label(true,true) }}</div>
+                x {{ shippingOption.dimensions.height }} {{ shippingOption.dimensions.unit|orob2b_length_unit_format_label(true, true) }}</div>
         </td>
         <td class="renderable">
-            <div class="text-center">{{ shippingOption.freightClass|orob2b_freight_class_format_label(false,false) }}</div>
+            <div class="text-center">{{ shippingOption.freightClass|orob2b_freight_class_format_label(false, false) }}</div>
         </td>
     </tr>
 {% endmacro %}

@@ -64,7 +64,7 @@ class ProductFormViewListener
             ->getEntityRepositoryForClass('OroB2BShippingBundle:ProductShippingOptions')
             ->findBy(['product' => $productId]);
 
-        if (count($shippingOptions) < 1) {
+        if (0 === count($shippingOptions)) {
             return;
         }
 
