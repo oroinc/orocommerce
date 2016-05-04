@@ -2,10 +2,8 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -13,7 +11,6 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
 use OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\WeightType;
 use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
 
 class DimensionsTypeTest extends FormIntegrationTestCase
@@ -125,7 +122,6 @@ class DimensionsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    WeightType::NAME => new WeightType(),
                     LengthUnitSelectType::NAME => new EntityType(
                         ['m' => $this->getLengthUnit('m')],
                         LengthUnitSelectType::NAME,
@@ -134,7 +130,7 @@ class DimensionsTypeTest extends FormIntegrationTestCase
                 ],
                 []
             ),
-            new ValidatorExtension(Validation::createValidator())
+            $this->getValidatorExtension(true)
         ];
     }
 }
