@@ -1,6 +1,5 @@
 datagrid:
     frontend-checkouts-grid:
-        acl_resource: orob2b_checkout_frontend_checkout
         update: false
         delete: false
         source:
