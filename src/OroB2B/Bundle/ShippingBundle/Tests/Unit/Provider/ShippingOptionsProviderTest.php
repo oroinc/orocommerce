@@ -9,7 +9,6 @@ use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingOptionsProvider;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class ShippingOptionsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -58,7 +57,85 @@ class ShippingOptionsProviderTest extends \PHPUnit_Framework_TestCase
         unset($this->provider, $this->configManager, $this->doctrineHelper, $this->em, $this->repo);
     }
 
-    public function testAnything()
+    /**
+     * @param mixed $method
+     * @param mixed $property
+     * @param mixed $class
+     *
+     * @dataProvider classesProvider
+     */
+    public function testSetClasses($method, $property, $class)
     {
+        $this->provider->{$method}($class);
+        $this->assertEquals($class, $this->getProperty($this->provider, $property));
+    }
+
+    /**
+     * @param mixed $method
+     * @param mixed $expected
+     *
+     * @dataProvider unitsProvider
+     */
+    public function testGetOptions($method, $expected)
+    {
+        $this->repo->expects($this->atLeastOnce())
+            ->method('findAll')
+            ->willReturn($expected);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepositoryForClass')
+            ->willReturn($this->repo);
+
+        $this->assertEquals($this->provider->{$method}(), $expected);
+    }
+
+    /**
+     * @return array
+     */
+    public function unitsProvider()
+    {
+        return [
+            ['method' => 'getWeightUnits', 'expected' => []],
+            ['method' => 'getLengthUnits', 'expected' => []],
+            ['method' => 'getFreightClasses', 'expected' => []],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function classesProvider()
+    {
+        return [
+            [
+                'method' => 'setWeightUnitClass',
+                'property' => 'weightUnitClass',
+                'class' => 'OroB2B\Bundle\ShippingBundle\Entity\WeightUnit',
+            ],
+            [
+                'method' => 'setLengthUnitClass',
+                'property' => 'lengthUnitClass',
+                'class' => 'OroB2B\Bundle\ShippingBundle\Entity\LengthUnit',
+            ],
+            [
+                'method' => 'setFreightClassClass',
+                'property' => 'freightClassClass',
+                'class' => 'OroB2B\Bundle\ShippingBundle\Entity\FreightClass',
+            ],
+        ];
+    }
+
+    /**
+     * @param object $object
+     * @param string $property
+     *
+     * @return mixed $value
+     */
+    protected function getProperty($object, $property)
+    {
+        $reflection = new \ReflectionProperty(get_class($object), $property);
+        $reflection->setAccessible(true);
+
+        return $reflection->getValue($object);
     }
 }
