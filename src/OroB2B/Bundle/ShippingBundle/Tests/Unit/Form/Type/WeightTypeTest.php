@@ -2,10 +2,8 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -120,7 +118,6 @@ class WeightTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    WeightType::NAME => new WeightType(),
                     WeightUnitSelectType::NAME => new EntityType(
                         ['kg' => $this->getWeightUnit('kg')],
                         WeightUnitSelectType::NAME,
@@ -129,7 +126,7 @@ class WeightTypeTest extends FormIntegrationTestCase
                 ],
                 []
             ),
-            new ValidatorExtension(Validation::createValidator())
+            $this->getValidatorExtension(true)
         ];
     }
 }
