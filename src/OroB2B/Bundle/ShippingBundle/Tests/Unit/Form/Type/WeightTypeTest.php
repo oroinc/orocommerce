@@ -14,6 +14,7 @@ use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
 use OroB2B\Bundle\ShippingBundle\Form\Type\WeightType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
 use OroB2B\Bundle\ShippingBundle\Model\Weight;
+use OroB2B\Bundle\ShippingBundle\Provider\ShippingOptionsProvider;
 
 class WeightTypeTest extends FormIntegrationTestCase
 {
@@ -24,12 +25,29 @@ class WeightTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
+    /**
+     * @var ShippingOptionsProvider
+     */
+    protected $provider;
+
     protected function setUp()
     {
         parent::setUp();
 
-        $this->formType = new WeightType();
+
+        $this->formType = new WeightType($this->initProvider());
         $this->formType->setDataClass(self::DATA_CLASS);
+    }
+
+    /**
+     * @return ShippingOptionsProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function initProvider()
+    {
+        $this->provider = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\ShippingOptionsProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+        return $this->provider;
     }
 
     public function testConfigureOptions()
@@ -38,10 +56,12 @@ class WeightTypeTest extends FormIntegrationTestCase
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with([
-                'data_class' => self::DATA_CLASS,
-                'compact' => false,
-            ]);
+            ->with(
+                [
+                    'data_class' => self::DATA_CLASS,
+                    'compact' => false,
+                ]
+            );
 
         $this->formType->configureOptions($resolver);
     }
@@ -75,10 +95,6 @@ class WeightTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         return [
-            'empty data' => [
-                'submittedData' => [],
-                'expectedData' => null,
-            ],
             'full data' => [
                 'submittedData' => [
                     'value' => '2',
@@ -93,6 +109,7 @@ class WeightTypeTest extends FormIntegrationTestCase
     /**
      * @param WeightUnit $weightUnit
      * @param float $value
+     *
      * @return Weight
      */
     protected function getWeight(WeightUnit $weightUnit, $value)
@@ -102,6 +119,7 @@ class WeightTypeTest extends FormIntegrationTestCase
 
     /**
      * @param string $code
+     *
      * @return WeightUnit
      */
     protected function getWeightUnit($code)
@@ -120,12 +138,8 @@ class WeightTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    WeightType::NAME => new WeightType(),
-                    WeightUnitSelectType::NAME => new EntityType(
-                        ['kg' => $this->getWeightUnit('kg')],
-                        WeightUnitSelectType::NAME,
-                        ['compact' => false]
-                    ),
+                    WeightType::NAME => new WeightType($this->initProvider()),
+                    'entity' => new EntityType(['kg' => $this->getWeightUnit('kg')])
                 ],
                 []
             ),

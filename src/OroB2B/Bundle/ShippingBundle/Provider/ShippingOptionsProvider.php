@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
 use OroB2B\Bundle\ShippingBundle\Entity\FreightClass;
 use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
 use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
@@ -39,21 +40,35 @@ class ShippingOptionsProvider
         $this->configManager = $configManager;
     }
 
+    /**
+     * @param $weightUnitClass
+     */
     public function setWeightUnitClass($weightUnitClass)
     {
         $this->weightUnitClass = $weightUnitClass;
     }
 
+    /**
+     * @param $lengthUnitClass
+     */
     public function setLengthUnitClass($lengthUnitClass)
     {
         $this->lengthUnitClass = $lengthUnitClass;
     }
 
+    /**
+     * @param $freightClassClass
+     */
     public function setFreightClassClass($freightClassClass)
     {
         $this->freightClassClass = $freightClassClass;
     }
 
+    /**
+     * @param $class
+     *
+     * @return EntityRepository
+     */
     protected function getRepositoryForClass($class)
     {
         return $this->doctrineHelper->getEntityRepositoryForClass($class);

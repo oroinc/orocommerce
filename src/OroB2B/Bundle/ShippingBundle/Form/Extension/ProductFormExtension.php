@@ -4,14 +4,16 @@ namespace OroB2B\Bundle\ShippingBundle\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
+
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
+use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
 
 class ProductFormExtension extends AbstractTypeExtension
 {
@@ -44,7 +46,7 @@ class ProductFormExtension extends AbstractTypeExtension
             'product_shipping_options',
             ProductShippingOptionsCollectionType::NAME,
             [
-                'label' => 'orob2b.shipping.productshippingoptions.entity_plural_label',
+                'label' => 'orob2b.shipping.product_shipping_options.entity_plural_label',
                 'required' => false,
                 'mapped' => false,
                 'options' => [
