@@ -60,13 +60,23 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
         $force = (bool)$input->getOption(self::FORCE);
 
         $container = $this->getContainer();
-        $container->get('orob2b_pricing.recalculate_triggers_filler.scope_recalculate_triggers_filler')
-            ->fillTriggersForRecalculate(
-                $input->getOption(self::WEBSITE),
-                $input->getOption(self::ACCOUNT_GROUP),
-                $input->getOption(self::ACCOUNT),
-                $force
+        $websiteIds = $input->getOption(self::WEBSITE);
+        $accountGroupIds = $input->getOption(self::ACCOUNT_GROUP);
+        $accountIds = $input->getOption(self::ACCOUNT);
+
+        if (($websiteIds || $accountGroupIds || $accountIds) && !$force) {
+            $output->writeln(
+                '<comment>ATTENTION</comment>: To force execution run command with <info>--force</info> option:'
             );
+            $output->writeln(sprintf('    <info>%s --force</info>', $this->getName()));
+
+            return;
+        }
+
+        if ($force) {
+            $container->get('orob2b_pricing.recalculate_triggers_filler.scope_recalculate_triggers_filler')
+                ->fillTriggersForRecalculate($websiteIds, $accountGroupIds, $accountIds);
+        }
 
         $key = Configuration::getConfigKeyByName(Configuration::PRICE_LISTS_UPDATE_MODE);
         $mode = $container->get('oro_config.manager')->get($key);

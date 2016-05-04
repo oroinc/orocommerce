@@ -126,8 +126,8 @@ class CombinedPriceListsBuilder
         if ($force || !$activeCpl->isPricesCalculated()) {
             $this->priceResolver->combinePrices($activeCpl);
         }
-        $fullCplConfigKey = Configuration::getConfigKeyToPriceList();
-        $actualCplConfigKey = Configuration::getConfigKeyToFullPriceList();
+        $actualCplConfigKey = Configuration::getConfigKeyToPriceList();
+        $fullCplConfigKey = Configuration::getConfigKeyToFullPriceList();
         $hasChanged = false;
         if ((int)$this->configManager->get($fullCplConfigKey) !== $cpl->getId()) {
             $this->configManager->set($fullCplConfigKey, $cpl->getId());
