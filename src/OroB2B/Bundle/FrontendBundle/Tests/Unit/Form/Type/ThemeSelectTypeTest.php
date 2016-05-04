@@ -54,7 +54,6 @@ class ThemeSelectTypeTest extends \PHPUnit_Framework_TestCase
         ];
 
         $expectedChoices = [
-            '' => 'orob2b_frontend.theme.demo.title',
             'theme1' => 'label1',
             'theme2' => 'label2'
         ];
