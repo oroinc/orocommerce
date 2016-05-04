@@ -128,7 +128,7 @@ services:
         parent: orob2b_shipping.provider.measure_units.abstract
         calls:
             - [setEntityClass, ['%orob2b_shipping.entity.weight_unit.class%']]
-            - [setConfigEntryName, ['???']]
+            - [setConfigEntryName, ['orob2b_shipping.weight_units']]
 
     orob2b_shipping.provider.measure_units.length:
         parent: orob2b_shipping.provider.measure_units.abstract
@@ -140,4 +140,4 @@ services:
         parent: orob2b_shipping.provider.measure_units.abstract
         calls:
             - [setEntityClass, ['%orob2b_shipping.entity.freight_class.class%']]
-            - [setConfigEntryName, ['???']]
+            - [setConfigEntryName, ['orob2b_shipping.freight_classes']]
