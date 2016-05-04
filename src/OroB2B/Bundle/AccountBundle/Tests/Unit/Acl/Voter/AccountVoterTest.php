@@ -638,11 +638,6 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 ->getMock()
             ;
 
-            $mock->expects($this->any())
-                ->method('getId')
-                ->willReturn($id)
-            ;
-
             $entities[$className][$id] = $mock;
         }
 

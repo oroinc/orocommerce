@@ -458,10 +458,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     {
         /* @var $productHolder \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface */
         $productHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
-        $productHolder
-            ->expects(static::any())
-            ->method('getId')
-            ->willReturn($id);
 
         $productHolder
             ->expects(static::any())
