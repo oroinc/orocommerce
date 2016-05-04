@@ -28,7 +28,6 @@ class ProductShippingOptionsCollectionType extends AbstractType
             'type' => ProductShippingOptionsType::NAME,
             'show_form_when_empty' => false,
             'error_bubbling' => false,
-            'add_label' => 'orob2b.shipping.product_shipping_options.add_label',
         ]);
     }
 
