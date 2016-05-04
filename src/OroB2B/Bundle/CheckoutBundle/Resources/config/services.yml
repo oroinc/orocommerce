@@ -127,6 +127,7 @@ services:
         tags:
             - { name: twig.extension }
 
+    # Listener in checkout bundle should be handled first to allow custom listeners overwrite result
     orob2b_checkout.event_listener.checkout_entity:
         class: OroB2B\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener
         lazy: true

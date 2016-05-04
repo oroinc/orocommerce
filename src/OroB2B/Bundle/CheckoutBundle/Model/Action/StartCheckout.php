@@ -328,15 +328,20 @@ class StartCheckout extends AbstractAction
      * @param CheckoutSource $checkoutSource
      * @return CheckoutInterface
      */
-    protected function getCheckout($checkoutSource = null)
+    protected function getCheckout($checkoutSource)
     {
-        $event = new CheckoutEntityEvent();
-        $event->setSource($checkoutSource);
-        $this->dispatcher->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
-        $checkout = $event->getCheckoutEntity();
+        if ($checkoutSource->getId()) {
+            $repo = $this->getEntityManager()->getRepository('OroB2BCheckoutBundle:BaseCheckout');
+            $checkout = $repo->findOneBy(['source' => $checkoutSource]);
+        } else {
+            $event = new CheckoutEntityEvent();
+            $event->setSource($checkoutSource);
+            $this->dispatcher->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
+            $checkout = $event->getCheckoutEntity();
+        }
 
         if (!$checkout) {
-            throw new \RuntimeException("Checkout entity should be specified during event process");
+            throw new \RuntimeException('Checkout entity should be specified.');
         }
 
         return $checkout;

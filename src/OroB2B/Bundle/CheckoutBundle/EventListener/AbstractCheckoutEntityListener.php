@@ -46,18 +46,18 @@ abstract class AbstractCheckoutEntityListener
     {
         $checkout = $this->createCheckoutEntity();
 
-        if ($this->isNotAcceptableCheckoutType($event, $checkout) || !$this->isStartWorkflowAllowed($checkout)) {
-            return;
-        }
-
         $className = get_class($checkout);
         $repository = $this->doctrine->getManagerForClass($className)
             ->getRepository($className);
 
-        if ($event->getCheckoutId()) {
+        if ($event->getCheckoutId() && $this->isAcceptableCheckoutType($event, $checkout)) {
             /** @var CheckoutInterface $checkout */
             $checkout = $repository->find($event->getCheckoutId());
             $event->setCheckoutEntity($checkout);
+            return;
+        }
+
+        if (!$this->isAcceptableCheckoutType($event, $checkout) || !$this->isStartWorkflowAllowed($checkout)) {
             return;
         }
 
@@ -89,9 +89,9 @@ abstract class AbstractCheckoutEntityListener
      * @param CheckoutInterface $checkout
      * @return bool
      */
-    protected function isNotAcceptableCheckoutType(CheckoutEntityEvent $event, $checkout)
+    protected function isAcceptableCheckoutType(CheckoutEntityEvent $event, $checkout)
     {
-        return !is_null($event->getType()) && $checkout->getCheckoutType() !== $event->getType();
+        return null === $event->getType() || $checkout->getCheckoutType() === $event->getType();
     }
 
     /**

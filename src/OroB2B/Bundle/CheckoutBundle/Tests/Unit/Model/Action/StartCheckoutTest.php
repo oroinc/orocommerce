@@ -74,8 +74,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = $this->getMockWithoutConstructor('Symfony\Bridge\Doctrine\ManagerRegistry');
         $this->websiteManager = $this->getMockWithoutConstructor('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager');
-        $this->tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+        $this->setUpTokenStorage();
         $this->currencyProvider = $this
             ->getMockWithoutConstructor('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider');
         $this->redirect = $this->getMockBuilder('Oro\Component\Action\Action\AbstractAction')
@@ -139,7 +138,8 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
         $this->action->initialize($options);
 
         $checkoutSourceRepository = $this->getMockWithoutConstructor('Doctrine\ORM\EntityRepository');
-        $checkoutSourceRepository->expects($this->any())
+        $baseCheckoutRepository = $this->getMockWithoutConstructor('Doctrine\ORM\EntityRepository');
+        $checkoutSourceRepository->expects($this->once())
             ->method('findOneBy')
             ->with([$options[StartCheckout::SOURCE_FIELD_KEY] => $options[StartCheckout::SOURCE_ENTITY_KEY]])
             ->willReturn($checkoutSource);
@@ -152,24 +152,14 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->willReturnMap(
                 [
-                    ['OroB2BCheckoutBundle:CheckoutSource', $checkoutSourceRepository]
+                    ['OroB2BCheckoutBundle:CheckoutSource', $checkoutSourceRepository],
+                    ['OroB2BCheckoutBundle:BaseCheckout', $baseCheckoutRepository]
                 ]
             );
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->will($this->returnValue($em));
-
-        $account = new Account();
-        $account->setOwner(new User());
-        $account->setOrganization(new Organization());
-        $user = new AccountUser();
-        $user->setAccount($account);
-
-        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->any())->method('getUser')->willReturn($user);
-        $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
 
         if (!$checkoutSource) {
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
@@ -198,6 +188,9 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             $em->expects($this->exactly(2))->method('flush');
         } else {
             $checkout->setWorkflowItem(new WorkflowItem());
+            $baseCheckoutRepository->expects($this->once())
+                ->method('findOneBy')
+                ->willReturn($checkout);
         }
 
         $this->redirect
@@ -260,7 +253,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                         'remove_source' => true
                     ]
                 ],
-                'checkoutSource' => new CheckoutSourceStub()
+                'checkoutSource' => (new CheckoutSourceStub())->setId(1)
             ],
             'with_force' => [
                 'options' => [
@@ -277,7 +270,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                     ],
                     'force' => true
                 ],
-                'checkoutSource' => new CheckoutSourceStub(),
+                'checkoutSource' => (new CheckoutSourceStub())->setId(1),
                 'force' => true
             ]
         ];
@@ -290,5 +283,22 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
     protected function getMockWithoutConstructor($className)
     {
         return $this->getMockBuilder($className)->disableOriginalConstructor()->getMock();
+    }
+
+    protected function setUpTokenStorage()
+    {
+        $this->tokenStorage = $this
+            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+
+        $account = new Account();
+        $account->setOwner(new User());
+        $account->setOrganization(new Organization());
+        $user = new AccountUser();
+        $user->setAccount($account);
+
+        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())->method('getUser')->willReturn($user);
+        $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
     }
 }
