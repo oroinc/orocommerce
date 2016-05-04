@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\FrontendBundle\Test\Client;
 
 /**
  * @dbIsolation
@@ -23,6 +24,11 @@ class AuditControllerTest extends WebTestCase
         'email'     => 'test@example.com',
         'account'   => 'AccountUser AccountUser',
     ];
+
+    /**
+     * @var Client
+     */
+    protected $client;
 
     protected function setUp()
     {
@@ -46,7 +52,7 @@ class AuditControllerTest extends WebTestCase
             ->getRepository('OroB2BAccountBundle:AccountUser')
             ->findOneBy(['email' => $this->userData['email']]);
 
-        $response = $this->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-audit-history-grid',
             [
                 'frontend-audit-history-grid[object_class]' => 'OroB2B_Bundle_AccountBundle_Entity_AccountUser',

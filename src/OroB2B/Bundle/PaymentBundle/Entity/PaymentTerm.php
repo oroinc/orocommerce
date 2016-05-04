@@ -18,6 +18,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
  * @Config(
  *      routeName="orob2b_payment_term_index",
  *      routeView="orob2b_payment_term_view",
+ *      routeUpdate="orob2b_payment_term_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-usd"

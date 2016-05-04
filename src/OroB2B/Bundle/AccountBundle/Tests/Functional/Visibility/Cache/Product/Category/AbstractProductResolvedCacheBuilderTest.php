@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 

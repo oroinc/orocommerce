@@ -49,6 +49,7 @@ services:
 
     orob2b_product.event_listener.product_normalizer:
         class: 'OroB2B\Bundle\ProductBundle\EventListener\ProductNormalizerEventListener'
+        public: true
         tags:
             - { name: kernel.event_listener, event: orob2b_product.normalizer.normalizer, method: onNormalize }
             - { name: kernel.event_listener, event: orob2b_product.normalizer.denormalizer, method: onDenormalize }

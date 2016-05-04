@@ -19,7 +19,6 @@ class OroB2BProductExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'orob2b_product.form.type.product',
-            'orob2b_product.product.manager.api',
             'orob2b_product.service.quantity_rounding',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);

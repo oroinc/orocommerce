@@ -2,11 +2,12 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use OroB2B\Bundle\FrontendBundle\Test\Client;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
@@ -15,6 +16,11 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 class ProductControllerTest extends WebTestCase
 {
     const SIDEBAR_ROUTE = 'orob2b_catalog_category_product_sidebar';
+
+    /**
+     * @var Client
+     */
+    protected $client;
 
     protected function setUp()
     {
@@ -38,7 +44,9 @@ class ProductControllerTest extends WebTestCase
                 'gridName' => 'products-grid',
                 RequestProductHandler::CATEGORY_ID_KEY => $secondLevelCategory->getId(),
                 RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY => $includeSubcategories,
-            ]
+            ],
+            [],
+            true
         );
         $result = $this->getJsonResponseContent($response, 200);
         $count = count($expected);

@@ -7,7 +7,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Doctrine\ORM\EntityManager;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;

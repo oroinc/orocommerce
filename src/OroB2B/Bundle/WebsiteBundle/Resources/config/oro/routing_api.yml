@@ -1,3 +1,0 @@
-orob2b_website_api:
-    resource: "@OroB2BWebsiteBundle/Controller/Api/Rest/WebsiteController.php"
-    type:     rest
