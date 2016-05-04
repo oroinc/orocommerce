@@ -6,8 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 
 class ProductShippingOptionsType extends AbstractType
 {
@@ -83,15 +83,11 @@ class ProductShippingOptionsType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            [
+        $resolver->setDefaults([
                 'product' => null,
-                'data_class' => $this->dataClass,
-                'intention' => 'shipping_product_shipping_origin',
-                'page_component' => 'oroui/js/app/components/view-component',
-                'page_component_options' => ['view' => 'orob2bshipping/js/app/views/line-item-view'],
-            ]
-        );
+            'data_class' => $this->dataClass,
+            'intention' => 'product_shipping_options',
+        ]);
     }
 
     /**
