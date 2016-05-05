@@ -9,6 +9,8 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
+use OroB2B\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
+use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 
 abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -61,6 +63,16 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $priceListToEntityRepository;
+
+    /**
+     * @var CombinedPriceListScheduleResolver
+     */
+    protected $cplScheduleResolver;
+
+    /**
+     * @var CombinedProductPriceResolver
+     */
+    protected $priceResolver;
 
     /**
      * @return string
@@ -141,6 +153,15 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
                     ]
                 )
             );
+
+        $className = 'OroB2B\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver';
+        $this->cplScheduleResolver = $this->getMockBuilder($className)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $className = 'OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver';
+        $this->priceResolver = $this->getMockBuilder($className)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
