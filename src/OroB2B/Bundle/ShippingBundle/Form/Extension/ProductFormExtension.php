@@ -14,6 +14,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
+use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
 
 class ProductFormExtension extends AbstractTypeExtension
 {
@@ -49,6 +50,7 @@ class ProductFormExtension extends AbstractTypeExtension
                 'label' => 'orob2b.shipping.product_shipping_options.entity_plural_label',
                 'required' => false,
                 'mapped' => false,
+                'constraints' => [new UniqueProductUnitShippingOptions()],
                 'options' => [
                     'product' => $product,
                 ],

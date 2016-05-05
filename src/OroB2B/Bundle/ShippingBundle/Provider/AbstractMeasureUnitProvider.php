@@ -144,7 +144,7 @@ class AbstractMeasureUnitProvider
      *
      * @return mixed|null
      */
-    protected function getSysConfigValues($default = false)
+    public function getSysConfigValues($default = false)
     {
         return $this->configManager->get($this->configEntryName, $default);
     }

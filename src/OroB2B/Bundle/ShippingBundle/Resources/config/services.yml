@@ -126,3 +126,8 @@ services:
             - [setEntityClass, ['%orob2b_shipping.entity.freight_class.class%']]
             - [setConfigEntryName, ['orob2b_shipping.freight_classes']]
             - [setLabelFormatter, ['@orob2b_shipping.formatter.freight_class_label']]
+
+    orob2b_shipping.validator.unique_product_unit_shipping_options:
+        class: 'OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_shipping_unique_product_unit_shipping_options_validator }

@@ -57,18 +57,18 @@ define(function (require) {
                 productUnits = this.getProductUnits()
                 ;
 
-            _.each(this.getSelects(), function (select) {
-                var $select = $(select);
-                var clearChangeRequired = self.clearOptions(productUnits, $select);
-                var addChangeRequired = self.addOptions(productUnits, $select);
-                if (clearChangeRequired || addChangeRequired) {
-                    $select.trigger('change');
-                }
-            });
-
-            if (items.length > 0) {
-                this.$itemsContainer.show();
-            }
+//            _.each(this.getSelects(), function (select) {
+//                var $select = $(select);
+//                var clearChangeRequired = self.clearOptions(productUnits, $select);
+//                var addChangeRequired = self.addOptions(productUnits, $select);
+//                if (clearChangeRequired || addChangeRequired) {
+//                    $select.trigger('change');
+//                }
+//            });
+//
+//            if (items.length > 0) {
+//                this.$itemsContainer.show();
+//            }
         },
 
         onContentRemoved: function () {
