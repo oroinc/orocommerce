@@ -7,10 +7,11 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
+use OroB2B\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
+use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 
 class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,6 +45,16 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected $websiteBuilder;
 
+    /**
+     * @var CombinedPriceListScheduleResolver|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $cplScheduleResolver;
+
+    /**
+     * @var CombinedProductPriceResolver|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $priceResolver;
+
     protected function setUp()
     {
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
@@ -69,11 +80,22 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $className = 'OroB2B\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver';
+        $this->cplScheduleResolver = $this->getMockBuilder($className)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $className = 'OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver';
+        $this->priceResolver = $this->getMockBuilder($className)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->builder = new CombinedPriceListsBuilder(
             $this->configManager,
             $this->priceListCollectionProvider,
             $this->combinedPriceListProvider,
-            $this->garbageCollector
+            $this->garbageCollector,
+            $this->cplScheduleResolver,
+            $this->priceResolver
         );
         $this->builder->setWebsiteCombinedPriceListBuilder($this->websiteBuilder);
     }
@@ -84,12 +106,9 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
      * @param int $actualCPLId
      * @param bool $force
      */
-    public function testBuild($configCPLId, $actualCPLId, $force)
+    public function testBuild($configCPLId, $actualCPLId, $force = false)
     {
         $callExpects = 1;
-        if ($force) {
-            $callExpects = 2;
-        }
         $combinedPriceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList');
         $combinedPriceList->expects($this->any())
             ->method('getId')
@@ -105,22 +124,25 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($priceListsCollection));
         $this->combinedPriceListProvider->expects($this->exactly($callExpects))
             ->method('getCombinedPriceList')
-            ->with($priceListsCollection, $force)
+            ->with($priceListsCollection)
             ->will($this->returnValue($combinedPriceList));
 
-        $key = implode(
-            ConfigManager::SECTION_MODEL_SEPARATOR,
-            [OroB2BPricingExtension::ALIAS, Configuration::COMBINED_PRICE_LIST]
-        );
-        $this->configManager->expects($this->exactly($callExpects))
+        $fullKey = Configuration::getConfigKeyToFullPriceList();
+        $key = Configuration::getConfigKeyToPriceList();
+        $this->configManager->expects($this->exactly($callExpects * 2))
             ->method('get')
-            ->with($key)
-            ->willReturn($configCPLId);
+            ->willReturnMap([
+                [$fullKey, $configCPLId],
+                [$key, $actualCPLId],
+            ]);
 
         if ($actualCPLId !== $configCPLId) {
-            $this->assertUpdateCombinedPriceListConnection($actualCPLId, $key, $force);
+            $this->configManager->expects($this->any())
+                ->method('set');
+            $this->configManager->expects($this->any())
+                ->method('flush');
         } else {
-            $this->configManager->expects($this->never())
+            $this->configManager->expects($this->exactly(2))
                 ->method('set');
         }
 
@@ -141,51 +163,32 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             'no changes' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 1,
-                false
+                'force' => true
             ],
             'change cpl' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 2,
-                false
+                'force' => false
             ],
             'new cpl' => [
                 'configCPLId' => null,
                 'actualCPLId' => 1,
-                false
+                'force' => true
             ],
             'no changes force' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 1,
-                true
             ],
             'change cpl force' => [
                 'configCPLId' => 1,
                 'actualCPLId' => 2,
-                true
+                'force' => false
             ],
             'new cpl force' => [
                 'configCPLId' => null,
                 'actualCPLId' => 1,
-                true
+                'force' => true
             ],
         ];
-    }
-
-    /**
-     * @param int $actualCPLId
-     * @param string $key
-     * @param bool $force
-     */
-    protected function assertUpdateCombinedPriceListConnection($actualCPLId, $key, $force)
-    {
-        $callExpects = 1;
-        if ($force) {
-            $callExpects = 2;
-        }
-        $this->configManager->expects($this->exactly($callExpects))
-            ->method('set')
-            ->with($key, $actualCPLId);
-        $this->configManager->expects($this->exactly($callExpects))
-            ->method('flush');
     }
 }

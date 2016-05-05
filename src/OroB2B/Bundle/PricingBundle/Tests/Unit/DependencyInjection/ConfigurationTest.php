@@ -48,6 +48,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => 'real_time',
                     'scope' => 'app'
                 ],
+                'offset_of_processing_cpl_prices' => [
+                    'value' => 12,
+                    'scope' => 'app'
+                ],
+                'full_combined_price_list' => [
+                    'value' => null,
+                    'scope' => 'app'
+                ],
             ]
         ];
 

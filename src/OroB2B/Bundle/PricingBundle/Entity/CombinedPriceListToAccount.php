@@ -11,21 +11,20 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
  *      name="orob2b_cmb_price_list_to_acc",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(name="orob2b_cpl_to_acc_ws_unq", columns={
- *              "website_id",
- *              "account_id"
+ *              "account_id",
+ *              "website_id"
  *          })
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository")
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToAccountRepository")
  */
 class CombinedPriceListToAccount extends BaseCombinedPriceListRelation
 {
     /**
      * @var Account
      *
-     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $account;
 
