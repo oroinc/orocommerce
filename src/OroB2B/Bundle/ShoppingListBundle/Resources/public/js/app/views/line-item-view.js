@@ -2,49 +2,35 @@
 define(function(require) {
     'use strict';
 
+    var _ = require('underscore');
+    var mediator = require('oroui/js/mediator');
     var BaseView = require('oroui/js/app/views/base/view');
+    var BaseModel = require('oroui/js/app/models/base/model');
     var PricesComponent = require('orob2bpricing/js/app/components/products-prices-component');
     var ProductQuantityComponent = require('orob2bproduct/js/app/components/product-quantity-editable-component');
     var NumberFormatter = require('orolocale/js/formatter/number');
-    var mediator = require('oroui/js/mediator');
-    var $ = require('jquery');
-    var _ = require('underscore');
 
     var LineItemView;
 
     LineItemView = BaseView.extend(/** @exports LineItemView.prototype */{
-        $priceContainer: {},
-
-        options: {
-            currency: null,
-            product: null,
-            matchedPricesRoute: null,
-            priceContainer: null,
-            quantityContainer: null,
-            quantityComponentOptions: {
-                validation: {
-                    showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
-                }
-            }
-        },
 
         initialize: function(options) {
-            this.options = $.extend(true, {}, this.options, options || {});
+            this.options = _.extend({}, this.options, options || {});
+            this.LineItemModel = new BaseModel({prices: this.options.allPrices});
+            this.$priceContainer = this.$(this.options.priceComponentOptions.priceContainer);
 
-            this.$priceContainer = this.$(options.priceContainer);
-
+            // TODO: in BB-2895 replace this component /base-product-prices-view.js
             this.pricesComponent = new PricesComponent({
                 _sourceElement: this.$el,
-                matchedPricesRoute: this.options.matchedPricesRoute
+                matchedPricesRoute: this.options.priceComponentOptions.matchedPricesRoute
             });
 
-            var productQuantityComponentInstance = new ProductQuantityComponent(
-                _.extend({}, this.options.quantityComponentOptions, {_sourceElement: this.$(options.quantityContainer)})
+            var productQuantityComponent = new ProductQuantityComponent(
+                _.extend({}, this.options.quantityComponentOptions, {$parentView: this.$el}),
+                this.LineItemModel
             );
-            this.listenTo(productQuantityComponentInstance, 'product:quantity-unit:update', this.onQuantityUnitChange);
 
-            this.subview('productQuantity', productQuantityComponentInstance);
-            this.subview('pricesComponent', this.pricesComponent);
+            this.listenTo(productQuantityComponent, 'product:quantity-unit:update', this.onQuantityUnitChange);
         },
 
         onQuantityUnitChange: function(data) {
@@ -56,7 +42,9 @@ define(function(require) {
             };
 
             this.pricesComponent.loadLineItemsMatchedPrices([item], _.bind(this.updateMatchedPrice, this));
+
             mediator.trigger('frontend:shopping-list-item-quantity:update', data);
+
             this.trigger('unit-changed', {
                 lineItemId: this.options.lineItemId,
                 product: this.options.product,

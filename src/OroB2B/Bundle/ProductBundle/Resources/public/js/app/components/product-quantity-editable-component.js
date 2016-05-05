@@ -3,8 +3,7 @@ define(function(require) {
     'use strict';
 
     var ProductQuantityEditableComponent;
-    var BaseModel = require('oroui/js/app/models/base/model');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    var BaseView = require('oroui/js/app/views/base/view');
     var ApiAccessor = require('oroui/js/tools/api-accessor');
     var mediator = require('oroui/js/mediator');
     var tools = require('oroui/js/tools');
@@ -12,7 +11,7 @@ define(function(require) {
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
 
-    ProductQuantityEditableComponent = BaseComponent.extend(/** @exports ProductQuantityEditableComponent.prototype */{
+    ProductQuantityEditableComponent = BaseView.extend(/** @exports ProductQuantityEditableComponent.prototype */{
         options: {
             quantityFieldName: 'quantity',
             unitFieldName: 'unit',
@@ -55,8 +54,9 @@ define(function(require) {
          * @constructor
          * @param {Object} options
          */
-        initialize: function(options) {
+        initialize: function(options, parentModel) {
             options = $.extend(true, {}, this.options, options);
+            this.$el = $(options.quantityContainer, options.$parentView);
             if (!options.enable) {
                 return;
             }
@@ -67,10 +67,10 @@ define(function(require) {
             this.quantityFieldName = options.quantityFieldName;
             this.unitFieldName = options.unitFieldName;
 
-            this.$el = options._sourceElement;
             this.initElements(options);
 
-            this.model = new BaseModel(this.getValue());
+            this.model = parentModel;
+            this.model.set(this.getValue());
             this.saveModelState();
 
             this.saveApiAccessor = new ApiAccessor(options.save_api_accessor);
@@ -78,8 +78,8 @@ define(function(require) {
 
         initElements: function(options) {
             this.elements = {
-                quantity: options._sourceElement.find(options.elements.quantity),
-                unit: options._sourceElement.find(options.elements.unit)
+                quantity: this.$el.find(options.elements.quantity),
+                unit: this.$el.find(options.elements.unit)
             };
 
             this.elements.unit.prop('disabled', false);
@@ -109,12 +109,12 @@ define(function(require) {
                 waitors.push(tools.loadModuleAndReplace(options.validation, 'showErrorsHandler').then(
                     _.bind(function() {
                         validationOptions.showErrors = options.validation.showErrorsHandler;
-                        this.validator = options._sourceElement.find('form').validate(validationOptions);
+                        this.validator = this.$el.find('form').validate(validationOptions);
                     }, this)
                 ));
                 this.deferredInit = $.when.apply($, waitors);
             } else {
-                this.validator = options._sourceElement.find('form').validate(validationOptions);
+                this.validator = this.$el.find('form').validate(validationOptions);
             }
         },
 
@@ -181,7 +181,10 @@ define(function(require) {
             }
 
             this._isSaving = true;
-            var modelData = this.model.toJSON();
+            var modelData = {
+                'quantity': this.model.get('quantity'),
+                'unit': this.model.get('unit')
+            };
             var serverUpdateData = {};
             if (this.dataKey) {
                 serverUpdateData[this.dataKey] = modelData;
@@ -189,7 +192,7 @@ define(function(require) {
                 serverUpdateData = modelData;
             }
 
-            var savePromise = this.saveApiAccessor.send(this.model.toJSON(), serverUpdateData, {}, {
+            var savePromise = this.saveApiAccessor.send(modelData, serverUpdateData, {}, {
                 processingMessage: this.messages.processingMessage,
                 preventWindowUnload: this.messages.preventWindowUnload
             });

@@ -127,24 +127,9 @@
         }) }} data-items-selector=".line_item" data-empty-block-selector=".cart-list_empty">
             <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md" {{ UI.renderPageComponentAttributes({
                 module: 'oroui/js/app/components/view-component',
+                layout: 'separate',
                 options: {
-                    view: 'orob2bshoppinglist/js/app/views/line-items-view',
-                    lineItemOptions: {
-                        matchedPricesRoute: 'orob2b_pricing_frontend_matching_price',
-                        priceContainer: '[data-container="matched-price"]',
-                        quantityContainer: '[data-container="quantity"]',
-                        quantityComponentOptions: {
-                            dataKey: constant('OroB2B\\Bundle\\ShoppingListBundle\\Form\\Type\\FrontendLineItemType::NAME'),
-                            enable: resource_granted('orob2b_shopping_list_frontend_update'),
-                            elements: {
-                                quantity: '[name="product_qty"]',
-                                unit: '[name="product_unit"]'
-                            },
-                            save_api_accessor: {
-                                route: 'orob2b_api_shopping_list_frontend_put_line_item'
-                            }
-                        }
-                    }
+                    view: 'orob2bshoppinglist/js/app/views/line-items-view'
                 }
             }) }}>
                 <thead>
@@ -160,8 +145,46 @@
                 {% set productMatchedPrice = lineItem is defined and productsMatchedPrice[lineItem.product.id] is not empty ? productsMatchedPrice[lineItem.product.id] : null %}
                 {% set productAllPrices = lineItem is defined and productsAllPrices[lineItem.product.id] is not empty ? productsAllPrices[lineItem.product.id] : null %}
                 {% set currency = productMatchedPrice ? productMatchedPrice.currency : defaultCurrency %}
-                <tbody class="line_item" data-all-prices="{{ productAllPrices|json_encode }}">
-                    <tr class="line_item_view" data-product-id="{{ lineItem.product.id }}" data-id="{{ lineItem.id }}" data-quantity="{{ lineItem.quantity }}" data-unit-code="{{ lineItem.unit.code }}" data-currency="{{ currency }}">
+                <tbody class="line_item">
+                    {# TODO: BB-2895. After merge https://github.com/laboro/commerce/pull/1872 place components on their nodes #}
+                    <tr class="line_item_view" {{ UI.renderPageComponentAttributes({
+                        module: 'oroui/js/app/components/view-component',
+                        options: {
+                            view: 'orob2bshoppinglist/js/app/views/line-item-view',
+                            product: lineItem.product.id,
+                            lineItemId: lineItem.id,
+                            quantity: lineItem.quantity,
+                            unitCode: lineItem.unit.code,
+                            currency: currency,
+                            allPrices: productAllPrices,
+                            quantityComponentOptions: {
+                                quantityContainer: '[data-container="quantity"]',
+                                dataKey: constant('OroB2B\\Bundle\\ShoppingListBundle\\Form\\Type\\FrontendLineItemType::NAME'),
+                                enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                                elements: {
+                                    quantity: '[name="product_qty"]',
+                                    unit: '[name="product_unit"]'
+                                },
+                                save_api_accessor: {
+                                    default_route_parameters: {
+                                        id: lineItem.id
+                                    },
+                                    route: 'orob2b_api_shopping_list_frontend_put_line_item'
+                                },
+                                value: {
+                                    unit: lineItem.unit.code,
+                                    quantity: lineItem.quantity
+                                },
+                                validation: {
+                                    showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
+                                }
+                            },
+                            priceComponentOptions: {
+                                priceContainer: '[data-container="matched-price"]',
+                                matchedPricesRoute: 'orob2b_pricing_frontend_matching_price'
+                            }
+                        }
+                    }) }}>
                         <td class="va-t_md" colspan="2">
                             <div class="product-item product-item_in-cart">
                                 <div class="product-item__image-holder product-item__image-holder_in-cart">
