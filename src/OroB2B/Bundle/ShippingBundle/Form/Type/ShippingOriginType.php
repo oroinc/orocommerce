@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
@@ -14,11 +12,11 @@ class ShippingOriginType extends AbstractType
 {
     const NAME = 'orob2b_shipping_origin';
 
-    /** @var AddressCountryAndRegionSubscriber */
-    private $countryAndRegionSubscriber;
-
     /** @var string */
-    private $dataClass;
+    protected $dataClass;
+
+    /** @var AddressCountryAndRegionSubscriber */
+    protected $countryAndRegionSubscriber;
 
     /**
      * @param AddressCountryAndRegionSubscriber $eventListener
@@ -115,26 +113,6 @@ class ShippingOriginType extends AbstractType
                 'intention' => 'shipping_origin'
             ]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        $parent = $form->getParent();
-        if (!$parent) {
-            return;
-        }
-
-        if (!$parent->has('use_parent_scope_value')) {
-            return;
-        }
-        
-        $useParentScopeValue = $parent->get('use_parent_scope_value')->getData();
-        foreach ($view->children as $child) {
-            $child->vars['use_parent_scope_value'] = $useParentScopeValue;
-        }
     }
 
     /**

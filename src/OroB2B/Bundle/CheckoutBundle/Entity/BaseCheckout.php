@@ -9,14 +9,12 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareTrait;
 use Oro\Component\Layout\ContextItemInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -38,6 +36,8 @@ class BaseCheckout implements
 {
     use DatesAwareTrait;
     use WorkflowAwareTrait;
+    use UserAwareTrait;
+    use FrontendAccountUserAwareTrait;
 
     /**
      * @var string
@@ -61,38 +61,6 @@ class BaseCheckout implements
      * @ORM\Column(name="po_number", type="string", length=255, nullable=true)
      */
     protected $poNumber;
-
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="user_owner_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $owner;
-
-    /**
-     * @var OrganizationInterface
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $organization;
-
-    /**
-     * @var Account
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     */
-    protected $account;
-
-    /**
-     * @var AccountUser
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     */
-    protected $accountUser;
 
     /**
      * @var Website
@@ -179,48 +147,6 @@ class BaseCheckout implements
     }
 
     /**
-     * @return Account
-     */
-    public function getAccount()
-    {
-        return $this->account;
-    }
-
-    /**
-     * @param Account $account
-     * @return Checkout
-     */
-    public function setAccount(Account $account)
-    {
-        $this->account = $account;
-
-        return $this;
-    }
-
-    /**
-     * @return AccountUser
-     */
-    public function getAccountUser()
-    {
-        return $this->accountUser;
-    }
-
-    /**
-     * @param AccountUser $accountUser
-     * @return Checkout
-     */
-    public function setAccountUser(AccountUser $accountUser)
-    {
-        $this->accountUser = $accountUser;
-
-        if ($accountUser && $accountUser->getAccount()) {
-            $this->setAccount($accountUser->getAccount());
-        }
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getCustomerNotes()
@@ -235,44 +161,6 @@ class BaseCheckout implements
     public function setCustomerNotes($customerNotes)
     {
         $this->customerNotes = $customerNotes;
-
-        return $this;
-    }
-
-    /**
-     * @return OrganizationInterface
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
-    }
-
-    /**
-     * @param OrganizationInterface $organization
-     * @return Checkout
-     */
-    public function setOrganization(OrganizationInterface $organization)
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
-    /**
-     * @return User
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
-     * @param User $owner
-     * @return Checkout
-     */
-    public function setOwner(User $owner)
-    {
-        $this->owner = $owner;
 
         return $this;
     }
