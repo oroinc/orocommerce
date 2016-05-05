@@ -89,7 +89,7 @@ class AbstractMeasureUnitProvider
         if ($onlyEnabled) {
             $configCodes = $this->getSysConfigValues();
             $dbUnits = array_filter($dbUnits, function (MeasureUnitInterface $item) use ($configCodes) {
-                return in_array($item->getCode(), $configCodes);
+                return in_array($item->getCode(), $configCodes, true);
             });
         }
 
