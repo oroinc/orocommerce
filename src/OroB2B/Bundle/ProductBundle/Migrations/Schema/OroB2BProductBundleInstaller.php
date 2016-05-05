@@ -295,16 +295,6 @@ class OroB2BProductBundleInstaller implements
      */
     protected function addAttachmentAssociations(Schema $schema)
     {
-        $this->attachmentExtension->addImageRelation(
-            $schema,
-            self::PRODUCT_TABLE_NAME,
-            'image',
-            [
-                'importexport' => ['excluded' => true]
-            ],
-            self::MAX_PRODUCT_IMAGE_SIZE_IN_MB
-        );
-
         $this->attachmentExtension->addAttachmentAssociation(
             $schema,
             self::PRODUCT_TABLE_NAME,
