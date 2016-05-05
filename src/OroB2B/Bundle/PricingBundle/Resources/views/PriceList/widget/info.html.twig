@@ -16,7 +16,7 @@
                 {{ UI.renderHtmlProperty('orob2b.pricing.pricelist.status.label'|trans, status) }}
             {% endif %}
 
-            {% if not entity.schedules.isEmpty() %}
+            {% if entity.isActive() and not entity.schedules.isEmpty() %}
                 {{ UI.renderHtmlProperty('orob2b.pricing.pricelist.schedule.label'|trans, _self.schedule(entity.schedules)) }}
             {% endif %}
         </div>
