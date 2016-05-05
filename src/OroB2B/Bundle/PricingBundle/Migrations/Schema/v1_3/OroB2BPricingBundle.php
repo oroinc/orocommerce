@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_3;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Schema\Schema;
 
@@ -17,27 +14,14 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, ContainerAwareInterface
+class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
     /**
      * {@inheritdoc}
      */
     public function getOrder()
     {
         return 20;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 
     /**
@@ -67,6 +51,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface, Conta
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_plist_to_acc_gr'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_ws'));
         $queries->addPostQuery(new UpdateCPLNameQuery());
+        $queries->addPostQuery(new AddJobQuery('oro:cron:price-lists:recalculate', [['force']]));
     }
 
     /**
