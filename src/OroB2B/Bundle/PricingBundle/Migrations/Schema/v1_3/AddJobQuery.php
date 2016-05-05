@@ -77,7 +77,7 @@ class AddJobQuery extends ParametrizedMigrationQuery
             'args' => $this->args,
             'now' => $now,
             'queue' => Job::DEFAULT_QUEUE,
-            'state' => Job::STATE_NEW,
+            'state' => Job::STATE_PENDING,
             'maxRuntime' => 0,
             'maxRetries' => 0,
             'priority' => 0,
