@@ -117,7 +117,7 @@
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
                 view: 'orob2bshipping/js/app/views/product-shipping-options-view',
-            }|json_encode }}">
+            }|json_encode }}" {{ block('widget_container_attributes') }}>
             <table class="grid table table-bordered list-items"{% if not form.children|length %} style="display: none;"{% endif %}>
                 <thead>
                 <tr>
@@ -152,7 +152,7 @@
         {% set name = widget.vars.full_name %}
     {% endif %}
 
-    <tr class="list-item" data-content="{{ name }}">
+    <tr class="list-item" data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}>
         {{ form_widget(form) }}
         <td class="product-shipping-options-remove">
             <button type="button" class="removeRow btn icons-holder remove-list-item" data-related="{{ name }}"><i class="icon-remove"></i></button>
