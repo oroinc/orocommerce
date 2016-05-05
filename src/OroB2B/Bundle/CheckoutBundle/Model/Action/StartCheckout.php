@@ -336,6 +336,11 @@ class StartCheckout extends AbstractAction
         $checkout = $event->getCheckoutEntity();
 
         if (!$checkout) {
+            $this->dispatcher->dispatch(CheckoutEvents::CREATE_CHECKOUT_ENTITY, $event);
+            $checkout = $event->getCheckoutEntity();
+        }
+
+        if (!$checkout) {
             throw new \RuntimeException('Checkout entity should be specified.');
         }
 
