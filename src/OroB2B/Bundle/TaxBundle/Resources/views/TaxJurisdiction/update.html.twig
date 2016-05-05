@@ -7,17 +7,8 @@
 {% oro_title_set({params : {"%taxCode%": entity.code|default('N/A'|trans), '%entityName%': 'orob2b.tax.taxjurisdiction.entity_label'|trans} }) %}
 
 {% block navButtons %}
-    {% if entity.id and resource_granted('DELETE', entity) %}
-        {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_tax_delete_taxjurisdiction', {'id': entity.id}),
-            'dataRedirect': path('orob2b_tax_jurisdiction_index'),
-            'aCss': 'no-hash remove-button',
-            'dataId': entity.id,
-            'id': 'btn-remove-attribute',
-            'entity_label': 'orob2b.tax.taxjurisdiction.entity_label'|trans,
-        }) }}
-        {{ UI.buttonSeparator() }}
-    {% endif %}
+    {{ parent() }}
+
     {{ UI.cancelButton(path('orob2b_tax_jurisdiction_index')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_tax_jurisdiction_update') %}

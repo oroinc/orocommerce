@@ -42,4 +42,12 @@ class ProductPriceChangeTriggerRepository extends EntityRepository
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }
+
+    public function deleteAll()
+    {
+        $this->createQueryBuilder('productPriceChangeTrigger')
+            ->delete('OroB2BPricingBundle:ProductPriceChangeTrigger', 'productPriceChangeTrigger')
+            ->getQuery()
+            ->execute();
+    }
 }

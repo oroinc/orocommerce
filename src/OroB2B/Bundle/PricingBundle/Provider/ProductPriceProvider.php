@@ -72,7 +72,9 @@ class ProductPriceProvider
         if (!$priceList) {
             $priceList = $this->requestHandler->getPriceListByAccount();
         }
-
+        if (!$priceList) {
+            return [];
+        }
         $productIds = [];
         $productUnitCodes = [];
 

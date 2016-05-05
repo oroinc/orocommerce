@@ -19,20 +19,9 @@
                 'title': 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.cms.child_page.entity_label'|trans})
             }) }}
         {% endif %}
-        {% if resource_granted('DELETE', entity) %}
-            {{ UI.deleteButton({
-                'dataUrl': path('orob2b_api_cms_delete_page', {'id': entityId}),
-                'dataRedirect': path('orob2b_cms_page_index'),
-                'aCss': 'no-hash remove-button',
-                'dataId': entityId,
-                'id': 'btn-remove-cms-page',
-                'entity_label': 'orob2b.cms.page.entity_label'|trans,
-            }) }}
-        {% endif %}
-        {% if resource_granted('orob2b_cms_page_create') or resource_granted('DELETE', entity) %}
-            {{ UI.buttonSeparator() }}
-        {% endif %}
     {% endif %}
+
+    {{ parent() }}
 
     {{ UI.cancelButton(path('orob2b_cms_page_index')) }}
     {% set html = UI.saveAndCloseButton() %}
