@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -45,6 +46,14 @@ class ScopeRecalculateTriggersFiller
         $this->createTriggers($em, $websites, $accountGroups, $accounts);
 
         $em->flush();
+    }
+
+    /**
+     * @param PriceList $priceList
+     */
+    public function fillTriggersByPriceList(PriceList $priceList)
+    {
+        // todo: Implement in BB-2781
     }
 
     /**

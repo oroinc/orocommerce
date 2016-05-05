@@ -14,6 +14,8 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller;
 
 class PriceListChangeTriggerHandler
 {
@@ -33,18 +35,26 @@ class PriceListChangeTriggerHandler
     protected $insertFromSelectQueryExecutor;
 
     /**
+     * @var ScopeRecalculateTriggersFiller
+     */
+    protected $triggersFiller;
+
+    /**
      * @param ManagerRegistry $registry
      * @param EventDispatcherInterface $eventDispatcher
      * @param InsertFromSelectQueryExecutor $insertFromSelectExecutor
+     * @param ScopeRecalculateTriggersFiller $triggersFiller
      */
     public function __construct(
         ManagerRegistry $registry,
         EventDispatcherInterface $eventDispatcher,
-        InsertFromSelectQueryExecutor $insertFromSelectExecutor
+        InsertFromSelectQueryExecutor $insertFromSelectExecutor,
+        ScopeRecalculateTriggersFiller $triggersFiller
     ) {
         $this->registry = $registry;
         $this->eventDispatcher = $eventDispatcher;
         $this->insertFromSelectQueryExecutor = $insertFromSelectExecutor;
+        $this->triggersFiller = $triggersFiller;
     }
 
     /**
@@ -95,6 +105,15 @@ class PriceListChangeTriggerHandler
         $trigger->setAccountGroup($accountGroup)
             ->setWebsite($website);
         $this->getManager()->persist($trigger);
+        $this->dispatchQueueChange();
+    }
+
+    /**
+     * @param PriceList $priceList
+     */
+    public function handlePriceListStatusChange(PriceList $priceList)
+    {
+        $this->triggersFiller->fillTriggersByPriceList($priceList);
         $this->dispatchQueueChange();
     }
 

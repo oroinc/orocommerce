@@ -8,9 +8,11 @@ use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
+use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
 
 class PriceListListener
 {
+    const IS_ACTIVE_FIELD = 'isActive';
     /**
      * @var PriceListSchedule[]
      */
@@ -22,12 +24,27 @@ class PriceListListener
     protected $activationPlanBuilder;
 
     /**
-     * @param CombinedPriceListActivationPlanBuilder $activationPlanBuilder
+     * @var PriceListChangeTriggerHandler
      */
-    public function __construct(CombinedPriceListActivationPlanBuilder $activationPlanBuilder)
-    {
+    protected $triggerHandler;
+
+    /**
+     * @var array
+     */
+    protected $plDataBeforeUpdate = [];
+
+    /**
+     * @param CombinedPriceListActivationPlanBuilder $activationPlanBuilder
+     * @param PriceListChangeTriggerHandler $triggerHandler
+     */
+    public function __construct(
+        CombinedPriceListActivationPlanBuilder $activationPlanBuilder,
+        PriceListChangeTriggerHandler $triggerHandler
+    ) {
         $this->activationPlanBuilder = $activationPlanBuilder;
+        $this->triggerHandler = $triggerHandler;
     }
+
 
     /**
      * @param FormProcessEvent $event
@@ -36,6 +53,9 @@ class PriceListListener
     {
         /** @var PriceList $priceList */
         $priceList = $event->getData();
+
+        $this->plDataBeforeUpdate[self::IS_ACTIVE_FIELD] = $priceList->isActive();
+
         foreach ($priceList->getSchedules() as $schedule) {
             $this->priceListSchedules[] = $schedule->getHash();
         }
@@ -51,6 +71,12 @@ class PriceListListener
 
         if ($priceList->getId() && $this->isCollectionChanged($priceList)) {
             $this->activationPlanBuilder->buildByPriceList($priceList);
+        }
+
+        if (array_key_exists(self::IS_ACTIVE_FIELD, $this->plDataBeforeUpdate)
+            && $this->plDataBeforeUpdate[self::IS_ACTIVE_FIELD] !== $priceList->isActive()
+        ) {
+            $this->triggerHandler->handlePriceListStatusChange($priceList);
         }
     }
 
