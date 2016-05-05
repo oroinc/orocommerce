@@ -12,6 +12,7 @@ use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -120,6 +121,31 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertRebuild($assertBuilders, $repositoryData);
         $this->assertManager($assertManager);
+        $this->consumer->process();
+    }
+
+    public function testProcessDataForceRebuild()
+    {
+        $forceTrigger = new PriceListChangeTrigger();
+        $forceTrigger->setForce(true);
+
+        $this->priceListChangeTriggerRepository
+            ->expects($this->once())
+            ->method('findBuildAllForceTrigger')
+            ->willReturn($forceTrigger);
+
+        $this->cplBuilder->expects($this->once())
+            ->method('build')
+            ->with(true);
+
+        $this->priceListChangeTriggerRepository
+            ->expects($this->once())
+            ->method('deleteAll');
+
+        $this->priceListChangeTriggerRepository
+            ->expects($this->never())
+            ->method('getPriceListChangeTriggersIterator');
+
         $this->consumer->process();
     }
 

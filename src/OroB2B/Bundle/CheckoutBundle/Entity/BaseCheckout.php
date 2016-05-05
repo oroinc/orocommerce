@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
@@ -25,6 +26,24 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\DiscriminatorColumn(name="checkout_discriminator", type="string", length=30)
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @Config(
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-shopping-cart"
+ *          },
+ *          "ownership"={
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id",
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_column_name"="account_user_id",
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"="commerce"
+ *          }
+ *      }
+ * )
  */
 class BaseCheckout implements
     CheckoutInterface,
