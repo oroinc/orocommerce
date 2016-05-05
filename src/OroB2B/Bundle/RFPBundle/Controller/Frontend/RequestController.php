@@ -234,20 +234,28 @@ class RequestController extends Controller
      */
     protected function addProductItemsToRfpRequest(RFPRequest $rfpRequest, Request $request)
     {
-        $rfpRequestManager = $this->get('orob2b_rfp.request.manager');
-        $fields = ['product_id', 'unit', 'quantity'];
-
-        $lineItems = $request->query->get('product_items', []);
-        foreach ($lineItems as $lineItem) {
-            if (array_diff($fields, array_keys($lineItem))) { // line item has all required fields
+        $productLineItems = (array)$request->query->get('product_items', []);
+        $filteredProducts = [];
+        foreach ($productLineItems as $productId => $items) {
+            $productId = (int)$productId;
+            if ($productId <= 0) {
                 continue;
             }
-            $rfpRequestManager->addProductItemToRequest(
-                $rfpRequest,
-                $lineItem['product_id'],
-                $lineItem['unit'],
-                $lineItem['quantity']
-            );
+            $filteredItems = [];
+            foreach ($items as $item) {
+                if (!is_array($item) || array_diff(['unit', 'quantity'], array_keys($item))) {
+                    continue;
+                }
+                $filteredItems[] = $item;
+            }
+            if (count($filteredItems) > 0) {
+                $filteredProducts[$productId] = $filteredItems;
+            }
         }
+        if (count($productLineItems) === 0) {
+            return;
+        }
+        $this->get('orob2b_rfp.request.manager')
+            ->addProductLineItemsToRequest($rfpRequest, $filteredProducts);
     }
 }

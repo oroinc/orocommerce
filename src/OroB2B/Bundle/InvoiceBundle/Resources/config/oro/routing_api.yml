@@ -1,3 +1,0 @@
-orob2b_invoice_api:
-    resource:     "@OroB2BInvoiceBundle/Controller/Api/Rest/InvoiceController.php"
-    type:         rest

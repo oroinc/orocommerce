@@ -22,13 +22,13 @@ define(function(require) {
 
         onClick: function(e) {
             var $button = $(e.currentTarget);
-            var productOptions = {
-                product_id: this.model.get('id'),
+            var productItems = {};
+            productItems[this.model.get('id')] = [{
                 quantity: this.model.get('quantity'),
                 unit: this.model.get('unit')
-            };
+            }];
             var url = routing.generate($button.data('url'), {
-                product_items: [productOptions]
+                product_items: productItems
             });
             mediator.execute('showLoading');
             mediator.execute('redirectTo', {url: url}, {redirect: true});

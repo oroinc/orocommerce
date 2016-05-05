@@ -19,10 +19,6 @@ datagrid:
                 type:   url
                 route:  orob2b_cms_loginpage_view
                 params: [ id ]
-            update_link:
-                type:   url
-                route:  orob2b_cms_loginpage_update
-                params: [ id ]
         actions:
             view:
                 type:          navigate
@@ -31,9 +27,3 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_cms_loginpage_view
                 rowAction:     true
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_cms_loginpage_update
