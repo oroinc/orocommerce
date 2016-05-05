@@ -58,7 +58,7 @@ class ProductFormExtension extends AbstractTypeExtension
         );
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
     /**
@@ -101,17 +101,18 @@ class ProductFormExtension extends AbstractTypeExtension
 
         $entityManager = $this->registry->getManagerForClass($this->productShippingOptionsClass);
 
-        // persist existing prices
+        // persist existing options
         $persistedOptionsIds = [];
         foreach ($options as $option) {
             $priceId = $option->getId();
             if ($priceId) {
                 $persistedOptionsIds[] = $priceId;
+                $option->setProduct($product);
+                $entityManager->persist($option);
             }
-            $entityManager->persist($option);
         }
 
-        // remove deleted prices
+        // remove deleted options
         if ($product->getId()) {
             /** @var ProductShippingOptions[] $existingOptions */
             $existingOptions = $this->getProductShippingOptionsRepository()->findBy(['product' => $product->getId()]);

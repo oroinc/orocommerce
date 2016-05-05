@@ -122,6 +122,7 @@
                 <thead>
                 <tr>
                     <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.product_unit.label'|trans }}</span></th>
+                    <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.product_unit.label'|trans }}</span></th>
                     <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.weight.label'|trans }}</span></th>
                     <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.dimensions.label'|trans }}</span></th>
                     <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.freight_class.label'|trans }}</span></th>
@@ -161,6 +162,7 @@
 {% endmacro %}
 
 {% block orob2b_shipping_product_shipping_options_widget %}
+    {#<td>{{ form_widget(form.product) }}</td>#}
     <td>{{ form_widget(form.productUnit) }}</td>
     <td>{{ form_widget(form.weight) }}</td>
     <td>{{ form_widget(form.dimensions) }}</td>

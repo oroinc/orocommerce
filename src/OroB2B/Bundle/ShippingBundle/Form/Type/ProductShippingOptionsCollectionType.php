@@ -24,11 +24,13 @@ class ProductShippingOptionsCollectionType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults([
-            'type' => ProductShippingOptionsType::NAME,
-            'show_form_when_empty' => false,
-            'error_bubbling' => false,
-        ]);
+        $resolver->setDefaults(
+            [
+                'type' => ProductShippingOptionsType::NAME,
+                'show_form_when_empty' => false,
+                'error_bubbling' => false,
+            ]
+        );
     }
 
     /**
