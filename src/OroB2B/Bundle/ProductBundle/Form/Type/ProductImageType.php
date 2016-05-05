@@ -21,7 +21,13 @@ class ProductImageType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('image', 'oro_image');
+        $builder->add(
+            'image',
+            'oro_image',
+            [
+                'allowDelete' => false,
+            ]
+        );
         $builder->add('types', 'hidden');
 
         $builder->addEventSubscriber(new ProductImageTypesSubscriber($options['image_types']));
