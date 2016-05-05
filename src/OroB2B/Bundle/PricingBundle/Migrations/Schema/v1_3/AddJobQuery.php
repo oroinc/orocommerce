@@ -25,7 +25,7 @@ class AddJobQuery extends ParametrizedMigrationQuery
     protected $args;
 
     /**
-     * @param $commandName
+     * @param string $commandName
      * @param array $args
      */
     public function __construct($commandName, array $args = [])
