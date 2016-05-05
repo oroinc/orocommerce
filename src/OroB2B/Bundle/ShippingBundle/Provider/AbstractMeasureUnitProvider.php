@@ -74,7 +74,12 @@ class AbstractMeasureUnitProvider
     {
         $dbUnits = $this->getRepositoryForClass($this->entityClass)->findAll();
 
-        // Intersect with enabled from config if $enabled is true
+        if ($onlyEnabled) {
+            $configCodes = $this->getSysConfigValues();
+            $dbUnits = array_filter($dbUnits, function (MeasureUnitInterface $item) use ($configCodes) {
+                    return in_array($item->getCode(), $configCodes);
+            });
+        }
 
         return $dbUnits;
     }
@@ -94,7 +99,7 @@ class AbstractMeasureUnitProvider
      *
      * @return mixed|null
      */
-    protected function getSysConfigValues($default = false)
+    public function getSysConfigValues($default = false)
     {
         return $this->configManager->get($this->configEntryName, $default);
     }
