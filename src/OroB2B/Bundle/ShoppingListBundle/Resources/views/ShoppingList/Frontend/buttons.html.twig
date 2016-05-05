@@ -81,23 +81,34 @@
 {% endmacro %}
 
 {% macro getButtonsHtml(options) %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import _self as buttons %}
-    {% set existingShoppingLists = [] %}
-    {% for shoppingList in options.shoppingLists %}
-        {% if shoppingList.current %}
-            {{ buttons.addToCurrentButton(options.current|merge({shoppingList: shoppingList})) }}
+    <div class="btn-group"
+         {{ UI.renderPageComponentAttributes({
+             module: options.componentModule|default('orob2bshoppinglist/js/app/views/product-add-to-shopping-list-view'),
+             options: {
+                 buttonTemplate: buttons.buttonTemplate(options.current),
+                 removeButtonTemplate: options.remove is defined ? buttons.buttonTemplate(options.remove),
+             }|merge(options.componentOptions|default({}))
+         }) }}
+        >
+        {% if options.shoppingLists is not empty %}
+            {% set existingShoppingLists = [] %}
+            {% for shoppingList in options.shoppingLists %}
+                {% if shoppingList.current %}
+                    {{ buttons.addToCurrentButton(options.current|merge({shoppingList: shoppingList})) }}
+                {% else %}
+                    {%  set existingShoppingLists = existingShoppingLists|merge([shoppingList]) %}
+                {% endif %}
+            {% endfor %}
+            {% for shoppingList in existingShoppingLists %}
+                {{ buttons.addToButton(options.existing|merge({shoppingList: shoppingList})) }}
+            {% endfor %}
+            {{ buttons.addToNewButton(options.new) }}
         {% else %}
-            {%  set existingShoppingLists = existingShoppingLists|merge([shoppingList]) %}
+            {% set aCss = options.singleButtonACss is defined ? options.singleButtonACss : "" %}
+            {{ buttons.addToCurrentButton(options.current|merge({shoppingList: null, aCss: aCss})) }}
         {% endif %}
-    {% else %}
-        {% set aCss = options.singleButtonACss is defined ? options.singleButtonACss : "" %}
-        {{ buttons.addToCurrentButton(options.current|merge({shoppingList: null, aCss: aCss})) }}
-    {% endfor %}
-    {% for shoppingList in existingShoppingLists %}
-        {{ buttons.addToButton(options.existing|merge({shoppingList: shoppingList})) }}
-    {% endfor %}
-    {% if options.shoppingLists is not empty %}
-        {{ buttons.addToNewButton(options.new) }}
-    {% endif %}
+    </div>
 {% endmacro %}
 

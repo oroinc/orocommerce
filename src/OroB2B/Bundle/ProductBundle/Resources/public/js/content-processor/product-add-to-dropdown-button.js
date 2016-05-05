@@ -2,79 +2,61 @@ define([
     'oroui/js/content-processor/pinned-dropdown-button',
     'underscore',
     'oroui/js/mediator',
-    'oroui/js/tools'
-], function($, _, mediator, tools) {
+    'oroui/js/tools',
+    'oroui/js/app/components/base/component-container-mixin'
+], function($, _, mediator, tools, componentContainerMixin) {
     'use strict';
 
-    $.widget('oroui.productAddToDropdownButtonProcessor', $.oroui.pinnedDropdownButtonProcessor, {
-        keyPreffix: 'product-add-to-dropdown-button-processor-',
+    $.widget(
+        'oroui.productAddToDropdownButtonProcessor',
+        $.oroui.pinnedDropdownButtonProcessor,
+        _.extend(componentContainerMixin, {
+            keyPreffix: 'product-add-to-dropdown-button-processor-',
 
-        model: null,
+            modules: [],
 
-        handlers: null,
+            getLayoutElement: function() {
+                return this.element;
+            },
 
-        _create: function() {
-            this.model = this.options.productModel;
-            this.handlers = {};
-            this.element.on('click', '[data-product-add-to-button]', _.bind(this.onClick, this));
-            this._super();
-        },
-
-        _destroy: function() {
-            delete this.model;
-            delete this.handlers;
-            this._super();
-        },
-
-        _renderButtons: function() {
-            var args = arguments;
-            var _super = this._super;
-            this.initButtons(_.bind(function() {
-                _super.apply(this, args);
-            }, this));
-        },
-
-        _moreButton: function() {
-            var $button = this._super().data('container', 'body');
-            return $button;
-        },
-
-        initButtons: function(callback) {
-            var loadHandlers = {};
-            var $buttons = this.element.find('[data-product-add-to-button]');
-            $buttons.each(_.bind(function(i, button) {
-                var $button = $(button);
-                var handler = $button.data('product-add-to-button');
-                $button.removeData('product-add-to-button')
-                    .data('product-add-to-handler', handler);
-                if (!this.handlers[handler]) {
-                    this.handlers[handler] = loadHandlers[handler] = handler;
-                }
-            }, this));
-
-            tools.loadModules(loadHandlers, function() {
-                _.extend(this.handlers, loadHandlers);
-
-                $buttons.each(_.bind(function(i, button) {
-                    var $button = $(button);
-                    var handler = $button.data('product-add-to-handler');
-                    $button.data('product-add-to-handler', this.handlers[handler]);
+            _create: function() {
+                var args = arguments;
+                var _super = this._super;
+                this.initPageComponents({
+                    dropdownWidget: this,
+                    productModel: this.options.productModel
+                }).done(_.bind(function(modules) {
+                    this.modules = modules;
+                    _super.apply(this, args);
                 }, this));
+            },
 
-                callback();
-            }, this);
-        },
+            _destroy: function() {
+                delete this.modules;
+                this.disposePageComponents();
+                this._super();
+            },
 
-        onClick: function(e) {
-            var $button = $(e.currentTarget);
-            var buttonHandler = $button.data('product-add-to-handler');
-            if (!buttonHandler) {
-                return;
+            _renderButtons: function() {
+                this._super.apply(this, arguments);
+                _.each(this.modules, function(module) {
+                    if (_.isFunction(module._afterRenderButtons)) {
+                        module._afterRenderButtons();
+                    }
+                });
+            },
+
+            _moreButton: function() {
+                return this._super().data('container', 'body');
+            },
+
+            _prepareMainButton: function($button) {
+                var $mainButton = this._super($button);
+                $mainButton.data('clone', $button);
+                return $mainButton;
             }
-
-            buttonHandler.onClick(this, $button);
-        }
-    });
+        })
+    );
 
     return $;
 });

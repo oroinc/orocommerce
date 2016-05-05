@@ -2,12 +2,7 @@
 
 {% set buttonOptions = {
     dataUrl: false,
-    dataAttributes: {
-        'product-add-to-button': params.buttonOptions.page_component_module|default('orob2bshoppinglist/js/handlers/product-quick-add-to-shopping-list-handler'),
-        'options': {
-            'quickAddComponentPrefix': 'quick-add'
-        }|merge(params.buttonOptions.page_component_options|default({}))
-    }
+    dataAttributes: {}
 } %}
 
 {% set buttonsOptions = {
@@ -15,6 +10,10 @@
     current: buttonOptions,
     existing: buttonOptions,
     shoppingLists: actionData.shoppingLists,
+    componentModule: params.buttonOptions.page_component_module|default('orob2bshoppinglist/js/app/views/product-quick-add-to-shopping-list-view'),
+    componentOptions: {
+        'quickAddComponentPrefix': 'quick-add'
+    }|merge(params.buttonOptions.page_component_options|default({}))
 } %}
 
 <div class="widget-content btn-group">
@@ -22,6 +21,9 @@
         {% import 'OroUIBundle::macros.html.twig' as UI %}
         {{ UI.pinnedDropdownButton({
             'html': buttons.getButtonsHtml(buttonsOptions),
+            'dataAttributes': {
+                'layout': 'separate'
+            },
             'options': {
                 'widgetModule': 'orob2bproduct/js/content-processor/product-add-to-dropdown-button',
                 'widgetName': 'productAddToDropdownButtonProcessor',

@@ -208,13 +208,6 @@ class AjaxLineItemController extends Controller
      */
     protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
     {
-        $productUnits = [];
-        $translator = $this->get('translator');
-        foreach ($product->getUnitPrecisions() as $unitPrecision) {
-            $label = sprintf('orob2b.product_unit.%s.label.full', $unitPrecision->getProductUnitCode());
-            $productUnits[$unitPrecision->getProductUnitCode()] = $translator->trans($label);
-        }
-
         $productLineItems = [];
         foreach ($shoppingList->getLineItems() as $lineItem) {
             if ($lineItem->getProduct() === $product) {
@@ -227,7 +220,6 @@ class AjaxLineItemController extends Controller
             'message' => $this->getSuccessMessage($shoppingList, $message),
             'product' => [
                 'id' => $product->getId(),
-                'units' => $productUnits,
                 'lineItems' => $productLineItems
             ],
             'shoppingList' => [
