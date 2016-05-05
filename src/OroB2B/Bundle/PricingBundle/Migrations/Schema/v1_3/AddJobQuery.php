@@ -68,8 +68,8 @@ class AddJobQuery extends ParametrizedMigrationQuery
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
-        $query = 'INSERT INTO jms_jobs (command, args, createdAt, queue, state) ';
-        $query .= 'VALUES (:command, :args, :now, :queue, :state)';
+        $query = 'INSERT INTO jms_jobs (command, args, createdAt, queue, state, maxRuntime, maxRetries, priority) ';
+        $query .= 'VALUES (:command, :args, :now, :queue, :state, :maxRuntime, :maxRetries, :priority)';
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
         $params = [
             'command' => $this->commandName,
@@ -77,6 +77,9 @@ class AddJobQuery extends ParametrizedMigrationQuery
             'now' => $now,
             'queue' => Job::DEFAULT_QUEUE,
             'state' => Job::STATE_NEW,
+            'maxRuntime' => 0,
+            'maxRetries' => 0,
+            'priority' => 0,
         ];
         $types = [
             'command' => Type::STRING,
@@ -84,6 +87,9 @@ class AddJobQuery extends ParametrizedMigrationQuery
             'now' => Type::DATETIME,
             'queue' => Type::STRING,
             'state' => Type::STRING,
+            'maxRuntime' => Type::INTEGER,
+            'maxRetries' => Type::INTEGER,
+            'priority' => Type::INTEGER,
         ];
         $this->logQuery($logger, $query, $params, $types);
         if (!$dryRun) {
