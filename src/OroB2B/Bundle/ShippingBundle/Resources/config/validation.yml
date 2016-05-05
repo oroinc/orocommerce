@@ -1,4 +1,4 @@
-OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin:
+OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse:
     properties:
         country:
             - NotBlank: ~
@@ -11,4 +11,6 @@ OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin:
         city:
             - NotBlank: ~
         street:
+            - NotBlank: ~
+        warehouse:
             - NotBlank: ~

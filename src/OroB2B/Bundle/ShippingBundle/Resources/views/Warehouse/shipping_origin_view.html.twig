@@ -1,0 +1,9 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroAddressBundle::macros.html.twig' as address %}
+
+{% set label = null %}
+{% if entity.system %}
+    {% set label = 'orob2b.shipping.warehouse.system_configuration.label'|trans %}
+{% endif %}
+
+{{ UI.renderHtmlProperty('oro.address.entity_label'|trans, address.renderAddress(entity.setLabel(label))) }}
