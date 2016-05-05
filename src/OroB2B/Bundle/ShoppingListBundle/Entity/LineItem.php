@@ -10,11 +10,9 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use OroB2B\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
 
 /**
@@ -52,9 +50,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
  */
 class LineItem extends ExtendLineItem implements
     OrganizationAwareInterface,
-    ProductUnitHolderInterface,
-    ProductHolderInterface,
-    QuantityAwareInterface
+    ProductLineItemInterface
 {
     use OrganizationAwareTrait;
 

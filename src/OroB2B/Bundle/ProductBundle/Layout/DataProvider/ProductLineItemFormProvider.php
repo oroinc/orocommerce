@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
+namespace OroB2B\Bundle\ProductBundle\Layout\DataProvider;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -8,13 +8,12 @@ use Symfony\Component\Form\FormInterface;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
+use OroB2B\Bundle\ProductBundle\Model\ProductLineItem;
+use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 
-class FrontendLineItemFormProvider extends AbstractServerRenderDataProvider
+class ProductLineItemFormProvider extends AbstractServerRenderDataProvider
 {
     const NULL_PRODUCT_KEY = 'no-product';
 
@@ -34,20 +33,11 @@ class FrontendLineItemFormProvider extends AbstractServerRenderDataProvider
     protected $formFactory;
 
     /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
-
-    /**
      * @param FormFactoryInterface $formFactory
-     * @param SecurityFacade $securityFacade
      */
-    public function __construct(
-        FormFactoryInterface $formFactory,
-        SecurityFacade $securityFacade
-    ) {
+    public function __construct(FormFactoryInterface $formFactory)
+    {
         $this->formFactory = $formFactory;
-        $this->securityFacade = $securityFacade;
     }
 
     /**
@@ -86,23 +76,14 @@ class FrontendLineItemFormProvider extends AbstractServerRenderDataProvider
 
     /**
      * @param Product $product
-     * @return LineItem|null
+     * @return ProductLineItem|null
      */
     public function getLineItem(Product $product = null)
     {
-        $accountUser = $this->securityFacade->getLoggedUser();
-        if (!$accountUser) {
-            return null;
-        }
-
-        $lineItem = (new LineItem())
-            ->setAccountUser($accountUser)
-            ->setOrganization($accountUser->getOrganization());
-
+        $lineItem = new ProductLineItem(null);
         if ($product) {
             $lineItem->setProduct($product);
         }
-
         return $lineItem;
     }
 }

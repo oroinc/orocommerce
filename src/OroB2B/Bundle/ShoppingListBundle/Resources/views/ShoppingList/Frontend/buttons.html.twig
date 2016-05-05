@@ -76,6 +76,11 @@
             'dataUrl': options.dataUrl,
         }) %}
     {% endif %}
+    {% if options.pageComponent is defined %}
+        {% set buttonOptions = buttonOptions|merge({
+            'pageComponent': options.pageComponent,
+        }) %}
+    {% endif %}
 
     {{ UI.clientButton(buttonOptions) }}
 {% endmacro %}

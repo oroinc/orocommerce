@@ -1,17 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
+namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-
 class FrontendLineItemType extends AbstractType
 {
-    const NAME = 'orob2b_shopping_list_frontend_line_item';
+    const NAME = 'orob2b_product_frontend_line_item';
 
     /**
      * @var string
@@ -29,7 +26,7 @@ class FrontendLineItemType extends AbstractType
                 ProductUnitSelectionType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.shoppinglist.lineitem.unit.label',
+                    'label' => 'orob2b.product.lineitem.unit.label',
                     'product_holder' => $builder->getData(),
                 ]
             )
@@ -38,9 +35,9 @@ class FrontendLineItemType extends AbstractType
                 QuantityType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.shoppinglist.lineitem.quantity.enter',
+                    'label' => 'orob2b.product.lineitem.quantity.enter',
                     'attr' => [
-                        'placeholder' => 'orob2b.shoppinglist.lineitem.quantity.placeholder',
+                        'placeholder' => 'orob2b.product.lineitem.quantity.placeholder',
                     ],
                     'product_holder' => $builder->getData(),
                     'product_unit_field' => 'unit',
@@ -55,8 +52,8 @@ class FrontendLineItemType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => $this->dataClass,
                 'validation_groups' => ['add_product'],
+                'data_class'=> 'OroB2B\Bundle\ProductBundle\Model\ProductLineItemInterface'
             ]
         );
     }
@@ -67,17 +64,5 @@ class FrontendLineItemType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * @param string $dataClass
-     *
-     * @return $this
-     */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-
-        return $this;
     }
 }
