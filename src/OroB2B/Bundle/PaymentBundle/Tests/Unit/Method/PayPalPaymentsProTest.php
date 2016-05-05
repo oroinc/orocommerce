@@ -79,10 +79,41 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
                 ],
                 []
             ],
+            'authorize successful with amount enabled' => [
+                [
+                    'gatewayAction' => Option\Transaction::AUTHORIZATION,
+                    'sourceTransactionData' => [
+                        'reference' => 'test_reference',
+                        'request' => [],
+                    ],
+                    'transactionData' => [
+                        'action' => 'authorize',
+                        'request' => [],
+                    ],
+                    'configs' => [
+                        Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY => 'authorize',
+                        Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY => true
+                    ],
+                    'requestOptions' => [
+                        'VENDOR' => 'test_vendor',
+                        'USER' => 'test_user',
+                        'PWD' => 'test_password',
+                        'PARTNER' => 'test_partner',
+                    ],
+                    'responseData' => [
+                        'RESULT' => '0',
+                        'PNREF' => 'test_reference',
+                    ],
+                ],
+                []
+            ],
             'charge successful' => [
                 [
                     'gatewayAction' => Option\Transaction::SALE,
-                    'sourceTransactionData' => [],
+                    'sourceTransactionData' => [
+                        'reference' => 'test_reference',
+                        'request' => [],
+                    ],
                     'transactionData' => [
                         'action' => 'charge',
                         'request' => [],
@@ -103,7 +134,35 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
                 ],
                 []
             ],
-            'capture successful' => [
+            'delayed capture successful with enabled required amount' => [
+                [
+                    'gatewayAction' => Option\Transaction::DELAYED_CAPTURE,
+                    'sourceTransactionData' => [],
+                    'transactionData' => [
+                        'action' => 'delayedCapture',
+                        'request' => [],
+                    ],
+                    'configs' => [
+                        Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY => 'authorize',
+                        Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY => true
+                    ],
+                    'requestOptions' => [
+                        'VENDOR' => 'test_vendor',
+                        'USER' => 'test_user',
+                        'PWD' => 'test_password',
+                        'PARTNER' => 'test_partner',
+                        'TENDER' => 'source_tender',
+                        'ORIGID' => 'test_reference',
+                    ],
+                    'responseData' => [
+                        'RESULT' => '0',
+                        'PNREF' => 'test_reference',
+                        'RESPMSG' => 'test_message',
+                    ],
+                ],
+                []
+            ],
+            'delayed capture successful with disabled required amount' => [
                 [
                     'gatewayAction' => Option\Transaction::DELAYED_CAPTURE,
                     'sourceTransactionData' => [
@@ -111,11 +170,12 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
                         'request' => ['TENDER' => 'source_tender'],
                     ],
                     'transactionData' => [
-                        'action' => 'capture',
+                        'action' => 'delayedCapture',
                         'request' => [],
                     ],
                     'configs' => [
                         Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY => 'authorize',
+                        Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY => false
                     ],
                     'requestOptions' => [
                         'VENDOR' => 'test_vendor',
@@ -135,6 +195,69 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
                     'message' => 'test_message',
                     'successful' => true,
                 ]
+            ],
+            'capture with amount required' => [
+                [
+                    'gatewayAction' => Option\Transaction::DELAYED_CAPTURE,
+                    'sourceTransactionData' => [],
+                    'transactionData' => [
+                        'action' => 'capture',
+                        'request' => [],
+                    ],
+                    'configs' => [
+                        Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY => 'authorize',
+                        Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY => true
+                    ],
+                    'requestOptions' => [
+                        'VENDOR' => 'test_vendor',
+                        'USER' => 'test_user',
+                        'PWD' => 'test_password',
+                        'PARTNER' => 'test_partner',
+                        'TENDER' => 'C',
+                        'AMT' => 0.0,
+                        'CURRENCY' => null,
+                        'ORIGID' => 'test_reference'
+                    ],
+                    'responseData' => [
+                        'RESULT' => '0',
+                        'PNREF' => 'test_reference',
+                        'RESPMSG' => 'test_message',
+                    ],
+                ],
+                []
+            ],
+            'capture without amount required' => [
+                [
+                    'gatewayAction' => Option\Transaction::SALE,
+                    'sourceTransactionData' => [
+                        'reference' => 'test_reference',
+                        'request' => [],
+                    ],
+                    'transactionData' => [
+                        'action' => 'capture',
+                        'request' => [],
+                    ],
+                    'configs' => [
+                        Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY => 'authorize',
+                        Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY => false
+                    ],
+                    'requestOptions' => [
+                        'VENDOR' => 'test_vendor',
+                        'USER' => 'test_user',
+                        'PWD' => 'test_password',
+                        'PARTNER' => 'test_partner',
+                        'TENDER' => 'C',
+                        'AMT' => 0.0,
+                        'CURRENCY' => null,
+                        'ORIGID' => 'test_reference'
+                    ],
+                    'responseData' => [
+                        'RESULT' => '0',
+                        'PNREF' => 'test_reference',
+                        'RESPMSG' => 'test_message',
+                    ],
+                ],
+                []
             ],
             'capture without source' => [
                 [

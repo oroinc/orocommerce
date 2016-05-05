@@ -200,9 +200,7 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
         $this->prepareAccountUser($expected['frontendOwner'], $data['frontendOwnerToken']);
 
         $actual = $this->provider->getActiveAuthorizePaymentTransaction(
-            $data['entity'],
-            $data['amount'],
-            $data['currency']
+            $data['entity']
         );
 
         $this->assertSame($result, $actual);
@@ -215,7 +213,6 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
     {
         $entityId = 10;
         $entityClass = 'TestClass';
-        $currency = 'USD';
 
         $accountUser = new AccountUser();
         $order = (new Order())->setAccountUser($accountUser);
@@ -226,8 +223,6 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'entity' => new \stdClass(),
                     'entityId' => $entityId,
                     'entityClass' => $entityClass,
-                    'currency' => $currency,
-                    'amount' => 12.3456,
                     'frontendOwnerToken' => $this->getMock(
                         'Symfony\Component\Security\Core\Authentication\Token\TokenInterface'
                     )
@@ -236,8 +231,6 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'active' => true,
                     'successful' => true,
                     'action' => PaymentMethodInterface::AUTHORIZE,
-                    'amount' => 12.35,
-                    'currency' => $currency,
                     'entityClass' => $entityClass,
                     'entityIdentifier' => $entityId,
                     'frontendOwner' => new AccountUser(),
@@ -248,8 +241,6 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'entity' => new \stdClass(),
                     'entityId' => $entityId,
                     'entityClass' => $entityClass,
-                    'currency' => $currency,
-                    'amount' => 12.3456,
                     'frontendOwnerToken' => $this->getMock(
                         'Symfony\Component\Security\Core\Authentication\Token\TokenInterface'
                     )
@@ -258,8 +249,6 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'active' => true,
                     'successful' => true,
                     'action' => PaymentMethodInterface::AUTHORIZE,
-                    'amount' => 12.35,
-                    'currency' => $currency,
                     'entityClass' => $entityClass,
                     'entityIdentifier' => $entityId,
                     'frontendOwner' => null,
@@ -270,16 +259,12 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'entity' => new \stdClass(),
                     'entityId' => $entityId,
                     'entityClass' => $entityClass,
-                    'currency' => $currency,
-                    'amount' => 12.3456,
                     'frontendOwnerToken' => null
                 ],
                 [
                     'active' => true,
                     'successful' => true,
                     'action' => PaymentMethodInterface::AUTHORIZE,
-                    'amount' => 12.35,
-                    'currency' => $currency,
                     'entityClass' => $entityClass,
                     'entityIdentifier' => $entityId,
                     'frontendOwner' => null,
@@ -290,8 +275,6 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'entity' => $order,
                     'entityId' => $entityId,
                     'entityClass' => $entityClass,
-                    'currency' => $currency,
-                    'amount' => 12.3456,
                     'frontendOwnerToken' => $this->getMock(
                         'Symfony\Component\Security\Core\Authentication\Token\TokenInterface'
                     )
@@ -300,8 +283,6 @@ class PaymentTransactionProviderTest extends \PHPUnit_Framework_TestCase
                     'active' => true,
                     'successful' => true,
                     'action' => PaymentMethodInterface::AUTHORIZE,
-                    'amount' => 12.35,
-                    'currency' => $currency,
                     'entityClass' => $entityClass,
                     'entityIdentifier' => $entityId,
                     'frontendOwner' => $accountUser,
