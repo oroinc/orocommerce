@@ -244,7 +244,12 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     protected function setPriceListToDefaultWebsite(CombinedPriceList $combinedPriceList, Website $website)
     {
         $priceListToWebsite = $this->priceListToWebsiteRepository
-            ->findOneBy(['website' => $website]);
+            ->findOneBy(['website' => $website, 'priceList' => $combinedPriceList]);
+
+        if (!$priceListToWebsite) {
+            $priceListToWebsite = $this->priceListToWebsiteRepository
+                ->findOneBy(['website' => $website]);
+        }
         if (!$priceListToWebsite) {
             $priceListToWebsite = new CombinedPriceListToWebsite();
             $priceListToWebsite->setWebsite($website);

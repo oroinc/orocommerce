@@ -105,19 +105,19 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
         ];
     }
 
-
     /**
      * @dataProvider getPriceListIteratorDataProvider
      * @param string $website
+     * @param int|null$fallback
      * @param array $expectedAccounts
      */
-    public function testGetAccountGroupIteratorByFallback($website, $expectedAccounts)
+    public function testGetAccountGroupIteratorByFallback($website, $fallback, $expectedAccounts)
     {
         /** @var $website Website */
         $website = $this->getReference($website);
 
         $iterator = $this->getRepository()
-            ->getAccountGroupIteratorByDefaultFallback($website, PriceListAccountGroupFallback::WEBSITE);
+            ->getAccountGroupIteratorByDefaultFallback($website, $fallback);
 
         $actualSiteMap = [];
         foreach ($iterator as $accountGroup) {
@@ -132,9 +132,18 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
     public function getPriceListIteratorDataProvider()
     {
         return [
-            [
+            'with fallback' => [
                 'website' => 'US',
+                'fallback' => PriceListAccountGroupFallback::WEBSITE,
                 'expectedAccounts' => ['account_group.group1']
+            ],
+            'without fallback' => [
+                'website' => 'US',
+                'fallback' => null,
+                'expectedAccounts' => [
+                    'account_group.group1',
+                    'account_group.group2'
+                ]
             ],
         ];
     }

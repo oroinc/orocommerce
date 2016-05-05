@@ -5,6 +5,8 @@ orob2b:
                   product_price_currency.message: 'Cannot remove "%invalidCurrency%" currency. Please delete all prices points in "%invalidCurrency%" first.'
                   unique_price_list.message: 'Price list is duplicated.'
                   not_empty_price_lists.message: 'At least one price list must be defined.'
+                  schedules_intersection.message: 'Price list schedule segments should not intersect'
+                  dates_chain.message: 'Price list schedule "Deactivate At" date should follow after "Active At"'
               product_price:
                   unique_entity.message: 'Product has duplication of product prices. Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
                   currency.message: 'Currency "%invalidCurrency%" is not valid for current price list.'

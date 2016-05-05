@@ -3,7 +3,9 @@ namespace OroB2B\Bundle\PricingBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
@@ -23,10 +25,17 @@ class PriceListCollectionProvider
      * @var ManagerRegistry
      */
     protected $registry;
-    /** @var  ConfigManager */
+
+    /**
+     * @var ConfigManager
+     */
     protected $configManager;
-    /** @var  PriceListConfigConverter */
+
+    /**
+     * @var PriceListConfigConverter
+     */
     protected $configConverter;
+
     /**
      * @param ManagerRegistry $registry
      * @param ConfigManager $configManager
@@ -41,6 +50,7 @@ class PriceListCollectionProvider
         $this->configManager = $configManager;
         $this->configConverter = $configConverter;
     }
+
     /**
      * @return PriceListSequenceMember[]
      */
@@ -52,6 +62,7 @@ class PriceListCollectionProvider
         );
         return $this->getPriceListSequenceMembers($priceListsConfig);
     }
+
     /**
      * @param Website $website
      * @return PriceListSequenceMember[]
@@ -71,6 +82,7 @@ class PriceListCollectionProvider
         }
         return $priceListCollection;
     }
+
     /**
      * @param AccountGroup $accountGroup
      * @param Website $website
@@ -91,6 +103,7 @@ class PriceListCollectionProvider
         }
         return $priceListCollection;
     }
+
     /**
      * @param Account $account
      * @param Website $website
@@ -118,6 +131,7 @@ class PriceListCollectionProvider
         }
         return $priceListCollection;
     }
+
     /**
      * @param string $className
      * @return ObjectRepository
@@ -128,6 +142,7 @@ class PriceListCollectionProvider
             ->getManagerForClass($className)
             ->getRepository($className);
     }
+
     /**
      * @param BasePriceListRelation[]|PriceListConfig[] $priceListsRelations
      * @return PriceListSequenceMember[]

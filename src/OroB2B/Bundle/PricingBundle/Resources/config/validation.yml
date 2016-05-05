@@ -9,6 +9,16 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
         currencies:
             - NotBlank: ~
             - Valid: ~
+        schedules:
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection: ~
+            - Valid: ~
+
+OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule:
+    constraints:
+        - OroB2B\Bundle\PricingBundle\Validator\Constraints\DatesChain:
+            chain:
+                activeAt: 'Active At'
+                deactivateAt: 'Deactivate At'
 
 OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
     properties:
