@@ -10,7 +10,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
 
 use OroB2B\Bundle\RedirectBundle\Entity\Slug;
 use OroB2B\Component\Tree\Entity\TreeTrait;
@@ -46,6 +46,7 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
 class Page
 {
     use TreeTrait;
+    use AuditableOrganizationAwareTrait;
 
     /**
      * @var integer
@@ -100,23 +101,6 @@ class Page
      * )
      */
     protected $currentSlug;
-
-    /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumns({
-     *     @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     * })
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $organization;
 
     /**
      * @var Page
@@ -250,29 +234,6 @@ class Page
         $this->content = $content;
 
         return $this;
-    }
-
-    /**
-     * Set organization
-     *
-     * @param Organization $organization
-     * @return $this
-     */
-    public function setOrganization(Organization $organization = null)
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
-    /**
-     * Get organization
-     *
-     * @return Organization
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
     }
 
     /**

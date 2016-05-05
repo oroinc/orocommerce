@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -161,10 +162,14 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(1);
 
         $accountUser = new AccountUser();
+        $organization = new Organization();
 
         $shoppingList->expects($this->any())
             ->method('getAccountUser')
             ->willReturn($accountUser);
+        $shoppingList->expects($this->any())
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $this->securityFacade->expects($this->any())
             ->method('hasLoggedUser')
@@ -173,7 +178,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->expects($this->once())->method('bulkAddLineItems')->with(
             $this->callback(
-                function (array $lineItems) use ($expectedLineItems, $accountUser) {
+                function (array $lineItems) use ($expectedLineItems, $accountUser, $organization) {
                     /** @var LineItem $lineItem */
                     foreach ($lineItems as $key => $lineItem) {
                         /** @var LineItem $expectedLineItem */
@@ -181,6 +186,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
                         $this->assertEquals($expectedLineItem->getQuantity(), $lineItem->getQuantity());
                         $this->assertEquals($accountUser, $lineItem->getAccountUser());
+                        $this->assertEquals($organization, $lineItem->getOrganization());
                         $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $lineItem->getProduct());
                         $this->assertInstanceOf(
                             'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
