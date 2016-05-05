@@ -203,10 +203,10 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $account = $this->getReference('account.level_1_1');
         /** @var Website $website */
         $website = $this->getReference('US');
-        $this->assertCount(6, $this->getRepository()->findAll());
+        $this->assertCount(7, $this->getRepository()->findAll());
         $this->assertCount(2, $this->getRepository()->findBy(['account' => $account, 'website' => $website]));
         $this->getRepository()->delete($account, $website);
-        $this->assertCount(4, $this->getRepository()->findAll());
+        $this->assertCount(5, $this->getRepository()->findAll());
         $this->assertCount(0, $this->getRepository()->findBy(['account' => $account, 'website' => $website]));
     }
 

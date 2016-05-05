@@ -17,31 +17,43 @@ class LoadPriceLists extends AbstractFixture
             'name' => 'priceList1',
             'reference' => 'price_list_1',
             'default' => false,
-            'currencies' => ['USD', 'EUR', 'AUD', 'CAD']
+            'currencies' => ['USD', 'EUR', 'AUD', 'CAD'],
+            'active' => true,
         ],
         [
             'name' => 'priceList2',
             'reference' => 'price_list_2',
             'default' => false,
-            'currencies' => ['USD']
+            'currencies' => ['USD'],
+            'active' => true,
         ],
         [
             'name' => 'priceList3',
             'reference' => 'price_list_3',
             'default' => false,
-            'currencies' => ['CAD']
+            'currencies' => ['CAD'],
+            'active' => true,
         ],
         [
             'name' => 'priceList4',
             'reference' => 'price_list_4',
             'default' => false,
-            'currencies' => ['GBP']
+            'currencies' => ['GBP'],
+            'active' => true,
         ],
         [
             'name' => 'priceList5',
             'reference' => 'price_list_5',
             'default' => false,
-            'currencies' => ['GBP', 'EUR']
+            'currencies' => ['GBP', 'EUR'],
+            'active' => true,
+        ],
+        [
+            'name' => 'priceList6',
+            'reference' => 'price_list_6',
+            'default' => false,
+            'currencies' => ['USD'],
+            'active' => false,
         ],
     ];
 
@@ -60,7 +72,8 @@ class LoadPriceLists extends AbstractFixture
                 ->setDefault($priceListData['default'])
                 ->setCurrencies($priceListData['currencies'])
                 ->setCreatedAt($now)
-                ->setUpdatedAt($now);
+                ->setUpdatedAt($now)
+                ->setActive($priceListData['active']);
 
             $manager->persist($priceList);
             $this->setReference($priceListData['reference'], $priceList);

@@ -78,7 +78,7 @@ class PriceListControllerTest extends WebTestCase
         return [
             'active' => [
                 'active' => true,
-                'priceLists' => ['priceList1', 'priceList3', 'priceList5', 'Default Price List']
+                'priceLists' => ['priceList1', 'priceList3', 'priceList5', 'Default Price List', 'priceList6']
             ],
             'not_active' => [
                 'active' => false,
@@ -94,7 +94,7 @@ class PriceListControllerTest extends WebTestCase
             ['pricing-price-list-grid[_sort_by][activity]' => OrmSorterExtension::DIRECTION_ASC]
         );
         $data = json_decode($grid->getContent(), true)['data'];
-        $this->assertCount(6, $data);
+        $this->assertCount(7, $data);
         foreach ($data as $key => $priceList) {
             if ($key <= 1) {
                 $this->assertContains("Is not active now.", $priceList['activity']);
