@@ -1,7 +1,3 @@
-orob2b_account_api:
-    resource: "@OroB2BAccountBundle/Controller/Api/Rest/AccountController.php"
-    type:     rest
-
 orob2b_account_address_api:
     resource: "@OroB2BAccountBundle/Controller/Api/Rest/AccountAddressController.php"
     type:     rest
@@ -10,20 +6,11 @@ orob2b_account_group_api:
     resource: "@OroB2BAccountBundle/Controller/Api/Rest/AccountGroupController.php"
     type:     rest
 
-orob2b_account_account_user_api:
-    resource: "@OroB2BAccountBundle/Controller/Api/Rest/AccountUserController.php"
-    type:     rest
-
-
 orob2b_account_frontend_account_user_api:
     resource: "@OroB2BAccountBundle/Controller/Frontend/Api/Rest/AccountUserController.php"
     type:     rest
     options:
         frontend: true
-
-orob2b_account_account_user_role_api:
-    resource: "@OroB2BAccountBundle/Controller/Api/Rest/AccountUserRoleController.php"
-    type:     rest
 
 orob2b_account_account_user_address_api:
     resource: "@OroB2BAccountBundle/Controller/Api/Rest/AccountUserAddressController.php"

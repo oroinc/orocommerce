@@ -62,7 +62,7 @@ class PaymentTermView implements PaymentMethodViewInterface
     /** {@inheritdoc} */
     public function getOrder()
     {
-        return $this->getConfigValue(Configuration::PAYMENT_TERM_SORT_ORDER_KEY);
+        return (int)$this->getConfigValue(Configuration::PAYMENT_TERM_SORT_ORDER_KEY);
     }
 
     /** {@inheritdoc} */

@@ -6,13 +6,6 @@ parameters:
     orob2b_sale.entity.quote_product_request.class: OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest
 
 services:
-    orob2b_sale.quote.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%orob2b_sale.entity.quote.class%'
-            - "@doctrine.orm.entity_manager"
-
     orob2b_sale.provider.quote_product_price:
         class: 'OroB2B\Bundle\SaleBundle\Provider\QuoteProductPriceProvider'
         arguments:
@@ -58,6 +51,7 @@ services:
     orob2b_sale.event_listener.product_select_db_query:
         class: '%orob2b_product.event_listener.scoped_product_select_db_query.common_class%'
         parent: orob2b_product.event_listener.abstract_product_select_db_query
+        public: true
         calls:
             - [setScope, ['quote']]
             - [setBackendSystemConfigurationPath, ['oro_b2b_sale.backend_product_visibility']]
@@ -122,3 +116,9 @@ services:
         class: 'OroB2B\Bundle\SaleBundle\Provider\QuoteCheckoutLineItemDataProvider'
         tags:
              - { name: checkout.data_provider.line_item }
+
+    orob2b_sale.manager.quote_demand_manager:
+        class: "OroB2B\Bundle\SaleBundle\Manager\QuoteDemandManager"
+        arguments:
+            - "@orob2b_pricing.subtotal_processor.total_processor_provider"
+            - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item"

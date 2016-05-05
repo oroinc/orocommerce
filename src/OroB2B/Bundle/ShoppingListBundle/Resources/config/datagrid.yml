@@ -14,6 +14,7 @@ datagrid:
                     - shopping_list.notes
                     - shopping_list.subtotal
                     - shopping_list.total
+                    - shopping_list.currency as totalsCurrency
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
                     - shopping_list_account.name as account
@@ -39,13 +40,13 @@ datagrid:
                 label:         orob2b.shoppinglist.subtotal.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BShoppingListBundle:ShoppingList:Datagrid/subtotal.html.twig
+                template:      OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig
                 renderable:    false
             total:
                 label:         orob2b.shoppinglist.total.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BShoppingListBundle:ShoppingList:Datagrid/total.html.twig
+                template:      OroB2BPricingBundle:Datagrid:Column/total.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -194,10 +195,6 @@ datagrid:
                 route: orob2b_product_view
                 params:
                     id: productId
-            delete_link:
-                type: url
-                route: orob2b_api_shopping_list_delete_line_item
-                params: [ id ]
         actions:
             view_product:
                 type:          navigate
@@ -206,9 +203,3 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_product_view
                 rowAction:     true
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_shopping_list_line_item_delete

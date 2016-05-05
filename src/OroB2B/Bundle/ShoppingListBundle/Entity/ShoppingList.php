@@ -193,6 +193,9 @@ class ShoppingList extends ExtendShoppingList implements
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "entity"={
+     *              "is_subtotal"=true
      *          }
      *      }
      * )
@@ -207,6 +210,9 @@ class ShoppingList extends ExtendShoppingList implements
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "entity"={
+     *              "is_total"=true
      *          }
      *      }
      * )
@@ -221,6 +227,9 @@ class ShoppingList extends ExtendShoppingList implements
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "entity"={
+     *              "is_total_currency"=true
      *          }
      *      }
      * )

@@ -36,7 +36,7 @@ define(function(require) {
                 if (lineItem.options.lineItemId === data.lineItemId) {
                     lineItem.options.unitCode = data.unit;
                 } else if (lineItem.options.product === data.product && lineItem.unit === data.unit) {
-                    mediator.execute('refreshPage');
+                    mediator.execute('redirectTo', {url: window.location.href});
                 }
             });
         }
