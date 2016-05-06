@@ -87,10 +87,9 @@ class AccountUserHandler
                             $session->getFlashBag()->add(
                                 'error',
                                 $this->translator
-                                    ->trans('orob2b.account.controller.accountuser.confirmation_failed.message')
+                                    ->trans('orob2b.account.controller.accountuser.welcome_failed.message')
                             );
                         }
-
                     }
                 }
 
