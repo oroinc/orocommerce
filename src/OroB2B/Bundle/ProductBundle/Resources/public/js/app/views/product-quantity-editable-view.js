@@ -1,8 +1,7 @@
-/** @lends ProductQuantityEditableComponent */
 define(function(require) {
     'use strict';
 
-    var ProductQuantityEditableComponent;
+    var ProductQuantityEditableView;
     var BaseView = require('oroui/js/app/views/base/view');
     var ApiAccessor = require('oroui/js/tools/api-accessor');
     var mediator = require('oroui/js/mediator');
@@ -11,7 +10,7 @@ define(function(require) {
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
 
-    ProductQuantityEditableComponent = BaseView.extend(/** @exports ProductQuantityEditableComponent.prototype */{
+    ProductQuantityEditableView = BaseView.extend({
         options: {
             quantityFieldName: 'quantity',
             unitFieldName: 'unit',
@@ -54,9 +53,8 @@ define(function(require) {
          * @constructor
          * @param {Object} options
          */
-        initialize: function(options, parentModel) {
+        initialize: function(options) {
             options = $.extend(true, {}, this.options, options);
-            this.$el = $(options.quantityContainer, options.$parentView);
             if (!options.enable) {
                 return;
             }
@@ -69,7 +67,6 @@ define(function(require) {
 
             this.initElements(options);
 
-            this.model = parentModel;
             this.model.set(this.getValue());
             this.saveModelState();
 
@@ -257,5 +254,5 @@ define(function(require) {
         }
     });
 
-    return ProductQuantityEditableComponent;
+    return ProductQuantityEditableView;
 });

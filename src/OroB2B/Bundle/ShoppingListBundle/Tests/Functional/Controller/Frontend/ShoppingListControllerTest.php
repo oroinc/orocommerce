@@ -203,7 +203,7 @@ class ShoppingListControllerTest extends WebTestCase
      */
     protected function assertLineItemPriceEquals($expected, Crawler $crawler)
     {
-        $actual = $crawler->filter('[data-container="matched-price"]')->text();
+        $actual = $crawler->filter('[data-name="price-value"]')->text();
         $this->assertEquals($expected, $actual);
     }
 }

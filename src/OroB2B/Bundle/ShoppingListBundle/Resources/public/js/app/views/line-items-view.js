@@ -1,4 +1,3 @@
-/** @lends LineItemView */
 define(function(require) {
     'use strict';
 
@@ -9,7 +8,7 @@ define(function(require) {
 
     var LineItemsView;
 
-    LineItemsView = BaseView.extend(/** @exports LineItemsView.prototype */{
+    LineItemsView = BaseView.extend({
         lineItems: [],
 
         initialize: function() {
@@ -19,23 +18,21 @@ define(function(require) {
         /**
          * Doing something after loading child components
          */
-        handleLayoutInit: function(params) {
-            var self = this;
-            var items = params;
-
+        handleLayoutInit: function(items) {
             _.each(items, function(item) {
                 if (item.view instanceof LineItemView) {
-                    self.lineItems.push(item.view);
-                    item.view.on('unit-changed', _.bind(self.unitChanged, self));
+                    this.lineItems.push(item.view);
+                    item.view.on('unit-changed', _.bind(this.unitChanged, this));
                 }
-            });
+            }, this);
         },
 
         unitChanged: function(data) {
             _.each(this.lineItems, function(lineItem) {
-                if (lineItem.options.lineItemId === data.lineItemId) {
-                    lineItem.options.unitCode = data.unit;
-                } else if (lineItem.options.product === data.product && lineItem.unit === data.unit) {
+                if (lineItem.lineItemId !== data.lineItemId &&
+                    lineItem.model.get('id') === data.product &&
+                    lineItem.model.get('unit') === data.unit
+                ) {
                     mediator.execute('redirectTo', {url: window.location.href});
                 }
             });
