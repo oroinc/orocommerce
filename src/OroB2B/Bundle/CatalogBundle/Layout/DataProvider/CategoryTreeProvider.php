@@ -40,7 +40,7 @@ class CategoryTreeProvider extends AbstractServerRenderDataProvider
 
             $this->data[$userId] = [
                 'all' => $categories,
-                'main' => $rootCategory ? $rootCategory->getChildCategories()->toArray() : [],
+                'main' => $rootCategory ? $this->categoryProvider->getCategories($user, $rootCategory, false) : [],
             ];
         }
 

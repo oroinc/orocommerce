@@ -34,12 +34,14 @@ class CategoryTreeHandlerListener
         if ($user instanceof User) {
             return;
         }
+        // TODO: Use AccountUserRelationsProvider here BB-2988
         $account = $user instanceof AccountUser ? $user->getAccount() : null;
         $categories = $this->filterCategories($event->getCategories(), $account);
         $event->setCategories($categories);
     }
 
     /**
+     * @todo: Add AccountGroup parameter, use it if account is null BB-2988
      * @param Category[] $categories
      * @param Account|null $account
      * @return array
