@@ -19,14 +19,11 @@
         'label': 'orob2b.frontend.sale.product.view.request_a_quote'|trans,
         'aCss': 'direct-link btn-block btn-orange btn_lg',
         'dataUrl': 'orob2b_rfp_frontend_request_create',
-        'dataAttributes': {
-            'urlOptions': {
-                'product_id': product.id
-            }
-        },
         'pageComponent': {
-            module: 'orob2bsale/js/app/components/request-quote-from-product-view-component',
-            options: {}
+            'module': 'oroui/js/app/components/view-component',
+            'options': {
+                'view': 'orob2bsale/js/app/views/product-add-to-rfq-view'
+            }
         }
     } %}
     {{ UI.clientButton(btnOptions) }}
