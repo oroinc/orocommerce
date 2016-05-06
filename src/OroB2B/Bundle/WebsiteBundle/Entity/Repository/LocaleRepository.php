@@ -23,4 +23,18 @@ class LocaleRepository extends EntityRepository
             ->getQuery()
             ->getScalarResult();
     }
+
+    /**
+     * @return mixed
+     */
+    public function findRootsWithChildren()
+    {
+        $locales = $this->createQueryBuilder('l')
+            ->addSelect('children')
+            ->leftJoin('l.childLocales', 'children')
+            ->getQuery()->execute();
+        return array_filter($locales, function (Locale $locale) {
+            return !$locale->getParentLocale();
+        });
+    }
 }

@@ -7,7 +7,7 @@ operations:
             - orob2b_sale_quote_view
         datagrids:
             - quotes-grid
-        order: 10
+        order: 40
         button_options:
             icon: icon-time
         frontend_options:

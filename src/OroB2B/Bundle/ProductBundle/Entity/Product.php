@@ -29,6 +29,7 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * @Config(
  *      routeName="orob2b_product_index",
  *      routeView="orob2b_product_view",
+ *      routeUpdate="orob2b_product_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
@@ -383,7 +384,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     {
         try {
             if ($this->getDefaultName()) {
-                return (string)$this->getDefaultName()->__toString();
+                return (string)$this->getDefaultName();
             } else {
                 return (string)$this->sku;
             }

@@ -1,0 +1,66 @@
+<?php
+
+namespace OroB2B\Bundle\ShippingBundle\Form\Type;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+
+class ProductShippingOptionsType extends AbstractType
+{
+    const NAME = 'orob2b_shipping_product_shipping_options';
+
+    /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('productUnit', ProductUnitSelectionType::NAME, [
+                'label' => 'orob2b.shipping.product_shipping_options.unit.label',
+            ])
+            ->add('weight', WeightType::NAME, [
+                'label' => 'orob2b.shipping.product_shipping_options.weight.label',
+            ])
+            ->add('dimensions', DimensionsType::NAME, [
+                'label' => 'orob2b.shipping.product_shipping_options.dimensions.label',
+            ])
+            ->add('freightClass', FreightClassSelectType::NAME, [
+                'label' => 'orob2b.shipping.product_shipping_options.freight_class.label',
+            ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => $this->dataClass,
+            'intention' => 'product_shipping_options',
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return self::NAME;
+    }
+}

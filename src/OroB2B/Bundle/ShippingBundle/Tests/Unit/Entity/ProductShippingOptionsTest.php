@@ -44,6 +44,34 @@ class ProductShippingOptionsTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors($this->entity, $properties);
     }
 
+    public function testGetEntityIdentifier()
+    {
+        $this->assertNull($this->entity->getEntityIdentifier());
+
+        $this->setProperty($this->entity, 'id', 123);
+
+        $this->assertSame(123, $this->entity->getEntityIdentifier());
+    }
+
+    public function testGetProductHolder()
+    {
+        $this->assertSame($this->entity, $this->entity->getProductHolder());
+    }
+
+    public function testGetProductUnitCode()
+    {
+        $this->entity->setProductUnit((new ProductUnit)->setCode('code'));
+
+        $this->assertSame('code', $this->entity->getProductUnitCode());
+    }
+
+    public function testGetProductSku()
+    {
+        $this->entity->setProduct((new Product)->setSku('sku'));
+
+        $this->assertSame('sku', $this->entity->getProductSku());
+    }
+
     public function testSetGetWeight()
     {
         $this->assertNull($this->entity->getWeight());

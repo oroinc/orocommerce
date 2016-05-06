@@ -1,18 +1,35 @@
 orob2b:
     shipping:
+        datagrid:
+            shipping_options:
+                column.label:         Shipping Options
         system_configuration:
             groups:
                 shipping.title: Shipping
                 shipping_origin.label: Shipping Origin
                 shipping_origin.title: Address
+                shipping_options.label: Shipping Options
+                shipping_options.title: Shipping Options
+            fields:
+                length_units.label: Allowed Units Of Length
+                weight_units.label: Allowed Units Of Weight
+                freight_classes.label: Allowed Freight Classes
         shipping_origin:
             country.label:       Country
             region.label:        Region/State
             region_text.label:   State
-            postal_code.label:   Zip/postal code
+            postal_code.label:   Zip/Postal Code
             city.label:          City
             street.label:        Street Address 1
             street2.label:       Street Address 2
+        product_shipping_options:
+            entity_label: Shipping Option
+            entity_plural_label: Shipping Options
+            unit.label: Units
+            weight.label: Weight
+            dimensions.label: Dimensions
+            freight_class.label: Freight Class
+            add_label: Add Options
         weightunit:
             entity_label: Unit Of Weight
             entity_plural_label: Units Of Weight
@@ -32,6 +49,9 @@ orob2b:
             system_configuration.label: '(system configuration)'
             section:
                 shipping_origin: Shipping Origin
+        product:
+            section:
+                shipping_options: Shipping Options
 
     weight_unit.lbs:
         label:

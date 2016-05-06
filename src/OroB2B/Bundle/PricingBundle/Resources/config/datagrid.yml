@@ -60,23 +60,15 @@ datagrid:
         options:
             entity_pagination: true
         properties:
+            default_link:
+                type: url
+                route: orob2b_pricing_price_list_default
+                params: [ id ]
             view_link:
                 type:  url
                 route: orob2b_pricing_price_list_view
                 params:
                     - id
-            update_link:
-                type: url
-                route: orob2b_pricing_price_list_update
-                params: [ id ]
-            delete_link:
-                type: url
-                route: orob2b_api_pricing_delete_price_list
-                params: [ id ]
-            default_link:
-                type: url
-                route: orob2b_pricing_price_list_default
-                params: [ id ]
         actions:
             default:
                 type:          ajax
@@ -91,18 +83,6 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_pricing_price_list_view
                 rowAction:     true
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_pricing_price_list_update
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_pricing_price_list_delete
         action_configuration: ['@orob2b_pricing.datagrid.price_list_permissions_provider', "getPermissions"]
 
     base-price-list-relations-grid:
@@ -490,10 +470,6 @@ datagrid:
                 type: url
                 route: orob2b_product_price_update_widget
                 params: [ id ]
-            delete_link:
-                type: url
-                route: orob2b_api_pricing_delete_product_price
-                params: [ id ]
         actions:
             view_product:
                 type:          navigate
@@ -513,12 +489,6 @@ datagrid:
                     options:
                         dialogOptions:
                             width: 650
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_pricing_product_price_delete
 
     product-prices-grid:
         acl_resource:      orob2b_pricing_product_price_view
