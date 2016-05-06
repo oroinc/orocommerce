@@ -6,6 +6,7 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
+use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class PostMigrationUpdates implements Migration, OrderedMigrationInterface
@@ -34,7 +35,9 @@ class PostMigrationUpdates implements Migration, OrderedMigrationInterface
     protected function updatePriceListTable(Schema $schema, QueryBag $queries)
     {
         $queries->addPreQuery(
-            'UPDATE orob2b_price_list SET contain_schedule=TRUE WHERE contain_schedule IS NULL'
+            new ParametrizedSqlMigrationQuery(
+                'UPDATE orob2b_price_list SET contain_schedule=TRUE WHERE contain_schedule IS NULL'
+            )
         );
 
         $table = $schema->getTable('orob2b_price_list');
@@ -48,7 +51,9 @@ class PostMigrationUpdates implements Migration, OrderedMigrationInterface
     protected function updatePriceListCombinedTable(Schema $schema, QueryBag $queries)
     {
         $queries->addPreQuery(
-            'UPDATE orob2b_price_list_combined SET is_prices_calculated=FALSE WHERE is_prices_calculated IS NULL'
+            new ParametrizedSqlMigrationQuery(
+                'UPDATE orob2b_price_list_combined SET is_prices_calculated=FALSE WHERE is_prices_calculated IS NULL'
+            )
         );
 
         $table = $schema->getTable('orob2b_price_list_combined');
