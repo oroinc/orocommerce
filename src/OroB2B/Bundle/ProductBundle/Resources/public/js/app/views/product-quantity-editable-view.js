@@ -67,7 +67,6 @@ define(function(require) {
 
             this.initElements(options);
 
-            this.model.set(this.getValue());
             this.saveModelState();
 
             this.saveApiAccessor = new ApiAccessor(options.save_api_accessor);
@@ -121,14 +120,12 @@ define(function(require) {
         },
 
         saveModelState: function() {
-            this.oldModelState = this.model.toJSON();
+            this.oldModelState = this.getValue();
         },
 
         restoreSavedState: function() {
-            this.model.set(this.oldModelState);
-
-            this.elements.quantity.val(this.model.get(this.quantityFieldName));
-            this.elements.unit.val(this.model.get(this.unitFieldName));
+            this.elements.quantity.val(this.oldModelState.quantity).change();
+            this.elements.unit.val(this.oldModelState.unit).change();
         },
 
         onViewChange: function() {
@@ -136,11 +133,7 @@ define(function(require) {
                 return;
             }
 
-            var value = this.getValue();
             this.enableQuantity();
-            this.model.set(this.quantityFieldName, value.quantity);
-            this.model.set(this.unitFieldName, value.unit);
-
             this.saveChanges();
         },
 
@@ -152,7 +145,7 @@ define(function(require) {
         },
 
         isChanged: function() {
-            var modelData = this.model.toJSON();
+            var modelData = this.getValue();
             for (var key in modelData) {
                 if (modelData.hasOwnProperty(key) && this.oldModelState[key] !== modelData[key]) {
                     return true;
@@ -178,10 +171,7 @@ define(function(require) {
             }
 
             this._isSaving = true;
-            var modelData = {
-                'quantity': this.model.get('quantity'),
-                'unit': this.model.get('unit')
-            };
+            var modelData = this.getValue();
             var serverUpdateData = {};
             if (this.dataKey) {
                 serverUpdateData[this.dataKey] = modelData;
@@ -200,23 +190,12 @@ define(function(require) {
         },
 
         onSaveSuccess: function(response) {
-            if (response && !this.model.disposed) {
-                _.each(response, function(item, i) {
-                    if (this.model.has(i)) {
-                        this.model.set(i, item);
-                    }
-                }, this);
-            }
             this.saveModelState();
-            this.elements.quantity.val(this.model.get(this.quantityFieldName));
-            this.elements.unit.val(this.model.get(this.unitFieldName));
+            this.restoreSavedState();
 
             this.trigger(
                 'product:quantity-unit:update',
-                {
-                    quantity: this.model.get(this.quantityFieldName),
-                    unit: this.model.get(this.unitFieldName)
-                }
+                this.getValue()
             );
             mediator.execute('showFlashMessage', 'success', this.messages.success);
         },
@@ -224,9 +203,7 @@ define(function(require) {
         onSaveError: function(jqXHR) {
             var errorCode = 'responseJSON' in jqXHR ? jqXHR.responseJSON.code : jqXHR.status;
 
-            if (!this.model.disposed) {
-                this.restoreSavedState();
-            }
+            this.restoreSavedState();
 
             var errors = [];
             switch (errorCode) {

@@ -5,6 +5,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orob2bfrontend/js/app/elements-helper');
     var _ = require('underscore');
+    var $ = require('jquery');
     var NumberFormatter = require('orolocale/js/formatter/number');
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
@@ -14,6 +15,10 @@ define(function(require) {
             priceNotFound: '[data-name="price-not-found"]',
             pricesHint: '[data-name="prices-hint"]',
             pricesHintContent: '[data-name="prices-hint-content"]'
+        },
+
+        modelAttr: {
+            prices: {}
         },
 
         prices: {},
@@ -36,6 +41,7 @@ define(function(require) {
         },
 
         dispose: function() {
+            delete this.modelAttr;
             this.disposeElements();
             BaseProductPricesView.__super__.dispose.apply(this, arguments);
         },
@@ -46,9 +52,16 @@ define(function(require) {
         },
 
         initModel: function(options) {
+            this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
             if (options.productModel) {
                 this.model = options.productModel;
             }
+
+            _.each(this.modelAttr, function(value, attribute) {
+                if (!this.model.has(attribute)) {
+                    this.model.set(attribute, value);
+                }
+            }, this);
         },
 
         renderHint: function() {
@@ -101,14 +114,14 @@ define(function(require) {
 
         renderPrice: function(price) {
             if (price === null) {
-                this.getElement('price').hide();
-                this.getElement('priceNotFound').show();
+                this.getElement('price').addClass('hidden');
+                this.getElement('priceNotFound').removeClass('hidden');
             } else {
                 price = NumberFormatter.formatCurrency(price.price, price.currency);
                 this.getElement('priceValue').html(price);
 
-                this.getElement('priceNotFound').hide();
-                this.getElement('price').show();
+                this.getElement('priceNotFound').addClass('hidden');
+                this.getElement('price').removeClass('hidden');
             }
         }
     }));
