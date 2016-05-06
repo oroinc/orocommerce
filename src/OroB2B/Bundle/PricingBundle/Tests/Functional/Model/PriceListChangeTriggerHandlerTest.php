@@ -27,6 +27,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
      * @var Website
      */
     protected $website;
+
     /**
      * @var Account
      */
@@ -47,7 +48,6 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
      */
     protected $handler;
 
-
     /**
      * {@inheritdoc}
      */
@@ -60,7 +60,6 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations'
             ]
         );
-
 
         $this->account = $this->getReference('account.level_1.2');
         $this->website = $this->getReference(LoadWebsiteData::WEBSITE1);
