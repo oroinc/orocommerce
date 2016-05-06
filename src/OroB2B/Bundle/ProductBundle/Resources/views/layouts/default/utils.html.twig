@@ -1,8 +1,0 @@
-{% macro getModel(product) -%}
-{% spaceless %}
-    {{ {
-        id: product.id,
-        product_units: product.availableUnitCodes,
-    }|json_encode|raw }}
-{% endspaceless %}
-{% endmacro %}
