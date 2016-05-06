@@ -32,7 +32,6 @@ operations:
         applications: [backend, frontend]
         routes:
             - orob2b_sale_quote_view
-            - orob2b_sale_quote_frontend_view
         order: 20
         acl_resource: oro_email_email_create
 
