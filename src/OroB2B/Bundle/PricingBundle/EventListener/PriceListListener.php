@@ -54,7 +54,7 @@ class PriceListListener
         /** @var PriceList $priceList */
         $priceList = $event->getData();
 
-        $this->plDataBeforeUpdate[self::IS_ACTIVE_FIELD] = $priceList->isActive();
+        $this->plDataBeforeUpdate[$priceList->getId()][self::IS_ACTIVE_FIELD] = $priceList->isActive();
 
         foreach ($priceList->getSchedules() as $schedule) {
             $this->priceListSchedules[] = $schedule->getHash();
@@ -73,8 +73,8 @@ class PriceListListener
             $this->activationPlanBuilder->buildByPriceList($priceList);
         }
 
-        if (array_key_exists(self::IS_ACTIVE_FIELD, $this->plDataBeforeUpdate)
-            && $this->plDataBeforeUpdate[self::IS_ACTIVE_FIELD] !== $priceList->isActive()
+        if (array_key_exists(self::IS_ACTIVE_FIELD, $this->plDataBeforeUpdate[$priceList->getId()])
+            && $this->plDataBeforeUpdate[$priceList->getId()][self::IS_ACTIVE_FIELD] !== $priceList->isActive()
         ) {
             $this->triggerHandler->handlePriceListStatusChange($priceList);
         }
