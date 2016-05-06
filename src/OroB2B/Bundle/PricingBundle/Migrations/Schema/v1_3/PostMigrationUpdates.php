@@ -23,16 +23,20 @@ class PostMigrationUpdates implements Migration, OrderedMigrationInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->updatePriceListTable($schema);
-        $this->updatePriceListCombinedTable($schema);
+        $this->updatePriceListTable($schema, $queries);
+        $this->updatePriceListCombinedTable($schema, $queries);
     }
 
     /**
      * @param Schema $schema
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    protected function updatePriceListTable(Schema $schema)
+    protected function updatePriceListTable(Schema $schema, QueryBag $queries)
     {
+        $queries->addPreQuery(
+            'UPDATE orob2b_price_list SET contain_schedule=TRUE WHERE contain_schedule IS NULL'
+        );
+
         $table = $schema->getTable('orob2b_price_list');
         $table->getColumn('contain_schedule')->setNotnull(true);
     }
@@ -41,8 +45,12 @@ class PostMigrationUpdates implements Migration, OrderedMigrationInterface
      * @param Schema $schema
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    protected function updatePriceListCombinedTable(Schema $schema)
+    protected function updatePriceListCombinedTable(Schema $schema, QueryBag $queries)
     {
+        $queries->addPreQuery(
+            'UPDATE orob2b_price_list_combined SET is_prices_calculated=FALSE WHERE is_prices_calculated IS NULL'
+        );
+
         $table = $schema->getTable('orob2b_price_list_combined');
         $table->getColumn('is_prices_calculated')->setNotnull(true);
     }
