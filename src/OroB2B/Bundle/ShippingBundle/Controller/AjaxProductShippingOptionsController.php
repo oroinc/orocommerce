@@ -85,12 +85,11 @@ class AjaxProductShippingOptionsController extends Controller
         ) {
             $shippingOptionsData = $productData[ProductFormExtension::FORM_ELEMENT_NAME];
         }
-
-        $shippingOptions = new ProductShippingOptions();
-        $form = $this->createForm(ProductShippingOptionsType::NAME, $shippingOptions);
         $activeShippingOptions = null;
         foreach ($shippingOptionsData as $shippingOptionsRow) {
-            $form->submit($shippingOptionsRow, true);
+            $shippingOptions = new ProductShippingOptions();
+            $form = $this->createForm(ProductShippingOptionsType::NAME, $shippingOptions, ['by_reference' => true]);
+            $form->submit($shippingOptionsRow);
             $productUnit = $shippingOptions->getProductUnit();
             if ($productUnit && $unitCode === $productUnit->getCode()) {
                 $activeShippingOptions = $shippingOptions;
