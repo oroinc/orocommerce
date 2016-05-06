@@ -188,7 +188,6 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
      */
     protected function getRandomWeightUnit(ObjectManager $manager)
     {
-
         if (count($this->weightUnits)) {
             return $this->weightUnits[mt_rand(0, count($this->weightUnits) - 1)];
         }
