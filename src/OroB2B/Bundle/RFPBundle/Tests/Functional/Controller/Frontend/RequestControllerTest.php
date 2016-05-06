@@ -464,7 +464,7 @@ class RequestControllerTest extends WebTestCase
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
 
-        $response = $this->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-requests-grid',
             [
                 'frontend-requests-grid[_filter][poNumber][value]' => static::PO_NUMBER

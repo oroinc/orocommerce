@@ -149,7 +149,7 @@ orob2b:
                 entity_label: 'Request For Quote'
                 entity_label_short: 'Request'
                 entity_plural_label: 'Requests For Quote'
-                create_title.label: 'Create Requests For Quote'
+                create_title.label: 'Request A Quote'
                 edit_title.label: 'Request For Quote #%id%'
                 id.label: 'RFQ #'
                 first_name.label: 'First Name'

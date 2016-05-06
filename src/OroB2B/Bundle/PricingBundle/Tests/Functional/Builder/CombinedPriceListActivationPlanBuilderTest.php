@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Builder;
 
 use Doctrine\ORM\EntityManager;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;

@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
