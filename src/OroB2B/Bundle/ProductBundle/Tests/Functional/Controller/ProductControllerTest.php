@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -73,8 +74,34 @@ class ProductControllerTest extends WebTestCase
         $form['orob2b_product[descriptions][values][default]'] = self::DEFAULT_DESCRIPTION;
         $form['orob2b_product[shortDescriptions][values][default]'] = self::DEFAULT_SHORT_DESCRIPTION;
 
+        $additionalSubmittedData = [
+            'orob2b_product' => [
+                'images' => [
+                    0 => [
+                        'main' => 1,
+                        'additional' => 1,
+                        'listing' => 1
+                    ],
+                ]
+            ]
+        ];
+
+        $submittedData = array_merge_recursive($form->getPhpValues(), $additionalSubmittedData);
+
+        $submittedFilesData = [
+            'orob2b_product' => [
+                'images' => [
+                    0 => [
+                        'image' => [
+                            'file' => $this->createUploadedFile('image1.gif')
+                        ]
+                    ],
+                ]
+            ]
+        ];
+
         $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData, $submittedFilesData);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -135,12 +162,33 @@ class ProductControllerTest extends WebTestCase
                         'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$locale->getId() => $localizedName->getId()],
+                ],
+                'images' => [
+                    0 => [
+                        'main' => 1,
+                        'listing' => 1
+                    ],
+                    1 => [
+                        'additional' => 1
+                    ],
                 ]
             ],
         ];
 
+        $submittedFilesData = [
+            'orob2b_product' => [
+                'images' => [
+                    1 => [
+                        'image' => [
+                            'file' => $this->createUploadedFile('image2.gif')
+                        ]
+                    ],
+                ]
+            ]
+        ];
+
         $this->client->followRedirects(true);
-        $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
+        $this->client->request($form->getMethod(), $form->getUri(), $submittedData, $submittedFilesData);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -482,5 +530,14 @@ class ProductControllerTest extends WebTestCase
             ->findOneBy(['product' => $productId, 'unit' => $unit]);
 
         $this->assertEquals($expectedPrecision, $productUnitPrecision->getPrecision());
+    }
+
+    /**
+     * @param string $fileName
+     * @return UploadedFile
+     */
+    private function createUploadedFile($fileName)
+    {
+        return new UploadedFile(__DIR__ . '/files/example.gif', $fileName);
     }
 }

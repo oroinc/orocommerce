@@ -19,13 +19,13 @@
 
 {% macro renderProductImages(productImages, imageTypes) %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    <div class="grid-container">
-        <table class="grid table-hover table table-bordered table-condensed">
+    <div class="image-collection view">
+        <table class="table table-bordered table-condensed">
             <thead>
                 <tr>
-                    <th><span>{{ 'orob2b.product.productimage.file.label'|trans }}</span></th>
+                    <th>{{ 'orob2b.product.productimage.file.label'|trans }}</th>
                     {% for imageType in imageTypes %}
-                        <th><span>{{ imageType.label|trans }}</span></th>
+                        <th class="text-center">{{ imageType.label|trans }}</th>
                     {% endfor %}
                 </tr>
             </thead>
