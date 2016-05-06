@@ -30,11 +30,12 @@ class AjaxProductShippingOptionsController extends Controller
         /* @var $provider AbstractMeasureUnitProvider */
         $provider = $this->get('orob2b_shipping.provider.measure_units.freight');
 
-        $codes = $provider->formatUnitsCodes($provider->getUnitsCodes(), (bool)$request->get('short', false));
+        $codes = $provider->getUnitsCodes();
+        $codes = $provider->formatUnitsCodes(array_combine($codes, $codes), (bool)$request->get('short', false));
 
         return new JsonResponse(
             [
-                'units' => array_combine($codes, $codes),
+                'units' => $codes,
             ]
         );
     }
