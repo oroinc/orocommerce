@@ -44,13 +44,17 @@ class DimensionsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('length', 'number', ['attr' => ['class' => 'length',],])
-            ->add('width', 'number', ['attr' => ['class' => 'width',],])
-            ->add('height', 'number', ['attr' => ['class' => 'height',],])
+            ->add('length', 'number', ['attr' => ['class' => 'length freight-class-update-trigger']])
+            ->add('width', 'number', ['attr' => ['class' => 'width freight-class-update-trigger']])
+            ->add('height', 'number', ['attr' => ['class' => 'height freight-class-update-trigger']])
             ->add(
                 'unit',
                 'entity',
-                ['class' => $this->provider->getEntityClass(), 'choices' => $this->provider->getUnits()]
+                [
+                    'class' => $this->provider->getEntityClass(),
+                    'choices' => $this->provider->getUnits(),
+                    'attr' => ['class' => 'freight-class-update-trigger'],
+                ]
             );
 
         $builder->addViewTransformer(new DimensionsTransformer());

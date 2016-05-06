@@ -44,11 +44,14 @@ class WeightType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('value', 'number', ['attr' => ['class' => 'value',],])
+            ->add('value', 'number', ['attr' => ['class' => 'value freight-class-update-trigger']])
             ->add(
                 'unit',
                 'entity',
-                ['class' => $this->provider->getEntityClass(), 'choices' => $this->provider->getUnits()]
+                [
+                    'class' => $this->provider->getEntityClass(), 'choices' => $this->provider->getUnits(),
+                    'attr' => ['class' => 'freight-class-update-trigger'],
+                ]
             );
 
         $builder->addViewTransformer(new WeightTransformer());

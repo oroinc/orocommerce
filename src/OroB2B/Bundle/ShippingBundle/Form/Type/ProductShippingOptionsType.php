@@ -73,6 +73,9 @@ class ProductShippingOptionsType extends AbstractType
                     'class' => $this->freightClassesProvider->getEntityClass(),
                     'choices' => $this->freightClassesProvider->getUnits(),
                     'label' => 'orob2b.shipping.product_shipping_options.freight_class.label',
+                    'attr' => [
+                        'class' => 'freight-class-select',
+                    ],
                 ]
             )
         ;
@@ -84,7 +87,7 @@ class ProductShippingOptionsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-                'product' => null,
+            'product' => null,
             'data_class' => $this->dataClass,
             'intention' => 'product_shipping_options',
         ]);
