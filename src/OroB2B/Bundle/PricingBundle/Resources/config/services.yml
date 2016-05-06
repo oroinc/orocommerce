@@ -298,7 +298,7 @@ services:
     orob2b_pricing.validator.dates_chain:
         class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\DatesChainValidator'
         arguments:
-            - @property_accessor
+            - '@property_accessor'
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_dates_chain_validator }
 
@@ -527,4 +527,4 @@ services:
     orob2b_pricing.recalculate_triggers_filler.scope_recalculate_triggers_filler:
         class: 'OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller'
         arguments:
-            - @doctrine
+            - '@doctrine'
