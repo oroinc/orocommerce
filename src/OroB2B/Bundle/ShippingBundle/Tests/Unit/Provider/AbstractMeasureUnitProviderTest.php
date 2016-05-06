@@ -8,6 +8,9 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\ShippingBundle\Entity\FreightClass;
+use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
+use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
 use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 
 class AbstractMeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
@@ -54,23 +57,50 @@ class AbstractMeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param mixed $entityClass
-     * @param $configEntryName
+     * @param mixed $ormData
+     * @param mixed $configEntryName
+     * @param mixed $configData
      * @param mixed $expected
+     * @param mixed $onlyEnabled
      *
      * @dataProvider unitsProvider
      */
-    public function testGetOptions($entityClass, $configEntryName, $expected)
-    {
+    public function testGetUnits(
+        $entityClass,
+        $ormData,
+        $configEntryName,
+        $configData,
+        $expected,
+        $onlyEnabled = true
+    ) {
         $this->repo->expects($this->atLeastOnce())
             ->method('findAll')
-            ->willReturn($expected);
+            ->willReturn($ormData);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
             ->with($entityClass)
             ->willReturn($this->repo);
 
-        $this->assertEquals($this->createProvider($entityClass, $configEntryName)->getUnits(), $expected);
+        if ($onlyEnabled) {
+            $this->configManager->expects($this->once())
+                ->method('get')
+                ->with($configEntryName, false)
+                ->willReturn($configData);
+        } else {
+            $this->configManager->expects($this->never())
+                ->method('get');
+        }
+
+        $units = $this->createProvider($entityClass, $configEntryName)->getUnits($onlyEnabled);
+
+        $this->assertEquals($units, $expected);
+
+        if (count($units)) {
+            foreach ($units as $unit) {
+                $this->assertInstanceOf($entityClass, $unit);
+            }
+        }
     }
 
     /**
@@ -86,6 +116,7 @@ class AbstractMeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
         $provider->setConfigEntryName($configEntryName);
         $this->assertEquals($configEntryName, $this->getProperty($provider, 'configEntryName'));
         $this->assertEquals($entityClass, $this->getProperty($provider, 'entityClass'));
+
         return $provider;
     }
 
@@ -97,18 +128,30 @@ class AbstractMeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'entityClass' => 'OroB2B\Bundle\ShippingBundle\Entity\WeightUnit',
+                'ormData' => [
+                    (new WeightUnit())->setCode('test 1'),
+                    (new WeightUnit())->setCode('test 2'),
+                    (new WeightUnit())->setCode('test 3')
+                ],
                 'configEntryName' => 'orob2b_shipping.weight_units',
-                'expected' => []
+                'configData' => ['test 1' => 'test 1'],
+                'expected' => [(new WeightUnit())->setCode('test 1')]
             ],
             [
-                'entityClass' => 'OroB2B\Bundle\ShippingBundle\Entity\LengthUnit',
-                'configEntryName' => 'orob2b_shipping.length_units',
-                'expected' => []
-            ],
-            [
-                'entityClass' => 'OroB2B\Bundle\ShippingBundle\Entity\FreightClass',
-                'configEntryName' => 'orob2b_shipping.freight_classes',
-                'expected' => []
+                'entityClass' => 'OroB2B\Bundle\ShippingBundle\Entity\WeightUnit',
+                'ormData' => [
+                    (new WeightUnit())->setCode('test 1'),
+                    (new WeightUnit())->setCode('test 2'),
+                    (new WeightUnit())->setCode('test 3')
+                ],
+                'configEntryName' => 'orob2b_shipping.weight_units',
+                'configData' => ['test 1' => 'test 1'],
+                'expected' => [
+                    (new WeightUnit())->setCode('test 1'),
+                    (new WeightUnit())->setCode('test 2'),
+                    (new WeightUnit())->setCode('test 3')
+                ],
+                'onlyEnabled' => false,
             ],
         ];
     }
