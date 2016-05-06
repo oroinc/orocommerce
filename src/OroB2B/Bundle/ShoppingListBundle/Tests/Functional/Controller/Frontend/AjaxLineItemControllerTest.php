@@ -86,11 +86,6 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertArrayHasKey('product', $result);
         $this->assertArrayHasKey('id', $result['product']);
         $this->assertEquals($product->getId(), $result['product']['id']);
-        $this->assertArrayHasKey('units', $result['product']);
-
-        foreach ($product->getAvailableUnitCodes() as $code) {
-            $this->assertArrayHasKey($code, $result['product']['units']);
-        }
 
         $shoppingList = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroB2BShoppingListBundle:ShoppingList')
