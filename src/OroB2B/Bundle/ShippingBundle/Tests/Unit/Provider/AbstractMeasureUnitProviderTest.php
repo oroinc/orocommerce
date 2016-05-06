@@ -101,13 +101,11 @@ class AbstractMeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
                 'expected' => []
             ],
             [
-                'method' => 'getUnits',
                 'entityClass' => 'OroB2B\Bundle\ShippingBundle\Entity\LengthUnit',
                 'configEntryName' => 'orob2b_shipping.length_units',
                 'expected' => []
             ],
             [
-                'method' => 'getUnits',
                 'entityClass' => 'OroB2B\Bundle\ShippingBundle\Entity\FreightClass',
                 'configEntryName' => 'orob2b_shipping.freight_classes',
                 'expected' => []

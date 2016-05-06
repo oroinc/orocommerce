@@ -11,7 +11,6 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
      * @param {Element} element
      */
     function getRealElement(element) {
-        console.log('Working');
         return $(element).closest('.product-shipping-options-collection');
     }
 
