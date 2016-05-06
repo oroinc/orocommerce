@@ -6,12 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\ShippingBundle\Entity\FreightClass;
-use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
-use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
-use OroB2B\Bundle\ShippingBundle\Model\Weight;
+
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,6 +15,13 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+
+use OroB2B\Bundle\ShippingBundle\Entity\FreightClass;
+use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
+use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
+use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
+use OroB2B\Bundle\ShippingBundle\Model\Weight;
 
 class LoadProductShippingOptionsDemoData extends AbstractFixture implements
     ContainerAwareInterface,
