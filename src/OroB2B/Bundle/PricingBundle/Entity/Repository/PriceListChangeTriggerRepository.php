@@ -66,7 +66,7 @@ class PriceListChangeTriggerRepository extends EntityRepository
         array $accountGroups = [],
         array $accounts = []
     ) {
-        $qb = $this->createQueryBuilder('priceListChangeTrigger');
+        $qb = $this->_em->createQueryBuilder();
 
         $qb->delete('OroB2BPricingBundle:PriceListChangeTrigger', 'priceListChangeTrigger');
 
