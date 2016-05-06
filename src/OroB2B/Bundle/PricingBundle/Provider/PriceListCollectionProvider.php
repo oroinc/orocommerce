@@ -60,7 +60,13 @@ class PriceListCollectionProvider
         $priceListsConfig = $this->configConverter->convertFromSaved(
             $this->configManager->get('oro_b2b_pricing.default_price_lists')
         );
-        return $this->getPriceListSequenceMembers($priceListsConfig);
+        $activeRelations = [];
+        foreach ($priceListsConfig as $priceList) {
+            if ($priceList->getPriceList()->isActive()) {
+                $activeRelations[] = $priceList;
+            }
+        }
+        return $this->getPriceListSequenceMembers($activeRelations);
     }
 
     /**
