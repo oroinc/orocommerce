@@ -110,9 +110,9 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
      */
     protected function createFooterLinks(ObjectManager $manager)
     {
-        $item = $this->factory->createItem('footer-links');
+        $itemInformationRoot = $this->factory->createItem('footer-links-information');
 
-        $itemInformation = $item->addChild('Information');
+        $itemInformation = $itemInformationRoot->addChild('Information');
         $itemInformation->addChild('About Us', ['uri' => '/about']);
         $itemInformation->addChild('Customer Service', ['uri' => '/customer-service']);
         $itemInformation->addChild('Privacy Policy', ['uri' => '/privacy-policy']);
@@ -122,12 +122,14 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
         $itemInformation->addChild('Orders and Returns', ['uri' => '/orders-and-returns']);
         $itemInformation->addChild('Contact Us', ['uri' => '/contact-us']);
 
-        $itemWhy = $item->addChild('Why Buy From Us');
+        $itemWhyRoot = $this->factory->createItem('footer-links-item-why');
+        $itemWhy = $itemWhyRoot->addChild('Why Buy From Us');
         $itemWhy->addChild('Shipping & Returns', ['uri' => '/shipping-and-returns']);
         $itemWhy->addChild('Secure Shopping', ['uri' => '/secure-shopping']);
         $itemWhy->addChild('International Shipping', ['uri' => '/international-shipping']);
 
-        $itemMyAccount = $item->addChild('My Account');
+        $itemMyAccountRoot = $this->factory->createItem('footer-links-my-account');
+        $itemMyAccount = $itemMyAccountRoot->addChild('My Account');
         $itemMyAccount->addChild(
             'Sign Out',
             ['uri' => $this->router->generate('orob2b_account_account_user_security_logout')]
@@ -140,7 +142,8 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
         $itemMyAccount->addChild('Track My Order', ['uri' => '/shipping/tracking']);
         $itemMyAccount->addChild('Help', ['uri' => '/help']);
 
-        $menuItem = $this->menuItemManager->createFromItem($item);
-        $manager->persist($menuItem);
+        $manager->persist($this->menuItemManager->createFromItem($itemInformationRoot));
+        $manager->persist($this->menuItemManager->createFromItem($itemWhyRoot));
+        $manager->persist($this->menuItemManager->createFromItem($itemMyAccountRoot));
     }
 }
