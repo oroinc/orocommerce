@@ -9,6 +9,7 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService;
+use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 
 class Configuration implements ConfigurationInterface
 {
@@ -16,12 +17,19 @@ class Configuration implements ConfigurationInterface
     const ROUNDING_TYPE = 'rounding_type';
     const PRECISION = 'precision';
     const COMBINED_PRICE_LIST = 'combined_price_list';
+    const FULL_COMBINED_PRICE_LIST = 'full_combined_price_list';
     const PRICE_LISTS_UPDATE_MODE = 'price_lists_update_mode';
+    const OFFSET_OF_PROCESSING_CPL_PRICES = 'offset_of_processing_cpl_prices';
 
     /**
-     * @var
+     * @var string
      */
     protected static $configKeyToPriceList;
+
+    /**
+     * @var string
+     */
+    protected static $configKeyToFullPriceList;
 
     /**
      * {@inheritDoc}
@@ -38,8 +46,12 @@ class Configuration implements ConfigurationInterface
                 self::DEFAULT_PRICE_LISTS => [ 'type' => 'array', 'value' => []],
                 self::ROUNDING_TYPE => ['value' => PriceRoundingService::ROUND_HALF_UP],
                 self::PRECISION => ['value' => PriceRoundingService::FALLBACK_PRECISION],
-                self::COMBINED_PRICE_LIST => null,
+                self::COMBINED_PRICE_LIST => ['value' => null],
+                self::FULL_COMBINED_PRICE_LIST => ['value' => null],
                 self::PRICE_LISTS_UPDATE_MODE => ['value' => CombinedPriceListQueueConsumer::MODE_REAL_TIME],
+                self::OFFSET_OF_PROCESSING_CPL_PRICES => [
+                    'value' => CombinedPriceListsBuilder::DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES
+                ]
             ]
         );
 
@@ -58,6 +70,17 @@ class Configuration implements ConfigurationInterface
         return self::$configKeyToPriceList;
     }
 
+    /**
+     * @return string
+     */
+    public static function getConfigKeyToFullPriceList()
+    {
+        if (!self::$configKeyToFullPriceList) {
+            self::$configKeyToFullPriceList = self::getConfigKeyByName(Configuration::FULL_COMBINED_PRICE_LIST);
+        }
+
+        return self::$configKeyToFullPriceList;
+    }
 
     /**
      * @param string $key

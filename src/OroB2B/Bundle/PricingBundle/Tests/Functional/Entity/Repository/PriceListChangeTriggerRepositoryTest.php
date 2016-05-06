@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
 
@@ -19,12 +19,28 @@ class PriceListChangeTriggerRepositoryTest extends WebTestCase
         ]);
     }
 
+    public function testFindBuildAllForceTrigger()
+    {
+        $trigger = $this->getRepository()->findBuildAllForceTrigger();
+        $this->assertEmpty($trigger->getWebsite());
+        $this->assertEmpty($trigger->getAccountGroup());
+        $this->assertEmpty($trigger->getAccount());
+        $this->assertTrue($trigger->isForce());
+    }
+
     public function testGetPriceListChangeTriggersIterator()
     {
         $iterator = $this->getRepository()->getPriceListChangeTriggersIterator();
         $allChanges = $this->getRepository()->findAll();
         $this->assertInstanceOf('Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator', $iterator);
         $this->assertCount(count($allChanges), $iterator);
+    }
+
+    public function testDeleteAll()
+    {
+        $this->assertNotEmpty($this->getRepository()->findAll());
+        $this->getRepository()->deleteAll();
+        $this->assertEmpty($this->getRepository()->findAll());
     }
 
     /**

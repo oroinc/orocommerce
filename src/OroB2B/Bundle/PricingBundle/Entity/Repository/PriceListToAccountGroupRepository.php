@@ -50,10 +50,10 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
 
     /**
      * @param Website $website
-     * @param int $fallback
+     * @param int|null $fallback
      * @return BufferedQueryResultIterator|AccountGroup[]
      */
-    public function getAccountGroupIteratorByDefaultFallback(Website $website, $fallback)
+    public function getAccountGroupIteratorByDefaultFallback(Website $website, $fallback = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct accountGroup')
@@ -78,14 +78,18 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
                 $qb->expr()->eq('priceListFallBack.website', ':website')
             )
         )
-        ->where(
-            $qb->expr()->orX(
-                $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite'),
-                $qb->expr()->isNull('priceListFallBack.fallback')
-            )
-        )
         ->setParameter('website', $website)
-        ->setParameter('fallbackToWebsite', $fallback);
+        ->orderBy('accountGroup.id', Criteria::ASC);
+
+        if ($fallback !== null) {
+            $qb->where(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite'),
+                    $qb->expr()->isNull('priceListFallBack.fallback')
+                )
+            )
+                ->setParameter('fallbackToWebsite', $fallback);
+        }
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }

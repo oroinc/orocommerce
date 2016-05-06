@@ -8,7 +8,6 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 
 class ProductPriceProvider
@@ -19,23 +18,16 @@ class ProductPriceProvider
     protected $registry;
 
     /**
-     * @var PriceListRequestHandler
-     */
-    protected $requestHandler;
-
-    /**
      * @var string
      */
     protected $className;
 
     /**
      * @param ManagerRegistry $registry
-     * @param PriceListRequestHandler $requestHandler
      */
-    public function __construct(ManagerRegistry $registry, PriceListRequestHandler $requestHandler)
+    public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
-        $this->requestHandler = $requestHandler;
     }
 
     /**
@@ -64,15 +56,11 @@ class ProductPriceProvider
 
     /**
      * @param ProductPriceCriteria[] $productsPriceCriteria
-     * @param BasePriceList|null $priceList
+     * @param BasePriceList $priceList
      * @return array|Price[]
      */
-    public function getMatchedPrices(array $productsPriceCriteria, BasePriceList $priceList = null)
+    public function getMatchedPrices(array $productsPriceCriteria, BasePriceList $priceList)
     {
-        if (!$priceList) {
-            $priceList = $this->requestHandler->getPriceListByAccount();
-        }
-
         $productIds = [];
         $productUnitCodes = [];
 
@@ -105,7 +93,7 @@ class ProductPriceProvider
 
             $price = $this->matchPriceByQuantity($productPrices, $quantity);
 
-            $result[$productPriceCriteria->getIdentifier()] = $price ? Price::create($price, $currency) : null;
+            $result[$productPriceCriteria->getIdentifier()] = $price !== null ? Price::create($price, $currency) : null;
         }
 
         return $result;
@@ -118,7 +106,7 @@ class ProductPriceProvider
      */
     protected function matchPriceByQuantity(array $prices, $expectedQuantity)
     {
-        $price = 0.0;
+        $price = null;
 
         foreach ($prices as $productPrice) {
             $quantity = (float)$productPrice['quantity'];

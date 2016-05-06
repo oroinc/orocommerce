@@ -9,7 +9,7 @@ oro_system_configuration:
     fields:
         orob2b_shipping.shipping_origin:
             data_type: array
-            type: orob2b_shipping_origin
+            type: orob2b_shipping_origin_config
     tree:
         system_configuration:
             commerce:

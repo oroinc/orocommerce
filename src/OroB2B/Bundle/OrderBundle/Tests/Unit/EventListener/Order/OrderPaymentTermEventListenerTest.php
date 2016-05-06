@@ -59,8 +59,8 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $order = new Order();
         $order
-            ->setAccount($account2)
-            ->setAccountUser($accountUser1);
+            ->setAccountUser($accountUser1)
+            ->setAccount($account2);
 
         $event = new OrderEvent($form, $order);
         $this->listener->onOrderEvent($event);

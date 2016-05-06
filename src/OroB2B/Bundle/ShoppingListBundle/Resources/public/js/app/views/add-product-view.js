@@ -35,7 +35,7 @@ define(function(require) {
             AddProductView.__super__.initialize.apply(this, arguments);
 
             _.extend(this.options, options || {});
-            this.$el.on('click', 'a[data-id]', _.bind(this.onClick, this));
+            this.$el.on('click', _.bind(this.onClick, this));
 
             var product = this.$el.data('product');
             this.$el.find('.pinned-dropdown').data('product', product);

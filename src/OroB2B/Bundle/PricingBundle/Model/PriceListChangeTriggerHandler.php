@@ -55,7 +55,7 @@ class PriceListChangeTriggerHandler
         $trigger = $this->createTrigger();
         $trigger->setWebsite($website);
         $this->getManager()->persist($trigger);
-        $this->triggerChangeListener();
+        $this->dispatchQueueChange();
     }
 
     /**
@@ -66,9 +66,10 @@ class PriceListChangeTriggerHandler
     {
         $trigger = $this->createTrigger();
         $trigger->setAccount($account)
+            ->setAccountGroup($account->getGroup())
             ->setWebsite($website);
         $this->getManager()->persist($trigger);
-        $this->triggerChangeListener();
+        $this->dispatchQueueChange();
     }
 
     /**
@@ -81,7 +82,7 @@ class PriceListChangeTriggerHandler
         if ($andFlush) {
             $this->getManager()->flush();
         }
-        $this->triggerChangeListener();
+        $this->dispatchQueueChange();
     }
 
     /**
@@ -94,7 +95,7 @@ class PriceListChangeTriggerHandler
         $trigger->setAccountGroup($accountGroup)
             ->setWebsite($website);
         $this->getManager()->persist($trigger);
-        $this->triggerChangeListener();
+        $this->dispatchQueueChange();
     }
 
     /**
@@ -115,11 +116,20 @@ class PriceListChangeTriggerHandler
                     $websiteIds,
                     $this->insertFromSelectQueryExecutor
                 );
-            $this->triggerChangeListener();
+            $this->dispatchQueueChange();
         }
     }
 
-    protected function triggerChangeListener()
+    public function handleFullRebuild()
+    {
+        $trigger = $this->createTrigger();
+        $trigger->setForce(true);
+        $this->getManager()->persist($trigger);
+        $this->getManager()->flush();
+        $this->dispatchQueueChange();
+    }
+
+    protected function dispatchQueueChange()
     {
         $event = new PriceListQueueChangeEvent();
         $this->eventDispatcher->dispatch(PriceListQueueChangeEvent::BEFORE_CHANGE, $event);
