@@ -1,8 +1,15 @@
 {% block _product_container_widget %}
     <!-- START Product -->
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " product clearfix"
-    }) %}
+    {% set attr = {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-options': {
+            view: 'orob2bproduct/js/app/views/base-product-view',
+            modelAttr: product
+        }|json_encode,
+        'data-layout': 'separate'
+    }|merge(attr|merge({
+        class: attr.class|default('') ~ ' product clearfix'
+    })) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -293,7 +300,7 @@
     </div>
 {% endblock %}
 
-{% block _line_item_list_form_widget %}
+{% block _line_item_form_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " line_item_form_product_view"}) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -301,17 +308,18 @@
 {% endblock %}
 
 {% block _line_item_buttons_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " form__col "}) %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if block.children is not empty %}
+        {% set attr = attr|merge({class: attr.class|default('') ~ " form__col "}) %}
         <div {{ block('block_attributes') }}>
-            {% import 'OroUIBundle::macros.html.twig' as UI %}
-            {% import _self as buttons %}
-            {% set buttonsHtml %}
-                {{ block_widget(block) }}
-            {% endset %}
             {{ UI.pinnedDropdownButton({
-                'html': buttonsHtml,
+                'html': block_widget(block),
+                'dataAttributes': {
+                    'layout': 'separate'
+                },
                 'options': {
+                    'widgetModule': 'orob2bproduct/js/content-processor/product-add-to-dropdown-button',
+                    'widgetName': 'productAddToDropdownButtonProcessor',
                     'truncateLength': 15,
                     'groupContainer': '<div class="btn btn-block btn-orange btn_has-dropdown btn_has-dropdown_lg"></div>'
                 }

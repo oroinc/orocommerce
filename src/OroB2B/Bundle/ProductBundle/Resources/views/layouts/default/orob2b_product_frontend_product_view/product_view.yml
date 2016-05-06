@@ -21,6 +21,9 @@ layout:
                     blockType: container
                 product_container:
                     blockType: container
+                    options:
+                        vars:
+                            product: {'@value': $data.product}
                 product_title_mobile:
                     blockType: text
                     options:
@@ -67,7 +70,7 @@ layout:
                     blockType: block
                 product_tabs:
                     blockType: block
-                line_item_list_form:
+                line_item_form:
                     blockType: container
                 line_item_form_start:
                     blockType: form_start
@@ -97,7 +100,7 @@ layout:
                                     product_specification:
                                         product_specification_sku: ~
                                         #product_specification_mfg: ~
-                                    line_item_list_form:
+                                    line_item_form:
                                         line_item_form_start: ~
                                         line_item_form_fields: ~
                                         line_item_buttons: ~
