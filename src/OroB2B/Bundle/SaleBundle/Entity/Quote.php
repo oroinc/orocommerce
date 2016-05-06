@@ -8,14 +8,16 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -59,8 +61,13 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class Quote extends ExtendQuote implements
     AccountOwnerAwareInterface,
-    EmailHolderInterface
+    EmailHolderInterface,
+    OrganizationAwareInterface
 {
+    use AuditableUserAwareTrait;
+    use AuditableFrontendAccountUserAwareTrait;
+    use DatesAwareTrait;
+    
     /**
      * @var int
      *
@@ -83,66 +90,6 @@ class Quote extends ExtendQuote implements
      * )
      */
     protected $qid;
-
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="user_owner_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $owner;
-
-    /**
-     * @var AccountUser
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $accountUser;
-
-    /**
-     * @var Account
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account"),
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     **/
-    protected $account;
-
-    /**
-     * @var OrganizationInterface
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $organization;
 
     /**
      * @var Website
@@ -201,34 +148,6 @@ class Quote extends ExtendQuote implements
      * )
      */
     protected $shipUntil;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
 
     /**
      * @var \DateTime
@@ -419,52 +338,6 @@ class Quote extends ExtendQuote implements
     }
 
     /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     * @return Quote
-     */
-    public function setCreatedAt(\DateTime $createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * Set updatedAt
-     *
-     * @param \DateTime $updatedAt
-     * @return Quote
-     */
-    public function setUpdatedAt(\DateTime $updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Get updatedAt
-     *
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
      * Set validUntil
      *
      * @param \DateTime $validUntil
@@ -485,29 +358,6 @@ class Quote extends ExtendQuote implements
     public function getValidUntil()
     {
         return $this->validUntil;
-    }
-
-    /**
-     * Set owner
-     *
-     * @param User $owner
-     * @return Quote
-     */
-    public function setOwner(User $owner = null)
-    {
-        $this->owner = $owner;
-
-        return $this;
-    }
-
-    /**
-     * Get owner
-     *
-     * @return User
-     */
-    public function getOwner()
-    {
-        return $this->owner;
     }
 
     /**
@@ -551,70 +401,6 @@ class Quote extends ExtendQuote implements
     public function getQuoteProducts()
     {
         return $this->quoteProducts;
-    }
-
-    /**
-     * @return AccountUser
-     */
-    public function getAccountUser()
-    {
-        return $this->accountUser;
-    }
-
-    /**
-     * @param AccountUser $accountUser
-     *
-     * @return Quote
-     */
-    public function setAccountUser(AccountUser $accountUser = null)
-    {
-        $this->accountUser = $accountUser;
-
-        return $this;
-    }
-
-    /**
-     * @return Account
-     */
-    public function getAccount()
-    {
-        return $this->account;
-    }
-
-    /**
-     * @param Account $account
-     *
-     * @return Quote
-     */
-    public function setAccount(Account $account = null)
-    {
-        $this->account = $account;
-
-        return $this;
-    }
-
-    /**
-     * Set organization
-     *
-     * @param OrganizationInterface $organization
-     *
-     * @return Quote
-     */
-    public function setOrganization(OrganizationInterface $organization = null)
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
-    /**
-     * Get organization
-     *
-     * @return OrganizationInterface
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
     }
 
     /**
@@ -745,7 +531,7 @@ class Quote extends ExtendQuote implements
      *
      * @return Quote
      */
-    public function setShipUntil($shipUntil)
+    public function setShipUntil(\DateTime $shipUntil = null)
     {
         $this->shipUntil = $shipUntil;
 

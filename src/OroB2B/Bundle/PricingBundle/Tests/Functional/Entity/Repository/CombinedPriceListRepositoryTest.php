@@ -27,7 +27,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules',
             ]
         );
     }
@@ -104,7 +104,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $websiteUs = $this->getReference(LoadWebsiteData::WEBSITE1);
 
         /** @var Website $websiteCa */
-        $websiteCa = $this->getReference(LoadWebsiteData::WEBSITE2);
+        $websiteCa = $this->getReference(LoadWebsiteData::WEBSITE3);
 
         $this->assertEquals(
             $priceList->getId(),
@@ -192,7 +192,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
             $targetEntity = $this->getReference($targetEntity);
         }
 
-        $this->getRepository()->updateCombinedPriceListConnection($priceList, $website, $targetEntity);
+        $this->getRepository()->updateCombinedPriceListConnection($priceList, $priceList, $website, $targetEntity);
         /** @var BasePriceListRelation $actual */
         $actual = call_user_func($getActual, $website, $targetEntity);
         $this->assertEquals($priceList->getId(), $actual->getPriceList()->getId());
@@ -295,13 +295,14 @@ class CombinedPriceListRepositoryTest extends WebTestCase
      * @dataProvider cplByPriceListProductDataProvider
      * @param string $priceList
      * @param int $result
+     * @param bool $calculatedPrices
      */
-    public function testGetCombinedPriceListsByPriceListProduct($priceList, $result)
+    public function testGetCombinedPriceListsByPriceListProduct($priceList, $result, $calculatedPrices)
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference($priceList);
 
-        $cPriceLists = $this->getRepository()->getCombinedPriceListsByPriceList($priceList);
+        $cPriceLists = $this->getRepository()->getCombinedPriceListsByPriceList($priceList, $calculatedPrices);
         $this->assertCount($result, $cPriceLists);
     }
 
@@ -314,15 +315,53 @@ class CombinedPriceListRepositoryTest extends WebTestCase
             [
                 'priceList' => 'price_list_1',
                 'result' => 4,
+                'calculatedPrices' => null,
             ],
             [
                 'priceList' => 'price_list_3',
-                'result' => 3,
+                'result' => 0,
+                'calculatedPrices' => false,
             ],
             [
                 'priceList' => 'price_list_4',
                 'result' => 0,
+                'calculatedPrices' => true,
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCPLsForPriceCollectByTimeOffsetDataProvider
+     * @param $offsetHours
+     * @param $result
+     */
+    public function testGetCPLsForPriceCollectByTimeOffset($offsetHours, $result)
+    {
+        /** @var CombinedPriceList $cpl */
+        $cpl = $this->getReference('2f');
+        $cpl->setPricesCalculated(false);
+        $this->getManager()->flush();
+        $cpl = $this->getReference('1f');
+        $cpl->setPricesCalculated(false);
+        $this->getManager()->flush();
+        $cPriceLists = $this->getRepository()->getCPLsForPriceCollectByTimeOffset($offsetHours);
+        $this->assertCount($result, $cPriceLists);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCPLsForPriceCollectByTimeOffsetDataProvider()
+    {
+        return [
+            [
+                'offsetHours' => 11,
+                'result' => 1
+            ],
+            [
+                'offsetHours' => 7 * 24,
+                'result' => 2
+            ]
         ];
     }
 

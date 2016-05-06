@@ -6,15 +6,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use OroB2B\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -29,6 +28,11 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      }
  * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository")
+ * @ORM\AssociationOverrides({
+ *      @ORM\AssociationOverride(name="accountUser",
+ *          joinColumns=@ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+ *      )
+ * })
  * @Config(
  *      routeName="orob2b_shopping_list_index",
  *      routeView="orob2b_shopping_list_view",
@@ -62,6 +66,10 @@ class ShoppingList extends ExtendShoppingList implements
     WebsiteAwareInterface,
     CheckoutSourceEntityInterface
 {
+    use DatesAwareTrait;
+    use OrganizationAwareTrait;
+    use FrontendAccountUserAwareTrait;
+
     /**
      * @var int
      *
@@ -98,58 +106,6 @@ class ShoppingList extends ExtendShoppingList implements
      * )
      */
     protected $notes;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
-
-    /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $organization;
-
-    /**
-     * @var AccountUser
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $accountUser;
-
-    /**
-     * @var Account
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $account;
 
     /**
      * @var Website
@@ -263,46 +219,6 @@ class ShoppingList extends ExtendShoppingList implements
     }
 
     /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     *
-     * @return $this
-     */
-    public function setCreatedAt(\DateTime $createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     *
-     * @return $this
-     */
-    public function setUpdatedAt(\DateTime $updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getNotes()
@@ -340,24 +256,6 @@ class ShoppingList extends ExtendShoppingList implements
         $this->label = $label;
 
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setOrganization(OrganizationInterface $organization = null)
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
     }
 
     /**
@@ -436,46 +334,6 @@ class ShoppingList extends ExtendShoppingList implements
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * @return Account
-     */
-    public function getAccount()
-    {
-        return $this->account;
-    }
-
-    /**
-     * @param Account $account
-     *
-     * @return $this
-     */
-    public function setAccount(Account $account)
-    {
-        $this->account = $account;
-
-        return $this;
-    }
-
-    /**
-     * @return AccountUser
-     */
-    public function getAccountUser()
-    {
-        return $this->accountUser;
-    }
-
-    /**
-     * @param AccountUser $accountUser
-     *
-     * @return $this
-     */
-    public function setAccountUser(AccountUser $accountUser)
-    {
-        $this->accountUser = $accountUser;
-
-        return $this;
     }
 
     /**

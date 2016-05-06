@@ -55,10 +55,10 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     /**
      * @param AccountGroup $accountGroup
      * @param Website $website
-     * @param int $fallback
+     * @param int|null $fallback
      * @return BufferedQueryResultIterator|Account[]
      */
-    public function getAccountIteratorByDefaultFallback(AccountGroup $accountGroup, Website $website, $fallback)
+    public function getAccountIteratorByDefaultFallback(AccountGroup $accountGroup, Website $website, $fallback = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct account')
@@ -73,6 +73,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
                 $qb->expr()->eq('plToAccount.account', 'account')
             )
         );
+
         $qb->leftJoin(
             'OroB2BPricingBundle:PriceListAccountFallback',
             'priceListFallBack',
@@ -81,17 +82,21 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
                 $qb->expr()->eq('priceListFallBack.website', ':website'),
                 $qb->expr()->eq('priceListFallBack.account', 'account')
             )
-        );
+        )
+        ->setParameter('website', $website);
+
         $qb->andWhere($qb->expr()->eq('account.group', ':accountGroup'))
-            ->andWhere(
+            ->setParameter('accountGroup', $accountGroup);
+
+        if ($fallback !== null) {
+            $qb->andWhere(
                 $qb->expr()->orX(
                     $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToGroup'),
                     $qb->expr()->isNull('priceListFallBack.fallback')
                 )
             )
-            ->setParameter('accountGroup', $accountGroup)
-            ->setParameter('fallbackToGroup', $fallback)
-            ->setParameter('website', $website);
+            ->setParameter('fallbackToGroup', $fallback);
+        }
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }

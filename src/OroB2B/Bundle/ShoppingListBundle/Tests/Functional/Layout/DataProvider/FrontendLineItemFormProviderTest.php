@@ -6,7 +6,6 @@ use Oro\Component\Layout\LayoutContext;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
@@ -79,6 +78,10 @@ class FrontendLineItemFormProviderTest extends WebTestCase
         $accountUser = null;
         if ($isAccountUser) {
             $accountUser = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+            $organization = $this->getMock('Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface');
+            $accountUser->expects($this->any())
+                ->method('getOrganization')
+                ->willReturn($organization);
         }
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
