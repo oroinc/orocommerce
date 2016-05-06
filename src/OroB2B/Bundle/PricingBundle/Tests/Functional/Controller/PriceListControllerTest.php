@@ -92,7 +92,7 @@ class PriceListControllerTest extends WebTestCase
             ['pricing-price-list-grid[_sort_by][activity]' => OrmSorterExtension::DIRECTION_ASC]
         );
         $data = json_decode($grid->getContent(), true)['data'];
-        $this->assertCount(6, $data);
+        $this->assertCount(7, $data);
         $this->assertEquals('Active', $data[0]['activity']);
 
         $grid = $this->client->requestGrid(
@@ -100,7 +100,7 @@ class PriceListControllerTest extends WebTestCase
             ['pricing-price-list-grid[_sort_by][activity]' => OrmSorterExtension::DIRECTION_DESC]
         );
         $data = json_decode($grid->getContent(), true)['data'];
-        $this->assertCount(6, $data);
+        $this->assertCount(7, $data);
         $this->assertEquals('Inactive', $data[0]['activity']);
     }
 
