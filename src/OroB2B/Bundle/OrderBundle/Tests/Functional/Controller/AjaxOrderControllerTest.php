@@ -125,29 +125,4 @@ class AjaxOrderControllerTest extends WebTestCase
             ]
         ];
     }
-
-    public function testGetRelatedDataActionException()
-    {
-        /** @var AccountUser $accountUser1 */
-        $accountUser1 = $this->getReference('grzegorz.brzeczyszczykiewicz@example.com');
-
-        /** @var AccountUser $accountUser2 */
-        $accountUser2 = $this->getReference('second_account.user@test.com');
-
-        $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_order_entry_point'),
-            [
-                OrderType::NAME => [
-                    'account' => $accountUser1->getAccount()->getId(),
-                    'accountUser' => $accountUser2->getId(),
-                ]
-            ]
-        );
-
-        $response = $this->client->getResponse();
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
-
-        $this->assertResponseStatusCodeEquals($response, 400);
-    }
 }

@@ -14,7 +14,7 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\Type\AddressType;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
-use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
+use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 
@@ -77,7 +77,7 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
                     'translatable_entity' => $translatableEntity,
                     'oro_region' => new RegionType(),
                 ],
-                ['form' => [new RandomIdExtension()]]
+                ['form' => [new AdditionalAttrExtension()]]
             )
         ];
     }

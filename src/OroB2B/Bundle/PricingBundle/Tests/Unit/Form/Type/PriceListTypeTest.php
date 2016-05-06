@@ -4,12 +4,17 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
 
 class PriceListTypeTest extends FormIntegrationTestCase
 {
@@ -66,7 +71,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $currencySelectType->getName() => $currencySelectType,
-                    $entityIdentifierType->getName() => $entityIdentifierType
+                    $entityIdentifierType->getName() => $entityIdentifierType,
+                    CollectionType::NAME => new CollectionType(),
+                    PriceListScheduleType::NAME => new PriceListScheduleType(new PropertyAccessor()),
+                    OroDateTimeType::NAME => new OroDateTimeType()
                 ],
                 []
             )
@@ -122,6 +130,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
         $result = $form->getData();
         $this->assertEquals($expectedData['name'], $result->getName());
         $this->assertEquals($expectedData['currencies'], array_values($result->getCurrencies()));
+        $this->assertSchedules($expectedData, $result);
     }
     
     /**
@@ -141,6 +150,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     'removeAccountGroups' => [],
                     'appendWebsites' => [],
                     'removeWebsites' => [],
+                    'schedules' => [
+                        ['activeAt' => '2016-03-01T22:00:00Z', 'deactivateAt' => '2016-03-15T22:00:00Z'],
+                        ['activeAt' => '2016-02-01T22:00:00Z', 'deactivateAt' => '2016-02-15T22:00:00Z']
+                    ]
                 ],
                 'expectedData' => [
                     'name' => 'Test Price List',
@@ -152,6 +165,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     'removeAccountGroups' => [],
                     'appendWebsites' => [],
                     'removeWebsites' => [],
+                    'schedules' => [
+                        ['2016-03-01T22:00:00Z', '2016-03-15T22:00:00Z'],
+                        ['2016-02-01T22:00:00Z', '2016-02-15T22:00:00Z'],
+                    ]
                 ]
             ],
             'update price list' => [
@@ -174,6 +191,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     'removeAccountGroups' => [4],
                     'appendWebsites' => [5],
                     'removeWebsites' => [6],
+                    'schedules' => [
+                        ['activeAt' => '2016-03-01T22:00:00Z', 'deactivateAt' => '2016-03-15T22:00:00Z'],
+                        ['activeAt' => '2016-02-01T22:00:00Z', 'deactivateAt' => '2016-02-15T22:00:00Z']
+                    ]
                 ],
                 'expectedData' => [
                     'name' => 'Test Price List 01',
@@ -188,6 +209,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     ],
                     'appendWebsites' => [$this->getEntity(self::WEBSITE_CLASS, 5)],
                     'removeWebsites' => [$this->getEntity(self::WEBSITE_CLASS, 6)],
+                    'schedules' => [
+                        ['2016-03-01T22:00:00Z', '2016-03-15T22:00:00Z'],
+                        ['2016-02-01T22:00:00Z', '2016-02-15T22:00:00Z'],
+                    ]
                 ]
             ]
         ];
@@ -213,5 +238,22 @@ class PriceListTypeTest extends FormIntegrationTestCase
         $method->setValue($entity, $id);
 
         return $entity;
+    }
+
+    /**
+     * @param array $expectedData
+     * @param PriceList $result
+     */
+    protected function assertSchedules(array $expectedData, PriceList $result)
+    {
+        /** @var PriceListSchedule[] $actualSchedules */
+        $actualSchedules = $result->getSchedules()->toArray();
+        $expectedSchedules = $expectedData['schedules'];
+        foreach ($expectedSchedules as $i => $expected) {
+            $actual = $actualSchedules[$i];
+            $this->assertSame($result, $actual->getPriceList());
+            $this->assertEquals(new \DateTime($expected[0]), $actual->getActiveAt());
+            $this->assertEquals(new \DateTime($expected[1]), $actual->getDeactivateAt());
+        }
     }
 }

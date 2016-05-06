@@ -7,7 +7,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Doctrine\ORM\EntityManager;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
@@ -85,6 +85,7 @@ class ProductVisibilityControllerTest extends WebTestCase
             [
                 'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
             ]

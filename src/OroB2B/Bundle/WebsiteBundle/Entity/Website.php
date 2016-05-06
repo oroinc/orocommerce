@@ -6,12 +6,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableBusinessUnitAwareTrait;
 
 use OroB2B\Bundle\WebsiteBundle\Model\ExtendWebsite;
 
@@ -52,6 +51,9 @@ use OroB2B\Bundle\WebsiteBundle\Model\ExtendWebsite;
  */
 class Website extends ExtendWebsite implements OrganizationAwareInterface
 {
+    use DatesAwareTrait;
+    use AuditableBusinessUnitAwareTrait;
+
     /**
      * @var Collection|Locale[]
      *
@@ -119,57 +121,6 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
     protected $url;
 
     /**
-     * @var \DateTime $createdAt
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime $updatedAt
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
-
-    /**
-     * @var BusinessUnit
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\BusinessUnit")
-     * @ORM\JoinColumn(name="business_unit_owner_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $owner;
-
-    /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $organization;
-
-    /**
      * Website constructor.
      */
     public function __construct()
@@ -228,44 +179,6 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
     }
 
     /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Website[]
      */
     public function getRelatedWebsites()
@@ -308,44 +221,6 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
         }
 
         return $this;
-    }
-
-    /**
-     * @return BusinessUnit
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
-     * @param BusinessUnit $owningBusinessUnit
-     * @return Website
-     */
-    public function setOwner($owningBusinessUnit)
-    {
-        $this->owner = $owningBusinessUnit;
-
-        return $this;
-    }
-
-    /**
-     * @param OrganizationInterface $organization
-     * @return Website
-     */
-    public function setOrganization(OrganizationInterface $organization = null)
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
-    /**
-     * @return OrganizationInterface
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
     }
 
     /**

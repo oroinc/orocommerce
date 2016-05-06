@@ -16,6 +16,9 @@ config:
 
         'orob2bpricing/js/validator/unique-product-prices': 'bundles/orob2bpricing/js/validator/unique-product-prices.js'
 
+        'orob2bpricing/js/app/views/base-product-prices-view': 'bundles/orob2bpricing/js/app/views/base-product-prices-view.js'
+        'orob2bpricing/js/app/views/price-list-schedule-view': 'bundles/orob2bpricing/js/app/views/price-list-schedule-view.js'
+
         'oro/filter/product-price-filter': 'bundles/orob2bpricing/js/filter/product-price-filter.js'
         'oro/filter/frontend-product-price-filter': 'bundles/orob2bpricing/js/filter/frontend-product-price-filter.js'
 

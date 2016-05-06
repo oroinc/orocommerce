@@ -17,6 +17,9 @@ class LoadWarehousesAndInventoryLevels extends AbstractFixture implements Depend
 {
     use UserUtilityTrait;
 
+    const WAREHOUSE1 = 'warehouse.1';
+    const WAREHOUSE2 = 'warehouse.2';
+
     /**
      * {@inheritdoc}
      */
@@ -34,15 +37,25 @@ class LoadWarehousesAndInventoryLevels extends AbstractFixture implements Depend
     {
         $user = $this->getFirstUser($manager);
 
-        $this->createWarehouse($manager, 'First Warehouse', $user, 'warehouse.1');
-        $this->createWarehouse($manager, 'Second Warehouse', $user, 'warehouse.2');
+        $this->createWarehouse($manager, 'First Warehouse', $user, self::WAREHOUSE1);
+        $this->createWarehouse($manager, 'Second Warehouse', $user, self::WAREHOUSE2);
 
-        $this->createWarehouseInventoryLevel($manager, 'warehouse.1', 'product_unit_precision.product.1.liter', 10);
-        $this->createWarehouseInventoryLevel($manager, 'warehouse.1', 'product_unit_precision.product.1.bottle', 99);
-        $this->createWarehouseInventoryLevel($manager, 'warehouse.1', 'product_unit_precision.product.2.liter', 12.345);
-        $this->createWarehouseInventoryLevel($manager, 'warehouse.1', 'product_unit_precision.product.2.bottle', 98);
-        $this->createWarehouseInventoryLevel($manager, 'warehouse.1', 'product_unit_precision.product.2.box', 42);
-        $this->createWarehouseInventoryLevel($manager, 'warehouse.2', 'product_unit_precision.product.2.box', 98.765);
+        $this->createWarehouseInventoryLevel($manager, self::WAREHOUSE1, 'product_unit_precision.product.1.liter', 10);
+        $this->createWarehouseInventoryLevel($manager, self::WAREHOUSE1, 'product_unit_precision.product.1.bottle', 99);
+        $this->createWarehouseInventoryLevel(
+            $manager,
+            self::WAREHOUSE1,
+            'product_unit_precision.product.2.liter',
+            12.345
+        );
+        $this->createWarehouseInventoryLevel($manager, self::WAREHOUSE1, 'product_unit_precision.product.2.bottle', 98);
+        $this->createWarehouseInventoryLevel($manager, self::WAREHOUSE1, 'product_unit_precision.product.2.box', 42);
+        $this->createWarehouseInventoryLevel(
+            $manager,
+            self::WAREHOUSE2,
+            'product_unit_precision.product.2.box',
+            98.765
+        );
 
         $manager->flush();
     }

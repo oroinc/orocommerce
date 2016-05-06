@@ -111,14 +111,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_shopping_list_form }
 
-    orob2b_shopping_list.layout.data_provider.frontend_line_item_form:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendLineItemFormProvider'
-        arguments:
-            - "@form.factory"
-            - "@oro_security.security_facade"
-        tags:
-            - { name: layout.data_provider, alias: orob2b_shopping_list_frontend_line_item_form }
-
     orob2b_shopping_list.layout.data_provider.account_user_shopping_lists:
         class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider'
         arguments:

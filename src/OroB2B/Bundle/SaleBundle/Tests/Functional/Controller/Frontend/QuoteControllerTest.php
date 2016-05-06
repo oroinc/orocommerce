@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -44,7 +44,7 @@ class QuoteControllerTest extends WebTestCase
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains('frontend-quotes-grid', $crawler->html());
 
-        $response = $this->requestFrontendGrid([
+        $response = $this->client->requestGrid([
             'gridName' => 'frontend-quotes-grid',
             'frontend-quotes-grid[_sort_by][qid]' => 'ASC',
         ]);
@@ -233,11 +233,10 @@ class QuoteControllerTest extends WebTestCase
             if ($property instanceof \DateTime) {
                 $property = $property->format('M j, Y');
             } elseif ($property instanceof Price) {
-                $property = (string)round($property->getValue());
-            } else {
-                $property = (string)$property;
+                $property = round($property->getValue());
             }
 
+            $property = (string)$property;
             $this->assertContains($label, $control->textContent);
             $this->assertContains($property, $control->textContent);
         }

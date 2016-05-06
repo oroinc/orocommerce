@@ -17,8 +17,17 @@ class BaseCombinedPriceListRelationTest extends \PHPUnit_Framework_TestCase
             new BaseCombinedPriceListRelation(),
             [
                 ['priceList', new CombinedPriceList()],
+                ['fullChainPriceList', new CombinedPriceList()],
                 ['website', new Website()]
             ]
         );
+    }
+
+    public function testUpdateFullChainPriceList()
+    {
+        $relation = new BaseCombinedPriceListRelation();
+        $priceList = new CombinedPriceList();
+        $relation->setPriceList($priceList);
+        $this->assertSame($priceList, $relation->getFullChainPriceList());
     }
 }

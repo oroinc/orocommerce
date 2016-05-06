@@ -9,7 +9,12 @@ orob2b:
             country.label:       Country
             region.label:        Region/State
             region_text.label:   State
-            postal_code.label:   Zip/postal code
+            postal_code.label:   Zip/Postal Code
             city.label:          City
             street.label:        Street Address 1
             street2.label:       Street Address 2
+        warehouse:
+            use_system_configuration: Use System Configuration
+            system_configuration.label: '(system configuration)'
+            section:
+                shipping_origin: Shipping Origin

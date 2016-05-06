@@ -17,35 +17,46 @@ class LoadPriceListChangeTrigger extends AbstractFixture implements DependentFix
      */
     protected $data = [
         [
+            'reference' => 'all_scopes_force',
+            'account' => null,
+            'accountGroup' => null,
+            'website' => null,
+            'force' => true
+        ],
+        [
             'reference' => 'pl_changed_config',
             'account' => null,
             'accountGroup' => null,
             'website' => null,
+            'force' => false
         ],
         [
             'reference' => 'pl_changed_w1',
             'account' => null,
             'accountGroup' => null,
             'website' => LoadWebsiteData::WEBSITE1,
+            'force' => false
         ],
         [
             'reference' => 'pl_changed_w1_g1',
             'account' => null,
             'accountGroup' => 'account_group.group1',
             'website' => LoadWebsiteData::WEBSITE1,
+            'force' => false
         ],
         [
             'reference' => 'pl_changed_w1_a1',
             'account' => 'account.level_1',
             'accountGroup' => null,
             'website' => LoadWebsiteData::WEBSITE1,
+            'force' => false
         ],
-
         [
             'reference' => 'pl_changed_w2_a2',
             'account' => 'account.level_1.2',
             'accountGroup' => null,
             'website' => LoadWebsiteData::WEBSITE2,
+            'force' => false
         ],
     ];
 
@@ -65,6 +76,9 @@ class LoadPriceListChangeTrigger extends AbstractFixture implements DependentFix
             if ($changes['website']) {
                 $changesObject->setWebsite($this->getReference($changes['website']));
             }
+
+            $changesObject->setForce($changes['force']);
+
             $manager->persist($changesObject);
             $this->setReference($changes['reference'], $changesObject);
         }

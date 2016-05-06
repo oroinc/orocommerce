@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\ProductBundle\ImportExport\DataConverter;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Bundle\ImportExportBundle\Converter\RelationCalculatorInterface;
+
 use OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter;
 use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
 
@@ -66,5 +68,13 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter
         }
 
         return $data;
+    }
+
+    /**
+     * @param RelationCalculatorInterface $relationCalculator
+     */
+    public function setRelationCalculator(RelationCalculatorInterface $relationCalculator)
+    {
+        $this->relationCalculator = $relationCalculator;
     }
 }
