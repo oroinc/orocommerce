@@ -134,7 +134,7 @@
                         priceContainer: '[data-container="matched-price"]',
                         quantityContainer: '[data-container="quantity"]',
                         quantityComponentOptions: {
-                            dataKey: constant('OroB2B\\Bundle\\ShoppingListBundle\\Form\\Type\\FrontendLineItemType::NAME'),
+                            dataKey: constant('OroB2B\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
                             enable: resource_granted('orob2b_shopping_list_frontend_update'),
                             elements: {
                                 quantity: '[name="product_qty"]',
@@ -205,7 +205,7 @@
                                 <tbody>
                                 <tr>
                                     <td>{{ 'orob2b.frontend.shoppinglist.view.your_price.label'|trans }}</td>
-                                    <td class="text-right" data-container="matched-price">{% if productPrice %}{{ productPrice.value|oro_format_currency({'currency': currency}) }}{% else %}{{ 'oro.ui.empty'|trans }}{% endif %}</td>
+                                    <td class="text-right" data-container="matched-price">{% if productPrice is not null %}{{ productPrice.value|oro_format_currency({'currency': currency}) }}{% else %}{{ 'oro.ui.empty'|trans }}{% endif %}</td>
                                 </tr>
                                 </tbody>
                             </table>

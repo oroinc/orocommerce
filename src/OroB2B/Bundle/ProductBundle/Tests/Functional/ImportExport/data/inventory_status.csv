@@ -1,6 +1,6 @@
-sku,status,inventory_status.id
-SKU001,enabled,
-SKU002,enabled,invalid_inventory
-SKU003,enabled,in_stock
-SKU004,enabled,out_of_stock
-SKU005,enabled,discontinued
+sku,status,unitPrecisions.1.unit.code,unitPrecisions.1.precision,inventory_status.id
+SKU001,enabled,kg,3,
+SKU002,enabled,kg,3,invalid_inventory
+SKU003,enabled,kg,3,in_stock
+SKU004,enabled,kg,3,out_of_stock
+SKU005,enabled,kg,3,discontinued

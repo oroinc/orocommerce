@@ -3,6 +3,7 @@ config:
         'orob2bproduct/js/app/components/product-unit-selection-limitations-component': 'bundles/orob2bproduct/js/app/components/product-unit-selection-limitations-component.js'
         'orob2bproduct/js/app/components/grid-sidebar-component': 'bundles/orob2bproduct/js/app/components/grid-sidebar-component.js'
         'orob2bproduct/js/app/components/product-unit-component': 'bundles/orob2bproduct/js/app/components/product-unit-component.js'
+        'orob2bproduct/js/app/components/product-unit-select-component': 'bundles/orob2bproduct/js/app/components/product-unit-select-component.js'
         'orob2bproduct/js/app/components/quick-add-component': 'bundles/orob2bproduct/js/app/components/quick-add-component.js'
         'orob2bproduct/js/app/components/product-autocomplete-component': 'bundles/orob2bproduct/js/app/components/product-autocomplete-component.js'
         'orob2bproduct/js/app/components/quick-add-form-button-component': 'bundles/orob2bproduct/js/app/components/quick-add-form-button-component.js'
@@ -13,6 +14,8 @@ config:
         'orob2bproduct/js/app/components/redirect-component': 'bundles/orob2bproduct/js/app/components/redirect-component.js'
         'orob2bproduct/js/app/components/product-quantity-editable-component': 'bundles/orob2bproduct/js/app/components/product-quantity-editable-component.js'
         'orob2bproduct/js/app/datagrid/frontend-product-display-options-builder': 'bundles/orob2bproduct/js/app/datagrid/frontend-product-display-options-builder.js'
+        'orob2bproduct/js/app/views/base-product-view': 'bundles/orob2bproduct/js/app/views/base-product-view.js'
+        'orob2bproduct/js/content-processor/product-add-to-dropdown-button': 'bundles/orob2bproduct/js/content-processor/product-add-to-dropdown-button.js'
 
     shim:
         'tinymce/plugins/fullscreen/plugin.min':

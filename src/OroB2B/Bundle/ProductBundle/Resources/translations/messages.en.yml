@@ -65,6 +65,12 @@ orob2b:
             parent_product.label: Parent Product
             product.label: Product
 
+        lineitem:
+            unit.label: Unit
+            quantity:
+                enter: Enter a QTY
+                placeholder: 'QTY #'
+
         menu:
             products_tab.label: Products
             product_list.description: List of existing products
