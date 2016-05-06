@@ -153,6 +153,25 @@ class AbstractMeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'onlyEnabled' => false,
             ],
+            [
+                'entityClass' => 'OroB2B\Bundle\ShippingBundle\Entity\WeightUnit',
+                'ormData' => [
+                ],
+                'configEntryName' => 'orob2b_shipping.weight_units',
+                'configData' => ['test 1' => 'test 1'],
+                'expected' => [
+                ],
+            ],
+            [
+                'entityClass' => 'OroB2B\Bundle\ShippingBundle\Entity\WeightUnit',
+                'ormData' => [
+                ],
+                'configEntryName' => 'orob2b_shipping.weight_units',
+                'configData' => ['test 1' => 'test 1'],
+                'expected' => [
+                ],
+                'onlyEnabled' => false,
+            ],
         ];
     }
 
