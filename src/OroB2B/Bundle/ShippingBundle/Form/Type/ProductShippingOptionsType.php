@@ -74,8 +74,7 @@ class ProductShippingOptionsType extends AbstractType
                     'choices' => $this->freightClassesProvider->getUnits(),
                     'label' => 'orob2b.shipping.product_shipping_options.freight_class.label',
                 ]
-            )
-        ;
+            );
     }
 
     /**
@@ -83,11 +82,14 @@ class ProductShippingOptionsType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
+        $resolver->setDefaults(
+            [
                 'product' => null,
-            'data_class' => $this->dataClass,
-            'intention' => 'product_shipping_options',
-        ]);
+                'data_class' => $this->dataClass,
+                'intention' => 'product_shipping_options',
+                'by_reference' => false,
+            ]
+        );
     }
 
     /**

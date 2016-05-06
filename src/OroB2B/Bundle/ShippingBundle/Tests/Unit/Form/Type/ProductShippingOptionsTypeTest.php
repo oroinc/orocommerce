@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
+use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -11,12 +13,10 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\FreightClassSelectType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\WeightType;
 use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 
@@ -38,6 +38,22 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         $this->formType->setDataClass('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions');
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function getValidators()
+    {
+        $constraint = new UniqueProductUnitShippingOptions();
+
+        $UniqueEntity = $this->getMockBuilder('Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator')
+            ->disableOriginalConstructor()->getMock();
+
+        return [
+            $constraint->validatedBy() => new UniqueProductUnitShippingOptionsValidator(),
+            'doctrine.orm.validator.unique' => $UniqueEntity
+        ];
+    }
+
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
@@ -49,6 +65,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                     'product' => null,
                     'data_class' => 'OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions',
                     'intention' => 'product_shipping_options',
+                    'by_reference' => false,
                 ]
             );
 

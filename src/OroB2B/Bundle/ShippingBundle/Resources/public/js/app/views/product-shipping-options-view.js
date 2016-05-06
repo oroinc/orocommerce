@@ -94,7 +94,7 @@ define(function (require) {
          * @returns {jQuery.Element}
          */
         getSelects: function () {
-            return this.itemsContainer.find(this.options.selectSelector);
+            return this.$itemsContainer.find(this.options.selectSelector);
         },
 
         /**
@@ -160,6 +160,7 @@ define(function (require) {
             if ($select.val() == '' && !_.isEmpty(units)) {
                 var value = _.keys(units)[0];
                 $select.val(value);
+                $($select.find('option')[0]).attr('selected','selected');
                 updateRequired = true;
             }
 
