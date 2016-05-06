@@ -20,5 +20,5 @@ layout:
         - '@move':
             id: footer_copyright
             siblingId: footer_menu_container
-    conditions:
-        '@neq': [ $context.logged_user, null ]
+#    conditions:
+#        '@neq': [ $context.logged_user, null ]
