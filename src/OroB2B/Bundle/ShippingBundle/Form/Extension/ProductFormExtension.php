@@ -100,26 +100,60 @@ class ProductFormExtension extends AbstractTypeExtension
         }
 
         $entityManager = $this->registry->getManagerForClass($this->productShippingOptionsClass);
+        if ($product->getId()) {
+            //Remove
+            /** @var ProductShippingOptions[] $incomingOptions */
+            $incomingOptions = [];
+            /** @var ProductShippingOptions[] $newOptions */
+            $newOptions = [];
+            foreach ($options as $option) {
+                if ($option->getId()) {
+                    $incomingOptions[$option->getId()] = $option;
+                } else {
+                    $newOptions[] = $option;
+                }
+            }
+            /** @var ProductShippingOptions[] $existingOptions */
+            $existingOptions = $this->getProductShippingOptionsRepository()->findBy(['product' => $product->getId()]);
+            $requireFlush = false;
+            foreach ($existingOptions as $option) {
+                if (!isset($incomingOptions[$option->getId()])) {
+                    $entityManager->remove($option);
+                    $requireFlush = true;
+                }
+            }
+            if ($requireFlush) {
+                $entityManager->flush();
+            }
 
-        // persist existing options
-        $persistedOptionsIds = [];
-        foreach ($options as $option) {
-            $priceId = $option->getId();
-            if ($priceId) {
-                $persistedOptionsIds[] = $priceId;
+            /** @var ProductShippingOptions[] $existingOptions */
+            $existingOptions = $this->getProductShippingOptionsRepository()->findBy(['product' => $product->getId()]);
+            //Update
+            foreach ($existingOptions as $option) {
+                if (isset($incomingOptions[$option->getId()])) {
+                    $incomingOption = $incomingOptions[$option->getId()];
+                    $option->setProduct($product);
+                    $option->setProductUnit($incomingOption->getProductUnit());
+                    $option->setWeight($incomingOption->getWeight());
+                    $option->setDimensions($incomingOption->getDimensions());
+                    $option->setFreightClass($incomingOption->getFreightClass());
+                    $entityManager->persist($option);
+                    $requireFlush = true;
+                }
+            }
+            if ($requireFlush) {
+                $entityManager->flush();
+            }
+
+            // Insert new
+            foreach ($newOptions as $option) {
                 $option->setProduct($product);
                 $entityManager->persist($option);
             }
-        }
-
-        // remove deleted options
-        if ($product->getId()) {
-            /** @var ProductShippingOptions[] $existingOptions */
-            $existingOptions = $this->getProductShippingOptionsRepository()->findBy(['product' => $product->getId()]);
-            foreach ($existingOptions as $option) {
-                if (!in_array($option->getId(), $persistedOptionsIds, true)) {
-                    $entityManager->remove($option);
-                }
+        } else {
+            foreach ($options as $option) {
+                $option->setProduct($product);
+                $entityManager->persist($option);
             }
         }
     }

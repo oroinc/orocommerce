@@ -29,6 +29,7 @@ class ProductShippingOptionsCollectionType extends AbstractType
                 'type' => ProductShippingOptionsType::NAME,
                 'show_form_when_empty' => false,
                 'error_bubbling' => false,
+                'required' => false,
             ]
         );
     }

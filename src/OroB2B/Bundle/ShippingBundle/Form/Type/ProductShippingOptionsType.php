@@ -87,7 +87,7 @@ class ProductShippingOptionsType extends AbstractType
                 'product' => null,
                 'data_class' => $this->dataClass,
                 'intention' => 'product_shipping_options',
-                'cascade_validation' => false,
+                'by_reference' => false,
             ]
         );
     }
