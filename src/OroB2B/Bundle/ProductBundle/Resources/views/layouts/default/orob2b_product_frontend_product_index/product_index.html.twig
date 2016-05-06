@@ -9,7 +9,8 @@
         'bodyClassName': 'grid-body products__list products__list_' ~ current_row_view,
         'rowClassName': 'grid-row product-item product-item_' ~ current_row_view,
         'rowAttributes': {
-            'data-layout': 'separate'
+            'data-layout': 'separate',
+            'data-layout-model': 'productModel'
         }
     })}) %}
     {{ block('datagrid_widget') }}
