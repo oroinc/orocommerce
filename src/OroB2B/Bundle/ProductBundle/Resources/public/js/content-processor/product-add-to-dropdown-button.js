@@ -47,7 +47,13 @@ define([
             },
 
             _moreButton: function() {
-                return this._super().data('container', 'body');
+                var $button = this._super();
+
+                if (this.options.appendToBody === true) {
+                    $button.data('container', 'body');
+                }
+
+                return $button;
             },
 
             _prepareMainButton: function($button) {
