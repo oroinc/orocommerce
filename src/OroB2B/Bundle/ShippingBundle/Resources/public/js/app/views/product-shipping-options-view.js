@@ -1,6 +1,6 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var $ = require('jquery');
@@ -17,12 +17,12 @@ define(function (require) {
          */
         options: {
             unitsAttribute: 'units',
-            selectSelector: "select[name^='orob2b_product[product_shipping_options]'][name$='[productUnit]']",
+            selectSelector: 'select[name^=\'orob2b_product[product_shipping_options]\'][name$=\'[productUnit]\']',
             routeFreightClassUpdate: 'orob2b_shipping_freight_classes',
             errorMessage: 'Sorry, unexpected error was occurred',
             selectors: {
                 itemsContainer: 'table.list-items',
-                itemContainer : 'table tr.list-item',
+                itemContainer: 'table tr.list-item',
                 freightClassSelector: '.freight-class-select',
                 freightClassUpdateSelector: '.freight-class-update-trigger'
             }
@@ -30,7 +30,7 @@ define(function (require) {
 
         listen: {
             'product:precision:remove mediator': 'onContentChanged',
-            'product:precision:add mediator'   : 'onContentChanged'
+            'product:precision:add mediator': 'onContentChanged'
         },
 
         /**
@@ -49,9 +49,9 @@ define(function (require) {
         $freightClassesSelect: null,
 
         /**
-         * @inheritdoc
+         * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
         },
@@ -75,7 +75,7 @@ define(function (require) {
             this.onContentChanged();
         },
 
-        onContentChanged: function () {
+        onContentChanged: function() {
             var items = this.$el.find(this.options.selectors.itemContainer);
 
             if (items.length > 0) {
@@ -85,7 +85,7 @@ define(function (require) {
                 productUnits = this.getProductUnits()
                 ;
 
-            _.each(this.getSelects(), function (select) {
+            _.each(this.getSelects(), function(select) {
                 var $select = $(select);
                 var clearChangeRequired = self.clearOptions(productUnits, $select);
                 var addChangeRequired = self.addOptions(productUnits, $select);
@@ -99,7 +99,7 @@ define(function (require) {
             }
         },
 
-        onFreightClassTrigger: function (e) {
+        onFreightClassTrigger: function(e) {
             var self = this;
             var $itemContainer = $(e.target).closest(this.options.selectors.itemContainer);
             this.$freightClassesSelect = $itemContainer.find(this.options.selectors.freightClassSelector);
@@ -122,7 +122,7 @@ define(function (require) {
             });
         },
 
-        onContentRemoved: function () {
+        onContentRemoved: function() {
             var items = this.$el.find(this.options.selectors.itemContainer);
 
             if (items.length === 0) {
@@ -135,7 +135,7 @@ define(function (require) {
          *
          * @returns {Object}
          */
-        getProductUnits: function () {
+        getProductUnits: function() {
             return $(':data(' + this.options.unitsAttribute + ')').data(this.options.unitsAttribute) || {};
         },
 
@@ -144,7 +144,7 @@ define(function (require) {
          *
          * @returns {jQuery.Element}
          */
-        getSelects: function () {
+        getSelects: function() {
             return this.$itemsContainer.find(this.options.selectSelector);
         },
 
@@ -156,7 +156,7 @@ define(function (require) {
          *
          * @return {Boolean}
          */
-        clearOptions: function (units, $select) {
+        clearOptions: function(units, $select) {
             var updateRequired = false;
 
             _.each($select.find('option'), function (option) {
@@ -191,7 +191,7 @@ define(function (require) {
          *
          * @return {Boolean}
          */
-        addOptions: function (units, $select) {
+        addOptions: function(units, $select) {
             var updateRequired = false,
                 emptyOption = $select.find('option[value=""]');
 
@@ -201,7 +201,7 @@ define(function (require) {
                 emptyOption.hide();
             }
 
-            _.each(units, function (text, value) {
+            _.each(units, function(text, value) {
                 if (!$select.find("option[value='" + value + "']").length) {
                     $select.append('<option value="' + value + '">' + text + '</option>');
                     updateRequired = true;
@@ -211,7 +211,7 @@ define(function (require) {
             if ($select.val() === '' && !_.isEmpty(units)) {
                 var value = _.keys(units)[0];
                 $select.val(value);
-                $($select.find('option')[0]).attr('selected','selected');
+                $($select.find('option')[0]).attr('selected', 'selected');
                 updateRequired = true;
             }
 
