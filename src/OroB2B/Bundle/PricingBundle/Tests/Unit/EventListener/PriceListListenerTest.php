@@ -12,6 +12,7 @@ use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\EventListener\PriceListListener;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
+use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
 
 class PriceListListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,6 +34,11 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
     protected $builder;
 
     /**
+     * @var PriceListChangeTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $triggerHandler;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -41,16 +47,34 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->triggerHandler = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->listener = new PriceListListener($this->builder);
+        $this->listener = new PriceListListener($this->builder, $this->triggerHandler);
         $this->priceList = $this->createPriceList();
+
+        // Need call this event first, to set initial state
         $this->listener->beforeSubmit($this->createFormProcessEvent($this->priceList));
     }
 
-    public function testWhenScheduleCollectionWasNotChanged()
+    public function testWithoutChanges()
     {
         $this->builder->expects($this->never())
             ->method('buildByPriceList');
+
+        $this->triggerHandler->expects($this->never())
+            ->method('handlePriceListStatusChange');
+
+        $this->listener->afterFlush($this->createAfterFormProcessEvent($this->priceList));
+    }
+
+    public function testStatusChanged()
+    {
+        $this->priceList->setActive(false);
+        $this->triggerHandler->expects($this->once())
+            ->method('handlePriceListStatusChange');
 
         $this->listener->afterFlush($this->createAfterFormProcessEvent($this->priceList));
     }
