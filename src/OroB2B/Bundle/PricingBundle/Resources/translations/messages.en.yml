@@ -90,7 +90,9 @@ orob2b.pricing:
         will_be_deacitivated: Will be deactivated on %date%.
         active_now: Is active now.
         not_active_now: Is not active now.
-
+        active: Active
+        inactive: Inactive
+        disabled: Disabled
 
     add_schedule: 'Add'
 
