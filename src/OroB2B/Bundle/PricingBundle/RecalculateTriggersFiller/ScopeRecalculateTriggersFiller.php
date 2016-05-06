@@ -96,14 +96,6 @@ class ScopeRecalculateTriggersFiller
     }
 
     /**
-     * @param PriceList $priceList
-     */
-    public function fillTriggersByPriceList(PriceList $priceList)
-    {
-        // todo: Implement in BB-2781
-    }
-
-    /**
      * @param EntityManager $em
      */
     protected function createConfigTriggers(EntityManager $em)
