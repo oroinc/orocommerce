@@ -12,8 +12,10 @@ use Symfony\Component\Form\FormEvents;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
+
 use OroB2B\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
+use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
 
 class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -70,6 +72,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                     'label' => 'orob2b.shipping.product_shipping_options.entity_plural_label',
                     'required' => false,
                     'mapped' => false,
+                    'constraints' => [new UniqueProductUnitShippingOptions()],
                     'options' => [
                         'product' => $product,
                     ],
@@ -82,7 +85,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->with(FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']);
         $builder->expects($this->at(3))
             ->method('addEventListener')
-            ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit']);
+            ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10);
 
         $builder->expects($this->once())
             ->method('getData')
@@ -133,7 +136,12 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
         $form->expects($this->once())
             ->method('getData')
-            ->willReturn([$this->getEntity('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions', ['id' => 1])]);
+            ->willReturn(
+                [
+                    $this->getEntity('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions', ['id' => 1]),
+                    $this->getEntity('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions', ['id' => null]),
+                ]
+            );
 
         $this->manager->expects($this->atLeastOnce())->method('persist');
 

@@ -77,8 +77,7 @@ class ProductShippingOptionsType extends AbstractType
                         'class' => 'freight-class-select',
                     ],
                 ]
-            )
-        ;
+            );
     }
 
     /**
@@ -86,11 +85,14 @@ class ProductShippingOptionsType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'product' => null,
-            'data_class' => $this->dataClass,
-            'intention' => 'product_shipping_options',
-        ]);
+        $resolver->setDefaults(
+            [
+                'product' => null,
+                'data_class' => $this->dataClass,
+                'intention' => 'product_shipping_options',
+                'by_reference' => false,
+            ]
+        );
     }
 
     /**
