@@ -73,7 +73,8 @@ class PriceListListener
             $this->activationPlanBuilder->buildByPriceList($priceList);
         }
 
-        if (array_key_exists(self::IS_ACTIVE_FIELD, $this->plDataBeforeUpdate[$priceList->getId()])
+        if (array_key_exists($priceList->getId(), $this->plDataBeforeUpdate)
+            && array_key_exists(self::IS_ACTIVE_FIELD, $this->plDataBeforeUpdate[$priceList->getId()])
             && $this->plDataBeforeUpdate[$priceList->getId()][self::IS_ACTIVE_FIELD] !== $priceList->isActive()
         ) {
             $this->triggerHandler->handlePriceListStatusChange($priceList);
