@@ -28,7 +28,7 @@ datagrid:
                 label:         orob2b.pricing.pricelist.default.label
                 frontend_type: boolean
             activity:
-                label:         orob2b.pricing.pricelist_schedule.activity.labal
+                label:         orob2b.pricing.pricelist_schedule.activity.label
                 type:          twig
                 frontend_type: html
                 template:      OroB2BPricingBundle:PriceList:Datagrid/schedule.html.twig
@@ -77,7 +77,7 @@ datagrid:
                                 disabled: orob2b.pricing.pricelist_schedule.disabled
                                 inactive: orob2b.pricing.pricelist_schedule.inactive
                                 active: orob2b.pricing.pricelist_schedule.active
-                    label: orob2b.pricing.pricelist_schedule.activity.labal
+                    label: orob2b.pricing.pricelist_schedule.activity.label
 
     pricing-price-list-grid:
         extends: pricing-price-list-select-grid
