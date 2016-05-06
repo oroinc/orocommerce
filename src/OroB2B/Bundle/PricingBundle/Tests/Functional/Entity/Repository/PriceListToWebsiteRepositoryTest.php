@@ -32,9 +32,6 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
 
         /** @var PriceListToWebsite $actualPriceListToWebsite */
         $actualPriceListToWebsite = $repository->findOneBy([]);
-        if (!$actualPriceListToWebsite) {
-            $this->markTestSkipped('Can\'t test method because fixture was not loaded.');
-        }
 
         $expectedPriceListToWebsite = $repository->findByPrimaryKey(
             $actualPriceListToWebsite->getPriceList(),

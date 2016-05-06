@@ -139,12 +139,17 @@ class PriceListChangeTriggerHandler
         }
     }
 
-    public function handleFullRebuild()
+    /**
+     * @param bool|true $andFlush
+     */
+    public function handleFullRebuild($andFlush = true)
     {
         $trigger = $this->createTrigger();
         $trigger->setForce(true);
         $this->getManager()->persist($trigger);
-        $this->getManager()->flush();
+        if ($andFlush) {
+            $this->getManager()->flush();
+        }
         $this->dispatchQueueChange();
     }
 

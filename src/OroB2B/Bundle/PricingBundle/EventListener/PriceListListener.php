@@ -13,6 +13,7 @@ use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
 class PriceListListener
 {
     const IS_ACTIVE_FIELD = 'isActive';
+
     /**
      * @var PriceListSchedule[]
      */
@@ -44,7 +45,6 @@ class PriceListListener
         $this->activationPlanBuilder = $activationPlanBuilder;
         $this->triggerHandler = $triggerHandler;
     }
-
 
     /**
      * @param FormProcessEvent $event

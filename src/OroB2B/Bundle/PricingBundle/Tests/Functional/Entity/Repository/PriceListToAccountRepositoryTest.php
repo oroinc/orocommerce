@@ -35,9 +35,6 @@ class PriceListToAccountRepositoryTest extends WebTestCase
 
         /** @var PriceListToAccount $actualPriceListToAccount */
         $actualPriceListToAccount = $repository->findOneBy([]);
-        if (!$actualPriceListToAccount) {
-            $this->markTestSkipped('Can\'t test method because fixture was not loaded.');
-        }
 
         $expectedPriceListToAccount = $repository->findByPrimaryKey(
             $actualPriceListToAccount->getPriceList(),
