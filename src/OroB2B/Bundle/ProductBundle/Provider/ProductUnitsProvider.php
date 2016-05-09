@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Provider;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductUnitsProvider
 {
@@ -12,9 +13,15 @@ class ProductUnitsProvider
     /** @var  array */
     private $productUnits;
 
-    public function __construct(ObjectManager $entityManager)
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    public function __construct(ObjectManager $entityManager, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
+        $this->translator = $translator;
         $this->productUnits = $this->entityManager
             ->getRepository('OroB2BProductBundle:ProductUnit')
             ->getAllUnits();
@@ -27,7 +34,7 @@ class ProductUnitsProvider
         $unitsFull = [];
         foreach ($this->productUnits as $unit){
             $code = $unit->getCode();
-            $unitsFull[$code] = 'product_unit.'.$code.'.label.full';
+            $unitsFull[$code] = $this->translator->trans('product_unit.'.$code.'.label.full');
         }
         return  $unitsFull;
     }
