@@ -179,7 +179,6 @@ services:
         class: 'OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider'
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@translator"
 
     orob2b_product.provider.quick_add_form_provider:
         class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider'

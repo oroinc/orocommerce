@@ -3,26 +3,28 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\UnitProvider;
 
 use OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Doctrine\Common\Persistence\ObjectManager;
 
-class ProductUnitsProviderTest extends KernelTestCase
+class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var ProductUnitsProvider $productUnitsProvider */
+    /**
+     * @var ProductUnitsProvider $productUnitsProvider
+     */
     protected $productUnitsProvider;
 
     public function setUp()
     {
+        $units = ['each', 'kg', 'hour', 'item', 'set', 'piece'];
+        $productUnits = [];
 
-        $productUnits[] = new ProductUnit('each');
-        $productUnits[] = new ProductUnit('kg');
-        $productUnits[] = new ProductUnit('hour');
-        $productUnits[] = new ProductUnit('item');
-        $productUnits[] = new ProductUnit('set');
-        $productUnits[] = new ProductUnit('piece');
+        foreach ($units as $v) {
+            $productUnits[] = $this->
+            getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', $v, 'code');
+        }
 
         $productUnitRepository = $this
-            ->getMockBuilder(EntityRepository::class)
+            ->getMockBuilder(ProductUnitRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -45,15 +47,33 @@ class ProductUnitsProviderTest extends KernelTestCase
     public function testGetAvailableProductUnits()
     {
         $expected = [
-            'each' => 'product_unit.each.label.full',
-            'kg' => 'product_unit.kg.label.full',
-            'hour' => 'product_unit.hour.label.full',
-            'item' => 'product_unit.item.label.full',
-            'set' => 'product_unit.set.label.full',
-            'piece' => 'product_unit.piece.label.full',
+            'each' => 'orob2b.product_unit.each.label.full',
+            'kg' => 'orob2b.product_unit.kg.label.full',
+            'hour' => 'orob2b.product_unit.hour.label.full',
+            'item' => 'orob2b.product_unit.item.label.full',
+            'set' => 'orob2b.product_unit.set.label.full',
+            'piece' => 'orob2b.product_unit.piece.label.full',
 
         ];
 
         $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnits());
+    }
+
+    /**
+     * @param string $className
+     * @param int|string $idValue
+     * @param string $idProperty
+     * @return object
+     */
+    protected function getEntity($className, $idValue, $idProperty = 'id')
+    {
+        $entity = new $className;
+
+        $reflectionClass = new \ReflectionClass($className);
+        $method = $reflectionClass->getProperty($idProperty);
+        $method->setAccessible(true);
+        $method->setValue($entity, $idValue);
+
+        return $entity;
     }
 }
