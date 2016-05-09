@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\UnitProvider;
 
 use OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ProductUnitsProviderTest extends KernelTestCase
@@ -12,15 +13,36 @@ class ProductUnitsProviderTest extends KernelTestCase
 
     public function setUp()
     {
-        self::bootKernel();
-        $em = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
 
-        $this->productUnitsProvider = new ProductUnitsProvider($em);
+        $productUnits[] = new ProductUnit('each');
+        $productUnits[] = new ProductUnit('kg');
+        $productUnits[] = new ProductUnit('hour');
+        $productUnits[] = new ProductUnit('item');
+        $productUnits[] = new ProductUnit('set');
+        $productUnits[] = new ProductUnit('piece');
+
+        $productUnitRepository = $this
+            ->getMockBuilder(EntityRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $productUnitRepository->expects($this->once())
+            ->method('getAllUnits')
+            ->will($this->returnValue($productUnits));
+
+        $entityManager = $this
+            ->getMockBuilder(ObjectManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $entityManager->expects($this->once())
+            ->method('getRepository')
+            ->will($this->returnValue($productUnitRepository));
+
+        $this->productUnitsProvider = new ProductUnitsProvider($entityManager);
     }
 
-    public function testGetAvailableProductStatus()
+    public function testGetAvailableProductUnits()
     {
         $expected = [
             'each' => 'product_unit.each.label.full',
