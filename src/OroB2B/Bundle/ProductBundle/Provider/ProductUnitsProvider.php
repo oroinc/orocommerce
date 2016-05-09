@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Provider;
 
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+
 class ProductUnitsProvider
 {
     private $entityManager;
@@ -21,7 +23,12 @@ class ProductUnitsProvider
      */
     public function getAvailableProductUnits()
     {
-        return $this->productUnits();
+        $unitsFull = [];
+        foreach ($this->productUnits as $unit){
+            $code = $unit->getCode();
+            $unitsFull[$code] = 'product_unit.'.$code.'.label.full';
+        }
+        return  $unitsFull;
     }
 }
 
