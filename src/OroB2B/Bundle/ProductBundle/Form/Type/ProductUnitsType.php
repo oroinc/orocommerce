@@ -5,22 +5,21 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider;
+use OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
-class ProductStatusType extends AbstractType
+class ProductUnitsType extends AbstractType
 {
-    const NAME = 'orob2b_product_status';
+    const NAME = 'orob2b_product_units';
 
-    /** @var  ProductStatusProvider $productStatuses */
-    protected $productStatusProvider;
+    /** @var  ProductUnitsProvider */
+    protected $productUnitsProvider;
 
     /**
-     * @param ProductStatusProvider $productStatusProvider
+     * @param ProductUnitsProvider $productUnitsProvider
      */
-    public function __construct(ProductStatusProvider $productStatusProvider)
+    public function __construct(ProductUnitsProvider $productUnitsProvider)
     {
-        $this->productStatusProvider = $productStatusProvider;
+        $this->productUnitsProvider = $productUnitsProvider;
     }
 
     /**
@@ -29,8 +28,7 @@ class ProductStatusType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'choices' => $this->productStatusProvider->getAvailableProductStatuses(),
-            'preferred_choices' => Product::STATUS_DISABLED
+            'choices' => $this->productUnitsProvider->getAvailableProductUnits(),
         ));
     }
 
