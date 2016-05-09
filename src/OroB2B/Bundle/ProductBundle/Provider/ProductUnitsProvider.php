@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Provider;
 
+use Doctrine\Common\Persistence\ObjectManager;
+
 class ProductUnitsProvider
 {
     private $entityManager;
@@ -9,11 +11,11 @@ class ProductUnitsProvider
     /** @var  array */
     private $productUnits;
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(ObjectManager $entityManager)
     {
         $this->entityManager = $entityManager;
         $this->productUnits = $this->entityManager
-            ->getRepository('OroB2B\ProductBundle\ProductUnitRepository')
+            ->getRepository('OroB2BProductBundle:ProductUnit')
             ->getAllUnits();
     }
     /**
@@ -21,7 +23,7 @@ class ProductUnitsProvider
      */
     public function getAvailableProductUnits()
     {
-        return $this->productUnits();
+        return $this->productUnits;
     }
 }
 

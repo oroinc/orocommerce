@@ -138,3 +138,11 @@ services:
         public: true
         tags:
             - { name: form.type, alias: orob2b_product_frontend_line_item }
+
+    orob2b_product.form.type.product_units:
+        class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitsType'
+        public: true
+        arguments:
+            - "@orob2b_product.provider.product_units_provider"
+        tags:
+            - { name: form.type, alias: orob2b_product_units }
