@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -18,7 +19,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
+use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
 class AjaxLineItemController extends Controller
@@ -72,14 +73,7 @@ class AjaxLineItemController extends Controller
         }
 
         return new JsonResponse(
-            [
-                'successful' => true,
-                'message' => $this->getSuccessMessage($shoppingList, 'orob2b.shoppinglist.product.added.label'),
-                'shoppingList' => [
-                    'id' => $shoppingList->getId(),
-                    'label' => $shoppingList->getLabel(),
-                ]
-            ]
+            $this->getSuccessResponse($shoppingList, $product, 'orob2b.shoppinglist.product.added.label')
         );
     }
 
@@ -99,16 +93,18 @@ class AjaxLineItemController extends Controller
      *      group_name="commerce"
      * )
      * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
+     * @Method("POST")
      *
+     * @param Request $request
      * @param Product $product
      *
      * @return JsonResponse
      */
-    public function removeProductFromViewAction(Product $product)
+    public function removeProductFromViewAction(Request $request, Product $product)
     {
         $shoppingListManager = $this->get('orob2b_shopping_list.shopping_list.manager');
 
-        $shoppingList = $shoppingListManager->getCurrent();
+        $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
         $result = [
             'successful' => false,
@@ -122,13 +118,11 @@ class AjaxLineItemController extends Controller
             if ($count) {
                 $shoppingListManager->recalculateSubtotals($shoppingList);
 
-                $result = [
-                    'successful' => true,
-                    'message' => $this->getSuccessMessage(
-                        $shoppingList,
-                        'orob2b.frontend.shoppinglist.lineitem.product.removed.label'
-                    )
-                ];
+                $result = $this->getSuccessResponse(
+                    $shoppingList,
+                    $product,
+                    'orob2b.frontend.shoppinglist.lineitem.product.removed.label'
+                );
             }
         }
 
@@ -204,5 +198,34 @@ class AjaxLineItemController extends Controller
             $translationKey,
             ['%shoppinglist%' => sprintf('<a href="%s">%s</a>', $link, $shoppingList->getLabel())]
         );
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param Product $product
+     * @param string $message
+     * @return array
+     */
+    protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
+    {
+        $productLineItems = [];
+        foreach ($shoppingList->getLineItems() as $lineItem) {
+            if ($lineItem->getProduct() === $product) {
+                $productLineItems[$lineItem->getProductUnitCode()] = $lineItem->getQuantity();
+            }
+        }
+
+        return [
+            'successful' => true,
+            'message' => $this->getSuccessMessage($shoppingList, $message),
+            'product' => [
+                'id' => $product->getId(),
+                'lineItems' => $productLineItems
+            ],
+            'shoppingList' => [
+                'id' => $shoppingList->getId(),
+                'label' => $shoppingList->getLabel()
+            ]
+        ];
     }
 }

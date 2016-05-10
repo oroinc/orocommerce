@@ -6,8 +6,8 @@ layout:
             id: product_prices
             parentId: product_specification_container
             siblingId: product_specification
-            blockType: block
+            blockType: container
             options:
                 vars:
                     prices: {'@value': $data.frontend_product_prices}
-                visible: { '@not_empty': $data.frontend_product_prices }
+                visible: { '@has_elements': $data.product.unitPrecisions }

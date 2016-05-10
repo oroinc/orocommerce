@@ -47,7 +47,7 @@ class MatchingPriceProvider
      * @param BasePriceList $priceList
      * @return array
      */
-    public function getMatchingPrices(array $lineItems, BasePriceList $priceList = null)
+    public function getMatchingPrices(array $lineItems, BasePriceList $priceList)
     {
         $productsPriceCriteria = $this->prepareProductsPriceCriteria($lineItems);
 

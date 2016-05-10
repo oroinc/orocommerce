@@ -57,7 +57,7 @@ workflows:
                 label: Flag indicates that payment is in progress
             payment_validate:
                 type: bool
-                label: Payment validatation required
+                label: Payment validation required
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -172,6 +172,8 @@ workflows:
                     is_checkout_continue: true
                     page_component_module: 'orob2bcheckout/js/app/components/payment-transition-button-component'
                 form_options:
+                    init_actions:
+                        - '@assign_value': [$payment_validate, true]
                     attribute_fields:
                         payment_method: ~
                         payment_validate:
@@ -385,8 +387,11 @@ workflows:
             verify_payment_definition:
                 pre_conditions:
                     '@and':
-                        - '@equal': [$payment_validate, false]
                         - '@not_equal': [$payment_in_progress, true]
+                        - '@not':
+                            - '@payment_method_supports':
+                                payment_method: $payment_method
+                                action: 'validate'
                         - '@not':
                             - '@check_request':
                                 is_ajax: true
@@ -453,7 +458,10 @@ workflows:
                         conditions:
                             '@and':
                                 - '@not_empty': $checkout.order.id
-                                - '@equal': [$payment_validate, false]
+                                - '@not':
+                                    - '@payment_method_supports':
+                                        payment_method: $payment_method
+                                        action: 'validate'
                         actions:
                             - '@assign_url':
                                 attribute: $.result.successUrl
@@ -476,12 +484,20 @@ workflows:
                                 transactionOptions:
                                     successUrl: $.result.successUrl
                                     errorUrl: $.result.errorUrl
+                            - '@send_email_template':
+                                parameters:
+                                    from: $checkout.order.owner.email
+                                    to: $checkout.order.accountUser.email
+                                    template: 'order_confirmation_email'
+                                    entity: $checkout.order
                             - '@assign_value': [$payment_in_progress, true]
                     - '@tree':
                         conditions:
                             '@and':
                                 - '@not_empty': $checkout.order.id
-                                - '@equal': [$payment_validate, true]
+                                - '@payment_method_supports':
+                                    payment_method: $payment_method
+                                    action: 'validate'
                         actions:
                             - '@payment_purchase':
                                 object: $checkout.order
@@ -495,6 +511,7 @@ workflows:
                                 route_parameters:
                                     id: $checkout.id
                                     transition: 'finish_checkout'
+
 
             finish_checkout_definition:
                 conditions:

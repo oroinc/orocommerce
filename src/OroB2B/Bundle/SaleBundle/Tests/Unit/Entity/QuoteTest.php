@@ -40,7 +40,7 @@ class QuoteTest extends AbstractTest
             ['locked', true],
             ['request', new Request()],
             ['website', new Website()],
-            ['shippingEstimate', new Price()]
+            ['shippingEstimate', new Price()],
         ];
 
         static::assertPropertyAccessors(new Quote(), $properties);

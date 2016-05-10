@@ -113,5 +113,6 @@ orob2b:
             error: Payment failed
 
         payflow:
-            authorized_card: 'Credit Card ************{{ last4 }}'
-            use_different_card: 'Use a different card'
+            authorized_card: 'Credit Card  **** **** **** {{ last4 }}'
+            use_different_card: 'Use a different card >'
+            use_authorized_card: '< Use an existing card'

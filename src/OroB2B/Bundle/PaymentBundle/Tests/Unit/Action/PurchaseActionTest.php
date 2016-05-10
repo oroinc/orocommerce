@@ -132,6 +132,7 @@ class PurchaseActionTest extends AbstractActionTest
                     'errorUrl' => 'orob2b_payment_callback_error',
                     'returnUrl' => 'orob2b_payment_callback_return',
                     'testResponse' => 'testResponse',
+                    'testOption' => 'testOption'
                 ]
             ],
             'without transactionOptions' => [
@@ -170,6 +171,7 @@ class PurchaseActionTest extends AbstractActionTest
                     'paymentMethod' => self::PAYMENT_METHOD,
                     'errorUrl' => 'orob2b_payment_callback_error',
                     'returnUrl' => 'orob2b_payment_callback_return',
+                    'testOption' => 'testOption'
                 ]
             ],
         ];

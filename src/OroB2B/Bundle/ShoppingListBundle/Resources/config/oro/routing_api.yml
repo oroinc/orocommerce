@@ -4,10 +4,6 @@ orob2b_shopping_list_api:
     options:
         frontend: true
 
-orob2b_shopping_list_api_line_item:
-    resource: "@OroB2BShoppingListBundle/Controller/Api/Rest/LineItemController.php"
-    type:     rest
-
 orob2b_shopping_list_api_line_item_frontend:
     resource: "@OroB2BShoppingListBundle/Controller/Frontend/Api/Rest/LineItemController.php"
     type:     rest

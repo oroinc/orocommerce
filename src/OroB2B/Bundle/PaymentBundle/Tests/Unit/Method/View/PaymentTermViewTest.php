@@ -4,10 +4,8 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\View;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PaymentBundle\Method\View\PaymentTermView;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm as PaymentTermMethod;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
@@ -16,9 +14,6 @@ use OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 {
     use ConfigTestTrait;
-
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
-    protected $configManager;
 
     /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentTermProvider;

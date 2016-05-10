@@ -263,10 +263,6 @@ datagrid:
             id: ~
             view_link:
                 route: orob2b_order_view
-            update_link:
-                route: orob2b_order_update
-            delete_link:
-                route: orob2b_api_delete_order
         actions:
             view:
                 acl_resource:  orob2b_order_view

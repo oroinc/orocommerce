@@ -5,12 +5,11 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\View;
 use Symfony\Component\Form\FormFactoryInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Account;
 use OroB2B\Bundle\PaymentBundle\Method\PayPalPaymentsPro;
-use OroB2B\Bundle\PaymentBundle\Provider\PayflowGatewayPaymentTransactionProvider;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType;
 use OroB2B\Bundle\PaymentBundle\Method\View\PayPalPaymentsProView;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
@@ -21,17 +20,14 @@ class PayPalPaymentsProViewTest extends \PHPUnit_Framework_TestCase
     use ConfigTestTrait;
     use EntityTrait;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
-    protected $configManager;
-
     /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $formFactory;
 
     /** @var PayPalPaymentsProView */
     protected $methodView;
 
-    /** @var  PayflowGatewayPaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $payflowGatewayPaymentTransactionProvider;
+    /** @var  PaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentTransactionProvider;
 
     protected function setUp()
     {
@@ -43,15 +39,15 @@ class PayPalPaymentsProViewTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         
-        $this->payflowGatewayPaymentTransactionProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PayflowGatewayPaymentTransactionProvider')
+        $this->paymentTransactionProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->methodView = new PayPalPaymentsProView(
             $this->formFactory,
             $this->configManager,
-            $this->payflowGatewayPaymentTransactionProvider
+            $this->paymentTransactionProvider
         );
     }
 
@@ -61,7 +57,7 @@ class PayPalPaymentsProViewTest extends \PHPUnit_Framework_TestCase
             $this->methodView,
             $this->configManager,
             $this->formFactory,
-            $this->payflowGatewayPaymentTransactionProvider
+            $this->paymentTransactionProvider
         );
     }
 
@@ -106,8 +102,8 @@ class PayPalPaymentsProViewTest extends \PHPUnit_Framework_TestCase
         }
 
         if ($data['zero_amount']) {
-            $this->payflowGatewayPaymentTransactionProvider->expects($this->once())
-                ->method('getZeroAmountTransaction')
+            $this->paymentTransactionProvider->expects($this->once())
+                ->method('getActiveValidatePaymentTransaction')
                 ->with($entity, PayPalPaymentsPro::TYPE)
                 ->willReturn($transactionEntity);
 
@@ -115,8 +111,10 @@ class PayPalPaymentsProViewTest extends \PHPUnit_Framework_TestCase
                 $expected = array_merge(
                     $expected,
                     [
-                        'authorizeTransaction' => $transactionEntity->getId(),
-                        'acct' => $data['last4']
+                        'creditCardComponent' => 'orob2bpayment/js/app/components/authorized-credit-card-component',
+                        'creditCardComponentOptions' => [
+                            'acct' => $data['last4']
+                        ]
                     ]
                 );
             }

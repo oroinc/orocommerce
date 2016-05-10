@@ -24,6 +24,7 @@ operations:
                 object: $.data
                 amount: $.data.total
                 currency: $.data.currency
+                paymentMethod: $.authorizePaymentTransaction.paymentMethod
                 transactionOptions: []
             - '@flash_message':
                 conditions:
@@ -39,3 +40,6 @@ operations:
                         - '@equal': ['$.result[successful]', false]
                 message: '$.result[message]'
                 type: 'error'
+    DELETE:
+        exclude_datagrids:
+            - order-line-items-grid

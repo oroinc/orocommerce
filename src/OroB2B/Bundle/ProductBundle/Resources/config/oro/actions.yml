@@ -32,7 +32,12 @@ operations:
                 route: orob2b_product_view
                 route_parameters:
                     id: $.product_copy_id
-
+    UPDATE:
+        exclude_datagrids:
+            - products-select-grid
+    DELETE:
+        exclude_datagrids:
+            - products-select-grid
 
 action_groups:
     orob2b_product_duplicate:

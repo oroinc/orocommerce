@@ -32,6 +32,14 @@ services:
         tags:
             - { name: twig.extension }
 
+    orob2b_payment.twig.payment_method_extension:
+        class: 'OroB2B\Bundle\PaymentBundle\Twig\PaymentMethodExtension'
+        arguments:
+            - "@orob2b_payment.provider.payment_transaction"
+            - "@oro_config.manager"
+        tags:
+            - { name: twig.extension }
+
     orob2b_payment.event_listener.form_view:
         class: 'OroB2B\Bundle\PaymentBundle\EventListener\FormViewListener'
         arguments:
@@ -97,13 +105,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_credit_card_form_provider }
 
-    orob2b_payment.provider.term_form_provider:
-        class: 'OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentTermFormProvider'
-        arguments:
-            - '@form.factory'
-        tags:
-            - { name: layout.data_provider, alias: orob2b_payment_payment_term_form_provider }
-
     orob2b_payment.provider.methods_provider:
         class: 'OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider'
         arguments:
@@ -129,11 +130,6 @@ services:
             - '%orob2b_payment.entity.payment_transaction.class%'
         calls:
             - ['setLogger', ['@logger']]
-
-    orob2b_payment.provider.payflow_gateway_payment_transaction:
-        class: 'OroB2B\Bundle\PaymentBundle\Provider\PayflowGatewayPaymentTransactionProvider'
-        arguments:
-            - '@orob2b_payment.provider.payment_transaction'
 
     orob2b_payment.provider.payment_status:
         class: 'OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider'
@@ -181,16 +177,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_payment.callback.return, method: onReturn, priority: 10 }
             - { name: kernel.event_listener, event: orob2b_payment.callback.error, method: onError, priority: 10 }
-
-    orob2b_payment.event_listener.callback.payment_term:
-        class: 'OroB2B\Bundle\PaymentBundle\EventListener\Callback\PaymentTermListener'
-        lazy: true
-        arguments:
-            - '@property_accessor'
-            - '@oro_entity.doctrine_helper'
-            - '@orob2b_payment.provider.payment_term'
-        tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.return, method: onReturn }
 
     orob2b_payment.condition.payment_method_enabled:
         class: 'OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodEnabled'

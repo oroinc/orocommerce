@@ -120,26 +120,31 @@ class PaymentTransactionProvider
 
     /**
      * @param object $object
+     * @param string|null $paymentMethod
      * @return PaymentTransaction|null
      */
-    public function getActiveAuthorizePaymentTransaction($object)
+    public function getActiveAuthorizePaymentTransaction($object, $paymentMethod = null)
     {
-        return $this->getPaymentTransaction(
-            $object,
-            [
-                'active' => true,
-                'successful' => true,
-                'action' => PaymentMethodInterface::AUTHORIZE,
-                'frontendOwner' => $this->getAccountUser($object)
-            ]
-        );
+        $options = [
+            'active' => true,
+            'successful' => true,
+            'action' => PaymentMethodInterface::AUTHORIZE,
+            'frontendOwner' => $this->getAccountUser($object)
+        ];
+
+        if ($paymentMethod) {
+            $options['paymentMethod'] = (string)$paymentMethod;
+        }
+
+        return $this->getPaymentTransaction($object, $options);
     }
 
     /**
      * @param object $object
+     * @param string $paymentMethod
      * @return PaymentTransaction
      */
-    public function getActiveValidatePaymentTransaction($object)
+    public function getActiveValidatePaymentTransaction($object, $paymentMethod)
     {
         return $this->getPaymentTransaction(
             $object,
@@ -147,6 +152,7 @@ class PaymentTransactionProvider
                 'active' => true,
                 'successful' => true,
                 'action' => PaymentMethodInterface::VALIDATE,
+                'paymentMethod' => (string)$paymentMethod,
                 'frontendOwner' => $this->getAccountUser()
             ]
         );
