@@ -50,7 +50,7 @@ class CheckoutLineItemDataProvider extends AbstractCheckoutProvider
             ->getRepository('OroB2BShoppingListBundle:LineItem');
         $lineItems = $repository->getItemsWithProductByShoppingList($entity);
 
-        $shoppingListPrices = $this->frontendProductPricesDataProvider->getProductsPrices($lineItems);
+        $shoppingListPrices = $this->frontendProductPricesDataProvider->getProductsMatchedPrice($lineItems);
         $data = [];
         foreach ($lineItems as $lineItem) {
             $unitCode = $lineItem->getProductUnitCode();

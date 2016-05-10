@@ -81,7 +81,18 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'qid'           => self::QUOTE3,
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER1,
-            'products'      => [],
+            'products'      => [
+                self::PRODUCT1 => [
+                    [
+                        'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
+                        'quantity'  => 1,
+                        'unit'      => self::UNIT1,
+                        'price'     => self::PRICE1,
+                        'currency'  => self::CURRENCY1,
+                        'allow_increments' => true
+                    ],
+                ],
+            ],
             'shippingEstimate' => 10
         ],
         self::QUOTE4 => [

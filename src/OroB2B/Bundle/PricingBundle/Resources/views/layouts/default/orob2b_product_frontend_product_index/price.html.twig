@@ -1,16 +1,68 @@
 {% block _product_grid_row_price_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " product-item__price product-item__price_<%= themeOptions.view %> mb1-md mb1-sm"
-    }) %}
+    {% set attr = {
+        "data-page-component-module": "oroui/js/app/components/view-component",
+        "data-page-component-options": {
+            view: 'orob2bpricing/js/app/views/base-product-prices-view'
+        }|json_encode
+    }|merge(attr|merge({
+        class: attr.class|default('') ~ " product-item__price product-item__price_<%= themeOptions.view %> mb1-md mb1-sm",
+    })) %}
     <div {{ block('block_attributes') }}>
-        <% if (!_.isEmpty(model.prices)) { %>
+        <div data-name="price">
             {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }}
-            <div class="product-item__price_block">
-                <% _.each(model.prices, function(price, forField) { %>
-                    <div><span class="fs16 blue"><%= price.formatted_price %></span> / <%= price.formatted_unit %></div>
-                <% }) %>
+            <div class="product-item__price_block"
+                 data-name="prices-hint"
+                 data-placement="bottom"
+                 data-close="false"
+                 data-trigger="hover"
+                 data-container="body"
+                 data-class="prices-hint-content">
+                <% var firstPrice = model.prices[_.keys(model.prices)[0]]; %>
+                <div>
+                    <span class="fs16 blue" data-name="price-value"><%= firstPrice ? firstPrice.formatted_price : '' %></span>
+                    / <%= firstPrice ? firstPrice.formatted_unit : ''%>
+                </div>
             </div>
-        <% } %>
+        </div>
+        <div data-name="prices-hint-content" class="hidden">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="text-uppercase">qty</th>
+                    <th >Unit Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <% var addNewLine = false %>
+                    <% var modelPrices = _.sortBy(model.prices, 'quantity'); %>
+                    <% _.each(model.product_units, function(label, key) { %>
+                        <% var prices = _.filter(modelPrices, function(price){return price.unit === key}); %>
+                        <% if (prices.length) { %>
+                            <tr>
+                                <td colspan="2" class="text-capitalize">
+                                    <%= addNewLine ? '<br/>' : '' %>
+                                    <b><%= label %></b>
+                                </td>
+                            </tr>
+                            <% addNewLine = true %>
+                            <% _.each(prices, function(price) { %>
+                                <tr>
+                                    <td><%= price.quantity %></td>
+                                    <td><%= price.formatted_price %></td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+        <div data-name="price-not-found">
+            <% if (!_.isEmpty(model.prices)) { %>
+                {{ 'orob2b.pricing.frontend.product_prices.price_not_found'|trans }}
+            <% } else { %>
+                {{ 'orob2b.pricing.frontend.product_prices.empty_prices'|trans }}
+            <% } %>
+        </div>
     </div>
 {% endblock %}
 
@@ -19,7 +71,23 @@
         class: attr.class|default('') ~ " product-item__listed-price product-item__listed-price_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        {{ 'orob2b.pricing.frontend.pricelist.index.listed_price'|trans }} <span>$12.99</span>
+        <% if (!_.isEmpty(model.prices)) { %>
+            {{ 'orob2b.pricing.frontend.pricelist.index.listed_price'|trans }}
+            <div class="product-item__price_block">
+                <% var pricesPerUnits = {};
+                _.each(model.prices, function(price) {
+                    var unit = price.unit;
+                    if (!pricesPerUnits[unit] || price.quantity < pricesPerUnits[unit].quantity) {
+                        pricesPerUnits[unit] = price;
+                    }
+                }) %>
+                <% _.each(pricesPerUnits, function(price) { %>
+                    <div title="{{ 'orob2b.pricing.productprice.applicable_from'|trans({'%amount%': '<%= price.quantity_with_unit %>'})|raw }}">
+                        <span><%= price.formatted_price %></span> / <%= price.formatted_unit %>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
     </div>
 {% endblock %}
 

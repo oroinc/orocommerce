@@ -273,6 +273,7 @@ services:
             - '@orob2b_pricing.model.price_list_request_handler'
             - '@oro_locale.formatter.number'
             - '@orob2b_product.formatter.product_unit_label'
+            - '@orob2b_product.formatter.product_unit_value'
             - '@orob2b_pricing.provider.user_currency'
         calls:
             - [setProductPriceClass, ['%orob2b_pricing.entity.combined_product_price.class%']]
@@ -523,6 +524,13 @@ services:
             - '@oro_security.security_facade'
             - '@oro_entity.routing_helper'
             - '@doctrine'
+
+    orob2b_pricing.formatter.product_price_formatter:
+        class: 'OroB2B\Bundle\PricingBundle\Formatter\ProductPriceFormatter'
+        arguments:
+            - '@oro_locale.formatter.number'
+            - '@orob2b_product.formatter.product_unit_label'
+            - '@orob2b_product.formatter.product_unit_value'
 
     orob2b_pricing.recalculate_triggers_filler.scope_recalculate_triggers_filler:
         class: 'OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller'
