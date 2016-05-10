@@ -2,16 +2,15 @@
 
 namespace OroB2B\Bundle\ProductBundle\Provider;
 
-use Oro\Bundle\ConfigBundle\Config\CongifManager;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class DefaultProductUnitProvider
 {
     private $configManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CongifManager $configManager */
-    public function __construct(CongifManager $configManager)
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
+    public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
     }

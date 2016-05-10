@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -130,6 +132,7 @@ class ProductType extends AbstractType
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener']);
     }
 
     /**
@@ -138,6 +141,19 @@ class ProductType extends AbstractType
     public function preSetDataListener(FormEvent $event)
     {
         $product = $event->getData();
+        if ($product->getId() == null) {
+            $unit = new ProductUnit();
+            $unit
+                ->setCode('kg')
+                ->setDefaultPrecision(3);
+
+            $unitPrecision = new ProductUnitPrecision();
+            $unitPrecision
+                ->setUnit($unit)
+                ->setPrecision($unit->getDefaultPrecision());
+
+            $product->addUnitPrecision($unitPrecision);
+        }
         $form = $event->getForm();
         if ($product instanceof Product && $product->getHasVariants()) {
             $form
@@ -147,6 +163,15 @@ class ProductType extends AbstractType
                     ['product_class' => $this->dataClass, 'by_reference' => false]
                 );
         }
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function postSetDataListener(FormEvent $event)
+    {
+        $product = $event->getData();
+        $form = $event->getForm();
     }
 
     /**
