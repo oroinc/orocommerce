@@ -24,7 +24,8 @@ define(function(require) {
                 itemsContainer: 'table.list-items',
                 itemContainer: 'table tr.list-item',
                 freightClassSelector: '.freight-class-select',
-                freightClassUpdateSelector: '.freight-class-update-trigger'
+                freightClassUpdateSelector: '.freight-class-update-trigger',
+                addButtonSelector: '.product-shipping-options-collection .add-list-item'
             }
         },
 
@@ -63,27 +64,27 @@ define(function(require) {
                 .on('content:changed', _.bind(this.onContentChanged, this))
                 .on('content:remove', _.bind(this.onContentRemoved, this))
             ;
+            this.$itemsContainer.on('click', '.removeRow', _.bind(this.onContentChanged, this));
 
             this.loadingMaskView = new LoadingMaskView({container: this.options.selectors.itemsContainer});
 
-            this.$itemsContainer.on(
-                'change',
-                this.options.selectors.freightClassUpdateSelector,
-                _.bind(this.onFreightClassTrigger, this)
-            );
+            this.$itemsContainer
+                .on(
+                    'change',
+                    this.options.selectors.freightClassUpdateSelector,
+                    _.bind(this.onFreightClassTrigger, this)
+                )
+                .on('change', this.options.selectSelector, _.bind(this.onProductUnitChanged, this))
+            ;
 
             this.onContentChanged();
         },
 
         onContentChanged: function() {
             var items = this.$el.find(this.options.selectors.itemContainer);
-
-            if (items.length > 0) {
-                this.$itemsContainer.show();
-            }
-            var self = this,
-                productUnits = this.getProductUnits()
-                ;
+            var self = this;
+            var productUnits = this.getProductUnits();
+            var selectedUnits = [];
 
             _.each(this.getSelects(), function(select) {
                 var $select = $(select);
@@ -92,11 +93,47 @@ define(function(require) {
                 if (clearChangeRequired || addChangeRequired) {
                     $select.trigger('change');
                 }
+                if (_.indexOf(selectedUnits, $select.val()) === -1) {
+                    selectedUnits.push($select.val());
+                }
             });
 
             if (items.length > 0) {
                 this.$itemsContainer.show();
             }
+            $(this.options.selectors.addButtonSelector).toggle(
+                _.keys(productUnits).length > selectedUnits.length
+            );
+        },
+
+        onProductUnitChanged: function() {
+            var units = this.getProductUnits();
+            var selectedUnits = [];
+            var selectedUnitsBefore = [];
+
+            _.each(this.getSelects(), function(select) {
+                var value = $(select).val();
+                if (_.indexOf(selectedUnits, value) === -1) {
+                    selectedUnits.push(value);
+                }
+            });
+
+            _.each(this.getSelects(), function(select) {
+                var $select = $(select);
+                var currentValue = $select.val();
+                $select.find('option').remove();
+                if (_.indexOf(selectedUnitsBefore, currentValue) === -1) {
+                    selectedUnitsBefore.push(currentValue);
+                } else {
+                    currentValue = '';
+                }
+                $.each(units, function(code, label) {
+                    if (code === currentValue || _.indexOf(selectedUnits, code) === -1) {
+                        $select.append($('<option/>').val(code).text(label));
+                    }
+                });
+                $select.val(currentValue);
+            });
         },
 
         onFreightClassTrigger: function(e) {
@@ -159,7 +196,7 @@ define(function(require) {
         clearOptions: function(units, $select) {
             var updateRequired = false;
 
-            _.each($select.find('option'), function (option) {
+            _.each($select.find('option'), function(option) {
 
                 if (!option.value) {
                     return;
