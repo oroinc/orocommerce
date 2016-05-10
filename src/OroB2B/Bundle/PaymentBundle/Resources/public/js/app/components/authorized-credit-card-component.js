@@ -3,7 +3,6 @@ define(function(require) {
 
     var AuthorizedCreditCardComponent;
     var _ = require('underscore');
-    var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var CreditCardComponent = require('orob2bpayment/js/app/components/credit-card-component');
 
@@ -12,12 +11,10 @@ define(function(require) {
          * @property {Object}
          */
         authorizedOptions: {
-            selectors: {
-                differentCard: '[data-different-card]',
-                authorizedCard: '[data-authorized-card]',
-                differentCardHandle: '[data-different-card-handle]',
-                authorizedCardHandle: '[data-authorized-card-handle]'
-            }
+            differentCard: '[data-different-card]',
+            authorizedCard: '[data-authorized-card]',
+            differentCardHandle: '[data-different-card-handle]',
+            authorizedCardHandle: '[data-authorized-card-handle]'
         },
 
         /**
@@ -43,12 +40,12 @@ define(function(require) {
 
             this.options = _.defaults(options || {}, this.options);
 
-            this.$authorizedCard = this.$el.find(this.authorizedOptions.selectors.authorizedCard);
-            this.$differentCard = this.$el.find(this.authorizedOptions.selectors.differentCard);
+            this.$authorizedCard = this.$el.find(this.authorizedOptions.authorizedCard);
+            this.$differentCard = this.$el.find(this.authorizedOptions.differentCard);
 
             this.$el
-                .on('click', this.authorizedOptions.selectors.authorizedCardHandle, _.bind(this.showAuthorizedCard, this))
-                .on('click', this.authorizedOptions.selectors.differentCardHandle, _.bind(this.showDifferentCard, this));
+                .on('click', this.authorizedOptions.authorizedCardHandle, _.bind(this.showAuthorizedCard, this))
+                .on('click', this.authorizedOptions.differentCardHandle, _.bind(this.showDifferentCard, this));
         },
 
         showDifferentCard: function() {
@@ -57,8 +54,7 @@ define(function(require) {
 
             this.$differentCard.show('slide', {direction: 'right'});
             this.$authorizedCard.hide('slide', {direction: 'left'}, (function() {
-                this.$authorizedCard
-                    .css('position', 'relative');
+                this.$authorizedCard.css('position', 'relative');
             }).bind(this));
 
             this.setPaymentValidateRequired(true);
@@ -72,8 +68,7 @@ define(function(require) {
 
             this.$authorizedCard.show('slide', {direction: 'left'});
             this.$differentCard.hide('slide', {direction: 'right'}, (function() {
-                this.$authorizedCard
-                    .css('position', 'relative');
+                this.$authorizedCard.css('position', 'relative');
             }).bind(this));
 
             this.setPaymentValidateRequired(false);
@@ -82,9 +77,11 @@ define(function(require) {
         },
 
         beforeTransit: function(eventData) {
-            if (this.getPaymentValidateRequired()) {
-                AuthorizedCreditCardComponent.__super__.beforeTransit.call(this, eventData);
+            if (!this.getPaymentValidateRequired()) {
+                return;
             }
+
+            AuthorizedCreditCardComponent.__super__.beforeTransit.call(this, eventData);
         },
 
         /**
@@ -96,8 +93,8 @@ define(function(require) {
             }
 
             this.$el
-                .off('click', this.authorizedOptions.selectors.authorizedCardHandle, _.bind(this.showAuthorizedCard, this))
-                .off('click', this.authorizedOptions.selectors.differentCardHandle, _.bind(this.showDifferentCard, this));
+                .off('click', this.authorizedOptions.authorizedCardHandle, _.bind(this.showAuthorizedCard, this))
+                .off('click', this.authorizedOptions.differentCardHandle, _.bind(this.showDifferentCard, this));
 
             AuthorizedCreditCardComponent.__super__.dispose.call(this);
         }
