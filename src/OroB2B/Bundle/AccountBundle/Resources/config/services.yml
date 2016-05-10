@@ -854,3 +854,9 @@ services:
               - '@form.factory'
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_form }
+
+    orob2b_account.provider.account_user_relations_provider:
+        class: 'OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider'
+        arguments:
+            - '@oro_config.global'
+            - '@oro_entity.doctrine_helper'

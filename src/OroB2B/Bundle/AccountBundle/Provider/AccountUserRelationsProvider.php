@@ -2,12 +2,35 @@
 
 namespace OroB2B\Bundle\AccountBundle\Provider;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class AccountUserRelationsProvider
 {
+    /**
+     * @var ConfigManager
+     */
+    protected $configManager;
+
+    /**
+     * @var DoctrineHelper
+     */
+    protected $doctrineHelper;
+
+    /**
+     * @param ConfigManager $configManager
+     * @param DoctrineHelper $doctrineHelper
+     */
+    public function __construct(ConfigManager $configManager, DoctrineHelper $doctrineHelper)
+    {
+        $this->configManager = $configManager;
+        $this->doctrineHelper = $doctrineHelper;
+    }
+
     /**
      * @param AccountUser|null $accountUser
      * @return null|Account
@@ -33,7 +56,14 @@ class AccountUserRelationsProvider
                 return $account->getGroup();
             }
         } else {
-            // TODO: Get for anonymous user, BB-2986
+            $anonymousGroupId = $this->configManager->get('oro_b2b_account.anonymous_account_group');
+
+            if ($anonymousGroupId) {
+                return $this->doctrineHelper->getEntityReference(
+                    'OroB2BAccountBundle:AccountGroup',
+                    $anonymousGroupId
+                );
+            }
         }
 
         return null;
