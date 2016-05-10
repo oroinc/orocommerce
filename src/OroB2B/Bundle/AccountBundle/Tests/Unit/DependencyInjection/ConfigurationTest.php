@@ -50,6 +50,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => 1,
                             'scope' => 'app'
                         ],
+                        'anonymous_account_group' => [
+                            'value' => null,
+                            'scope' => 'app'
+                        ],
                         'registration_allowed' => [
                             'value' => true,
                             'scope' => 'app'
