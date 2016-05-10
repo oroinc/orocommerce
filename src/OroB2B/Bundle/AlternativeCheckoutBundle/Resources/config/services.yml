@@ -1,14 +1,17 @@
-services:
-    orob2b.event_listener.checkout_entity:
-        class: 'OroB2B\Bundle\AlternativeCheckoutBundle\EventListener\CheckoutEntityListener'
-        lazy: true
-        arguments:
-            - '@oro_workflow.manager'
-            - '@doctrine'
-        tags:
-            - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity, priority: -10}
+parameters:
+    orob2b_alternativecheckout.entity.alternativecheckout.class: OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout
 
-    orob2b.workflow_expression.user_in_group:
+services:
+    orob2b_alternativecheckout.event_listener.checkout_entity:
+        parent: 'orob2b_checkout.event_listener.checkout_entity.abstract'
+        calls:
+            - [setCheckoutClassName, ['%orob2b_alternativecheckout.entity.alternativecheckout.class%']]
+            - [setCheckoutType, ['alternative']]
+        tags:
+            - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity, priority: 10}
+            - {name: kernel.event_listener, event: orob2b_checkout.create_checkout_entity, method: onCreateCheckoutEntity, priority: 10}
+
+    orob2b_alternativecheckout.workflow_expression.user_in_group:
         class: 'OroB2B\Bundle\AlternativeCheckoutBundle\Condition\AssertAccount'
         arguments:
             - '@oro_security.security_facade'

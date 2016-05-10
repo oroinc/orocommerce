@@ -6,6 +6,11 @@ services:
             - [setEntityName, ['%orob2b_product.entity.product.class%']]
             - [setEventDispatcher, ['@event_dispatcher']]
 
+    orob2b_product.importexport.data_converter.product_template:
+        parent: orob2b_product.importexport.data_converter.product
+        calls:
+            - [setRelationCalculator, ['@oro_importexport.data_converter.template_fixture.relation_calculator']]
+
     orob2b_product.importexport.strategy.product:
         class: 'OroB2B\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy'
         parent: orob2b_fallback.importexport.strategy.localized_fallback_value_aware
@@ -45,6 +50,12 @@ services:
             - [setDataConverter, ['@orob2b_product.importexport.data_converter.product']]
         tags:
             - { name: oro_importexport.processor, type: export, entity: '%orob2b_product.entity.product.class%', alias: orob2b_product_product }
+
+    orob2b_product.importexport.processor.export_template.product:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, ['@orob2b_product.importexport.data_converter.product_template']]
+        tags:
             - { name: oro_importexport.processor, type: export_template, entity: '%orob2b_product.entity.product.class%', alias: orob2b_product_product_export_template }
 
     orob2b_product.event_listener.product_normalizer:

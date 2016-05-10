@@ -57,9 +57,10 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * @ORM\HasLifecycleCallbacks()
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class Product extends ExtendProduct implements OrganizationAwareInterface
+class Product extends ExtendProduct implements OrganizationAwareInterface, \JsonSerializable
 {
     const STATUS_DISABLED = 'disabled';
     const STATUS_ENABLED = 'enabled';
@@ -868,5 +869,16 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
             $this->variantLinks = new ArrayCollection();
             $this->variantFields = [];
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'product_units' => $this->getAvailableUnitCodes(),
+        ];
     }
 }

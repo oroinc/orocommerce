@@ -1,0 +1,30 @@
+{% block _request_for_quote_for_unit_widget %}
+    {% for unit in units %}
+        <tr>
+            <td colspan="2" class="text-center">
+                <strong>{{ unit.code|orob2b_format_product_unit_label|capitalize }}</strong>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="text-center">
+                <div class="product_view_request_quote_for_unit">{{ 'orob2b.frontend.sale.btn.add_to_rfp'|trans }}</div>
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block _request_a_quote_form_button_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% set btnOptions = {
+        'label': 'orob2b.frontend.sale.product.view.request_a_quote'|trans,
+        'aCss': 'direct-link btn-block btn-orange btn_lg',
+        'dataUrl': 'orob2b_rfp_frontend_request_create',
+        'pageComponent': {
+            'module': 'oroui/js/app/components/view-component',
+            'options': {
+                'view': 'orob2bsale/js/app/views/product-add-to-rfq-view'
+            }
+        }
+    } %}
+    {{ UI.clientButton(btnOptions) }}
+{% endblock %}

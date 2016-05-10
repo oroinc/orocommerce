@@ -194,7 +194,9 @@ class ProductPriceRepositoryTest extends WebTestCase
                     'product_price.3',
                     'product_price.12',
                     'product_price.5',
-                    'product_price.4'
+                    'product_price.4',
+                    'product_price.16',
+                    'product_price.15',
                 ],
             ],
         ];

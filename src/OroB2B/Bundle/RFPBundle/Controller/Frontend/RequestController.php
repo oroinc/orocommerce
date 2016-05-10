@@ -16,10 +16,8 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class RequestController extends Controller
@@ -79,22 +77,13 @@ class RequestController extends Controller
      * @Route("/create", name="orob2b_rfp_frontend_request_create")
      * @Layout
      *
+     * @param Request $request
      * @return array
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
-        $rfpRequest = new RFPRequest();
-        $user = $this->getUser();
-        if ($user instanceof AccountUser) {
-            $rfpRequest
-                ->setAccountUser($user)
-                ->setAccount($user->getAccount())
-                ->setFirstName($user->getFirstName())
-                ->setLastName($user->getLastName())
-                ->setCompany($user->getAccount()->getName())
-                ->setEmail($user->getEmail())
-            ;
-        }
+        $rfpRequest = $this->get('orob2b_rfp.request.manager')->create();
+        $this->addProductItemsToRfpRequest($rfpRequest, $request);
 
         $response = $this->update($rfpRequest);
 
@@ -153,31 +142,30 @@ class RequestController extends Controller
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     $route = $securityFacade->isGranted('ACCOUNT_EDIT', $rfpRequest)
                         ? 'orob2b_rfp_frontend_request_update'
-                        : 'orob2b_rfp_frontend_request_view'
-                    ;
+                        : 'orob2b_rfp_frontend_request_view';
 
                     return [
-                        'route'         => $route,
-                        'parameters'    => ['id' => $rfpRequest->getId()],
+                        'route' => $route,
+                        'parameters' => ['id' => $rfpRequest->getId()],
                     ];
                 }
 
                 return [
-                    'route'         => 'orob2b_rfp_frontend_request_create',
-                    'parameters'    => [],
+                    'route' => 'orob2b_rfp_frontend_request_create',
+                    'parameters' => [],
                 ];
             },
             function (RFPRequest $rfpRequest) use ($securityFacade) {
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     return [
-                        'route'         => 'orob2b_rfp_frontend_request_view',
-                        'parameters'    => ['id' => $rfpRequest->getId()],
+                        'route' => 'orob2b_rfp_frontend_request_view',
+                        'parameters' => ['id' => $rfpRequest->getId()],
                     ];
                 }
 
                 return [
-                    'route'         => 'orob2b_rfp_frontend_request_create',
-                    'parameters'    => [],
+                    'route' => 'orob2b_rfp_frontend_request_create',
+                    'parameters' => [],
                 ];
             },
             $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message'),
@@ -237,7 +225,37 @@ class RequestController extends Controller
             ->getDoctrine()
             ->getManagerForClass($requestStatusClass)
             ->getRepository($requestStatusClass)
-            ->findOneBy(['name' => $defaultRequestStatusName])
-        ;
+            ->findOneBy(['name' => $defaultRequestStatusName]);
+    }
+
+    /**
+     * @param RFPRequest $rfpRequest
+     * @param Request $request
+     */
+    protected function addProductItemsToRfpRequest(RFPRequest $rfpRequest, Request $request)
+    {
+        $productLineItems = (array)$request->query->get('product_items', []);
+        $filteredProducts = [];
+        foreach ($productLineItems as $productId => $items) {
+            $productId = (int)$productId;
+            if ($productId <= 0) {
+                continue;
+            }
+            $filteredItems = [];
+            foreach ($items as $item) {
+                if (!is_array($item) || array_diff(['unit', 'quantity'], array_keys($item))) {
+                    continue;
+                }
+                $filteredItems[] = $item;
+            }
+            if (count($filteredItems) > 0) {
+                $filteredProducts[$productId] = $filteredItems;
+            }
+        }
+        if (count($productLineItems) === 0) {
+            return;
+        }
+        $this->get('orob2b_rfp.request.manager')
+            ->addProductLineItemsToRequest($rfpRequest, $filteredProducts);
     }
 }

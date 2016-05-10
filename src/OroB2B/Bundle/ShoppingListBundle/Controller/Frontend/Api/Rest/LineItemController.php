@@ -18,7 +18,7 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
+use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 
 /**
  * @NamePrefix("orob2b_api_shopping_list_frontend_")

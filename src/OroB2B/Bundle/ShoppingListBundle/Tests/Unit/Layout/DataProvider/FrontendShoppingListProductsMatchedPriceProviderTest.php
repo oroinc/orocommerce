@@ -2,15 +2,14 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Component\Layout\LayoutContext;
 
 use OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
+use OroB2B\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsPricesDataProvider;
+use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsMatchedPriceProvider;
 
-class FrontendShoppingListProductsPricesDataProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendShoppingListProductsMatchedPriceProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|FrontendProductPricesDataProvider
@@ -18,14 +17,14 @@ class FrontendShoppingListProductsPricesDataProviderTest extends \PHPUnit_Framew
     protected $frontendProductPricesDataProvider;
 
     /**
-     * @var  FrontendShoppingListProductsPricesDataProvider
+     * @var  FrontendShoppingListProductsMatchedPriceProvider
      */
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListLineItemsDataProvider
      */
-    protected $registry;
+    protected $shoppingListLineItemsDataProvider;
 
     public function setUp()
     {
@@ -33,20 +32,14 @@ class FrontendShoppingListProductsPricesDataProviderTest extends \PHPUnit_Framew
             ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->shoppingListLineItemsDataProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider')
+            ->disableOriginalConstructor()->getMock();
 
-        $this->provider = new FrontendShoppingListProductsPricesDataProvider(
+        $this->provider = new FrontendShoppingListProductsMatchedPriceProvider(
             $this->frontendProductPricesDataProvider,
-            $this->registry
+            $this->shoppingListLineItemsDataProvider
         );
-    }
-
-    /**
-     * @expectedException \BadMethodCallException
-     */
-    public function testGetIdentifier()
-    {
-        $this->provider->getIdentifier();
     }
 
     /**
@@ -71,26 +64,15 @@ class FrontendShoppingListProductsPricesDataProviderTest extends \PHPUnit_Framew
 
         if ($shoppingList) {
             $lineItems = [];
-            $repo = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
-                ->disableOriginalConstructor()
-                ->getMock();
-            $repo->expects($this->once())
-                ->method('getItemsWithProductByShoppingList')
-                ->with($shoppingList)
-                ->will($this->returnValue($lineItems));
 
-            $em = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
-            $em->expects($this->once())
-                ->method('getRepository')
-                ->will($this->returnValue($repo));
-            $this->registry->expects($this->once())
-                ->method('getManagerForClass')
-                ->will($this->returnValue($em));
+            $this->shoppingListLineItemsDataProvider->expects($this->once())
+                ->method('getShoppingListLineItems')
+                ->willReturn($lineItems);
 
             $expected = 'expectedData';
             $this->frontendProductPricesDataProvider
                 ->expects($this->once())
-                ->method('getProductsPrices')
+                ->method('getProductsMatchedPrice')
                 ->with($lineItems)
                 ->willReturn($expected);
         }
