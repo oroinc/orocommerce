@@ -180,6 +180,11 @@ services:
         arguments:
             - "@doctrine.orm.entity_manager"
 
+    orob2b_product.provider.default_product_unit_provider:
+        class: 'OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider'
+        arguments:
+            - "@oro_config.manager"
+
     orob2b_product.provider.quick_add_form_provider:
         class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider'
         public: true
