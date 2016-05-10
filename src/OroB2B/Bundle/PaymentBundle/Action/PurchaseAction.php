@@ -14,9 +14,7 @@ class PurchaseAction extends AbstractPaymentMethodAction
         parent::configureOptionsResolver($resolver);
 
         $resolver
-            ->setRequired('paymentMethod')
             ->setDefined('reference')
-            ->addAllowedTypes('paymentMethod', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface'])
             ->addAllowedTypes('reference', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface']);
     }
 
@@ -45,7 +43,7 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         if (!empty($options['reference'])) {
             $sourcePaymentTransaction = $this->paymentTransactionProvider
-                ->getActiveValidatePaymentTransaction($options['reference']);
+                ->getActiveValidatePaymentTransaction($options['reference'], $options['paymentMethod']);
 
             if (!$sourcePaymentTransaction) {
                 throw new \RuntimeException('Payment transaction by reference not found');

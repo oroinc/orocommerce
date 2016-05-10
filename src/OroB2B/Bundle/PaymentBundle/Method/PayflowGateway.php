@@ -184,6 +184,10 @@ class PayflowGateway implements PaymentMethodInterface
      */
     protected function secureTokenResponse(PaymentTransaction $paymentTransaction)
     {
+        // Mark successful false for generate token transaction
+        // PayPal callback should update transaction
+        $paymentTransaction->setSuccessful(false);
+
         $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
 
         $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
@@ -279,6 +283,14 @@ class PayflowGateway implements PaymentMethodInterface
         return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ENABLED_KEY);
     }
 
+    /**
+     * @return bool
+     */
+    protected function isZeroAmountAuthorizationEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY);
+    }
+
     /** {@inheritdoc} */
     public function getType()
     {
@@ -288,10 +300,10 @@ class PayflowGateway implements PaymentMethodInterface
     /** {@inheritdoc} */
     public function supports($actionName)
     {
-        return in_array(
-            $actionName,
-            [self::AUTHORIZE, self::CAPTURE, self::CHARGE, self::PURCHASE, self::VALIDATE],
-            true
-        );
+        if ($actionName === self::VALIDATE) {
+            return $this->isZeroAmountAuthorizationEnabled();
+        }
+
+        return in_array($actionName, [self::AUTHORIZE, self::CAPTURE, self::CHARGE, self::PURCHASE], true);
     }
 }

@@ -91,6 +91,6 @@ class PaymentTerm implements PaymentMethodInterface
     /** {@inheritdoc} */
     public function supports($actionName)
     {
-        return $actionName === self::PURCHASE;
+        return in_array($actionName, [self::PURCHASE, self::VALIDATE], true);
     }
 }

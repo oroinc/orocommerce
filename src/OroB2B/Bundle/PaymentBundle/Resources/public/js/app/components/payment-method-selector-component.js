@@ -15,10 +15,11 @@ define(function(require) {
         options: {
             selectors: {
                 radio: '[data-choice]',
-                item_container: '[data-item-container]',
+                itemContainer: '[data-item-container]',
                 subform: '[data-form-container]',
-                submit_button: '[data-payment-method-submit]',
-                no_methods: 'payment-no-methods'
+                submitButton: '[data-payment-method-submit]',
+                noMethods: 'payment-no-methods',
+                paymentValidateRequired: '[name$="[payment_validate]"]'
             },
             redirectEvent: 'scroll keypress mousedown tap',
             delay: 1000 * 60 * 15 // 15 minutes
@@ -71,9 +72,10 @@ define(function(require) {
         },
 
         updateForms: function(e) {
-            var element =  e.target;
+            var $element =  $(e.target);
             this.$el.find(this.options.selectors.subform).hide();
-            $(element).parents(this.options.selectors.item_container).find(this.options.selectors.subform).show();
+            $element.parents(this.options.selectors.itemContainer).find(this.options.selectors.subform).show();
+            mediator.trigger('checkout:payment:method:changed', {paymentMethod: $element.val()});
         }
     });
 

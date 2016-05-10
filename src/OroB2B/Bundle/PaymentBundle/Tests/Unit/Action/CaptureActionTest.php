@@ -20,6 +20,7 @@ class CaptureActionTest extends AbstractActionTest
             'amount' => 100.0,
             'currency' => 'USD',
             'attribute' => new PropertyPath('test'),
+            'paymentMethod' => self::PAYMENT_METHOD,
             'transactionOptions' => [],
         ];
 
@@ -63,7 +64,7 @@ class CaptureActionTest extends AbstractActionTest
         $this->paymentTransactionProvider
             ->expects($this->once())
             ->method('getActiveAuthorizePaymentTransaction')
-            ->with($options['object'], $options['amount'], $options['currency'])
+            ->with($options['object'], $options['amount'], $options['currency'], $options['paymentMethod'])
             ->willReturn($paymentTransaction);
 
         $responseValue = $this->returnValue($data['response']);
@@ -74,7 +75,7 @@ class CaptureActionTest extends AbstractActionTest
 
         $capturePaymentTransaction = new PaymentTransaction();
         $capturePaymentTransaction
-            ->setPaymentMethod($data['testPaymentMethodType'])
+            ->setPaymentMethod($options['paymentMethod'])
             ->setEntityIdentifier($data['testEntityIdentifier']);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
@@ -87,13 +88,13 @@ class CaptureActionTest extends AbstractActionTest
         $this->paymentTransactionProvider
             ->expects($this->once())
             ->method('createPaymentTransaction')
-            ->with($data['testPaymentMethodType'], PaymentMethodInterface::CAPTURE, $options['object'])
+            ->with($options['paymentMethod'], PaymentMethodInterface::CAPTURE, $options['object'])
             ->willReturn($capturePaymentTransaction);
 
         $this->paymentMethodRegistry
             ->expects($this->once())
             ->method('getPaymentMethod')
-            ->with($data['testPaymentMethodType'])
+            ->with($options['paymentMethod'])
             ->willReturn($paymentMethod);
 
         $this->paymentTransactionProvider
@@ -129,11 +130,11 @@ class CaptureActionTest extends AbstractActionTest
                         'amount' => 100.0,
                         'currency' => 'USD',
                         'attribute' => new PropertyPath('test'),
+                        'paymentMethod' => self::PAYMENT_METHOD,
                         'transactionOptions' => [
                             'testOption' => 'testOption'
                         ],
                     ],
-                    'testPaymentMethodType' => self::PAYMENT_METHOD,
                     'testEntityIdentifier' => 10,
                     'response' => ['testResponse' => 'testResponse'],
                 ],
@@ -152,11 +153,11 @@ class CaptureActionTest extends AbstractActionTest
                         'amount' => 100.0,
                         'currency' => 'USD',
                         'attribute' => new PropertyPath('test'),
+                        'paymentMethod' => self::PAYMENT_METHOD,
                         'transactionOptions' => [
                             'testOption' => 'testOption'
                         ],
                     ],
-                    'testPaymentMethodType' => self::PAYMENT_METHOD,
                     'testEntityIdentifier' => 10,
                     'response' => new \Exception(),
                 ],

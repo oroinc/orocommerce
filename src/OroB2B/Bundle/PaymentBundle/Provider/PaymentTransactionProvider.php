@@ -122,28 +122,33 @@ class PaymentTransactionProvider
      * @param object $object
      * @param string $amount
      * @param string $currency
-     * @return PaymentTransaction|null
+     * @param string|null $paymentMethod
+     * @return null|PaymentTransaction
      */
-    public function getActiveAuthorizePaymentTransaction($object, $amount, $currency)
+    public function getActiveAuthorizePaymentTransaction($object, $amount, $currency, $paymentMethod = null)
     {
-        return $this->getPaymentTransaction(
-            $object,
-            [
-                'active' => true,
-                'successful' => true,
-                'action' => PaymentMethodInterface::AUTHORIZE,
-                'amount' => round($amount, 2),
-                'currency' => $currency,
-                'frontendOwner' => $this->getAccountUser($object)
-            ]
-        );
+        $options = [
+            'active' => true,
+            'successful' => true,
+            'action' => PaymentMethodInterface::AUTHORIZE,
+            'amount' => round($amount, 2),
+            'currency' => $currency,
+            'frontendOwner' => $this->getAccountUser($object)
+        ];
+
+        if ($paymentMethod) {
+            $options['paymentMethod'] = (string)$paymentMethod;
+        }
+
+        return $this->getPaymentTransaction($object, $options);
     }
 
     /**
      * @param object $object
+     * @param string $paymentMethod
      * @return PaymentTransaction
      */
-    public function getActiveValidatePaymentTransaction($object)
+    public function getActiveValidatePaymentTransaction($object, $paymentMethod)
     {
         return $this->getPaymentTransaction(
             $object,
@@ -151,6 +156,7 @@ class PaymentTransactionProvider
                 'active' => true,
                 'successful' => true,
                 'action' => PaymentMethodInterface::VALIDATE,
+                'paymentMethod' => (string)$paymentMethod,
                 'frontendOwner' => $this->getAccountUser()
             ]
         );

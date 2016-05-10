@@ -13,7 +13,7 @@ use OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType;
 use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Account;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
-use OroB2B\Bundle\PaymentBundle\Provider\PayflowGatewayPaymentTransactionProvider;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
 class PayflowGatewayView implements PaymentMethodViewInterface
@@ -26,22 +26,22 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     /** @var OptionsResolver */
     private $optionsResolver;
 
-    /** @var PayflowGatewayPaymentTransactionProvider */
-    protected $payflowGatewayPaymentTransactionProvider;
+    /** @var PaymentTransactionProvider */
+    protected $paymentTransactionProvider;
 
     /**
      * @param FormFactoryInterface $formFactory
      * @param ConfigManager $configManager
-     * @param PayflowGatewayPaymentTransactionProvider $payflowGatewayPaymentTransactionProvider
+     * @param PaymentTransactionProvider $paymentTransactionProvider
      */
     public function __construct(
         FormFactoryInterface $formFactory,
         ConfigManager $configManager,
-        PayflowGatewayPaymentTransactionProvider $payflowGatewayPaymentTransactionProvider
+        PaymentTransactionProvider $paymentTransactionProvider
     ) {
         $this->formFactory = $formFactory;
         $this->configManager = $configManager;
-        $this->payflowGatewayPaymentTransactionProvider = $payflowGatewayPaymentTransactionProvider;
+        $this->paymentTransactionProvider = $paymentTransactionProvider;
     }
 
     /** {@inheritdoc} */
@@ -57,12 +57,16 @@ class PayflowGatewayView implements PaymentMethodViewInterface
         ];
 
         if ($this->isZeroAmountAuthorizationEnabled()) {
-            $authorizeTransaction = $this->payflowGatewayPaymentTransactionProvider
-                ->getZeroAmountTransaction($contextOptions['entity'], $this->getPaymentMethodType());
+            $authorizeTransaction = $this->paymentTransactionProvider
+                ->getActiveValidatePaymentTransaction($contextOptions['entity'], $this->getPaymentMethodType());
 
             if ($authorizeTransaction) {
-                $viewOptions['authorizeTransaction'] = $authorizeTransaction->getId();
-                $viewOptions['acct'] = $this->getLast4($authorizeTransaction);
+                $viewOptions['creditCardComponent'] =
+                    'orob2bpayment/js/app/components/authorized-credit-card-component';
+
+                $viewOptions['creditCardComponentOptions'] = [
+                    'acct' => $this->getLast4($authorizeTransaction),
+                ];
             }
         }
 

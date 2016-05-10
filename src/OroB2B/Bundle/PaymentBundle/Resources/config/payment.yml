@@ -42,7 +42,7 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_config.global'
-            - '@orob2b_payment.provider.payflow_gateway_payment_transaction'
+            - '@orob2b_payment.provider.payment_transaction'
 
     orob2b_payment.payment_method.view.paypal_payments_pro:
         class: 'OroB2B\Bundle\PaymentBundle\Method\View\PayPalPaymentsProView'
