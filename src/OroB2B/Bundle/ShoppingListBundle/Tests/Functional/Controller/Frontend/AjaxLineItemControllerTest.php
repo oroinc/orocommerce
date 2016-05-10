@@ -70,7 +70,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 ]
             ),
             [
-                'orob2b_shopping_list_frontend_line_item' => [
+                'orob2b_product_frontend_line_item' => [
                     'quantity' => $quantity,
                     'unit' => $unit->getCode(),
                     '_token' => $this->getCsrfToken(),
@@ -86,11 +86,6 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertArrayHasKey('product', $result);
         $this->assertArrayHasKey('id', $result['product']);
         $this->assertEquals($product->getId(), $result['product']['id']);
-        $this->assertArrayHasKey('units', $result['product']);
-
-        foreach ($product->getAvailableUnitCodes() as $code) {
-            $this->assertArrayHasKey($code, $result['product']['units']);
-        }
 
         $shoppingList = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroB2BShoppingListBundle:ShoppingList')
@@ -145,7 +140,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             'POST',
             $this->getUrl('orob2b_shopping_list_frontend_add_product', ['productId' => $product->getId()]),
             [
-                'orob2b_shopping_list_frontend_line_item' => [
+                'orob2b_product_frontend_line_item' => [
                     'quantity' => null,
                     'unit' => null,
                     '_token' => $this->getCsrfToken(),
@@ -406,7 +401,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         return $this->client
             ->getContainer()
             ->get('security.csrf.token_manager')
-            ->getToken('orob2b_shopping_list_frontend_line_item')
+            ->getToken('orob2b_product_frontend_line_item')
             ->getValue();
     }
 

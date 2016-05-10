@@ -6,6 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
@@ -61,8 +63,13 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     {
         $this->manager = $manager;
         $this->clearPreconditions();
+        /** @var AccountUser $accountUser */
+        $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')
+            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
         foreach ($this->getData() as $name => $checkoutData) {
             $checkout = $this->createCheckout();
+            $checkout->setAccountUser($accountUser);
+            $checkout->setOrganization($accountUser->getOrganization());
             $source = new CheckoutSource();
             /** @var CheckoutSourceEntityInterface $sourceEntity */
             $sourceEntity = $this->getReference($checkoutData['source']);

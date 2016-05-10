@@ -37,23 +37,23 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
      */
     public function getPriceLists($accountGroup, Website $website, $sortOrder = Criteria::DESC)
     {
-        return $this->createQueryBuilder('PriceListToAccountGroup')
-            ->innerJoin('PriceListToAccountGroup.priceList', 'priceList')
-            ->innerJoin('PriceListToAccountGroup.accountGroup', 'accountGroup')
-            ->where('accountGroup = :accountGroup')
-            ->andWhere('PriceListToAccountGroup.website = :website')
-            ->orderBy('PriceListToAccountGroup.priority', $sortOrder)
-            ->setParameters(['accountGroup' => $accountGroup, 'website' => $website])
-            ->getQuery()
-            ->getResult();
+        $qb = $this->createQueryBuilder('relation');
+        $qb->innerJoin('relation.priceList', 'priceList')
+            ->where($qb->expr()->eq('relation.accountGroup', ':accountGroup'))
+            ->andWhere($qb->expr()->eq('relation.website', ':website'))
+            ->andWhere($qb->expr()->eq('priceList.active', ':active'))
+            ->orderBy('relation.priority', $sortOrder)
+            ->setParameters(['accountGroup' => $accountGroup, 'website' => $website, 'active' => true]);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
      * @param Website $website
-     * @param int $fallback
+     * @param int|null $fallback
      * @return BufferedQueryResultIterator|AccountGroup[]
      */
-    public function getAccountGroupIteratorByDefaultFallback(Website $website, $fallback)
+    public function getAccountGroupIteratorByDefaultFallback(Website $website, $fallback = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct accountGroup')
@@ -78,14 +78,18 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
                 $qb->expr()->eq('priceListFallBack.website', ':website')
             )
         )
-        ->where(
-            $qb->expr()->orX(
-                $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite'),
-                $qb->expr()->isNull('priceListFallBack.fallback')
-            )
-        )
         ->setParameter('website', $website)
-        ->setParameter('fallbackToWebsite', $fallback);
+        ->orderBy('accountGroup.id', Criteria::ASC);
+
+        if ($fallback !== null) {
+            $qb->where(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite'),
+                    $qb->expr()->isNull('priceListFallBack.fallback')
+                )
+            )
+                ->setParameter('fallbackToWebsite', $fallback);
+        }
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }

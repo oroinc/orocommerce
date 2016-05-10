@@ -328,7 +328,7 @@ class StartCheckout extends AbstractAction
      * @param CheckoutSource $checkoutSource
      * @return CheckoutInterface
      */
-    protected function getCheckout($checkoutSource = null)
+    protected function getCheckout($checkoutSource)
     {
         $event = new CheckoutEntityEvent();
         $event->setSource($checkoutSource);
@@ -336,7 +336,12 @@ class StartCheckout extends AbstractAction
         $checkout = $event->getCheckoutEntity();
 
         if (!$checkout) {
-            throw new \RuntimeException("Checkout entity should be specified during event process");
+            $this->dispatcher->dispatch(CheckoutEvents::CREATE_CHECKOUT_ENTITY, $event);
+            $checkout = $event->getCheckoutEntity();
+        }
+
+        if (!$checkout) {
+            throw new \RuntimeException('Checkout entity should be specified.');
         }
 
         return $checkout;

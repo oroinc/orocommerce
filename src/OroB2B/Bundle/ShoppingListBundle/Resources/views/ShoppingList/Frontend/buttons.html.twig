@@ -57,11 +57,6 @@
             label: shoppingListLabel
         }
     }) %}
-    {% if options.dataUrl %}
-        {% set dataAttributes = dataAttributes|merge({
-            urlOptions: (options.dataUrlOptions|merge({shoppingListId: shoppingListId}))|json_encode
-        }) %}
-    {% endif %}
 
     {% set buttonOptions = {
         'dataAttributes': dataAttributes,
@@ -76,50 +71,44 @@
             'dataUrl': options.dataUrl,
         }) %}
     {% endif %}
+    {% if options.pageComponent is defined %}
+        {% set buttonOptions = buttonOptions|merge({
+            'pageComponent': options.pageComponent,
+        }) %}
+    {% endif %}
 
     {{ UI.clientButton(buttonOptions) }}
 {% endmacro %}
 
-{% macro createAddToShoppingListButton(options) %}
+{% macro getButtonsHtml(options) %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import _self as buttons %}
-    {% set buttonsHtml %}
-        {% set existingShoppingLists = [] %}
-        {% for shoppingList in options.shoppingLists %}
-            {% if shoppingList.current %}
-                {{ buttons.addToCurrentButton(options.current|merge({shoppingList: shoppingList})) }}
-            {% else %}
-                {%  set existingShoppingLists = existingShoppingLists|merge([shoppingList]) %}
-            {% endif %}
+    <div class="btn-group"
+         {{ UI.renderPageComponentAttributes({
+             module: options.componentModule|default('orob2bshoppinglist/js/app/views/product-add-to-shopping-list-view'),
+             options: {
+                 buttonTemplate: buttons.buttonTemplate(options.current),
+                 removeButtonTemplate: options.remove is defined ? buttons.buttonTemplate(options.remove),
+             }|merge(options.componentOptions|default({}))
+         }) }}
+        >
+        {% if options.shoppingLists is not empty %}
+            {% set existingShoppingLists = [] %}
+            {% for shoppingList in options.shoppingLists %}
+                {% if shoppingList.current %}
+                    {{ buttons.addToCurrentButton(options.current|merge({shoppingList: shoppingList})) }}
+                {% else %}
+                    {%  set existingShoppingLists = existingShoppingLists|merge([shoppingList]) %}
+                {% endif %}
+            {% endfor %}
+            {% for shoppingList in existingShoppingLists %}
+                {{ buttons.addToButton(options.existing|merge({shoppingList: shoppingList})) }}
+            {% endfor %}
+            {{ buttons.addToNewButton(options.new) }}
         {% else %}
             {% set aCss = options.singleButtonACss is defined ? options.singleButtonACss : "" %}
             {{ buttons.addToCurrentButton(options.current|merge({shoppingList: null, aCss: aCss})) }}
-        {% endfor %}
-        {% for shoppingList in existingShoppingLists %}
-            {{ buttons.addToButton(options.existing|merge({shoppingList: shoppingList})) }}
-        {% endfor %}
-        {% if options.shoppingLists is not empty %}
-            {{ buttons.addToNewButton(options.new) }}
         {% endif %}
-    {% endset %}
-    {% set customOptions = {
-        defaultClass: options.defaultClass|default(''),
-        addedClass: options.addedClass|default(''),
-    } %}
-    {% set customOptions = customOptions
-        |merge(options.groupContainer|default(false) ? {'groupContainer': options.groupContainer} : {} )
-        |merge(options.truncateLabelLength|default(false) ? {'truncateLength': options.truncateLabelLength} : {} )
-    %}
-    {{ UI.pinnedDropdownButton({
-        'html': buttonsHtml,
-        'options': {
-            'widgetModule': 'orob2bshoppinglist/js/content-processor/add-to-shopping-list-dropdown-button',
-            'widgetName': 'addToShoppingListDropdownButtonProcessor',
-            'addButtonEvent': 'shopping-list:created',
-            'updateButtonLabel': options.updateButtonLabel is defined ? options.updateButtonLabel : true,
-            'buttonTemplate': buttons.buttonTemplate(options.current),
-            'buttonRemoveTemplate': options.remove is defined ? buttons.buttonTemplate(options.remove) : '',
-            'truncateLength': 15
-        }|merge(customOptions)
-    }) }}
+    </div>
 {% endmacro %}
+

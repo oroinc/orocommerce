@@ -48,8 +48,10 @@ layout:
                         vars:
                             shoppingList:
                                 '@value': $data.entity
-                            productsPrices:
-                                '@value': $data.orob2b_shopping_list_products_prices
+                            productsMatchedPrice:
+                                '@value': $data.orob2b_shopping_list_products_matched_price
+                            productsAllPrices:
+                                '@value': $data.orob2b_shopping_list_products_all_prices
                             productsUnits:
                                 '@value': $data.orob2b_shopping_list_products_units
                 shopping_list_line_items_empty:

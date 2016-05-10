@@ -4,8 +4,8 @@ oro_system_configuration:
             title: orob2b.pricing.system_configuration.groups.default_price_lists.title
         price_rounding:
             title: orob2b.pricing.system_configuration.groups.price_rounding.title
-        price_lists_update_mode:
-            title: orob2b.pricing.system_configuration.groups.price_lists_update_mode.title
+        price_lists_update:
+            title: orob2b.pricing.system_configuration.groups.price_lists_update.title
         pricing:
             title: orob2b.pricing.system_configuration.groups.pricing.title
             icon: 'icon-credit-card'
@@ -47,16 +47,26 @@ oro_system_configuration:
                     - Type:
                         type: integer
         oro_b2b_pricing.price_lists_update_mode:
-                    data_type: string
-                    type: choice
-                    options:
-                        label: orob2b.pricing.system_configuration.fields.price_lists_update_mode.label
-                        tooltip: orob2b.pricing.system_configuration.fields.price_lists_update_mode.tooltip
-                        choice_translation_domain: messages
-                        choices:
-                            scheduled: orob2b.pricing.system_configuration.fields.price_lists_update_mode.choices.scheduled.label
-                            real_time: orob2b.pricing.system_configuration.fields.price_lists_update_mode.choices.real_time.label
-
+            data_type: string
+            type: choice
+            options:
+                label: orob2b.pricing.system_configuration.fields.price_lists_update_mode.label
+                tooltip: orob2b.pricing.system_configuration.fields.price_lists_update_mode.tooltip
+                choice_translation_domain: messages
+                choices:
+                    scheduled: orob2b.pricing.system_configuration.fields.price_lists_update_mode.choices.scheduled.label
+                    real_time: orob2b.pricing.system_configuration.fields.price_lists_update_mode.choices.real_time.label
+        oro_b2b_pricing.offset_of_processing_cpl_prices:
+            data_type: float
+            type: number
+            options:
+                label: orob2b.pricing.system_configuration.fields.offset_of_processing_cpl_prices.label
+                tooltip: orob2b.pricing.system_configuration.fields.offset_of_processing_cpl_prices.tooltip
+                constraints:
+                    - NotBlank: ~
+                    - 'OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero': ~
+                    - Type:
+                        type: float
 
     tree:
         system_configuration:
@@ -76,7 +86,8 @@ oro_system_configuration:
                                         priority: 100
                                         children:
                                             - oro_b2b_pricing.default_price_lists
-                                    price_lists_update_mode:
+                                    price_lists_update:
                                         priority: 50
                                         children:
                                             - oro_b2b_pricing.price_lists_update_mode
+                                            - oro_b2b_pricing.offset_of_processing_cpl_prices

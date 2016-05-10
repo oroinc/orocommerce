@@ -144,3 +144,9 @@ services:
             - '@form.factory'
         tags:
             - { name: layout.data_provider, alias: orob2b_rfp_request_form }
+
+    orob2b_rfp.request.manager:
+        class: 'OroB2B\Bundle\RFPBundle\Model\RequestManager'
+        arguments:
+            - '@oro_security.security_facade'
+            - '@oro_entity.doctrine_helper'

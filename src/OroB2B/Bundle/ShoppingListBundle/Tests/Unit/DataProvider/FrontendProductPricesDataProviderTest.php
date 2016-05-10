@@ -113,7 +113,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
             $expected = ['42' => ['test' => $price]];
         }
 
-        $result = $this->provider->getProductsPrices($lineItems);
+        $result = $this->provider->getProductsMatchedPrice($lineItems);
         $this->assertEquals($expected, $result);
     }
 

@@ -16,6 +16,7 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
     const LINE_ITEM_1 = 'shopping_list_line_item.1';
     const LINE_ITEM_2 = 'shopping_list_line_item.2';
     const LINE_ITEM_3 = 'shopping_list_line_item.3';
+    const LINE_ITEM_4 = 'shopping_list_line_item.4';
 
     /** @var array */
     protected $lineItems = [
@@ -26,10 +27,22 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
             'quantity' => 23.15
         ],
         self::LINE_ITEM_2 => [
-            'product' => LoadProductData::PRODUCT_2,
+            'product' => LoadProductData::PRODUCT_4,
             'shoppingList' => LoadShoppingLists::SHOPPING_LIST_3,
-            'unit' => 'product_unit.liter',
+            'unit' => 'product_unit.bottle',
             'quantity' => 5
+        ],
+        self::LINE_ITEM_3 => [
+            'product' => LoadProductData::PRODUCT_5,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
+            'unit' => 'product_unit.bottle',
+            'quantity' => 1
+        ],
+        self::LINE_ITEM_4 => [
+            'product' => LoadProductData::PRODUCT_1,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
+            'unit' => 'product_unit.box',
+            'quantity' => 1
         ],
     ];
 
