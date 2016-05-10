@@ -6,6 +6,7 @@ orob2b.pricing:
         id.label: Id
         name.label: Name
         default.label: Is Default
+        active.label: Active
         currencies.label: Currencies
         schedule.label: Schedule
         has_price_list.label: Has Price List
@@ -26,6 +27,16 @@ orob2b.pricing:
 
         form:
             pricelist_required: Please select a price list first...
+        status:
+            label: Status
+            disable: Disable
+            enable: Enable
+            enabled: Enabled
+            disabled: Disabled
+            message:
+              enabled: Price List was enabled successfully
+              disabled: Price List was disabled successfully
+
     quantity.label: Quantity
     fallback:
         label: Fallback
@@ -73,8 +84,8 @@ orob2b.pricing:
         unit: 'per unit'
 
     pricelist_schedule:
-        active.labal: Active
-        activity.labal: Activity
+        active.label: Enabled
+        activity.label: Status
         active_at.label: 'Active At'
         deactivate_at.label: 'Deactivate At'
         was_activated: Was activated on %date%.
@@ -83,7 +94,9 @@ orob2b.pricing:
         will_be_deacitivated: Will be deactivated on %date%.
         active_now: Is active now.
         not_active_now: Is not active now.
-
+        active: Active
+        inactive: Inactive
+        disabled: Disabled
 
     add_schedule: 'Add'
 

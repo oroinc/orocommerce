@@ -1,5 +1,3 @@
-{% if value %}
-    {{ 'orob2b.pricing.pricelist_schedule.active_now'|trans }}
-{% else %}
-    {{ 'orob2b.pricing.pricelist_schedule.not_active_now'|trans }}
-{% endif %}
+{% spaceless %}
+    {{ ('orob2b.pricing.pricelist_schedule.' ~ value)|trans }}
+{% endspaceless %}

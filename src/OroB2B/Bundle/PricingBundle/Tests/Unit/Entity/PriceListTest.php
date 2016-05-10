@@ -19,6 +19,7 @@ class PriceListTest extends \PHPUnit_Framework_TestCase
             $this->createPriceList(),
             [
                 ['default', false],
+                ['active', true],
             ]
         );
     }
