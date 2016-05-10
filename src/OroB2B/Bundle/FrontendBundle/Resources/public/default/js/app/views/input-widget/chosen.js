@@ -19,6 +19,8 @@ define(function(require) {
 
         containerClassSuffix: 'select',
 
+        refreshOnChange: true,
+
         isInitialized: function() {
             return this.$el.data('chosen') ? true : false;
         },

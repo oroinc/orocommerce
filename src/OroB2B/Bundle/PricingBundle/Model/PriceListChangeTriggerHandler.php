@@ -14,6 +14,8 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller;
 
 class PriceListChangeTriggerHandler
 {
@@ -33,18 +35,26 @@ class PriceListChangeTriggerHandler
     protected $insertFromSelectQueryExecutor;
 
     /**
+     * @var ScopeRecalculateTriggersFiller
+     */
+    protected $triggersFiller;
+
+    /**
      * @param ManagerRegistry $registry
      * @param EventDispatcherInterface $eventDispatcher
      * @param InsertFromSelectQueryExecutor $insertFromSelectExecutor
+     * @param ScopeRecalculateTriggersFiller $triggersFiller
      */
     public function __construct(
         ManagerRegistry $registry,
         EventDispatcherInterface $eventDispatcher,
-        InsertFromSelectQueryExecutor $insertFromSelectExecutor
+        InsertFromSelectQueryExecutor $insertFromSelectExecutor,
+        ScopeRecalculateTriggersFiller $triggersFiller
     ) {
         $this->registry = $registry;
         $this->eventDispatcher = $eventDispatcher;
         $this->insertFromSelectQueryExecutor = $insertFromSelectExecutor;
+        $this->triggersFiller = $triggersFiller;
     }
 
     /**
@@ -55,7 +65,7 @@ class PriceListChangeTriggerHandler
         $trigger = $this->createTrigger();
         $trigger->setWebsite($website);
         $this->getManager()->persist($trigger);
-        $this->triggerChangeListener();
+        $this->dispatchQueueChange();
     }
 
     /**
@@ -66,9 +76,10 @@ class PriceListChangeTriggerHandler
     {
         $trigger = $this->createTrigger();
         $trigger->setAccount($account)
+            ->setAccountGroup($account->getGroup())
             ->setWebsite($website);
         $this->getManager()->persist($trigger);
-        $this->triggerChangeListener();
+        $this->dispatchQueueChange();
     }
 
     /**
@@ -81,7 +92,7 @@ class PriceListChangeTriggerHandler
         if ($andFlush) {
             $this->getManager()->flush();
         }
-        $this->triggerChangeListener();
+        $this->dispatchQueueChange();
     }
 
     /**
@@ -94,7 +105,16 @@ class PriceListChangeTriggerHandler
         $trigger->setAccountGroup($accountGroup)
             ->setWebsite($website);
         $this->getManager()->persist($trigger);
-        $this->triggerChangeListener();
+        $this->dispatchQueueChange();
+    }
+
+    /**
+     * @param PriceList $priceList
+     */
+    public function handlePriceListStatusChange(PriceList $priceList)
+    {
+        $this->triggersFiller->fillTriggersByPriceList($priceList);
+        $this->dispatchQueueChange();
     }
 
     /**
@@ -115,11 +135,25 @@ class PriceListChangeTriggerHandler
                     $websiteIds,
                     $this->insertFromSelectQueryExecutor
                 );
-            $this->triggerChangeListener();
+            $this->dispatchQueueChange();
         }
     }
 
-    protected function triggerChangeListener()
+    /**
+     * @param bool|true $andFlush
+     */
+    public function handleFullRebuild($andFlush = true)
+    {
+        $trigger = $this->createTrigger();
+        $trigger->setForce(true);
+        $this->getManager()->persist($trigger);
+        if ($andFlush) {
+            $this->getManager()->flush();
+        }
+        $this->dispatchQueueChange();
+    }
+
+    protected function dispatchQueueChange()
     {
         $event = new PriceListQueueChangeEvent();
         $this->eventDispatcher->dispatch(PriceListQueueChangeEvent::BEFORE_CHANGE, $event);

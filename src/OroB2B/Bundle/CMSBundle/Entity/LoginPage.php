@@ -13,6 +13,8 @@ use OroB2B\Bundle\CMSBundle\Model\ExtendLoginPage;
  * @ORM\Table(name="orob2b_cms_login_page")
  * @ORM\Entity()
  * @Config(
+ *      routeName="orob2b_cms_loginpage_index",
+ *      routeUpdate="orob2b_cms_loginpage_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-sign-in"

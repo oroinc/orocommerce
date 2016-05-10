@@ -1,0 +1,16 @@
+OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse:
+    properties:
+        country:
+            - NotBlank: ~
+            - Valid: ~
+        region:
+            - NotBlank: ~
+            - Valid: ~
+        postalCode:
+            - NotBlank: ~
+        city:
+            - NotBlank: ~
+        street:
+            - NotBlank: ~
+        warehouse:
+            - NotBlank: ~

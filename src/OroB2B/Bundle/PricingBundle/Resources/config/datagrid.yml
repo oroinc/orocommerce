@@ -12,14 +12,26 @@ datagrid:
                     - priceList.default
                     - priceList.createdAt
                     - priceList.updatedAt
+                    - CASE WHEN priceList.active <> true THEN 'disabled' ELSE CASE WHEN priceList.containSchedule = true THEN CASE WHEN schedule.id IS NOT NULL THEN 'active' ELSE 'inactive' END ELSE 'active' END END as activity
                 from:
                     - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
+                join:
+                    left:
+                        - { join: '%orob2b_pricing.entity.price_list_schedule.class%', alias: schedule, conditionType: 'WITH', condition: '(schedule.priceList = priceList) AND ((schedule.activeAt IS NOT NULL AND schedule.deactivateAt IS NOT NULL AND :now BETWEEN schedule.activeAt AND schedule.deactivateAt) OR (schedule.activeAt IS NULL AND :now < schedule.deactivateAt) OR (schedule.deactivateAt IS NULL AND :now > schedule.activeAt))'}
+            bind_parameters:
+                - now
+
         columns:
             name:
                 label:         orob2b.pricing.pricelist.name.label
             default:
                 label:         orob2b.pricing.pricelist.default.label
                 frontend_type: boolean
+            activity:
+                label:         orob2b.pricing.pricelist_schedule.activity.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BPricingBundle:PriceList:Datagrid/schedule.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -38,6 +50,8 @@ datagrid:
                     data_name: priceList.updatedAt
                 default:
                     data_name: priceList.default
+                activity:
+                    data_name: activity
             default:
                 createdAt:     %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
@@ -54,29 +68,31 @@ datagrid:
                 default:
                     type:      boolean
                     data_name: priceList.default
+                activity:
+                    type:      single_choice
+                    data_name: activity
+                    options:
+                        field_options:
+                            choices:
+                                disabled: orob2b.pricing.pricelist_schedule.disabled
+                                inactive: orob2b.pricing.pricelist_schedule.inactive
+                                active: orob2b.pricing.pricelist_schedule.active
+                    label: orob2b.pricing.pricelist_schedule.activity.label
 
     pricing-price-list-grid:
         extends: pricing-price-list-select-grid
         options:
             entity_pagination: true
         properties:
+            default_link:
+                type: url
+                route: orob2b_pricing_price_list_default
+                params: [ id ]
             view_link:
                 type:  url
                 route: orob2b_pricing_price_list_view
                 params:
                     - id
-            update_link:
-                type: url
-                route: orob2b_pricing_price_list_update
-                params: [ id ]
-            delete_link:
-                type: url
-                route: orob2b_api_pricing_delete_price_list
-                params: [ id ]
-            default_link:
-                type: url
-                route: orob2b_pricing_price_list_default
-                params: [ id ]
         actions:
             default:
                 type:          ajax
@@ -91,18 +107,6 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_pricing_price_list_view
                 rowAction:     true
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_pricing_price_list_update
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_pricing_price_list_delete
         action_configuration: ['@orob2b_pricing.datagrid.price_list_permissions_provider', "getPermissions"]
 
     base-price-list-relations-grid:
@@ -490,10 +494,6 @@ datagrid:
                 type: url
                 route: orob2b_product_price_update_widget
                 params: [ id ]
-            delete_link:
-                type: url
-                route: orob2b_api_pricing_delete_product_price
-                params: [ id ]
         actions:
             view_product:
                 type:          navigate
@@ -513,12 +513,6 @@ datagrid:
                     options:
                         dialogOptions:
                             width: 650
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_pricing_product_price_delete
 
     product-prices-grid:
         acl_resource:      orob2b_pricing_product_price_view

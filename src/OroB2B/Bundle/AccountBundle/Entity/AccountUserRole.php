@@ -26,6 +26,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *      }
  * )
  * @Config(
+ *      routeName="orob2b_account_account_user_role_index",
+ *      routeUpdate="orob2b_account_account_user_role_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"

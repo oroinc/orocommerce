@@ -2,7 +2,9 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Component\Testing\WebTestCase;
+use Symfony\Component\DomCrawler\Field\InputFormField;
+
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
@@ -58,7 +60,7 @@ class RequestControllerTest extends WebTestCase
 
         static::assertContains('frontend-requests-grid', $crawler->html());
 
-        $response = $this->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             [
                 'gridName' => 'frontend-requests-grid',
                 'frontend-requests-grid[_sort_by][id]' => 'ASC',
@@ -334,12 +336,135 @@ class RequestControllerTest extends WebTestCase
         $this->assertContainsRequestData($result->getContent(), $expected);
     }
 
+    /**
+     * @return array
+     */
+    public function createProvider()
+    {
+        return [
+            'create' => [
+                'formData' => [
+                    'firstName' => LoadRequestData::FIRST_NAME,
+                    'lastName' => LoadRequestData::LAST_NAME,
+                    'email' => LoadRequestData::EMAIL,
+                    'phone' => static::PHONE,
+                    'role' => static::ROLE,
+                    'company' => static::COMPANY,
+                    'note' => static::REQUEST,
+                    'poNumber' => static::PO_NUMBER,
+                ],
+                'expected' => [
+                    'firstName' => LoadRequestData::FIRST_NAME,
+                    'lastName' => LoadRequestData::LAST_NAME,
+                    'email' => LoadRequestData::EMAIL,
+                    'phone' => static::PHONE,
+                    'role' => static::ROLE,
+                    'company' => static::COMPANY,
+                    'note' => static::REQUEST,
+                    'poNumber' => static::PO_NUMBER
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider createQueryInitDataProvider
+     * @param array $productItems
+     * @param array $expectedData
+     */
+    public function testCreateQueryInit(array $productItems, array $expectedData)
+    {
+        $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
+        $this->initClient([], $authParams);
+
+        $productIdCallable = function ($productReference) {
+            return $this->getReference($productReference)->getId();
+        };
+
+        $productItems = array_combine(array_map($productIdCallable, array_keys($productItems)), $productItems);
+
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_create', [
+            'product_items' => $productItems,
+        ]));
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $form = $crawler->selectButton('Submit Request For Quote')->form();
+
+        /** @var array $formRequestProducts */
+        $formRequestProducts = $form->get('orob2b_rfp_frontend_request[requestProducts]');
+
+        $formRequestProducts = array_reduce($formRequestProducts, function (array $result, array $formRequestProduct) {
+            /** @var InputFormField $requestProduct */
+            $requestProduct = $formRequestProduct['product'];
+            $result[(string)$requestProduct->getValue()] = array_map(function (array $requestProductItem) {
+                /** @var InputFormField $quantity */
+                $quantity = $requestProductItem['quantity'];
+                /** @var InputFormField $unit */
+                $unit = $requestProductItem['productUnit'];
+                return [
+                    'unit' => $unit->getValue(),
+                    'quantity' => $quantity->getValue(),
+                ];
+            }, $formRequestProduct['requestProductItems']);
+            return $result;
+        }, []);
+        $expectedData = array_combine(array_map($productIdCallable, array_keys($expectedData)), $expectedData);
+        $this->assertEquals($expectedData, $formRequestProducts);
+    }
+
+    /**
+     * @return array
+     */
+    public function createQueryInitDataProvider()
+    {
+        return [
+            [
+                'productLineItems' => [
+                    'product.1' => [
+                        ['unit' => 'liter', 'quantity' => 10]
+                    ],
+                    'product.2' => [
+                        ['unit' => 'bottle', 'quantity' => 20],
+                        ['unit' => 'box', 'quantity' => 2],
+                    ],
+                ],
+                'expectedData' => [
+                    'product.1' => [
+                        ['unit' => 'liter', 'quantity' => 10]
+                    ],
+                    'product.2' => [
+                        ['unit' => 'bottle', 'quantity' => 20],
+                        ['unit' => 'box', 'quantity' => 2],
+                    ],
+                ]
+            ],
+            [
+                'productLineItems' => [
+                    'product.1' => [
+                        ['unit' => 'no_unit', 'quantity' => 10],
+                        ['unit' => 'liter', 'quantity' => 10],
+                    ],
+                    'product.2' => [
+                        ['unit' => 'bottle'],
+                    ],
+                ],
+                'expectedData' => [
+                    'product.1' => [
+                        ['unit' => 'liter', 'quantity' => 10]
+                    ],
+                ]
+            ]
+        ];
+    }
+
     public function testUpdate()
     {
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
 
-        $response = $this->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-requests-grid',
             [
                 'frontend-requests-grid[_filter][poNumber][value]' => static::PO_NUMBER
@@ -381,37 +506,6 @@ class RequestControllerTest extends WebTestCase
                 $this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName()
             ]
         );
-    }
-
-    /**
-     * @return array
-     */
-    public function createProvider()
-    {
-        return [
-            'create' => [
-                'formData' => [
-                    'firstName' => LoadRequestData::FIRST_NAME,
-                    'lastName' => LoadRequestData::LAST_NAME,
-                    'email' => LoadRequestData::EMAIL,
-                    'phone' => static::PHONE,
-                    'role' => static::ROLE,
-                    'company' => static::COMPANY,
-                    'note' => static::REQUEST,
-                    'poNumber' => static::PO_NUMBER,
-                ],
-                'expected' => [
-                    'firstName' => LoadRequestData::FIRST_NAME,
-                    'lastName' => LoadRequestData::LAST_NAME,
-                    'email' => LoadRequestData::EMAIL,
-                    'phone' => static::PHONE,
-                    'role' => static::ROLE,
-                    'company' => static::COMPANY,
-                    'note' => static::REQUEST,
-                    'poNumber' => static::PO_NUMBER
-                ]
-            ],
-        ];
     }
 
     /**

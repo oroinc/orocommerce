@@ -13,8 +13,17 @@ orob2b:
 
         at_least_one_item: Please add at least one item
 
+        sku.blank: SKU should not be blank.
+
+        names.blank: Product Name should not be blank.
+
         productunit:
             invalid: 'Please enter valid unit of measurement'
+            precision.blank: Precision should not be blank.
+            unit.blank: Unit should not be blank.
+
+        unit_precisions_items:
+            blank: 'Please add one or more product units.'
 
         frontend:
             quick_add:

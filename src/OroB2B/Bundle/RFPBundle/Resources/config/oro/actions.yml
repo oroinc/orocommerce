@@ -238,7 +238,7 @@ operations:
             - rfp-requests-grid
         order: 100
         button_options:
-            icon: icon-delete
+            icon: icon-trash
         frontend_options:
             confirmation: orob2b.rfp.request.actions.delete_frp_confirm
         preactions:
@@ -284,6 +284,13 @@ operations:
                     route: orob2b_rfp_frontend_request_update
                     route_parameters:
                         id: $id
+
+    DELETE:
+        exclude_entities:
+            - OroB2B\Bundle\RFPBundle\Entity\Request
+            - OroB2B\Bundle\RFPBundle\Entity\RequestStatus
+        exclude_datagrids:
+            - rfp-requests-grid
 
 action_groups:
     orob2b_rfp_change_status:

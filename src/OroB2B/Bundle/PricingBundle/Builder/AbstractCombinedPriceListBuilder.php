@@ -5,9 +5,15 @@ namespace OroB2B\Bundle\PricingBundle\Builder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
+use OroB2B\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
+use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class AbstractCombinedPriceListBuilder
 {
@@ -67,21 +73,37 @@ abstract class AbstractCombinedPriceListBuilder
     protected $builtList;
 
     /**
+     * @var CombinedPriceListScheduleResolver
+     */
+    protected $scheduleResolver;
+
+    /**
+     * @var CombinedProductPriceResolver
+     */
+    protected $priceResolver;
+
+    /**
      * @param ManagerRegistry $registry
      * @param PriceListCollectionProvider $priceListCollectionProvider
      * @param CombinedPriceListProvider $combinedPriceListProvider
      * @param CombinedPriceListGarbageCollector $garbageCollector
+     * @param CombinedPriceListScheduleResolver $scheduleResolver
+     * @param CombinedProductPriceResolver $priceResolver
      */
     public function __construct(
         ManagerRegistry $registry,
         PriceListCollectionProvider $priceListCollectionProvider,
         CombinedPriceListProvider $combinedPriceListProvider,
-        CombinedPriceListGarbageCollector $garbageCollector
+        CombinedPriceListGarbageCollector $garbageCollector,
+        CombinedPriceListScheduleResolver $scheduleResolver,
+        CombinedProductPriceResolver $priceResolver
     ) {
         $this->registry = $registry;
         $this->priceListCollectionProvider = $priceListCollectionProvider;
         $this->combinedPriceListProvider = $combinedPriceListProvider;
         $this->garbageCollector = $garbageCollector;
+        $this->scheduleResolver = $scheduleResolver;
+        $this->priceResolver = $priceResolver;
     }
 
     /**
@@ -162,5 +184,38 @@ abstract class AbstractCombinedPriceListBuilder
     public function setCombinedPriceListToEntityClassName($combinedPriceListToEntityClassName)
     {
         $this->combinedPriceListToEntityClassName = $combinedPriceListToEntityClassName;
+    }
+
+    /**
+     * @return $this
+     */
+    public function resetCache()
+    {
+        $this->builtList = [];
+
+        return $this;
+    }
+
+    /**
+     * @param CombinedPriceList $cpl
+     * @param Website $website
+     * @param Account|AccountGroup $targetEntity
+     * @param bool|false $force
+     */
+    protected function updateRelationsAndPrices(
+        CombinedPriceList $cpl,
+        Website $website,
+        $targetEntity = null,
+        $force = false
+    ) {
+        $activeCpl = $this->scheduleResolver->getActiveCplByFullCPL($cpl);
+        if ($activeCpl === null) {
+            $activeCpl = $cpl;
+        }
+        $this->getCombinedPriceListRepository()
+            ->updateCombinedPriceListConnection($cpl, $activeCpl, $website, $targetEntity);
+        if ($force || !$activeCpl->isPricesCalculated()) {
+            $this->priceResolver->combinePrices($activeCpl);
+        }
     }
 }

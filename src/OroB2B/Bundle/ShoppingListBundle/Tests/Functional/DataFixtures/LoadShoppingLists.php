@@ -15,6 +15,8 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     const SHOPPING_LIST_1 = 'shopping_list_1';
     const SHOPPING_LIST_2 = 'shopping_list_2';
     const SHOPPING_LIST_3 = 'shopping_list_3';
+    const SHOPPING_LIST_4 = 'shopping_list_4';
+    const SHOPPING_LIST_5 = 'shopping_list_5';
 
     /**
      * {@inheritdoc}
@@ -33,9 +35,16 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     {
         $accountUser = $this->getAccountUser($manager);
         $lists = $this->getData();
-        foreach ($lists as $listLabel) {
+        foreach ($lists as $listLabel => $data) {
             $isCurrent = $listLabel === self::SHOPPING_LIST_2;
-            $this->createShoppingList($manager, $accountUser, $listLabel, $isCurrent);
+            $this->createShoppingList(
+                $manager,
+                $accountUser,
+                $listLabel,
+                $data['total'],
+                $data['subtotal'],
+                $isCurrent
+            );
         }
 
         $manager->flush();
@@ -43,14 +52,21 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
 
     /**
      * @param ObjectManager $manager
-     * @param AccountUser   $accountUser
-     * @param string        $name
-     * @param bool          $isCurrent
-     *
+     * @param AccountUser $accountUser
+     * @param string $name
+     * @param float $total
+     * @param float $subtotal
+     * @param bool $isCurrent
      * @return ShoppingList
      */
-    protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $name, $isCurrent = false)
-    {
+    protected function createShoppingList(
+        ObjectManager $manager,
+        AccountUser $accountUser,
+        $name,
+        $total,
+        $subtotal,
+        $isCurrent = false
+    ) {
         $shoppingList = new ShoppingList();
         $shoppingList->setOrganization($accountUser->getOrganization());
         $shoppingList->setAccountUser($accountUser);
@@ -59,7 +75,8 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         $shoppingList->setNotes($name . '_notes');
         $shoppingList->setCurrent($isCurrent);
         $shoppingList->setCurrency('EUR');
-
+        $shoppingList->setTotal($total);
+        $shoppingList->setSubtotal($subtotal);
         $manager->persist($shoppingList);
         $this->addReference($name, $shoppingList);
 
@@ -89,6 +106,12 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
      */
     protected function getData()
     {
-        return [self::SHOPPING_LIST_1, self::SHOPPING_LIST_2, self::SHOPPING_LIST_3];
+        return [
+            self::SHOPPING_LIST_1 => ['total' => 2312, 'subtotal' => 91222],
+            self::SHOPPING_LIST_2 => ['total' => 321, 'subtotal' => 5555],
+            self::SHOPPING_LIST_3 => ['total' => 83, 'subtotal' => 422],
+            self::SHOPPING_LIST_4 => ['total' => 32, 'subtotal' => 2464],
+            self::SHOPPING_LIST_5 => ['total' => 466, 'subtotal' => 45354]
+        ];
     }
 }

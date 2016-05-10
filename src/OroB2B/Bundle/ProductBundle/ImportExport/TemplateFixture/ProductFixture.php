@@ -8,6 +8,8 @@ use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class ProductFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
@@ -71,11 +73,20 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setText('US Product Short Description')
             ->setFallback('system');
 
+        $productUnit = (new ProductUnit())
+            ->setCode('kg')
+            ->setDefaultPrecision(3);
+
+        $productUnitPrecision = (new ProductUnitPrecision())
+            ->setUnit($productUnit)
+            ->setPrecision($productUnit->getDefaultPrecision());
+
         $entity->setSku('sku_001')
             ->setStatus('enabled')
             ->setInventoryStatus($inventoryStatus)
             ->addName($name)
             ->addName($localizedName)
+            ->addUnitPrecision($productUnitPrecision)
             ->addDescription($description)
             ->addDescription($localizedDescription)
             ->addShortDescription($shortDescription)
