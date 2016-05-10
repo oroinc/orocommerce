@@ -46,7 +46,7 @@ class WebsiteControllerTest extends WebTestCase
 
     public function testDelete()
     {
-        $this->assertCount(2, $this->getPriceListsByWebsite());
+        $this->assertCount(3, $this->getPriceListsByWebsite());
         $form = $this->getUpdateForm();
         $this->assertTrue(isset($form[$this->formExtensionPath]));
         $form->remove($this->formExtensionPath);

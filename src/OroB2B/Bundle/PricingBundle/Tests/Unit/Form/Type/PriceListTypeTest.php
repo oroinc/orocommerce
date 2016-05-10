@@ -101,7 +101,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
         if ($defaultData) {
             $existingPriceList = new PriceList();
             $class = new \ReflectionClass($existingPriceList);
-            $prop  = $class->getProperty('id');
+            $prop = $class->getProperty('id');
             $prop->setAccessible(true);
 
             $prop->setValue($existingPriceList, 42);
@@ -132,7 +132,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData['currencies'], array_values($result->getCurrencies()));
         $this->assertSchedules($expectedData, $result);
     }
-    
+
     /**
      * @return array
      */
@@ -143,6 +143,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 'defaultData' => null,
                 'submittedData' => [
                     'name' => 'Test Price List',
+                    'active' => true,
                     'currencies' => [],
                     'appendAccounts' => [],
                     'removeAccounts' => [],
@@ -157,6 +158,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'name' => 'Test Price List',
+                    'active' => false,
                     'currencies' => [],
                     'default' => false,
                     'appendAccounts' => [],
@@ -174,6 +176,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
             'update price list' => [
                 'defaultData' => [
                     'name' => 'Test Price List',
+                    'active' => true,
                     'currencies' => ['USD', 'UAH'],
                     'appendAccounts' => [],
                     'removeAccounts' => [],
@@ -184,6 +187,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 ],
                 'submittedData' => [
                     'name' => 'Test Price List 01',
+                    'active' => false,
                     'currencies' => ['EUR', 'USD'],
                     'appendAccounts' => [1],
                     'removeAccounts' => [2],
@@ -198,6 +202,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'name' => 'Test Price List 01',
+                    'active' => true,
                     'currencies' => ['EUR', 'USD'],
                     'appendAccounts' => [$this->getEntity(self::ACCOUNT_CLASS, 1)],
                     'removeAccounts' => [$this->getEntity(self::ACCOUNT_CLASS, 2)],

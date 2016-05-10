@@ -12,7 +12,7 @@ datagrid:
                     - priceList.default
                     - priceList.createdAt
                     - priceList.updatedAt
-                    - CASE WHEN priceList.containSchedule = true THEN CASE WHEN schedule.id IS NOT NULL THEN true ELSE false END ELSE true END as activity
+                    - CASE WHEN priceList.active <> true THEN 'disabled' ELSE CASE WHEN priceList.containSchedule = true THEN CASE WHEN schedule.id IS NOT NULL THEN 'active' ELSE 'inactive' END ELSE 'active' END END as activity
                 from:
                     - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
                 join:
@@ -28,7 +28,7 @@ datagrid:
                 label:         orob2b.pricing.pricelist.default.label
                 frontend_type: boolean
             activity:
-                label:         orob2b.pricing.pricelist_schedule.activity.labal
+                label:         orob2b.pricing.pricelist_schedule.activity.label
                 type:          twig
                 frontend_type: html
                 template:      OroB2BPricingBundle:PriceList:Datagrid/schedule.html.twig
@@ -69,9 +69,15 @@ datagrid:
                     type:      boolean
                     data_name: priceList.default
                 activity:
-                    type:      boolean
+                    type:      single_choice
                     data_name: activity
-                    label: orob2b.pricing.pricelist_schedule.active.labal
+                    options:
+                        field_options:
+                            choices:
+                                disabled: orob2b.pricing.pricelist_schedule.disabled
+                                inactive: orob2b.pricing.pricelist_schedule.inactive
+                                active: orob2b.pricing.pricelist_schedule.active
+                    label: orob2b.pricing.pricelist_schedule.activity.label
 
     pricing-price-list-grid:
         extends: pricing-price-list-select-grid

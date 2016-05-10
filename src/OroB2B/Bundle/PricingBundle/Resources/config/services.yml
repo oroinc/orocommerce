@@ -229,6 +229,7 @@ services:
             - '@doctrine'
             - '@event_dispatcher'
             - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@orob2b_pricing.recalculate_triggers_filler.scope_recalculate_triggers_filler'
 
     orob2b_pricing.event_listener.combined_price_list_queue:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener'
@@ -408,6 +409,7 @@ services:
         lazy: true
         arguments:
             - '@orob2b_pricing.builder.combined_price_list_activation_plan_builder'
+            - '@orob2b_pricing.price_list_change_trigger_handler'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit.orob2b_pricing_price_list, method: beforeSubmit }
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.orob2b_pricing_price_list, method: afterFlush }
@@ -536,3 +538,5 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller'
         arguments:
             - '@doctrine'
+            - '@oro_config.global'
+            - '@oro_entity.orm.insert_from_select_query_executor'
