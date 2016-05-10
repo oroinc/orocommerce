@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\ProductBundle\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\CongifManager;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class DefaultProductUnitProvider
 {
@@ -14,14 +16,16 @@ class DefaultProductUnitProvider
         $this->configManager = $configManager;
     }
     /**
-     * @return array
+     * @return ProductUnit $productUnit
      */
     public function getDefaultProductUnit()
     {
-        return
-            ['default_unit'=>$this->configManager->get('orob2b_product.default_unit'),
-             'default_unit_precision'=>$this->configManager->get('orob2b_product.default_unit_precision')
-            ];
+        $defaultUnitValue = $this->configManager->get('orob2b_product.default_unit');
+        $defaultUnitPrecision = $this->configManager->get('orob2b_product.default_unit_precision');
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($defaultUnitValue);
+        $productUnit->setDefaultPrecision($defaultUnitPrecision);
+        return $productUnit;
     }
 }
 
