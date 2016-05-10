@@ -20,17 +20,24 @@ class LoadWarehouseDemoData extends AbstractFixture implements ContainerAwareInt
 {
     use UserUtilityTrait;
 
+    const MAIN_WAREHOUSE = 'warehouse.main';
+    const ADDITIONAL_WAREHOUSE = 'warehouse.additional.1';
+    const ADDITIONAL_WAREHOUSE_2 = 'warehouse.additional.2';
+
     /**
      * @var array
      */
     protected $warehouses = [
-        [
+        self::MAIN_WAREHOUSE => [
             'name' => 'Main Warehouse',
             'generateLevels' => true,
         ],
-        [
+        self::ADDITIONAL_WAREHOUSE => [
             'name' => 'Additional Warehouse',
         ],
+        self::ADDITIONAL_WAREHOUSE_2 => [
+            'name' => 'Additional Warehouse 2',
+        ]
     ];
 
     /**
@@ -66,7 +73,7 @@ class LoadWarehouseDemoData extends AbstractFixture implements ContainerAwareInt
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
 
-        foreach ($this->warehouses as $row) {
+        foreach ($this->warehouses as $reference => $row) {
             $warehouse = new Warehouse();
             $warehouse
                 ->setName($row['name'])
@@ -85,6 +92,8 @@ class LoadWarehouseDemoData extends AbstractFixture implements ContainerAwareInt
                     $manager->persist($level);
                 }
             }
+
+            $this->addReference($reference, $warehouse);
         }
 
         $manager->flush();

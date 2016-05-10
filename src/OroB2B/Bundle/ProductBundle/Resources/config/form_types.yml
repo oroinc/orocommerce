@@ -2,6 +2,7 @@ services:
     # Product form types
     orob2b_product.form.type.product:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductType'
+        public: true
         calls:
             - [setDataClass, ['%orob2b_product.entity.product.class%']]
         tags:
@@ -9,16 +10,19 @@ services:
 
     orob2b_product.form.type.product_row:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_product_row }
 
     orob2b_product.form.type.product_row_collection:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductRowCollectionType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_product_row_collection }
 
     orob2b_product.form.type.product_unit_selection:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType'
+        public: true
         arguments:
             - "@orob2b_product.formatter.product_unit_label"
             - "@translator"
@@ -29,6 +33,7 @@ services:
 
     orob2b_product.form.type.quantity_type:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\QuantityType'
+        public: true
         arguments:
             - "@orob2b_product.service.quantity_rounding"
             - '%orob2b_product.entity.product.class%'
@@ -37,6 +42,7 @@ services:
 
     orob2b_product.form.type.product_unit_precision:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType'
+        public: true
         calls:
             - [setDataClass, ['%orob2b_product.entity.product_unit_precision.class%']]
         tags:
@@ -44,11 +50,13 @@ services:
 
     orob2b_product.form.type.product_unit_precision_collection:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_product_unit_precision_collection }
 
     orob2b_product.form.type.product_select:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType'
+        public: true
         arguments:
             - "@translator"
         tags:
@@ -56,16 +64,19 @@ services:
 
     orob2b_product.form.type.product_autocomplete:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_product_autocomplete }
 
     orob2b_product.form.type.quick_add:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType'
+        public: true
         tags:
             - { name: form.type, alias: 'orob2b_product_quick_add' }
 
     orob2b_product.form.type.extension.product_data_storage.abstract:
         class: 'OroB2B\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension'
+        public: true
         abstract: true
         arguments:
             - "@request_stack"
@@ -75,11 +86,13 @@ services:
 
     orob2b_product.form.type.extension.integer:
         class: 'OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension'
+        public: true
         tags:
             - { name: form.type_extension, alias: integer }
 
     orob2b_product.form.type.custom_entity_fields_choice:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType'
+        public: true
         arguments:
             - "@orob2b_product.provider.custom_field_provider"
             - '%orob2b_product.entity.product.class%'
@@ -88,11 +101,13 @@ services:
 
     orob2b_product.form.type.product_variant_links:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_product_variant_links }
 
     orob2b_product.form.type.product_status:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType'
+        public: true
         arguments:
             - "@orob2b_product.provider.product_status_provider"
         tags:
@@ -100,6 +115,7 @@ services:
 
     orob2b_product.form.type.product_inventory_status_select:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType'
+        public: true
         arguments:
             - "@doctrine"
         tags:
@@ -107,11 +123,18 @@ services:
 
     orob2b_product.form.type.quick_add_copy_paste:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType'
+        public: true
         tags:
             - { name: form.type, alias: 'orob2b_product_quick_add_copy_paste' }
 
     orob2b_product.form.type.quick_add_import_from_file:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType'
+        public: true
         tags:
             - { name: form.type, alias: 'orob2b_product_quick_add_import_from_file' }
 
+    orob2b_product.form.type.frontend_line_item:
+        class: 'OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType'
+        public: true
+        tags:
+            - { name: form.type, alias: orob2b_product_frontend_line_item }

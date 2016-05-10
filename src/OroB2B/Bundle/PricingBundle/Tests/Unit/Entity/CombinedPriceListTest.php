@@ -16,6 +16,7 @@ class CombinedPriceListTest extends \PHPUnit_Framework_TestCase
             $this->createPriceList(),
             [
                 ['enabled', false],
+                ['pricesCalculated', false],
             ]
         );
     }

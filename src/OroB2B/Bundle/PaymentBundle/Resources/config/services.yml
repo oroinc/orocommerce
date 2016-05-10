@@ -32,6 +32,14 @@ services:
         tags:
             - { name: twig.extension }
 
+    orob2b_payment.twig.payment_method_extension:
+        class: 'OroB2B\Bundle\PaymentBundle\Twig\PaymentMethodExtension'
+        arguments:
+            - "@orob2b_payment.provider.payment_transaction"
+            - "@oro_config.manager"
+        tags:
+            - { name: twig.extension }
+
     orob2b_payment.event_listener.form_view:
         class: 'OroB2B\Bundle\PaymentBundle\EventListener\FormViewListener'
         arguments:

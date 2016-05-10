@@ -1,3 +1,0 @@
-orob2b_product_api:
-    resource: "@OroB2BProductBundle/Controller/Api/Rest/ProductController.php"
-    type:     rest

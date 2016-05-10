@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Security;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;

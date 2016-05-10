@@ -3,13 +3,6 @@ parameters:
     orob2b_invoice.entity.invoice_line_item.class: OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem
 
 services:
-    orob2b_invoice.invoice.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%orob2b_invoice.entity.invoice.class%'
-            - "@doctrine.orm.entity_manager"
-
     orob2b_invoice.form.type.invoice:
         class: 'OroB2B\Bundle\InvoiceBundle\Form\Type\InvoiceType'
         calls:

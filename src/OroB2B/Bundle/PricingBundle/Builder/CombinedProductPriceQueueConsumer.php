@@ -89,7 +89,8 @@ class CombinedProductPriceQueueConsumer
     {
         $repository = $this->getCombinedPriceListRepository();
         $iterator = $repository->getCombinedPriceListsByPriceList(
-            $changes->getPriceList()
+            $changes->getPriceList(),
+            true
         );
         foreach ($iterator as $combinedPriceList) {
             $this->resolver->combinePrices($combinedPriceList, $changes->getProduct());

@@ -1,54 +1,24 @@
-{% block _add_to_shopping_list_form_start_widget %}
-    {% set attr = attr|merge({
-        'id': form.vars.id ~ '-product-id-<%= model.id %>',
-    }) %}
-    {{ block('form_start_widget') }}
-{% endblock %}
-
-{% block _add_to_shopping_list_form_fields_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " product-item__qty__current-grid"
-    }) %}
-    <% if (!_.isEmpty(model.product_units)) { %>
-        <div {{ block('block_attributes') }}
-            data-page-component-module="orob2bshoppinglist/js/app/components/product-unit-select-component"
-            data-product-units='<%= JSON.stringify(model.product_units) %>'>
-            {{ block_widget(block) }}
-        </div>
-    <% } %>
-{% endblock %}
-
-{% block _add_to_shopping_list_form_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " product-item__qty product-item__qty_<%= themeOptions.view %>"
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _add_to_shopping_list_form_button_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " add-product-from-view-component"
-    }) %}
     {% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
-    {% set commonOptions = {
+    {% set buttonOptions = {
         dataUrl: 'orob2b_shopping_list_frontend_add_product',
-        dataUrlOptions: {},
         dataAttributes: {}
     } %}
-    <% if (!_.isEmpty(model.product_units)) { %>
-        <div {{ block('block_attributes') }}
-                data-page-component-module="orob2bshoppinglist/js/app/components/add-product-from-index-component" data-product-id="<%= model.id %>">
-            {{ buttons.createAddToShoppingListButton({
-                groupContainer: '<div class="btn btn-block btn-dark btn_has-dropdown btn_has-dropdown_lg width-auto"></div>',
-                new: commonOptions,
-                current: commonOptions,
-                existing: commonOptions,
-                shoppingLists: shoppingLists,
-                truncateLabelLength: 25,
-                singleButtonACss: 'btn-block btn-dark btn_lg'
-            }) }}
-        </div>
-    <% } %>
+    {% set removeOptions = buttonOptions|merge({
+        dataUrl: 'orob2b_shopping_list_frontend_remove_product',
+        actionLabel: 'orob2b.shoppinglist.actions.remove_from_shopping_list'|trans
+    }) %}
+    {% set options = {
+        new: buttonOptions,
+        current: buttonOptions,
+        existing: buttonOptions,
+        shoppingLists: shoppingLists,
+        remove: removeOptions,
+        componentOptions: {
+            defaultClass: 'btn-dark',
+            addedClass: 'btn-green'
+        },
+        singleButtonACss: 'btn-block btn-dark btn_lg'
+    } %}
+    {{ buttons.getButtonsHtml(options) }}
 {% endblock %}

@@ -22,22 +22,8 @@
             'title': 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.cms.child_page.entity_label'|trans})
         }) }}
     {% endif %}
-    {% if resource_granted('EDIT', entity) %}
-        {{ UI.editButton({
-            'path' : path('orob2b_cms_page_update', { 'id': entity.id }),
-            'entity_label': 'orob2b.cms.page.entity_label'|trans
-        }) }}
-    {% endif %}
-    {% if resource_granted('DELETE', entity) %}
-        {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_cms_delete_page', {'id': entity.id}),
-            'dataRedirect': path('orob2b_cms_page_index'),
-            'aCss': 'no-hash remove-button',
-            'dataId': entity.id,
-            'id': 'btn-remove-cms-page',
-            'entity_label': 'orob2b.cms.page.entity_label'|trans
-        }) }}
-    {% endif %}
+
+    {{ parent() }}
 {% endblock navButtons %}
 
 {% block ownerLink %}{% endblock ownerLink %}

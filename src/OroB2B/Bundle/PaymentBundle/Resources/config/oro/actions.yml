@@ -1,0 +1,17 @@
+operations:
+    UPDATE:
+        exclude_datagrids:
+            - payment-term-accounts-grid
+            - payment-term-account-groups-grid
+            - payment-term-select-account-groups-grid
+            - payment-term-select-accounts-grid
+            - payment-terms-select-grid
+    DELETE:
+        exclude_entities:
+            - OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm
+        exclude_datagrids:
+            - payment-term-accounts-grid
+            - payment-term-account-groups-grid
+            - payment-term-select-account-groups-grid
+            - payment-term-select-accounts-grid
+            - payment-terms-select-grid

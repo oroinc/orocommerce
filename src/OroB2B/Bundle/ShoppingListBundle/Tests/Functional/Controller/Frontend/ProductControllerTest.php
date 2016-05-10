@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -69,10 +69,10 @@ class ProductControllerTest extends WebTestCase
                 ]
             ),
             [
-                'orob2b_shopping_list_frontend_line_item' => [
+                'orob2b_product_frontend_line_item' => [
                     'quantity' => 5,
                     'unit' => 'liter',
-                    '_token' => $tokenManager->getToken('orob2b_shopping_list_frontend_line_item')->getValue()
+                    '_token' => $tokenManager->getToken('orob2b_product_frontend_line_item')->getValue()
                 ]
             ]
         );
@@ -98,6 +98,6 @@ class ProductControllerTest extends WebTestCase
         /** @var LineItem $lineItem */
         $lineItem = $shoppingList->getLineItems()->first();
         $this->assertEquals(5, $lineItem->getQuantity());
-        $this->assertEquals('liter', $lineItem->getUnit()->getCode());
+        $this->assertEquals('bottle', $lineItem->getUnit()->getCode());
     }
 }

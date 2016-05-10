@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\MenuBundle\Tests\Functional\Menu;
 
 use Knp\Menu\Util\MenuManipulator;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseBuilder;

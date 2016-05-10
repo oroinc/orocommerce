@@ -53,7 +53,6 @@ operations:
         order: 30
         button_options:
             template: OroB2BShoppingListBundle:Action:buttons.html.twig
-            page_component_module: orob2bshoppinglist/js/app/components/quick-add-button-component
         preactions:
             - '@call_service_method':
                 service: orob2b_shopping_list.shopping_list.manager
@@ -70,9 +69,6 @@ operations:
         extends: orob2b_shoppinglist_frontend_products_add_to_shoppinglist_base
         routes:
             - orob2b_product_frontend_quick_add
-        button_options:
-            page_component_options:
-                quickAddComponentPrefix: 'quick-add'
 
     orob2b_shoppinglist_frontend_quick_add_import_to_shoppinglist:
         extends: orob2b_shoppinglist_frontend_products_add_to_shoppinglist_base
@@ -245,6 +241,11 @@ operations:
                 parameters:
                     route: orob2b_rfp_frontend_request_create
                     route_parameters: {'storage': true}
+    DELETE:
+        exclude_entities:
+            - OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
+        exclude_datagrids:
+            - shopping-list-grid
 
 action_groups:
     orob2b_shoppinglist_frontend_addlineitem:

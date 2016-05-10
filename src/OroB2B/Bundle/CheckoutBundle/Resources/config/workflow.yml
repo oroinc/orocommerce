@@ -476,6 +476,12 @@ workflows:
                                 transactionOptions:
                                     successUrl: $.result.successUrl
                                     errorUrl: $.result.errorUrl
+                            - '@send_email_template':
+                                parameters:
+                                    from: $checkout.order.owner.email
+                                    to: $checkout.order.accountUser.email
+                                    template: 'order_confirmation_email'
+                                    entity: $checkout.order
                             - '@assign_value': [$payment_in_progress, true]
                     - '@tree':
                         conditions:
@@ -489,6 +495,7 @@ workflows:
                                 amount: $checkout.order.total
                                 currency: $checkout.order.currency
                                 paymentMethod: $payment_method
+
 
             finish_checkout_definition:
                 conditions:

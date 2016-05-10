@@ -47,12 +47,14 @@ class TierPriceEventListener
         );
 
         $priceList = $this->priceListTreeHandler->getPriceList($order->getAccount(), $order->getWebsite());
-
-        $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
-            $priceList->getId(),
-            array_filter($productIds->toArray()),
-            $order->getCurrency()
-        );
+        $prices = [];
+        if ($priceList) {
+            $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
+                $priceList->getId(),
+                array_filter($productIds->toArray()),
+                $order->getCurrency()
+            );
+        }
 
         $event->getData()->offsetSet(self::TIER_PRICES_KEY, $prices);
     }

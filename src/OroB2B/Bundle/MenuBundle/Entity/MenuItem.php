@@ -22,7 +22,7 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
  * @ORM\EntityListeners({ "OroB2B\Bundle\MenuBundle\Entity\Listener\MenuItemListener" })
  * @Gedmo\Tree(type="nested")
  * @Config(
- *      routeName="orob2b_menu_item_index",
+ *      routeName="orob2b_menu_item_roots",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-th"

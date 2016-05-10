@@ -39,4 +39,11 @@ class ProductPriceChangeTriggerRepositoryTest extends AbstractChangedProductPric
         //should be true after save
         $this->assertTrue($this->getProductPriceChangeTriggerRepository()->isCreated($trigger));
     }
+
+    public function testDeleteAll()
+    {
+        $this->assertNotEmpty($this->getProductPriceChangeTriggerRepository()->findAll());
+        $this->getProductPriceChangeTriggerRepository()->deleteAll();
+        $this->assertCount(0, $this->getProductPriceChangeTriggerRepository()->findAll());
+    }
 }

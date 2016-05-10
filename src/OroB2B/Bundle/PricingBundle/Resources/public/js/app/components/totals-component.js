@@ -221,7 +221,7 @@ define(function(require) {
                     }
                 },
                 error: function(jqXHR) {
-                    messenger.showErrorMessage(__('Sorry, unexpected error was occurred'), jqXHR.responseJSON);
+                    messenger.showErrorMessage(_.__('Sorry, unexpected error was occurred'), jqXHR.responseJSON);
                 }
             });
         },
