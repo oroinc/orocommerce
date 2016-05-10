@@ -37,15 +37,15 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
      */
     public function getPriceLists($accountGroup, Website $website, $sortOrder = Criteria::DESC)
     {
-        return $this->createQueryBuilder('PriceListToAccountGroup')
-            ->innerJoin('PriceListToAccountGroup.priceList', 'priceList')
-            ->innerJoin('PriceListToAccountGroup.accountGroup', 'accountGroup')
-            ->where('accountGroup = :accountGroup')
-            ->andWhere('PriceListToAccountGroup.website = :website')
-            ->orderBy('PriceListToAccountGroup.priority', $sortOrder)
-            ->setParameters(['accountGroup' => $accountGroup, 'website' => $website])
-            ->getQuery()
-            ->getResult();
+        $qb = $this->createQueryBuilder('relation');
+        $qb->innerJoin('relation.priceList', 'priceList')
+            ->where($qb->expr()->eq('relation.accountGroup', ':accountGroup'))
+            ->andWhere($qb->expr()->eq('relation.website', ':website'))
+            ->andWhere($qb->expr()->eq('priceList.active', ':active'))
+            ->orderBy('relation.priority', $sortOrder)
+            ->setParameters(['accountGroup' => $accountGroup, 'website' => $website, 'active' => true]);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**

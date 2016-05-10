@@ -6,7 +6,6 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
-use OroB2B\Bundle\CheckoutBundle\EventListener\AbstractCheckoutEntityListener;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
@@ -16,7 +15,7 @@ use OroB2B\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener;
 class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var AbstractCheckoutEntityListener
+     * @var CheckoutEntityListener
      */
     protected $listener;
 
@@ -65,96 +64,190 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new CheckoutEntityListener($this->workflowManager, $registry);
     }
 
+    public function testCheckoutType()
+    {
+        $this->listener->setCheckoutType('test');
+        $this->assertAttributeEquals('test', 'checkoutType', $this->listener);
+    }
+
     /**
-     * @dataProvider onGetCheckoutEntityDataProvider
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Checkout class must implement OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface
+     */
+    public function testCheckoutClassNameInvalid()
+    {
+        $this->listener->setCheckoutClassName('test');
+    }
+
+    public function testCheckoutClassName()
+    {
+        $className = 'OroB2B\Bundle\CheckoutBundle\Entity\Checkout';
+        $this->listener->setCheckoutClassName($className);
+        $this->assertAttributeEquals($className, 'checkoutClassName', $this->listener);
+    }
+
+    /**
+     * @dataProvider existingCheckoutByIdProvider
      *
-     * @param bool $isStartWorkflowAllowed
      * @param string $type
      * @param int $id
-     * @param CheckoutSource $source
+     * @param CheckoutInterface $found
      * @param CheckoutInterface $expected
      */
-    public function testOnGetCheckoutEntity(
-        $isStartWorkflowAllowed,
+    public function testOnGetCheckoutEntityExistingById(
         $type,
         $id,
-        $source,
+        CheckoutInterface $found = null,
         CheckoutInterface $expected = null
     ) {
-        $this->workflowManager->expects($this->any())
-            ->method('isStartTransitionAvailable')
-            ->willReturn($isStartWorkflowAllowed);
+        $this->listener->setCheckoutClassName('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
 
         $event = new CheckoutEntityEvent();
+
+        $this->repository->expects($this->any())
+            ->method('find')
+            ->with($id)
+            ->willReturn($found);
+
         $event->setType($type);
-
-        if ($id) {
-            $this->repository->expects($this->once())
-                ->method('find')
-                ->with($id)
-                ->willReturn($expected);
-
-            $event->setCheckoutId($id);
-        }
-
-        if ($source) {
-            $this->repository->expects($this->once())
-                ->method('findOneBy')
-                ->with(['source' => $source])
-                ->willReturn($expected);
-
-            $event->setSource($source);
-        }
+        $event->setCheckoutId($id);
 
         $this->listener->onGetCheckoutEntity($event);
-        $actual = $event->getCheckoutEntity();
-        $this->assertEquals($expected, $actual);
-        if ($source) {
-            $this->assertSame($source, $actual->getSource());
-        }
+        $this->assertCheckoutEvent($event, $expected);
     }
 
     /**
      * @return array
      */
-    public function onGetCheckoutEntityDataProvider()
+    public function existingCheckoutByIdProvider()
     {
+        $checkout = new Checkout();
         return [
-            'start workflow not allowed' => [
-                'isStartWorkflowAllowed' => false,
-                'type' => '',
-                'id' => null,
-                'source' => null,
-                'expected' => null
-            ],
-            'other checkout type' => [
-                'isStartWorkflowAllowed' => true,
-                'type' => 'alternative',
-                'id' => null,
-                'source' => null,
-                'expected' => null
-            ],
             'find existing by id' => [
-                'isStartWorkflowAllowed' => true,
                 'type' => '',
                 'id' => 1,
+                'found' => $checkout,
+                'expected' => $checkout
+            ],
+            'find existing by id another type' => [
+                'type' => 'unknown',
+                'id' => 1,
+                'found' => $checkout,
+                'expected' => null
+            ],
+            'find existing by id none' => [
+                'type' => '',
+                'id' => 1,
+                'found' => null,
+                'expected' => null
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider existingCheckoutBySourceProvider
+     *
+     * @param CheckoutSource $source
+     * @param CheckoutInterface $found
+     * @param CheckoutInterface $expected
+     */
+    public function testOnGetCheckoutEntityExistingBySource(
+        CheckoutSource $source = null,
+        CheckoutInterface $found = null,
+        CheckoutInterface $expected = null
+    ) {
+        $this->listener->setCheckoutClassName('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
+
+        $event = new CheckoutEntityEvent();
+
+        $this->repository->expects($this->any())
+            ->method('findOneBy')
+            ->with(['source' => $source])
+            ->willReturn($found);
+        $event->setSource($source);
+
+        $this->listener->onGetCheckoutEntity($event);
+        $this->assertCheckoutEvent($event, $expected);
+    }
+
+    /**
+     * @return array
+     */
+    public function existingCheckoutBySourceProvider()
+    {
+        $checkoutSource = (new CheckoutSource())->setId(1);
+        $checkout = new Checkout();
+        return [
+            'find existing incorrect call' => [
                 'source' => null,
-                'expected' => new Checkout()
+                'found' => $checkout,
+                'expected' => null
             ],
             'find existing by source' => [
-                'isStartWorkflowAllowed' => true,
-                'type' => '',
-                'id' => null,
-                'source' => new CheckoutSource(),
-                'expected' => new Checkout()
+                'source' => $checkoutSource,
+                'found' => $checkout,
+                'expected' => $checkout
             ],
+            'find existing by source none' => [
+                'source' => $checkoutSource,
+                'found' => null,
+                'expected' => null
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider onGetCheckoutEntityDataProviderNew
+     *
+     * @param bool $isStartWorkflowAllowed
+     * @param CheckoutSource $source
+     * @param CheckoutInterface $expected
+     */
+    public function testOnGetCheckoutEntityNew(
+        $isStartWorkflowAllowed,
+        CheckoutSource $source = null,
+        CheckoutInterface $expected = null
+    ) {
+        $this->listener->setCheckoutClassName('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
+        $this->workflowManager->expects($this->any())
+            ->method('isStartTransitionAvailable')
+            ->willReturn($isStartWorkflowAllowed);
+
+        $event = new CheckoutEntityEvent();
+        $event->setSource($source);
+
+        $this->listener->onCreateCheckoutEntity($event);
+        $this->assertCheckoutEvent($event, $expected);
+    }
+
+    /**
+     * @return array
+     */
+    public function onGetCheckoutEntityDataProviderNew()
+    {
+        $checkoutSource = (new CheckoutSource())->setId(1);
+        return [
             'new instance' => [
                 'isStartWorkflowAllowed' => true,
-                'type' => '',
-                'id' => null,
-                'source' => null,
-                'expected' => new Checkout()
+                'source' => $checkoutSource,
+                'expected' => (new Checkout())->setSource($checkoutSource),
+            ],
+            'new instance start disallowed' => [
+                'isStartWorkflowAllowed' => false,
+                'source' => $checkoutSource,
+                'expected' => null
             ]
         ];
+    }
+
+    /**
+     * @param CheckoutEntityEvent $event
+     * @param CheckoutInterface|null $expected
+     */
+    protected function assertCheckoutEvent(CheckoutEntityEvent $event, CheckoutInterface $expected = null)
+    {
+        $actual = $event->getCheckoutEntity();
+        $this->assertEquals($expected, $actual);
+        $this->assertEquals((bool)$expected, $event->isPropagationStopped());
     }
 }

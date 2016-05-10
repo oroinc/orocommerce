@@ -6,7 +6,6 @@ use Symfony\Component\Intl\Intl;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
-use Oro\Bundle\FilterBundle\Form\Type\Filter\BooleanFilterType;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -51,16 +50,15 @@ class PriceListControllerTest extends WebTestCase
 
     /**
      * @dataProvider dataGridFiltersDataProvider
-     * @param boolean $active
+     * @param string $activity
      * @param string[] $priceLists
      */
-    public function testDataGridFilters($active, $priceLists)
+    public function testDataGridFilters($activity, $priceLists)
     {
         $grid = $this->client->requestGrid(
             ['gridName' => 'pricing-price-list-grid'],
             [
-                'pricing-price-list-grid[_filter][activity][value]' =>
-                    $active ? BooleanFilterType::TYPE_YES : BooleanFilterType::TYPE_NO
+                'pricing-price-list-grid[_filter][activity][value]' => $activity
             ]
         );
         $data = json_decode($grid->getContent(), true)['data'];
@@ -77,11 +75,11 @@ class PriceListControllerTest extends WebTestCase
     {
         return [
             'active' => [
-                'active' => true,
+                'activity' => 'active',
                 'priceLists' => ['priceList1', 'priceList3', 'priceList5', 'Default Price List']
             ],
-            'not_active' => [
-                'active' => false,
+            'inactive' => [
+                'activity' => 'inactive',
                 'priceLists' => ['priceList2', 'priceList4']
             ]
         ];
@@ -94,14 +92,16 @@ class PriceListControllerTest extends WebTestCase
             ['pricing-price-list-grid[_sort_by][activity]' => OrmSorterExtension::DIRECTION_ASC]
         );
         $data = json_decode($grid->getContent(), true)['data'];
-        $this->assertCount(6, $data);
-        foreach ($data as $key => $priceList) {
-            if ($key <= 1) {
-                $this->assertContains("Is not active now.", $priceList['activity']);
-            } else {
-                $this->assertContains("Is active now.", $priceList['activity']);
-            }
-        }
+        $this->assertCount(7, $data);
+        $this->assertEquals('Active', $data[0]['activity']);
+
+        $grid = $this->client->requestGrid(
+            ['gridName' => 'pricing-price-list-grid'],
+            ['pricing-price-list-grid[_sort_by][activity]' => OrmSorterExtension::DIRECTION_DESC]
+        );
+        $data = json_decode($grid->getContent(), true)['data'];
+        $this->assertCount(7, $data);
+        $this->assertEquals('Inactive', $data[0]['activity']);
     }
 
     /**
