@@ -64,6 +64,56 @@ operations:
             - pricing-price-list-select-grid
             - product-prices-grid
 
+    orob2b_pricing_price_list_set_active:
+        label: orob2b.pricing.pricelist.status.enable
+        routes: [orob2b_pricing_price_list_view]
+        datagrids:
+            - pricing-price-list-grid
+        order: 10
+        button_options:
+            icon: icon-ok
+        preconditions:
+            '@equal': [$active, false]
+        actions:
+            - '@assign_value': [$.entity.active, true]
+            - '@flush_entity': $.entity
+            - '@refresh_grid':
+                conditions:
+                    '@not_empty': $.gridName
+                parameters: [$.gridName]
+            - '@flash_message':
+                message: orob2b.pricing.pricelist.status.message.enabled
+                type: 'success'
+            - '@call_service_method':
+                service: orob2b_pricing.price_list_change_trigger_handler
+                method: handlePriceListStatusChange
+                method_parameters: [$.entity]
+
+    orob2b_pricing_price_list_disable:
+        label: orob2b.pricing.pricelist.status.disable
+        routes: [orob2b_pricing_price_list_view]
+        datagrids:
+            - pricing-price-list-grid
+        order: 10
+        button_options:
+            icon: icon-remove
+        preconditions:
+            '@equal': [$active, true]
+        actions:
+            - '@assign_value': [$.entity.active, false]
+            - '@flush_entity': $.entity
+            - '@refresh_grid':
+                conditions:
+                    '@not_empty': $.gridName
+                parameters: [$.gridName]
+            - '@flash_message':
+                message: orob2b.pricing.pricelist.status.message.disabled
+                type: 'success'
+            - '@call_service_method':
+                service: orob2b_pricing.price_list_change_trigger_handler
+                method: handlePriceListStatusChange
+                method_parameters: [$.entity]
+
 action_groups:
     orob2b_pricing_add_product_price:
         parameters:

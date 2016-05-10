@@ -17,6 +17,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 
 class FrontendLineItemWidgetType extends AbstractType
 {
