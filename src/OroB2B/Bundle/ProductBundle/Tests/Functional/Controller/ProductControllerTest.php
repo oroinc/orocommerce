@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller;
 
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -46,6 +47,23 @@ class ProductControllerTest extends WebTestCase
     const DEFAULT_DESCRIPTION = 'default description';
     const DEFAULT_SHORT_DESCRIPTION = 'default short description';
 
+    const FIRST_IMAGE_FILENAME = 'image1.gif';
+    const SECOND_IMAGE_FILENAME = 'image2.gif';
+
+    const IMAGES_VIEW_BODY_SELECTOR = 'div.image-collection table tbody tr';
+    const IMAGES_VIEW_HEAD_SELECTOR = 'div.image-collection table thead tr th';
+    const IMAGE_TYPE_CHECKED_TAG = 'i';
+    const IMAGE_TYPE_CHECKED_CLASS = 'icon-check';
+    const IMAGE_FILENAME_ATTR = 'title';
+
+    /**
+     * @var array
+     */
+    private static $expectedProductImageMatrixHeaders = ['File', 'Main', 'Additional', 'Listing'];
+
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -93,7 +111,7 @@ class ProductControllerTest extends WebTestCase
                 'images' => [
                     0 => [
                         'image' => [
-                            'file' => $this->createUploadedFile('image1.gif')
+                            'file' => $this->createUploadedFile(self::FIRST_IMAGE_FILENAME)
                         ]
                     ],
                 ]
@@ -111,6 +129,13 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(self::TEST_SKU, $html);
         $this->assertContains(self::INVENTORY_STATUS, $html);
         $this->assertContains(self::STATUS, $html);
+
+        $expectedProductImageMatrix = [
+            self::$expectedProductImageMatrixHeaders,
+            [self::FIRST_IMAGE_FILENAME, 1, 1, 1],
+        ];
+
+        $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
     }
 
     /**
@@ -180,7 +205,7 @@ class ProductControllerTest extends WebTestCase
                 'images' => [
                     1 => [
                         'image' => [
-                            'file' => $this->createUploadedFile('image2.gif')
+                            'file' => $this->createUploadedFile(self::SECOND_IMAGE_FILENAME)
                         ]
                     ],
                 ]
@@ -247,6 +272,14 @@ class ProductControllerTest extends WebTestCase
         $this->assertProductPrecision($id, self::FIRST_UNIT_CODE, self::FIRST_UNIT_PRECISION);
         $this->assertProductPrecision($id, self::SECOND_UNIT_CODE, self::SECOND_UNIT_PRECISION);
         $this->assertProductPrecision($id, self::THIRD_UNIT_CODE, self::THIRD_UNIT_PRECISION);
+
+        $expectedProductImageMatrix = [
+            self::$expectedProductImageMatrixHeaders,
+            [self::FIRST_IMAGE_FILENAME, 1, 0, 1],
+            [self::SECOND_IMAGE_FILENAME, 0, 1, 0]
+        ];
+
+        $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
     }
 
     /**
@@ -290,6 +323,14 @@ class ProductControllerTest extends WebTestCase
             $this->createUnitPrecisionString(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION),
             $html
         );
+
+        $expectedProductImageMatrix = [
+            self::$expectedProductImageMatrixHeaders,
+            [self::FIRST_IMAGE_FILENAME, 1, 0, 1],
+            [self::SECOND_IMAGE_FILENAME, 0, 1, 0]
+        ];
+
+        $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
 
         $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
@@ -343,6 +384,7 @@ class ProductControllerTest extends WebTestCase
                     ],
                     'ids' => [$locale->getId() => $localizedName->getId()],
                 ],
+                'images' => []//remove all images
             ],
         ];
 
@@ -373,6 +415,8 @@ class ProductControllerTest extends WebTestCase
             $this->createUnitPrecisionString(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION),
             $html
         );
+
+        $this->assertEmpty($this->parseProductImages($crawler));
 
         $product = $this->getProductDataBySku(self::UPDATED_SKU);
 
@@ -539,5 +583,38 @@ class ProductControllerTest extends WebTestCase
     private function createUploadedFile($fileName)
     {
         return new UploadedFile(__DIR__ . '/files/example.gif', $fileName);
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @return array
+     */
+    private function parseProductImages(Crawler $crawler)
+    {
+        $result = [];
+
+        $children = $crawler->filter(self::IMAGES_VIEW_HEAD_SELECTOR);
+        /** @var \DOMElement $child */
+        foreach ($children as $child) {
+            $result[0][] = $child->textContent;
+        }
+
+        $crawler->filter(self::IMAGES_VIEW_BODY_SELECTOR)->each(
+            function (Crawler $node) use (&$result) {
+                $data = [];
+                $data[] = $node->children()->first()->children()->first()->attr(self::IMAGE_FILENAME_ATTR);
+
+                /** @var \DOMElement $child */
+                foreach ($node->children()->nextAll() as $child) {
+                    $icon = $child->getElementsByTagName(self::IMAGE_TYPE_CHECKED_TAG)->item(0);
+                    $data[] = $icon
+                        ? $icon->attributes->getNamedItem('class')->nodeValue == self::IMAGE_TYPE_CHECKED_CLASS
+                        : false;
+                }
+                $result[] = $data;
+            }
+        );
+
+        return $result;
     }
 }

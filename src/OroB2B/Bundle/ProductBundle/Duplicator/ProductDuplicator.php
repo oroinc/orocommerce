@@ -132,7 +132,7 @@ class ProductDuplicator
             $productCopy->addShortDescription(clone $shortDescription);
         }
 
-        foreach ($productCopy->getImages() as $productImage) {
+        foreach ($product->getImages() as $productImage) {
             $productImageCopy = clone $productImage;
             $productImageCopy->setProduct($productCopy);
 
