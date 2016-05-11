@@ -64,7 +64,7 @@ define(function(require) {
                 .on('content:changed', _.bind(this.onContentChanged, this))
                 .on('content:remove', _.bind(this.onContentRemoved, this))
             ;
-            this.$itemsContainer.on('click', '.removeRow', _.bind(this.onContentChanged, this));
+            this.$itemsContainer.on('click', '.removeRow', _.bind(this.onRemoveRowClick, this));
 
             this.loadingMaskView = new LoadingMaskView({container: this.options.selectors.itemsContainer});
 
@@ -98,9 +98,8 @@ define(function(require) {
                 }
             });
 
-            if (items.length > 0) {
-                this.$itemsContainer.show();
-            }
+            this.$itemsContainer.toggle(items.length > 0);
+
             $(this.options.selectors.addButtonSelector).toggle(
                 _.keys(productUnits).length > selectedUnits.length
             );
@@ -132,10 +131,17 @@ define(function(require) {
                         $select.append($('<option/>').val(code).text(label));
                     }
                 });
+                if ('' === currentValue) {
+                    $select.append($('<option/>').val('').text(''));
+                    $select.trigger('click');
+                }
                 $select.val(currentValue);
             });
         },
 
+        /**
+         * @param {jQuery.Event} e
+         */
         onFreightClassTrigger: function(e) {
             var self = this;
             var $itemContainer = $(e.target).closest(this.options.selectors.itemContainer);
@@ -165,6 +171,18 @@ define(function(require) {
             if (items.length === 0) {
                 this.$itemsContainer.hide();
             }
+        },
+
+        /**
+         * @param {jQuery.Event} e
+         */
+        onRemoveRowClick: function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(e.target).closest('*[data-content]')
+                .trigger('content:remove')
+                .remove();
+            this.onContentChanged();
         },
 
         /**
@@ -229,17 +247,13 @@ define(function(require) {
          * @return {Boolean}
          */
         addOptions: function(units, $select) {
-            var updateRequired = false,
-                emptyOption = $select.find('option[value=""]');
+            var updateRequired = false;
+            var emptyOption = $select.find('option[value=""]');
 
-            if (_.isEmpty(units)) {
-                emptyOption.show();
-            } else {
-                emptyOption.hide();
-            }
+            emptyOption.toggle(_.isEmpty(units));
 
             _.each(units, function(text, value) {
-                if (!$select.find("option[value='" + value + "']").length) {
+                if (!$select.find('option[value="' + value + '"]').length) {
                     $select.append('<option value="' + value + '">' + text + '</option>');
                     updateRequired = true;
                 }
