@@ -7,7 +7,6 @@ layout:
                 top_sign_in:
                     blockType: link
                     options:
-                        visible: { '@neq': [$context.logged_user, null] }
                         route_name: orob2b_account_account_user_security_login
                         text: orob2b.account.accountuser.profile.login
             tree:
