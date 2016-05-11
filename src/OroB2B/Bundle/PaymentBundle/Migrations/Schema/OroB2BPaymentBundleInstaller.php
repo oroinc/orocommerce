@@ -30,7 +30,7 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -118,8 +118,8 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('active', 'boolean', []);
         $table->addColumn('successful', 'boolean', []);
         $table->addColumn('source_payment_transaction', 'integer', ['notnull' => false]);
-        $table->addColumn('request', 'secure_array', ['notnull' => false]);
-        $table->addColumn('response', 'secure_array', ['notnull' => false]);
+        $table->addColumn('request', 'secure_array', ['notnull' => false, 'comment' => '(DC2Type:secure_array)']);
+        $table->addColumn('response', 'secure_array', ['notnull' => false, 'comment' => '(DC2Type:secure_array)']);
         $table->addColumn('transaction_options', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['source_payment_transaction']);
