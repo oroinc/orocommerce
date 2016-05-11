@@ -65,6 +65,8 @@ class ProductControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
+        $this->assertDefaultProductUnit($form);
+
         $formValues = $form->getPhpValues();
         $formValues['orob2b_product']['sku'] = self::TEST_SKU;
         $formValues['orob2b_product']['owner'] = $this->getBusinessUnitId();
@@ -489,4 +491,24 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertEquals($expectedPrecision, $productUnitPrecision->getPrecision());
     }
+    /*
+    *
+    * @param form $form
+    * checking if default product unit field is added and filled
+    */
+    protected function assertDefaultProductUnit($form)
+    {
+        $configManager = $this->client->getContainer()->get('oro_config.manager');
+        $expectedDefaultProductUnit = $configManager->get('orob2b_product.default_unit');
+        $expectedDefaultProductUnitPrecision = $configManager->get('orob2b_product.default_unit_precision');
+
+        $formValues = $form->getValues();
+
+        $this->assertArrayHasKey(self::DEFAULT_UNIT_FIELD, $formValues);
+        $this->assertArrayHasKey(self::DEFAULT_UNIT_PRECISION_FIELD, $formValues);
+        
+        $this->assertEquals($expectedDefaultProductUnit, $formValues[self::DEFAULT_UNIT_FIELD]);
+        $this->assertEquals($expectedDefaultProductUnitPrecision, $formValues[self::DEFAULT_UNIT_PRECISION_FIELD]);
+    }
 }
+
