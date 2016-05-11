@@ -28,9 +28,9 @@ class ProductControllerTest extends WebTestCase
     const INVENTORY_STATUS = 'In Stock';
     const UPDATED_INVENTORY_STATUS = 'Out of Stock';
 
-    const FIRST_UNIT_CODE = 'item';
-    const FIRST_UNIT_FULL_NAME = 'item';
-    const FIRST_UNIT_PRECISION = '5';
+    const FIRST_UNIT_CODE = 'each';
+    const FIRST_UNIT_FULL_NAME = 'each';
+    const FIRST_UNIT_PRECISION = '0';
 
     const SECOND_UNIT_CODE = 'kg';
     const SECOND_UNIT_FULL_NAME = 'kilogram';
@@ -175,7 +175,7 @@ class ProductControllerTest extends WebTestCase
         $expectedUnitPrecisions = [
             ['unit' => self::FIRST_UNIT_FULL_NAME, 'precision' => self::FIRST_UNIT_PRECISION],
             ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION],
-            ['unit' => self::THIRD_UNIT_CODE, 'precision' => self::THIRD_UNIT_PRECISION],
+            ['unit' => self::THIRD_UNIT_FULL_NAME, 'precision' => self::THIRD_UNIT_PRECISION],
         ];
 
         $this->assertEquals(
@@ -491,11 +491,12 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertEquals($expectedPrecision, $productUnitPrecision->getPrecision());
     }
-    /*
-    *
-    * @param form $form
-    * checking if default product unit field is added and filled
-    */
+    
+    /**
+     * checking if default product unit field is added and filled
+     *
+     * @param Form $form
+     */
     protected function assertDefaultProductUnit($form)
     {
         $configManager = $this->client->getContainer()->get('oro_config.manager');
@@ -504,11 +505,7 @@ class ProductControllerTest extends WebTestCase
 
         $formValues = $form->getValues();
 
-        $this->assertArrayHasKey(self::DEFAULT_UNIT_FIELD, $formValues);
-        $this->assertArrayHasKey(self::DEFAULT_UNIT_PRECISION_FIELD, $formValues);
-        
-        $this->assertEquals($expectedDefaultProductUnit, $formValues[self::DEFAULT_UNIT_FIELD]);
-        $this->assertEquals($expectedDefaultProductUnitPrecision, $formValues[self::DEFAULT_UNIT_PRECISION_FIELD]);
+        $this->assertEquals($expectedDefaultProductUnit, $formValues['orob2b_product[unitPrecisions][0][unit]']);
+        $this->assertEquals($expectedDefaultProductUnitPrecision, $formValues['orob2b_product[unitPrecisions][0][precision]']);
     }
 }
-
