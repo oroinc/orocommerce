@@ -51,6 +51,7 @@ services:
         calls:
             - [setClassName, ['%orob2b_product.entity.product.class%']]
             - [setModifier, ["@orob2b_account.model.product_visibility_query_builder_modifier"]]
+            - [setFrontendHelper, ["@orob2b_frontend.request.frontend_helper"]]
         tags:
             - { name: security.voter }
 
@@ -570,6 +571,7 @@ services:
             - "@oro_config.global"
             - "@security.token_storage"
             - "@orob2b_website.manager"
+            - "@orob2b_account.provider.account_user_relations_provider"
         calls:
             - [setProductVisibilitySystemConfigurationPath, ['oro_b2b_account.product_visibility']]
             - [setCategoryVisibilitySystemConfigurationPath, ['oro_b2b_account.category_visibility']]
