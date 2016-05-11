@@ -607,9 +607,12 @@ class ProductControllerTest extends WebTestCase
                 /** @var \DOMElement $child */
                 foreach ($node->children()->nextAll() as $child) {
                     $icon = $child->getElementsByTagName(self::IMAGE_TYPE_CHECKED_TAG)->item(0);
-                    $data[] = $icon
-                        ? $icon->attributes->getNamedItem('class')->nodeValue == self::IMAGE_TYPE_CHECKED_CLASS
-                        : false;
+                    $checked = false;
+                    if ($icon) {
+                        $iconClass = $icon->attributes->getNamedItem('class')->nodeValue;
+                        $checked = $iconClass == self::IMAGE_TYPE_CHECKED_CLASS;
+                    }
+                    $data[] = $checked;
                 }
                 $result[] = $data;
             }
