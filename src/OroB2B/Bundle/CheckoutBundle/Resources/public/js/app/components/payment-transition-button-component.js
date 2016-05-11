@@ -58,11 +58,41 @@ define(function(require) {
                 return;
             }
 
-            this.getPaymentForm()
-                .addClass('hidden')
-                .insertAfter($(this.options.selectors.checkoutContent));
+            this.hidePaymentForm();
 
             PaymentTransitionButtonComponent.__super__.transit.call(this, e, data);
+        },
+
+        onContentUpdated: function() {
+            this.restorePaymentForm();
+        },
+
+        /**
+         * @returns {jQuery|HTMLElement}
+         */
+        hidePaymentForm: function() {
+            var $paymentForm = this.getPaymentForm();
+            $paymentForm.addClass('hidden')
+                .insertAfter(this.getContent());
+
+            return $paymentForm;
+        },
+
+        /**
+         * @returns {jQuery|HTMLElement}
+         */
+        restorePaymentForm: function() {
+            var $paymentForm = this.getPaymentForm();
+            var $hiddenPaymentForm = this.getContent().next(this.options.selectors.paymentForm);
+
+            if ($paymentForm.length && $hiddenPaymentForm.length) {
+                $paymentForm.replaceWith($hiddenPaymentForm);
+                $hiddenPaymentForm.removeClass('hidden');
+
+                return $hiddenPaymentForm;
+            }
+
+            return $paymentForm;
         },
 
         /**

@@ -6,6 +6,8 @@ define(function(require) {
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var BaseView = require('oroui/js/app/views/base/view');
+    var PaymentTransitionButtonComponent =
+        require('orob2bcheckout/js/app/components/payment-transition-button-component');
 
     require('jquery.cookie');
 
@@ -20,6 +22,9 @@ define(function(require) {
         },
 
         _onContentUpdated: function() {
+            var $dummySource = $('<div>');
+            var paymentComponent = new PaymentTransitionButtonComponent({'_sourceElement': $dummySource});
+            paymentComponent.onContentUpdated();
             this.initLayout();
         },
 
