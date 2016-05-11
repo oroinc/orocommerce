@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\CMSBundle\Migrations\Data;
 
-use Oro\Bundle\PlatformBundle\Yaml\Yaml;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\PlatformBundle\Yaml\Yaml;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 use OroB2B\Bundle\CMSBundle\Entity\Page;
@@ -65,7 +65,7 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
      */
     protected function loadFromFile($filePath, Organization $organization)
     {
-        $rows = Yaml::parse(file_get_contents($filePath));
+        $rows = Yaml::parse($filePath);
         $pages = [];
         foreach ($rows as $reference => $row) {
             $page = new Page();

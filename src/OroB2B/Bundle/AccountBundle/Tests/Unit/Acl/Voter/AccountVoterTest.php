@@ -128,7 +128,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     {
         $object = $inputData['object'];
         if (is_null($object) && is_array($inputData['initObjectParams'])) {
-            $object = call_user_func_array(array($this, 'getObject'), $inputData['initObjectParams']);
+            $object = call_user_func_array([$this, 'getObject'], $inputData['initObjectParams']);
         }
         $class  = is_object($object) ? get_class($object) : null;
 
@@ -232,7 +232,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => 2,
                     'object'        => null,
-                    'initObjectParams'  => array('id' => 2),
+                    'initObjectParams'  => ['id' => 2],
                     'user'          => new \stdClass(),
                     'attributes'    => [],
                     'grantedViewBasic' => null,
@@ -283,7 +283,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => 1,
                     'object'        => null,
-                    'initObjectParams'  => array('id' => 1, 'accountUserId' => 1),
+                    'initObjectParams'  => ['id' => 1, 'accountUserId' => 1],
                     'user'          => $this->getAccountUser(2),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => true,
@@ -300,7 +300,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => 2,
                     'object'        => null,
-                    'initObjectParams'  => array('id' => 2, 'accountUserId' => 3),
+                    'initObjectParams'  => ['id' => 2, 'accountUserId' => 3],
                     'user'          => $this->getAccountUser(3),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => true,
@@ -317,7 +317,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => 4,
                     'object'        => null,
-                    'initObjectParams'  => array('id' => 4, 'accountUserId' => 5, 'accountId' => 6),
+                    'initObjectParams'  => ['id' => 4, 'accountUserId' => 5, 'accountId' => 6],
                     'user'          => $this->getAccountUser(7, 8),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => false,
@@ -334,7 +334,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => 9,
                     'object'        => null,
-                    'initObjectParams'  => array('id' => 9, 'accountUserId' => 10, 'accountId' => 11),
+                    'initObjectParams'  => ['id' => 9, 'accountUserId' => 10, 'accountId' => 11],
                     'user'          => $this->getAccountUser(12, 11),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => false,
@@ -351,7 +351,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => 13,
                     'object'        => null,
-                    'initObjectParams'  => array('id' => 13, 'accountUserId' => 14, 'accountId' => 15),
+                    'initObjectParams'  => ['id' => 13, 'accountUserId' => 14, 'accountId' => 15],
                     'user'          => $this->getAccountUser(14, 17),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => false,
@@ -368,7 +368,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => 21,
                     'object'        => null,
-                    'initObjectParams'  => array('id' => 21, 'accountUserId' => 21),
+                    'initObjectParams'  => ['id' => 21, 'accountUserId' => 21],
                     'user'          => $this->getAccountUser(22),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,
@@ -385,7 +385,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => 22,
                     'object'        => null,
-                    'initObjectParams'  => array('id' => 22, 'accountUserId' => 23),
+                    'initObjectParams'  => ['id' => 22, 'accountUserId' => 23],
                     'user'          => $this->getAccountUser(23),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,
@@ -402,7 +402,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => 24,
                     'object'        => null,
-                    'initObjectParams'  => array('id' => 24, 'accountUserId' => 25, 'accountId' => 26),
+                    'initObjectParams'  => ['id' => 24, 'accountUserId' => 25, 'accountId' => 26],
                     'user'          => $this->getAccountUser(27, 28),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,
@@ -419,7 +419,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => 29,
                     'object'        => null,
-                    'initObjectParams'  => array('id' => 29, 'accountUserId' => 30, 'accountId' => 31),
+                    'initObjectParams'  => ['id' => 29, 'accountUserId' => 30, 'accountId' => 31],
                     'user'          => $this->getAccountUser(32, 31),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,
@@ -436,7 +436,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => 33,
                     'object'        => null,
-                    'initObjectParams'  => array('id' => 33, 'accountUserId' => 34, 'accountId' => 35),
+                    'initObjectParams'  => ['id' => 33, 'accountUserId' => 34, 'accountId' => 35],
                     'user'          => $this->getAccountUser(34, 37),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,

@@ -63,7 +63,7 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->cache = $this->cache = $this->getMockForAbstractClass(
+        $this->cache = $this->getMockForAbstractClass(
             'Doctrine\Common\Cache\CacheProvider',
             [],
             '',
