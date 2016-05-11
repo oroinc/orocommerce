@@ -26,7 +26,9 @@ class OroB2BShippingExtensionTest extends ExtensionTestCase
         $this->loadExtension($this->extension);
 
         $expectedDefinitions = [
-            'orob2b_shipping.form.type.shipping_origin',
+            'orob2b_shipping.form.type.shipping_origin_config',
+            'orob2b_shipping.form.type.shipping_origin_warehouse',
+            'orob2b_shipping.form.extension.warehouse_shipping_origin',
             'orob2b_shipping.factory.shipping_origin_model_factory',
             'orob2b_shipping.event_listener.config.shipping_origin'
         ];

@@ -37,3 +37,25 @@
 {% block _shipping_origin_orob2b_shipping___shipping_origin_value_street2_row %}
     {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
+
+{% block orob2b_shipping_origin_warehouse_widget %}
+    <div
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {
+            view: 'orob2bshipping/js/app/views/shipping-origin-view',
+            selectors: {
+                useSystem: '#' ~ form.system.vars.id
+            }
+        }|json_encode }}"
+    >
+        {{ form_row(form.system) }}
+        {{ _self.shipping_origin_block(form.country, form.system.vars.data) }}
+        {{ _self.shipping_origin_block(form.region_text, form.system.vars.data) }}
+        {{ _self.shipping_origin_block(form.region, form.system.vars.data) }}
+        {{ _self.shipping_origin_block(form.postalCode, form.system.vars.data) }}
+        {{ _self.shipping_origin_block(form.city, form.system.vars.data) }}
+        {{ _self.shipping_origin_block(form.street, form.system.vars.data) }}
+        {{ _self.shipping_origin_block(form.street2, form.system.vars.data) }}
+        {{ form_rest(form) }}
+    </div>
+{% endblock %}

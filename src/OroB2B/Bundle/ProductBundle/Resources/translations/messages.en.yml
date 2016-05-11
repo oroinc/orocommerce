@@ -79,6 +79,12 @@ orob2b:
                 additional.label: Additional
                 listing.label: Listing
 
+        lineitem:
+            unit.label: Unit
+            quantity:
+                enter: Enter a QTY
+                placeholder: 'QTY #'
+
         menu:
             products_tab.label: Products
             product_list.description: List of existing products

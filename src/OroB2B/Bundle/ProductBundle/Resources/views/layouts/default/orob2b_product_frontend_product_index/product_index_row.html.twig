@@ -1,7 +1,13 @@
 {% block _product_grid_row_template_widget %}
-    {% set attr = attr|merge({
+    {% set attr = {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-options': {
+            view: 'orob2bproduct/js/app/views/base-product-view'
+        }|json_encode,
+        'data-layout': 'separate'
+    }|merge(attr|merge({
         class: attr.class|default('')
-    }) %}
+    })) %}
     <script id="template-grid-row" type="text/template">
         <div {{ block('block_attributes') }}>
             {{ block_widget(block) }}
@@ -153,4 +159,55 @@
             </ul>
         </div>
     </div>
+{% endblock %}
+
+{% block _line_item_form_start_widget %}
+    {% set attr = attr|merge({
+        'id': form.vars.id ~ '-product-id-<%= model.id %>',
+    }) %}
+    {{ block('form_start_widget') }}
+{% endblock %}
+
+{% block _line_item_form_fields_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product-item__qty__current-grid"
+    }) %}
+    <% if (!_.isEmpty(model.product_units)) { %>
+    <div {{ block('block_attributes') }}
+            data-page-component-module="orob2bproduct/js/app/components/product-unit-select-component"
+            data-product-units='<%= JSON.stringify(model.product_units) %>'>
+        {{ block_widget(block) }}
+    </div>
+    <% } %>
+{% endblock %}
+
+{% block _line_item_form_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product-item__qty product-item__qty_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _line_item_buttons_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% if block.children is not empty %}
+        {% set attr = attr|merge({class: attr.class|default('') ~ " add-product-from-view-component "}) %}
+        <div {{ block('block_attributes') }}>
+            {{ UI.pinnedDropdownButton({
+                'html': block_widget(block),
+                'dataAttributes': {
+                    'layout': 'separate'
+                },
+                'options': {
+                    'widgetModule': 'orob2bproduct/js/content-processor/product-add-to-dropdown-button',
+                    'widgetName': 'productAddToDropdownButtonProcessor',
+                    'truncateLength': 25,
+                    'groupContainer': '<div class="btn btn-block btn-dark btn_has-dropdown btn_has-dropdown_lg width-auto"></div>',
+                    'appendToBody': true
+                }
+            }) }}
+        </div>
+    {% endif %}
 {% endblock %}

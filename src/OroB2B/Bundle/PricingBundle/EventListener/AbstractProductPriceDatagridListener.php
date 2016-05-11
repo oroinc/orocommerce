@@ -60,22 +60,6 @@ abstract class AbstractProductPriceDatagridListener
     abstract public function onBuildBefore(BuildBefore $event);
 
     /**
-     * @param string $currencyIsoCode
-     * @param string $unitCode
-     * @return string
-     */
-    abstract protected function buildColumnName($currencyIsoCode, $unitCode = null);
-
-    /**
-     * @param string $columnName
-     * @return string
-     */
-    protected function buildJoinAlias($columnName)
-    {
-        return $columnName . '_table';
-    }
-
-    /**
      * @return BasePriceList
      */
     protected function getPriceList()
@@ -113,33 +97,6 @@ abstract class AbstractProductPriceDatagridListener
         }
 
         return $groupedPrices;
-    }
-
-    /**
-     * @param DatagridConfiguration $config
-     * @param string $currency
-     * @param ProductUnit|null $unit
-     */
-    protected function addConfigProductPriceJoin(DatagridConfiguration $config, $currency, $unit = null)
-    {
-        $columnName = $this->buildColumnName($currency, $unit);
-        $joinAlias = $this->buildJoinAlias($columnName);
-        $priceList = $this->getPriceList();
-        $expr = new Expr();
-        $joinExpr = $expr
-            ->andX(sprintf('%s.product = product.id', $joinAlias))
-            ->add($expr->eq(sprintf('%s.currency', $joinAlias), $expr->literal($currency)))
-            ->add($expr->eq(sprintf('%s.priceList', $joinAlias), $expr->literal($priceList->getId())))
-            ->add($expr->eq(sprintf('%s.quantity', $joinAlias), 1));
-        if ($unit) {
-            $joinExpr->add($expr->eq(sprintf('%s.unit', $joinAlias), $expr->literal($unit)));
-        }
-        $this->addConfigElement($config, '[source][query][join][left]', [
-            'join' => $this->productPriceClass,
-            'alias' => $joinAlias,
-            'conditionType' => Expr\Join::WITH,
-            'condition' => (string)$joinExpr,
-        ]);
     }
 
     /**

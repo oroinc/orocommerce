@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
 
-use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
+use OroB2B\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;

@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
+use OroB2B\Bundle\ProductBundle\Entity\ProductImage as ProductImageEntity;
 
 class ProductImageCollectionValidator extends ConstraintValidator
 {
@@ -43,7 +43,7 @@ class ProductImageCollectionValidator extends ConstraintValidator
     }
 
     /**
-     * @param ProductImage[]|Collection $value
+     * @param ProductImageEntity[]|Collection $value
      * @param Constraint|ProductImageCollection $constraint
      *
      * {@inheritdoc}
@@ -71,7 +71,7 @@ class ProductImageCollectionValidator extends ConstraintValidator
     }
 
     /**
-     * @param ProductImage[]|Collection $productImages
+     * @param ProductImageEntity[]|Collection $productImages
      * @return array
      */
     private function countImagesByType(Collection $productImages)

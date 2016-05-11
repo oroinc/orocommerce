@@ -146,3 +146,9 @@ services:
             - "@oro_layout.provider.image_type"
         tags:
             - { name: form.type, alias: 'orob2b_product_image_collection' }
+
+    orob2b_product.form.type.frontend_line_item:
+        class: 'OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType'
+        public: true
+        tags:
+            - { name: form.type, alias: orob2b_product_frontend_line_item }

@@ -48,6 +48,13 @@ class PriceListChangeTrigger
     protected $accountGroup;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_force", type="boolean", nullable=true)
+     */
+    protected $force = false;
+
+    /**
      * @return int
      */
     public function getId()
@@ -108,6 +115,25 @@ class PriceListChangeTrigger
     public function setAccountGroup(AccountGroup $accountGroup = null)
     {
         $this->accountGroup = $accountGroup;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isForce()
+    {
+        return $this->force;
+    }
+
+    /**
+     * @param bool $force
+     * @return $this
+     */
+    public function setForce($force)
+    {
+        $this->force = (bool)$force;
 
         return $this;
     }
