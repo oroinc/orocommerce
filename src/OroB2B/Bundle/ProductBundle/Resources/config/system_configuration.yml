@@ -49,8 +49,8 @@ oro_system_configuration:
                 label: orob2b.product.system_configuration.fields.default_unit.label
 
         orob2b_product.default_unit_precision:
-            data_type: string
-            type: text
+            data_type: integer
+            type: integer
             priority: 10
             options:
                 label: orob2b.product.system_configuration.fields.default_unit_precision.label
