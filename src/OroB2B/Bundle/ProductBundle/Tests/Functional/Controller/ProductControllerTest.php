@@ -97,34 +97,20 @@ class ProductControllerTest extends WebTestCase
             'precision' => self::FIRST_UNIT_PRECISION,
         ];
 
-        $additionalSubmittedData = [
-            'orob2b_product' => [
-                'images' => [
-                    0 => [
-                        'main' => 1,
-                        'additional' => 1,
-                        'listing' => 1
-                    ],
-                ]
-            ]
+        $formValues['orob2b_product']['images'][] = [
+            'main' => 1,
+            'additional' => 1,
+            'listing' => 1
         ];
 
-        $submittedData = array_merge_recursive($formValues, $additionalSubmittedData);
-
-        $submittedFilesData = [
-            'orob2b_product' => [
-                'images' => [
-                    0 => [
-                        'image' => [
-                            'file' => $this->createUploadedFile(self::FIRST_IMAGE_FILENAME)
-                        ]
-                    ],
-                ]
+        $filesData['orob2b_product']['images'][] = [
+            'image' => [
+                'file' => $this->createUploadedFile(self::FIRST_IMAGE_FILENAME)
             ]
         ];
 
         $this->client->followRedirects(true);
-        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData, $submittedFilesData);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues, $filesData);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -206,7 +192,7 @@ class ProductControllerTest extends WebTestCase
             ],
         ];
 
-        $submittedFilesData = [
+        $filesData = [
             'orob2b_product' => [
                 'images' => [
                     1 => [
@@ -219,7 +205,7 @@ class ProductControllerTest extends WebTestCase
         ];
 
         $this->client->followRedirects(true);
-        $this->client->request($form->getMethod(), $form->getUri(), $submittedData, $submittedFilesData);
+        $this->client->request($form->getMethod(), $form->getUri(), $submittedData, $filesData);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -618,7 +604,7 @@ class ProductControllerTest extends WebTestCase
                         $iconClass = $icon->attributes->getNamedItem('class')->nodeValue;
                         $checked = $iconClass == self::IMAGE_TYPE_CHECKED_CLASS;
                     }
-                    $data[] = $checked;
+                    $data[] = (int) $checked;
                 }
                 $result[] = $data;
             }
