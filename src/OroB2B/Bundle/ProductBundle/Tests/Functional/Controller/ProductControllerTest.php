@@ -501,9 +501,12 @@ class ProductControllerTest extends WebTestCase
         $configManager = $this->client->getContainer()->get('oro_config.manager');
         $expectedDefaultProductUnit = $configManager->get('orob2b_product.default_unit');
         $expectedDefaultProductUnitPrecision = $configManager->get('orob2b_product.default_unit_precision');
+
         $formValues = $form->getValues();
+
         $this->assertArrayHasKey(self::DEFAULT_UNIT_FIELD, $formValues);
         $this->assertArrayHasKey(self::DEFAULT_UNIT_PRECISION_FIELD, $formValues);
+        
         $this->assertEquals($expectedDefaultProductUnit, $formValues[self::DEFAULT_UNIT_FIELD]);
         $this->assertEquals($expectedDefaultProductUnitPrecision, $formValues[self::DEFAULT_UNIT_PRECISION_FIELD]);
     }
