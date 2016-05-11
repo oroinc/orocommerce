@@ -859,6 +859,7 @@ services:
 
     orob2b_account.provider.account_user_relations_provider:
         class: 'OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider'
+        public: true
         arguments:
             - '@oro_config.global'
             - '@oro_entity.doctrine_helper'

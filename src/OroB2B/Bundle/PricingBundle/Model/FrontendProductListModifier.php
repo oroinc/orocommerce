@@ -32,6 +32,7 @@ class FrontendProductListModifier
     }
 
     /**
+     * @todo use account user relations provider to get account with group for frontend application BB-2987
      * @param QueryBuilder $queryBuilder
      * @param string|null $currency
      * @param null|BasePriceList $priceList

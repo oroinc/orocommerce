@@ -34,13 +34,10 @@ class ProductController extends Controller
      */
     protected function createCurrenciesForm()
     {
-        $accountUser = $this->getUser();
-        if (!$accountUser instanceof AccountUser) {
-            $accountUser = null;
-        }
+        $relationsProvider = $this->get('orob2b_account.provider.account_user_relations_provider');
 
         $priceList = $this->get('orob2b_pricing.model.price_list_tree_handler')
-            ->getPriceList($accountUser->getAccount());
+            ->getPriceList($relationsProvider->getAccountIncludingEmpty($this->getUser()));
 
         $currenciesList = null;
         $selectedCurrencies = [];

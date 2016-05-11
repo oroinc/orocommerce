@@ -68,4 +68,19 @@ class AccountUserRelationsProvider
 
         return null;
     }
+
+    /**
+     * @param AccountUser|null $accountUser
+     * @return null|Account
+     */
+    public function getAccountIncludingEmpty(AccountUser $accountUser = null)
+    {
+        $account = $this->getAccount($accountUser);
+        if (!$account) {
+            $account = new Account();
+            $account->setGroup($this->getAccountGroup($accountUser));
+        }
+        
+        return $account;
+    }
 }
