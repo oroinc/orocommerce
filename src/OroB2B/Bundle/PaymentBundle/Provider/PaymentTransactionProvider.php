@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareTrait;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -59,7 +60,7 @@ class PaymentTransactionProvider
         return $this->doctrineHelper->getEntityRepository($this->paymentTransactionClass)->findOneBy(
             array_merge(
                 [
-                    'frontendOwner' => $this->getAccountUser()
+                    'frontendOwner' => $this->getAccountUser($object)
                 ],
                 $filter,
                 [
@@ -77,18 +78,23 @@ class PaymentTransactionProvider
      */
     protected function getAccountUser($object = null)
     {
-        if ($object instanceof AccountOwnerAwareInterface) {
-            return $object->getAccountUser();
-        }
-
         $token = $this->tokenStorage->getToken();
         if (!$token) {
             return null;
         }
 
         $user = $token->getUser();
+
+        if ($user instanceof User && $object instanceof AccountOwnerAwareInterface && $object->getAccountUser()) {
+            return $object->getAccountUser();
+        }
+
         if ($user instanceof AccountUser) {
             return $user;
+        }
+
+        if ($object instanceof AccountOwnerAwareInterface && $object->getAccountUser()) {
+            return $object->getAccountUser();
         }
 
         return null;
@@ -107,7 +113,7 @@ class PaymentTransactionProvider
         return $this->doctrineHelper->getEntityRepository($this->paymentTransactionClass)->findBy(
             array_merge(
                 [
-                    'frontendOwner' => $this->getAccountUser()
+                    'frontendOwner' => $this->getAccountUser($object)
                 ],
                 $filter,
                 [
@@ -120,14 +126,18 @@ class PaymentTransactionProvider
 
     /**
      * @param object $object
+     * @param float $amount
+     * @param string $currency
      * @param string|null $paymentMethod
-     * @return PaymentTransaction|null
+     * @return null|PaymentTransaction
      */
-    public function getActiveAuthorizePaymentTransaction($object, $paymentMethod = null)
+    public function getActiveAuthorizePaymentTransaction($object, $amount, $currency, $paymentMethod = null)
     {
         $options = [
             'active' => true,
             'successful' => true,
+            'amount' => (string)round($amount, 2),
+            'currency' => $currency,
             'action' => PaymentMethodInterface::AUTHORIZE,
             'frontendOwner' => $this->getAccountUser($object)
         ];
@@ -146,15 +156,15 @@ class PaymentTransactionProvider
      */
     public function getActiveValidatePaymentTransaction($object, $paymentMethod)
     {
-        return $this->getPaymentTransaction(
-            $object,
+        return $this->doctrineHelper->getEntityRepository($this->paymentTransactionClass)->findOneBy(
             [
                 'active' => true,
                 'successful' => true,
                 'action' => PaymentMethodInterface::VALIDATE,
                 'paymentMethod' => (string)$paymentMethod,
-                'frontendOwner' => $this->getAccountUser()
-            ]
+                'frontendOwner' => $this->getAccountUser(),
+            ],
+            ['id' => Criteria::DESC]
         );
     }
 

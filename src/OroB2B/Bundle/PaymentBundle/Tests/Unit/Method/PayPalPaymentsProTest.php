@@ -139,7 +139,7 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
                     'gatewayAction' => Option\Transaction::DELAYED_CAPTURE,
                     'sourceTransactionData' => [],
                     'transactionData' => [
-                        'action' => 'delayedCapture',
+                        'action' => 'capture',
                         'request' => [],
                     ],
                     'configs' => [
@@ -170,7 +170,7 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
                         'request' => ['TENDER' => 'source_tender'],
                     ],
                     'transactionData' => [
-                        'action' => 'delayedCapture',
+                        'action' => 'capture',
                         'request' => [],
                     ],
                     'configs' => [
@@ -311,6 +311,54 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
                     'formAction' => 'test_form_action',
                 ]
             ],
+        ];
+    }
+
+    /**
+     * @param bool $expected
+     * @param string $actionName
+     *
+     * @dataProvider supportsDataProvider
+     */
+    public function testSupports($expected, $actionName)
+    {
+        $this->assertEquals($expected, $this->method->supports($actionName));
+    }
+
+    /**
+     * @return array
+     */
+    public function supportsDataProvider()
+    {
+        return [
+            [true, PayPalPaymentsPro::AUTHORIZE],
+            [true, PayPalPaymentsPro::CAPTURE],
+            [true, PayPalPaymentsPro::CHARGE],
+            [true, PayPalPaymentsPro::PURCHASE],
+        ];
+    }
+
+    /**
+     * @param bool $expected
+     * @param bool $configValue
+     *
+     * @dataProvider validateSupportsDataProvider
+     */
+    public function testSupportsValidate($expected, $configValue)
+    {
+        $this->configureConfig([Configuration::PAYPAL_PAYMENTS_PRO_ZERO_AMOUNT_AUTHORIZATION_KEY => $configValue]);
+
+        $this->assertEquals($expected, $this->method->supports(PayPalPaymentsPro::VALIDATE));
+    }
+
+    /**
+     * @return array
+     */
+    public function validateSupportsDataProvider()
+    {
+        return [
+            [true, true],
+            [false, false],
         ];
     }
 }

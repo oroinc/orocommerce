@@ -9,14 +9,12 @@ interface PaymentMethodInterface
     const AUTHORIZE = 'authorize';
     const CHARGE = 'charge';
     const VALIDATE = 'validate';
-    const DELAYED_CAPTURE = 'delayedCapture';
+    const CAPTURE = 'capture';
 
     /**
      * Action to wrap action combination - charge, authorize, authorize and capture
      */
     const PURCHASE = 'purchase';
-
-    const CAPTURE = 'capture';
 
     /**
      * @param PaymentTransaction $paymentTransaction

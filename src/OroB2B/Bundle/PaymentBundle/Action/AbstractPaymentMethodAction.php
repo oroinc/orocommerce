@@ -34,7 +34,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
     protected $entity;
 
     /** @var array */
-    protected $options;
+    protected $options = [];
 
     /**
      * @param ContextAccessor $contextAccessor

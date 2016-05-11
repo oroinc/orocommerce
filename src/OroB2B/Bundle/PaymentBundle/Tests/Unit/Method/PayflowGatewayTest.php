@@ -150,14 +150,17 @@ class PayflowGatewayTest extends AbstractPayflowGatewayTest
                         'PNREF' => 'test_reference',
                     ],
                 ],
-                []
+                [
+                    'message' => null,
+                    'successful' => true,
+                ]
             ],
             'delayed capture successful with enabled required amount' => [
                 [
                     'gatewayAction' => Option\Transaction::DELAYED_CAPTURE,
                     'sourceTransactionData' => [],
                     'transactionData' => [
-                        'action' => 'delayedCapture',
+                        'action' => 'capture',
                         'request' => [],
                     ],
                     'configs' => [
@@ -188,7 +191,7 @@ class PayflowGatewayTest extends AbstractPayflowGatewayTest
                         'request' => ['TENDER' => 'source_tender'],
                     ],
                     'transactionData' => [
-                        'action' => 'delayedCapture',
+                        'action' => 'capture',
                         'request' => [],
                     ],
                     'configs' => [
@@ -329,6 +332,54 @@ class PayflowGatewayTest extends AbstractPayflowGatewayTest
                     'formAction' => 'test_form_action',
                 ]
             ],
+        ];
+    }
+
+    /**
+     * @param bool $expected
+     * @param string $actionName
+     *
+     * @dataProvider supportsDataProvider
+     */
+    public function testSupports($expected, $actionName)
+    {
+        $this->assertEquals($expected, $this->method->supports($actionName));
+    }
+
+    /**
+     * @return array
+     */
+    public function supportsDataProvider()
+    {
+        return [
+            [true, PayflowGateway::AUTHORIZE],
+            [true, PayflowGateway::CAPTURE],
+            [true, PayflowGateway::CHARGE],
+            [true, PayflowGateway::PURCHASE],
+        ];
+    }
+
+    /**
+     * @param bool $expected
+     * @param bool $configValue
+     *
+     * @dataProvider validateSupportsDataProvider
+     */
+    public function testSupportsValidate($expected, $configValue)
+    {
+        $this->configureConfig([Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY => $configValue]);
+
+        $this->assertEquals($expected, $this->method->supports(PayflowGateway::VALIDATE));
+    }
+
+    /**
+     * @return array
+     */
+    public function validateSupportsDataProvider()
+    {
+        return [
+            [true, true],
+            [false, false],
         ];
     }
 }

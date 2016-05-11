@@ -215,6 +215,7 @@ oro_system_configuration:
             priority: 30
             options:
                 label: orob2b.payment.system_configuration.fields.zero_amount_authorization.label
+                tooltip: orob2b.payment.system_configuration.fields.zero_amount_authorization.tooltip
 
         orob2b_payment.paypal_payments_pro_authorization_for_required_amount:
             data_type: boolean
@@ -401,6 +402,7 @@ oro_system_configuration:
             priority: 30
             options:
                 label: orob2b.payment.system_configuration.fields.zero_amount_authorization.label
+                tooltip: orob2b.payment.system_configuration.fields.zero_amount_authorization.tooltip
 
         orob2b_payment.payflow_gateway_authorization_for_required_amount:
             data_type: boolean

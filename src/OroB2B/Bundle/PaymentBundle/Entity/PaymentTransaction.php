@@ -361,7 +361,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      */
     public function setAmount($amount)
     {
-        $this->amount = (string)$amount;
+        $this->amount = (string)round($amount, 2);
 
         return $this;
     }

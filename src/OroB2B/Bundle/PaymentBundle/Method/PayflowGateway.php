@@ -61,9 +61,9 @@ class PayflowGateway implements PaymentMethodInterface
     public function authorize(PaymentTransaction $paymentTransaction)
     {
         $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
-        if ($sourcePaymentTransaction && !$this->getRequiredAmountEnabled()) {
-            $this->authorizeTransactionForValidate($paymentTransaction, $sourcePaymentTransaction);
-            
+        if ($sourcePaymentTransaction && $this->skipAuthorizeWithAmountAfterValidate()) {
+            $this->useValidateTransactionData($paymentTransaction, $sourcePaymentTransaction);
+
             return;
         }
 
@@ -84,12 +84,11 @@ class PayflowGateway implements PaymentMethodInterface
      * @param PaymentTransaction $paymentTransaction
      * @param PaymentTransaction $sourcePaymentTransaction
      */
-    protected function authorizeTransactionForValidate(
+    protected function useValidateTransactionData(
         PaymentTransaction $paymentTransaction,
         PaymentTransaction $sourcePaymentTransaction
     ) {
         $paymentTransaction
-            ->setAmount($sourcePaymentTransaction->getAmount())
             ->setCurrency($sourcePaymentTransaction->getCurrency())
             ->setReference($sourcePaymentTransaction->getReference())
             ->setSuccessful($sourcePaymentTransaction->isSuccessful())
@@ -99,6 +98,7 @@ class PayflowGateway implements PaymentMethodInterface
 
     /**
      * @param PaymentTransaction $paymentTransaction
+     * @return array
      */
     public function charge(PaymentTransaction $paymentTransaction)
     {
@@ -115,10 +115,17 @@ class PayflowGateway implements PaymentMethodInterface
             ->setResponse($response->getData());
 
         if ($sourcePaymentTransaction) {
-            $sourcePaymentTransaction
-                ->setActive(!$paymentTransaction->isSuccessful())
-                ->setSuccessful($response->isSuccessful());
+            $sourcePaymentTransaction->setSuccessful($response->isSuccessful());
         }
+
+        if ($sourcePaymentTransaction && $sourcePaymentTransaction->getAmount()) {
+            $sourcePaymentTransaction->setActive(!$paymentTransaction->isSuccessful());
+        }
+
+        return [
+            'message' => $response->getMessage(),
+            'successful' => $response->isSuccessful(),
+        ];
     }
 
     /**
@@ -131,32 +138,11 @@ class PayflowGateway implements PaymentMethodInterface
         $paymentTransaction->setRequest($options);
 
         $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
-        if ($sourcePaymentTransaction && !$this->getRequiredAmountEnabled()) {
-            $paymentTransaction->setAction(self::CHARGE);
-            return $this->execute($paymentTransaction);
+        if ($sourcePaymentTransaction && $this->skipAuthorizeWithAmountAfterValidate()) {
+            return $this->charge($paymentTransaction);
         }
 
-        $paymentTransaction->setAction(self::DELAYED_CAPTURE);
-
-        return $this->execute($paymentTransaction);
-    }
-
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return array
-     */
-    public function delayedCapture(PaymentTransaction $paymentTransaction)
-    {
-        $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
-        if (!$sourcePaymentTransaction) {
-            return [];
-        }
-
-        $keys = [Option\Tender::TENDER];
-        $options = array_intersect_key($sourcePaymentTransaction->getRequest(), array_flip($keys));
-        $options[Option\OriginalTransaction::ORIGID] = $sourcePaymentTransaction->getReference();
-
-        $paymentTransaction->setRequest($options);
+        unset($options[Option\Currency::CURRENCY]);
 
         $response = $this->gateway
             ->request(Option\Transaction::DELAYED_CAPTURE, array_replace($this->getCredentials(), $options));
@@ -166,9 +152,11 @@ class PayflowGateway implements PaymentMethodInterface
             ->setReference($response->getReference())
             ->setResponse($response->getData());
 
-        $sourcePaymentTransaction
-            ->setActive(!$paymentTransaction->isSuccessful())
-            ->setSuccessful($response->isSuccessful());
+        if ($sourcePaymentTransaction) {
+            $sourcePaymentTransaction
+                ->setActive(!$paymentTransaction->isSuccessful())
+                ->setSuccessful($response->isSuccessful());
+        }
 
         return [
             'message' => $response->getMessage(),
@@ -219,12 +207,9 @@ class PayflowGateway implements PaymentMethodInterface
 
         $paymentTransaction
             ->setRequest($options)
-            ->setAction(PaymentMethodInterface::AUTHORIZE);
-
-        $this->execute($paymentTransaction);
-
-        $paymentTransaction
             ->setAction(PaymentMethodInterface::VALIDATE);
+
+        $this->authorize($paymentTransaction);
 
         return $this->secureTokenResponse($paymentTransaction);
     }
@@ -357,7 +342,7 @@ class PayflowGateway implements PaymentMethodInterface
 
         return in_array(
             $actionName,
-            [self::AUTHORIZE, self::CAPTURE, self::CHARGE, self::PURCHASE, self::DELAYED_CAPTURE],
+            [self::AUTHORIZE, self::CAPTURE, self::CHARGE, self::PURCHASE],
             true
         );
     }
@@ -368,5 +353,13 @@ class PayflowGateway implements PaymentMethodInterface
     protected function getRequiredAmountEnabled()
     {
         return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    public function skipAuthorizeWithAmountAfterValidate()
+    {
+        return !$this->getRequiredAmountEnabled();
     }
 }

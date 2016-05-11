@@ -191,22 +191,22 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             [
                 'paymentTermPresent' => true,
                 'configValue' => true,
-                'expected' => true
+                'expected' => true,
             ],
             [
                 'paymentTermPresent' => false,
                 'configValue' => true,
-                'expected' => false
+                'expected' => false,
             ],
             [
                 'paymentTermPresent' => true,
                 'configValue' => false,
-                'expected' => false
+                'expected' => false,
             ],
             [
                 'paymentTermPresent' => false,
                 'configValue' => false,
-                'expected' => false
+                'expected' => false,
             ],
         ];
     }
@@ -214,5 +214,30 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
     public function testGetType()
     {
         $this->assertEquals('payment_term', $this->method->getType());
+    }
+
+    /**
+     * @param bool $expected
+     * @param string $actionName
+     *
+     * @dataProvider supportsDataProvider
+     */
+    public function testSupports($expected, $actionName)
+    {
+        $this->assertEquals($expected, $this->method->supports($actionName));
+    }
+
+    /**
+     * @return array
+     */
+    public function supportsDataProvider()
+    {
+        return [
+            [false, PaymentTermMethod::AUTHORIZE],
+            [false, PaymentTermMethod::CAPTURE],
+            [false, PaymentTermMethod::CHARGE],
+            [true, PaymentTermMethod::VALIDATE],
+            [true, PaymentTermMethod::PURCHASE],
+        ];
     }
 }
