@@ -127,16 +127,21 @@ services:
         tags:
             - { name: twig.extension }
 
-    orob2b_checkout.event_listener.checkout_entity:
+    # Listener in checkout bundle should be handled first to allow custom listeners overwrite result
+    orob2b_checkout.event_listener.checkout_entity.abstract:
         class: OroB2B\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener
         lazy: true
         arguments:
             - '@oro_workflow.manager'
             - '@doctrine'
+
+    orob2b_checkout.event_listener.checkout_entity:
+        parent: 'orob2b_checkout.event_listener.checkout_entity.abstract'
         calls:
             - [setCheckoutClassName, ['%orob2b_checkout.entity.checkout.class%']]
         tags:
             - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity}
+            - {name: kernel.event_listener, event: orob2b_checkout.create_checkout_entity, method: onCreateCheckoutEntity}
 
     orob2b_checkout.grid_totals_metadata.cache:
         parent: oro.cache.abstract

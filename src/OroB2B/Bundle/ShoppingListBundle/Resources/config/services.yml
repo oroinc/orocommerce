@@ -111,14 +111,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_shopping_list_form }
 
-    orob2b_shopping_list.layout.data_provider.frontend_line_item_form:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendLineItemFormProvider'
-        arguments:
-            - "@form.factory"
-            - "@oro_security.security_facade"
-        tags:
-            - { name: layout.data_provider, alias: orob2b_shopping_list_frontend_line_item_form }
-
     orob2b_shopping_list.layout.data_provider.account_user_shopping_lists:
         class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider'
         arguments:
@@ -130,13 +122,22 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_account_user_shopping_lists }
 
-    orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_prices:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsPricesDataProvider'
+    orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_matched_price:
+        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsMatchedPriceProvider'
         arguments:
             - '@orob2b_shopping_list.data_provider.frontend_product_prices'
-            - '@doctrine'
+            - '@orob2b_shopping_list.data_provider.shopping_list_line_items'
         tags:
-            - { name: layout.data_provider, alias: orob2b_shopping_list_products_prices }
+            - { name: layout.data_provider, alias: orob2b_shopping_list_products_matched_price }
+
+    orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_all_prices:
+        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsAllPricesProvider'
+        arguments:
+            - '@orob2b_shopping_list.data_provider.frontend_product_prices'
+            - '@orob2b_shopping_list.data_provider.shopping_list_line_items'
+            - '@orob2b_pricing.formatter.product_price_formatter'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_shopping_list_products_all_prices }
 
     orob2b_shopping_list.data_provider.frontend_product_prices:
         class: 'OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider'
@@ -200,3 +201,8 @@ services:
         factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
         arguments:
             - '%orob2b_shopping_list.entity.line_item.class%'
+
+    orob2b_shopping_list.data_provider.shopping_list_line_items:
+        class: 'OroB2B\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider'
+        arguments:
+            - '@doctrine'

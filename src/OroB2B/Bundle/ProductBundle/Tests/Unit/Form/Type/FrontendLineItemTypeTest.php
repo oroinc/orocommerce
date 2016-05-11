@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
@@ -10,21 +10,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Model\ProductLineItem;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
+use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 
 class FrontendLineItemTypeTest extends FormIntegrationTestCase
 {
     use QuantityTypeTrait;
-
-    const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
-    const SHOPPING_LIST_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList';
-    const NEW_SHOPPING_LIST_ID = 10;
 
     /**
      * @var FrontendLineItemType
@@ -47,7 +41,6 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->type = new FrontendLineItemType();
-        $this->type->setDataClass(self::DATA_CLASS);
     }
 
     /**
@@ -73,9 +66,8 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
      */
     public function testBuildForm()
     {
-        $lineItem = (new LineItem())
-            ->setProduct($this->getProductEntityWithPrecision(1, 'kg', 3))
-            ->setShoppingList($this->getShoppingList(1, 'Shopping List 1'));
+        $lineItem = (new ProductLineItem(1))
+            ->setProduct($this->getProductEntityWithPrecision(1, 'kg', 3));
 
         $form = $this->factory->create($this->type, $lineItem);
 
@@ -100,7 +92,6 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
         $this->type->configureOptions($resolver);
         $resolvedOptions = $resolver->resolve();
 
-        $this->assertEquals(self::DATA_CLASS, $resolvedOptions['data_class']);
         $this->assertEquals(['add_product'], $resolvedOptions['validation_groups']);
     }
 
@@ -130,11 +121,9 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     public function submitDataProvider()
     {
         $product = $this->getProductEntityWithPrecision(1, 'kg', 3);
-        $expectedShoppingList = $this->getShoppingList(1, 'Shopping List 1');
 
-        $defaultLineItem = new LineItem();
+        $defaultLineItem = new ProductLineItem(1);
         $defaultLineItem->setProduct($product);
-        $defaultLineItem->setShoppingList($expectedShoppingList);
 
         $expectedLineItem = clone $defaultLineItem;
         $expectedLineItem
@@ -178,21 +167,6 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param integer $id
-     * @param string  $label
-     *
-     * @return ShoppingList
-     */
-    protected function getShoppingList($id, $label)
-    {
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $id);
-        $shoppingList->setLabel($label);
-
-        return $shoppingList;
-    }
-
-    /**
      * @param string $className
      * @param int    $id
      *
@@ -226,11 +200,11 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param LineItem $lineItem
+     * @param ProductLineItem $lineItem
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
      */
-    protected function getForm(LineItem $lineItem)
+    protected function getForm(ProductLineItem $lineItem)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
         $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')

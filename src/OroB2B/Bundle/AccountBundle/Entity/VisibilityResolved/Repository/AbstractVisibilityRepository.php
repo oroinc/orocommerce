@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class AbstractVisibilityRepository extends EntityRepository

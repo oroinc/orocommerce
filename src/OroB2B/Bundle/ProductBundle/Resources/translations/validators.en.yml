@@ -22,6 +22,9 @@ orob2b:
             precision.blank: Precision should not be blank.
             unit.blank: Unit should not be blank.
 
+        unit_precisions_items:
+            blank: 'Please add one or more product units.'
+
         frontend:
             quick_add:
                 invalid_file_type: This file type is not allowed
