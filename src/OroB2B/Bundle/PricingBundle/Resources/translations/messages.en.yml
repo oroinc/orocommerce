@@ -36,6 +36,7 @@ orob2b.pricing:
             message:
               enabled: Price List was enabled successfully
               disabled: Price List was disabled successfully
+        duplicate.label: Duplicate Price List
 
     quantity.label: Quantity
     fallback:

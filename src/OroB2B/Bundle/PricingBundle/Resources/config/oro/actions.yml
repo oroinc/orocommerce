@@ -114,6 +114,28 @@ operations:
                 method: handlePriceListStatusChange
                 method_parameters: [$.entity]
 
+    orob2b_pricing_price_list_duplicate:
+        label: orob2b.pricing.pricelist.duplicate.label
+        routes: [orob2b_pricing_price_list_view]
+        order: 10
+        button_options:
+            icon: icon-copy
+        actions:
+            - '@create_entity':
+            - '@assign_value': [$.entity.active, false]
+            - '@flush_entity': $.entity
+            - '@refresh_grid':
+                conditions:
+                    '@not_empty': $.gridName
+                parameters: [$.gridName]
+            - '@flash_message':
+                message: orob2b.pricing.pricelist.status.message.disabled
+                type: 'success'
+            - '@call_service_method':
+                service: orob2b_pricing.price_list_change_trigger_handler
+                method: handlePriceListStatusChange
+                method_parameters: [$.entity]
+
 action_groups:
     orob2b_pricing_add_product_price:
         parameters:
