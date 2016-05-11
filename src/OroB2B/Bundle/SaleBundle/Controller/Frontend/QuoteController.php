@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
@@ -96,6 +97,11 @@ class QuoteController extends Controller
      */
     public function choiceAction(Request $request, QuoteDemand $quoteDemand)
     {
+        $quote = $quoteDemand->getQuote();
+        if ($quote->isExpired() || $quote->getValidUntil() && $quote->getValidUntil() < new \DateTime()) {
+            return new RedirectResponse($request->headers->get('referer'));
+        }
+
         $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
