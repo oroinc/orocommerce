@@ -2,11 +2,19 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
@@ -26,22 +34,31 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
     /** @var UnitLabelFormatter */
     protected $formatter;
 
+    /** @var TranslatorInterface */
+    protected $translator;
+
     /** @var string */
     protected $configParameterName;
+
+    /** @var string */
+    protected $entityClass;
 
     /**
      * @param EntityRepository $repository
      * @param ConfigManager $configManager
      * @param UnitLabelFormatter $formatter
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         EntityRepository $repository,
         ConfigManager $configManager,
-        UnitLabelFormatter $formatter
+        UnitLabelFormatter $formatter,
+        TranslatorInterface $translator
     ) {
         $this->repository = $repository;
         $this->configManager = $configManager;
         $this->formatter = $formatter;
+        $this->translator = $translator;
     }
 
     /**
@@ -50,6 +67,130 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
     public function setConfigParameterName($configParameterName)
     {
         $this->configParameterName = $configParameterName;
+    }
+
+    /**
+     * @param string $entityClass
+     */
+    public function setEntityClass($entityClass)
+    {
+        $this->entityClass = $entityClass;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setAcceptableUnits']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'validateUnits']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $formParent = $form->getParent();
+        if (!$formParent) {
+            return;
+        }
+
+        $view->vars['choices'] = [];
+
+        $choices = $this->formatter->formatChoices($this->getUnits($options['full_list']), $options['compact']);
+        foreach ($choices as $key => $value) {
+            $view->vars['choices'][] = new ChoiceView($value, $key, $value);
+        }
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function setAcceptableUnits(FormEvent $event)
+    {
+        $form = $event->getForm();
+        $options = $form->getConfig()->getOptions();
+
+        if ($options['choices_updated']) {
+            return;
+        }
+
+        $formParent = $form->getParent();
+        if (!$formParent) {
+            return;
+        }
+
+        $options['choices'] = $this->getUnits($options['full_list']);
+        $options['choices_updated'] = true;
+
+        $formParent->add($form->getName(), $this->getName(), $options);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function validateUnits(FormEvent $event)
+    {
+        $form = $event->getForm();
+        $units = new ArrayCollection($this->getUnits(true));
+        $data = $this->repository->findBy(['code' => $event->getData()]);
+
+        foreach ($data as $unit) {
+            if (!$units->contains($unit)) {
+                $form->addError(
+                    new FormError(
+                        $this->translator->trans(
+                            'orob2b.shipping.validators.shipping_options.invalid',
+                            [],
+                            'validators'
+                        )
+                    )
+                );
+                break;
+            }
+        }
+    }
+
+    /**
+     * @param bool $fullList
+     *
+     * @return MeasureUnitInterface[]|array
+     */
+    protected function getUnits($fullList = false)
+    {
+        $units = $this->repository->findAll();
+
+        if (!$fullList) {
+            $configCodes = $this->configManager->get($this->configParameterName);
+            $units = array_filter(
+                $units,
+                function (MeasureUnitInterface $item) use ($configCodes) {
+                    return in_array($item->getCode(), $configCodes, true);
+                }
+            );
+        }
+
+        return $units;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(
+            [
+                'class' => $this->entityClass,
+                'property' => 'code',
+                'compact' => false,
+                'full_list' => false,
+                'choices_updated' => false
+            ]
+        )
+        ->setAllowedTypes('compact', ['bool'])
+        ->setAllowedTypes('full_list', ['bool'])
+        ->setAllowedTypes('choices_updated', ['bool']);
     }
 
     /**
@@ -65,59 +206,6 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
      */
     public function getParent()
     {
-        return 'choice';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(
-            [
-                'choices' => function (Options $options) {
-                    if ($options['full_list']) {
-                        $codes = array_map(
-                            function (MeasureUnitInterface $entity) {
-                                return $entity->getCode();
-                            },
-                            $this->repository->findAll()
-                        );
-                    } else {
-                        $codes = $this->configManager->get($this->configParameterName);
-                    }
-
-                    $codes = array_merge($codes, $options['additional_codes']);
-
-                    return $this->formatChoices($codes, $options['compact']);
-                },
-                'compact' => false,
-                'additional_codes' => [],
-                'full_list' => false
-            ]
-        );
-        $resolver->setAllowedTypes('compact', ['bool'])
-            ->setAllowedTypes('additional_codes', ['array'])
-            ->setAllowedTypes('full_list', ['bool']);
-    }
-
-    /**
-     * @param array $codes
-     * @param boolean $isShort
-     * @return array
-     */
-    protected function formatChoices(array $codes, $isShort)
-    {
-        $codes = array_combine($codes, $codes);
-        $codes = array_map(
-            function ($code) use ($isShort) {
-                return $this->formatter->format($code, $isShort);
-            },
-            $codes
-        );
-
-        ksort($codes);
-
-        return $codes;
+        return 'entity';
     }
 }

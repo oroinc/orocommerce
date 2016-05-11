@@ -35,8 +35,11 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->repo = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
-        $this->repo->expects($this->any())->method('findBy')->willReturn([]);
+        $this->repo = $this
+            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->repo->expects($this->any())->method('getShippingOptionsByProduct')->willReturn([]);
 
         $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->manager->expects($this->any())
