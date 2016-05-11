@@ -24,6 +24,7 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
                 ->getMock();
 
         $this->productUnitsProvider
+            ->expects($this->any())
             ->method('getAvailableProductUnits')
             ->willReturn([
                 'each' => 'each',

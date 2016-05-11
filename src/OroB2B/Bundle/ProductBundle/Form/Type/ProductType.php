@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -13,6 +16,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Doctrine\Common\Persistence\ObjectManager;
 
 class ProductType extends AbstractType
 {
@@ -23,6 +27,16 @@ class ProductType extends AbstractType
      */
     protected $dataClass;
 
+    /**
+     * @var  DefaultProductUnitProvider
+     */
+    private $provider;
+
+/** @var DefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject $provider */
+    public function __construct(DefaultProductUnitProvider $provider)
+    {
+        $this->provider = $provider;
+    }
     /**
      * @param string $dataClass
      */
@@ -139,6 +153,11 @@ class ProductType extends AbstractType
     {
         $product = $event->getData();
         $form = $event->getForm();
+
+        if ($product->getId() == null) {
+            $unitPrecision = $this->provider->getDefaultProductUnitPrecision();
+            $product->addUnitPrecision($unitPrecision);
+        }
         if ($product instanceof Product && $product->getHasVariants()) {
             $form
                 ->add(
