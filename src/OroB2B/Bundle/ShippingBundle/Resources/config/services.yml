@@ -109,6 +109,27 @@ services:
         arguments:
             - '%orob2b_shipping.entity.freight_class.class%'
 
+    orob2b_shipping.provider.measure_units.weight:
+        class: 'OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider'
+        arguments:
+            - '@orob2b_shipping.repository.weight_unit'
+            - '@oro_config.manager'
+            - 'orob2b_shipping.weight_units'
+
+    orob2b_shipping.provider.measure_units.length:
+        class: 'OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider'
+        arguments:
+            - '@orob2b_shipping.repository.length_unit'
+            - '@oro_config.manager'
+            - 'orob2b_shipping.length_units'
+
+    orob2b_shipping.provider.measure_units.freight:
+        class: 'OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider'
+        arguments:
+            - '@orob2b_shipping.repository.freight_class'
+            - '@oro_config.manager'
+            - 'orob2b_shipping.freight_classes'
+
     orob2b_shipping.validator.unique_product_unit_shipping_options:
         class: 'OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator'
         tags:

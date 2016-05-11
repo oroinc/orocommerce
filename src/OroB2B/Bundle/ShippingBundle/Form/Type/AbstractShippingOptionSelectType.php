@@ -16,10 +16,8 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 
 abstract class AbstractShippingOptionSelectType extends AbstractType
 {
@@ -28,8 +26,8 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
     /** @var EntityRepository */
     protected $repository;
 
-    /** @var ConfigManager */
-    protected $configManager;
+    /** @var MeasureUnitProvider */
+    protected $unitProvider;
 
     /** @var UnitLabelFormatter */
     protected $formatter;
@@ -38,35 +36,24 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
     protected $translator;
 
     /** @var string */
-    protected $configParameterName;
-
-    /** @var string */
     protected $entityClass;
 
     /**
      * @param EntityRepository $repository
-     * @param ConfigManager $configManager
+     * @param MeasureUnitProvider $unitProvider
      * @param UnitLabelFormatter $formatter
      * @param TranslatorInterface $translator
      */
     public function __construct(
         EntityRepository $repository,
-        ConfigManager $configManager,
+        MeasureUnitProvider $unitProvider,
         UnitLabelFormatter $formatter,
         TranslatorInterface $translator
     ) {
         $this->repository = $repository;
-        $this->configManager = $configManager;
+        $this->unitProvider = $unitProvider;
         $this->formatter = $formatter;
         $this->translator = $translator;
-    }
-
-    /**
-     * @param string $configParameterName
-     */
-    public function setConfigParameterName($configParameterName)
-    {
-        $this->configParameterName = $configParameterName;
     }
 
     /**
@@ -98,7 +85,10 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
 
         $view->vars['choices'] = [];
 
-        $choices = $this->formatter->formatChoices($this->getUnits($options['full_list']), $options['compact']);
+        $choices = $this->formatter->formatChoices(
+            $this->unitProvider->getUnits(!$options['full_list']),
+            $options['compact']
+        );
         foreach ($choices as $key => $value) {
             $view->vars['choices'][] = new ChoiceView($value, $key, $value);
         }
@@ -121,7 +111,7 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
             return;
         }
 
-        $options['choices'] = $this->getUnits($options['full_list']);
+        $options['choices'] = $this->unitProvider->getUnits(!$options['full_list']);
         $options['choices_updated'] = true;
 
         $formParent->add($form->getName(), $this->getName(), $options);
@@ -133,7 +123,7 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
     public function validateUnits(FormEvent $event)
     {
         $form = $event->getForm();
-        $units = new ArrayCollection($this->getUnits(true));
+        $units = new ArrayCollection($this->unitProvider->getUnits(false));
         $data = $this->repository->findBy(['code' => $event->getData()]);
 
         foreach ($data as $unit) {
@@ -150,28 +140,6 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
                 break;
             }
         }
-    }
-
-    /**
-     * @param bool $fullList
-     *
-     * @return MeasureUnitInterface[]|array
-     */
-    protected function getUnits($fullList = false)
-    {
-        $units = $this->repository->findAll();
-
-        if (!$fullList) {
-            $configCodes = $this->configManager->get($this->configParameterName);
-            $units = array_filter(
-                $units,
-                function (MeasureUnitInterface $item) use ($configCodes) {
-                    return in_array($item->getCode(), $configCodes, true);
-                }
-            );
-        }
-
-        return $units;
     }
 
     /**
