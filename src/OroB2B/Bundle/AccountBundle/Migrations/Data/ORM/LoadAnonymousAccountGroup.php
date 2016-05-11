@@ -36,7 +36,7 @@ class LoadAnonymousAccountGroup extends AbstractFixture implements ContainerAwar
         $accountGroup->setName('Non-Authenticated Visitors');
 
         $manager->persist($accountGroup);
-        $manager->flush();
+        $manager->flush($accountGroup);
 
         /** @var ConfigManager $configManager */
         $configManager = $this->container->get('oro_config.global');
