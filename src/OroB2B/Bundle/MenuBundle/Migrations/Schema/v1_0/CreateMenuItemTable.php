@@ -50,7 +50,6 @@ class CreateMenuItemTable implements Migration, AttachmentExtensionAwareInterfac
         $table = $schema->createTable('orob2b_menu_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
-        $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('uri', 'text', ['notnull' => false]);
         $table->addColumn('display', 'boolean', []);
         $table->addColumn('display_children', 'boolean', []);
