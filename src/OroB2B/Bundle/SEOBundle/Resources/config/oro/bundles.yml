@@ -1,0 +1,2 @@
+bundles:
+    - { name: OroB2B\Bundle\SEOBundle\OroB2BSEOBundle, priority: 5 }
