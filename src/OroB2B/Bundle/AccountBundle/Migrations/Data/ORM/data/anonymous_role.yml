@@ -1,2 +1,2 @@
 IS_AUTHENTICATED_ANONYMOUSLY:
-    label: Anonymous
+    label: Non-Authenticated Visitors
