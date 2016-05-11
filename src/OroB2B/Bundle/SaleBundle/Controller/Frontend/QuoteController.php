@@ -39,6 +39,10 @@ class QuoteController extends Controller
      */
     public function viewAction(Quote $quote)
     {
+        if ($quote->isExpired() || $quote->getValidUntil() && $quote->getValidUntil() < new \DateTime()) {
+            $this->addFlash('notice', $this->get('translator')->trans('orob2b.sale.controller.quote.expired.message'));
+        }
+
         return [
             'data' => ['entity' => $quote, 'quote' => $quote]
         ];
