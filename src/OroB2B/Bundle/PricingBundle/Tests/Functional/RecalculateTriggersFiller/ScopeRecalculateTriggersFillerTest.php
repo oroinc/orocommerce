@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\RecalculateTriggersFiller
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller;
 
 /**
@@ -104,6 +105,50 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
                 'accounts' => [],
                 'priceListChangeTriggersCount' => 1,
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider fillTriggersByPriceListDataProvider
+     * @param string $priceList
+     * @param int $expectedCount
+     */
+    public function testFillTriggersByPriceList($priceList, $expectedCount)
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference($priceList);
+        $this->triggersFiller->fillTriggersByPriceList($priceList);
+
+        $this->assertPriceListChangeTriggersCount($expectedCount);
+    }
+
+    /**
+     * @return array
+     */
+    public function fillTriggersByPriceListDataProvider()
+    {
+        return [
+            [
+                'priceList' => 'price_list_1',
+                'expectedCount' => 3
+            ],
+            [
+                'priceList' => 'price_list_2',
+                'expectedCount' => 3
+            ],
+            [
+                'priceList' => 'price_list_3',
+                'expectedCount' => 2
+            ],
+            [
+                'priceList' => 'price_list_4',
+                'expectedCount' => 2
+            ],
+            [
+                'priceList' => 'price_list_5',
+                'expectedCount' => 3
+            ],
+
         ];
     }
 

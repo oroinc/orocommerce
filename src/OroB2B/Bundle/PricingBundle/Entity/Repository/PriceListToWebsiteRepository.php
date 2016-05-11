@@ -35,13 +35,15 @@ class PriceListToWebsiteRepository extends EntityRepository
      */
     public function getPriceLists(Website $website)
     {
-        return $this->createQueryBuilder('PriceListToWebsite')
-            ->innerJoin('PriceListToWebsite.priceList', 'priceList')
-            ->where('PriceListToWebsite.website = :website')
-            ->orderBy('PriceListToWebsite.priority', Criteria::DESC)
+        $qb = $this->createQueryBuilder('relation');
+        $qb->innerJoin('relation.priceList', 'priceList')
+            ->where($qb->expr()->eq('relation.website', ':website'))
+            ->andWhere($qb->expr()->eq('priceList.active', ':active'))
+            ->orderBy('relation.priority', Criteria::DESC)
             ->setParameter('website', $website)
-            ->getQuery()
-            ->getResult();
+            ->setParameter('active', true);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
