@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\Controller;
+namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DomCrawler\Crawler;
@@ -68,7 +68,8 @@ class CheckoutControllerTest extends WebTestCase
             [
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
+                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
         $this->registry = $this->getContainer()->get('doctrine');
@@ -247,8 +248,7 @@ class CheckoutControllerTest extends WebTestCase
      */
     public function testSubmitOrder(Crawler $crawler)
     {
-        /** @var ShoppingList $sourceEntity */
-        $sourceEntity = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
+        $sourceEntity = $this->getSourceEntity();
         $sourceEntityId = $sourceEntity->getId();
         $checkoutSources = $this->registry
             ->getRepository('OroB2BCheckoutBundle:CheckoutSource')
@@ -398,7 +398,7 @@ class CheckoutControllerTest extends WebTestCase
         $addressId = $addressId == 0 ?: 'a_' . $addressId;
 
         $addressTypePath = sprintf('%s[%s][accountAddress]', self::ORO_WORKFLOW_TRANSITION, $addressType);
-        $form[$addressTypePath] = $addressId;
+        $form->setValues([$addressTypePath => $addressId]);
     }
 
     /**
@@ -450,8 +450,7 @@ class CheckoutControllerTest extends WebTestCase
      */
     protected function getCheckoutData()
     {
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
+        $shoppingList = $this->getSourceEntity();
         $context = new ActionData(['data' => $shoppingList]);
 
         return [
@@ -472,5 +471,13 @@ class CheckoutControllerTest extends WebTestCase
                 ]
             ]
         ];
+    }
+
+    /**
+     * @return ShoppingList
+     */
+    protected function getSourceEntity()
+    {
+        return $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
     }
 }

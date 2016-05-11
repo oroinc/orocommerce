@@ -125,6 +125,7 @@ workflows:
                 display_type: page
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
                 form_options:
                     attribute_fields:
                         billing_address:
@@ -154,6 +155,7 @@ workflows:
                 display_type: page
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
                 form_options:
                     attribute_fields:
                         shipping_address:
@@ -182,6 +184,7 @@ workflows:
                 transition_definition: do_nothing
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
 
             continue_to_order_review:
                 label: Continue
@@ -189,6 +192,7 @@ workflows:
                 transition_definition: continue_to_order_review_definition
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
                 form_options:
                     attribute_fields:
                         payment_method: ~
@@ -324,6 +328,11 @@ workflows:
                 post_actions:
                     - '@assign_value': [$billing_address_has_shipping, true]
             continue_to_shipping_address_definition:
+                pre_conditions:
+                    '@order_line_item_has_count':
+                        message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                        parameters:
+                            entity: $checkout
                 conditions:
                     '@not_empty': $checkout.billingAddress
                 post_actions:
@@ -376,6 +385,11 @@ workflows:
                                   - [[keep], [propertyName, [organization]]]
                             - '@flush_entity': $checkout.shippingAddress
             continue_to_shipping_method_definition:
+                pre_conditions:
+                    '@order_line_item_has_count':
+                        message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                        parameters:
+                            entity: $checkout
                 conditions:
                     '@or':
                         - '@and':
@@ -628,4 +642,9 @@ workflows:
 
             continue_to_order_review_definition:
                 pre_conditions:
-                    '@payment_method_enabled': 'payment_term'
+                    '@and':
+                        - '@payment_method_enabled': 'payment_term'
+                        - '@order_line_item_has_count':
+                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout

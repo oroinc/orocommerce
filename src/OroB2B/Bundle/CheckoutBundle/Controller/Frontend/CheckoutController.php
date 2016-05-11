@@ -128,7 +128,7 @@ class CheckoutController extends Controller
      */
     protected function validateOrderLineItems(WorkflowItem $workflowItem, CheckoutInterface $checkout, Request $request)
     {
-        if ($request->isMethod(Request::METHOD_POST)) {
+        if ($request->isMethod(Request::METHOD_POST) || $request->isXmlHttpRequest()) {
             return;
         }
         $continueTransition = $this->get('orob2b_checkout.layout.data_provider.continue_transition')

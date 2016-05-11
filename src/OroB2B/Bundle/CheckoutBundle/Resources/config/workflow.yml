@@ -389,14 +389,9 @@ workflows:
 
             place_order_definition:
                 pre_conditions:
-                    '@and':
-                        - '@not_equal':
-                            message: Payment process is running for this checkout
-                            parameters: [$payment_in_progress, true]
-                        - '@order_line_item_has_count':
-                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
-                            parameters:
-                                entity: $checkout
+                    '@not_equal':
+                        message: Payment process is running for this checkout
+                        parameters: [$payment_in_progress, true]
                 post_actions:
                     - '@assign_value':
                         conditions:
