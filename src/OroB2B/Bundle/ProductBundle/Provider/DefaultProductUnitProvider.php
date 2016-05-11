@@ -2,29 +2,48 @@
 
 namespace OroB2B\Bundle\ProductBundle\Provider;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class DefaultProductUnitProvider
 {
+    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     private $configManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
-    public function __construct(ConfigManager $configManager)
+    /** @var ObjectManager |\PHPUnit_Framework_MockObject_MockObject */
+    private $entityManager;
+
+
+    /**
+     * DefaultProductUnitProvider constructor.
+     * @param ConfigManager $configManager
+     * @param ObjectManager $entityManager
+     */
+    public function __construct(ConfigManager $configManager, ObjectManager $entityManager)
     {
         $this->configManager = $configManager;
+        $this->entityManager = $entityManager;
     }
+    
     /**
-     * @return ProductUnit $productUnit
+     * @return ProductUnitPrecision $unitPrecision
      */
-    public function getDefaultProductUnit()
+    public function getDefaultProductUnitPrecision()
     {
         $defaultUnitValue = $this->configManager->get('orob2b_product.default_unit');
         $defaultUnitPrecision = $this->configManager->get('orob2b_product.default_unit_precision');
-        $productUnit = new ProductUnit();
-        $productUnit->setCode($defaultUnitValue);
-        $productUnit->setDefaultPrecision($defaultUnitPrecision);
-        return $productUnit;
+
+        $unit = $this->entityManager
+            ->getRepository('OroB2BProductBundle:ProductUnit')->findOneBy(['code' => $defaultUnitValue]);
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision
+            ->setUnit($unit)
+            ->setPrecision($defaultUnitPrecision);
+
+        return $unitPrecision;
     }
 }
 

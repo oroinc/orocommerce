@@ -3,6 +3,8 @@ services:
     orob2b_product.form.type.product:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductType'
         public: true
+        arguments:
+            - "@orob2b_product.provider.default_product_unit_provider"
         calls:
             - [setDataClass, ['%orob2b_product.entity.product.class%']]
         tags:

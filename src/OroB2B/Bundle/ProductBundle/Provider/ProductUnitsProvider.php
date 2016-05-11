@@ -26,7 +26,7 @@ class ProductUnitsProvider
     public function getAvailableProductUnits()
     {
         $unitsFull = [];
-        foreach ($this->productUnits as $unit){
+        foreach ($this->productUnits as $unit) {
             $code = $unit->getCode();
             $unitsFull[$code] = 'orob2b.product_unit.'.$code.'.label.full';
         }

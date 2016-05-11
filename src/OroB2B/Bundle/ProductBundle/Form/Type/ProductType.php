@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -15,6 +16,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Doctrine\Common\Persistence\ObjectManager;
 
 class ProductType extends AbstractType
 {
@@ -25,6 +27,16 @@ class ProductType extends AbstractType
      */
     protected $dataClass;
 
+    /**
+     * @var  DefaultProductUnitProvider
+     */
+    private $provider;
+
+/** @var DefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject $provider */
+    public function __construct(DefaultProductUnitProvider $provider)
+    {
+        $this->provider = $provider;
+    }
     /**
      * @param string $dataClass
      */
@@ -132,7 +144,6 @@ class ProductType extends AbstractType
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener']);
     }
 
     /**
@@ -141,20 +152,12 @@ class ProductType extends AbstractType
     public function preSetDataListener(FormEvent $event)
     {
         $product = $event->getData();
+        $form = $event->getForm();
+
         if ($product->getId() == null) {
-            $unit = new ProductUnit();
-            $unit
-                ->setCode('kg')
-                ->setDefaultPrecision(3);
-
-            $unitPrecision = new ProductUnitPrecision();
-            $unitPrecision
-                ->setUnit($unit)
-                ->setPrecision($unit->getDefaultPrecision());
-
+            $unitPrecision = $this->provider->getDefaultProductUnitPrecision();
             $product->addUnitPrecision($unitPrecision);
         }
-        $form = $event->getForm();
         if ($product instanceof Product && $product->getHasVariants()) {
             $form
                 ->add(
@@ -163,15 +166,6 @@ class ProductType extends AbstractType
                     ['product_class' => $this->dataClass, 'by_reference' => false]
                 );
         }
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function postSetDataListener(FormEvent $event)
-    {
-        $product = $event->getData();
-        $form = $event->getForm();
     }
 
     /**
