@@ -133,3 +133,8 @@ services:
         tags:
             - { name: form.type, alias: 'orob2b_product_quick_add_import_from_file' }
 
+    orob2b_product.form.type.frontend_line_item:
+        class: 'OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType'
+        public: true
+        tags:
+            - { name: form.type, alias: orob2b_product_frontend_line_item }

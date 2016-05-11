@@ -42,6 +42,7 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orodatagrid/js/datagrid/fo
          */
         initialize: function(options) {
             this.grid = options.grid;
+            this.grid.refreshAction.execute();
 
             var inputSelector = options.options.metadata.options.cellSelection.selector;
             var quantityValidationOptions = $(inputSelector).first().data('level-quantity-options');

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -10,6 +11,7 @@ use Oro\Component\Testing\Unit\FormHandlerTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class AccountUserHandlerTest extends FormHandlerTestCase
 {
@@ -32,6 +34,16 @@ class AccountUserHandlerTest extends FormHandlerTestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
      */
     protected $securityFacade;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|LoggerInterface
+     */
+    protected $logger;
 
     /**
      * @var AccountUser
@@ -63,11 +75,16 @@ class AccountUserHandlerTest extends FormHandlerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->logger = $this->getMock('Psr\Log\LoggerInterface');
+
         $this->handler = new AccountUserHandler(
             $this->form,
             $this->request,
             $this->userManager,
-            $this->securityFacade
+            $this->securityFacade,
+            $this->translator,
+            $this->logger
         );
     }
 

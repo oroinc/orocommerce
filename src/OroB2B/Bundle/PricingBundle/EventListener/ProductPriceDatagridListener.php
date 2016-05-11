@@ -2,16 +2,18 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Doctrine\ORM\Query\Expr;
+
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -245,5 +247,41 @@ class ProductPriceDatagridListener extends AbstractProductPriceDatagridListener
 
         $priceList = $this->getPriceList();
         return $priceRepository->findByPriceListIdAndProductIds($priceList->getId(), $productIds, $showTierPrices);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param string $currency
+     * @param ProductUnit|null $unit
+     */
+    protected function addConfigProductPriceJoin(DatagridConfiguration $config, $currency, $unit = null)
+    {
+        $columnName = $this->buildColumnName($currency, $unit);
+        $joinAlias = $this->buildJoinAlias($columnName);
+        $priceList = $this->getPriceList();
+        $expr = new Expr();
+        $joinExpr = $expr
+            ->andX(sprintf('%s.product = product.id', $joinAlias))
+            ->add($expr->eq(sprintf('%s.currency', $joinAlias), $expr->literal($currency)))
+            ->add($expr->eq(sprintf('%s.priceList', $joinAlias), $expr->literal($priceList->getId())))
+            ->add($expr->eq(sprintf('%s.quantity', $joinAlias), 1));
+        if ($unit) {
+            $joinExpr->add($expr->eq(sprintf('%s.unit', $joinAlias), $expr->literal($unit)));
+        }
+        $this->addConfigElement($config, '[source][query][join][left]', [
+            'join' => $this->productPriceClass,
+            'alias' => $joinAlias,
+            'conditionType' => Expr\Join::WITH,
+            'condition' => (string)$joinExpr,
+        ]);
+    }
+
+    /**
+     * @param string $columnName
+     * @return string
+     */
+    protected function buildJoinAlias($columnName)
+    {
+        return $columnName . '_table';
     }
 }

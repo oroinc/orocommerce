@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
+use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -47,6 +49,138 @@ class ProductUnitRepositoryTest extends WebTestCase
         );
 
         $this->assertEquals($expectedUnits, $units);
+    }
+
+    /**
+     * @dataProvider getProductsUnitsDataProvider
+     * @param array $products
+     * @param array $expectedData
+     */
+    public function testGetProductsUnits(array $products, array $expectedData)
+    {
+        $products = array_map(function ($productReference) {
+            return $this->getReference($productReference);
+        }, $products);
+        $productIds = array_map(function (Product $product) {
+            return $product->getId();
+        }, $products);
+        $expectedData = array_combine($productIds, $expectedData);
+        $this->assertEquals($expectedData, $this->getRepository()->getProductsUnits($products));
+    }
+
+    public function testGetProductsUnitsNoQuery()
+    {
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BMenuBundle:MenuItem');
+        $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
+
+        $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();
+        $em->getConnection()->getConfiguration()->setSQLLogger($queryAnalyzer);
+
+        $this->assertEquals([], $this->getRepository()->getProductsUnits([]));
+
+        $queries = $queryAnalyzer->getExecutedQueries();
+        $this->assertCount(0, $queries);
+
+        $em->getConnection()->getConfiguration()->setSQLLogger($prevLogger);
+    }
+    
+    /**
+     * @return array
+     */
+    public function getProductsUnitsDataProvider()
+    {
+        return [
+            [
+                'products' => [
+                    'product.1',
+                    'product.2',
+                    'product.3',
+                ],
+                'expectedData' => [
+                    'product.1' => ['bottle', 'liter'],
+                    'product.2' => ['bottle', 'box', 'liter'],
+                    'product.3' => ['liter']
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getProductsUnitsByCodesDataProvider
+     * @param array $products
+     * @param array $codes
+     * @param array $expectedData
+     */
+    public function testGetProductsUnitsByCodes(array $products, array $codes, array $expectedData)
+    {
+        $products = array_map(function ($productReference) {
+            return $this->getReference($productReference);
+        }, $products);
+        $units = array_map(function ($unitCode) {
+            return $this->getReference('product_unit.' . $unitCode);
+        }, $codes);
+
+        $expectedData = array_reduce($expectedData, function (array $result, $unitCode) {
+            $result[$unitCode] = $this->getReference('product_unit.' . $unitCode);
+            return $result;
+        }, []);
+        $actualData = $this->getRepository()->getProductsUnitsByCodes($products, $units);
+        $this->assertEquals($expectedData, $actualData);
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductsUnitsByCodesDataProvider()
+    {
+        return [
+            [
+                'products' => [],
+                'codes' => [],
+                'expectedData' => [],
+            ],
+            [
+                'products' => [
+                    'product.1',
+                    'product.2',
+                    'product.3',
+                ],
+                'codes' => [
+                    'liter',
+                    'box',
+                ],
+                'expectedData' => [
+                    'liter',
+                    'box',
+                ],
+            ],
+            [
+                'products' => [
+                    'product.1',
+                    'product.3',
+                ],
+                'codes' => [
+                    'box',
+                ],
+                'expectedData' => [],
+            ],
+        ];
+    }
+
+    public function testGetProductsUnitsByCodesNoQuery()
+    {
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BMenuBundle:MenuItem');
+        $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
+
+        $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();
+        $em->getConnection()->getConfiguration()->setSQLLogger($queryAnalyzer);
+
+        $this->assertEquals([], $this->getRepository()->getProductsUnitsByCodes([], []));
+
+        $queries = $queryAnalyzer->getExecutedQueries();
+        $this->assertCount(0, $queries);
+
+        $em->getConnection()->getConfiguration()->setSQLLogger($prevLogger);
     }
 
     /**

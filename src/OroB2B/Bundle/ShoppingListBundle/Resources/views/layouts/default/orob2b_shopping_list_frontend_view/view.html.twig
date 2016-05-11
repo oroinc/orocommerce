@@ -127,24 +127,9 @@
         }) }} data-items-selector=".line_item" data-empty-block-selector=".cart-list_empty">
             <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md" {{ UI.renderPageComponentAttributes({
                 module: 'oroui/js/app/components/view-component',
+                layout: 'separate',
                 options: {
-                    view: 'orob2bshoppinglist/js/app/views/line-items-view',
-                    lineItemOptions: {
-                        matchedPricesRoute: 'orob2b_pricing_frontend_matching_price',
-                        priceContainer: '[data-container="matched-price"]',
-                        quantityContainer: '[data-container="quantity"]',
-                        quantityComponentOptions: {
-                            dataKey: constant('OroB2B\\Bundle\\ShoppingListBundle\\Form\\Type\\FrontendLineItemType::NAME'),
-                            enable: resource_granted('orob2b_shopping_list_frontend_update'),
-                            elements: {
-                                quantity: '[name="product_qty"]',
-                                unit: '[name="product_unit"]'
-                            },
-                            save_api_accessor: {
-                                route: 'orob2b_api_shopping_list_frontend_put_line_item'
-                            }
-                        }
-                    }
+                    view: 'orob2bshoppinglist/js/app/views/line-items-view'
                 }
             }) }}>
                 <thead>
@@ -157,10 +142,41 @@
                 </tr>
                 </thead>
                 {% for lineItem in shoppingList.lineItems %}
-                {% set productPrice = lineItem is defined and productsPrices[lineItem.product.id][lineItem.unit.code] is not empty ? productsPrices[lineItem.product.id][lineItem.unit.code] : null %}
-                {% set currency = productPrice ? productPrice.currency : defaultCurrency %}
+                {% set productAllPrices = productsAllPrices[lineItem.product.id]|default({}) is not empty ? productsAllPrices[lineItem.product.id] : null %}
+                {% set productMatchedPrice = productsMatchedPrice[lineItem.product.id][lineItem.unit.code] is not empty ? productsMatchedPrice[lineItem.product.id][lineItem.unit.code] : null %}
+                {% set currency = productMatchedPrice ? productMatchedPrice.currency : defaultCurrency %}
                 <tbody class="line_item">
-                    <tr class="line_item_view" data-product-id="{{ lineItem.product.id }}" data-id="{{ lineItem.id }}" data-quantity="{{ lineItem.quantity }}" data-unit-code="{{ lineItem.unit.code }}" data-currency="{{ currency }}">
+                    {# TODO: BB-2895. After merge https://github.com/laboro/commerce/pull/1872 place components on their nodes #}
+                    <tr class="line_item_view" {{ UI.renderPageComponentAttributes({
+                        module: 'oroui/js/app/components/view-component',
+                        options: {
+                            view: 'orob2bshoppinglist/js/app/views/line-item-view',
+                            modelAttr: lineItem.product,
+                            lineItemId: lineItem.id,
+                            quantityComponentOptions: {
+                                dataKey: constant('OroB2B\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
+                                enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                                elements: {
+                                    quantity: '[name="product_qty"]',
+                                    unit: '[name="product_unit"]'
+                                },
+                                save_api_accessor: {
+                                    default_route_parameters: {
+                                        id: lineItem.id
+                                    },
+                                    route: 'orob2b_api_shopping_list_frontend_put_line_item'
+                                },
+                                value: {
+                                    unit: lineItem.unit.code,
+                                    quantity: lineItem.quantity
+                                },
+                                validation: {
+                                    showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
+                                }
+                            }
+                        },
+                        layout: 'separate'
+                    }) }}>
                         <td class="va-t_md" colspan="2">
                             <div class="product-item product-item_in-cart">
                                 <div class="product-item__image-holder product-item__image-holder_in-cart">
@@ -177,17 +193,17 @@
                         <td class="va-t_md">
                             <div>{{ lineItem.product.InventoryStatus }}</div>
                         </td>
-                        <td class="va-t_md" data-container="quantity">
+                        <td class="va-t_md">
                             <form action="#">
                                 <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
                                     <div class="product__qty-input__count-option">
-                                        <input type="number" value="{{ lineItem.quantity }}" name="product_qty"
+                                        <input type="number" value="{{ lineItem.quantity }}" name="product_qty" data-name="field__quantity"
                                             placeholder="{{ 'orob2b.frontend.shoppinglist.view.qty.label'|trans }}"
                                             class="input input_md input_block text-center" disabled="disabled" required />
                                     </div>
                                 </div>
                                 <div class="product__select inline va-m_md">
-                                    <select data-chosen-selectbox class="input input_block input_sm" name="product_unit" required>
+                                    <select class="input input_block input_sm" name="product_unit" data-name="field__unit" required>
                                         {% if productsUnits[lineItem.product.id] is defined %}
                                             {% for unit in productsUnits[lineItem.product.id] %}
                                             <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|orob2b_format_product_unit_label}}</option>
@@ -200,15 +216,78 @@
                                 </div>
                             </form>
                         </td>
-                        <td class="va-t_md">
-                            <table class="table borderless paddingless mb0-md">
+                        <td class="va-t_md line-item-price" {{ UI.renderPageComponentAttributes({
+                            module: 'oroui/js/app/components/view-component',
+                            options: {
+                                view: 'orob2bpricing/js/app/views/base-product-prices-view',
+                                modelAttr: {
+                                    prices: productAllPrices
+                                }
+                            }
+                        }) }}>
+                            <table class="table borderless paddingless mb0-md {{ productMatchedPrice is null ? 'hidden' }}" data-name="price">
                                 <tbody>
                                 <tr>
                                     <td>{{ 'orob2b.frontend.shoppinglist.view.your_price.label'|trans }}</td>
-                                    <td class="text-right" data-container="matched-price">{% if productPrice %}{{ productPrice.value|oro_format_currency({'currency': currency}) }}{% else %}{{ 'oro.ui.empty'|trans }}{% endif %}</td>
+                                    <td class="text-right"
+                                        data-name="prices-hint"
+                                        data-placement="bottom"
+                                        data-close="false"
+                                        data-trigger="hover"
+                                        data-container="body"
+                                        data-class="prices-hint-content">
+                                            <span data-name="price-value">
+                                                {% if productMatchedPrice is not null %}
+                                                    {{ productMatchedPrice.value|oro_format_currency({'currency': currency}) }}
+                                                {% else %}
+                                                    {{ 'oro.ui.empty'|trans }}
+                                                {% endif %}
+                                            </span>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
+                            <div data-name="prices-hint-content" class="hidden">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-uppercase">qty</th>
+                                        <th >Unit Price</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% set shownUnit = '' %}
+                                    {% for price in productAllPrices %}
+                                        {% if shownUnit != price.unit %}
+                                            {% set shownUnit = price.unit %}
+                                    <tr>
+                                        <td colspan="2" class="text-capitalize">
+                                            {% if loop.index > 1 %}<br/>{% endif %}
+                                            <b>{{ shownUnit|orob2b_format_product_unit_label }}</b>
+                                        </td>
+                                    </tr>
+                                        {% endif %}
+                                    <tr>
+                                        <td>{{ price.quantity }}</td>
+                                        <td>{{ price.formatted_price }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div data-name="price-not-found" class="{{ productMatchedPrice is not null ? 'hidden' }}">
+                                {% if productAllPrices %}
+                                    <span data-name="prices-hint"
+                                          data-placement="bottom"
+                                          data-close="false"
+                                          data-trigger="hover"
+                                          data-container="body"
+                                          data-class="prices-hint-content"
+                                          >{{ 'orob2b.pricing.frontend.product_prices.price_not_found'|trans }}</span>
+                                {% else %}
+                                {{ 'orob2b.pricing.frontend.product_prices.empty_prices'|trans }}
+                                {% endif %}
+                            </div>
                         </td>
                         <td class="va-t_md text-right">
                             <button class="item-remove button-icon gray fs20" {{ UI.renderPageComponentAttributes({

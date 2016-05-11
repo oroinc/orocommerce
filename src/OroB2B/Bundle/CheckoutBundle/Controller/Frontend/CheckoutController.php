@@ -43,7 +43,7 @@ class CheckoutController extends Controller
      *      id="orob2b_checkout_frontend_checkout",
      *      type="entity",
      *      class="OroB2BCheckoutBundle:Checkout",
-     *      permission="CREATE",
+     *      permission="ACCOUNT_EDIT",
      *      group_name="commerce"
      * )
      *

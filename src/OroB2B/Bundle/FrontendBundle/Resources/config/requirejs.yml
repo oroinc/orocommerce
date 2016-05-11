@@ -18,5 +18,7 @@ config:
         'orob2bfrontend/js/app/components/delete-item-component': 'bundles/orob2bfrontend/js/app/components/delete-item-component.js'
         'orob2bfrontend/js/app/components/empty-items-component': 'bundles/orob2bfrontend/js/app/components/empty-items-component.js'
         'orob2bfrontend/js/app/components/delete-confirmation': 'bundles/orob2bfrontend/js/app/components/delete-confirmation.js'
+
+        'orob2bfrontend/js/app/elements-helper': 'bundles/orob2bfrontend/js/app/elements-helper.js'
     appmodules:
         - orob2bfrontend/js/app/modules/inline-editor-types-map-module
