@@ -53,7 +53,7 @@
     {% set data = order_line_items(entity) %}
     {% for item in data.lineItems %}
         <tr>
-            <td>{{ item.product }}<br>SKU #: {{ item.product.sku }}</td>
+            <td>{{ item.product_name }}<br>SKU #: {{ item.product_sku }}</td>
             <td>{{ item.quantity|orob2b_format_short_product_unit_value(item.unit) }}</td>
             <td>{{ item.price|oro_format_price }}</td>
             <td>{{ item.subtotal|oro_format_price }}</td>
