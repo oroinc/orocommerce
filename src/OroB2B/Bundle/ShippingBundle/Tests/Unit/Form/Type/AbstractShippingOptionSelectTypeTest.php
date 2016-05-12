@@ -2,6 +2,20 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
+use Doctrine\ORM\EntityRepository;
+
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitHolderTypeStub;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Translation\TranslatorInterface;
+
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
@@ -16,18 +30,37 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
     /** @var AbstractShippingOptionSelectType */
     protected $formType;
 
+    /** @var UnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    protected $formatter;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
+    protected $configManager;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+    protected $translator;
+
     protected function setUp()
     {
-        parent::setUp();
-
-        $this->unitProvider = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider')
+        $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
+        parent::setUp();
     }
 
     protected function tearDown()
     {
-        unset($this->formType, $this->repository, $this->formatter, $this->configManager);
+        unset($this->formType, $this->repository, $this->formatter, $this->configManager, $this->translator);
 
         parent::tearDown();
     }
@@ -51,18 +84,27 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
      */
     public function testSubmit($submittedData, $expectedData, array $options = [])
     {
-        $this->unitProvider->expects($this->once())
-            ->method('getUnitsCodes')
-            ->with(empty($options['full_list']))
-            ->willReturn(['kg', 'lbs']);
-
-        $this->unitProvider->expects($this->once())
-            ->method('formatUnitsCodes')
-            ->with(['kg' => 'kg', 'lbs' => 'lbs'], false)
-            ->willReturn([
-                'kg' => 'formatted.kg',
-                'lbs' => 'formatted.lbs',
-            ]);
+//        if (!empty($options['full_list'])) {
+//            $this->repository->expects($this->once())
+//                ->method('findAll')
+//                ->willReturn([
+//                    $this->createUnit('kg'),
+//                    $this->createUnit('lbs')
+//                ]);
+//        } else {
+//            $this->configManager->expects($this->once())
+//                ->method('get')
+//                ->willReturn(['kg', 'lbs']);
+//        }
+//
+//        $this->formatter->expects($this->at(0))
+//            ->method('format')
+//            ->with('kg', false, false)
+//            ->willReturn('formatted.kg');
+//        $this->formatter->expects($this->at(1))
+//            ->method('format')
+//            ->with('lbs', false, false)
+//            ->willReturn('formatted.lbs');
 
         $form = $this->factory->create($this->formType, null, $options);
 

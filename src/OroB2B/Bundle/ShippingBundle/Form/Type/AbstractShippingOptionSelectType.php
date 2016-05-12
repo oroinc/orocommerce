@@ -14,20 +14,54 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
+
+use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 
 abstract class AbstractShippingOptionSelectType extends AbstractType
 {
     const NAME = '';
 
-    /** @var AbstractMeasureUnitProvider */
+    /** @var EntityRepository */
+    protected $repository;
+
+    /** @var MeasureUnitProvider */
     protected $unitProvider;
 
+    /** @var UnitLabelFormatter */
+    protected $formatter;
+
+    /** @var TranslatorInterface */
+    protected $translator;
+
+    /** @var string */
+    protected $entityClass;
+
     /**
-     * @param AbstractMeasureUnitProvider $unitProvider
+     * @param EntityRepository $repository
+     * @param MeasureUnitProvider $unitProvider
+     * @param UnitLabelFormatter $formatter
+     * @param TranslatorInterface $translator
      */
-    public function setUnitProvider(AbstractMeasureUnitProvider $unitProvider)
-    {
+    public function __construct(
+        EntityRepository $repository,
+        MeasureUnitProvider $unitProvider,
+        UnitLabelFormatter $formatter,
+        TranslatorInterface $translator
+    ) {
+        $this->repository = $repository;
         $this->unitProvider = $unitProvider;
+        $this->formatter = $formatter;
+        $this->translator = $translator;
+    }
+
+    /**
+     * @param string $entityClass
+     */
+    public function setEntityClass($entityClass)
+    {
+        $this->entityClass = $entityClass;
     }
 
     /**
@@ -55,6 +89,7 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
             $this->unitProvider->getUnits(!$options['full_list']),
             $options['compact']
         );
+
         foreach ($choices as $key => $value) {
             $view->vars['choices'][] = new ChoiceView($value, $key, $value);
         }
@@ -115,14 +150,8 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'choices' => function (Options $options) {
-                    $codes = array_merge(
-                        $this->unitProvider->getUnitsCodes(!$options['full_list']),
-                        $options['additional_codes']
-                    );
-
-                    return $this->unitProvider->formatUnitsCodes(array_combine($codes, $codes), $options['compact']);
-                },
+                'class' => $this->entityClass,
+                'property' => 'code',
                 'compact' => false,
                 'full_list' => false,
                 'choices_updated' => false
@@ -131,5 +160,21 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
         ->setAllowedTypes('compact', ['bool'])
         ->setAllowedTypes('full_list', ['bool'])
         ->setAllowedTypes('choices_updated', ['bool']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return static::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return 'entity';
     }
 }
