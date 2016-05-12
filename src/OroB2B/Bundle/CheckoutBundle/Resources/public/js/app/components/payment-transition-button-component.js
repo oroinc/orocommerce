@@ -32,6 +32,7 @@ define(function(require) {
                     mediator.trigger('checkout:payment:before-restore-filled-form', filledForm);
                     filledForm.removeClass('hidden');
                     this.getPaymentForm().replaceWith(filledForm);
+                    delete this.$paymentForm;
                 } else {
                     filledForm.remove();
                 }

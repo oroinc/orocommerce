@@ -147,6 +147,8 @@ define(function(require) {
 
             mediator.off('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
             mediator.off('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
+
+            CreditCardComponent.__super__.dispose.call(this);
         },
 
         validate: function(elementSelector) {
