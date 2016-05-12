@@ -68,8 +68,7 @@ class ProductShippingOptionsType extends AbstractType
         $resolver->setDefaults(
             [
                 'product' => null,
-                'data_class' => $this->dataClass,
-//                'by_reference' => false
+                'data_class' => $this->dataClass
             ]
         );
     }

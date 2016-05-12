@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ShippingBundle\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,6 +13,7 @@ use Symfony\Component\Form\FormEvents;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use OroB2B\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
 use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
 
@@ -20,12 +21,8 @@ class ProductFormExtension extends AbstractTypeExtension
 {
     const FORM_ELEMENT_NAME = 'product_shipping_options';
 
-    /**
-     * @var ManagerRegistry
-     */
+    /** @var ManagerRegistry */
     protected $registry;
-    /** @var string */
-    protected $productShippingOptionsClass = 'OroB2BShippingBundle:ProductShippingOptions';
 
     /**
      * @param ManagerRegistry $registry
@@ -44,7 +41,7 @@ class ProductFormExtension extends AbstractTypeExtension
         $product = $builder->getData();
 
         $builder->add(
-            'product_shipping_options',
+            self::FORM_ELEMENT_NAME,
             ProductShippingOptionsCollectionType::NAME,
             [
                 'label' => 'orob2b.shipping.product_shipping_options.entity_plural_label',
@@ -58,6 +55,7 @@ class ProductFormExtension extends AbstractTypeExtension
         );
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
@@ -72,9 +70,47 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $shippingOptions = $this->getProductShippingOptionsRepository()->findBy(['product' => $product->getId()]);
+        $shippingOptions = $this->getProductShippingOptionsRepository()->getShippingOptionsByProduct($product);
 
-        $event->getForm()->get(static::FORM_ELEMENT_NAME)->setData($shippingOptions);
+        $event->getForm()->get(self::FORM_ELEMENT_NAME)->setData($shippingOptions);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onPreSubmit(FormEvent $event)
+    {
+        $form = $event->getForm();
+
+        $product = $form->getData();
+        if (!$product || !$product->getId()) {
+            return;
+        }
+
+        $data = $event->getData();
+        $options = $data[self::FORM_ELEMENT_NAME];
+
+        $existingOptions = $form->get(self::FORM_ELEMENT_NAME)->getData();
+        $newOptions = [];
+
+        foreach ($options as $key => $option) {
+            $found = false;
+
+            foreach ($existingOptions as $existingOptionKey => $existingOption) {
+                if ($existingOption->getProductUnitCode() === $option['productUnit']) {
+                    $newOptions[$existingOptionKey] = $option;
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                $newOptions[$key] = $option;
+            }
+        }
+
+        $data[self::FORM_ELEMENT_NAME] = $newOptions;
+        $event->setData($data);
     }
 
     /**
@@ -89,8 +125,9 @@ class ProductFormExtension extends AbstractTypeExtension
         }
 
         $form = $event->getForm();
+
         /** @var ProductShippingOptions[] $options */
-        $options = (array) $form->get(static::FORM_ELEMENT_NAME)->getData();
+        $options = (array)$form->get(self::FORM_ELEMENT_NAME)->getData();
         foreach ($options as $option) {
             $option->setProduct($product);
         }
@@ -99,78 +136,47 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $entityManager = $this->registry->getManagerForClass($this->productShippingOptionsClass);
+        $entityManager = $this->getProductShippingOptionsObjectManager();
+
+        $persistedOptionIds = [];
+        foreach ($options as $option) {
+            $optionId = $option->getId();
+            if ($optionId) {
+                $persistedOptionIds[] = $optionId;
+            }
+
+            $entityManager->persist($option);
+        }
+
         if ($product->getId()) {
-            //Remove
-            /** @var ProductShippingOptions[] $incomingOptions */
-            $incomingOptions = [];
-            /** @var ProductShippingOptions[] $newOptions */
-            $newOptions = [];
-            foreach ($options as $option) {
-                if ($option->getId()) {
-                    $incomingOptions[$option->getId()] = $option;
-                } else {
-                    $newOptions[] = $option;
+            $existingOptions = $this->getProductShippingOptionsRepository()->getShippingOptionsByProduct($product);
+            foreach ($existingOptions as $existingOption) {
+                if (!in_array($existingOption->getId(), $persistedOptionIds, true)) {
+                    $entityManager->remove($existingOption);
                 }
-            }
-            /** @var ProductShippingOptions[] $existingOptions */
-            $existingOptions = $this->getProductShippingOptionsRepository()->findBy(['product' => $product->getId()]);
-            $requireFlush = false;
-            foreach ($existingOptions as $option) {
-                if (!isset($incomingOptions[$option->getId()])) {
-                    $entityManager->remove($option);
-                    $requireFlush = true;
-                }
-            }
-            if ($requireFlush) {
-                $entityManager->flush();
-            }
-
-            /** @var ProductShippingOptions[] $existingOptions */
-            $existingOptions = $this->getProductShippingOptionsRepository()->findBy(['product' => $product->getId()]);
-            //Update
-            foreach ($existingOptions as $option) {
-                if (isset($incomingOptions[$option->getId()])) {
-                    $incomingOption = $incomingOptions[$option->getId()];
-                    $option->setProduct($product);
-                    $option->setProductUnit($incomingOption->getProductUnit());
-                    $option->setWeight($incomingOption->getWeight());
-                    $option->setDimensions($incomingOption->getDimensions());
-                    $option->setFreightClass($incomingOption->getFreightClass());
-                    $entityManager->persist($option);
-                    $requireFlush = true;
-                }
-            }
-            if ($requireFlush) {
-                $entityManager->flush();
-            }
-
-            // Insert new
-            foreach ($newOptions as $option) {
-                $option->setProduct($product);
-                $entityManager->persist($option);
-            }
-        } else {
-            foreach ($options as $option) {
-                $option->setProduct($product);
-                $entityManager->persist($option);
             }
         }
     }
 
     /**
-     * @return ObjectRepository
+     * @return ObjectManager
+     */
+    protected function getProductShippingOptionsObjectManager()
+    {
+        return $this->registry->getManagerForClass('OroB2BShippingBundle:ProductShippingOptions');
+    }
+
+    /**
+     * @return ProductShippingOptionsRepository
      */
     protected function getProductShippingOptionsRepository()
     {
-        return $this->registry->getManagerForClass('OroB2BShippingBundle:ProductShippingOptions')
+        return $this->getProductShippingOptionsObjectManager()
             ->getRepository('OroB2BShippingBundle:ProductShippingOptions');
     }
 
     /**
-     * Returns the name of the type being extended.
-     *
-     * @return string The name of the type being extended
+     * {@inheritdoc}
      */
     public function getExtendedType()
     {

@@ -65,7 +65,6 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-
         $builder->expects($this->once())
             ->method('add')
             ->with(
@@ -82,11 +81,14 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $builder->expects($this->exactly(2))->method('addEventListener');
+        $builder->expects($this->exactly(3))->method('addEventListener');
         $builder->expects($this->at(2))
             ->method('addEventListener')
             ->with(FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']);
         $builder->expects($this->at(3))
+            ->method('addEventListener')
+            ->with(FormEvents::PRE_SUBMIT, [$this->extension, 'onPreSubmit']);
+        $builder->expects($this->at(4))
             ->method('addEventListener')
             ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10);
 
@@ -95,7 +97,6 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($product);
 
         $this->extension->buildForm($builder, []);
-        unset($builder);
     }
 
     public function testGetExtendedType()
