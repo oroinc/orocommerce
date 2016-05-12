@@ -61,9 +61,9 @@ class DimensionsTypeTest extends FormIntegrationTestCase
                     'length' => '42',
                     'width' => '42',
                     'height' => '42',
-                    'unit' => 'feet',
+                    'unit' => 'foot',
                 ],
-                'expectedData' => $this->getDimensions($this->getLengthUnit('feet'), 42, 42, 42)
+                'expectedData' => $this->getDimensions($this->getLengthUnit('foot'), 42, 42, 42)
             ],
             'full data' => [
                 'submittedData' => [
@@ -116,7 +116,7 @@ class DimensionsTypeTest extends FormIntegrationTestCase
                         [
                             'm' => $this->getLengthUnit('m'),
                             'sm' => $this->getLengthUnit('sm'),
-                            'feet' => $this->getLengthUnit('feet')
+                            'foot' => $this->getLengthUnit('foot')
                         ],
                         LengthUnitSelectType::NAME
                     )

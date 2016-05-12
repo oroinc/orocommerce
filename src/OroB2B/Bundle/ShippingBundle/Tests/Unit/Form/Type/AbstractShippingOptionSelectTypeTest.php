@@ -25,7 +25,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
     protected $formType;
 
     /** @var array */
-    protected $units = ['lbs', 'kg'];
+    protected $units = ['lbs', 'kg', 'custom'];
 
     protected function setUp()
     {
@@ -57,6 +57,17 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         $this->assertEquals('entity', $this->formType->getParent());
     }
 
+    public function testSetEntityClass()
+    {
+        $className = 'stdClass';
+
+        $this->assertAttributeEmpty('entityClass', $this->formType);
+
+        $this->formType->setEntityClass($className);
+
+        $this->assertAttributeEquals($className, 'entityClass', $this->formType);
+    }
+
     /**
      * @dataProvider submitDataProvider
      *
@@ -65,20 +76,27 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
      * @param mixed $submittedData
      * @param mixed $expectedData
      * @param array $expectedLabels
+     * @param array $customChoices
      */
     public function testSubmit(
         array $inputOptions,
         array $expectedOptions,
         $submittedData,
         $expectedData,
-        array $expectedLabels
+        array $expectedLabels,
+        array $customChoices = null
     ) {
         $units = ['lbs', 'kg'];
 
-        $this->provider->expects($this->once())
+        $this->provider->expects($customChoices ? $this->never() : $this->once())
             ->method('getUnits')
             ->with(!$expectedOptions['full_list'])
             ->willReturn($units);
+
+        if ($customChoices) {
+            $inputOptions['choices'] = $customChoices;
+            $units = $customChoices;
+        }
 
         $form = $this->factory->create($this->formType, null, $inputOptions);
 
@@ -137,6 +155,14 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
                 'submittedData' => ['lbs', 'kg'],
                 'expectedData' => [$this->createUnit('lbs'), $this->createUnit('kg')],
                 'expectedLabels' => ['formatted.lbs', 'formatted.kg'],
+            ],
+            [
+                'inputOptions' => [],
+                'expectedOptions' => ['compact' => false, 'full_list' => false],
+                'submittedData' => 'custom',
+                'expectedData' => $this->createUnit('custom'),
+                'expectedLabels' => ['formatted.lbs', 'formatted.kg'],
+                'choices' => ['custom']
             ]
         ];
     }
