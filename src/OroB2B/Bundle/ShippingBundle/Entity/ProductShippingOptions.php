@@ -151,25 +151,6 @@ class ProductShippingOptions implements
         return $this->getProduct()->getSku();
     }
 
-//    public static function fromArray(array $data)
-//    {
-//        $options = new self();
-//
-//        if (!empty($data['weight'])) {
-//            $this->setWeight(Weight::fromArray($data['weight']));
-//        }
-//
-//        if (!empty($data['dimensions'])) {
-//            $this->setWeight(Dimensions::fromArray($data['weight']));
-//        }
-//
-//        if (!empty($data['product'])) {
-//            $this->setWeight(Dimensions::fromArray($data['weight']));
-//        }
-//
-//        return $options;
-//    }
-
     /**
      * @return int
      */
