@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 
@@ -85,10 +86,8 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
 
         $view->vars['choices'] = [];
 
-        $choices = $this->formatter->formatChoices(
-            $this->unitProvider->getUnits(!$options['full_list']),
-            $options['compact']
-        );
+        $choices = $this->formatter->formatChoices($this->getUnits($formParent, $options), $options['compact']);
+
         foreach ($choices as $key => $value) {
             $view->vars['choices'][] = new ChoiceView($value, $key, $value);
         }
@@ -111,7 +110,7 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
             return;
         }
 
-        $options['choices'] = $this->unitProvider->getUnits(!$options['full_list']);
+        $options['choices'] = $this->unitProvider->getUnits($formParent, $options);
         $options['choices_updated'] = true;
 
         $formParent->add($form->getName(), $this->getName(), $options);
@@ -175,5 +174,15 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
     public function getParent()
     {
         return 'entity';
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param array $options
+     * @return MeasureUnitInterface[]
+     */
+    protected function getUnits(FormInterface $form, array $options)
+    {
+        return $this->unitProvider->getUnits(!$options['full_list']);
     }
 }

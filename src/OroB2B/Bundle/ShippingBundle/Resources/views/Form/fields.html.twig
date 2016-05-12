@@ -162,8 +162,8 @@
 
 {% block orob2b_shipping_product_shipping_options_widget %}
     {#<td>{{ form_widget(form.product) }}</td>#}
-    <td>{{ form_widget(form.productUnit) }}</td>
-    <td>{{ form_widget(form.weight) }}</td>
-    <td>{{ form_widget(form.dimensions) }}</td>
-    <td>{{ form_widget(form.freightClass) }}</td>
+    <td>{{ form_widget(form.productUnit) }}{{ form_errors(form.productUnit) }}</td>
+    <td>{{ form_widget(form.weight) }}{{ form_errors(form.weight) }}</td>
+    <td>{{ form_widget(form.dimensions) }}{{ form_errors(form.dimensions) }}</td>
+    <td>{{ form_widget(form.freightClass) }}{{ form_errors(form.freightClass) }}</td>
 {% endblock %}

@@ -52,7 +52,8 @@ class DimensionsType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => $this->dataClass
+                'data_class' => $this->dataClass,
+                'error_bubbling' => false,
             ]
         );
     }

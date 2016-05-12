@@ -27,7 +27,10 @@ use OroB2B\Bundle\ShippingBundle\Model\Weight;
  * @ORM\HasLifecycleCallbacks()
  * @Config(mode="hidden")
  */
-class ProductShippingOptions implements ProductUnitHolderInterface, ProductHolderInterface
+class ProductShippingOptions implements
+    ProductShippingOptionsInterface,
+    ProductUnitHolderInterface,
+    ProductHolderInterface
 {
     /**
      * @var integer
@@ -147,6 +150,25 @@ class ProductShippingOptions implements ProductUnitHolderInterface, ProductHolde
     {
         return $this->getProduct()->getSku();
     }
+
+//    public static function fromArray(array $data)
+//    {
+//        $options = new self();
+//
+//        if (!empty($data['weight'])) {
+//            $this->setWeight(Weight::fromArray($data['weight']));
+//        }
+//
+//        if (!empty($data['dimensions'])) {
+//            $this->setWeight(Dimensions::fromArray($data['weight']));
+//        }
+//
+//        if (!empty($data['product'])) {
+//            $this->setWeight(Dimensions::fromArray($data['weight']));
+//        }
+//
+//        return $options;
+//    }
 
     /**
      * @return int
