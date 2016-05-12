@@ -10,8 +10,12 @@ class LengthUnitSelectTypeTest extends AbstractShippingOptionSelectTypeTest
     {
         parent::setUp();
 
-        $this->formType = new LengthUnitSelectType();
-        $this->formType->setUnitProvider($this->unitProvider);
+        $this->formType = new LengthUnitSelectType(
+            $this->repository,
+            $this->configManager,
+            $this->formatter,
+            $this->translator
+        );
     }
 
     public function testGetName()

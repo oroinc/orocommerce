@@ -338,3 +338,11 @@ services:
             - '@orob2b_product.datagrid_theme_helper'
         tags:
             - { name: layout.data_provider, alias: orob2b_product_frontend_datagrid_row_view }
+
+    orob2b_product.layout.data_provider.product_line_item_form:
+        class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductLineItemFormProvider'
+        public: true
+        arguments:
+            - "@form.factory"
+        tags:
+            - { name: layout.data_provider, alias: orob2b_product_line_item_form }

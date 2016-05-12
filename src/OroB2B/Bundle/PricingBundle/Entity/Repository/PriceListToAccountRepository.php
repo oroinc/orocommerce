@@ -41,24 +41,24 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
      */
     public function getPriceLists($account, Website $website, $sortOrder = Criteria::DESC)
     {
-        return $this->createQueryBuilder('PriceListToAccount')
-            ->innerJoin('PriceListToAccount.priceList', 'priceList')
-            ->innerJoin('PriceListToAccount.account', 'account')
-            ->where('account = :account')
-            ->andWhere('PriceListToAccount.website = :website')
-            ->orderBy('PriceListToAccount.priority', $sortOrder)
-            ->setParameters(['account' => $account, 'website' => $website])
-            ->getQuery()
-            ->getResult();
+        $qb = $this->createQueryBuilder('relation');
+        $qb->innerJoin('relation.priceList', 'priceList')
+            ->where($qb->expr()->eq('relation.account', ':account'))
+            ->andWhere($qb->expr()->eq('relation.website', ':website'))
+            ->andWhere($qb->expr()->eq('priceList.active', ':active'))
+            ->orderBy('relation.priority', $sortOrder)
+            ->setParameters(['account' => $account, 'website' => $website, 'active' => true]);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
      * @param AccountGroup $accountGroup
      * @param Website $website
-     * @param int $fallback
+     * @param int|null $fallback
      * @return BufferedQueryResultIterator|Account[]
      */
-    public function getAccountIteratorByDefaultFallback(AccountGroup $accountGroup, Website $website, $fallback)
+    public function getAccountIteratorByDefaultFallback(AccountGroup $accountGroup, Website $website, $fallback = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct account')
@@ -73,6 +73,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
                 $qb->expr()->eq('plToAccount.account', 'account')
             )
         );
+
         $qb->leftJoin(
             'OroB2BPricingBundle:PriceListAccountFallback',
             'priceListFallBack',
@@ -81,17 +82,21 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
                 $qb->expr()->eq('priceListFallBack.website', ':website'),
                 $qb->expr()->eq('priceListFallBack.account', 'account')
             )
-        );
+        )
+        ->setParameter('website', $website);
+
         $qb->andWhere($qb->expr()->eq('account.group', ':accountGroup'))
-            ->andWhere(
+            ->setParameter('accountGroup', $accountGroup);
+
+        if ($fallback !== null) {
+            $qb->andWhere(
                 $qb->expr()->orX(
                     $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToGroup'),
                     $qb->expr()->isNull('priceListFallBack.fallback')
                 )
             )
-            ->setParameter('accountGroup', $accountGroup)
-            ->setParameter('fallbackToGroup', $fallback)
-            ->setParameter('website', $website);
+            ->setParameter('fallbackToGroup', $fallback);
+        }
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }

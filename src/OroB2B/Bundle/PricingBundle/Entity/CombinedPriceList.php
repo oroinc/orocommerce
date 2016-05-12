@@ -43,6 +43,13 @@ class CombinedPriceList extends BasePriceList
     protected $currencies;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_prices_calculated", type="boolean")
+     */
+    protected $pricesCalculated = false;
+
+    /**
      * @return boolean
      */
     public function isEnabled()
@@ -67,5 +74,24 @@ class CombinedPriceList extends BasePriceList
     protected function createPriceListCurrency()
     {
         return new CombinedPriceListCurrency();
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPricesCalculated()
+    {
+        return $this->pricesCalculated;
+    }
+
+    /**
+     * @param boolean $pricesCalculated
+     * @return $this
+     */
+    public function setPricesCalculated($pricesCalculated)
+    {
+        $this->pricesCalculated = $pricesCalculated;
+
+        return $this;
     }
 }

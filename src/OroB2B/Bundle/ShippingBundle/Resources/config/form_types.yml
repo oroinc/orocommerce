@@ -29,7 +29,6 @@ services:
     orob2b_shipping.form.type.length_unit_select:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType
         calls:
-            - [setUnitProvider, ['@orob2b_shipping.provider.measure_units.length']]
         tags:
             - { name: form.type, alias: orob2b_shipping_length_unit_select }
 
@@ -49,8 +48,6 @@ services:
 
     orob2b_shipping.form.type.weight:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\WeightType
-        arguments:
-            - '@orob2b_shipping.provider.measure_units.weight'
         calls:
             - [setDataClass, ['%orob2b_shipping.model.weight.class%']]
         tags:
@@ -58,8 +55,6 @@ services:
 
     orob2b_shipping.form.type.dimensions:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType
-        arguments:
-            - '@orob2b_shipping.provider.measure_units.length'
         calls:
             - [setDataClass, ['%orob2b_shipping.model.dimensions.class%']]
         tags:
@@ -67,8 +62,6 @@ services:
 
     orob2b_shipping.form.product_shipping_option:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType
-        arguments:
-            - '@orob2b_shipping.provider.measure_units.freight'
         calls:
             - [setDataClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]
         tags:
@@ -76,6 +69,8 @@ services:
 
     orob2b_shipping.form.product_shipping_option_collection:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType
+        calls:
+            - [setDataClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]
         tags:
             - { name: form.type, alias: orob2b_shipping_product_shipping_options_collection }
 

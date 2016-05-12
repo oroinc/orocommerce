@@ -39,14 +39,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-view, method: onWarehouseView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-edit, method: onWarehouseEdit }
-
-    orob2b_shipping.event_listener.product_form_view:
-        class: OroB2B\Bundle\ShippingBundle\EventListener\ProductFormViewListener
-        arguments:
-            - '@translator'
-            - '@oro_entity.doctrine_helper'
-            - '@request_stack'
-        tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
 
@@ -131,3 +123,22 @@ services:
         class: 'OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator'
         tags:
             - { name: validator.constraint_validator, alias: orob2b_shipping_unique_product_unit_shipping_options_validator }
+
+    orob2b_shipping.form.data_transformer.measure:
+        class: 'OroB2B\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer'
+        abstract: true
+
+    orob2b_shipping.form.data_transformer.length_unit:
+        parent: 'orob2b_shipping.form.data_transformer.measure'
+        arguments:
+            - '@orob2b_shipping.repository.length_unit'
+
+    orob2b_shipping.form.data_transformer.weight_unit:
+        parent: 'orob2b_shipping.form.data_transformer.measure'
+        arguments:
+            - '@orob2b_shipping.repository.weight_unit'
+
+    orob2b_shipping.form.data_transformer.freight_class:
+        parent: 'orob2b_shipping.form.data_transformer.measure'
+        arguments:
+            - '@orob2b_shipping.repository.freight_class'

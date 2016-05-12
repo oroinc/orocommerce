@@ -39,7 +39,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
 
     public function testGetParent()
     {
-        $this->assertEquals('choice', $this->formType->getParent());
+        $this->assertEquals('entity', $this->formType->getParent());
     }
 
     /**
@@ -65,6 +65,29 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
             ]);
 
         $form = $this->factory->create($this->formType, null, $options);
+
+        $precision1 = new ProductUnitPrecision();
+        $unit1 = new ProductUnit();
+        $unit1->setCode('test01');
+        $precision1->setUnit($unit1);
+        $precision2 = new ProductUnitPrecision();
+        $unit2 = new ProductUnit();
+        $unit2->setCode('test02');
+        $precision2->setUnit($unit2);
+
+        $productUnitHolder = $this->createProductUnitHolder(
+            1,
+            'sku',
+            $unit1,
+            $this->createProductHolder(
+                1,
+                'sku',
+                (new Product())->addUnitPrecision($precision1)->addUnitPrecision($precision2)
+            )
+        );
+
+        $formParent = $this->factory->create(new ProductUnitHolderTypeStub(), $productUnitHolder);
+        $form->setParent($formParent);
 
         $this->assertNull($form->getData());
 
@@ -118,5 +141,88 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
             ->willReturn($code);
 
         return $unit;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtensions()
+    {
+        return [
+            new PreloadedExtension(
+                [
+                    'entity' => new EntityType([]),
+                    ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
+                        [1],
+                        ProductUnitSelectionType::NAME
+                    )
+                ],
+                []
+            ),
+            $this->getValidatorExtension(true)
+        ];
+    }
+
+    /**
+     * @param int $id
+     * @param $productUnitCode
+     * @param ProductUnit $productUnit
+     * @param ProductHolderInterface $productHolder
+     * @return ProductUnitHolderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createProductUnitHolder(
+        $id,
+        $productUnitCode,
+        ProductUnit $productUnit = null,
+        ProductHolderInterface $productHolder = null
+    ) {
+        /* @var $productUmitHolder \PHPUnit_Framework_MockObject_MockObject|ProductUnitHolderInterface */
+        $productUnitHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface');
+        $productUnitHolder
+            ->expects(static::any())
+            ->method('getEntityIdentifier')
+            ->willReturn($id);
+        $productUnitHolder
+            ->expects(static::any())
+            ->method('getProductUnit')
+            ->willReturn($productUnit);
+        $productUnitHolder
+            ->expects(static::any())
+            ->method('getProductUnitCode')
+            ->willReturn($productUnitCode);
+        $productUnitHolder
+            ->expects(static::any())
+            ->method('getProductHolder')
+            ->willReturn($productHolder);
+
+        return $productUnitHolder;
+    }
+
+    /**
+     * @param int $id
+     * @param string $productSku
+     * @param Product $product
+     * @return \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface
+     */
+    protected function createProductHolder($id, $productSku, Product $product = null)
+    {
+        /* @var $productHolder \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface */
+        $productHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolder
+            ->expects(static::any())
+            ->method('getId')
+            ->willReturn($id);
+
+        $productHolder
+            ->expects(static::any())
+            ->method('getProduct')
+            ->willReturn($product);
+
+        $productHolder
+            ->expects(static::any())
+            ->method('getProductSku')
+            ->willReturn($productSku);
+
+        return $productHolder;
     }
 }

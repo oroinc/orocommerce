@@ -23,7 +23,7 @@ use OroB2B\Bundle\ShippingBundle\Model\Weight;
  *          )
  *      }
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository")
  * @ORM\HasLifecycleCallbacks()
  * @Config(mode="hidden")
  */
@@ -212,6 +212,7 @@ class ProductShippingOptions implements ProductUnitHolderInterface, ProductHolde
     public function setWeight(Weight $weight = null)
     {
         $this->weight = $weight;
+        $this->updateWeight();
 
         return $this;
     }
@@ -232,6 +233,7 @@ class ProductShippingOptions implements ProductUnitHolderInterface, ProductHolde
     public function setDimensions(Dimensions $dimensions = null)
     {
         $this->dimensions = $dimensions;
+        $this->updateDimensions();
 
         return $this;
     }

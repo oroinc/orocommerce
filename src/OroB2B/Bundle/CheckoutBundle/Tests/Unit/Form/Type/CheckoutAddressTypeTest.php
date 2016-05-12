@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
-use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
+use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 
 use OroB2B\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType;
 
@@ -48,7 +48,7 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
             'orob2b_country' => new CountryType(),
             'orob2b_region' => new RegionType(),
             ],
-            ['form' => [new RandomIdExtension()]]
+            ['form' => [new AdditionalAttrExtension()]]
         )]);
     }
 

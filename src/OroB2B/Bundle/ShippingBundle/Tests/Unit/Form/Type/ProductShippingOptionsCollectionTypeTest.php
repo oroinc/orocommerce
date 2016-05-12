@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
@@ -12,6 +12,8 @@ use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
 
 class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
 {
+    const DATA_CLASS = 'stdClass';
+
     /**
      * @var ProductShippingOptionsCollectionType
      */
@@ -25,23 +27,25 @@ class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->formType = new ProductShippingOptionsCollectionType();
+        $this->formType->setDataClass(self::DATA_CLASS);
     }
 
     public function testSetDefaultOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
                 'type' => ProductShippingOptionsType::NAME,
                 'show_form_when_empty' => false,
-                'error_bubbling' => false,
-                'required' => false,
+                'options' => [
+                    'data_class' => self::DATA_CLASS
+                ]
             ])
         ;
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 
     public function testGetParent()

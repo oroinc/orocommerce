@@ -11,11 +11,10 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use OroB2B\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -26,6 +25,11 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *      indexes={@ORM\Index(name="orob2b_invoice_created_at_index", columns={"created_at"})}
  * )
  * @ORM\Entity
+ * @ORM\AssociationOverrides({
+ *      @ORM\AssociationOverride(name="account",
+ *          joinColumns=@ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
+ *      )
+ * })
  * @Config(
  *      routeName="orob2b_invoice_index",
  *      routeUpdate="orob2b_invoice_update",
@@ -53,12 +57,15 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Invoice extends ExtendInvoice implements
+    AccountOwnerAwareInterface,
     OrganizationAwareInterface,
     CurrencyAwareInterface,
     LineItemsAwareInterface,
     DatesAwareInterface
 {
     use DatesAwareTrait;
+    use AuditableUserAwareTrait;
+    use FrontendAccountUserAwareTrait;
 
     /**
      * @var integer
@@ -91,37 +98,6 @@ class Invoice extends ExtendInvoice implements
     protected $invoiceDate;
 
     /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="user_owner_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $owner;
-
-    /**
-     * @var OrganizationInterface
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
-     */
-    protected $organization;
-
-    /**
-     * @var Account
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $account;
-
-    /**
      * @var Website
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
@@ -135,14 +111,6 @@ class Invoice extends ExtendInvoice implements
      * )
      */
     protected $website;
-
-    /**
-     * @var AccountUser
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     */
-    protected $accountUser;
 
     /**
      * @var string
@@ -251,82 +219,6 @@ class Invoice extends ExtendInvoice implements
     public function setInvoiceDate(\DateTime $invoiceDate)
     {
         $this->invoiceDate = $invoiceDate;
-
-        return $this;
-    }
-
-    /**
-     * @return User|null
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
-     * @param User|null $owner
-     * @return $this
-     */
-    public function setOwner(User $owner = null)
-    {
-        $this->owner = $owner;
-
-        return $this;
-    }
-
-    /**
-     * @return OrganizationInterface|null
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
-    }
-
-    /**
-     * @param OrganizationInterface|null $organization
-     * @return $this
-     */
-    public function setOrganization(OrganizationInterface $organization = null)
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
-    /**
-     * @return Account
-     */
-    public function getAccount()
-    {
-        return $this->account;
-    }
-
-    /**
-     * @param Account $account
-     * @return $this
-     */
-    public function setAccount(Account $account)
-    {
-        $this->account = $account;
-
-        return $this;
-    }
-
-    /**
-     * @return AccountUser|null
-     */
-    public function getAccountUser()
-    {
-        return $this->accountUser;
-    }
-
-    /**
-     * @param AccountUser|null $accountUser
-     * @return $this
-     */
-    public function setAccountUser(AccountUser $accountUser = null)
-    {
-        $this->accountUser = $accountUser;
 
         return $this;
     }

@@ -35,9 +35,6 @@ class PriceListToAccountRepositoryTest extends WebTestCase
 
         /** @var PriceListToAccount $actualPriceListToAccount */
         $actualPriceListToAccount = $repository->findOneBy([]);
-        if (!$actualPriceListToAccount) {
-            $this->markTestSkipped('Can\'t test method because fixture was not loaded.');
-        }
 
         $expectedPriceListToAccount = $repository->findByPrimaryKey(
             $actualPriceListToAccount->getPriceList(),
@@ -115,8 +112,9 @@ class PriceListToAccountRepositoryTest extends WebTestCase
      * @param string $accountGroup
      * @param string $website
      * @param array $expectedAccounts
+     * @param int $fallback
      */
-    public function testGetAccountIteratorByFallback($accountGroup, $website, $expectedAccounts)
+    public function testGetAccountIteratorByFallback($accountGroup, $website, $expectedAccounts, $fallback = null)
     {
         /** @var $accountGroup  AccountGroup */
         $accountGroup = $this->getReference($accountGroup);
@@ -124,7 +122,7 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $website = $this->getReference($website);
 
         $iterator = $this->getRepository()
-            ->getAccountIteratorByDefaultFallback($accountGroup, $website, PriceListAccountFallback::ACCOUNT_GROUP);
+            ->getAccountIteratorByDefaultFallback($accountGroup, $website, $fallback);
 
         $actualSiteMap = [];
         foreach ($iterator as $account) {
@@ -139,10 +137,27 @@ class PriceListToAccountRepositoryTest extends WebTestCase
     public function getPriceListIteratorDataProvider()
     {
         return [
-            [
+            'with fallback group1' => [
+                'accountGroup' => 'account_group.group1',
+                'website' => 'US',
+                'expectedAccounts' => ['account.level_1.3'],
+                'fallback' => PriceListAccountFallback::ACCOUNT_GROUP
+            ],
+            'without fallback group1' => [
                 'accountGroup' => 'account_group.group1',
                 'website' => 'US',
                 'expectedAccounts' => ['account.level_1.3']
+            ],
+            'with fallback group2' => [
+                'accountGroup' => 'account_group.group2',
+                'website' => 'US',
+                'expectedAccounts' => [],
+                'fallback' => PriceListAccountFallback::ACCOUNT_GROUP
+            ],
+            'without fallback group2' => [
+                'accountGroup' => 'account_group.group2',
+                'website' => 'US',
+                'expectedAccounts' => ['account.level_1.2'],
             ],
         ];
     }
@@ -185,10 +200,10 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $account = $this->getReference('account.level_1_1');
         /** @var Website $website */
         $website = $this->getReference('US');
-        $this->assertCount(6, $this->getRepository()->findAll());
+        $this->assertCount(7, $this->getRepository()->findAll());
         $this->assertCount(2, $this->getRepository()->findBy(['account' => $account, 'website' => $website]));
         $this->getRepository()->delete($account, $website);
-        $this->assertCount(4, $this->getRepository()->findAll());
+        $this->assertCount(5, $this->getRepository()->findAll());
         $this->assertCount(0, $this->getRepository()->findBy(['account' => $account, 'website' => $website]));
     }
 

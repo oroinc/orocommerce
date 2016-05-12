@@ -373,6 +373,7 @@ orob2b.account:
             profile_updated.message: 'Account User profile updated'
             token_not_found.message: 'The user with "confirmation token" does not exist for value "%token%"'
             confirmation_sent.message: 'Confirmation email has been sent'
+            welcome_failed.message: 'Welcome email sending failed'
         accountuseraddress:
             saved.message: 'Account User Address has been saved'
         accountuserrole:

@@ -15,6 +15,8 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     const SHOPPING_LIST_1 = 'shopping_list_1';
     const SHOPPING_LIST_2 = 'shopping_list_2';
     const SHOPPING_LIST_3 = 'shopping_list_3';
+    const SHOPPING_LIST_4 = 'shopping_list_4';
+    const SHOPPING_LIST_5 = 'shopping_list_5';
 
     /**
      * {@inheritdoc}
@@ -107,7 +109,9 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         return [
             self::SHOPPING_LIST_1 => ['total' => 2312, 'subtotal' => 91222],
             self::SHOPPING_LIST_2 => ['total' => 321, 'subtotal' => 5555],
-            self::SHOPPING_LIST_3 => ['total' => 83, 'subtotal' => 422]
+            self::SHOPPING_LIST_3 => ['total' => 83, 'subtotal' => 422],
+            self::SHOPPING_LIST_4 => ['total' => 32, 'subtotal' => 2464],
+            self::SHOPPING_LIST_5 => ['total' => 466, 'subtotal' => 45354]
         ];
     }
 }

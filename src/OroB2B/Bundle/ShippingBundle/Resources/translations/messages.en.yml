@@ -52,6 +52,11 @@ orob2b:
         product:
             section:
                 shipping_options: Shipping Options
+        form:
+            placeholder:
+                length_unit.label: Select Unit Of Length
+                weight_unit.label: Select Unit Of Weight
+                freight_class.label: Select Freight Class
 
     weight_unit.lbs:
         label:
