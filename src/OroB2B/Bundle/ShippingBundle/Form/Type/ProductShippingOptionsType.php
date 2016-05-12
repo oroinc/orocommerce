@@ -55,7 +55,7 @@ class ProductShippingOptionsType extends AbstractType
                 FreightClassSelectType::NAME,
                 [
                     'label' => 'orob2b.shipping.product_shipping_options.freight_class.label',
-                    'placeholder' => 'orob2b.shipping.form.placeholder.freight_class.label'
+                    'placeholder' => 'orob2b.shipping.form.placeholder.freight_class.label',
                     'attr' => [
                         'class' => 'freight-class-select',
                     ],
