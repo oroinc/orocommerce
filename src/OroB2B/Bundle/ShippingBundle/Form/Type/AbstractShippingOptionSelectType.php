@@ -89,7 +89,6 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
             $this->unitProvider->getUnits(!$options['full_list']),
             $options['compact']
         );
-
         foreach ($choices as $key => $value) {
             $view->vars['choices'][] = new ChoiceView($value, $key, $value);
         }

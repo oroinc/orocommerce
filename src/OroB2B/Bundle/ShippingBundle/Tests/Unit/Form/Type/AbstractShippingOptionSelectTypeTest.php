@@ -19,19 +19,19 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use OroB2B\Bundle\ShippingBundle\Form\Type\AbstractShippingOptionSelectType;
-use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 
 abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestCase
 {
-    /** @var AbstractMeasureUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $unitProvider;
-
-    /** @var AbstractShippingOptionSelectType */
-    protected $formType;
+    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    protected $repository;
 
     /** @var UnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
     protected $formatter;
+
+    /** @var AbstractShippingOptionSelectType */
+    protected $formType;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
     protected $configManager;
