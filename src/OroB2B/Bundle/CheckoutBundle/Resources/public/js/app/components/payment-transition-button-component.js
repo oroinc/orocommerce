@@ -29,8 +29,10 @@ define(function(require) {
             var selectedValue = this.getPaymentMethodElement().val();
             if (filledForm.length > 0) {
                 if (selectedValue) {
+                    mediator.trigger('checkout:payment:before-restore-filled-form', filledForm);
                     filledForm.removeClass('hidden');
                     this.getPaymentForm().replaceWith(filledForm);
+                    delete this.$paymentForm;
                 } else {
                     filledForm.remove();
                 }
@@ -60,7 +62,7 @@ define(function(require) {
 
             this.getPaymentForm()
                 .addClass('hidden')
-                .insertAfter($(this.options.selectors.checkoutContent));
+                .insertAfter(this.getContent());
 
             PaymentTransitionButtonComponent.__super__.transit.call(this, e, data);
         },

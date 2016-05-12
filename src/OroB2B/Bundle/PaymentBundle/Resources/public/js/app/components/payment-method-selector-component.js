@@ -49,6 +49,8 @@ define(function(require) {
                 this.options.redirectEvent,
                 _.debounce(_.bind(this.redirectToHomepage, this), this.options.delay)
             );
+
+            mediator.on('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
         },
 
         redirectToHomepage: function() {
@@ -67,6 +69,7 @@ define(function(require) {
             }
 
             this.$el.off();
+            mediator.off('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
 
             PaymentMethodSelectorComponent.__super__.dispose.call(this);
         },
@@ -76,6 +79,12 @@ define(function(require) {
             this.$el.find(this.options.selectors.subform).hide();
             $element.parents(this.options.selectors.itemContainer).find(this.options.selectors.subform).show();
             mediator.trigger('checkout:payment:method:changed', {paymentMethod: $element.val()});
+        },
+
+        beforeRestoreFilledForm: function($filledForm) {
+            if (!$filledForm.is(this.$el)) {
+                this.dispose();
+            }
         }
     });
 

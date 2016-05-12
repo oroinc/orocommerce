@@ -79,6 +79,7 @@ define(function(require) {
             mediator.on('checkout:place-order:response', _.bind(this.handleSubmit, this));
             mediator.on('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
             mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
+            mediator.on('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
         },
 
         handleSubmit: function(eventData) {
@@ -163,6 +164,7 @@ define(function(require) {
             mediator.off('checkout:place-order:response', _.bind(this.handleSubmit, this));
             mediator.off('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
             mediator.off('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
+            mediator.off('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
 
             CreditCardComponent.__super__.dispose.call(this);
         },
@@ -262,6 +264,12 @@ define(function(require) {
         beforeTransit: function(eventData) {
             if (eventData.data.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = !this.validate();
+            }
+        },
+
+        beforeRestoreFilledForm: function($filledForm) {
+            if ($filledForm.find(this.$el).length === 0) {
+                this.dispose();
             }
         }
     });
