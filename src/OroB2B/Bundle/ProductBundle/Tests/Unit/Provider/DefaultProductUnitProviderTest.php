@@ -2,12 +2,9 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\UnitProvider;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 
 class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +18,7 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $configManager = $this
-            ->getMockBuilder(ConfigManager::class)
+            ->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
         
@@ -35,7 +32,7 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValueMap($map));
 
         $productUnitRepository = $this
-            ->getMockBuilder(ProductUnitRepository::class)
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -49,7 +46,7 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($productUnit));
 
         $entityManager = $this
-            ->getMockBuilder(ObjectManager::class)
+            ->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();
 

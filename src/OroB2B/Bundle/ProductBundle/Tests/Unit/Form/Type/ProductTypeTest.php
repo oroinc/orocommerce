@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -28,6 +27,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType;
+use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomFieldsChoiceTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
@@ -67,7 +67,8 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
-        $this->defaultProductUnitProvider = $this->getMockBuilder(DefaultProductUnitProvider::class)
+        $this->defaultProductUnitProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
