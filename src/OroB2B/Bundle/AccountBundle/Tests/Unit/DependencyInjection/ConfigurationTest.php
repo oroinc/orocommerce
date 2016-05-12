@@ -79,4 +79,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             ]
         ];
     }
+
+    public function testGetSettingName()
+    {
+        $this->assertSame(
+            'oro_b2b_account.anonymous_account_group',
+            Configuration::getSettingName(Configuration::ANONYMOUS_ACCOUNT_GROUP)
+        );
+    }
 }
