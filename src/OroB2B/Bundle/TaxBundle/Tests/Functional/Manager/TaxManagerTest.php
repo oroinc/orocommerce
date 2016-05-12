@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Oro\Bundle\PlatformBundle\Yaml\Yaml;
+use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;

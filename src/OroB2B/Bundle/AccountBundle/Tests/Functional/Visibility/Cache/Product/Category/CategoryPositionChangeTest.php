@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
-use Oro\Bundle\PlatformBundle\Yaml\Yaml;
+use Symfony\Component\Yaml\Yaml;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 

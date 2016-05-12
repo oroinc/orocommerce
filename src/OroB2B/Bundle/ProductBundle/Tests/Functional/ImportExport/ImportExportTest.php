@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Functional\ImportExport;
 use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
 
 use Symfony\Component\DomCrawler\Form;
-use Oro\Bundle\PlatformBundle\Yaml\Yaml;
+use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
