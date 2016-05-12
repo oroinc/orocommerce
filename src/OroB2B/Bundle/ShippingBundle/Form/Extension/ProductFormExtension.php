@@ -145,6 +145,9 @@ class ProductFormExtension extends AbstractTypeExtension
                 $persistedOptionIds[] = $optionId;
             }
 
+            $option->updateWeight();
+            $option->updateDimensions();
+
             $entityManager->persist($option);
         }
 
