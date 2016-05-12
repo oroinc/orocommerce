@@ -153,7 +153,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                 'defaultData' => $this->getProductShippingOptions(),
             ],
             'empty weight' => [
-                'isValid' => false,
+                'isValid' => true,
                 'submittedData' => [
                     'productUnit' => 'item',
                     'dimensions' => [
@@ -168,7 +168,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                 'defaultData' => $this->getProductShippingOptions(),
             ],
             'empty dimensions' => [
-                'isValid' => false,
+                'isValid' => true,
                 'submittedData' => [
                     'productUnit' => 'item',
                     'weight' => [
@@ -181,7 +181,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                 'defaultData' => $this->getProductShippingOptions(),
             ],
             'empty freightClass' => [
-                'isValid' => false,
+                'isValid' => true,
                 'submittedData' => [
                     'productUnit' => 'item',
                     'weight' => [

@@ -23,7 +23,7 @@ class Weight
      * @param WeightUnit $unit
      * @return Weight
      */
-    public static function create($value, WeightUnit $unit)
+    public static function create($value, WeightUnit $unit = null)
     {
         /* @var $weight self */
         $weight = new static();
@@ -63,7 +63,7 @@ class Weight
      * @param WeightUnit $unit
      * @return $this
      */
-    public function setUnit(WeightUnit $unit)
+    public function setUnit(WeightUnit $unit = null)
     {
         $this->unit = $unit;
 

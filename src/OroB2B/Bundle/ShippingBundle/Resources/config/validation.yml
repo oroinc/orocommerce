@@ -26,12 +26,3 @@ OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions:
         productUnit:
             - NotBlank: ~
             - Valid: ~
-        weight:
-            - NotBlank: ~
-            - Valid: ~
-        dimensions:
-            - NotBlank: ~
-            - Valid: ~
-        freightClass:
-            - NotBlank: ~
-            - Valid: ~

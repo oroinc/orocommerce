@@ -30,14 +30,24 @@ class DimensionsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('length', 'number', ['attr' => ['class' => 'length']])
-            ->add('width', 'number', ['attr' => ['class' => 'width']])
-            ->add('height', 'number', ['attr' => ['class' => 'height']])
+            ->add('length', 'number', [
+                    'attr' => ['class' => 'length'],
+                    'required' => false,
+                ])
+            ->add('width', 'number', [
+                    'attr' => ['class' => 'width'],
+                    'required' => false,
+                ])
+            ->add('height', 'number', [
+                    'attr' => ['class' => 'height'],
+                    'required' => false,
+                ])
             ->add(
                 'unit',
                 LengthUnitSelectType::NAME,
                 [
-                    'placeholder' => 'orob2b.shipping.form.placeholder.length_unit.label'
+                    'placeholder' => 'orob2b.shipping.form.placeholder.length_unit.label',
+                    'required' => false,
                 ]
             );
 

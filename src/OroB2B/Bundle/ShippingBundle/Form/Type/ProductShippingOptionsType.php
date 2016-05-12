@@ -34,6 +34,7 @@ class ProductShippingOptionsType extends AbstractType
                 ProductUnitSelectionType::NAME,
                 [
                     'label' => 'orob2b.shipping.product_shipping_options.product_unit.label',
+                    'required' => true,
                 ]
             )
             ->add(
@@ -41,6 +42,7 @@ class ProductShippingOptionsType extends AbstractType
                 WeightType::NAME,
                 [
                     'label' => 'orob2b.shipping.product_shipping_options.weight.label',
+                    'required' => false,
                 ]
             )
             ->add(
@@ -48,6 +50,7 @@ class ProductShippingOptionsType extends AbstractType
                 DimensionsType::NAME,
                 [
                     'label' => 'orob2b.shipping.product_shipping_options.dimensions.label',
+                    'required' => false,
                 ]
             )
             ->add(
@@ -55,7 +58,8 @@ class ProductShippingOptionsType extends AbstractType
                 FreightClassSelectType::NAME,
                 [
                     'label' => 'orob2b.shipping.product_shipping_options.freight_class.label',
-                    'placeholder' => 'orob2b.shipping.form.placeholder.freight_class.label'
+                    'placeholder' => 'orob2b.shipping.form.placeholder.freight_class.label',
+                    'required' => false,
                 ]
             );
     }
