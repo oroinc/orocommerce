@@ -1,0 +1,13 @@
+parameters:
+    orob2b_seo.event_listener.form_view.class: 'OroB2B\Bundle\SEOBundle\EventListener\FormViewListener'
+
+services:
+    #EventListeners
+    orob2b_seo.event_listener.form_view:
+        class: '%orob2b_seo.event_listener.form_view.class%'
+        arguments:
+            - '@request_stack'
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
