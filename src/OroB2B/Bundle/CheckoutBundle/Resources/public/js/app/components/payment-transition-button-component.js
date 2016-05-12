@@ -29,6 +29,7 @@ define(function(require) {
             var selectedValue = this.getPaymentMethodElement().val();
             if (filledForm.length > 0) {
                 if (selectedValue) {
+                    mediator.trigger('checkout:payment:before-restore-filled-form', filledForm);
                     filledForm.removeClass('hidden');
                     this.getPaymentForm().replaceWith(filledForm);
                 } else {
@@ -58,41 +59,11 @@ define(function(require) {
                 return;
             }
 
-            this.hidePaymentForm();
-
-            PaymentTransitionButtonComponent.__super__.transit.call(this, e, data);
-        },
-
-        onContentUpdated: function() {
-            this.restorePaymentForm();
-        },
-
-        /**
-         * @returns {jQuery|HTMLElement}
-         */
-        hidePaymentForm: function() {
-            var $paymentForm = this.getPaymentForm();
-            $paymentForm.addClass('hidden')
+            this.getPaymentForm()
+                .addClass('hidden')
                 .insertAfter(this.getContent());
 
-            return $paymentForm;
-        },
-
-        /**
-         * @returns {jQuery|HTMLElement}
-         */
-        restorePaymentForm: function() {
-            var $paymentForm = this.getPaymentForm();
-            var $hiddenPaymentForm = this.getContent().next(this.options.selectors.paymentForm);
-
-            if ($paymentForm.length && $hiddenPaymentForm.length) {
-                $paymentForm.replaceWith($hiddenPaymentForm);
-                $hiddenPaymentForm.removeClass('hidden');
-
-                return $hiddenPaymentForm;
-            }
-
-            return $paymentForm;
+            PaymentTransitionButtonComponent.__super__.transit.call(this, e, data);
         },
 
         /**

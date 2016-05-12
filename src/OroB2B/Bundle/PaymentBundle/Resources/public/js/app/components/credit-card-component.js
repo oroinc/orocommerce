@@ -73,6 +73,7 @@ define(function(require) {
                 .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
 
             mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
+            mediator.on('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
         },
 
         handleSubmit: function(eventData) {
@@ -145,6 +146,7 @@ define(function(require) {
             }
 
             mediator.off('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
+            mediator.off('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
         },
 
         validate: function(elementSelector) {
@@ -204,6 +206,12 @@ define(function(require) {
         beforeTransit: function(eventData) {
             if (eventData.data.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = !this.validate();
+            }
+        },
+
+        beforeRestoreFilledForm: function($filledForm) {
+            if ($filledForm.find(this.$el).length === 0) {
+                this.dispose();
             }
         }
     });
