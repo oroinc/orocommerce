@@ -7,6 +7,8 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
@@ -280,5 +282,40 @@ class ProductPriceRepository extends EntityRepository
         }
 
         return $result;
+    }
+
+    /**
+     * @param BasePriceList $sourcePriceList
+     * @param BasePriceList $targetPriceList
+     * @param InsertFromSelectQueryExecutor $insertQueryExecutor
+     */
+    public function copyPrices(
+        BasePriceList $sourcePriceList,
+        BasePriceList $targetPriceList,
+        InsertFromSelectQueryExecutor $insertQueryExecutor
+    ) {
+        $qb = $this->createQueryBuilder('pp');
+        $qb
+            ->select(
+                'IDENTITY(pp.product)',
+                'IDENTITY(pp.unit)',
+                (string)$qb->expr()->literal($targetPriceList->getId()),
+                'pp.productSku',
+                'pp.quantity',
+                'pp.value',
+                'pp.currency'
+            )
+            ->where($qb->expr()->eq('pp.priceList', ':sourcePriceList'))
+            ->setParameter('sourcePriceList', $sourcePriceList);
+        $fields = [
+            'product',
+            'unit',
+            'priceList',
+            'productSku',
+            'quantity',
+            'value',
+            'currency',
+        ];
+        $insertQueryExecutor->execute($this->getClassName(), $fields, $qb);
     }
 }

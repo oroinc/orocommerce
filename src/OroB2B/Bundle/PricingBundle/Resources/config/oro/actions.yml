@@ -137,6 +137,10 @@ operations:
                   - [[collection], [propertyName, [currencies]]]
             - '@assign_value': [$.newPriceList.name, $.newName]
             - '@flush_entity': $.newPriceList
+            - '@call_service_method':
+                service: orob2b_pricing.duplicator.product_price_duplicator
+                method: duplicate
+                method_parameters: [$.entity, $.newPriceList]
             - '@flash_message':
                 message: orob2b.pricing.pricelist.duplicate.message
                 type: 'success'
