@@ -71,6 +71,9 @@
                 <td>{{ form_errors(form.value) }}</td>
                 <td>{{ form_errors(form.unit) }}</td>
             </tr>
+            {% if form.vars.errors|length %}
+                <tr><td colspan="2">{{ form_errors(form) }}</td></tr>
+            {% endif %}
         </table>
     </div>
 {% endblock %}
@@ -94,6 +97,9 @@
                 <td>{{ form_errors(form.height) }}</td>
                 <td>{{ form_errors(form.unit) }}</td>
             </tr>
+            {% if form.vars.errors|length %}
+                <tr><td colspan="6">{{ form_errors(form) }}</td></tr>
+            {% endif %}
         </table>
     </div>
 {% endblock %}
@@ -162,8 +168,8 @@
 
 {% block orob2b_shipping_product_shipping_options_widget %}
     {#<td>{{ form_widget(form.product) }}</td>#}
-    <td>{{ form_widget(form.productUnit) }}{{ form_errors(form.productUnit) }}</td>
-    <td>{{ form_widget(form.weight) }}{{ form_errors(form.weight) }}</td>
-    <td>{{ form_widget(form.dimensions) }}{{ form_errors(form.dimensions) }}</td>
-    <td>{{ form_widget(form.freightClass) }}{{ form_errors(form.freightClass) }}</td>
+    <td>{{ form_widget(form.productUnit) }}</td>
+    <td>{{ form_widget(form.weight) }}</td>
+    <td>{{ form_widget(form.dimensions) }}</td>
+    <td>{{ form_widget(form.freightClass) }}</td>
 {% endblock %}

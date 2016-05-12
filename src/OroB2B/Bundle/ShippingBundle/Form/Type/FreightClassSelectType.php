@@ -2,7 +2,9 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 use OroB2B\Bundle\ShippingBundle\Provider\FreightClassesProvider;
 
@@ -14,14 +16,20 @@ class FreightClassSelectType extends AbstractShippingOptionSelectType
     protected $unitProvider;
 
     /**
-     * {@ihneritdoc}
+     * {@inheritdoc}
      */
-    protected function getUnits(FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        if ($options['full_list']) {
-            return parent::getUnits($form, $options);
+        $formParent = $form->getParent();
+        if (!$options['full_list'] && $formParent) {
+            $choices = $this->unitProvider->getFreightClasses($formParent->getData(), $options['compact']);
+
+            $view->vars['choices'] = [];
+            foreach ($choices as $choice) {
+                $view->vars['choices'][] = new ChoiceView($choice, $choice->getCode(), $choice->getCode());
+            }
         }
 
-        return $this->unitProvider->getFreightClasses($form->getData());
+        parent::finishView($view, $form, $options);
     }
 }
