@@ -404,6 +404,14 @@
                 <arg line="--user-password=&quot;@{user-password}&quot;"/>
                 <arg line="--sample-data=@{sample-data}"/>
                 <arg line="--organization-name=&quot;@{organization-name}&quot;"/>
+                <if>
+                    <equals arg1="@{env}" arg2="prod"/>
+                    <then>
+                    </then>
+                    <else>
+                        <arg line="--skip-assets" />
+                    </else>
+                </if>
                 <arg line="--no-interaction" />
             </exec>
         </sequential>
