@@ -2,23 +2,25 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType;
+use OroB2B\Bundle\ShippingBundle\Form\Type\FreightClassSelectType;
+use OroB2B\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\WeightType;
-use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
+use OroB2B\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
+use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
+use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator;
 
 class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
 {
@@ -34,7 +36,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new ProductShippingOptionsType($this->getProvider());
+        $this->formType = new ProductShippingOptionsType();
         $this->formType->setDataClass('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions');
     }
 
@@ -45,12 +47,13 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
     {
         $constraint = new UniqueProductUnitShippingOptions();
 
-        $UniqueEntity = $this->getMockBuilder('Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator')
-            ->disableOriginalConstructor()->getMock();
+        $uniqueEntity = $this->getMockBuilder('Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         return [
             $constraint->validatedBy() => new UniqueProductUnitShippingOptionsValidator(),
-            'doctrine.orm.validator.unique' => $UniqueEntity
+            'doctrine.orm.validator.unique' => $uniqueEntity
         ];
     }
 
@@ -64,7 +67,6 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                 [
                     'product' => null,
                     'data_class' => 'OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions',
-                    'intention' => 'product_shipping_options',
                     'by_reference' => false,
                 ]
             );
@@ -74,7 +76,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_shipping_product_shipping_options', $this->formType->getName());
+        $this->assertEquals(ProductShippingOptionsType::NAME, $this->formType->getName());
     }
 
     /**
@@ -95,7 +97,6 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
 
         $this->assertEquals($isValid, $form->isValid());
-
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -257,11 +258,11 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                     [
                         'value' => $weight[0],
                         'unit' => $this->getEntity(
-                                'OroB2B\Bundle\ShippingBundle\Entity\WeightUnit',
-                                [
-                                    'code' => $weight[1]
-                                ]
-                            ),
+                            'OroB2B\Bundle\ShippingBundle\Entity\WeightUnit',
+                            [
+                                'code' => $weight[1]
+                            ]
+                        ),
                     ]
                 )
             );
@@ -276,11 +277,11 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                         'width' => $dimensions[1],
                         'height' => $dimensions[2],
                         'unit' => $this->getEntity(
-                                'OroB2B\Bundle\ShippingBundle\Entity\LengthUnit',
-                                [
-                                    'code' => $dimensions[3]
-                                ]
-                            ),
+                            'OroB2B\Bundle\ShippingBundle\Entity\LengthUnit',
+                            [
+                                'code' => $dimensions[3]
+                            ]
+                        ),
                     ]
                 )
             );
@@ -325,10 +326,10 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
             ProductUnitSelectionType::NAME
         );
 
-        $weightType = new WeightType($this->getProvider());
+        $weightType = new WeightType();
         $weightType->setDataClass('OroB2B\Bundle\ShippingBundle\Model\Weight');
 
-        $dimensionsType = new DimensionsType($this->getProvider());
+        $dimensionsType = new DimensionsType();
         $dimensionsType->setDataClass('OroB2B\Bundle\ShippingBundle\Model\Dimensions');
 
         return [
@@ -336,15 +337,17 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                 [
                     $weightType->getName() => $weightType,
                     $dimensionsType->getName() => $dimensionsType,
-                    'entity' => new EntityType([
-                            'mm' => $this->getEntity(
-                                'OroB2B\Bundle\ShippingBundle\Entity\LengthUnit',
-                                ['code' => 'mm']
-                            ),
-                            'cm' => $this->getEntity(
-                                'OroB2B\Bundle\ShippingBundle\Entity\LengthUnit',
-                                ['code' => 'cm']
-                            ),
+                    FreightClassSelectType::NAME => new EntityType(
+                        [
+                            'pl' => $this->getEntity(
+                                'OroB2B\Bundle\ShippingBundle\Entity\FreightClass',
+                                ['code' => 'pl']
+                            )
+                        ],
+                        FreightClassSelectType::NAME
+                    ),
+                    WeightUnitSelectType::NAME => new EntityType(
+                        [
                             'mg' => $this->getEntity(
                                 'OroB2B\Bundle\ShippingBundle\Entity\WeightUnit',
                                 ['code' => 'mg']
@@ -352,33 +355,28 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                             'kg' => $this->getEntity(
                                 'OroB2B\Bundle\ShippingBundle\Entity\WeightUnit',
                                 ['code' => 'kg']
-                            ),
-                            'pl' => $this->getEntity(
-                                'OroB2B\Bundle\ShippingBundle\Entity\FreightClass',
-                                ['code' => 'pl']
                             )
-                        ]),
+                        ],
+                        WeightUnitSelectType::NAME
+                    ),
+                    LengthUnitSelectType::NAME => new EntityType(
+                        [
+                            'mm' => $this->getEntity(
+                                'OroB2B\Bundle\ShippingBundle\Entity\LengthUnit',
+                                ['code' => 'mm']
+                            ),
+                            'cm' => $this->getEntity(
+                                'OroB2B\Bundle\ShippingBundle\Entity\LengthUnit',
+                                ['code' => 'cm']
+                            )
+                        ],
+                        LengthUnitSelectType::NAME
+                    ),
                     $productUnitSelectionType->getName() => $productUnitSelectionType,
                 ],
                 []
             ),
             $this->getValidatorExtension(true),
         ];
-    }
-
-    protected function getProvider()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractMeasureUnitProvider $provider */
-        $provider = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $provider->expects($this->any())
-            ->method('getEntityClass')
-            ->willReturn(null);
-        $provider->expects($this->any())
-            ->method('getUnits')
-            ->willReturn([]);
-
-        return $provider;
     }
 }

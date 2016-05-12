@@ -7,23 +7,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ShippingBundle\Form\DataTransformer\DimensionsTransformer;
-use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 
 class DimensionsType extends AbstractType
 {
-    /**
-     * @var AbstractMeasureUnitProvider
-     */
-    protected $provider;
-
-    /**
-     * @param AbstractMeasureUnitProvider $provider
-     */
-    public function __construct(AbstractMeasureUnitProvider $provider)
-    {
-        $this->provider = $provider;
-    }
-
     const NAME = 'orob2b_shipping_dimensions';
 
     /** @var string */
@@ -49,10 +35,9 @@ class DimensionsType extends AbstractType
             ->add('height', 'number', ['attr' => ['class' => 'height freight-class-update-trigger']])
             ->add(
                 'unit',
-                'entity',
+                LengthUnitSelectType::NAME,
                 [
-                    'class' => $this->provider->getEntityClass(),
-                    'choices' => $this->provider->getUnits(),
+                    'placeholder' => 'orob2b.shipping.form.placeholder.length_unit.label',
                     'attr' => ['class' => 'freight-class-update-trigger'],
                 ]
             );
@@ -67,8 +52,7 @@ class DimensionsType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => $this->dataClass,
-                'compact' => false
+                'data_class' => $this->dataClass
             ]
         );
     }

@@ -7,28 +7,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
 
 class ProductShippingOptionsType extends AbstractType
 {
-    /**
-     * @var AbstractMeasureUnitProvider
-     */
-    protected $freightClassesProvider;
-
-    /**
-     * @param AbstractMeasureUnitProvider $freightClassesProvider
-     */
-    public function __construct(AbstractMeasureUnitProvider $freightClassesProvider)
-    {
-        $this->freightClassesProvider = $freightClassesProvider;
-    }
-
     const NAME = 'orob2b_shipping_product_shipping_options';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $dataClass;
 
     /**
@@ -68,11 +52,10 @@ class ProductShippingOptionsType extends AbstractType
             )
             ->add(
                 'freightClass',
-                'entity',
+                FreightClassSelectType::NAME,
                 [
-                    'class' => $this->freightClassesProvider->getEntityClass(),
-                    'choices' => $this->freightClassesProvider->getUnits(),
                     'label' => 'orob2b.shipping.product_shipping_options.freight_class.label',
+                    'placeholder' => 'orob2b.shipping.form.placeholder.freight_class.label'
                     'attr' => [
                         'class' => 'freight-class-select',
                     ],
@@ -89,8 +72,7 @@ class ProductShippingOptionsType extends AbstractType
             [
                 'product' => null,
                 'data_class' => $this->dataClass,
-                'intention' => 'product_shipping_options',
-                'by_reference' => false,
+//                'by_reference' => false
             ]
         );
     }

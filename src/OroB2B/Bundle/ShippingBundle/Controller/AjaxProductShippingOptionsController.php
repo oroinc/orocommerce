@@ -16,7 +16,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
-use OroB2B\Bundle\ShippingBundle\Provider\AbstractMeasureUnitProvider;
+use OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 
 class AjaxProductShippingOptionsController extends Controller
 {
@@ -46,15 +46,12 @@ class AjaxProductShippingOptionsController extends Controller
         }
         $activeShippingOptions->setProduct($product);
 
-        /* @var $provider AbstractMeasureUnitProvider */
+        /* @var $provider MeasureUnitProvider */
         $provider = $this->get('orob2b_shipping.provider.measure_units.freight');
-
-        $codes = $provider->getUnitsCodes();
-        $codes = $provider->formatUnitsCodes(array_combine($codes, $codes), (bool)$request->get('short', false));
 
         return new JsonResponse(
             [
-                'units' => $codes,
+                'units' => $provider->getFormattedUnits((bool)$request->get('short', false)),
             ]
         );
     }
