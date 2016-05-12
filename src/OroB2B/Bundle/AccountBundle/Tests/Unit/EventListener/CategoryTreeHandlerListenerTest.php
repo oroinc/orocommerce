@@ -6,8 +6,10 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener;
+use OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
@@ -23,6 +25,11 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
      * @var CategoryVisibilityResolverInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $categoryVisibilityResolver;
+    
+    /**
+     * @var AccountUserRelationsProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $accountUserRelationsProvider;
 
     /**
      * @var CategoryTreeHandlerListener
@@ -55,7 +62,15 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new CategoryTreeHandlerListener($this->categoryVisibilityResolver);
+        $this->accountUserRelationsProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new CategoryTreeHandlerListener(
+            $this->categoryVisibilityResolver,
+            $this->accountUserRelationsProvider
+        );
     }
 
     protected function tearDown()
@@ -70,17 +85,26 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
      * @param array $expected
      * @param array $hiddenCategoryIds
      * @param UserInterface|null $user
+     * @param AccountGroup|null $accountGroup
      */
     public function testOnCreateAfter(
         array $categories,
         array $expected,
         array $hiddenCategoryIds,
-        UserInterface $user = null
+        UserInterface $user = null,
+        AccountGroup $accountGroup = null
     ) {
         $categories = $this->prepareCategories($categories);
         $expected = $this->prepareCategories($expected);
         $event = new CategoryTreeCreateAfterEvent($categories);
         $event->setUser($user);
+
+        if (!$user) {
+            $this->accountUserRelationsProvider->expects($this->once())
+                ->method('getAccountGroup')
+                ->with($user)
+                ->willReturn($accountGroup);
+        }
 
         if ($user instanceof User) {
             $this->categoryVisibilityResolver->expects($this->never())
@@ -89,6 +113,11 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
             $this->categoryVisibilityResolver->expects($this->once())
                 ->method('getHiddenCategoryIdsForAccount')
                 ->with($user->getAccount())
+                ->willReturn($hiddenCategoryIds);
+        } elseif (!$user && $accountGroup) {
+            $this->categoryVisibilityResolver->expects($this->once())
+                ->method('getHiddenCategoryIdsForAccountGroup')
+                ->with($accountGroup)
                 ->willReturn($hiddenCategoryIds);
         } else {
             $this->categoryVisibilityResolver->expects($this->once())
@@ -124,7 +153,18 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                     ['id' => 2, 'parent' => 1],
                 ],
                 'hiddenCategoryIds' => [3, 4, 5, 8, 9, 10, 11],
-                'user' => null
+                'user' => null,
+                'accountGroup' => new AccountGroup()
+            ],
+            'tree without user and group' => [
+                'categories' => self::$categories,
+                'expected' => [
+                    ['id' => 1, 'parent' => null],
+                    ['id' => 2, 'parent' => 1],
+                ],
+                'hiddenCategoryIds' => [3, 4, 5, 8, 9, 10, 11],
+                'user' => null,
+                'accountGroup' => null
             ],
             'tree for account user with invisible ids' => [
                 'categories' => self::$categories,
