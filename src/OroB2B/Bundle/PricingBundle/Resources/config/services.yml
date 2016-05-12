@@ -540,3 +540,6 @@ services:
             - '@doctrine'
             - '@oro_config.global'
             - '@oro_entity.orm.insert_from_select_query_executor'
+
+    orob2b_pricing.duplicator.schedule:
+        class: 'OroB2B\Bundle\PricingBundle\Duplicator\ScheduleDuplicator'

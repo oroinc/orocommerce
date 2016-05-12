@@ -136,6 +136,10 @@ operations:
                   - [[emptyCollection], [propertyName, [schedules]]]
                   - [[collection], [propertyName, [currencies]]]
             - '@assign_value': [$.newPriceList.name, $.newName]
+            - '@call_service_method':
+                service: orob2b_pricing.duplicator.schedule
+                method: duplicateSchedule
+                method_parameters: [$.entity,$.newPriceList]
             - '@flush_entity': $.newPriceList
             - '@flash_message':
                 message: orob2b.pricing.pricelist.duplicate.message
