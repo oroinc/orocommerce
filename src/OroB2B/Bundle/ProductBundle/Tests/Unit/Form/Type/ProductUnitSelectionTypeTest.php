@@ -140,7 +140,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             'sku',
             $unit1,
             $this->createProductHolder(
-                1,
                 'sku',
                 (new Product())->addUnitPrecision($precision1)->addUnitPrecision($precision2)
             )
@@ -286,7 +285,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                         1,
                         'sku',
                         new ProductUnit(),
-                        $this->createProductHolder(1, 'sku', null)
+                        $this->createProductHolder('sku', null)
                     ),
                 ],
                 'expectedData' => [
@@ -315,7 +314,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                         1,
                         'sku',
                         new ProductUnit(),
-                        $this->createProductHolder(1, 'sku', null)
+                        $this->createProductHolder('sku', null)
                     ),
                 ],
                 'expectedData' => [
@@ -333,7 +332,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                         1,
                         'code',
                         $unit,
-                        $this->createProductHolder(1, 'code', (new Product())->addUnitPrecision($precision))
+                        $this->createProductHolder('code', (new Product())->addUnitPrecision($precision))
                     ),
                 ],
                 'expectedData' => [
@@ -351,7 +350,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                         1,
                         'code',
                         $unit,
-                        $this->createProductHolder(1, 'code', (new Product())->addUnitPrecision($precision))
+                        $this->createProductHolder('code', (new Product())->addUnitPrecision($precision))
                     ),
                 ],
                 'expectedData' => [
@@ -367,7 +366,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                         null,
                         null,
                         null,
-                        $this->createProductHolder(1, 'sku', (new Product())->addUnitPrecision($precision))
+                        $this->createProductHolder('sku', (new Product())->addUnitPrecision($precision))
                     ),
                 ],
                 'expectedData' => [
@@ -383,7 +382,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                         1,
                         'code',
                         null,
-                        $this->createProductHolder(1, 'code', null)
+                        $this->createProductHolder('code', null)
                     ),
                 ],
                 'expectedData' => [
@@ -400,7 +399,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                         1,
                         'sku',
                         (new ProductUnit())->setCode('sku'),
-                        $this->createProductHolder(1, 'sku', (new Product())->addUnitPrecision($precision))
+                        $this->createProductHolder('sku', (new Product())->addUnitPrecision($precision))
                     ),
                 ],
                 'expectedData' => [
@@ -449,12 +448,11 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param int $id
      * @param string $productSku
      * @param Product $product
      * @return \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface
      */
-    protected function createProductHolder($id, $productSku, Product $product = null)
+    protected function createProductHolder($productSku, Product $product = null)
     {
         /* @var $productHolder \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface */
         $productHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
@@ -570,7 +568,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     {
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit($this->getProductUnit());
-        $productHolder = $this->createProductHolder(1, $code, (new Product())->addUnitPrecision($unitPrecision));
+        $productHolder = $this->createProductHolder($code, (new Product())->addUnitPrecision($unitPrecision));
 
         return $productHolder;
     }
