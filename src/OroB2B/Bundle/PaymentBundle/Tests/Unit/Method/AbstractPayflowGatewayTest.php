@@ -290,7 +290,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($sourceTransaction->isActive());
     }
 
-    public function testCaptureDoChargeUsingValidation()
+    public function testCaptureDoChargeUsingValidationIfRequestAndResponseEmptyAfterDataReuse()
     {
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction
@@ -339,7 +339,8 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
             ->setSuccessful(true)
             ->setActive(true)
             ->setAmount('1000')
-            ->setCurrency('USD');
+            ->setCurrency('USD')
+            ->setRequest(['AMT' => '1000']);
 
         $transaction = new PaymentTransaction();
         $transaction

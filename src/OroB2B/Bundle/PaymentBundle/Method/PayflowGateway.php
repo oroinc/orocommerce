@@ -93,7 +93,8 @@ class PayflowGateway implements PaymentMethodInterface
             ->setReference($sourcePaymentTransaction->getReference())
             ->setSuccessful($sourcePaymentTransaction->isSuccessful())
             ->setActive($sourcePaymentTransaction->isActive())
-            ->setRequest([]);
+            ->setRequest()
+            ->setResponse();
     }
 
     /**
@@ -143,7 +144,7 @@ class PayflowGateway implements PaymentMethodInterface
             return ['successful' => false];
         }
 
-        if ($sourcePaymentTransaction->getAction() === PayflowGateway::VALIDATE) {
+        if (!$sourcePaymentTransaction->getResponse() && !$sourcePaymentTransaction->getRequest()) {
             return $this->charge($paymentTransaction);
         }
 

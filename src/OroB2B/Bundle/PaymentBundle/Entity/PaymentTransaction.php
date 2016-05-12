@@ -276,7 +276,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      * @param array $request
      * @return PaymentTransaction
      */
-    public function setRequest(array $request)
+    public function setRequest(array $request = null)
     {
         $this->request = $request;
 
@@ -293,7 +293,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      * @param array $response
      * @return PaymentTransaction
      */
-    public function setResponse(array $response)
+    public function setResponse(array $response = null)
     {
         $this->response = $response;
 
