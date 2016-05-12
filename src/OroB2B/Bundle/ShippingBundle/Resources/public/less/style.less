@@ -1,13 +1,15 @@
+@import "oroui/css/less/variables";
+
 .system-configuration-container {
-  .control-group {
-    &.shipping-origin-address {
-      .controls {
-        &.control-subgroup {
-          width: 535px;
+    .control-group {
+        &.shipping-origin-address {
+            .controls {
+                &.control-subgroup {
+                    width: 535px;
+                }
+            }
         }
-      }
     }
-  }
 }
 
 .product-shipping-options-collection {
@@ -35,6 +37,27 @@
                 border: 0;
                 padding: 0 5px 0 5px;
             }
+        }
+    }
+}
+
+.shipping-options-result-grid {
+    .other-scroll-container & {
+        //        border: 1px solid @generalBorderColor;
+        border: 1px solid @generalBorderColor;
+        thead {
+            position: inherit !important;
+            display: table-header-group !important;
+        }
+        tr {
+            display: table-row !important;
+        }
+        td:first-child {
+            height: auto;
+        }
+        td {
+            border: 0;
+            padding: 5px;
         }
     }
 }
