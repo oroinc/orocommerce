@@ -121,20 +121,27 @@ operations:
         button_options:
             icon: icon-copy
         actions:
+            - '@format_string':
+                attribute: $.newName
+                string: 'Copy of %%priceListName%%'
+                arguments:
+                    priceListName: $.entity.name
             - '@create_entity':
-            - '@assign_value': [$.entity.active, false]
-            - '@flush_entity': $.entity
-            - '@refresh_grid':
-                conditions:
-                    '@not_empty': $.gridName
-                parameters: [$.gridName]
+                class: OroB2B\Bundle\PricingBundle\Entity\PriceList
+                attribute: $.newPriceList
+                data:
+                    active: false
+                    prices: $.entity.prices
+                    currencies: $.entity.currencies
+                    name: $.newName
+            - '@flush_entity': $.newPriceList
             - '@flash_message':
-                message: orob2b.pricing.pricelist.status.message.disabled
+                message: orob2b.pricing.pricelist.duplicate.message
                 type: 'success'
             - '@call_service_method':
                 service: orob2b_pricing.price_list_change_trigger_handler
                 method: handlePriceListStatusChange
-                method_parameters: [$.entity]
+                method_parameters: [$.newPriceList]
 
 action_groups:
     orob2b_pricing_add_product_price:
