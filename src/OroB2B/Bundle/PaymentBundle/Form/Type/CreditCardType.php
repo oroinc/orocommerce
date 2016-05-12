@@ -88,6 +88,18 @@ class CreditCardType extends AbstractType
                         'data-gateway' => true,
                     ]
                 ]
+            )
+            ->add(
+                'saveForFuture',
+                'checkbox',
+                [
+                    'required' => false,
+                    'label' => 'orob2b.payment.credit_card.save_for_future.label',
+                    'mapped' => false,
+                    'attr' => [
+                        'data-save-for-future' => true
+                    ]
+                ]
             );
     }
 

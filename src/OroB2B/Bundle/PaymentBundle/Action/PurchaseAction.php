@@ -14,8 +14,9 @@ class PurchaseAction extends AbstractPaymentMethodAction
         parent::configureOptionsResolver($resolver);
 
         $resolver
-            ->setDefined('reference')
-            ->addAllowedTypes('reference', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface']);
+            ->setDefined(['reference', 'allowReuseSourceTransaction'])
+            ->addAllowedTypes('reference', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface'])
+            ->addAllowedTypes('allowReuseSourceTransaction', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface']);
     }
 
     /** {@inheritdoc} */
@@ -25,9 +26,11 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $resolver
             ->setRequired('paymentMethod')
+            ->setDefault('allowReuseSourceTransaction', true)
             ->setDefined('reference')
             ->addAllowedTypes('paymentMethod', 'string')
-            ->addAllowedTypes('reference', 'object');
+            ->addAllowedTypes('reference', 'object')
+            ->addAllowedTypes('allowReuseSourceTransaction', 'bool');
     }
 
     /** {@inheritdoc} */
@@ -63,6 +66,10 @@ class PurchaseAction extends AbstractPaymentMethodAction
         $response = $this->executePaymentTransaction($paymentTransaction);
 
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
+
+        if ($sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction()) {
+            $sourcePaymentTransaction->setActive($options['allowReuseSourceTransaction']);
+        }
 
         $this->setAttributeValue(
             $context,

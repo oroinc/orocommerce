@@ -23,7 +23,8 @@ define(function(require) {
                 cvv: '[data-card-cvv]',
                 cardNumber: '[data-card-number]',
                 validation: '[data-validation]',
-                paymentValidateRequired: '[name$="[payment_validate]"]'
+                paymentValidateRequired: '[name$="[payment_validate]"]',
+                saveForFuture: '[data-save-for-future]'
             }
         },
 
@@ -74,7 +75,8 @@ define(function(require) {
                     this.options.selectors.cardNumber,
                     _.bind(this.validate, this, this.options.selectors.cardNumber)
                 )
-                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
+                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv))
+                .on('change', this.options.selectors.saveForFuture, _.bind(this.onSaveForFutureChanged, this));
 
             mediator.on('checkout:place-order:response', _.bind(this.handleSubmit, this));
             mediator.on('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
@@ -158,7 +160,8 @@ define(function(require) {
                     this.options.selectors.cardNumber,
                     _.bind(this.validate, this, this.options.selectors.cardNumber)
                 )
-                .off('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
+                .off('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv))
+                .off('change', this.options.selectors.saveForFuture, _.bind(this.onSaveForFutureChanged, this));
 
             mediator.off('checkout:place-order:response', _.bind(this.handleSubmit, this));
             mediator.off('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
@@ -254,6 +257,14 @@ define(function(require) {
             if (eventData.paymentMethod === this.options.paymentMethod) {
                 this.setPaymentValidateRequired(this.paymentValidationRequiredComponentState);
             }
+        },
+
+        /**
+         * @param {Object} e
+         */
+        onSaveForFutureChanged: function(e) {
+            var $el = $(e.target);
+            mediator.trigger('checkout:payment:save-for-future:change', $el.prop('checked'));
         },
 
         /**

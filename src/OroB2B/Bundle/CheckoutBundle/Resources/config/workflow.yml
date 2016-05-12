@@ -58,6 +58,9 @@ workflows:
             payment_validate:
                 type: bool
                 label: Payment validation required
+            payment_save_for_future:
+                type: bool
+                label: Save payment data for future use
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -177,6 +180,8 @@ workflows:
                     attribute_fields:
                         payment_method: ~
                         payment_validate:
+                            form_type: checkbox
+                        payment_save_for_future:
                             form_type: checkbox
 
             back_to_billing_address:
@@ -481,6 +486,7 @@ workflows:
                                 amount: $checkout.order.total
                                 currency: $checkout.order.currency
                                 paymentMethod: $payment_method
+#                                allowReuseSourceTransaction: $payment_save_for_future
                                 transactionOptions:
                                     successUrl: $.result.successUrl
                                     errorUrl: $.result.errorUrl

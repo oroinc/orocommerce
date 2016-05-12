@@ -4,6 +4,12 @@
             {{ form_widget(form.payment_method) }}
         </fieldset>
 
+    {% if form.payment_save_for_future is defined %}
+        <div data-page-component-module="orob2bcheckout/js/app/components/payment-save-for-future-component">
+            {{ form_widget(form.payment_save_for_future) }}
+        </div>
+    {% endif %}
+
     {% if form.payment_validate is defined %}
         {{ form_widget(form.payment_validate) }}
     {% endif %}
