@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_3;
 
 use Psr\Log\LoggerInterface;
 
+use Doctrine\DBAL\Types\Type;
+
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 
@@ -48,10 +50,15 @@ class UpdateCPLRelationsQuery extends ParametrizedMigrationQuery
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
-        $query  = 'UPDATE ' . $this->tableName . ' SET full_combined_price_list_id = combined_price_list_id';
-        $this->logQuery($logger, $query);
+        $qb = $this->connection
+            ->createQueryBuilder()
+            ->update($this->tableName)
+            ->set('full_combined_price_list_id', 'combined_price_list_id')
+        ;
+
+        $this->logQuery($logger, $qb);
         if (!$dryRun) {
-            $this->connection->executeQuery($query);
+            $qb->execute();
         }
     }
 }
