@@ -2,30 +2,21 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Doctrine\ORM\EntityRepository;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitHolderTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+
 use OroB2B\Bundle\ShippingBundle\Form\Type\AbstractShippingOptionSelectType;
+use OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 
 abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestCase
 {
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
-    protected $repository;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|MeasureUnitProvider */
+    protected $provider;
 
     /** @var UnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
     protected $formatter;
@@ -33,15 +24,12 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
     /** @var AbstractShippingOptionSelectType */
     protected $formType;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
-    protected $configManager;
-
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
-    protected $translator;
+    /** @var array */
+    protected $units = ['lbs', 'kg', 'custom'];
 
     protected function setUp()
     {
-        $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+        $this->provider = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -49,18 +37,12 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-
         parent::setUp();
     }
 
     protected function tearDown()
     {
-        unset($this->formType, $this->repository, $this->formatter, $this->configManager, $this->translator);
+        unset($this->formType, $this->formatter, $this->provider);
 
         parent::tearDown();
     }
@@ -75,67 +57,71 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         $this->assertEquals('entity', $this->formType->getParent());
     }
 
+    public function testSetEntityClass()
+    {
+        $className = 'stdClass';
+
+        $this->assertAttributeEmpty('entityClass', $this->formType);
+
+        $this->formType->setEntityClass($className);
+
+        $this->assertAttributeEquals($className, 'entityClass', $this->formType);
+    }
+
     /**
      * @dataProvider submitDataProvider
      *
+     * @param array $inputOptions
+     * @param array $expectedOptions
      * @param mixed $submittedData
      * @param mixed $expectedData
-     * @param array $options
+     * @param array $expectedLabels
+     * @param array $customChoices
      */
-    public function testSubmit($submittedData, $expectedData, array $options = [])
-    {
-//        if (!empty($options['full_list'])) {
-//            $this->repository->expects($this->once())
-//                ->method('findAll')
-//                ->willReturn([
-//                    $this->createUnit('kg'),
-//                    $this->createUnit('lbs')
-//                ]);
-//        } else {
-//            $this->configManager->expects($this->once())
-//                ->method('get')
-//                ->willReturn(['kg', 'lbs']);
-//        }
-//
-//        $this->formatter->expects($this->at(0))
-//            ->method('format')
-//            ->with('kg', false, false)
-//            ->willReturn('formatted.kg');
-//        $this->formatter->expects($this->at(1))
-//            ->method('format')
-//            ->with('lbs', false, false)
-//            ->willReturn('formatted.lbs');
+    public function testSubmit(
+        array $inputOptions,
+        array $expectedOptions,
+        $submittedData,
+        $expectedData,
+        array $expectedLabels,
+        array $customChoices = null
+    ) {
+        $units = ['lbs', 'kg'];
 
-        $form = $this->factory->create($this->formType, null, $options);
+        $this->provider->expects($customChoices ? $this->never() : $this->once())
+            ->method('getUnits')
+            ->with(!$expectedOptions['full_list'])
+            ->willReturn($units);
 
-        $precision1 = new ProductUnitPrecision();
-        $unit1 = new ProductUnit();
-        $unit1->setCode('test01');
-        $precision1->setUnit($unit1);
-        $precision2 = new ProductUnitPrecision();
-        $unit2 = new ProductUnit();
-        $unit2->setCode('test02');
-        $precision2->setUnit($unit2);
+        if ($customChoices) {
+            $inputOptions['choices'] = $customChoices;
+            $units = $customChoices;
+        }
 
-        $productUnitHolder = $this->createProductUnitHolder(
-            1,
-            'sku',
-            $unit1,
-            $this->createProductHolder(
-                1,
-                'sku',
-                (new Product())->addUnitPrecision($precision1)->addUnitPrecision($precision2)
-            )
-        );
-
-        $formParent = $this->factory->create(new ProductUnitHolderTypeStub(), $productUnitHolder);
-        $form->setParent($formParent);
-
-        $this->assertNull($form->getData());
+        $form = $this->factory->create($this->formType, null, $inputOptions);
 
         $formConfig = $form->getConfig();
+        foreach ($expectedOptions as $key => $value) {
+            $this->assertTrue($formConfig->hasOption($key));
+            $this->assertEquals($value, $formConfig->getOption($key));
+        }
+
         $this->assertTrue($formConfig->hasOption('choices'));
-        $this->assertEquals(['kg' => 'formatted.kg', 'lbs' => 'formatted.lbs'], $formConfig->getOption('choices'));
+        $this->assertEquals($units, $formConfig->getOption('choices'));
+
+        foreach ($expectedLabels as $key => $expectedLabel) {
+            $this->formatter->expects($this->at($key))
+                ->method('format')
+                ->with(array_shift($this->units), $formConfig->getOption('compact'), false)
+                ->willReturn($expectedLabel);
+        }
+
+        $choices = $form->createView()->vars['choices'];
+        foreach ($choices as $choice) {
+            $this->assertEquals(array_shift($expectedLabels), $choice->label);
+        }
+
+        $this->assertNull($form->getData());
 
         $form->submit($submittedData);
 
@@ -150,39 +136,35 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
     {
         return [
             [
+                'inputOptions' => [],
+                'expectedOptions' => ['compact' => false, 'full_list' => false, 'multiple' => false],
                 'submittedData' => null,
                 'expectedData' => null,
+                'expectedLabels' => ['formatted.lbs', 'formatted.kg'],
             ],
             [
+                'inputOptions' => ['compact' => true, 'full_list' => true],
+                'expectedOptions' => ['compact' => true, 'full_list' => true, 'multiple' => false],
                 'submittedData' => 'lbs',
-                'expectedData' => 'lbs',
+                'expectedData' => $this->createUnit('lbs'),
+                'expectedLabels' => ['formatted.lbs', 'formatted.kg'],
             ],
             [
+                'inputOptions' => ['multiple' => true],
+                'expectedOptions' => ['compact' => false, 'full_list' => false, 'multiple' => true],
                 'submittedData' => ['lbs', 'kg'],
-                'expectedData' => ['lbs', 'kg'],
-                'options' => ['multiple' => true],
+                'expectedData' => [$this->createUnit('lbs'), $this->createUnit('kg')],
+                'expectedLabels' => ['formatted.lbs', 'formatted.kg'],
             ],
             [
-                'submittedData' => 'lbs',
-                'expectedData' => 'lbs',
-                'options' => ['full_list' => true],
-            ],
+                'inputOptions' => [],
+                'expectedOptions' => ['compact' => false, 'full_list' => false],
+                'submittedData' => 'custom',
+                'expectedData' => $this->createUnit('custom'),
+                'expectedLabels' => ['formatted.lbs', 'formatted.kg'],
+                'choices' => ['custom']
+            ]
         ];
-    }
-
-    /**
-     * @param string $code
-     * @return MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function createUnit($code)
-    {
-        /** @var MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject $unit */
-        $unit = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface');
-        $unit->expects($this->atLeastOnce())
-            ->method('getCode')
-            ->willReturn($code);
-
-        return $unit;
     }
 
     /**
@@ -193,11 +175,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         return [
             new PreloadedExtension(
                 [
-                    'entity' => new EntityType([]),
-                    ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
-                        [1],
-                        ProductUnitSelectionType::NAME
-                    )
+                    'entity' => new EntityType($this->prepareChoices())
                 ],
                 []
             ),
@@ -206,65 +184,30 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
     }
 
     /**
-     * @param int $id
-     * @param $productUnitCode
-     * @param ProductUnit $productUnit
-     * @param ProductHolderInterface $productHolder
-     * @return ProductUnitHolderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return array
      */
-    protected function createProductUnitHolder(
-        $id,
-        $productUnitCode,
-        ProductUnit $productUnit = null,
-        ProductHolderInterface $productHolder = null
-    ) {
-        /* @var $productUmitHolder \PHPUnit_Framework_MockObject_MockObject|ProductUnitHolderInterface */
-        $productUnitHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface');
-        $productUnitHolder
-            ->expects(static::any())
-            ->method('getEntityIdentifier')
-            ->willReturn($id);
-        $productUnitHolder
-            ->expects(static::any())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
-        $productUnitHolder
-            ->expects(static::any())
-            ->method('getProductUnitCode')
-            ->willReturn($productUnitCode);
-        $productUnitHolder
-            ->expects(static::any())
-            ->method('getProductHolder')
-            ->willReturn($productHolder);
+    protected function prepareChoices()
+    {
+        $choices = [];
+        foreach ($this->units as $unitCode) {
+            $choices[$unitCode] = $this->createUnit($unitCode);
+        }
 
-        return $productUnitHolder;
+        return $choices;
     }
 
     /**
-     * @param int $id
-     * @param string $productSku
-     * @param Product $product
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface
+     * @param string $code
+     * @return MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createProductHolder($id, $productSku, Product $product = null)
+    protected function createUnit($code)
     {
-        /* @var $productHolder \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface */
-        $productHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
-        $productHolder
-            ->expects(static::any())
-            ->method('getId')
-            ->willReturn($id);
+        /** @var MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject $unit */
+        $unit = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface');
+        $unit->expects($this->any())
+            ->method('getCode')
+            ->willReturn($code);
 
-        $productHolder
-            ->expects(static::any())
-            ->method('getProduct')
-            ->willReturn($product);
-
-        $productHolder
-            ->expects(static::any())
-            ->method('getProductSku')
-            ->willReturn($productSku);
-
-        return $productHolder;
+        return $unit;
     }
 }

@@ -7,7 +7,11 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository;
+use OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadProductShippingOptions;
 
+/**
+ * @dbIsolation
+ */
 class ProductShippingOptionsRepositoryTest extends WebTestCase
 {
     /** @var ProductShippingOptionsRepository */
@@ -19,8 +23,7 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-                ''
+                'OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadProductShippingOptions'
             ]
         );
 
@@ -52,10 +55,10 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
             $expected[] = $this->getReference($optionReference);
         }
 
-        $this->assertEquals(
-            $this->getIds($expected),
-            $this->getIds($this->repository->getShippingOptionsByProduct($product))
-        );
+        $expected = $this->getIds($expected);
+        $actual = $this->getIds($this->repository->getShippingOptionsByProduct($product));
+
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -64,17 +67,16 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
     public function getShippingOptionsByProductProvider()
     {
         return [
-            'first product' => [
+            'product' => [
                 'productReference' => 'product.1',
                 'optionsReferences' => [
-
+                    LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_2,
+                    LoadProductShippingOptions::PRODUCT_SHIPPING_OPTIONS_1
                 ],
             ],
-            'second product' => [
+            'empty product' => [
                 'productReference' => 'product.2',
-                'optionsReferences' => [
-
-                ],
+                'optionsReferences' => [],
             ],
         ];
     }

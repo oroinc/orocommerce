@@ -15,7 +15,7 @@ class LoadUnitsAndFreightClassesData extends AbstractUnitsAndFreightClassesFixtu
     /** @var array */
     protected $lengthUnits = [
         ['code' => 'inch', 'conversion_rates' => []],
-        ['code' => 'feet', 'conversion_rates' => []],
+        ['code' => 'foot', 'conversion_rates' => []],
         ['code' => 'cm', 'conversion_rates' => []],
         ['code' => 'm', 'conversion_rates' => []]
     ];

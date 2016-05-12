@@ -62,11 +62,11 @@ orob2b:
         label:
             full: pound
             full_plural: pounds
-            short: lbs
+            short: lb
             short_plural: lbs
         value:
             full: '{0} none|{1} %count% pound|]1,Inf] %count% pounds'
-            short: '{0} none|{1} %count% lbs|]1,Inf] %count% lbs'
+            short: '{0} none|{1} %count% lb|]1,Inf] %count% lbs'
 
     weight_unit.kg:
         label:
@@ -85,10 +85,10 @@ orob2b:
             short: in
             short_plural: in
 
-    length_unit.feet:
+    length_unit.foot:
         label:
-            full: feet
-            full_plural: feets
+            full: foot
+            full_plural: feet
             short: ft
             short_plural: ft
 
