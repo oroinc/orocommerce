@@ -126,22 +126,24 @@ operations:
                 string: 'Copy of %%priceListName%%'
                 arguments:
                     priceListName: $.entity.name
-            - '@create_entity':
-                class: OroB2B\Bundle\PricingBundle\Entity\PriceList
+            - '@duplicate':
                 attribute: $.newPriceList
-                data:
-                    active: false
-                    prices: $.entity.prices
-                    currencies: $.entity.currencies
-                    name: $.newName
+                settings:
+                  - [[setNull], [propertyName, [id]]]
+                  - [[replaceValue, [false]], [propertyName, [active]]]
+                  - [[replaceValue, [false]], [propertyName, [containSchedule]]]
+                  - [[emptyCollection], [propertyName, [prices]]]
+                  - [[emptyCollection], [propertyName, [schedules]]]
+                  - [[collection], [propertyName, [currencies]]]
+            - '@assign_value': [$.newPriceList.name, $.newName]
             - '@flush_entity': $.newPriceList
             - '@flash_message':
                 message: orob2b.pricing.pricelist.duplicate.message
                 type: 'success'
-            - '@call_service_method':
-                service: orob2b_pricing.price_list_change_trigger_handler
-                method: handlePriceListStatusChange
-                method_parameters: [$.newPriceList]
+            - '@redirect':
+                route: 'orob2b_pricing_price_list_view'
+                route_parameters:
+                    id: $.newPriceList.id
 
 action_groups:
     orob2b_pricing_add_product_price:
