@@ -49,7 +49,9 @@ class LineItemsExtension extends \Twig_Extension
     {
         $lineItems = [];
         foreach ($order->getLineItems() as $lineItem) {
-            $data['product'] = $lineItem->getProduct();
+            $product = $lineItem->getProduct();
+            $data['product_name'] = $product ? (string)$product : $lineItem->getFreeFormProduct();
+            $data['product_sku'] = $lineItem->getProductSku();
             $data['quantity'] = $lineItem->getQuantity();
             $data['unit'] = $lineItem->getProductUnit();
             $data['price'] = $lineItem->getPrice();

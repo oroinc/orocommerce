@@ -28,6 +28,8 @@ class OroB2BPaymentBundle implements Migration
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->getColumn('request')->setOptions(['notnull' => false, 'comment' => '(DC2Type:secure_array)']);
+        $table->getColumn('response')->setOptions(['notnull' => false, 'comment' => '(DC2Type:secure_array)']);
     }
 
     /**
