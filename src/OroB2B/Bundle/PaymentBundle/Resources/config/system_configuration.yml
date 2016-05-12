@@ -215,6 +215,14 @@ oro_system_configuration:
             priority: 30
             options:
                 label: orob2b.payment.system_configuration.fields.zero_amount_authorization.label
+                tooltip: orob2b.payment.system_configuration.fields.zero_amount_authorization.tooltip
+
+        orob2b_payment.paypal_payments_pro_authorization_for_required_amount:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 20
+            options:
+                label: orob2b.payment.system_configuration.fields.authorization_for_required_amount.label
 
         # Payflow Gateway
         orob2b_payment.payflow_gateway_enabled:
@@ -394,6 +402,14 @@ oro_system_configuration:
             priority: 30
             options:
                 label: orob2b.payment.system_configuration.fields.zero_amount_authorization.label
+                tooltip: orob2b.payment.system_configuration.fields.zero_amount_authorization.tooltip
+
+        orob2b_payment.payflow_gateway_authorization_for_required_amount:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 30
+            options:
+                label: orob2b.payment.system_configuration.fields.authorization_for_required_amount.label
 
         # Payment Term
         orob2b_payment.payment_term_enabled:
@@ -465,6 +481,7 @@ oro_system_configuration:
                                             - orob2b_payment.paypal_payments_pro_require_cvv
                                             - orob2b_payment.paypal_payments_pro_validate_cvv
                                             - orob2b_payment.paypal_payments_pro_zero_amount_authorization
+                                            - orob2b_payment.paypal_payments_pro_authorization_for_required_amount
                             payflow_gateway:
                                 priority: 90
                                 children:
@@ -497,6 +514,7 @@ oro_system_configuration:
                                             - orob2b_payment.payflow_gateway_require_cvv
                                             - orob2b_payment.payflow_gateway_validate_cvv
                                             - orob2b_payment.payflow_gateway_zero_amount_authorization
+                                            - orob2b_payment.payflow_gateway_authorization_for_required_amount
                             payment_term:
                                 priority: 80
                                 children:

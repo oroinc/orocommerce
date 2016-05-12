@@ -153,6 +153,8 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     protected $transactionOptions;
 
     /**
+     * @param AccountUser
+     *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="SET NULL")
      */
@@ -274,7 +276,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      * @param array $request
      * @return PaymentTransaction
      */
-    public function setRequest(array $request)
+    public function setRequest(array $request = null)
     {
         $this->request = $request;
 
@@ -291,7 +293,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      * @param array $response
      * @return PaymentTransaction
      */
-    public function setResponse(array $response)
+    public function setResponse(array $response = null)
     {
         $this->response = $response;
 
@@ -361,7 +363,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      */
     public function setAmount($amount)
     {
-        $this->amount = (string)$amount;
+        $this->amount = (string)round($amount, 2);
 
         return $this;
     }
@@ -504,7 +506,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     }
 
     /**
-     * @return PaymentTransaction
+     * @return AccountUser
      */
     public function getFrontendOwner()
     {

@@ -47,7 +47,7 @@ class CaptureAction extends AbstractPaymentMethodAction
             array_merge(
                 [
                     'transaction' => $capturePaymentTransaction->getEntityIdentifier(),
-                    'successful' => false,
+                    'successful' => $capturePaymentTransaction->isSuccessful(),
                     'message' => null,
                 ],
                 $response

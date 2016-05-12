@@ -88,7 +88,12 @@ orob2b:
                 enable_ssl_verification.label: 'Enable SSL Verification'
                 require_cvv.label: 'Require CVV Entry'
                 validate_cvv.label: 'Validate CVV'
-                zero_amount_authorization.label: 'Zero Amount Authorization'
+                zero_amount_authorization:
+                    label: 'Zero Amount Authorization'
+                    tooltip: |
+                        If enabled it provides additional convenience to your customers, so that they do not need to re-enter credit card details every time they return back to checkout.
+                        Please note that zero dollar authorizations are subject to the transaction fees.
+                authorization_for_required_amount.label: 'Authorization For Required Amount'
 
         security.transaction: Work with payments
         capture: Capture

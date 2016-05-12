@@ -134,6 +134,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => false,
                             'scope' => 'app'
                         ],
+                        'paypal_payments_pro_authorization_for_required_amount' => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
 
                         'payflow_gateway_enabled' => [
                             'value' => false,
@@ -215,6 +219,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'scope' => 'app'
                         ],
                         'payflow_gateway_zero_amount_authorization' => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
+                        'payflow_gateway_authorization_for_required_amount' => [
                             'value' => false,
                             'scope' => 'app'
                         ],
