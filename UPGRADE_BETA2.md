@@ -9,3 +9,7 @@ CheckoutBundle:
 WebsiteBundle:
 --------------
 - Added translation strategy to handle translation fallbacks on frontend based on locale structure from `OroB2BWebsiteBundle`
+
+ProductBundle:
+--------------
+- Replaced single product image with typed product image collection
