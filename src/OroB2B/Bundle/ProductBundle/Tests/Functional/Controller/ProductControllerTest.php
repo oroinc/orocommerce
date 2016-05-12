@@ -505,7 +505,13 @@ class ProductControllerTest extends WebTestCase
 
         $formValues = $form->getValues();
 
-        $this->assertEquals($expectedDefaultProductUnit, $formValues['orob2b_product[unitPrecisions][0][unit]']);
-        $this->assertEquals($expectedDefaultProductUnitPrecision, $formValues['orob2b_product[unitPrecisions][0][precision]']);
+        $this->assertEquals(
+            $expectedDefaultProductUnit,
+            $formValues['orob2b_product[unitPrecisions][0][unit]']
+        );
+        $this->assertEquals(
+            $expectedDefaultProductUnitPrecision,
+            $formValues['orob2b_product[unitPrecisions][0][precision]']
+        );
     }
 }

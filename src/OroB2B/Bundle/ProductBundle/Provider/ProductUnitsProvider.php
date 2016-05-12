@@ -33,4 +33,3 @@ class ProductUnitsProvider
         return  $unitsFull;
     }
 }
-

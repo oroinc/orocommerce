@@ -46,4 +46,3 @@ class DefaultProductUnitProvider
         return $unitPrecision;
     }
 }
-
