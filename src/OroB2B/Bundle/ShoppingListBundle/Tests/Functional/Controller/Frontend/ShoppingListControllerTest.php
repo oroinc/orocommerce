@@ -99,7 +99,7 @@ class ShoppingListControllerTest extends WebTestCase
             ],
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
-                'expectedLineItemPrice' => 'N/A'
+                'expectedLineItemPrice' => '$0.00'
             ],
         ];
     }

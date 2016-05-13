@@ -128,7 +128,7 @@ class CheckoutController extends Controller
      */
     protected function validateOrderLineItems(WorkflowItem $workflowItem, CheckoutInterface $checkout, Request $request)
     {
-        if ($request->isMethod(Request::METHOD_POST) || $request->isXmlHttpRequest()) {
+        if ($request->isXmlHttpRequest()) {
             return;
         }
         $continueTransition = $this->get('orob2b_checkout.layout.data_provider.continue_transition')
@@ -148,8 +148,8 @@ class CheckoutController extends Controller
             return;
         }
         $manager = $this->get('orob2b_checkout.data_provider.manager.checkout_line_items');
-        $orderLineItemsCount = $manager->getData($checkout)->count();
-        if ($orderLineItemsCount && $orderLineItemsCount !== $manager->getData($checkout, false)->count()) {
+        $orderLineItemsCount = $manager->getData($checkout, true)->count();
+        if ($orderLineItemsCount && $orderLineItemsCount !== $manager->getData($checkout)->count()) {
             $this->get('session')->getFlashBag()
                 ->add('warning', 'orob2b.checkout.order.line_items.order_line_item_has_without_prices.message');
         }

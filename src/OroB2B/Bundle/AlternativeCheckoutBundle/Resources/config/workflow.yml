@@ -181,7 +181,7 @@ workflows:
             continue_to_payment:
                 label: Continue
                 step_to: enter_payment
-                transition_definition: do_nothing
+                transition_definition: continue_to_payment_definition
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
@@ -421,6 +421,12 @@ workflows:
                                   - [[keep], [propertyName, [region]]]
                                   - [[keep], [propertyName, [organization]]]
                             - '@flush_entity': $checkout.shippingAddress
+            continue_to_payment_definition:
+                pre_conditions:
+                    '@order_line_item_has_count':
+                        message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                        parameters:
+                            entity: $checkout
             place_order_definition:
                 pre_conditions:
                     '@or':
