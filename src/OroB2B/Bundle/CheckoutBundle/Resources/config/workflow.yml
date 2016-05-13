@@ -58,9 +58,9 @@ workflows:
             payment_validate:
                 type: bool
                 label: Payment validation required
-            payment_save_for_future:
+            payment_save_for_later:
                 type: bool
-                label: Save payment data for future use
+                label: Save payment data for later use
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -181,7 +181,7 @@ workflows:
                         payment_method: ~
                         payment_validate:
                             form_type: checkbox
-                        payment_save_for_future:
+                        payment_save_for_later:
                             form_type: checkbox
 
             back_to_billing_address:
@@ -486,7 +486,6 @@ workflows:
                                 amount: $checkout.order.total
                                 currency: $checkout.order.currency
                                 paymentMethod: $payment_method
-#                                allowReuseSourceTransaction: $payment_save_for_future
                                 transactionOptions:
                                     successUrl: $.result.successUrl
                                     errorUrl: $.result.errorUrl
@@ -511,6 +510,7 @@ workflows:
                                 amount: $checkout.order.total
                                 currency: $checkout.order.currency
                                 paymentMethod: $payment_method
+                                allowReuseSourceTransaction: $payment_save_for_later
                             - '@assign_value': [$payment_in_progress, true]
                             - '@redirect':
                                 route: orob2b_checkout_frontend_checkout

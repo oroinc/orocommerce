@@ -48,6 +48,9 @@ define(function(require) {
                 .on('click', this.authorizedOptions.differentCardHandle, _.bind(this.showDifferentCard, this));
         },
 
+        /**
+         * @returns {Boolean}
+         */
         showDifferentCard: function() {
             this.$authorizedCard
                 .css('position', 'absolute');
@@ -58,10 +61,14 @@ define(function(require) {
             }).bind(this));
 
             this.setPaymentValidateRequired(true);
+            this.setSaveForLaterBasedOnForm();
 
             return false;
         },
 
+        /**
+         * @returns {Boolean}
+         */
         showAuthorizedCard: function() {
             this.$authorizedCard
                 .css('position', 'absolute');
@@ -72,8 +79,16 @@ define(function(require) {
             }).bind(this));
 
             this.setPaymentValidateRequired(false);
+            mediator.trigger('checkout:payment:save-for-later:restore-default');
 
             return false;
+        },
+
+        onCurrentPaymentMethodSelected: function() {
+            this.setPaymentValidateRequired(this.paymentValidationRequiredComponentState);
+            if (this.getPaymentValidateRequired()) {
+                this.setSaveForLaterBasedOnForm();
+            }
         },
 
         beforeTransit: function(eventData) {
