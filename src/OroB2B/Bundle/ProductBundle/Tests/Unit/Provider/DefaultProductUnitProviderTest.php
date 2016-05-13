@@ -45,20 +45,23 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->method('findOneBy')
             ->will($this->returnValue($productUnit));
 
-        $entityManager = $this
-            ->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityManager->expects($this->once())
+        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $manager->expects($this->once())
             ->method('getRepository')
-            ->will($this->returnValue($productUnitRepository));
+            ->with('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
+            ->willReturn($productUnitRepository);
+
+        $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
+            ->willReturn($manager);
 
 
         $this->expectedUnitPrecision = new ProductUnitPrecision();
         $this->expectedUnitPrecision->setUnit($productUnit)->setPrecision('3');
 
-        $this->defaultProductUnitProvider = new DefaultProductUnitProvider($configManager, $entityManager);
+        $this->defaultProductUnitProvider = new DefaultProductUnitProvider($configManager, $managerRegistry);
     }
 
     public function testGetDefaultProductUnit()
