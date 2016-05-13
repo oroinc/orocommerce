@@ -92,6 +92,7 @@ define(function(require) {
         },
 
         initValidator: function(options) {
+            var $form = this.$el.find('form');
             var validationRules = {};
             validationRules[this.elements.quantity.attr('name')] = options.validation.rules.quantity;
             validationRules[this.elements.unit.attr('name')] = options.validation.rules.unit;
@@ -105,13 +106,32 @@ define(function(require) {
                 waitors.push(tools.loadModuleAndReplace(options.validation, 'showErrorsHandler').then(
                     _.bind(function() {
                         validationOptions.showErrors = options.validation.showErrorsHandler;
-                        this.validator = this.$el.find('form').validate(validationOptions);
+                        // Reinitialize validation
+                        this.validator = $form.validate();
+                        this.updateValidation(validationOptions);
                     }, this)
                 ));
                 this.deferredInit = $.when.apply($, waitors);
             } else {
-                this.validator = this.$el.find('form').validate(validationOptions);
+                // Reinitialize validation
+                this.validator = $form.validate();
+                this.updateValidation(validationOptions);
             }
+        },
+
+        updateValidation: function(rules) {
+            var settings = this.validator.settings;
+
+            if (!_.isObject(settings) && !_.isObject(rules)) {
+                return;
+            }
+            _.each(rules, function(item, index) {
+                if (_.isFunction(item)) {
+                    settings[index] = item;
+                } else if (_.isObject(item)) {
+                    settings[index] = $.extend(true, {}, settings[index], item);
+                }
+            });
         },
 
         initListeners: function() {
