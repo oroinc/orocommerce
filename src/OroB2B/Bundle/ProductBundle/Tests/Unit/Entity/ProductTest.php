@@ -28,6 +28,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['sku', 'sku-test-01'],
             ['owner', new User()],
             ['organization', new Organization()],
+            ['primaryUnitPrecision',  new ProductUnitPrecision()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
             ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED]
