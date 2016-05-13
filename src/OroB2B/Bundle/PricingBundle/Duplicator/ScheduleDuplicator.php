@@ -21,5 +21,8 @@ class ScheduleDuplicator
             }
         };
         $duplicatedPriceList->setSchedules($newSchedules);
+        if ($newSchedules->count() > 0) {
+            $duplicatedPriceList->setContainSchedule(true);
+        }
     }
 }

@@ -30,7 +30,9 @@ class ScheduleDuplicatorTest extends \PHPUnit_Framework_TestCase
 
         $duplicatedPriceList = new PriceList();
         $this->assertCount(0, $duplicatedPriceList->getSchedules());
+        $this->assertFalse($duplicatedPriceList->isContainSchedule());
         $this->scheduleDuplicator->duplicateSchedule($sourcePriceList, $duplicatedPriceList);
         $this->assertCount(1, $duplicatedPriceList->getSchedules());
+        $this->assertTrue($duplicatedPriceList->isContainSchedule());
     }
 }
