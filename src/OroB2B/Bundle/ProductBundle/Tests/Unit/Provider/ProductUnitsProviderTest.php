@@ -30,16 +30,19 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getAllUnits')
             ->will($this->returnValue($productUnits));
 
-        $entityManager = $this
-            ->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityManager->expects($this->once())
+        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $manager->expects($this->once())
             ->method('getRepository')
-            ->will($this->returnValue($productUnitRepository));
+            ->with('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
+            ->willReturn($productUnitRepository);
 
-        $this->productUnitsProvider = new ProductUnitsProvider($entityManager);
+        $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
+            ->willReturn($manager);
+
+        $this->productUnitsProvider = new ProductUnitsProvider($managerRegistry);
     }
 
     public function testGetAvailableProductUnits()
