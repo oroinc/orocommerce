@@ -22,16 +22,6 @@ class FreightClassesProvider extends MeasureUnitProvider
 
     /**
      * @param ProductShippingOptions $options
-     * @param bool $isShort
-     * @return array
-     */
-    public function getFormattedFreightClasses(ProductShippingOptions $options = null, $isShort = false)
-    {
-        return $this->labelFormatter->formatChoices($this->getFreightClasses($options), $isShort);
-    }
-
-    /**
-     * @param ProductShippingOptions $options
      * @return FreightClass[]
      */
     public function getFreightClasses(ProductShippingOptions $options = null)

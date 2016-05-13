@@ -65,7 +65,8 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
                 'class' => $this->entityClass,
                 'property' => 'code',
                 'compact' => false,
-                'full_list' => false
+                'full_list' => false,
+                'choices' => null,
             ]
         )
         ->setAllowedTypes('compact', ['bool'])
@@ -73,7 +74,7 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
         ->setNormalizer(
             'choices',
             function (Options $options, $value) {
-                if (!empty($value)) {
+                if (null !== $value) {
                     return $value;
                 }
                 return $this->unitProvider->getUnits(!$options['full_list']);

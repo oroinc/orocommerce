@@ -13,6 +13,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
@@ -49,11 +50,14 @@ class AjaxProductShippingOptionsController extends Controller
         /* @var $provider FreightClassesProvider */
         $provider = $this->get('orob2b_shipping.provider.measure_units.freight');
 
-        $units = $provider->getFormattedFreightClasses($activeShippingOptions, (bool)$request->get('short', false));
+        /* @var $formatter UnitLabelFormatter */
+        $formatter = $this->get('orob2b_shipping.formatter.freight_class_label');
+
+        $units = $provider->getFreightClasses($activeShippingOptions);
 
         return new JsonResponse(
             [
-                'units' => $units,
+                'units' => $formatter->formatChoices($units, (bool)$request->get('short', false)),
             ]
         );
     }

@@ -22,7 +22,6 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
         $this->provider = new FreightClassesProvider(
             $this->repository,
             $this->configManager,
-            $this->labelFormatter,
             self::CONFIG_ENTRY_NAME
         );
     }
@@ -31,7 +30,7 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
      * @param array $inputData
      * @param array $expectedData
      *
-     * @dataProvider getUnitsByProductShippingOptionsProvider
+     * @dataProvider getFreightClassesProvider
      */
     public function testGetFreightClasses(array $inputData, array $expectedData)
     {
@@ -52,7 +51,7 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
     /**
      * @return array
      */
-    public function getUnitsByProductShippingOptionsProvider()
+    public function getFreightClassesProvider()
     {
         return [
             'no providers' => [
