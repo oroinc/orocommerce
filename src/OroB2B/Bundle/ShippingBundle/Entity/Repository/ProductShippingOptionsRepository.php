@@ -11,7 +11,7 @@ class ProductShippingOptionsRepository extends EntityRepository
 {
     /**
      * @param Product $product
-     * @return ProductShippingOptions[]
+     * @return ProductShippingOptions[]|array
      */
     public function getShippingOptionsByProduct(Product $product)
     {

@@ -198,6 +198,22 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $this->listener->onProductView($event);
     }
 
+    public function testOnProductViewWithoutProduct()
+    {
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($this->request);
+        $this->request->expects($this->once())->method('get')->with('id')->willReturn(42);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->with('OroB2BProductBundle:Product', 42)
+            ->willReturn(null);
+
+        $event = $this->getBeforeListRenderEventMock();
+        $event->expects($this->never())->method('getScrollData');
+
+        $this->listener->onProductView($event);
+    }
+
     public function testOnProductViewWithEmptyShippingOptions()
     {
         $this->requestStack->expects($this->once())
@@ -291,6 +307,24 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $event = new BeforeListRenderEvent($twig, $this->getScrollData());
 
         $this->listener->onProductView($event);
+
+        $scrollData = $event->getScrollData()->getData();
+        $this->assertEquals(
+            [$renderedHtml],
+            $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+        );
+    }
+
+    public function testOnProductEdit()
+    {
+        $renderedHtml = 'rendered_html';
+
+        $twig = $this->getMockBuilder('\Twig_Environment')->disableOriginalConstructor()->getMock();
+        $twig->expects($this->once())->method('render')->willReturn($renderedHtml);
+
+        $event = new BeforeListRenderEvent($twig, $this->getScrollData());
+
+        $this->listener->onProductEdit($event);
 
         $scrollData = $event->getScrollData()->getData();
         $this->assertEquals(
