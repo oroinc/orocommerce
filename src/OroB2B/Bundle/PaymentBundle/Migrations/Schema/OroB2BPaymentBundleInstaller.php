@@ -118,8 +118,8 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('active', 'boolean', []);
         $table->addColumn('successful', 'boolean', []);
         $table->addColumn('source_payment_transaction', 'integer', ['notnull' => false]);
-        $table->addColumn('request', 'secure_array', ['notnull' => false]);
-        $table->addColumn('response', 'secure_array', ['notnull' => false]);
+        $table->addColumn('request', 'secure_array', ['notnull' => false, 'comment' => '(DC2Type:secure_array)']);
+        $table->addColumn('response', 'secure_array', ['notnull' => false, 'comment' => '(DC2Type:secure_array)']);
         $table->addColumn('transaction_options', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('frontend_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
