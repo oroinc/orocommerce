@@ -54,19 +54,35 @@ class RouteCollectionListenerTest extends \PHPUnit_Framework_TestCase
                 $this->getCollection(['route1' => new Route('prefix/route1')]),
                 ['route1' => new Route('/prefix/route1')]
             ],
+            'contains prefix for resource inside the path with slash' => [
+                ' /prefix/ ',
+                $this->getCollection(['route1' => new Route('/route1/prefix')]),
+                ['route1' => new Route('/prefix/route1/prefix')]
+            ],
+            'contains prefix for resource inside the path' => [
+                ' /prefix/ ',
+                $this->getCollection(['route1' => new Route('/route1-prefix')]),
+                ['route1' => new Route('/prefix/route1-prefix')]
+            ],
             'frontend route skip prefix' => [
                 ' /prefix/ ',
                 $this->getCollection(
                     [
                         'route1' => new Route('/route1'),
+                        'route2' => new Route('/prefix/route2-prefix'),
                         'frontend1' => (new Route('/frontend1'))->setOption('frontend', false),
                         'frontend2' => (new Route('/frontend2'))->setOption('frontend', true),
+                        'frontend3' => (new Route('/frontend3-prefix'))->setOption('frontend', false),
+                        'frontend4' => (new Route('/frontend4-prefix'))->setOption('frontend', true),
                     ]
                 ),
                 [
                     'route1' => new Route('/prefix/route1'),
+                    'route2' => new Route('/prefix/route2-prefix'),
                     'frontend1' => (new Route('/prefix/frontend1'))->setOption('frontend', false),
                     'frontend2' => (new Route('/frontend2'))->setOption('frontend', true),
+                    'frontend3' => (new Route('/prefix/frontend3-prefix'))->setOption('frontend', false),
+                    'frontend4' => (new Route('/frontend4-prefix'))->setOption('frontend', true),
                 ]
             ],
         ];
