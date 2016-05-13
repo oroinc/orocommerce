@@ -1,6 +1,7 @@
 services:
     orob2b_shopping_list.form.type.shopping_list:
         class: 'OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_shopping_list_type }
         calls:
@@ -8,6 +9,7 @@ services:
 
     orob2b_shopping_list.form.type.line_item:
         class: 'OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType'
+        public: true
         calls:
             - [setDataClass, ['%orob2b_shopping_list.entity.line_item.class%']]
         tags:
@@ -15,6 +17,7 @@ services:
 
     orob2b_shopping_list.form.type.frontend_line_item_widget:
         class: 'OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType'
+        public: true
         arguments:
             - "@doctrine"
             - "@security.token_storage"

@@ -509,6 +509,7 @@ services:
 
     orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced:
         class: 'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
+        public: true
         arguments:
             - '@translator'
             - '@orob2b_pricing.rounding.price_rounding_service'
