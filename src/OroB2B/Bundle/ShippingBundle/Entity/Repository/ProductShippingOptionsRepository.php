@@ -15,12 +15,6 @@ class ProductShippingOptionsRepository extends EntityRepository
      */
     public function getShippingOptionsByProduct(Product $product)
     {
-        $qb = $this->createQueryBuilder('pso');
-
-        return $qb->andWhere('pso.product = :product')
-            ->setParameter('product', $product)
-            ->addOrderBy($qb->expr()->asc('pso.productUnit'))
-            ->getQuery()
-            ->getResult();
+        return $this->findBy(['product' => $product], ['productUnit' => 'ASC']);
     }
 }

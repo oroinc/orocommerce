@@ -24,8 +24,7 @@ class DimensionsType extends AbstractType
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -37,7 +36,7 @@ class DimensionsType extends AbstractType
                 'unit',
                 LengthUnitSelectType::NAME,
                 [
-                    'placeholder' => 'orob2b.shipping.form.placeholder.length_unit.label'
+                    'placeholder' => 'orob2b.shipping.form.placeholder.length_unit.label',
                 ]
             );
 
@@ -57,7 +56,7 @@ class DimensionsType extends AbstractType
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {

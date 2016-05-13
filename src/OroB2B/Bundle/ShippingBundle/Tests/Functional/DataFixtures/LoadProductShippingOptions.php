@@ -81,14 +81,14 @@ class LoadProductShippingOptions extends AbstractFixture implements DependentFix
             /** @var FreightClass $freightClass */
             $freightClass = $this->getReference($data['freightClass']);
 
-            $weight = new Weight();
-            $weight->setValue($data['weightValue'])->setUnit($weightUnit);
+            $weight = Weight::create($data['weightValue'], $weightUnit);
 
-            $dimensions = new Dimensions();
-            $dimensions->setLength($data['dimensionsLength'])
-                ->setWidth($data['dimensionsWidth'])
-                ->setHeight($data['dimensionsHeight'])
-                ->setUnit($dimensionsUnit);
+            $dimensions = Dimensions::create(
+                $data['dimensionsLength'],
+                $data['dimensionsWidth'],
+                $data['dimensionsHeight'],
+                $dimensionsUnit
+            );
 
             $entity = new ProductShippingOptions();
             $entity
