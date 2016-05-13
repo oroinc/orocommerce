@@ -264,7 +264,7 @@ services:
     orob2b_pricing.event_listener.price_list_datagrid:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\PriceListDatagridListener'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.pricing-price-list-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.pricing-price-list-select-grid, method: onBuildBefore }
 
     orob2b_pricing.event_listener.frontend.product_price_datagrid:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener'
