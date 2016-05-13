@@ -18,11 +18,7 @@ class FrontendController extends Controller
      */
     public function indexAction()
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('orob2b_account_account_user_security_login');
-        } else {
-            return $this->redirectToRoute('orob2b_product_frontend_product_index');
-        }
+        return $this->redirectToRoute('orob2b_product_frontend_product_index');
     }
 
     /**

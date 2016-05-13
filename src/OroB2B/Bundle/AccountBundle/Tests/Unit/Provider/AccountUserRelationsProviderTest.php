@@ -110,7 +110,43 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetAccountGroupConfig()
     {
         $accountGroup = new AccountGroup();
+        $this->assertAccountGroupConfigCall($accountGroup);
 
+        $this->assertEquals($accountGroup, $this->provider->getAccountGroup(null));
+    }
+
+    public function testGetAccountIncludingEmptyAnonymous()
+    {
+        $account = new Account();
+        $accountGroup = new AccountGroup();
+        $accountGroup->setName('test');
+        $account->setGroup($accountGroup);
+
+        $this->assertAccountGroupConfigCall($accountGroup);
+        $this->assertEquals($account, $this->provider->getAccountIncludingEmpty(null));
+    }
+
+    public function testGetAccountIncludingEmptyLogged()
+    {
+        $account = new Account();
+        $account->setName('test2');
+        $accountGroup = new AccountGroup();
+        $accountGroup->setName('test2');
+        $account->setGroup($accountGroup);
+        $accountUser = new AccountUser();
+        $accountUser->setAccount($account);
+
+        $this->configManager->expects($this->never())
+            ->method('get');
+
+        $this->assertEquals($account, $this->provider->getAccountIncludingEmpty($accountUser));
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     */
+    protected function assertAccountGroupConfigCall(AccountGroup $accountGroup)
+    {
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_b2b_account.anonymous_account_group')
@@ -119,7 +155,5 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityReference')
             ->with('OroB2BAccountBundle:AccountGroup', 10)
             ->willReturn($accountGroup);
-
-        $this->assertEquals($accountGroup, $this->provider->getAccountGroup(null));
     }
 }
