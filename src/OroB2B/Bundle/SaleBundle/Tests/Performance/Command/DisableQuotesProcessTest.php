@@ -28,23 +28,27 @@ class DisableQuotesProcessTest extends WebTestCase
 
         $totalQuotes = $quotesRepo->countQuotes();
         if (0 == $totalQuotes) {
-            $this->loadFixtures(['OroB2B\Bundle\SaleBundle\Tests\Performance\DataFixtures\LoadQuoteDataForPerformanceTest']);
+            $this->loadFixtures(
+                ['OroB2B\Bundle\SaleBundle\Tests\Performance\DataFixtures\LoadQuoteDataForPerformanceTest']
+            );
             // Get new quote number after fixtures
             $totalQuotes = $quotesRepo->countQuotes();
         }
         $quotesToExpire = $quotesRepo->countQuotes(true);
 
-        $expireQuotesTrigger = $em->getRepository('OroWorkflowBundle:ProcessTrigger')->findOneBy([
-            'definition' => static::PROCESS_TRIGGER_NAME
-        ]);
+        $expireQuotesTrigger = $em->getRepository('OroWorkflowBundle:ProcessTrigger')->findOneBy(
+            ['definition' => static::PROCESS_TRIGGER_NAME]
+        );
         $app = new Application($this->client->getKernel());
         $app->setAutoExit(false);
         $fp = tmpfile();
-        $input = new StringInput(sprintf(
-            'oro:process:handle-trigger --name=%s --id=%s',
-            self::PROCESS_TRIGGER_NAME,
-            $expireQuotesTrigger->getId()
-        ));
+        $input = new StringInput(
+            sprintf(
+                'oro:process:handle-trigger --name=%s --id=%s',
+                self::PROCESS_TRIGGER_NAME,
+                $expireQuotesTrigger->getId()
+            )
+        );
         $output = new StreamOutput($fp);
 
         // measure trigger process performance
@@ -65,7 +69,13 @@ class DisableQuotesProcessTest extends WebTestCase
 
         fwrite(STDERR, print_r("\n", true));
         fwrite(STDERR, print_r("Total number of quotes in DB: $totalQuotes\n", true));
-        fwrite(STDERR, print_r("Total number of quotes to mark as expired: $quotesToExpire. Message of process:\n\n", true));
+        fwrite(
+            STDERR,
+            print_r(
+                "Total number of quotes to mark as expired: $quotesToExpire. Message of process:\n\n",
+                true
+            )
+        );
         fwrite(STDERR, print_r($output, true));
         fwrite(STDERR, print_r("\n", true));
     }

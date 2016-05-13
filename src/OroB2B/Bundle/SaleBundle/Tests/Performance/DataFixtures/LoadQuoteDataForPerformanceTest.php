@@ -44,7 +44,8 @@ class LoadQuoteDataForPerformanceTest extends LoadQuoteData
                 $poNumber = 'CA' . rand(1000, 9999) . 'USD';
 
                 // generate VALUES sql
-                $quoteSql .= sprintf($valueSprintf,
+                $quoteSql .= sprintf(
+                    $valueSprintf,
                     $user->getId(),
                     $item['qid'],
                     $user->getOrganization()->getId(),
