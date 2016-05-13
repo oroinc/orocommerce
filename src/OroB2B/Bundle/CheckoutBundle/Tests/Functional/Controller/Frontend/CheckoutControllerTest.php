@@ -258,6 +258,7 @@ class CheckoutControllerTest extends WebTestCase
         $form = $crawler->selectButton('Submit Order')->form();
         $this->client->submit($form);
         $result = $this->client->getResponse();
+        $this->assertResponseStatusCodeEquals($result, 200);
         $data = json_decode($result->getContent(), true);
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
