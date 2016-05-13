@@ -5,8 +5,6 @@ namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 
-use OroB2B\Bundle\AccountBundle\DependencyInjection\Configuration;
-
 class AccountGroupVoter extends AbstractEntityVoter
 {
     /**
@@ -34,12 +32,22 @@ class AccountGroupVoter extends AbstractEntityVoter
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
-        $configKey = Configuration::getSettingName(Configuration::ANONYMOUS_ACCOUNT_GROUP);
-
-        if ($this->configManager && $identifier && $identifier === (int)$this->configManager->get($configKey)) {
+        if ($this->configManager
+            && $identifier
+            && $this->isAnonymousAccountGroup($identifier)
+        ) {
             return self::ACCESS_DENIED;
         }
 
         return self::ACCESS_ABSTAIN;
+    }
+
+    /**
+     * @param int $identifier
+     * @return bool
+     */
+    protected function isAnonymousAccountGroup($identifier)
+    {
+        return $identifier === (int)$this->configManager->get('oro_b2b_account.anonymous_account_group');
     }
 }

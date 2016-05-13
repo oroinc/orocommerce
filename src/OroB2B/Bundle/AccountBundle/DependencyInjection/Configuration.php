@@ -6,15 +6,12 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 
 class Configuration implements ConfigurationInterface
 {
-    const ANONYMOUS_ACCOUNT_GROUP = 'anonymous_account_group';
-
     /**
      * {@inheritdoc}
      */
@@ -27,7 +24,7 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 'default_account_owner' => ['type' => 'string', 'value' => 1],
-                self::ANONYMOUS_ACCOUNT_GROUP => ['type' => 'integer', 'value' => null],
+                'anonymous_account_group' => ['type' => 'integer', 'value' => null],
                 'registration_allowed' => ['type' => 'boolean', 'value' => true],
                 'confirmation_required' => ['type' => 'boolean', 'value' => true],
                 'send_password_in_welcome_email' => ['type' => 'boolean', 'value' => false],
@@ -37,14 +34,5 @@ class Configuration implements ConfigurationInterface
         );
 
         return $treeBuilder;
-    }
-
-    /**
-     * @param string $setting
-     * @return string
-     */
-    public static function getSettingName($setting)
-    {
-        return OroB2BAccountExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $setting;
     }
 }
