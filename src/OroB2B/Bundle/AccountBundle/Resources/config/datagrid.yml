@@ -29,6 +29,9 @@ datagrid:
                 label: orob2b.account.parent.label
             internal_rating_name:
                 label: orob2b.account.internal_rating.label
+            price_lists:
+                label: orob2b.pricing.pricelist.entity_plural_label
+                renderable: false
         properties:
             id: ~
         sorters:

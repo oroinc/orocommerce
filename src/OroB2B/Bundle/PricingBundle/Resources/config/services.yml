@@ -263,8 +263,11 @@ services:
 
     orob2b_pricing.event_listener.account_accounts_grid:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\AccountDataGridListener'
+        arguments:
+            - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.account-accounts-grid, method: onResultAfter }
 
     orob2b_pricing.event_listener.price_list_datagrid:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\PriceListDatagridListener'

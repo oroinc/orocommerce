@@ -208,6 +208,50 @@ class PriceListToAccountRepositoryTest extends WebTestCase
     }
 
     /**
+     * @dataProvider dataProviderRelationsByAccount
+     * @param $accounts
+     * @param $expectsResult
+     */
+    public function testGetRelationsByAccounts($accounts, $expectsResult)
+    {
+        $accountsObjects = [];
+        foreach ($accounts as $accountName) {
+            $accountsObjects[] = $this->getReference($accountName);
+        }
+        $relations = $this->getRepository()->getRelationsByAccounts($accountsObjects);
+        $relations = array_map(function ($relation) {
+            return [
+                $relation->getAccount()->getName(),
+                $relation->getWebsite()->getName(),
+                $relation->getPriceList()->getName()
+            ];
+        }, $relations);
+        $this->assertEquals($expectsResult, $relations);
+    }
+
+    public function dataProviderRelationsByAccount()
+    {
+        return [
+            [
+                'accounts' => [],
+                'expectsResult' => [],
+            ],
+            [
+                'accounts' => [
+                    'account.level_1.2',
+                    'account.level_1.3',
+                ],
+                'expectsResult' => [
+                    ['account.level_1.2', 'US', 'priceList2'],
+                    ['account.level_1.3', 'US', 'priceList6'],
+                    ['account.level_1.3', 'US', 'priceList2'],
+                    ['account.level_1.3', 'US', 'priceList4'],
+                ],
+            ],
+        ];
+    }
+
+    /**
      * @return PriceListToAccountRepository
      */
     protected function getRepository()
