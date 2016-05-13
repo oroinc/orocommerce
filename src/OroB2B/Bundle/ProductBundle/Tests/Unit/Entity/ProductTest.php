@@ -341,4 +341,41 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('array', Product::getStatuses());
         $this->assertNotEmpty('array', Product::getStatuses());
     }
+
+    public function testGetAdditionalUnitPrecisions()
+    {
+        $product = new Product();
+        $unitPrecision1 = $this->createUnitPrecision('kg', 3);
+        $unitPrecision2 = $this->createUnitPrecision('piece', 1);
+        $unitPrecision3 = $this->createUnitPrecision('set', 1);
+
+        $product->addUnitPrecision($unitPrecision1);
+        $product->addUnitPrecision($unitPrecision2);
+        $product->addUnitPrecision($unitPrecision3);
+        $product->setPrimaryUnitPrecision($unitPrecision1);
+        
+        $expectedAdditionalUnits = [$unitPrecision2, $unitPrecision3];
+        $actualAdditionalUnits = $product->getAdditionalUnitPrecisions()->toArray();
+
+        $this->assertEquals($expectedAdditionalUnits, array_values($actualAdditionalUnits));
+    }
+
+    /**
+     * @param string $code
+     * @param integer $precisionValue
+     * @return UnitPrecision $unitPrecision
+     */
+    private function createUnitPrecision($code, $precisionValue)
+    {
+        $unit = new ProductUnit();
+        $unit
+            ->setCode($code)
+            ->setDefaultPrecision($precisionValue);
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision
+            ->setUnit($unit)
+            ->setPrecision($unit->getDefaultPrecision());
+        return $unitPrecision;
+    }
 }
