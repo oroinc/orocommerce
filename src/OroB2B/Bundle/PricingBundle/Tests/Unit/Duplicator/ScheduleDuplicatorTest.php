@@ -20,19 +20,32 @@ class ScheduleDuplicatorTest extends \PHPUnit_Framework_TestCase
 
     public function testDuplicateSchedule()
     {
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
         $sourcePriceList = new PriceList();
         $schedule = new PriceListSchedule();
-        $schedule->setDeactivateAt(new \DateTime('now + 1 day', new \DateTimeZone('UTC')));
-        $pastSchedule = clone  $schedule;
-        $pastSchedule->setDeactivateAt(new \DateTime('now - 1 day', new \DateTimeZone('UTC')));
+        $schedule->setDeactivateAt(new \DateTime('+ 1 day', new \DateTimeZone('UTC')));
         $sourcePriceList->addSchedule($schedule);
+
+        $pastSchedule = new PriceListSchedule();
+        $pastSchedule->setDeactivateAt(new \DateTime('- 1 day', new \DateTimeZone('UTC')));
         $sourcePriceList->addSchedule($pastSchedule);
+
+        $lastSchedule = new PriceListSchedule();
+        $lastSchedule->setActiveAt(new \DateTime('+ 2 day', new \DateTimeZone('UTC')));
+        $lastSchedule->setDeactivateAt(null);
+        $sourcePriceList->addSchedule($lastSchedule);
 
         $duplicatedPriceList = new PriceList();
         $this->assertCount(0, $duplicatedPriceList->getSchedules());
         $this->assertFalse($duplicatedPriceList->isContainSchedule());
+
         $this->scheduleDuplicator->duplicateSchedule($sourcePriceList, $duplicatedPriceList);
-        $this->assertCount(1, $duplicatedPriceList->getSchedules());
+        foreach ($duplicatedPriceList->getSchedules() as $schedule) {
+            if ($schedule->getDeactivateAt() !== null) {
+                $this->assertGreaterThan($now, $schedule->getDeactivateAt());
+            }
+        }
+        $this->assertCount(2, $duplicatedPriceList->getSchedules());
         $this->assertTrue($duplicatedPriceList->isContainSchedule());
     }
 }

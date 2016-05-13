@@ -14,15 +14,13 @@ class ScheduleDuplicator
      */
     public function duplicateSchedule(PriceList $sourcePriceList, PriceList $duplicatedPriceList)
     {
-        $newSchedules = new ArrayCollection();
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
         foreach ($sourcePriceList->getSchedules() as $schedule) {
-            if ($schedule->getDeactivateAt() > new \DateTime('now', new \DateTimeZone('UTC'))) {
-                $newSchedules->add($schedule);
+            if ($schedule->getDeactivateAt() === null ||
+                $schedule->getDeactivateAt() > $now
+            ) {
+                $duplicatedPriceList->addSchedule(clone $schedule);
             }
         };
-        $duplicatedPriceList->setSchedules($newSchedules);
-        if ($newSchedules->count() > 0) {
-            $duplicatedPriceList->setContainSchedule(true);
-        }
     }
 }
