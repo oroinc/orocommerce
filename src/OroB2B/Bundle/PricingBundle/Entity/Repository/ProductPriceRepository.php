@@ -294,19 +294,20 @@ class ProductPriceRepository extends EntityRepository
         BasePriceList $targetPriceList,
         InsertFromSelectQueryExecutor $insertQueryExecutor
     ) {
-        $qb = $this->createQueryBuilder('pp');
+        $qb = $this->createQueryBuilder('productPrice');
         $qb
             ->select(
-                'IDENTITY(pp.product)',
-                'IDENTITY(pp.unit)',
+                'IDENTITY(productPrice.product)',
+                'IDENTITY(productPrice.unit)',
                 (string)$qb->expr()->literal($targetPriceList->getId()),
-                'pp.productSku',
-                'pp.quantity',
-                'pp.value',
-                'pp.currency'
+                'productPrice.productSku',
+                'productPrice.quantity',
+                'productPrice.value',
+                'productPrice.currency'
             )
-            ->where($qb->expr()->eq('pp.priceList', ':sourcePriceList'))
+            ->where($qb->expr()->eq('productPrice.priceList', ':sourcePriceList'))
             ->setParameter('sourcePriceList', $sourcePriceList);
+
         $fields = [
             'product',
             'unit',
@@ -316,6 +317,7 @@ class ProductPriceRepository extends EntityRepository
             'value',
             'currency',
         ];
+
         $insertQueryExecutor->execute($this->getClassName(), $fields, $qb);
     }
 }

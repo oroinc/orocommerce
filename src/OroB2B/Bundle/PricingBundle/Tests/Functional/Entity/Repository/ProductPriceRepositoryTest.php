@@ -551,23 +551,28 @@ class ProductPriceRepositoryTest extends WebTestCase
         $priceList = $this->getReference('price_list_1');
         $newPriceList = new PriceList();
         $newPriceList->setName('test');
+
         $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:ProductPrice');
-        $priceRepository = $em->getRepository('OroB2BPricingBundle:ProductPrice');
         $em->persist($newPriceList);
         $em->flush();
+
+        $priceRepository = $em->getRepository('OroB2BPricingBundle:ProductPrice');
         $priceRepository->copyPrices(
             $priceList,
             $newPriceList,
             $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor')
         );
+
         $sourcePrices = $priceRepository->findBy(
             ['priceList' => $priceList],
             ['product' => 'ASC', 'quantity' => 'ASC', 'value' => 'ASC']
         );
+
         $targetPrices = $priceRepository->findBy(
             ['priceList' => $newPriceList],
             ['product' => 'ASC', 'quantity' => 'ASC', 'value' => 'ASC']
         );
+
         $priceToArrayCallback = function (BaseProductPrice $price) {
             return [
                 'product' => $price->getProduct()->getId(),
@@ -578,8 +583,10 @@ class ProductPriceRepositoryTest extends WebTestCase
                 'currency' => $price->getPrice()->getCurrency(),
             ];
         };
+
         $sourcePricesArray = array_map($priceToArrayCallback, $sourcePrices);
         $targetPricesArray = array_map($priceToArrayCallback, $targetPrices);
+
         $this->assertSame($sourcePricesArray, $targetPricesArray);
     }
 
