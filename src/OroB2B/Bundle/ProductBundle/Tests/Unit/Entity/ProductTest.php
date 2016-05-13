@@ -28,6 +28,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['sku', 'sku-test-01'],
             ['owner', new User()],
             ['organization', new Organization()],
+            ['primaryUnitPrecision',  new ProductUnitPrecision()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
             ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED]
@@ -146,51 +147,6 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($product->getUnitPrecision('item'));
         $this->assertEquals($unitPrecision, $product->getUnitPrecision('kg'));
     }
-
-    public function testGetPrimaryUnitPrecision()
-    {
-        $unit = new ProductUnit();
-        $unit
-            ->setCode('kg')
-            ->setDefaultPrecision(3);
-
-        $unitPrecision = new ProductUnitPrecision();
-        $unitPrecision
-            ->setUnit($unit)
-            ->setPrecision($unit->getDefaultPrecision());
-
-        $product = new Product();
-        $refProduct = new \ReflectionObject($product);
-        $refPrimary = $refProduct->getProperty('primaryUnitPrecision');
-        $refPrimary->setAccessible(true);
-        $refPrimary->setValue($product, $unitPrecision);
-
-        $this->assertEquals($unitPrecision, $product->getPrimaryUnitPrecision());
-    }
-
-    public function testSetPrimaryUnitPrecision()
-    {
-        $unit = new ProductUnit();
-        $unit
-            ->setCode('kg')
-            ->setDefaultPrecision(3);
-        $unitPrecision = new ProductUnitPrecision();
-        $unitPrecision
-            ->setUnit($unit)
-            ->setPrecision($unit->getDefaultPrecision());
-
-        $product = new Product();
-        $product->setPrimaryUnitPrecision($unitPrecision);
-
-        $product = new Product();
-        $refProduct = new \ReflectionObject($product);
-        $refPrimary = $refProduct->getProperty('primaryUnitPrecision');
-        $refPrimary->setAccessible(true);
-
-        $this->assertEquals($unitPrecision, $refPrimary->getValue($product));
-    }
-
-
 
     public function testGetAvailableUnitCodes()
     {
