@@ -62,10 +62,8 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
             $this->createQuickAccessMenu($manager);
             $this->createMainMenu($manager);
             $this->createFooterLinks($manager);
-        } elseif ($lastVersion === '1.0') {
-            $this->addLoggedInCondition($manager);
         }
-
+        $this->addLoggedInCondition($manager);
         $manager->flush();
     }
 
