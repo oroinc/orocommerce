@@ -254,14 +254,9 @@ class ImportExportTest extends WebTestCase
 
         $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
 
-        $this->assertEquals(
-            [
-                'success'   => true,
-                'message'   => 'File was successfully imported.',
-                'errorsUrl' => null
-            ],
-            $data
-        );
+        $this->assertEquals(true, $data['success']);
+        $this->assertEquals('File was successfully imported.', $data['message']);
+        $this->assertEquals(null, $data['errorsUrl']);
     }
 
     /**
