@@ -8,7 +8,7 @@ class WeightUnitValueExtension extends \Twig_Extension
 {
     const NAME = 'orob2b_weight_unit_value';
 
-    /** @var AbstractUnitValueFormatter */
+    /** @var UnitValueFormatter */
     protected $formatter;
 
     /**

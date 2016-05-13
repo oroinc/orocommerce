@@ -56,21 +56,25 @@ services:
     # formatters
     orob2b_shipping.formatter.length_unit_label:
         parent: orob2b_product.formatter.unit_label
+        public: true
         calls:
             - [setTranslationPrefix, ['orob2b.length_unit']]
 
     orob2b_shipping.formatter.weight_unit_label:
         parent: orob2b_product.formatter.unit_label
+        public: true
         calls:
             - [setTranslationPrefix, ['orob2b.weight_unit']]
 
     orob2b_shipping.formatter.freight_class_label:
         parent: orob2b_product.formatter.unit_label
+        public: true
         calls:
             - [setTranslationPrefix, ['orob2b.freight_class']]
 
     orob2b_shipping.formatter.weight_unit_value:
         parent: orob2b_product.formatter.unit_value
+        public: true
         calls:
             - [setTranslationPrefix, ['orob2b.weight_unit']]
 
