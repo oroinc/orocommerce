@@ -29,15 +29,16 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
     /**
      * @param Website|null $currentWebsite
-     * @param boolean|false $force
+     * @param bool $force
      */
     public function build(Website $currentWebsite = null, $force = false)
     {
-        if ($force || !$this->isBuiltForWebsite($currentWebsite)) {
+        if (!$this->isBuiltForWebsite($currentWebsite)) {
             $websites = [$currentWebsite];
             if (!$currentWebsite) {
+                $fallback = $force ? null : PriceListWebsiteFallback::CONFIG;
                 $websites = $this->getPriceListToEntityRepository()
-                    ->getWebsiteIteratorByDefaultFallback(PriceListWebsiteFallback::CONFIG);
+                    ->getWebsiteIteratorByDefaultFallback($fallback);
             }
 
             foreach ($websites as $website) {
@@ -54,7 +55,7 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
     /**
      * @param Website $website
-     * @param boolean $force
+     * @param bool $force
      */
     protected function updatePriceListsOnCurrentLevel(Website $website, $force)
     {
@@ -68,12 +69,9 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
             return;
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByWebsite($website);
-        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
-
-        $this->getCombinedPriceListRepository()
-            ->updateCombinedPriceListConnection($actualCombinedPriceList, $website);
+        $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
+        $this->updateRelationsAndPrices($combinedPriceList, $website, null, $force);
     }
-
 
     /**
      * @param Website|null $website

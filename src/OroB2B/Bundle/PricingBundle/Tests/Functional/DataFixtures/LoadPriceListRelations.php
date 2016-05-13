@@ -17,9 +17,17 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadPriceListRelations extends AbstractFixture implements DependentFixtureInterface
 {
+    /**
+     * @var array
+     */
     protected $data = [
         'US' => [
             'priceLists' => [
+                [
+                    'priceList' => 'price_list_6',
+                    'priority' => 50,
+                    'mergeAllowed' => false,
+                ],
                 [
                     'priceList' => 'price_list_1',
                     'priority' => 100,
@@ -29,7 +37,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                     'priceList' => 'price_list_3',
                     'priority' => 200,
                     'mergeAllowed' => false,
-                ]
+                ],
             ],
             'priceListsToAccounts' => [
                 'account.level_1_1' => [ // No group
@@ -44,7 +52,12 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                         'mergeAllowed' => false,
                     ]
                 ],
-                'account.level_1.3' => [ // Assigned to group1
+                'account.level_1.3' => [// Assigned to group1
+                    [
+                        'priceList' => 'price_list_6',
+                        'priority' => 50,
+                        'mergeAllowed' => false,
+                    ],
                     [
                         'priceList' => 'price_list_4',
                         'priority' => 100,
@@ -66,6 +79,11 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
             ],
             'priceListsToAccountGroups' => [
                 'account_group.group1' => [
+                    [
+                        'priceList' => 'price_list_6',
+                        'priority' => 50,
+                        'mergeAllowed' => false,
+                    ],
                     [
                         'priceList' => 'price_list_1',
                         'priority' => 100,

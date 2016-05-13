@@ -90,18 +90,37 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository')
             ->disableOriginalConstructor()
             ->getMock();
+        $accountRelationRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToAccountRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $accountGroupRelationRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToAccountGroupRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $websiteRelationRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToWebsiteRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($repository);
+        $em->method('getRepository')
+            ->willReturnMap([
+                ['OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList', $repository],
+                ['OroB2BPricingBundle:CombinedPriceListToAccount', $accountRelationRepository],
+                ['OroB2BPricingBundle:CombinedPriceListToAccountGroup', $accountGroupRelationRepository],
+                ['OroB2BPricingBundle:CombinedPriceListToWebsite', $websiteRelationRepository],
+            ]);
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
             ->with($this->combinedPriceListClass)
+            ->willReturn($em);
+        $this->registry->expects($this->once())
+            ->method('getManager')
             ->willReturn($em);
 
         return $repository;
