@@ -243,6 +243,25 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     protected $unitPrecisions;
 
     /**
+     * @var ProductUnitPrecision
+     *
+     * @ORM\OneToOne(targetEntity="ProductUnitPrecision")
+     * @ORM\JoinColumn(name="primary_product_unit_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=25,
+     *              "full"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $primaryUnitPrecision;
+
+    /**
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
@@ -880,5 +899,29 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
             'id' => $this->getId(),
             'product_units' => $this->getAvailableUnitCodes(),
         ];
+    }
+
+    /**
+     * Set primaryUnitPrecision
+     *
+     * @param \OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision $primaryUnitPrecision
+     *
+     * @return Product
+     */
+    public function setPrimaryUnitPrecision(\OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision $primaryUnitPrecision = null)
+    {
+        $this->primaryUnitPrecision = $primaryUnitPrecision;
+
+        return $this;
+    }
+
+    /**
+     * Get primaryUnitPrecision
+     *
+     * @return \OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision
+     */
+    public function getPrimaryUnitPrecision()
+    {
+        return $this->primaryUnitPrecision;
     }
 }
