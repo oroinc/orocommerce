@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Form;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
@@ -67,7 +68,7 @@ class ShipToBillingAddressTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return \Symfony\Component\Form\Form
+     * @return Form
      */
     protected function createParentForm()
     {
@@ -75,6 +76,7 @@ class ShipToBillingAddressTypeTest extends FormIntegrationTestCase
             ->add('test_type', ShipToBillingAddressType::NAME)
             ->add(ShipToBillingAddressType::SHIPPING_ADDRESS_FORM_FIELD, 'text')
             ->getForm();
+
         return $form;
     }
 }
