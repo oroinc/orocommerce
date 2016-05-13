@@ -97,14 +97,4 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
     {
         return 'entity';
     }
-
-    /**
-     * @param FormInterface $form
-     * @param array $options
-     * @return MeasureUnitInterface[]
-     */
-    protected function getUnits(FormInterface $form, array $options)
-    {
-        return $this->unitProvider->getUnits(!$options['full_list']);
-    }
 }
