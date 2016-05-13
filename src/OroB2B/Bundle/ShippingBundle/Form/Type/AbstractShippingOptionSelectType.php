@@ -77,6 +77,7 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
                 if (null !== $value) {
                     return $value;
                 }
+
                 return $this->unitProvider->getUnits(!$options['full_list']);
             }
         );
