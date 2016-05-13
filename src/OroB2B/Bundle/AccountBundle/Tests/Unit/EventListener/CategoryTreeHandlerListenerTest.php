@@ -6,6 +6,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener;
@@ -85,6 +86,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
      * @param array $expected
      * @param array $hiddenCategoryIds
      * @param UserInterface|null $user
+     * @param Account $account
      * @param AccountGroup|null $accountGroup
      */
     public function testOnCreateAfter(
@@ -92,6 +94,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
         array $expected,
         array $hiddenCategoryIds,
         UserInterface $user = null,
+        Account $account = null,
         AccountGroup $accountGroup = null
     ) {
         $categories = $this->prepareCategories($categories);
@@ -109,10 +112,18 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
         if ($user instanceof User) {
             $this->categoryVisibilityResolver->expects($this->never())
                 ->method('isCategoryVisibleForAccount');
-        } elseif ($user instanceof AccountUser) {
+            $this->categoryVisibilityResolver->expects($this->never())
+                ->method('isCategoryVisibleForAccountGroup');
+            $this->categoryVisibilityResolver->expects($this->never())
+                ->method('getHiddenCategoryIds');
+        } elseif ($user instanceof AccountUser && $account) {
+            $this->accountUserRelationsProvider->expects($this->once())
+                ->method('getAccount')
+                ->with($user)
+                ->willReturn($account);
             $this->categoryVisibilityResolver->expects($this->once())
                 ->method('getHiddenCategoryIdsForAccount')
-                ->with($user->getAccount())
+                ->with($account)
                 ->willReturn($hiddenCategoryIds);
         } elseif (!$user && $accountGroup) {
             $this->categoryVisibilityResolver->expects($this->once())
@@ -154,6 +165,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                 ],
                 'hiddenCategoryIds' => [3, 4, 5, 8, 9, 10, 11],
                 'user' => null,
+                'account' => null,
                 'accountGroup' => new AccountGroup()
             ],
             'tree without user and group' => [
@@ -164,6 +176,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                 ],
                 'hiddenCategoryIds' => [3, 4, 5, 8, 9, 10, 11],
                 'user' => null,
+                'account' => null,
                 'accountGroup' => null
             ],
             'tree for account user with invisible ids' => [
@@ -179,8 +192,8 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                     ['id' => 9, 'parent' => 5],
                 ],
                 'hiddenCategoryIds' => [3],
-                'user' => (new AccountUser)
-                    ->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 42]))
+                'user' => new AccountUser(),
+                'account' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 42])
             ]
         ];
     }

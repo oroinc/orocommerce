@@ -6,7 +6,6 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
@@ -46,8 +45,8 @@ class CategoryTreeHandlerListener
             return;
         }
 
-        $account = $user instanceof AccountUser ? $user->getAccount() : null;
-        $accountGroup = $account ? null : $this->accountUserRelationsProvider->getAccountGroup($user);
+        $account = $this->accountUserRelationsProvider->getAccount($user);
+        $accountGroup = $this->accountUserRelationsProvider->getAccountGroup($user);
         $categories = $this->filterCategories($event->getCategories(), $account, $accountGroup);
         $event->setCategories($categories);
     }
