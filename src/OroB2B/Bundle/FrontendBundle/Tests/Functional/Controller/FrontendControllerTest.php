@@ -24,17 +24,6 @@ class FrontendControllerTest extends WebTestCase
         $this->setTheme(self::DEFAULT_THEME);
     }
 
-    public function testRedirectToLogin()
-    {
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
-        $crawler = $this->client->followRedirect();
-        $this->assertNotContains($this->getBackendPrefix(), $crawler->html());
-        $this->assertEquals(
-            'Sign In',
-            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
-        );
-    }
-
     public function testRedirectToProduct()
     {
         $this->markTestSkipped();
