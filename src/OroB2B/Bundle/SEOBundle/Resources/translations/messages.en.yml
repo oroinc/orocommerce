@@ -12,3 +12,7 @@ orob2b:
         meta_descriptions.label: Meta Descriptions
         meta_keywords.label: Meta Keywords
         meta_titles.label: Meta Titles
+    cms.page:
+        meta_descriptions.label: Meta Descriptions
+        meta_keywords.label: Meta Keywords
+        meta_titles.label: Meta Titles
