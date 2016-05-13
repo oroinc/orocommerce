@@ -36,7 +36,7 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
-        if ($this->frontendHelper->isFrontendRequest()) {
+        if ($this->frontendHelper && $this->frontendHelper->isFrontendRequest()) {
             return parent::vote($token, $object, $attributes);
         }
 
