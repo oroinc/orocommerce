@@ -4,3 +4,8 @@ services:
         parent: orob2b_order.form.type.order_address
         tags:
             - { name: form.type, alias: orob2b_checkout_address }
+
+    orob2b_checkout.form.type.ship_to_billing_address:
+        class: 'OroB2B\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType'
+        tags:
+            - { name: form.type, alias: orob2b_ship_to_billing_address }
