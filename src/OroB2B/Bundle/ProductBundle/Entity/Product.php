@@ -924,4 +924,22 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     {
         return $this->primaryUnitPrecision;
     }
+
+    /**
+     * Get unitPrecisions
+     *
+     * @return Collection|ProductUnitPrecision[]
+     */
+    public function getAdditionalUnitPrecisions()
+    {
+        $precisions = $this->unitPrecisions;
+        foreach ($precisions as  $key => $unitPrecision) {
+            if ($unitPrecision->getUnit()->getId() == $this->primaryUnitPrecision->getId()) {
+                unset($precisions[$key]);
+                break;
+            }
+        }
+        return $precisions;
+    }
+
 }
