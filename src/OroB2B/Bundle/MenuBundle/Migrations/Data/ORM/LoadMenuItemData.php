@@ -56,12 +56,13 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
      */
     public function load(ObjectManager $manager)
     {
-        if ($this->getLastVersion($manager) === '1.0') {
+        $lastVersion = $this->getLastVersion($manager);
+        if (!$lastVersion) {
             $this->createTopNavMenu($manager);
             $this->createQuickAccessMenu($manager);
             $this->createMainMenu($manager);
             $this->createFooterLinks($manager);
-        } else {
+        } elseif ($lastVersion === '1.0') {
             $this->addLoggedInCondition($manager);
         }
 
@@ -157,13 +158,7 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     {
         /** @var MenuItem $information */
         $information = $manager->getRepository('OroB2BMenuBundle:MenuItem')->findMenuItemByTitle('My Account');
-        $information->setData(
-            [
-                'extras' => [
-                    'condition' => 'is_logged_in()'
-                ]
-            ]
-        );
+        $information->setCondition('is_logged_in()');
     }
 
     /**
@@ -177,6 +172,4 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
 
         return $fixture ? $fixture->getVersion() : false;
     }
-
-
 }
