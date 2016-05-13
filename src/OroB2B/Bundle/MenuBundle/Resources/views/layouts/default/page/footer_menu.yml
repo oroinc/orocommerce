@@ -6,27 +6,17 @@ layout:
             items:
                 footer_menu_container:
                     blockType: container
-                footer_menu_information:
+                footer_menu:
                     blockType: menu
                     options:
-                        menu: footer-links-information
-                        depth: 2
-                        attr:
-                            class: footer-nav__list
-                footer_menu_itemwhy:
-                    blockType: menu
-                    options:
-                        menu: footer-links-item-why
+                        menu: footer-links
                         depth: 2
                         attr:
                             class: footer-nav__list
             tree:
                 footer:
                     footer_menu_container:
-                        footer_menu_information: ~
-                        footer_menu_itemwhy: ~
-
+                        footer_menu: ~
         - '@move':
             id: footer_copyright
             siblingId: footer_menu_container
-
