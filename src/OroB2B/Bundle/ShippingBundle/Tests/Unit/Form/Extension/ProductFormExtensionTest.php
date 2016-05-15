@@ -6,17 +6,23 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 
 use OroB2B\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
 use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
@@ -39,7 +45,6 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->repo->expects($this->any())->method('getShippingOptionsByProduct')->willReturn([]);
 
         $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->manager->expects($this->any())
@@ -63,9 +68,8 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildForm($product)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-
         $builder->expects($this->once())
             ->method('add')
             ->with(
@@ -82,20 +86,20 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $builder->expects($this->exactly(2))->method('addEventListener');
+        $builder->expects($this->exactly(3))->method('addEventListener');
         $builder->expects($this->at(2))
             ->method('addEventListener')
             ->with(FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']);
         $builder->expects($this->at(3))
             ->method('addEventListener')
+            ->with(FormEvents::PRE_SUBMIT, [$this->extension, 'onPreSubmit']);
+        $builder->expects($this->at(4))
+            ->method('addEventListener')
             ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10);
 
-        $builder->expects($this->once())
-            ->method('getData')
-            ->willReturn($product);
+        $builder->expects($this->once())->method('getData')->willReturn($product);
 
         $this->extension->buildForm($builder, []);
-        unset($builder);
     }
 
     public function testGetExtendedType()
@@ -105,6 +109,8 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider formDataProvider
+     *
+     * @param null|Product $product
      */
     public function testOnPostSetData($product)
     {
@@ -131,11 +137,20 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSubmitValidData()
     {
+        $product = $this->createMockProduct();
+
         $event = $this->createEvent($this->createMockProduct());
         /** @var \PHPUnit_Framework_MockObject_MockObject $form */
         $form = $event->getForm()->get(ProductFormExtension::FORM_ELEMENT_NAME);
 
         $event->getForm()->expects($this->once())->method('isValid')->willReturn(true);
+
+        $removedOption = $this->getEntity('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions', ['id' => 42]);
+
+        $this->repo->expects($this->once())
+            ->method('getShippingOptionsByProduct')
+            ->with($product)
+            ->willReturn([$removedOption]);
 
         $form->expects($this->once())
             ->method('getData')
@@ -146,12 +161,13 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->manager->expects($this->atLeastOnce())->method('persist');
+        $this->manager->expects($this->exactly(2))->method('persist');
+        $this->manager->expects($this->once())->method('remove')->with($removedOption);
 
         $this->extension->onPostSubmit($event);
     }
 
-    public function testOnPostSubmitInValidData()
+    public function testOnPostSubmitInvalidData()
     {
         $event = $this->createEvent($this->createMockProduct());
         /** @var \PHPUnit_Framework_MockObject_MockObject $form */
@@ -168,23 +184,91 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->onPostSubmit($event);
     }
 
+    public function testOnPreSubmit()
+    {
+        $product = $this->createMockProduct();
+
+        $event = $this->createEvent(
+            [
+                ProductFormExtension::FORM_ELEMENT_NAME => [
+                    5 => ['productUnit' => 'test2'],
+                    10 => ['productUnit' => 'test1']
+                ]
+            ]
+        );
+        $event->expects($this->once())
+            ->method('setData')
+            ->with(
+                [
+                    ProductFormExtension::FORM_ELEMENT_NAME => [
+                        0 => ['productUnit' => 'test1'],
+                        5 => ['productUnit' => 'test2']
+                    ]
+                ]
+            );
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $event->getForm();
+        $form->expects($this->once())->method('getData')->willReturn($product);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $childForm */
+        $childForm = $form->get(ProductFormExtension::FORM_ELEMENT_NAME);
+        $childForm->expects($this->once())
+            ->method('getData')
+            ->willReturn(
+                [
+                    $this->getEntity(
+                        'OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions',
+                        [
+                            'id' => 42,
+                            'productUnit' => $this->getEntity(
+                                'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                                ['code' => 'test1']
+                            )
+                        ]
+                    )
+                ]
+            );
+
+        $this->extension->onPreSubmit($event);
+    }
+
+    public function testOnPreSubmitWithoutProduct()
+    {
+        $product = $this->createMockProduct(null);
+
+        $event = $this->createEvent();
+        $event->expects($this->never())->method('setData');
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $event->getForm();
+        $form->expects($this->once())->method('getData')->willReturn($product);
+
+        $this->extension->onPreSubmit($event);
+    }
+
     /**
      * @param object|null $data
      *
-     * @return FormEvent
+     * @return FormEvent|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function createEvent($data = null)
     {
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject $mainForm */
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
         $mainForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->any())
             ->method('get')
             ->with(ProductFormExtension::FORM_ELEMENT_NAME)
             ->willReturn($form);
 
-        return new FormEvent($mainForm, $data);
+        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')->disableOriginalConstructor()->getMock();
+        $event->expects($this->any())->method('getForm')->willReturn($mainForm);
+        $event->expects($this->any())->method('getData')->willReturn($data);
+
+        return $event;
     }
 
     /**
@@ -201,10 +285,11 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return object
+     * @param int $id
+     * @return Product
      */
-    private function createMockProduct()
+    private function createMockProduct($id = 1)
     {
-        return $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
+        return $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $id]);
     }
 }

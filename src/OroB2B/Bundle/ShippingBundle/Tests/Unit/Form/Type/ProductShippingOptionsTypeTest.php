@@ -66,8 +66,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
             ->with(
                 [
                     'product' => null,
-                    'data_class' => 'OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions',
-                    'by_reference' => false,
+                    'data_class' => 'OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions'
                 ]
             );
 
