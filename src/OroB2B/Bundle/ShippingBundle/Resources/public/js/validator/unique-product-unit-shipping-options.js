@@ -1,6 +1,6 @@
 /*global define*/
 define(['underscore', 'orotranslation/js/translator', 'jquery'
-], function (_, __, $) {
+], function(_, __, $) {
     'use strict';
 
     var defaultParam = {
@@ -19,7 +19,6 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
      */
     function getShippingOptionValues(element) {
         var shippingOption = $(element);
-
         var unit = shippingOption.find('select[name$="[productUnit]"] option:selected');
 
         return {
@@ -33,7 +32,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
      * @returns {Object}
      */
     function findDuplication(shippingOptions, search) {
-        return _.find(shippingOptions, function (obj) {
+        return _.find(shippingOptions, function(obj) {
             return obj.unit === search.unit;
         });
     }
@@ -43,11 +42,11 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
      */
     return [
         'OroB2B\\Bundle\\ShippingBundle\\Validator\\Constraints\\UniqueProductUnitShippingOptions',
-        function (value, element) {
-            var noDuplicationFound = true,
-                processedShippingOptions = [];
+        function(value, element) {
+            var noDuplicationFound = true;
+            var processedShippingOptions = [];
 
-            _.each(getRealElement(element).find('.list-item'), function (shippingOption) {
+            _.each(getRealElement(element).find('.list-item'), function(shippingOption) {
                 var data = getShippingOptionValues(shippingOption);
 
                 if (_.isEmpty(data.unit.trim())) {
@@ -63,7 +62,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
 
             return noDuplicationFound;
         },
-        function (param) {
+        function(param) {
             param = _.extend({}, defaultParam, param);
 
             return __(param.message, {});
