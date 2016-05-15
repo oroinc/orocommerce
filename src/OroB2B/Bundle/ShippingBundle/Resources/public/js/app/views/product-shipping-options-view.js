@@ -13,7 +13,7 @@ define(function(require) {
          */
         options: {
             unitsAttribute: 'units',
-            selectSelector: 'select[name^=\'orob2b_product[product_shipping_options]\'][name$=\'[productUnit]\']',
+            selectSelector: 'select[name^="orob2b_product[product_shipping_options]"][name$="[productUnit]"]',
             selectors: {
                 itemsContainer: 'table.list-items',
                 itemContainer: 'table tr.list-item',
@@ -172,7 +172,7 @@ define(function(require) {
             var needUpdateValue = (_.indexOf(_.keys(units), currentValue) === -1);
             _.each(units, function(text, value) {
                 if (!$select.find('option[value="' + value + '"]').length) {
-                    $select.append($('<option value="' + value + '">' + text + '</option>'));
+                    $select.append($('<option/>').val(value).text(text));
                     updateRequired = true;
                 }
                 if (needUpdateValue && (_.indexOf(allSelectedUnits, value) === -1)) {

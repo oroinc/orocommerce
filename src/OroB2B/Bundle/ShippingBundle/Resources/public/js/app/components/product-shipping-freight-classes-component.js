@@ -28,7 +28,7 @@ define(function(require) {
             activeUnitCodeParam: 'activeUnitCode',
             selectors: {
                 itemContainer: 'tr.list-item',
-                unitSelect: 'select[name^=\'orob2b_product[product_shipping_options]\'][name$=\'[productUnit]\']',
+                unitSelect: 'select[name^="orob2b_product[product_shipping_options]"][name$="[productUnit]"]',
                 freightClassSelector: '.freight-class-select',
                 freightClassUpdateSelector: '.freight-class-update-trigger'
             }
