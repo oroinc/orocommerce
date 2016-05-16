@@ -44,12 +44,14 @@ class ProductPriceDuplicator
     }
 
     /**
-     * @param BasePriceList $priceListSource
-     * @param BasePriceList $priceListTarget
+     * @param BasePriceList $sourcePriceList
+     * @param BasePriceList $targetPriceList
      */
-    public function duplicate(BasePriceList $priceListSource, BasePriceList $priceListTarget)
+    public function duplicate(BasePriceList $sourcePriceList, BasePriceList $targetPriceList)
     {
-        $this->getRepository()->copyPrices($priceListSource, $priceListTarget, $this->insertQueryExecutor);
+        if ($targetPriceList->getPrices()->isEmpty()) {
+            $this->getRepository()->copyPrices($sourcePriceList, $targetPriceList, $this->insertQueryExecutor);
+        }
     }
 
     /**

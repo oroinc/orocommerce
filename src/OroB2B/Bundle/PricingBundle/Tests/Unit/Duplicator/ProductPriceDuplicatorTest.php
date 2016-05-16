@@ -8,6 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -54,23 +55,46 @@ class ProductPriceDuplicatorTest extends \PHPUnit_Framework_TestCase
             ->getMockWithoutConstructor('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository');
     }
 
-    public function testDuplicate()
+    /**
+     * @dataProvider duplicateDataProvider
+     * @param PriceList $sourcePriceList
+     * @param PriceList $targetPriceList
+     */
+    public function testDuplicate(PriceList $sourcePriceList, PriceList $targetPriceList)
     {
         $priceListClass = 'OroB2B\Bundle\PricingBundle\Entity\ProductPrice';
         $this->priceDuplicator->setPriceListClass($priceListClass);
 
-        $this->manager->expects($this->once())
-            ->method('getRepository')
-            ->with($priceListClass)
-            ->willReturn($this->repository);
-        $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($this->manager);
+        if ($targetPriceList->getPrices()->isEmpty()) {
+            $this->manager->expects($this->once())
+                ->method('getRepository')
+                ->with($priceListClass)
+                ->willReturn($this->repository);
+            $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($this->manager);
+            $this->repository->expects($this->once())
+                ->method('copyPrices')
+                ->with($sourcePriceList, $targetPriceList, $this->insertExecutor);
+        } else {
+            $this->manager->expects($this->never())
+                ->method('getRepository')
+                ->with($priceListClass);
+        }
 
-        $priceListTarget = new PriceList();
-        $priceListSource = new PriceList();
-        $this->repository->expects($this->once())
-            ->method('copyPrices')
-            ->with($priceListSource, $priceListTarget, $this->insertExecutor);
-        $this->priceDuplicator->duplicate($priceListSource, $priceListTarget);
+        $this->priceDuplicator->duplicate($sourcePriceList, $targetPriceList);
+    }
+
+    public function duplicateDataProvider()
+    {
+        return [
+            'target price list without prices' => [
+                'sourcePriceList' => new PriceList(),
+                'targetPriceList' => new PriceList()
+            ],
+            'target price list with prices' => [
+                'sourcePriceList' => new PriceList(),
+                'targetPriceList' => (new PriceList())->addPrice(new ProductPrice())
+            ],
+        ];
     }
 
     /**
