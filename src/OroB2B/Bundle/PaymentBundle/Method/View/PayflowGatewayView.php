@@ -56,7 +56,11 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     {
         $contextOptions = $this->getOptionsResolver()->resolve($context);
 
-        $formView = $this->formFactory->create(CreditCardType::NAME)->createView();
+        $formOptions = [
+            'zeroAmountAuthorizationEnabled' => $this->isZeroAmountAuthorizationEnabled()
+        ];
+
+        $formView = $this->formFactory->create(CreditCardType::NAME, null, $formOptions)->createView();
 
         $viewOptions = [
             'formView' => $formView,
