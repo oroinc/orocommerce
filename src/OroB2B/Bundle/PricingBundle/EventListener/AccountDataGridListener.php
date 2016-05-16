@@ -16,8 +16,14 @@ class AccountDataGridListener
 {
     const PRICE_LIST_KEY = 'price_list';
 
+    /**
+     * @var Registry
+     */
     protected $registry;
 
+    /**
+     * @param Registry $registry
+     */
     public function __construct(Registry $registry)
     {
         $this->registry = $registry;
@@ -110,6 +116,9 @@ class AccountDataGridListener
         $grid->getConfig()->offsetAddToArrayByPath('[source][query][where][and]', [$condition]);
     }
 
+    /**
+     * @param OrmResultAfter $event
+     */
     public function onResultAfter(OrmResultAfter $event)
     {
         /** @var ResultRecord[] $records */
@@ -127,25 +136,20 @@ class AccountDataGridListener
                 ->getRelationsByAccounts($accountIds);
 
             foreach ($relations as $relation) {
-                //TODO: use website in BB-3131
-//                $groupedPriceLists[$relation->getAccount()->getId()][$relation->getWebsite()->getId()]['website']
-//                    = $relation->getWebsite();
+                $groupedPriceLists[$relation->getAccount()->getId()][$relation->getWebsite()->getId()]['website']
+                    = $relation->getWebsite();
                 $groupedPriceLists[$relation->getAccount()->getId()][$relation->getWebsite()->getId()]['priceLists'][]
                     = $relation->getPriceList()->getName();
             }
 
             foreach ($records as $record) {
                 $accountId = $record->getValue('id');
+                $priceLists = [];
                 if (array_key_exists($accountId, $groupedPriceLists)) {
-                    //TODO: will be removed in BB-3131
-                    $implode = '';
-                    foreach ($groupedPriceLists[$accountId] as $priceListsName) {
-                        $implode .= implode(', ', $priceListsName['priceLists']); // demo string, remove at BB-3131
-                    }
-
-                    $data = ['price_lists' => $implode];
-                    $record->addData($data);
+                    $priceLists = $groupedPriceLists[$accountId];
                 }
+                $data = ['price_lists' => $priceLists];
+                $record->addData($data);
             }
         }
     }
