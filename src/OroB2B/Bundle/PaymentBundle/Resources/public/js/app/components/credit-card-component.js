@@ -24,7 +24,7 @@ define(function(require) {
                 cardNumber: '[data-card-number]',
                 validation: '[data-validation]',
                 paymentValidateRequired: '[name$="[payment_validate]"]',
-                saveForLater: '[data-save-for-laters]'
+                saveForLater: '[data-save-for-later]'
             }
         },
 

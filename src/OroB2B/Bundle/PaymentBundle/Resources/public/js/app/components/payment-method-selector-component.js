@@ -16,10 +16,7 @@ define(function(require) {
             selectors: {
                 radio: '[data-choice]',
                 itemContainer: '[data-item-container]',
-                subform: '[data-form-container]',
-                submitButton: '[data-payment-method-submit]',
-                noMethods: 'payment-no-methods',
-                paymentValidateRequired: '[name$="[payment_validate]"]'
+                subform: '[data-form-container]'
             },
             redirectEvent: 'scroll keypress mousedown tap',
             delay: 1000 * 60 * 15 // 15 minutes

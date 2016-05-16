@@ -61,7 +61,7 @@ define(function(require) {
             }).bind(this));
 
             this.setPaymentValidateRequired(true);
-            this.setSaveForLaterBasedOnForm();
+            this.updateSaveForLater();
 
             return false;
         },
@@ -79,15 +79,25 @@ define(function(require) {
             }).bind(this));
 
             this.setPaymentValidateRequired(false);
-            mediator.trigger('checkout:payment:save-for-later:restore-default');
+            this.updateSaveForLater();
 
             return false;
         },
 
         onCurrentPaymentMethodSelected: function() {
             this.setPaymentValidateRequired(this.paymentValidationRequiredComponentState);
-            if (this.getPaymentValidateRequired()) {
-                this.setSaveForLaterBasedOnForm();
+            this.updateSaveForLater();
+        },
+
+        updateSaveForLater: function() {
+            if (this.options.currentValidation) {
+                if (this.getPaymentValidateRequired()) {
+                    this.setSaveForLaterBasedOnForm();
+                } else {
+                    mediator.trigger('checkout:payment:save-for-later:restore-default');
+                }
+            } else {
+                mediator.trigger('checkout:payment:save-for-later:change', true);
             }
         },
 

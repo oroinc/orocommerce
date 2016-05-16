@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\Method\View;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
@@ -29,19 +30,25 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
 
+    /** @var DoctrineHelper */
+    protected $doctrineHelper;
+
     /**
      * @param FormFactoryInterface $formFactory
      * @param ConfigManager $configManager
      * @param PaymentTransactionProvider $paymentTransactionProvider
+     * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         FormFactoryInterface $formFactory,
         ConfigManager $configManager,
-        PaymentTransactionProvider $paymentTransactionProvider
+        PaymentTransactionProvider $paymentTransactionProvider,
+        DoctrineHelper $doctrineHelper
     ) {
         $this->formFactory = $formFactory;
         $this->configManager = $configManager;
         $this->paymentTransactionProvider = $paymentTransactionProvider;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /** {@inheritdoc} */
@@ -61,11 +68,22 @@ class PayflowGatewayView implements PaymentMethodViewInterface
                 ->getActiveValidatePaymentTransaction($contextOptions['entity'], $this->getPaymentMethodType());
 
             if ($authorizeTransaction) {
+                $entityClass = $this->doctrineHelper->getEntityClass($contextOptions['entity']);
+                $entityIdentifiers = $this->doctrineHelper->getEntityIdentifier($contextOptions['entity']);
+
+                $currentValidation = false;
+                if ($authorizeTransaction->getEntityClass() === $entityClass &&
+                    $authorizeTransaction->getEntityIdentifier() === reset($entityIdentifiers)
+                ) {
+                    $currentValidation = true;
+                }
+
                 $viewOptions['creditCardComponent'] =
                     'orob2bpayment/js/app/components/authorized-credit-card-component';
 
                 $viewOptions['creditCardComponentOptions'] = [
                     'acct' => $this->getLast4($authorizeTransaction),
+                    'currentValidation' => $currentValidation,
                 ];
             }
         }
