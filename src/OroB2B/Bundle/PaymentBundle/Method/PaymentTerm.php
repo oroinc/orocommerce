@@ -49,7 +49,9 @@ class PaymentTerm implements PaymentMethodInterface
     /** {@inheritdoc} */
     public function execute(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setSuccessful(true);
+        $paymentTransaction
+            ->setSuccessful(true)
+            ->setActive(false);
 
         $entity = $this->doctrineHelper->getEntityReference(
             $paymentTransaction->getEntityClass(),
@@ -91,6 +93,6 @@ class PaymentTerm implements PaymentMethodInterface
     /** {@inheritdoc} */
     public function supports($actionName)
     {
-        return in_array($actionName, [self::PURCHASE, self::VALIDATE], true);
+        return $actionName === self::PURCHASE;
     }
 }

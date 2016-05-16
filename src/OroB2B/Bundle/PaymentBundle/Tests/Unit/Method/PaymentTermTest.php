@@ -236,7 +236,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             [false, PaymentTermMethod::AUTHORIZE],
             [false, PaymentTermMethod::CAPTURE],
             [false, PaymentTermMethod::CHARGE],
-            [true, PaymentTermMethod::VALIDATE],
+            [false, PaymentTermMethod::VALIDATE],
             [true, PaymentTermMethod::PURCHASE],
         ];
     }
