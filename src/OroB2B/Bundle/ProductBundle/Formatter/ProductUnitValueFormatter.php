@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Formatter;
 
 /**
- * @deprecated Use orob2b_product.formatter.unit_value and setTranslationPrefix to define you own service with needed 
+ * @deprecated Use orob2b_product.formatter.unit_value and setTranslationPrefix to define you own service with needed
  * translation prefix
  */
 class ProductUnitValueFormatter extends UnitValueFormatter
