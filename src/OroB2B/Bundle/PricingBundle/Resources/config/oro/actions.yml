@@ -130,12 +130,16 @@ operations:
                 attribute: $.newPriceList
                 settings:
                   - [[setNull], [propertyName, [id]]]
-                  - [[replaceValue, [false]], [propertyName, [active]]]
-                  - [[replaceValue, [false]], [propertyName, [containSchedule]]]
                   - [[emptyCollection], [propertyName, [prices]]]
                   - [[emptyCollection], [propertyName, [schedules]]]
                   - [[collection], [propertyName, [currencies]]]
             - '@assign_value': [$.newPriceList.name, $.newName]
+            - '@assign_value': [$.newPriceList.active, false]
+            - '@assign_value': [$.newPriceList.default, false]
+            - '@call_service_method':
+                service: orob2b_pricing.duplicator.schedule
+                method: duplicateSchedule
+                method_parameters: [$.entity,$.newPriceList]
             - '@flush_entity': $.newPriceList
             - '@call_service_method':
                 service: orob2b_pricing.duplicator.product_price_duplicator
