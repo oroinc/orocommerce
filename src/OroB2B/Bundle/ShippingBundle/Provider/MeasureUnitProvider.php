@@ -33,8 +33,8 @@ class MeasureUnitProvider
         ObjectRepository $repository,
         ConfigManager $configManager,
         UnitLabelFormatter $labelFormatter,
-        $configEntryName)
-    {
+        $configEntryName
+    ) {
         $this->repository = $repository;
         $this->configManager = $configManager;
         $this->labelFormatter = $labelFormatter;

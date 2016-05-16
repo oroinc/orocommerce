@@ -133,7 +133,7 @@ class ProductFormExtension extends AbstractTypeExtension
         foreach ($options as $option) {
             $option->setProduct($product);
         }
-
+        
         if (!$form->isValid()) {
             return;
         }
