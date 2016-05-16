@@ -5,9 +5,9 @@ namespace OroB2B\Bundle\MenuBundle\Migrations\Data\ORM;
 use Knp\Menu\MenuFactory;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -16,7 +16,10 @@ use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
 
 use OroB2B\Bundle\MenuBundle\Entity\Manager\MenuItemManager;
 
-class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterface, VersionedFixtureInterface
+class LoadMenuItemData extends AbstractFixture implements
+    ContainerAwareInterface,
+    VersionedFixtureInterface,
+    OrderedFixtureInterface
 {
     /**
      * @var MenuFactory
@@ -38,7 +41,15 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
      */
     public function getVersion()
     {
-        return '1.1';
+        return '1.0';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 10;
     }
 
     /**
@@ -56,14 +67,10 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
      */
     public function load(ObjectManager $manager)
     {
-        $lastVersion = $this->getLastVersion($manager);
-        if (!$lastVersion) {
-            $this->createTopNavMenu($manager);
-            $this->createQuickAccessMenu($manager);
-            $this->createMainMenu($manager);
-            $this->createFooterLinks($manager);
-        }
-        $this->addLoggedInCondition($manager);
+        $this->createTopNavMenu($manager);
+        $this->createQuickAccessMenu($manager);
+        $this->createMainMenu($manager);
+        $this->createFooterLinks($manager);
         $manager->flush();
     }
 
@@ -147,27 +154,5 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
 
         $menuItem = $this->menuItemManager->createFromItem($item);
         $manager->persist($menuItem);
-    }
-
-    /**
-     * @param ObjectManager $manager
-     */
-    protected function addLoggedInCondition(ObjectManager $manager)
-    {
-        /** @var MenuItem $information */
-        $information = $manager->getRepository('OroB2BMenuBundle:MenuItem')->findMenuItemByTitle('My Account');
-        $information->setCondition('is_logged_in()');
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @return string|boolean
-     */
-    protected function getLastVersion(ObjectManager $manager)
-    {
-        $fixture = $manager->getRepository('OroMigrationBundle:DataFixture')
-            ->findOneBy(['className' => 'OroB2B\Bundle\MenuBundle\Migrations\Data\ORM\LoadMenuItemData']);
-
-        return $fixture ? $fixture->getVersion() : false;
     }
 }
