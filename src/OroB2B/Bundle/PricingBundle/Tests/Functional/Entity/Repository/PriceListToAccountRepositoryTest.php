@@ -212,14 +212,14 @@ class PriceListToAccountRepositoryTest extends WebTestCase
      * @param $accounts
      * @param $expectsResult
      */
-    public function testGetRelationsByAccounts($accounts, $expectsResult)
+    public function testGetRelationsByHolders($accounts, $expectsResult)
     {
         $accountsObjects = [];
         foreach ($accounts as $accountName) {
             $accountsObjects[] = $this->getReference($accountName);
         }
-        $relations = $this->getRepository()->getRelationsByAccounts($accountsObjects);
-        $relations = array_map(function ($relation) {
+        $relations = $this->getRepository()->getRelationsByHolders($accountsObjects);
+        $relations = array_map(function (PriceListToAccount $relation) {
             return [
                 $relation->getAccount()->getName(),
                 $relation->getWebsite()->getName(),
@@ -229,6 +229,9 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $this->assertEquals($expectsResult, $relations);
     }
 
+    /**
+     * @return array
+     */
     public function dataProviderRelationsByAccount()
     {
         return [

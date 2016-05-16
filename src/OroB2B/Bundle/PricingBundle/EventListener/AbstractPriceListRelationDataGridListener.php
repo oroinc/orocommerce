@@ -60,28 +60,27 @@ abstract class AbstractPriceListRelationDataGridListener
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
-        $accountIds = [];
+        $priceListHoldersIds = [];
 
         foreach ($records as $record) {
-            $accountIds[] = $record->getValue('id');
+            $priceListHoldersIds[] = $record->getValue('id');
         }
 
-        if (!empty($accountIds)) {
-            $relations = $groupedPriceLists = [];
-
-            $this->getRelations($accountIds);
+        if (!empty($priceListHoldersIds)) {
+            $groupedPriceLists = [];
+            $relations = $this->getRelations($priceListHoldersIds);
             foreach ($relations as $relation) {
-                $groupedPriceLists[$relation->getAccount()->getId()][$relation->getWebsite()->getId()]['website']
+                $groupedPriceLists[$this->getObjectId($relation)][$relation->getWebsite()->getId()]['website']
                     = $relation->getWebsite();
-                $groupedPriceLists[$relation->getAccount()->getId()][$relation->getWebsite()->getId()]['priceLists'][]
+                $groupedPriceLists[$this->getObjectId($relation)][$relation->getWebsite()->getId()]['priceLists'][]
                     = $relation->getPriceList();
             }
 
             foreach ($records as $record) {
-                $accountId = $record->getValue('id');
+                $priceListHolderId = $record->getValue('id');
                 $priceLists = [];
-                if (array_key_exists($accountId, $groupedPriceLists)) {
-                    $priceLists = $groupedPriceLists[$accountId];
+                if (array_key_exists($priceListHolderId, $groupedPriceLists)) {
+                    $priceLists = $groupedPriceLists[$priceListHolderId];
                 }
                 $data = ['price_lists' => $priceLists];
                 $record->addData($data);
@@ -102,7 +101,7 @@ abstract class AbstractPriceListRelationDataGridListener
                 'options' => [
                     'field_type' => 'entity',
                     'field_options' => [
-                        'multiple' => true,
+                        'multiple' => false,
                         'class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList',
                         'property' => 'name'
                     ]
@@ -123,7 +122,7 @@ abstract class AbstractPriceListRelationDataGridListener
                 'type' => 'twig',
                 'template' => 'OroB2BPricingBundle:Datagrid:Column/priceLists.html.twig',
                 'frontend_type' => 'html',
-                'renderable' => false,
+                'renderable' => true,
             ]
         );
     }

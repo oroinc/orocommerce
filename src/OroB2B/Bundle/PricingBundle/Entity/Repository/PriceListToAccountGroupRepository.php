@@ -127,4 +127,25 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
             ->getQuery()
             ->execute();
     }
+
+    /**
+     * @param array AccountGroup[]|int[] $groupIds
+     * @return PriceListToAccountGroup[]
+     */
+    public function getRelationsByHolders(array $groupIds)
+    {
+        $qb = $this->createQueryBuilder('relation');
+        $qb->addSelect('website')
+            ->addSelect('priceList')
+            ->join('relation.website', 'website')
+            ->join('relation.priceList', 'priceList')
+            ->where($qb->expr()->in('relation.accountGroup', ':groups'))
+            ->orderBy('relation.accountGroup')
+            ->addOrderBy('relation.website')
+            ->addOrderBy('relation.priority')
+            ->setParameter('groups', $groupIds);
+
+
+        return $qb->getQuery()->getResult();
+    }
 }

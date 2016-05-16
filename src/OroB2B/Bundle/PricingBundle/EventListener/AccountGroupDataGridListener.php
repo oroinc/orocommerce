@@ -21,9 +21,9 @@ class AccountGroupDataGridListener extends AbstractPriceListRelationDataGridList
      */
     protected function getRelations(array $priceListHolderIds)
     {
-        return $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListToAccount')
-            ->getRepository('OroB2BPricingBundle:PriceListToAccount')
-            ->getRelationsByAccounts($priceListHolderIds);
+        return $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListToAccountGroup')
+            ->getRepository('OroB2BPricingBundle:PriceListToAccountGroup')
+            ->getRelationsByHolders($priceListHolderIds);
     }
 
     /**
