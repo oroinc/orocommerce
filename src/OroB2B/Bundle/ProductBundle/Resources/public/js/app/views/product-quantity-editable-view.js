@@ -106,32 +106,22 @@ define(function(require) {
                 waitors.push(tools.loadModuleAndReplace(options.validation, 'showErrorsHandler').then(
                     _.bind(function() {
                         validationOptions.showErrors = options.validation.showErrorsHandler;
-                        // Reinitialize validation
-                        this.validator = $form.validate();
-                        this.updateValidation(validationOptions);
+                        this.updateValidation($form, validationOptions);
                     }, this)
                 ));
                 this.deferredInit = $.when.apply($, waitors);
             } else {
-                // Reinitialize validation
-                this.validator = $form.validate();
-                this.updateValidation(validationOptions);
+                this.updateValidation($form, validationOptions);
             }
         },
 
-        updateValidation: function(rules) {
-            var settings = this.validator.settings;
+        updateValidation: function($form, options) {
+            this.validator = $form.validate();
 
-            if (!_.isObject(settings) && !_.isObject(rules)) {
-                return;
+            if (_.isObject(options)) {
+                var settings = this.validator.settings;
+                settings = $.extend(true, settings, options);
             }
-            _.each(rules, function(item, index) {
-                if (_.isFunction(item)) {
-                    settings[index] = item;
-                } else if (_.isObject(item)) {
-                    settings[index] = $.extend(true, {}, settings[index], item);
-                }
-            });
         },
 
         initListeners: function() {
