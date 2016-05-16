@@ -2,6 +2,7 @@ services:
     # Quote form types
     orob2b_sale.form.type.quote:
         class: 'OroB2B\Bundle\SaleBundle\Form\Type\QuoteType'
+        public: true
         arguments:
             - "@orob2b_sale.provider.quote_address_security"
         calls:
@@ -11,6 +12,7 @@ services:
 
     orob2b_sale.form.type.quote_product:
         class: 'OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType'
+        public: true
         arguments:
             - "@translator"
             - "@orob2b_product.formatter.product_unit_label"
@@ -24,6 +26,7 @@ services:
 
     orob2b_sale.form.type.quote_product_offer:
         class: 'OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType'
+        public: true
         arguments:
             - "@orob2b_sale.formatter.quote_product_offer"
         calls:
@@ -33,6 +36,7 @@ services:
 
     orob2b_sale.form.type.quote_product_request:
         class: 'OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestType'
+        public: true
         calls:
             - [setDataClass, ['%orob2b_sale.entity.quote_product_request.class%']]
         tags:
@@ -40,21 +44,25 @@ services:
 
     orob2b_sale.form.type.quote_product_collection:
         class: 'OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_collection }
 
     orob2b_sale.form.type.quote_product_offer_collection:
         class: 'OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_offer_collection }
 
     orob2b_sale.form.type.quote_product_request_collection:
         class: 'OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_request_collection }
 
     orob2b_sale.form.type.extension.quote_data_storage:
         class: 'OroB2B\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension'
+        public: true
         parent: orob2b_product.form.type.extension.product_data_storage.abstract
         calls:
             - [setDataClass, ['%orob2b_sale.entity.quote.class%']]
@@ -64,6 +72,7 @@ services:
 
     orob2b_sale.form.type.quote_address:
         class: 'OroB2B\Bundle\SaleBundle\Form\Type\QuoteAddressType'
+        public: true
         arguments:
             - "@oro_locale.formatter.address"
             - "@orob2b_sale.manager.quote_address"
@@ -76,21 +85,27 @@ services:
 
     orob2b_sale.form.type.quote_demand:
         class: 'OroB2B\Bundle\SaleBundle\Form\Type\QuoteDemandType'
+        public: true
+        arguments:
+            - "@orob2b_sale.manager.quote_demand_manager"
         tags:
             - { name: form.type, alias: orob2b_sale_quote_demand }
 
     orob2b_sale.form.type.quote_product_demand:
         class: 'OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductDemandType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_demand }
 
     orob2b_sale.form.type.quote_product_demand_collection:
         class: 'OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductDemandCollectionType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_demand_collection }
 
     orob2b_sale.form.type.quote_product_demand_offer_choice:
         class: 'OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductDemandOfferChoiceType'
+        public: true
         arguments:
             - '@orob2b_product.formatter.product_unit_value'
             - '@translator'

@@ -39,3 +39,6 @@ operations:
                         - '@equal': ['$.result[successful]', false]
                 message: '$.result[message]'
                 type: 'error'
+    DELETE:
+        exclude_datagrids:
+            - order-line-items-grid

@@ -6,11 +6,13 @@ use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
@@ -20,6 +22,8 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemNotPri
 
 class LineItemNotPricedSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var LineItemNotPricedSubtotalProvider
      */
@@ -114,6 +118,14 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $entity->addLineItem($lineItem);
 
         $entity->setCurrency($currency);
+
+        /** @var BasePriceList $priceList */
+        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 1]);
+
+        $this->priceListTreeHandler->expects($this->exactly($entity->getLineItems()->count()))
+            ->method('getPriceList')
+            ->with($entity->getAccount(), $entity->getWebsite())
+            ->willReturn($priceList);
 
         $subtotal = $this->provider->getSubtotal($entity);
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);

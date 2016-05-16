@@ -1,7 +1,0 @@
-orob2b_cms_page_api:
-    resource: "@OroB2BCMSBundle/Controller/Api/Rest/PageController.php"
-    type:     rest
-
-orob2b_cms_login_page_api:
-    resource: "@OroB2BCMSBundle/Controller/Api/Rest/LoginPageController.php"
-    type:     rest

@@ -51,12 +51,6 @@ datagrid:
             view_link:
                 type:   url
                 params: [ id ]
-            update_link:
-                type:   url
-                params: [ id ]
-            delete_link:
-                type:   url
-                params: [ id ]
         actions:
             view:
                 type:          navigate
@@ -64,16 +58,6 @@ datagrid:
                 link:          view_link
                 icon:          eye-open
                 rowAction:     true
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
 
     tax-product-tax-codes-grid:
         acl_resource: orob2b_tax_product_tax_code_view
@@ -92,17 +76,9 @@ datagrid:
         properties:
             view_link:
                 route: orob2b_tax_product_tax_code_view
-            update_link:
-                route:  orob2b_tax_product_tax_code_update
-            delete_link:
-                route:  orob2b_api_tax_delete_producttaxcode
         actions:
             view:
                 acl_resource:  orob2b_tax_product_tax_code_view
-            update:
-                acl_resource:  orob2b_tax_product_tax_code_update
-            delete:
-                acl_resource:  orob2b_tax_product_tax_code_delete
 
     tax-account-tax-codes-grid:
         acl_resource: orob2b_tax_account_tax_code_view
@@ -121,17 +97,9 @@ datagrid:
         properties:
             view_link:
                 route: orob2b_tax_account_tax_code_view
-            update_link:
-                route:  orob2b_tax_account_tax_code_update
-            delete_link:
-                route:  orob2b_api_tax_delete_accounttaxcode
         actions:
             view:
                 acl_resource:  orob2b_tax_account_tax_code_view
-            update:
-                acl_resource:  orob2b_tax_account_tax_code_update
-            delete:
-                acl_resource:  orob2b_tax_account_tax_code_delete
 
     products-tax-code-select-grid:
         extends: tax-product-tax-codes-grid
@@ -210,14 +178,6 @@ datagrid:
                 type:  url
                 route: orob2b_tax_view
                 params: [ id ]
-            update_link:
-                type:   url
-                route:  orob2b_tax_update
-                params: [ id ]
-            delete_link:
-                type:   url
-                route:  orob2b_api_tax_delete_tax
-                params: [ id ]
         actions:
             view:
                 type:          navigate
@@ -226,18 +186,6 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_tax_view
                 rowAction:     true
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_tax_update
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_tax_delete
 
     tax-taxes-select-grid:
         extends: tax-taxes-grid
@@ -332,14 +280,6 @@ datagrid:
                 type:  url
                 route: orob2b_tax_rule_view
                 params: [ id ]
-            update_link:
-                type:   url
-                route:  orob2b_tax_rule_update
-                params: [ id ]
-            delete_link:
-                type:   url
-                route:  orob2b_api_tax_delete_taxrule
-                params: [ id ]
         actions:
             view:
                 type:          navigate
@@ -348,18 +288,6 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_tax_rule_view
                 rowAction:     true
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_tax_rule_update
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_tax_rule_delete
 
     tax-jurisdiction-grid:
         acl_resource: orob2b_tax_jurisdiction_view
@@ -417,14 +345,6 @@ datagrid:
                 type:   url
                 route: orob2b_tax_jurisdiction_view
                 params: [ id ]
-            update_link:
-                type:   url
-                route: orob2b_tax_jurisdiction_update
-                params: [ id ]
-            delete_link:
-                type:   url
-                route: orob2b_api_tax_delete_taxjurisdiction
-                params: [ id ]
         actions:
             view:
                 type:          navigate
@@ -433,18 +353,6 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_tax_jurisdiction_view
                 rowAction:     true
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_tax_jurisdiction_update
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_tax_jurisdiction_delete
 
     tax-jurisdiction-select-grid:
         extends: tax-jurisdiction-grid

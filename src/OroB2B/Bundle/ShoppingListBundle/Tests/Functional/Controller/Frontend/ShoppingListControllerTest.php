@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -35,14 +35,13 @@ class ShoppingListControllerTest extends WebTestCase
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
     }
 
     public function testView()
     {
-        /** @var ShoppingList $selectedShoppingList */
-        $selectedShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         /** @var ShoppingList $currentShoppingList */
         $currentShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
 
@@ -56,17 +55,53 @@ class ShoppingListControllerTest extends WebTestCase
         // operations only for ShoppingList with LineItems
         $this->assertNotContains('Request Quote', $crawler->html());
         $this->assertNotContains('Create Order', $crawler->html());
+    }
 
+    /**
+     * @dataProvider testViewSelectedShoppingListDataProvider
+     * @param string $shoppingList
+     * @param string $expectedLineItemPrice
+     */
+    public function testViewSelectedShoppingListWithLineItemPrice($shoppingList, $expectedLineItemPrice)
+    {
         // assert selected shopping list
+        /** @var ShoppingList $shoppingList1 */
+        $shoppingList1 = $this->getReference($shoppingList);
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shopping_list_frontend_view', ['id' => $selectedShoppingList->getId()])
+            $this->getUrl('orob2b_shopping_list_frontend_view', ['id' => $shoppingList1->getId()])
         );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains($selectedShoppingList->getLabel(), $crawler->html());
+        $this->assertContains($shoppingList1->getLabel(), $crawler->html());
         // operations only for ShoppingList with LineItems
         $this->assertContains('Request Quote', $crawler->html());
         $this->assertContains('Create Order', $crawler->html());
+        $this->assertLineItemPriceEquals($expectedLineItemPrice, $crawler);
+    }
+
+    /**
+     * @return array
+     */
+    public function testViewSelectedShoppingListDataProvider()
+    {
+        return [
+            'price defined' => [
+                'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
+                'expectedLineItemPrice' => '$13.10'
+            ],
+            'no price for selected quantity' => [
+                'shoppingList' => LoadShoppingLists::SHOPPING_LIST_3,
+                'expectedLineItemPrice' => 'N/A'
+            ],
+            'zero price' => [
+                'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
+                'expectedLineItemPrice' => '$0.00'
+            ],
+            'no price for selected unit' => [
+                'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
+                'expectedLineItemPrice' => 'N/A'
+            ],
+        ];
     }
 
     public function testQuickAdd()
@@ -148,5 +183,15 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->assertEquals($sku, $item->getProductSku());
         $this->assertEquals($quantity, $item->getQuantity());
+    }
+
+    /**
+     * @param $expected
+     * @param Crawler $crawler
+     */
+    protected function assertLineItemPriceEquals($expected, Crawler $crawler)
+    {
+        $actual = trim($crawler->filter('[data-name="price-value"]')->text());
+        $this->assertEquals($expected, $actual);
     }
 }

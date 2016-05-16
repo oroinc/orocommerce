@@ -29,6 +29,7 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * @Config(
  *      routeName="orob2b_product_index",
  *      routeView="orob2b_product_view",
+ *      routeUpdate="orob2b_product_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
@@ -56,9 +57,10 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * @ORM\HasLifecycleCallbacks()
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class Product extends ExtendProduct implements OrganizationAwareInterface
+class Product extends ExtendProduct implements OrganizationAwareInterface, \JsonSerializable
 {
     const STATUS_DISABLED = 'disabled';
     const STATUS_ENABLED = 'enabled';
@@ -383,7 +385,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     {
         try {
             if ($this->getDefaultName()) {
-                return (string)$this->getDefaultName()->__toString();
+                return (string)$this->getDefaultName();
             } else {
                 return (string)$this->sku;
             }
@@ -867,5 +869,16 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
             $this->variantLinks = new ArrayCollection();
             $this->variantFields = [];
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'product_units' => $this->getAvailableUnitCodes(),
+        ];
     }
 }

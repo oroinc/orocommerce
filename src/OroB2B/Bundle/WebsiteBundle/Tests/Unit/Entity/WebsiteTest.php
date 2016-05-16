@@ -2,15 +2,16 @@
 
 namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Component\Testing\Unit\EntityTestCase;
 
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class WebsiteTest extends EntityTestCase
+class WebsiteTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
 
     public function testProperties()
     {
@@ -19,7 +20,7 @@ class WebsiteTest extends EntityTestCase
             ['id', 1],
             ['name', 'test'],
             ['url', 'www.test.com'],
-            ['owner', new User()],
+            ['owner', new BusinessUnit()],
             ['organization', new Organization()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],

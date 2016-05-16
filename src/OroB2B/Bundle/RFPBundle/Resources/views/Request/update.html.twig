@@ -16,6 +16,8 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
+    {{ parent() }}
+
     {{ UI.cancelButton(path('orob2b_rfp_request_index')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_rfp_frontend_request_create') %}

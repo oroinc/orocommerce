@@ -22,6 +22,67 @@ class ProductUnitRepository extends EntityRepository
     }
 
     /**
+     * @param Product[] $products
+     * @return array
+     */
+    public function getProductsUnits(array $products)
+    {
+        if (count($products) === 0) {
+            return [];
+        }
+
+        $productsUnits = $this->getProductsUnitsQueryBuilder($products)
+            ->select('IDENTITY(productUnitPrecision.product) AS productId, unit.code AS code')
+            ->getQuery()->getArrayResult();
+
+        $result = [];
+        foreach ($productsUnits as $unit) {
+            $result[$unit['productId']][] = $unit['code'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $products
+     * @return QueryBuilder
+     */
+    protected function getProductsUnitsQueryBuilder(array $products)
+    {
+        $qb = $this->createQueryBuilder('unit');
+        $qb->join(
+            'OroB2BProductBundle:ProductUnitPrecision',
+            'productUnitPrecision',
+            Join::WITH,
+            $qb->expr()->eq('productUnitPrecision.unit', 'unit')
+        )
+            ->addOrderBy('unit.code')
+            ->where($qb->expr()->in('productUnitPrecision.product', ':products'))
+            ->setParameter('products', $products);
+        return $qb;
+    }
+
+    /**
+     * @param array $products
+     * @param array $codes
+     * @return array
+     */
+    public function getProductsUnitsByCodes(array $products, array $codes)
+    {
+        if (count($products) === 0 || count($codes) === 0) {
+            return [];
+        }
+        $qb = $this->getProductsUnitsQueryBuilder($products);
+        $qb->andWhere($qb->expr()->in('unit', ':units'))
+            ->setParameter('units', $codes);
+
+        return array_reduce($qb->getQuery()->execute(), function ($result, ProductUnit $unit) {
+            $result[$unit->getCode()] = $unit;
+            return $result;
+        }, []);
+    }
+
+    /**
      * @return ProductUnit[]
      */
     public function getAllUnits()

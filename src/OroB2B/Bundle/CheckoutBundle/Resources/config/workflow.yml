@@ -122,6 +122,7 @@ workflows:
                             options:
                                 label: Save address
                         ship_to_billing_address:
+                            form_type: orob2b_ship_to_billing_address
                             options:
                                 label: Ship to this address
 
@@ -151,6 +152,7 @@ workflows:
                             options:
                                 label: Save address
                         ship_to_billing_address:
+                            form_type: orob2b_ship_to_billing_address
                             options:
                                 label: Use billing address
 
@@ -445,7 +447,14 @@ workflows:
                                 transactionOptions:
                                     successUrl: $.result.successUrl
                                     errorUrl: $.result.errorUrl
+                            - '@send_email_template':
+                                parameters:
+                                    from: $checkout.order.owner.email
+                                    to: $checkout.order.accountUser.email
+                                    template: 'order_confirmation_email'
+                                    entity: $checkout.order
                             - '@assign_value': [$payment_in_progress, true]
+
 
             finish_checkout_definition:
                 conditions:

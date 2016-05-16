@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\ImportExport;
 
 use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
 
-use OroB2B\Bundle\FrontendBundle\Test\Client;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
@@ -27,11 +26,6 @@ class ImportExportTest extends WebTestCase
      * @var PriceList
      */
     protected $priceList;
-
-    /**
-     * @var Client
-     */
-    protected $client;
 
     protected function setUp()
     {
@@ -70,9 +64,11 @@ class ImportExportTest extends WebTestCase
 
     /**
      * @param string $strategy
+     * @param int $expectedAdd
+     * @param int $expectedUpdate
      * @dataProvider strategyDataProvider
      */
-    public function testImportExport($strategy)
+    public function testImportExport($strategy, $expectedAdd, $expectedUpdate)
     {
         $this->doExport();
         $this->file = $this->getExportFile();
@@ -80,7 +76,7 @@ class ImportExportTest extends WebTestCase
         $this->validateImportFile($strategy);
         $crawler = $this->client->getCrawler();
         $this->assertEquals(0, $crawler->filter('.import-errors')->count());
-        $this->doImport($strategy);
+        $this->doImport($strategy, $expectedAdd, $expectedUpdate);
     }
 
     /**
@@ -132,7 +128,7 @@ class ImportExportTest extends WebTestCase
         $this->assertErrors(
             $strategy,
             '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/unavailable_product_unit.csv',
-            'Error in row #1. Unit Code: Product unit is not exist.'
+            'Error in row #1. Unit Code: Product unit does not exist.'
         );
     }
 
@@ -145,7 +141,7 @@ class ImportExportTest extends WebTestCase
         $this->assertErrors(
             $strategy,
             '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/unavailable_product.csv',
-            'Error in row #1. Product SKU: Product is not exist.'
+            'Error in row #1. Product SKU: Product does not exist.'
         );
     }
 
@@ -168,8 +164,8 @@ class ImportExportTest extends WebTestCase
     public function strategyDataProvider()
     {
         return [
-            'add or replace' => ['orob2b_pricing_product_price.add_or_replace'],
-            'reset' => ['orob2b_pricing_product_price.reset']
+            'add or replace' => ['orob2b_pricing_product_price.add_or_replace', 0, 8],
+            'reset' => ['orob2b_pricing_product_price.reset', 8, 0]
         ];
     }
 
@@ -239,8 +235,10 @@ class ImportExportTest extends WebTestCase
 
     /**
      * @param string $strategy
+     * @param int $expectedAdd
+     * @param int $expectedUpdate
      */
-    protected function doImport($strategy)
+    protected function doImport($strategy, $expectedAdd, $expectedUpdate)
     {
         // test import
         $this->client->followRedirects(false);
@@ -264,7 +262,9 @@ class ImportExportTest extends WebTestCase
             [
                 'success'   => true,
                 'message'   => 'File was successfully imported.',
-                'errorsUrl' => null
+                'errorsUrl' => null,
+                'importInfo'
+                    => sprintf('%s entities were added, %s entities were updated', $expectedAdd, $expectedUpdate),
             ],
             $data
         );
@@ -301,7 +301,7 @@ class ImportExportTest extends WebTestCase
             $data['url'],
             [],
             [],
-            $this->client->generateNoHashNavigationHeader()
+            $this->generateNoHashNavigationHeader()
         );
 
         $result = $this->client->getResponse();

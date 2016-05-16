@@ -1,12 +1,3 @@
-.add_to_shopping_list_form_product_view {
-  .add_to_shopping_list_form_fields__form__row {
-    padding-bottom: 1.3rem;
-    label {
-      padding-bottom: 0.4rem;
-    }
-  }
-}
-
 .product-item__qty {
   //Override current grid
   &.product-item__qty_no-image-view {
@@ -55,10 +46,10 @@
       }
     }
 
-    .add_to_shopping_list_form_fields__form__row {
+    .line_item_form_fields__form__row {
       width: 60%;
 
-      + .add_to_shopping_list_form_fields__form__row {
+      + .line_item_form_fields__form__row {
         width: calc(~'40% - 1rem');
         margin-right: 1rem;
         max-width: 5rem;
@@ -66,11 +57,11 @@
     }
   }
 
-  .add_to_shopping_list_form_fields__form__row {
+  .line_item_form_fields__form__row {
     float: right;
     width: calc(~'50% - .5rem');
 
-    + .add_to_shopping_list_form_fields__form__row {
+    + .line_item_form_fields__form__row {
       margin-right: 1rem;
     }
 
@@ -78,7 +69,7 @@
       display: none;
     }
 
-    .add_to_shopping_list_form_fields__form__input {
+    .line_item_form_fields__form__input {
       margin: 0 !important;
     }
   }

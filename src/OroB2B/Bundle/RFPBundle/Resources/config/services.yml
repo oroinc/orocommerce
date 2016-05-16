@@ -7,6 +7,7 @@ parameters:
 services:
     orob2b_rfp.datagrid.action_permission_provider:
         class: 'OroB2B\Bundle\RFPBundle\Datagrid\ActionPermissionProvider'
+        public: true
         arguments:
             - "@oro_config.manager"
 
@@ -21,6 +22,7 @@ services:
 
     orob2b_rfp.processor.quick_add:
         parent: orob2b_product.component_processor.data_storage_aware.processor
+        public: true
         calls:
             - [setName, ['orob2b_rfp_quick_add_processor']]
             - [setRedirectRouteName, ['orob2b_rfp_frontend_request_create']]
@@ -32,6 +34,7 @@ services:
     orob2b_rfp.event_listener.product_select_db_query:
         class: '%orob2b_product.event_listener.scoped_product_select_db_query.common_class%'
         parent: orob2b_product.event_listener.abstract_product_select_db_query
+        public: true
         calls:
             - [setScope, ['rfp']]
             - [setFrontendSystemConfigurationPath, ['oro_b2b_rfp.frontend_product_visibility']]
@@ -47,6 +50,7 @@ services:
     orob2b_rfp.storage.offers_data_storage:
         class: 'OroB2B\Bundle\RFPBundle\Storage\OffersDataStorage'
         parent: orob2b_product.storage.session_data_storage
+        public: true
 
     orob2b_rfp.storage.offers_form_storage:
         class: 'OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage'
@@ -137,7 +141,15 @@ services:
 
     orob2b_rfp.layout.data_provider.request_form:
         class: 'OroB2B\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider'
+        public: true
         arguments:
             - '@form.factory'
         tags:
             - { name: layout.data_provider, alias: orob2b_rfp_request_form }
+
+    orob2b_rfp.request.manager:
+        class: 'OroB2B\Bundle\RFPBundle\Model\RequestManager'
+        public: true
+        arguments:
+            - '@oro_security.security_facade'
+            - '@oro_entity.doctrine_helper'

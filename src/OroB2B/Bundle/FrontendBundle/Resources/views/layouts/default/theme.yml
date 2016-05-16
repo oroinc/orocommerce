@@ -1,6 +1,6 @@
 parent: base
 label: Default theme
-description: Default theme. Based on layouts.
+description: Default theme.
 groups: [ commerce ]
 icon: bundles/orob2bfrontend/default/images/favicon.ico
 data:

@@ -177,7 +177,6 @@ class AccountGroupChangesListenerTest extends WebTestCase
             $website = $this->getReference($expected['websiteReference']);
             $exist = false;
             foreach ($actual as $actualChanges) {
-                $this->assertNull($actualChanges->getAccountGroup());
                 if ($actualChanges->getAccount() && $actualChanges->getAccount()->getId() === $account->getId()
                     && $actualChanges->getWebsite()->getId() === $website->getId()
                 ) {

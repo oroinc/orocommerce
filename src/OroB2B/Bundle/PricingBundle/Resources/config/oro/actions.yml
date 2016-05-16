@@ -50,6 +50,108 @@ operations:
             - '@flash_message':
                 message: orob2b.pricing.productprice.save.success
                 type: 'success'
+    UPDATE:
+        exclude_datagrids:
+            - price-list-accounts-grid
+            - price-list-account-groups-grid
+            - price-list-websites-grid
+            - pricing-price-list-select-grid
+    DELETE:
+        exclude_datagrids:
+            - price-list-accounts-grid
+            - price-list-account-groups-grid
+            - price-list-websites-grid
+            - pricing-price-list-select-grid
+            - product-prices-grid
+
+    orob2b_pricing_price_list_set_active:
+        label: orob2b.pricing.pricelist.status.enable
+        routes: [orob2b_pricing_price_list_view]
+        datagrids:
+            - pricing-price-list-grid
+        order: 10
+        button_options:
+            icon: icon-ok
+        preconditions:
+            '@equal': [$active, false]
+        actions:
+            - '@assign_value': [$.entity.active, true]
+            - '@flush_entity': $.entity
+            - '@refresh_grid':
+                conditions:
+                    '@not_empty': $.gridName
+                parameters: [$.gridName]
+            - '@flash_message':
+                message: orob2b.pricing.pricelist.status.message.enabled
+                type: 'success'
+            - '@call_service_method':
+                service: orob2b_pricing.price_list_change_trigger_handler
+                method: handlePriceListStatusChange
+                method_parameters: [$.entity]
+
+    orob2b_pricing_price_list_disable:
+        label: orob2b.pricing.pricelist.status.disable
+        routes: [orob2b_pricing_price_list_view]
+        datagrids:
+            - pricing-price-list-grid
+        order: 10
+        button_options:
+            icon: icon-remove
+        preconditions:
+            '@equal': [$active, true]
+        actions:
+            - '@assign_value': [$.entity.active, false]
+            - '@flush_entity': $.entity
+            - '@refresh_grid':
+                conditions:
+                    '@not_empty': $.gridName
+                parameters: [$.gridName]
+            - '@flash_message':
+                message: orob2b.pricing.pricelist.status.message.disabled
+                type: 'success'
+            - '@call_service_method':
+                service: orob2b_pricing.price_list_change_trigger_handler
+                method: handlePriceListStatusChange
+                method_parameters: [$.entity]
+
+    orob2b_pricing_price_list_duplicate:
+        label: orob2b.pricing.pricelist.duplicate.label
+        routes: [orob2b_pricing_price_list_view]
+        order: 10
+        button_options:
+            icon: icon-copy
+        actions:
+            - '@format_string':
+                attribute: $.newName
+                string: 'Copy of %%priceListName%%'
+                arguments:
+                    priceListName: $.entity.name
+            - '@duplicate':
+                attribute: $.newPriceList
+                settings:
+                  - [[setNull], [propertyName, [id]]]
+                  - [[emptyCollection], [propertyName, [prices]]]
+                  - [[emptyCollection], [propertyName, [schedules]]]
+                  - [[collection], [propertyName, [currencies]]]
+            - '@assign_value': [$.newPriceList.name, $.newName]
+            - '@assign_value': [$.newPriceList.active, false]
+            - '@assign_value': [$.newPriceList.default, false]
+            - '@call_service_method':
+                service: orob2b_pricing.duplicator.schedule
+                method: duplicateSchedule
+                method_parameters: [$.entity,$.newPriceList]
+            - '@flush_entity': $.newPriceList
+            - '@call_service_method':
+                service: orob2b_pricing.duplicator.product_price_duplicator
+                method: duplicate
+                method_parameters: [$.entity, $.newPriceList]
+            - '@flash_message':
+                message: orob2b.pricing.pricelist.duplicate.message
+                type: 'success'
+            - '@redirect':
+                route: 'orob2b_pricing_price_list_view'
+                route_parameters:
+                    id: $.newPriceList.id
 
 action_groups:
     orob2b_pricing_add_product_price:

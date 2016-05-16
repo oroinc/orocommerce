@@ -12,7 +12,6 @@ use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\FrontendBundle\Test\Client;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -27,11 +26,6 @@ class ImportExportTest extends WebTestCase
      * @var string
      */
     protected $file;
-
-    /**
-     * @var Client
-     */
-    protected $client;
 
     protected function setUp()
     {
@@ -160,7 +154,7 @@ class ImportExportTest extends WebTestCase
             $data['url'],
             [],
             [],
-            $this->client->generateNoHashNavigationHeader()
+            $this->generateNoHashNavigationHeader()
         );
 
         $result = $this->client->getResponse();
@@ -189,9 +183,10 @@ class ImportExportTest extends WebTestCase
 
         $this->assertEquals(
             [
-                'success' => true,
-                'message' => 'File was successfully imported.',
-                'errorsUrl' => null,
+                'success'    => true,
+                'message'    => 'File was successfully imported.',
+                'errorsUrl'  => null,
+                'importInfo' => '1 entities were added, 0 entities were updated',
             ],
             $data
         );

@@ -1,9 +1,8 @@
 {% block _product_prices_widget %}
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ "product__qnty"
+        class: attr.class|default('') ~ "product__qnty"
     }) %}
     <div {{ block('block_attributes') }}>
-        {% set shownUnit = '' %}
 
         <table class="table">
             <thead>
@@ -13,17 +12,17 @@
             </tr>
             </thead>
             <tbody>
-            {% for key, price in prices %}
+            {% set shownUnit = '' %}
+            {% for price in prices %}
                 {% if shownUnit != price.unit.code %}
                     {% set shownUnit = price.unit.code %}
                     <tr>
                         <td colspan="2" class="text-center">
-                            {% if key != 0 %}<br/>{% endif %}
+                            {% if loop.index > 1 %}<br/>{% endif %}
                             <strong>{{ shownUnit|orob2b_format_product_unit_label|capitalize }}</strong>
                         </td>
                     </tr>
                 {% endif %}
-
                 <tr>
                     <td class="text-center">
                         {{ price.quantity }}
@@ -33,6 +32,7 @@
                     </td>
                 </tr>
             {% endfor %}
+            {{ block_widget(block) }}
             </tbody>
         </table>
     </div>

@@ -21,6 +21,9 @@ layout:
                     blockType: container
                 product_container:
                     blockType: container
+                    options:
+                        vars:
+                            product: {'@value': $data.product}
                 product_title_mobile:
                     blockType: text
                     options:
@@ -67,6 +70,23 @@ layout:
                     blockType: block
                 product_tabs:
                     blockType: block
+                line_item_form:
+                    blockType: container
+                line_item_form_start:
+                    blockType: form_start
+                    options:
+                        form: { '@value': $data.orob2b_product_line_item_form }
+                line_item_form_fields:
+                    blockType: form
+                    options:
+                        preferred_fields: [quantity]
+                        form: { '@value': $data.orob2b_product_line_item_form }
+                line_item_form_end:
+                    blockType: form_end
+                    options:
+                        form: { '@value': $data.orob2b_product_line_item_form }
+                line_item_buttons:
+                    blockType: container
             tree:
                 content:
                     product_view_page:
@@ -80,6 +100,11 @@ layout:
                                     product_specification:
                                         product_specification_sku: ~
                                         #product_specification_mfg: ~
+                                    line_item_form:
+                                        line_item_form_start: ~
+                                        line_item_form_fields: ~
+                                        line_item_buttons: ~
+                                        line_item_form_end: ~
                                     #product_variants: ~
                                     #order_with_matrix: ~
                                 product_description_content:

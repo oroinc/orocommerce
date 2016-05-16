@@ -130,7 +130,15 @@ class PriceMatcherTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $this->provider->expects($this->once())->method('getMatchingPrices')->willReturn($matchedPrices);
+        /** @var BasePriceList $priceList */
+        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 1]);
+        $this->priceListTreeHandler->expects($this->once())
+            ->method('getPriceList')
+            ->willReturn($priceList);
+
+        $this->provider->expects($this->once())
+            ->method('getMatchingPrices')
+            ->willReturn($matchedPrices);
 
         $this->matcher->addMatchingPrices($order);
 

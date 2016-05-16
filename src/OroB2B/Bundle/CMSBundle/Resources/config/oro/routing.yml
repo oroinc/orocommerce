@@ -15,15 +15,6 @@ orob2b_cms_ajax:
     type:         annotation
     prefix:       /cms/ajax
 
-orob2b_cms_bundle_api:
-    resource:     "@OroB2BCMSBundle/Resources/config/oro/routing_api.yml"
-    prefix:       api/rest/{version}/
-    requirements:
-        version:  latest|v1
-        _format:  json
-    defaults:
-        version:  latest
-
 orob2b_cms_login_page:
     resource:     "@OroB2BCMSBundle/Controller/LoginPageController.php"
     type:         annotation

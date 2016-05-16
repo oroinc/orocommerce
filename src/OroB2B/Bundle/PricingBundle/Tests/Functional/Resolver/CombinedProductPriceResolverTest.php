@@ -121,6 +121,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
         /** @var CombinedPriceList $combinedPriceList */
         $combinedPriceList = $this->getReference($combinedPriceList);
         $this->resolver->combinePrices($combinedPriceList);
+        $this->assertTrue($combinedPriceList->isPricesCalculated());
         $this->assertNotEmpty($this->getCombinedPrices($combinedPriceList));
 
         /** @var Product $product */
@@ -139,7 +140,9 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $this->getEntityManager()->persist($productPrice);
         $this->getEntityManager()->flush($productPrice);
 
+        $combinedPriceList->setPricesCalculated(false);
         $this->resolver->combinePrices($combinedPriceList, $product);
+        $this->assertFalse($combinedPriceList->isPricesCalculated());
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
 
         $this->getEntityManager()->remove($productPrice);

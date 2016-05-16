@@ -29,7 +29,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     {
         $this->initClient();
 
-        if (!$this->getContainer()->hasParameter('orob2b_product.entity.product.class')) {
+        $container = $this->getContainer();
+
+        if (!$container->hasParameter('orob2b_product.entity.product.class')) {
             $this->markTestSkipped('ProductBundle is missing');
         }
 
@@ -37,7 +39,19 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             ['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']
         );
 
-        $this->getContainer()->get('oro_importexport.field.database_helper')->onClear();
+        $container->get('oro_importexport.field.database_helper')->onClear();
+
+        $this->strategy = new LocalizedFallbackValueAwareStrategy(
+            $container->get('event_dispatcher'),
+            $container->get('oro_importexport.strategy.import.helper'),
+            $container->get('oro_importexport.field.field_helper'),
+            $container->get('oro_importexport.field.database_helper'),
+            $container->get('oro_entity.entity_class_name_provider'),
+            $container->get('translator')
+        );
+        $this->strategy->setLocalizedFallbackValueClass(
+            $container->getParameter('orob2b_fallback.entity.localized_fallback_value.class')
+        );
     }
 
     /**
@@ -51,12 +65,10 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     {
         $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
 
-        /** @var LocalizedFallbackValueAwareStrategy $strategy */
-        $strategy = $this->getContainer()->get('orob2b_fallback.importexport.strategy.localized_fallback_value_aware');
         $context = new Context([]);
         $context->setValue('itemData', $itemData);
-        $strategy->setImportExportContext($context);
-        $strategy->setEntityName($productClass);
+        $this->strategy->setImportExportContext($context);
+        $this->strategy->setEntityName($productClass);
 
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
         /** @var AbstractEnumValue $inventoryStatus */
@@ -68,7 +80,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $entity->setInventoryStatus($inventoryStatus);
 
         /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $result */
-        $result = $strategy->process($entity);
+        $result = $this->strategy->process($entity);
 
         foreach ($result->getNames() as $localizedFallbackValue) {
             $localeCode = LocaleCodeFormatter::formatName($localizedFallbackValue->getLocale());
@@ -104,6 +116,18 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             [
                 [
                     'sku' => 'product.1',
+                    'unitPrecisions' => [
+                        $this->getEntity(
+                            'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                            [
+                                'unit' => $this->getEntity(
+                                    'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                                    ['code' => 'kg']
+                                ),
+                                'precision' => 3,
+                            ]
+                        )
+                    ],
                     'names' => new ArrayCollection(
                         [
                             $this->getEntity(
@@ -147,6 +171,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                 ],
                 [
                     'sku' => 'product.1',
+                    'unitPrecisions' => [],
                     'names' => [
                         'en_US' => [
                             'string' => 'product.1 en_US Title',
@@ -170,10 +195,8 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     {
         $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
 
-        /** @var LocalizedFallbackValueAwareStrategy $strategy */
-        $strategy = $this->getContainer()->get('orob2b_fallback.importexport.strategy.localized_fallback_value_aware');
-        $strategy->setImportExportContext(new Context([]));
-        $strategy->setEntityName($productClass);
+        $this->strategy->setImportExportContext(new Context([]));
+        $this->strategy->setEntityName($productClass);
 
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
         /** @var AbstractEnumValue $inventoryStatus */
@@ -187,7 +210,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             $this->getContainer()->get('doctrine')->getRepository('OroOrganizationBundle:BusinessUnit')->findOneBy([])
         );
 
-        $resultCallback($strategy->process($entity));
+        $resultCallback($this->strategy->process($entity));
     }
 
     /**
@@ -201,6 +224,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             'new product, no fallback from another entity' => [
                 [
                     'sku' => 'new_sku',
+                    'unitPrecisions' => [
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision')
+                    ],
                 ],
                 function ($product) {
                     $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
@@ -213,6 +239,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             'existing product with, id not mapped for new fallback' => [
                 [
                     'sku' => 'product.4',
+                    'unitPrecisions' => [
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision')
+                    ],
                     'names' => new ArrayCollection(
                         [
                             $this->getEntity(
