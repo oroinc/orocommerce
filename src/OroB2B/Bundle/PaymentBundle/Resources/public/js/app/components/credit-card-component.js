@@ -80,6 +80,8 @@ define(function(require) {
             mediator.on('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
             mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
             mediator.on('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
+
+            this.setPaymentValidateRequired(this.paymentValidationRequiredComponentState);
         },
 
         handleSubmit: function(eventData) {
