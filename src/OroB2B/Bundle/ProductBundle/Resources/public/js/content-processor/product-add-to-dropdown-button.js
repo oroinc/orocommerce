@@ -60,6 +60,14 @@ define([
                 var $mainButton = this._super($button);
                 $mainButton.data('clone', $button);
                 return $mainButton;
+            },
+
+            validateForm: function() {
+                var $form = $(this.getLayoutElement()).closest('form');
+
+                if ($form.data('validator')) {
+                    return $form.valid();
+                }
             }
         })
     );

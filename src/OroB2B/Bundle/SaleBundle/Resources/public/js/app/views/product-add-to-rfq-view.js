@@ -12,9 +12,12 @@ define(function(require) {
             'click': 'onClick'
         },
 
+        dropdownWidget: null,
+
         initialize: function(options) {
             ProductAddToRfqView.__super__.initialize.apply(this, arguments);
 
+            this.dropdownWidget = options.dropdownWidget;
             if (options.productModel) {
                 this.model = options.productModel;
             }
@@ -23,6 +26,11 @@ define(function(require) {
         onClick: function(e) {
             var $button = $(e.currentTarget);
             var productItems = {};
+
+            if (!this.dropdownWidget.validateForm()) {
+                return;
+            }
+
             productItems[this.model.get('id')] = [{
                 quantity: this.model.get('quantity'),
                 unit: this.model.get('unit')
