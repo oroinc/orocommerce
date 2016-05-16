@@ -1,6 +1,7 @@
 services:
     orob2b_payment.form.type.payment_term:
         class: 'OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermType'
+        public: true
         arguments: ['%orob2b_payment.entity.payment_term.class%']
         tags:
             - { name: form.type, alias: orob2b_payment_term }
@@ -10,21 +11,25 @@ services:
 
     orob2b_payment.form.type.credit_card:
         class: OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType
+        public: true
         tags:
             - { name: form.type, alias: orob2b_payment_credit_card }
 
     orob2b_payment.form.type.credit_card_expiration_date:
-            class: OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardExpirationDateType
-            tags:
-                - { name: form.type, alias: orob2b_payment_credit_card_expiration_date }
+        class: OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardExpirationDateType
+        public: true
+        tags:
+            - { name: form.type, alias: orob2b_payment_credit_card_expiration_date }
 
     orob2b_payment.form.type.payment_term_select:
         class: 'OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_payment_term_select }
 
     orob2b_payment.form.type.paypal_password:
         class: 'OroB2B\Bundle\PaymentBundle\Form\Type\PayPalPasswordType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_payment_paypal_password_type }
 
@@ -38,12 +43,14 @@ services:
 
     orob2b_payment.form.extension.account_type:
         class: 'OroB2B\Bundle\PaymentBundle\Form\Extension\AccountFormExtension'
+        public: true
         parent: orob2b_payment.form.extension.abstract
         tags:
             - { name: form.type_extension, alias: orob2b_account_type }
 
     orob2b_payment.form.extension.account_group_type:
         class: 'OroB2B\Bundle\PaymentBundle\Form\Extension\AccountGroupFormExtension'
+        public: true
         parent: orob2b_payment.form.extension.abstract
         tags:
             - { name: form.type_extension, alias: orob2b_account_group_type }
