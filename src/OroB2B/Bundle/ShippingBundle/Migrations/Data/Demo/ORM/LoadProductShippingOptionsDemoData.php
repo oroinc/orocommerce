@@ -10,7 +10,6 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -32,29 +31,19 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
     /** @var  DoctrineHelper */
     protected $doctrineHelper;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $products = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $productUnits = [];
 
-    /**
-     * @var array|WeightUnit[]
-     */
+    /** @var array|WeightUnit[] */
     protected $weightUnits = [];
 
-    /**
-     * @var array|LengthUnit[]
-     */
+    /** @var array|LengthUnit[] */
     protected $lengthUnits = [];
 
-    /**
-     * @var array|FreightClass[]
-     */
+    /** @var array|FreightClass[] */
     protected $freightClasses = [];
 
     /**
@@ -107,7 +96,7 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
             if (in_array($currentPair, $processedPairs)) {
                 continue;
             }
-            $precessedPairs[] = $currentPair;
+            $processedPairs[] = $currentPair;
 
             $productShippingOptions = new ProductShippingOptions();
             $productShippingOptions
@@ -189,17 +178,15 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
      */
     protected function getRandomWeightUnit(ObjectManager $manager)
     {
-        if (count($this->weightUnits)) {
-            return $this->weightUnits[mt_rand(0, count($this->weightUnits) - 1)];
+        if (!$this->weightUnits) {
+            $this->weightUnits = $manager->getRepository('OroB2BShippingBundle:WeightUnit')->findAll();
+
+            if (!count($this->weightUnits)) {
+                $this->weightUnits[] = (new WeightUnit())->setCode('demo_weight');
+            }
         }
 
-        $this->weightUnits = $manager->getRepository('OroB2BShippingBundle:WeightUnit')->findAll();
-
-        if (!count($this->weightUnits)) {
-            $this->weightUnits[] = (new WeightUnit())->setCode('demo_weight');
-        }
-
-        return $this->getRandomWeightUnit($manager);
+        return $this->weightUnits[mt_rand(0, count($this->weightUnits) - 1)];
     }
 
     /**
@@ -209,19 +196,17 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
      */
     protected function getRandomLengthUnit(ObjectManager $manager)
     {
-        if (count($this->lengthUnits)) {
-            return $this->lengthUnits[mt_rand(0, count($this->lengthUnits) - 1)];
+        if (!$this->lengthUnits) {
+            $this->lengthUnits = $manager->getRepository('OroB2BShippingBundle:LengthUnit')->findAll();
+
+            if (!count($this->lengthUnits)) {
+                $unit = (new LengthUnit())->setCode('demo_length');
+                $manager->persist($unit);
+                $this->lengthUnits[] = $unit;
+            }
         }
-
-        $this->lengthUnits = $manager->getRepository('OroB2BShippingBundle:LengthUnit')->findAll();
-
-        if (!count($this->lengthUnits)) {
-            $unit = (new LengthUnit())->setCode('demo_length');
-            $manager->persist($unit);
-            $this->lengthUnits[] = $unit;
-        }
-
-        return $this->getRandomLengthUnit($manager);
+        
+        return $this->lengthUnits[mt_rand(0, count($this->lengthUnits) - 1)];
     }
 
     /**
@@ -231,18 +216,16 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
      */
     protected function getRandomFreightClass(ObjectManager $manager)
     {
-        if (count($this->freightClasses)) {
-            return $this->freightClasses[mt_rand(0, count($this->freightClasses) - 1)];
+        if (!$this->freightClasses) {
+            $this->freightClasses = $manager->getRepository('OroB2BShippingBundle:FreightClass')->findAll();
+
+            if (!count($this->freightClasses)) {
+                $freight = (new FreightClass())->setCode('parcel');
+                $manager->persist($freight);
+                $this->freightClasses[] = $freight;
+            }
         }
 
-        $this->freightClasses = $manager->getRepository('OroB2BShippingBundle:FreightClass')->findAll();
-
-        if (!count($this->freightClasses)) {
-            $freight = (new FreightClass())->setCode('demo_freight');
-            $manager->persist($freight);
-            $this->freightClasses[] = $freight;
-        }
-
-        return $this->getRandomFreightClass($manager);
+        return $this->freightClasses[mt_rand(0, count($this->freightClasses) - 1)];
     }
 }
