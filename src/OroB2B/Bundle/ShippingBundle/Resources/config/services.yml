@@ -114,6 +114,7 @@ services:
         arguments:
             - '@orob2b_shipping.repository.weight_unit'
             - '@oro_config.manager'
+            - '@orob2b_shipping.formatter.weight_unit_label'
             - 'orob2b_shipping.weight_units'
 
     orob2b_shipping.provider.measure_units.length:
@@ -121,6 +122,7 @@ services:
         arguments:
             - '@orob2b_shipping.repository.length_unit'
             - '@oro_config.manager'
+            - '@orob2b_shipping.formatter.length_unit_label'
             - 'orob2b_shipping.length_units'
 
     orob2b_shipping.provider.measure_units.freight:
@@ -128,6 +130,7 @@ services:
         arguments:
             - '@orob2b_shipping.repository.freight_class'
             - '@oro_config.manager'
+            - '@orob2b_shipping.formatter.freight_class_label'
             - 'orob2b_shipping.freight_classes'
 
     orob2b_shipping.validator.unique_product_unit_shipping_options:
