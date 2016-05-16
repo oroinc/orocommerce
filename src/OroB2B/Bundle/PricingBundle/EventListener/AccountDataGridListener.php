@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
@@ -9,8 +11,6 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class AccountDataGridListener
 {
@@ -22,11 +22,18 @@ class AccountDataGridListener
     protected $registry;
 
     /**
-     * @param Registry $registry
+     * @param TranslatorInterface $translator
      */
-    public function __construct(Registry $registry)
+    protected $translator;
+
+    /**
+     * @param Registry $registry
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(Registry $registry, TranslatorInterface $translator)
     {
         $this->registry = $registry;
+        $this->translator = $translator;
     }
 
     /**
@@ -36,6 +43,7 @@ class AccountDataGridListener
     {
         $grid = $event->getDatagrid();
         $config = $grid->getConfig();
+        $this->addPriceListColumn($config);
         $this->addPriceListFilter($config);
 
         if ($this->isPriceListFilterEnabled($grid)) {
@@ -58,10 +66,26 @@ class AccountDataGridListener
                     'field_type' => 'entity',
                     'field_options' => [
                         'multiple' => true,
-                        'class' => PriceList::class,//todo
+                        'class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList',
                         'property' => 'name'
                     ]
                 ]
+            ]
+        );
+    }
+    /**
+     * @param DatagridConfiguration $config
+     */
+    protected function addPriceListColumn(DatagridConfiguration $config)
+    {
+        $config->addColumn(
+            'price_lists',
+            [
+                'label' => $this->translator->trans('orob2b.pricing.pricelist.entity_plural_label'),
+                'type' => 'twig',
+                'template' => 'OroB2BPricingBundle:Datagrid:Column/priceLists.html.twig',
+                'frontend_type' => 'html',
+                'renderable' => false,
             ]
         );
     }
@@ -139,7 +163,7 @@ class AccountDataGridListener
                 $groupedPriceLists[$relation->getAccount()->getId()][$relation->getWebsite()->getId()]['website']
                     = $relation->getWebsite();
                 $groupedPriceLists[$relation->getAccount()->getId()][$relation->getWebsite()->getId()]['priceLists'][]
-                    = $relation->getPriceList()->getName();
+                    = $relation->getPriceList();
             }
 
             foreach ($records as $record) {
