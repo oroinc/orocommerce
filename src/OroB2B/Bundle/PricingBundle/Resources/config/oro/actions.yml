@@ -114,6 +114,45 @@ operations:
                 method: handlePriceListStatusChange
                 method_parameters: [$.entity]
 
+    orob2b_pricing_price_list_duplicate:
+        label: orob2b.pricing.pricelist.duplicate.label
+        routes: [orob2b_pricing_price_list_view]
+        order: 10
+        button_options:
+            icon: icon-copy
+        actions:
+            - '@format_string':
+                attribute: $.newName
+                string: 'Copy of %%priceListName%%'
+                arguments:
+                    priceListName: $.entity.name
+            - '@duplicate':
+                attribute: $.newPriceList
+                settings:
+                  - [[setNull], [propertyName, [id]]]
+                  - [[emptyCollection], [propertyName, [prices]]]
+                  - [[emptyCollection], [propertyName, [schedules]]]
+                  - [[collection], [propertyName, [currencies]]]
+            - '@assign_value': [$.newPriceList.name, $.newName]
+            - '@assign_value': [$.newPriceList.active, false]
+            - '@assign_value': [$.newPriceList.default, false]
+            - '@call_service_method':
+                service: orob2b_pricing.duplicator.schedule
+                method: duplicateSchedule
+                method_parameters: [$.entity,$.newPriceList]
+            - '@flush_entity': $.newPriceList
+            - '@call_service_method':
+                service: orob2b_pricing.duplicator.product_price_duplicator
+                method: duplicate
+                method_parameters: [$.entity, $.newPriceList]
+            - '@flash_message':
+                message: orob2b.pricing.pricelist.duplicate.message
+                type: 'success'
+            - '@redirect':
+                route: 'orob2b_pricing_price_list_view'
+                route_parameters:
+                    id: $.newPriceList.id
+
 action_groups:
     orob2b_pricing_add_product_price:
         parameters:
