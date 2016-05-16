@@ -2,17 +2,18 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\ActionBundle\Model\ActionData;
-use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+
+use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 abstract class CheckoutControllerTestCase extends WebTestCase
 {

@@ -56,7 +56,7 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
     /**
      * @var array
      */
-    protected $users = [
+    protected static $users = [
         [
             'first_name' => self::FIRST_NAME,
             'last_name' => self::LAST_NAME,
@@ -122,8 +122,8 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
         /** @var BaseUserManager $userManager */
         $userManager = $this->container->get('orob2b_account_user.manager');
         $owner = $this->getFirstUser($manager);
-
-        foreach ($this->users as $user) {
+        $role = $manager->getRepository('OroB2BAccountBundle:AccountUserRole')->findOneBy([]);
+        foreach (static::$users as $user) {
             if (isset($user['account'])) {
                 /** @var Account $account */
                 $account = $this->getReference($user['account']);
@@ -132,7 +132,6 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
                     ->findOneBy(['username' => UserData::AUTH_USER]);
                 $account = $accountUser->getAccount();
             }
-            $role = $manager->getRepository('OroB2BAccountBundle:AccountUserRole')->findOneBy([]);
             $entity = new AccountUser();
             $entity
                 ->setAccount($account)

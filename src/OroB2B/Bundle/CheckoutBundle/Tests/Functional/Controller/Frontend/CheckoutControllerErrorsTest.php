@@ -40,7 +40,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $selectedAddressId = $this->getSelectedAddressId($crawler, self::BILLING_ADDRESS);
         $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
-        $this->assertEquals($selectedAddressId, $this->getReference(self::DEFAULT_BILLING_ADDRESS)->getId());
+        $this->assertEquals($this->getReference(self::DEFAULT_BILLING_ADDRESS)->getId(), $selectedAddressId);
         $noProductsError = $translator
             ->trans('orob2b.checkout.workflow.condition.order_line_item_has_count.message');
         $this->assertContains($noProductsError, $crawler->html());
@@ -53,22 +53,18 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 500);
     }
 
-    /**
-     * @depends testStartCheckoutProductsWithoutPrices
-     */
     public function testStartCheckoutSeveralProductsWithoutPrices()
     {
         $translator = $this->getContainer()->get('translator');
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
         $this->startCheckout($shoppingList);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $selectedAddressId = $this->getSelectedAddressId($crawler, self::BILLING_ADDRESS);
         $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
-        $this->assertEquals($selectedAddressId, $this->getReference(self::DEFAULT_BILLING_ADDRESS)->getId());
+        $this->assertEquals($this->getReference(self::DEFAULT_BILLING_ADDRESS)->getId(), $selectedAddressId);
         $noProductsError = $translator
             ->trans('orob2b.checkout.order.line_items.order_line_item_has_without_prices.message');
         $this->assertContains($noProductsError, $crawler->html());
@@ -80,13 +76,17 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
         $this->assertContains($noProductsError, $crawler->html());
 
-        foreach ($shoppingList->getLineItems() as $lineItem) {
-            if ($lineItem->getProduct()->getSku() === LoadProductData::PRODUCT_5) {
-                $shoppingList->removeLineItem($lineItem);
-                break;
-            }
-        }
-        $em->flush();
+        $productId = $this->getReference(LoadProductData::PRODUCT_5)->getId();
+        $url = $this->getUrl('orob2b_shopping_list_frontend_remove_product', [
+            'productId' => $productId,
+            'shoppingListId' => $shoppingList->getId(),
+        ]);
+        $this->client->request('POST', $url);
+        $result = $this->client->getResponse();
+        $this->assertResponseStatusCodeEquals($result, 200);
+        $response = json_decode($result->getContent(), true);
+        $this->assertTrue($response['successful']);
+
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
