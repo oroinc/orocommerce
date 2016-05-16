@@ -145,6 +145,7 @@ workflows:
                             options:
                                 label: Save address
                         ship_to_billing_address:
+                            form_type: orob2b_ship_to_billing_address
                             options:
                                 label: Ship to this address
 
@@ -175,6 +176,7 @@ workflows:
                             options:
                                 label: Save address
                         ship_to_billing_address:
+                            form_type: orob2b_ship_to_billing_address
                             options:
                                 label: Use billing address
 
