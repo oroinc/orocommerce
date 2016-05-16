@@ -4,8 +4,9 @@ namespace OroB2B\Bundle\AccountBundle\EventListener;
 
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -18,11 +19,20 @@ class CategoryTreeHandlerListener
     protected $categoryVisibilityResolver;
 
     /**
-     * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
+     * @var AccountUserRelationsProvider
      */
-    public function __construct(CategoryVisibilityResolverInterface $categoryVisibilityResolver)
-    {
+    protected $accountUserRelationsProvider;
+
+    /**
+     * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
+     * @param AccountUserRelationsProvider $accountUserRelationsProvider
+     */
+    public function __construct(
+        CategoryVisibilityResolverInterface $categoryVisibilityResolver,
+        AccountUserRelationsProvider $accountUserRelationsProvider
+    ) {
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
+        $this->accountUserRelationsProvider = $accountUserRelationsProvider;
     }
 
     /**
@@ -34,22 +44,25 @@ class CategoryTreeHandlerListener
         if ($user instanceof User) {
             return;
         }
-        // TODO: Use AccountUserRelationsProvider here BB-2988
-        $account = $user instanceof AccountUser ? $user->getAccount() : null;
-        $categories = $this->filterCategories($event->getCategories(), $account);
+
+        $account = $this->accountUserRelationsProvider->getAccount($user);
+        $accountGroup = $this->accountUserRelationsProvider->getAccountGroup($user);
+        $categories = $this->filterCategories($event->getCategories(), $account, $accountGroup);
         $event->setCategories($categories);
     }
 
     /**
-     * @todo: Add AccountGroup parameter, use it if account is null BB-2988
      * @param Category[] $categories
      * @param Account|null $account
+     * @param AccountGroup|null $accountGroup
      * @return array
      */
-    protected function filterCategories(array $categories, Account $account = null)
+    protected function filterCategories(array $categories, Account $account = null, AccountGroup $accountGroup = null)
     {
         if ($account) {
             $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIdsForAccount($account);
+        } elseif ($accountGroup) {
+            $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIdsForAccountGroup($accountGroup);
         } else {
             $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIds();
         }

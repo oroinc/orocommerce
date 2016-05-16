@@ -564,6 +564,7 @@ services:
         public: true
         arguments:
             - "@orob2b_account.visibility.resolver.category_visibility_resolver"
+            - "@orob2b_account.provider.account_user_relations_provider"
         tags:
             - {name: kernel.event_listener, event: orob2b_catalog.category.tree.create_after, method: onCreateAfter }
 
