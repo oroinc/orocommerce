@@ -26,13 +26,13 @@ class MeasureTransformer implements DataTransformerInterface
      */
     public function transform($values)
     {
-        if (empty($values) || !is_array($values)) {
+        if (!is_array($values)) {
             return [];
         }
 
         $entities = [];
         foreach ($values as $value) {
-            $entities[] = $this->repository->findOneBy(['code' => $value]);
+            $entities[] = $this->repository->find($value);
         }
 
         return $entities;
@@ -43,14 +43,15 @@ class MeasureTransformer implements DataTransformerInterface
      */
     public function reverseTransform($entities)
     {
-        if (empty($entities) || !is_array($entities)) {
+        if (!is_array($entities)) {
             return [];
         }
 
         $values = [];
-        /** @var MeasureUnitInterface[] $entities */
         foreach ($entities as $entity) {
-            $values[] = $entity->getCode();
+            if ($entity instanceof MeasureUnitInterface) {
+                $values[] = $entity->getCode();
+            }
         }
 
         return $values;

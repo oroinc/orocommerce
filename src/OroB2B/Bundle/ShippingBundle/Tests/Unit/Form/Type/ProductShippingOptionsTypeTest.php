@@ -130,9 +130,9 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                     'freightClass' => 'pl',
                 ],
                 'expectedData' => $this->getProductShippingOptions('item', [1, 'kg'], [2, 3, 4, 'mm'], 'pl')
-                        ->setProduct(null),
+                    ->setProduct(null),
                 'defaultData' => $this->getProductShippingOptions()
-                        ->setProduct(null),
+                    ->setProduct(null),
             ],
             'empty unit' => [
                 'isValid' => false,

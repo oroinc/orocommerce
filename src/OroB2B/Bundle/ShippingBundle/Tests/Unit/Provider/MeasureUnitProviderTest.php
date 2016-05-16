@@ -1,11 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Bundle\Tests\Unit\Provider;
+namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
 use OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 
@@ -22,6 +24,9 @@ class MeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
     /** @var MeasureUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $provider;
 
+    /** @var UnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    protected $labelFormatter;
+
     protected function setUp()
     {
         $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
@@ -32,12 +37,21 @@ class MeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new MeasureUnitProvider($this->repository, $this->configManager, self::CONFIG_ENTRY_NAME);
+        $this->labelFormatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->provider = new MeasureUnitProvider(
+            $this->repository,
+            $this->configManager,
+            $this->labelFormatter,
+            self::CONFIG_ENTRY_NAME
+        );
     }
 
     public function tearDown()
     {
-        unset($this->repository, $this->doctrineHelper, $this->provider);
+        unset($this->repository, $this->doctrineHelper, $this->provider, $this->labelFormatter);
     }
 
     /**
@@ -108,6 +122,63 @@ class MeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
                 'expected' => [],
                 'onlyEnabled' => false
             ]
+        ];
+    }
+
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider getFormattedUnitsProvider
+     */
+    public function testGetFormattedUnits(array $inputData, array $expectedData)
+    {
+        $this->repository->expects($this->atLeastOnce())->method('findAll')->willReturn($inputData['orm']);
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with(self::CONFIG_ENTRY_NAME, false)
+            ->willReturn($inputData['config']);
+
+        $this->labelFormatter->expects($this->any())
+            ->method('formatChoices')
+            ->with($inputData['orm'])
+            ->willReturn($expectedData);
+
+        $this->assertEquals(
+            $expectedData,
+            $this->provider->getFormattedUnits($inputData['isShort'])
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getFormattedUnitsProvider()
+    {
+        return [
+            'normal' => [
+                'input' => [
+                    'orm' => [
+                        (new WeightUnit())->setCode('kg'),
+                        (new WeightUnit())->setCode('mg'),
+                    ],
+                    'config' => ['kg', 'mg'],
+                    'isShort' => false,
+                ],
+                'expected' => ['kg.formatted', 'mg.formatted'],
+            ],
+            'short' => [
+                'input' => [
+                    'orm' => [
+                        (new WeightUnit())->setCode('kg'),
+                        (new WeightUnit())->setCode('mg'),
+                    ],
+                    'config' => ['kg', 'mg'],
+                    'isShort' => true,
+                ],
+                'expected' => ['kg.formatted.short', 'mg.formatted.short'],
+            ],
         ];
     }
 }
