@@ -12,17 +12,37 @@ use OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter\LocalizedFallbackVal
  */
 class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 {
+    /**
+     * @var LocalizedFallbackValueAwareDataConverter
+     */
+    protected $converter;
+
     /** {@inheritdoc} */
     protected function setUp()
     {
         $this->initClient();
 
-        if (!$this->getContainer()->hasParameter('orob2b_product.entity.product.class')) {
+        $container = $this->getContainer();
+
+        if (!$container->hasParameter('orob2b_product.entity.product.class')) {
             $this->markTestSkipped('ProductBundle is missing');
         }
 
         $this->loadFixtures(
             ['OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData']
+        );
+
+        $this->converter = new LocalizedFallbackValueAwareDataConverter(
+            $container->get('oro_importexport.field.field_helper'),
+            $container->get('oro_importexport.data_converter.relation_calculator')
+        );
+        $this->converter->setDispatcher($container->get('event_dispatcher'));
+        $this->converter->setRegistry($container->get('doctrine'));
+        $this->converter->setLocalizedFallbackValueClassName(
+            $container->getParameter('orob2b_fallback.entity.localized_fallback_value.class')
+        );
+        $this->converter->setLocaleClassName(
+            $container->getParameter('orob2b_website.entity.locale.class')
         );
     }
 
@@ -36,12 +56,9 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
     {
         $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
 
-        /** @var LocalizedFallbackValueAwareDataConverter $converter */
-        $converter = $this->getContainer()
-            ->get('orob2b_fallback.importexport.data_converter.localized_fallback_value_aware');
-        $converter->setEntityName($productClass);
+        $this->converter->setEntityName($productClass);
 
-        $this->assertEquals($expected, $converter->convertToImportFormat($data));
+        $this->assertEquals($expected, $this->converter->convertToImportFormat($data));
     }
 
     /**
@@ -85,12 +102,9 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
     {
         $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
 
-        /** @var LocalizedFallbackValueAwareDataConverter $converter */
-        $converter = $this->getContainer()
-            ->get('orob2b_fallback.importexport.data_converter.localized_fallback_value_aware');
-        $converter->setEntityName($productClass);
+        $this->converter->setEntityName($productClass);
 
-        $this->assertEquals($expected, $converter->convertToExportFormat($data));
+        $this->assertEquals($expected, $this->converter->convertToExportFormat($data));
     }
 
     /**
