@@ -8,7 +8,6 @@ services:
 
     orob2b_payment.payment_method.payflow_gateway:
         class: 'OroB2B\Bundle\PaymentBundle\Method\PayflowGateway'
-        public: false
         arguments:
             - '@orob2b_payment.paypal.payflow.gateway'
             - '@oro_config.global'
@@ -17,11 +16,9 @@ services:
     orob2b_payment.payment_method.paypal_payments_pro:
         class: 'OroB2B\Bundle\PaymentBundle\Method\PayPalPaymentsPro'
         parent: orob2b_payment.payment_method.payflow_gateway
-        public: false
 
     orob2b_payment.payment_method.payment_term:
         class: 'OroB2B\Bundle\PaymentBundle\Method\PaymentTerm'
-        public: false
         arguments:
             - '@orob2b_payment.provider.payment_term'
             - '@oro_config.global'
