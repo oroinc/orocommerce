@@ -25,5 +25,3 @@ layout:
                         main_menu: ~
                         main_menu_widgets:
                             #main_menu_messages_widget: ~
-#    conditions:
-#        '@neq': [ $context.logged_user, null ]
