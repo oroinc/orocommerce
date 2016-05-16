@@ -27,7 +27,10 @@ use OroB2B\Bundle\ShippingBundle\Model\Weight;
  * @ORM\HasLifecycleCallbacks()
  * @Config(mode="hidden")
  */
-class ProductShippingOptions implements ProductUnitHolderInterface, ProductHolderInterface
+class ProductShippingOptions implements
+    ProductShippingOptionsInterface,
+    ProductUnitHolderInterface,
+    ProductHolderInterface
 {
     /**
      * @var integer
