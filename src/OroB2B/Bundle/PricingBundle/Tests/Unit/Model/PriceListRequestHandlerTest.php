@@ -22,6 +22,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -269,7 +270,8 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
      * @param AccountUser|null $user
      * @param Account|null $expectedAccount
      */
-    public function testGetPriceListByAccountForAccountUser($user, $expectedAccount) {
+    public function testGetPriceListByAccountForAccountUser($user, $expectedAccount)
+    {
         /** @var PriceList $priceList */
         $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList', 42);
         $websiteId = 1;
