@@ -13,9 +13,9 @@
                 oro_image_view(product, product.image, null, 'image')
             ) }}
 
-            {% if product.unitPrecisions.count %}
+            {% if product.additionalUnitPrecisions.count %}
                 {% set productUnitPrecisions = [] %}
-                {% for unitPrecision in product.unitPrecisions %}
+                {% for unitPrecision in product.additionalUnitPrecisions %}
                     {% set unitPrecisionElement %}
                         {{ 'orob2b.product.productunitprecision.representation'|transchoice(
                             unitPrecision.precision,
@@ -26,6 +26,15 @@
                     {% endset %}
                     {% set productUnitPrecisions = productUnitPrecisions|merge([unitPrecisionElement]) %}
                 {% endfor %}
+                {% set primaryUnitPrecisionElement %}
+                    {{ 'orob2b.product.productunitprecision.representation'|transchoice(
+                    product.primaryUnitPrecision.precision,
+                    {
+                        '{{ label }}': ('orob2b.product_unit.'~ product.primaryUnitPrecision.unit.code ~'.label.full')|trans
+                    }
+                    ) }}
+                {% endset %}
+                {{ UI.renderHtmlProperty('orob2b.product.unit_precision.label'|trans, primaryUnitPrecisionElement )}}
                 {{ UI.renderHtmlProperty('orob2b.product.unit_precisions.label'|trans, UI.renderList(productUnitPrecisions)) }}
             {% endif %}
         </div>
