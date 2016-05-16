@@ -173,6 +173,7 @@ services:
 
     orob2b_checkout.workflow.condition.order_line_item_has_count:
         class: 'OroB2B\Bundle\CheckoutBundle\Model\Condition\OrderLineItemsHasCount'
+        public: true
         arguments:
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
         tags:
