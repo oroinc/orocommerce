@@ -148,7 +148,6 @@ define(function(require) {
          * @private
          */
         _beforeSend: function() {
-            console.log(this.loadingMaskView);
             if (this.loadingMaskView) {
                 this.loadingMaskView.show();
             }
@@ -206,7 +205,7 @@ define(function(require) {
 
             this.listenerOff();
 
-            this.__super__.dispose.call(this);
+            ProductShippingFreightClassesComponent.__super__.dispose.call(this);
         }
     });
 
