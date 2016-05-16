@@ -98,6 +98,7 @@ class CreditCardType extends AbstractType
                     'required' => false,
                     'label' => 'orob2b.payment.credit_card.save_for_later.label',
                     'mapped' => false,
+                    'data' => true,
                     'attr' => [
                         'data-save-for-later' => true
                     ]

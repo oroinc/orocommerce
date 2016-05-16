@@ -101,6 +101,9 @@ define(function(require) {
             }
         },
 
+        /**
+         * @inheritDoc
+         */
         beforeTransit: function(eventData) {
             if (!this.getPaymentValidateRequired()) {
                 return;

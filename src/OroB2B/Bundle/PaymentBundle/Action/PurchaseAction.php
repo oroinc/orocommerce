@@ -70,7 +70,8 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
-        if ($sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction()) {
+        $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
+        if ($sourcePaymentTransaction) {
             $sourcePaymentTransaction->setActive($options['allowReuseSourceTransaction']);
         }
 

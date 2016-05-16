@@ -25,7 +25,8 @@ define(function(require) {
                 validation: '[data-validation]',
                 paymentValidateRequired: '[name$="[payment_validate]"]',
                 saveForLater: '[data-save-for-later]'
-            }
+            },
+            currentValidation: false
         },
 
         /**
@@ -240,8 +241,9 @@ define(function(require) {
          */
         setPaymentValidateRequired: function(state) {
             this.paymentValidationRequiredComponentState = state;
-            this.getPaymentValidateElement().prop('checked', state);
-            this.getPaymentValidateElement().trigger('change');
+            this.getPaymentValidateElement()
+                .prop('checked', state)
+                .trigger('change');
         },
 
         /**
@@ -260,14 +262,6 @@ define(function(require) {
             }
 
             return this.$saveForLaterElement;
-        },
-
-        /**
-         * @param {Boolean} state
-         */
-        setSaveForLaterState: function(state) {
-            this.getSaveForLaterElement().prop('checked', state);
-            this.getSaveForLaterElement().trigger('change');
         },
 
         /**

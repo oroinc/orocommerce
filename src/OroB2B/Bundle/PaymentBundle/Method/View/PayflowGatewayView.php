@@ -68,25 +68,21 @@ class PayflowGatewayView implements PaymentMethodViewInterface
         ];
 
         if ($this->isZeroAmountAuthorizationEnabled()) {
-            $authorizeTransaction = $this->paymentTransactionProvider
+            $validateTransaction = $this->paymentTransactionProvider
                 ->getActiveValidatePaymentTransaction($contextOptions['entity'], $this->getPaymentMethodType());
 
-            if ($authorizeTransaction) {
+            if ($validateTransaction) {
                 $entityClass = $this->doctrineHelper->getEntityClass($contextOptions['entity']);
-                $entityIdentifiers = $this->doctrineHelper->getEntityIdentifier($contextOptions['entity']);
+                $entityIdentifier = $this->doctrineHelper->getSingleEntityIdentifier($contextOptions['entity']);
 
-                $currentValidation = false;
-                if ($authorizeTransaction->getEntityClass() === $entityClass &&
-                    $authorizeTransaction->getEntityIdentifier() === reset($entityIdentifiers)
-                ) {
-                    $currentValidation = true;
-                }
+                $currentValidation = $validateTransaction->getEntityClass() === $entityClass &&
+                    $validateTransaction->getEntityIdentifier() === $entityIdentifier;
 
                 $viewOptions['creditCardComponent'] =
                     'orob2bpayment/js/app/components/authorized-credit-card-component';
 
                 $viewOptions['creditCardComponentOptions'] = [
-                    'acct' => $this->getLast4($authorizeTransaction),
+                    'acct' => $this->getLast4($validateTransaction),
                     'currentValidation' => $currentValidation,
                 ];
             }

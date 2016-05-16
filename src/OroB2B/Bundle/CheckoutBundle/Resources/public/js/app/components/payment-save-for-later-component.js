@@ -49,9 +49,13 @@ define(function(require) {
             this.setCheckboxState(this.defaultState);
         },
 
+        /**
+         * @param {Boolean} state
+         */
         setCheckboxState: function(state) {
-            this.getPaymentSaveForLaterElement().prop('checked', state);
-            this.getPaymentSaveForLaterElement().trigger('change');
+            this.getPaymentSaveForLaterElement()
+                .prop('checked', state)
+                .trigger('change');
         },
 
         /**
@@ -80,7 +84,7 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('checkout:payment:save-for-later:change', _.bind(this.onChanged, this));
+            mediator.off('checkout:payment:save-for-later:change', _.bind(this.setCheckboxState, this));
             mediator.off('checkout:payment:save-for-later:restore-default', _.bind(this.onRestoreDefault, this));
 
             PaymentSaveForLaterComponent.__super__.dispose.call(this);
