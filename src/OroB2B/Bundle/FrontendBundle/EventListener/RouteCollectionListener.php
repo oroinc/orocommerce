@@ -35,7 +35,7 @@ class RouteCollectionListener
         /** @var Route $route */
         foreach ($event->getCollection()->getIterator() as $route) {
             $path = $route->getPath();
-            if (false !== strpos($path, $this->prefix)) {
+            if (0 === strpos($path, $this->prefix) || 0 === strpos($path, '/' . $this->prefix)) {
                 continue;
             }
 

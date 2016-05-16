@@ -1,11 +1,13 @@
 services:
     orob2b_cms.form.type.slug:
         class: 'OroB2B\Bundle\CMSBundle\Form\Type\SlugType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_slug }
 
     orob2b_cms.form.type.page:
         class: 'OroB2B\Bundle\CMSBundle\Form\Type\PageType'
+        public: true
         calls:
             - [setDataClass, ['%orob2b_cms.entity.page.class%']]
         tags:
@@ -13,5 +15,6 @@ services:
 
     orob2b_cms.form.type.loginpage:
         class: 'OroB2B\Bundle\CMSBundle\Form\Type\LoginPageType'
+        public: true
         tags:
             - { name: form.type, alias: orob2b_cms_login_page }
