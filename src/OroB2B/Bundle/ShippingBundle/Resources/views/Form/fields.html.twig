@@ -121,14 +121,16 @@
             <table class="grid table table-bordered list-items"{% if not form.children|length %} style="display: none;"{% endif %}>
                 <thead>
                 <tr>
-                    <th><span>{{ 'orob2b.shipping.product_shipping_options.product_unit.label'|trans }}</span></th>
-                    <th><span>{{ 'orob2b.shipping.product_shipping_options.weight.label'|trans }}</span></th>
-                    <th><span>{{ 'orob2b.shipping.product_shipping_options.dimensions.label'|trans }}</span></th>
-                    <th><span>{{ 'orob2b.shipping.product_shipping_options.freight_class.label'|trans }}</span></th>
+                    <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.product_unit.label'|trans }}</span></th>
+                    <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.weight.label'|trans }}</span></th>
+                    <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.dimensions.label'|trans }}</span></th>
+                    <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.freight_class.label'|trans }}</span></th>
                     <th></th>
                 </tr>
                 </thead>
-                <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
+                <tbody data-last-index="{{ form.children|length}}"
+                       data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}
+                       data-page-component-module="orob2bshipping/js/app/components/product-shipping-freight-classes-component">
                     {% if form.children|length %}
                         {% for child in form.children %}
                             {{ _self.orob2b_shipping_product_shipping_options_prototype(child) }}
