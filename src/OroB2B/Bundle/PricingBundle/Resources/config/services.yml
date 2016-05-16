@@ -583,3 +583,14 @@ services:
             - '@doctrine'
             - '@oro_config.global'
             - '@oro_entity.orm.insert_from_select_query_executor'
+
+    orob2b_pricing.duplicator.schedule:
+        class: 'OroB2B\Bundle\PricingBundle\Duplicator\ScheduleDuplicator'
+
+    orob2b_pricing.duplicator.product_price_duplicator:
+        class: 'OroB2B\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator'
+        arguments:
+            - '@doctrine'
+            - '@oro_entity.orm.insert_from_select_query_executor'
+        calls:
+            - [setPriceListClass, ['%orob2b_pricing.entity.product_price.class%']]
