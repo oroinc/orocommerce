@@ -36,6 +36,11 @@ define(function(require) {
         $radios: null,
 
         /**
+         * @property {Boolean}
+         */
+        disposable: true,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -51,6 +56,7 @@ define(function(require) {
             );
 
             mediator.on('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
+            mediator.on('checkout:payment:before-hide-filled-form', _.bind(this.beforeHideFilledForm, this));
         },
 
         redirectToHomepage: function() {
@@ -64,12 +70,13 @@ define(function(require) {
          * @inheritDoc
          */
         dispose: function() {
-            if (this.disposed) {
+            if (this.disposed || !this.disposable) {
                 return;
             }
 
             this.$el.off();
             mediator.off('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
+            mediator.off('checkout:payment:before-hide-filled-form', _.bind(this.beforeHideFilledForm, this));
 
             PaymentMethodSelectorComponent.__super__.dispose.call(this);
         },
@@ -79,6 +86,12 @@ define(function(require) {
             this.$el.find(this.options.selectors.subform).hide();
             $element.parents(this.options.selectors.itemContainer).find(this.options.selectors.subform).show();
             mediator.trigger('checkout:payment:method:changed', {paymentMethod: $element.val()});
+        },
+
+        beforeHideFilledForm: function($filledForm) {
+            if ($filledForm.is(this.$el)) {
+                this.disposable = false;
+            }
         },
 
         beforeRestoreFilledForm: function($filledForm) {

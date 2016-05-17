@@ -53,6 +53,11 @@ define(function(require) {
         $form: null,
 
         /**
+         * @property {Boolean}
+         */
+        disposable: true,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -79,6 +84,7 @@ define(function(require) {
             mediator.on('checkout:place-order:response', _.bind(this.handleSubmit, this));
             mediator.on('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
             mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
+            mediator.on('checkout:payment:before-hide-filled-form', _.bind(this.beforeHideFilledForm, this));
             mediator.on('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
 
             this.setPaymentValidateRequired(this.paymentValidationRequiredComponentState);
@@ -149,7 +155,7 @@ define(function(require) {
         },
 
         dispose: function() {
-            if (this.disposed) {
+            if (this.disposed || !this.disposable) {
                 return;
             }
 
@@ -166,6 +172,7 @@ define(function(require) {
             mediator.off('checkout:place-order:response', _.bind(this.handleSubmit, this));
             mediator.off('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
             mediator.off('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
+            mediator.off('checkout:payment:before-hide-filled-form', _.bind(this.beforeHideFilledForm, this));
             mediator.off('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
 
             CreditCardComponent.__super__.dispose.call(this);
@@ -266,6 +273,12 @@ define(function(require) {
         beforeTransit: function(eventData) {
             if (eventData.data.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = !this.validate();
+            }
+        },
+
+        beforeHideFilledForm: function($filledForm) {
+            if ($filledForm.find(this.$el).length !== 0) {
+                this.disposable = false;
             }
         },
 

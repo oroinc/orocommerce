@@ -60,7 +60,9 @@ define(function(require) {
                 return;
             }
 
-            this.getPaymentForm()
+            var filledForm = this.getPaymentForm();
+            mediator.trigger('checkout:payment:before-hide-filled-form', filledForm);
+            filledForm
                 .addClass('hidden')
                 .insertAfter(this.getContent());
 
