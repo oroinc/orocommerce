@@ -77,7 +77,7 @@ define(function(require) {
         },
 
         beforeTransit: function(eventData) {
-            if (!this.getPaymentValidateRequired()) {
+            if (this.disposed || !this.getPaymentValidateRequired()) {
                 return;
             }
 
