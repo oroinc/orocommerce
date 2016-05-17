@@ -11,3 +11,4 @@ services:
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.pageView, method: onLandingPageView }

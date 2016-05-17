@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SEOBundle\EventListener;
 
+use OroB2B\Bundle\CMSBundle\Entity\Page;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -45,6 +46,8 @@ class FormViewListener
     }
 
     /**
+     * Insert SEO information 
+     *
      * @param BeforeListRenderEvent $event
      */
     public function onProductView(BeforeListRenderEvent $event)
@@ -62,14 +65,36 @@ class FormViewListener
             'OroB2BSEOBundle:Product:seo_view.html.twig',
             ['entity' => $product]
         );
-        $this->addProductPricesBlock($event->getScrollData(), $template);
+        $this->addSEOBlock($event->getScrollData(), $template);
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     */
+    public function onLandingPageView(BeforeListRenderEvent $event)
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            return;
+        }
+
+        $pageId = (int)$request->get('id');
+        /** @var Page $page */
+        $page = $this->doctrineHelper->getEntityReference('OroB2BCMSBundle:Page', $pageId);
+
+        $template = $event->getEnvironment()->render(
+            'OroB2BSEOBundle:Page:seo_view.html.twig',
+            ['entity' => $page]
+        );
+
+        $this->addSEOBlock($event->getScrollData(), $template);
     }
 
     /**
      * @param ScrollData $scrollData
      * @param string $html
      */
-    protected function addProductPricesBlock(ScrollData $scrollData, $html)
+    protected function addSEOBlock(ScrollData $scrollData, $html)
     {
         $blockLabel = $this->translator->trans('orob2b.seo.label');
         $blockId = $scrollData->addBlock($blockLabel, 10);
