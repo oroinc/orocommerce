@@ -17,6 +17,7 @@ class OroB2BCheckoutExtension extends Extension
     {
         $loader = new PrivateYamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
+        $loader->load('block_types.yml');
         $loader->load('form_types.yml');
     }
 }

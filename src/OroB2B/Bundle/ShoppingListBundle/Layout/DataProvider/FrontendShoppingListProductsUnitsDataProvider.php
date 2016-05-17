@@ -4,15 +4,15 @@ namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
 
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInterface
+class FrontendShoppingListProductsUnitsDataProvider extends AbstractServerRenderDataProvider
 {
     /**
      * @var Registry
@@ -42,14 +42,6 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
         $this->registry = $registry;
         $this->requestHandler = $requestHandler;
         $this->userCurrencyProvider = $userCurrencyProvider;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        throw new \BadMethodCallException('Not implemented');
     }
 
     /**
