@@ -30,4 +30,10 @@ interface PaymentMethodInterface
      * @return bool
      */
     public function isEnabled();
+
+    /**
+     * @param array $context
+     * @return bool
+     */
+    public function isApplicable(array $context = []);
 }

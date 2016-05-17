@@ -43,4 +43,21 @@ class PayPalPaymentsPro extends PayflowGateway
     {
         return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY);
     }
+
+    /**
+     * @return bool
+     */
+    protected function getAllowedCountries()
+    {
+        return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_SELECTED_COUNTRIES_KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isAllCountriesAllowed()
+    {
+        return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_COUNTRIES_KEY)
+            === Configuration::ALLOWED_COUNTRIES_ALL;
+    }
 }
