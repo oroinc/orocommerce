@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@remove':
+            id: footer
+        - '@remove':
+            id: header

@@ -100,7 +100,7 @@ orob2b:
 
         workflow:
             view_options.label: View Options for this Order
-            unavailable_transition.message: This action is not available, reason:
+            unavailable_transition.message: 'This action is not available, reason:'
             b2b_flow_checkout:
                 label: Checkout
 
