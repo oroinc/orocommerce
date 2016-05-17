@@ -63,6 +63,8 @@ layout:
                 quote_view_accept_button:
                     blockType: action_combined_buttons
                     options:
+                        vars:
+                            quote: { '@value': $data.entity }
                         visible: { '@not_empty': $data.entity.hasOfferVariants }
                         actions:
                             '@value': $data.actions.all
