@@ -932,7 +932,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function getAdditionalUnitPrecisions()
     {
-        $precisions = $this->unitPrecisions;
+        $precisions = clone($this->unitPrecisions);
         foreach ($precisions as  $unitPrecision) {
             if ($unitPrecision->getUnit()->getCode() == $this->primaryUnitPrecision->getUnit()->getCode()) {
                 $precisions->removeElement($unitPrecision);
