@@ -25,9 +25,9 @@ class DimensionsTransformer implements DataTransformerInterface
     {
         if (!$dimensions ||
             !$dimensions instanceof Dimensions ||
-            filter_var($dimensions->getLength(), FILTER_VALIDATE_FLOAT) === false ||
-            filter_var($dimensions->getWidth(), FILTER_VALIDATE_FLOAT) === false ||
-            filter_var($dimensions->getHeight(), FILTER_VALIDATE_FLOAT) === false
+            $dimensions->getLength() && filter_var($dimensions->getLength(), FILTER_VALIDATE_FLOAT) === false ||
+            $dimensions->getWidth() && filter_var($dimensions->getWidth(), FILTER_VALIDATE_FLOAT) === false ||
+            $dimensions->getHeight() && filter_var($dimensions->getHeight(), FILTER_VALIDATE_FLOAT) === false
         ) {
             return null;
         }

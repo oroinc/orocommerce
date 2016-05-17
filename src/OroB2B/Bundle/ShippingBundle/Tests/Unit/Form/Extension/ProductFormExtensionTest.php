@@ -116,7 +116,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->createEvent($product);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $event->getForm()->get(ProductFormExtension::FORM_ELEMENT_NAME);
 
         $form->expects($product ? $this->once() : $this->never())->method('setData');
@@ -127,7 +127,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     public function testOnPostSubmitEmptyProduct()
     {
         $event = $this->createEvent();
-        /** @var \PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $event->getForm()->get(ProductFormExtension::FORM_ELEMENT_NAME);
 
         $form->expects($this->never())->method('getData');
@@ -140,7 +140,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         $product = $this->createMockProduct();
 
         $event = $this->createEvent($this->createMockProduct());
-        /** @var \PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $event->getForm()->get(ProductFormExtension::FORM_ELEMENT_NAME);
 
         $event->getForm()->expects($this->once())->method('isValid')->willReturn(true);
@@ -170,7 +170,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     public function testOnPostSubmitInvalidData()
     {
         $event = $this->createEvent($this->createMockProduct());
-        /** @var \PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $event->getForm()->get(ProductFormExtension::FORM_ELEMENT_NAME);
 
         $event->getForm()->expects($this->once())->method('isValid')->willReturn(false);

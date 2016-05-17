@@ -32,7 +32,7 @@ class WeightTransformerTest extends \PHPUnit_Framework_TestCase
      */
     public function reverseTransformDataProvider()
     {
-        $weight = $this->getWeight($this->getWeightUnit('kg'), 2, 4, 6);
+        $weight = $this->getWeight($this->getWeightUnit('kg'), 2);
 
         return [
             'empty data' => [
@@ -44,7 +44,7 @@ class WeightTransformerTest extends \PHPUnit_Framework_TestCase
                 'expected' => $weight,
             ],
             'bad data' => [
-                'value' => $this->getWeight($this->getWeightUnit('kg'), 'bad', 4, 6),
+                'value' => $this->getWeight($this->getWeightUnit('kg'), 'bad'),
                 'expected' => null,
             ],
             'bad type' => [
@@ -82,8 +82,8 @@ class WeightTransformerTest extends \PHPUnit_Framework_TestCase
                 'expected' => $weight,
             ],
             'bad data' => [
-                'value' => $this->getWeight($this->getWeightUnit('kg'), 'bad', 4, 6),
-                'expected' => $this->getWeight($this->getWeightUnit('kg'), 'bad', 4, 6),
+                'value' => $this->getWeight($this->getWeightUnit('kg'), 'bad'),
+                'expected' => $this->getWeight($this->getWeightUnit('kg'), 'bad'),
             ],
             'bad type' => [
                 'value' => 'string',

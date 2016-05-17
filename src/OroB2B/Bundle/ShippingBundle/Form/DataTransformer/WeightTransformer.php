@@ -25,7 +25,7 @@ class WeightTransformer implements DataTransformerInterface
     {
         if (!$weight ||
             !$weight instanceof Weight ||
-            filter_var($weight->getValue(), FILTER_VALIDATE_FLOAT) === false
+            $weight->getValue() && filter_var($weight->getValue(), FILTER_VALIDATE_FLOAT) === false
         ) {
             return null;
         }

@@ -36,9 +36,9 @@ class Dimensions
      *
      * @return Dimensions
      */
-    public static function create($length, $width, $height, LengthUnit $unit)
+    public static function create($length, $width, $height, LengthUnit $unit = null)
     {
-        /* @var $dimensions self */
+        /* @var $dimensions Dimensions */
         $dimensions = new static();
         $dimensions->setLength($length)
             ->setWidth($width)
@@ -121,7 +121,7 @@ class Dimensions
      *
      * @return $this
      */
-    public function setUnit(LengthUnit $unit)
+    public function setUnit(LengthUnit $unit = null)
     {
         $this->unit = $unit;
 

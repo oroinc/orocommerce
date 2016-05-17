@@ -60,7 +60,7 @@ class ProductShippingOptions implements
     /**
      * @var float
      *
-     * @ORM\Column(name="weight_value", type="float")
+     * @ORM\Column(name="weight_value", type="float", nullable=true)
      */
     protected $weightValue;
 
@@ -68,7 +68,7 @@ class ProductShippingOptions implements
      * @var WeightUnit
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\WeightUnit")
-     * @ORM\JoinColumn(name="weight_unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="weight_unit_code", referencedColumnName="code")
      */
     protected $weightUnit;
 
@@ -80,29 +80,29 @@ class ProductShippingOptions implements
     /**
      * @var float
      *
-     * @ORM\Column(name="dimensions_length",type="float")
+     * @ORM\Column(name="dimensions_length", type="float", nullable=true)
      */
-    protected $dimensionsLength;
+    protected $dimensionsLength = null;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="dimensions_width",type="float")
+     * @ORM\Column(name="dimensions_width", type="float", nullable=true)
      */
-    protected $dimensionsWidth;
+    protected $dimensionsWidth = null;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="dimensions_height",type="float")
+     * @ORM\Column(name="dimensions_height", type="float", nullable=true)
      */
-    protected $dimensionsHeight;
+    protected $dimensionsHeight = null;
 
     /**
      * @var LengthUnit
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\LengthUnit")
-     * @ORM\JoinColumn(name="dimensions_unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="dimensions_unit_code", referencedColumnName="code")
      */
     protected $dimensionsUnit;
 
@@ -115,7 +115,7 @@ class ProductShippingOptions implements
      * @var FreightClass
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\FreightClass")
-     * @ORM\JoinColumn(name="freight_class_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="freight_class_code", referencedColumnName="code")
      */
     protected $freightClass;
 

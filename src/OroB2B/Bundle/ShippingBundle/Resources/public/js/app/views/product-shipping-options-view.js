@@ -6,10 +6,6 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var routing = require('routing');
-    var messenger =  require('oroui/js/messenger');
-    var __ = require('orotranslation/js/translator');
 
     return BaseView.extend({
         /**
@@ -17,14 +13,10 @@ define(function(require) {
          */
         options: {
             unitsAttribute: 'units',
-            selectSelector: 'select[name^=\'orob2b_product[product_shipping_options]\'][name$=\'[productUnit]\']',
-            routeFreightClassUpdate: 'orob2b_shipping_freight_classes',
-            errorMessage: 'Sorry, unexpected error was occurred',
+            selectSelector: 'select[name^="orob2b_product[product_shipping_options]"][name$="[productUnit]"]',
             selectors: {
                 itemsContainer: 'table.list-items',
                 itemContainer: 'table tr.list-item',
-                freightClassSelector: '.freight-class-select',
-                freightClassUpdateSelector: '.freight-class-update-trigger',
                 addButtonSelector: '.product-shipping-options-collection .add-list-item'
             }
         },
@@ -35,19 +27,9 @@ define(function(require) {
         },
 
         /**
-         * @property {LoadingMaskView}
-         */
-        loadingMaskView: null,
-
-        /**
          * @property {jQuery}
          */
         $itemsContainer: null,
-
-        /**
-         * @property {jQuery}
-         */
-        $freightClassesSelect: null,
 
         /**
          * @inheritDoc
@@ -66,17 +48,6 @@ define(function(require) {
             ;
             this.$itemsContainer.on('click', '.removeRow', _.bind(this.onRemoveRowClick, this));
 
-            this.loadingMaskView = new LoadingMaskView({container: this.options.selectors.itemsContainer});
-
-            this.$itemsContainer
-                .on(
-                    'change',
-                    this.options.selectors.freightClassUpdateSelector,
-                    _.bind(this.onFreightClassTrigger, this)
-                )
-                .on('change', this.options.selectSelector, _.bind(this.onProductUnitChanged, this))
-            ;
-
             this.onContentChanged();
         },
 
@@ -85,11 +56,22 @@ define(function(require) {
             var self = this;
             var productUnits = this.getProductUnits();
             var selectedUnits = [];
+            var allSelectedUnits = [];
+
+            _.each(this.getSelects(), function(select) {
+                var currentValue = $(select).val();
+                if (_.indexOf(_.keys(productUnits), currentValue) !== -1) {
+                    allSelectedUnits.push(currentValue);
+                }
+            });
 
             _.each(this.getSelects(), function(select) {
                 var $select = $(select);
+                var currentValue = $select.val();
                 var clearChangeRequired = self.clearOptions(productUnits, $select);
-                var addChangeRequired = self.addOptions(productUnits, $select);
+                var addChangeRequired = self.addOptions(productUnits, allSelectedUnits, currentValue, $select);
+                allSelectedUnits.push($select.val());
+
                 if (clearChangeRequired || addChangeRequired) {
                     $select.trigger('change');
                 }
@@ -103,66 +85,6 @@ define(function(require) {
             $(this.options.selectors.addButtonSelector).toggle(
                 _.keys(productUnits).length > selectedUnits.length
             );
-        },
-
-        onProductUnitChanged: function() {
-            var units = this.getProductUnits();
-            var selectedUnits = [];
-            var selectedUnitsBefore = [];
-
-            _.each(this.getSelects(), function(select) {
-                var value = $(select).val();
-                if (_.indexOf(selectedUnits, value) === -1) {
-                    selectedUnits.push(value);
-                }
-            });
-
-            _.each(this.getSelects(), function(select) {
-                var $select = $(select);
-                var currentValue = $select.val();
-                $select.find('option').remove();
-                if (_.indexOf(selectedUnitsBefore, currentValue) === -1) {
-                    selectedUnitsBefore.push(currentValue);
-                } else {
-                    currentValue = '';
-                }
-                $.each(units, function(code, label) {
-                    if (code === currentValue || _.indexOf(selectedUnits, code) === -1) {
-                        $select.append($('<option/>').val(code).text(label));
-                    }
-                });
-                if ('' === currentValue) {
-                    $select.append($('<option/>').val('').text(''));
-                    $select.trigger('click');
-                }
-                $select.val(currentValue);
-            });
-        },
-
-        /**
-         * @param {jQuery.Event} e
-         */
-        onFreightClassTrigger: function(e) {
-            var self = this;
-            var $itemContainer = $(e.target).closest(this.options.selectors.itemContainer);
-            this.$freightClassesSelect = $itemContainer.find(this.options.selectors.freightClassSelector);
-            var $form = $itemContainer.closest('form');
-            var formData = $form.find(':input[data-ftid]').serialize();
-            formData = formData +
-                '&activeUnitCode=' +
-                encodeURI($itemContainer.find(this.options.selectSelector).val());
-            $.ajax({
-                url: routing.generate(this.options.routeFreightClassUpdate),
-                type: 'post',
-                data: formData,
-                beforeSend: $.proxy(this._beforeSend, this),
-                success: $.proxy(this._success, this),
-                complete: $.proxy(this._complete, this),
-                error: $.proxy(function(jqXHR) {
-                    this._dropValues(true);
-                    messenger.showErrorMessage(__(self.options.errorMessage), jqXHR.responseJSON);
-                }, this)
-            });
         },
 
         onContentRemoved: function() {
@@ -215,11 +137,6 @@ define(function(require) {
             var updateRequired = false;
 
             _.each($select.find('option'), function(option) {
-
-                if (!option.value) {
-                    return;
-                }
-
                 if (!units.hasOwnProperty(option.value)) {
                     option.remove();
 
@@ -242,93 +159,34 @@ define(function(require) {
          * Add options based on units configuration
          *
          * @param {Array} units
+         * @param {Array} allSelectedUnits
+         * @param {String} currentValue
          * @param {jQuery.Element} $select
          *
          * @return {Boolean}
          */
-        addOptions: function(units, $select) {
+        addOptions: function(units, allSelectedUnits, currentValue, $select) {
             var updateRequired = false;
-            var emptyOption = $select.find('option[value=""]');
 
-            emptyOption.toggle(_.isEmpty(units));
-
+            // if current value was removed
+            var needUpdateValue = (_.indexOf(_.keys(units), currentValue) === -1);
             _.each(units, function(text, value) {
                 if (!$select.find('option[value="' + value + '"]').length) {
-                    $select.append('<option value="' + value + '">' + text + '</option>');
+                    $select.append($('<option/>').val(value).text(text));
                     updateRequired = true;
+                }
+                if (needUpdateValue && (_.indexOf(allSelectedUnits, value) === -1)) {
+                    $select.val(value);
+                    needUpdateValue = false;
                 }
             });
 
-            if ($select.val() === '' && !_.isEmpty(units)) {
-                var value = _.keys(units)[0];
-                $select.val(value);
-                $($select.find('option')[0]).attr('selected', 'selected');
-                updateRequired = true;
+            // if no value found
+            if (needUpdateValue) {
+                $select.append($('<option/>').val('').text('')).val('');
             }
 
             return updateRequired;
-        },
-
-        /**
-         * @private
-         *
-         * @param {Boolean} disabled
-         */
-        _dropValues: function(disabled) {
-            this.$freightClassesSelect
-                .prop('disabled', disabled)
-                .val(null)
-                .find('option')
-                .remove();
-        },
-
-        /**
-         * @private
-         */
-        _beforeSend: function() {
-            if (this.loadingMaskView) {
-                this.loadingMaskView.show();
-            }
-        },
-
-        /**
-         * @param {Object} data
-         *
-         * @private
-         */
-        _success: function(data) {
-            var self = this;
-            var units = data.units;
-            var disabled = _.isEmpty(units);
-            var value = this.$freightClassesSelect.val();
-            this._dropValues(disabled);
-            if (!_.isEmpty(units)) {
-                $.each(units, function(code, label) {
-                    if (!self.$freightClassesSelect.find('option[value=' + code + ']').length) {
-                        self.$freightClassesSelect.append($('<option/>').val(code).text(label));
-                    }
-                });
-                self.$freightClassesSelect.find('option[value=""]').hide();
-                self.$freightClassesSelect.val(value);
-                if (self.$freightClassesSelect.val() === null) {
-                    self.$freightClassesSelect.val(_.keys(units)[0]);
-                }
-            } else {
-                self.$freightClassesSelect.append($('<option/>').val('').text(''));
-                self.$freightClassesSelect.val('');
-            }
-        },
-
-        /**
-         * @private
-         */
-        _complete: function() {
-            this.$freightClassesSelect
-                .trigger('value:changed')
-                .trigger('change');
-            if (this.loadingMaskView) {
-                this.loadingMaskView.hide();
-            }
         }
     });
 });

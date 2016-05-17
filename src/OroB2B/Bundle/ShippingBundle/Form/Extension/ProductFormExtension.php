@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormEvents;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
+use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
@@ -90,6 +91,7 @@ class ProductFormExtension extends AbstractTypeExtension
         $data = $event->getData();
         $options = $data[self::FORM_ELEMENT_NAME];
 
+        /** @var ProductUnitHolderInterface[] $existingOptions */
         $existingOptions = $form->get(self::FORM_ELEMENT_NAME)->getData();
         $newOptions = [];
 

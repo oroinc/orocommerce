@@ -62,10 +62,10 @@ class MeasureTransformerTest extends \PHPUnit_Framework_TestCase
     public function testTransform($value, $expected)
     {
         $this->repository->expects(is_array($value) && count($value) ? $this->once() : $this->never())
-            ->method('findOneBy')
+            ->method('find')
             ->willReturnCallback(
                 function ($value) {
-                    return $this->createUnit($value['code']);
+                    return $this->createUnit($value);
                 }
             );
 

@@ -27,8 +27,8 @@ class MeasureUnitProvider
     public function __construct(
         ObjectRepository $repository,
         ConfigManager $configManager,
-        $configEntryName)
-    {
+        $configEntryName
+    ) {
         $this->repository = $repository;
         $this->configManager = $configManager;
         $this->configEntryName = $configEntryName;
