@@ -405,6 +405,16 @@ services:
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: product-price }
 
+    orob2b_pricing.filter.price_lists:
+        class: 'OroB2B\Bundle\PricingBundle\Filter\PriceListsFilter'
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+        calls:
+            - [setRegistry, ['@doctrine']]
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: price-lists }
+
     orob2b_pricing.filter.frontend_product_price:
         class: 'OroB2B\Bundle\PricingBundle\Filter\FrontendProductPriceFilter'
         public: true

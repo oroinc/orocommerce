@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use OroB2B\Bundle\PricingBundle\Filter\PriceListsFilter;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 
@@ -47,10 +47,6 @@ abstract class AbstractPriceListRelationDataGridListener
         $config = $grid->getConfig();
         $this->addPriceListColumn($config);
         $this->addPriceListFilter($config);
-
-        if ($this->isPriceListFilterEnabled($grid)) {
-            $this->addPriceListCondition($grid);
-        }
     }
 
     /**
@@ -97,8 +93,10 @@ abstract class AbstractPriceListRelationDataGridListener
             self::PRICE_LIST_KEY,
             [
                 'label' => 'orob2b.pricing.pricelist.entity_label',
-                'type' => 'entity',
+                'type' => 'price-lists',
                 'data_name' => 'price_list',
+                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => $this->getRelationClassName(),
+                PriceListsFilter::ENTITY_ALIAS_PARAMETER => $this->getEntityAlias(),
                 'options' => [
                     'field_type' => 'entity',
                     'field_options' => [
@@ -129,29 +127,6 @@ abstract class AbstractPriceListRelationDataGridListener
     }
 
     /**
-     * @param DatagridInterface $grid
-     * @return bool
-     */
-    protected function isPriceListFilterEnabled(DatagridInterface $grid)
-    {
-        $params = $grid->getParameters();
-
-        // todo: refactor
-        if ($params->has('_minified')) {
-            $filters = $params->get('_minified')['f'];
-        } else {
-            $filters = $params->get('_filter');
-        }
-
-        return $filters && array_key_exists(self::PRICE_LIST_KEY, $filters);
-    }
-
-    /**
-     * @param DatagridInterface $grid
-     */
-    abstract protected function addPriceListCondition(DatagridInterface $grid);
-
-    /**
      * @param array|int[] $priceListHolderIds
      * @return BasePriceListRelation[]
      */
@@ -162,4 +137,14 @@ abstract class AbstractPriceListRelationDataGridListener
      * @return int
      */
     abstract protected function getObjectId(BasePriceListRelation $relation);
+
+    /**
+     * @return string
+     */
+    abstract protected function getRelationClassName();
+
+    /**
+     * @return string
+     */
+    abstract protected function getEntityAlias();
 }

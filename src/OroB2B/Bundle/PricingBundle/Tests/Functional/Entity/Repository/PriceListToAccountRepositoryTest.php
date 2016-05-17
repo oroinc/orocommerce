@@ -6,6 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
@@ -27,6 +28,71 @@ class PriceListToAccountRepositoryTest extends WebTestCase
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
             ]
         );
+    }
+
+    /**
+     * @dataProvider restrictByPriceListDataProvider
+     * @param $priceList
+     * @param array $expectedAccounts
+     */
+    public function testRestrictByPriceList($priceList, array $expectedAccounts)
+    {
+        $alias = 'account';
+        $qb = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:Account')
+            ->getRepository('OroB2BAccountBundle:Account')
+            ->createQueryBuilder($alias);
+
+        /** @var BasePriceList $priceList */
+        $priceList = $this->getReference($priceList);
+
+        $qb = $this->getRepository()->restrictByPriceList($qb, $priceList, $alias, 'priceList');
+
+        $result = $qb->getQuery()->getResult();
+
+        $this->assertCount(count($expectedAccounts), $result);
+
+        foreach ($expectedAccounts as $expectedAccount) {
+            $this->assertContains($this->getReference($expectedAccount), $result);
+        }
+    }
+
+    public function restrictByPriceListDataProvider()
+    {
+        return [
+            [
+                'priceList' => 'price_list_2',
+                'expectedAccounts' => [
+                    'account.level_1_1',
+                    'account.level_1.2',
+                    'account.level_1.3'
+                ]
+            ],
+            [
+                'priceList' => 'price_list_5',
+                'expectedAccounts' => [
+                    'account.level_1.1.1'
+                ]
+            ],
+            [
+                'priceList' => 'price_list_4',
+                'expectedAccounts' => [
+                    'account.level_1.3'
+                ]
+            ],
+            [
+                'priceList' => 'price_list_6',
+                'expectedAccounts' => [
+                    'account.level_1.3'
+                ]
+            ],
+            [
+                'priceList' => 'price_list_1',
+                'expectedAccounts' => [
+                    'account.level_1_1'
+                ]
+            ]
+        ];
     }
 
     public function testFindByPrimaryKey()

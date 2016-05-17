@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
@@ -25,6 +26,62 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
             ]
         );
+    }
+
+    /**
+     * @dataProvider restrictByPriceListDataProvider
+     * @param $priceList
+     * @param array $expectedAccountGroups
+     */
+    public function testRestrictByPriceList($priceList, array $expectedAccountGroups)
+    {
+        $alias = 'account_group';
+        $qb = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
+            ->getRepository('OroB2BAccountBundle:AccountGroup')
+            ->createQueryBuilder($alias);
+
+        /** @var BasePriceList $priceList */
+        $priceList = $this->getReference($priceList);
+
+        $qb = $this->getRepository()->restrictByPriceList($qb, $priceList, $alias, 'priceList');
+
+        $result = $qb->getQuery()->getResult();
+
+        $this->assertCount(count($expectedAccountGroups), $result);
+
+        foreach ($expectedAccountGroups as $expectedAccount) {
+            $this->assertContains($this->getReference($expectedAccount), $result);
+        }
+    }
+
+    public function restrictByPriceListDataProvider()
+    {
+        return [
+            [
+                'priceList' => 'price_list_1',
+                'expectedAccountGroups' => [
+                    'account_group.group1'
+                ]
+            ],
+            [
+                'priceList' => 'price_list_2',
+                'expectedAccountGroups' => []
+            ],
+            [
+                'priceList' => 'price_list_4',
+                'expectedAccountGroups' => [
+                    'account_group.group2'
+                ]
+            ],
+            [
+                'priceList' => 'price_list_5',
+                'expectedAccountGroups' => [
+                    'account_group.group1',
+                    'account_group.group3'
+                ]
+            ]
+        ];
     }
 
     public function testFindByPrimaryKey()
@@ -106,9 +163,9 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
      * @dataProvider getPriceListIteratorDataProvider
      * @param string $website
      * @param int|null$fallback
-     * @param array $expectedAccounts
+     * @param array $expectedAccountGroups
      */
-    public function testGetAccountGroupIteratorByFallback($website, $fallback, $expectedAccounts)
+    public function testGetAccountGroupIteratorByFallback($website, $fallback, $expectedAccountGroups)
     {
         /** @var $website Website */
         $website = $this->getReference($website);
@@ -120,7 +177,7 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
         foreach ($iterator as $accountGroup) {
             $actualSiteMap[] = $accountGroup->getName();
         }
-        $this->assertSame($expectedAccounts, $actualSiteMap);
+        $this->assertSame($expectedAccountGroups, $actualSiteMap);
     }
 
     /**
@@ -132,12 +189,12 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
             'with fallback' => [
                 'website' => 'US',
                 'fallback' => PriceListAccountGroupFallback::WEBSITE,
-                'expectedAccounts' => ['account_group.group1']
+                'expectedAccountGroups' => ['account_group.group1']
             ],
             'without fallback' => [
                 'website' => 'US',
                 'fallback' => null,
-                'expectedAccounts' => [
+                'expectedAccountGroups' => [
                     'account_group.group1',
                     'account_group.group2'
                 ]
