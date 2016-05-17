@@ -343,11 +343,10 @@ services:
             - [setPriceListClass, ['%orob2b_pricing.entity.price_list.class%']]
         arguments:
             - '@request_stack'
-            - '@session'
             - '@oro_security.security_facade'
             - '@orob2b_pricing.model.price_list_tree_handler'
             - '@doctrine'
-            - '@orob2b_frontend.request.frontend_helper'
+            - '@orob2b_account.provider.account_user_relations_provider'
 
     orob2b_pricing.model.price_list_tree_handler:
         class: 'OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler'
@@ -584,3 +583,14 @@ services:
             - '@doctrine'
             - '@oro_config.global'
             - '@oro_entity.orm.insert_from_select_query_executor'
+
+    orob2b_pricing.duplicator.schedule:
+        class: 'OroB2B\Bundle\PricingBundle\Duplicator\ScheduleDuplicator'
+
+    orob2b_pricing.duplicator.product_price_duplicator:
+        class: 'OroB2B\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator'
+        arguments:
+            - '@doctrine'
+            - '@oro_entity.orm.insert_from_select_query_executor'
+        calls:
+            - [setPriceListClass, ['%orob2b_pricing.entity.product_price.class%']]
