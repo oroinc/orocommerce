@@ -1,15 +1,15 @@
-/** @lends PaymentSaveForLaterComponent */
+/** @lends PaymentValidateComponent */
 define(function(require) {
     'use strict';
 
-    var PaymentSaveForLaterComponent;
+    var PaymentValidateComponent;
     var $ = require('jquery');
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
 
     var BaseComponent = require('oroui/js/app/components/base/component');
 
-    PaymentSaveForLaterComponent = BaseComponent.extend(/** @exports PaymentSaveForLaterComponent.prototype */ {
+    PaymentValidateComponent = BaseComponent.extend(/** @exports PaymentValidateComponent.prototype */ {
         /**
          * @property {jQuery}
          */
@@ -19,7 +19,7 @@ define(function(require) {
          * @property {Object}
          */
         selectors: {
-            saveForLaterSelector: '[name$="[payment_save_for_later]"]'
+            validateCheckboxSelector: '[name$="[payment_validate]"]'
         },
 
         /**
@@ -34,8 +34,9 @@ define(function(require) {
             this.$el = $(options._sourceElement);
             this.defaultState = this.getCheckboxState();
 
-            mediator.on('checkout:payment:save-for-later:change', _.bind(this.onChange, this));
-            mediator.on('checkout:payment:save-for-later:restore-default', _.bind(this.onRestoreDefault, this));
+            mediator.on('checkout:payment:validate:get-value', _.bind(this.onGetValue, this));
+            mediator.on('checkout:payment:validate:change', _.bind(this.onChange, this));
+            mediator.on('checkout:payment:validate:restore-default', _.bind(this.onRestoreDefault, this));
         },
 
         /**
@@ -50,10 +51,17 @@ define(function(require) {
         },
 
         /**
+         * @param {Object} object
+         */
+        onGetValue: function(object) {
+            object.value = this.getCheckboxState();
+        },
+
+        /**
          * @param {Boolean} state
          */
         setCheckboxState: function(state) {
-            this.getPaymentSaveForLaterElement()
+            this.getValidateCheckboxElement()
                 .prop('checked', state)
                 .trigger('change');
         },
@@ -62,18 +70,18 @@ define(function(require) {
          * @returns {Boolean}
          */
         getCheckboxState: function() {
-            return this.getPaymentSaveForLaterElement().prop('checked');
+            return this.getValidateCheckboxElement().prop('checked');
         },
 
         /**
          * @returns {jQuery}
          */
-        getPaymentSaveForLaterElement: function() {
-            if (!this.hasOwnProperty('$paymentSaveForLaterElement')) {
-                this.$paymentSaveForLaterElement = this.$el.find(this.selectors.saveForLaterSelector);
+        getValidateCheckboxElement: function() {
+            if (!this.hasOwnProperty('$validateCheckboxElement')) {
+                this.$validateCheckboxElement = this.$el.find(this.selectors.validateCheckboxSelector);
             }
 
-            return this.$paymentSaveForLaterElement;
+            return this.$validateCheckboxElement;
         },
 
         /**
@@ -84,12 +92,13 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('checkout:payment:save-for-later:change', _.bind(this.onChange, this));
-            mediator.off('checkout:payment:save-for-later:restore-default', _.bind(this.onRestoreDefault, this));
+            mediator.off('checkout:payment:validate:get-value', _.bind(this.onGetValue, this));
+            mediator.off('checkout:payment:validate:change', _.bind(this.onChange, this));
+            mediator.off('checkout:payment:validate:restore-default', _.bind(this.onRestoreDefault, this));
 
-            PaymentSaveForLaterComponent.__super__.dispose.call(this);
+            PaymentValidateComponent.__super__.dispose.call(this);
         }
     });
 
-    return PaymentSaveForLaterComponent;
+    return PaymentValidateComponent;
 });

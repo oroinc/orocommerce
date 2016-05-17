@@ -38,6 +38,8 @@ define(function(require) {
         initialize: function(options) {
             AuthorizedCreditCardComponent.__super__.initialize.call(this, options);
 
+            //this.options.currentValidation = false;
+            this.options.saveForLaterUse = false;
             this.options = _.defaults(options || {}, this.options);
 
             this.$authorizedCard = this.$el.find(this.authorizedOptions.authorizedCard);
@@ -60,7 +62,7 @@ define(function(require) {
                 this.$authorizedCard.css('position', 'relative');
             }).bind(this));
 
-            this.setPaymentValidateRequired(true);
+            this.setGlobalPaymentValidate(true);
             this.updateSaveForLater();
 
             return false;
@@ -78,26 +80,27 @@ define(function(require) {
                 this.$authorizedCard.css('position', 'relative');
             }).bind(this));
 
-            this.setPaymentValidateRequired(false);
+            this.setGlobalPaymentValidate(false);
             this.updateSaveForLater();
 
             return false;
         },
 
         onCurrentPaymentMethodSelected: function() {
-            this.setPaymentValidateRequired(this.paymentValidationRequiredComponentState);
+            this.setGlobalPaymentValidate(this.paymentValidationRequiredComponentState);
             this.updateSaveForLater();
         },
 
         updateSaveForLater: function() {
-            if (this.options.currentValidation) {
-                if (this.getPaymentValidateRequired()) {
-                    this.setSaveForLaterBasedOnForm();
-                } else {
-                    mediator.trigger('checkout:payment:save-for-later:restore-default');
-                }
+
+            if (this.getGlobalPaymentValidate()) {
+                this.setSaveForLaterBasedOnForm();
             } else {
-                mediator.trigger('checkout:payment:save-for-later:change', true);
+                //if (this.options.currentValidation) {
+                //    mediator.trigger('checkout:payment:save-for-later:restore-default');
+                //} else {
+                    mediator.trigger('checkout:payment:save-for-later:change', this.options.saveForLaterUse);
+                //}
             }
         },
 
@@ -105,7 +108,7 @@ define(function(require) {
          * @inheritDoc
          */
         beforeTransit: function(eventData) {
-            if (!this.getPaymentValidateRequired()) {
+            if (!this.getGlobalPaymentValidate()) {
                 return;
             }
 

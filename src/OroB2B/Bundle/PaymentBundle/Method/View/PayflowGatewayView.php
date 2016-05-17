@@ -78,12 +78,17 @@ class PayflowGatewayView implements PaymentMethodViewInterface
                 $currentValidation = $validateTransaction->getEntityClass() === $entityClass &&
                     $validateTransaction->getEntityIdentifier() === $entityIdentifier;
 
+                $transactionOptions = $validateTransaction->getTransactionOptions();
+                $saveForLaterUse = isset($transactionOptions['saveForLaterUse']) ?
+                    $transactionOptions['saveForLaterUse'] : false;
+
                 $viewOptions['creditCardComponent'] =
                     'orob2bpayment/js/app/components/authorized-credit-card-component';
 
                 $viewOptions['creditCardComponentOptions'] = [
                     'acct' => $this->getLast4($validateTransaction),
-                    'currentValidation' => $currentValidation,
+//                    'currentValidation' => $currentValidation,
+                    'saveForLaterUse' => $saveForLaterUse
                 ];
             }
         }
