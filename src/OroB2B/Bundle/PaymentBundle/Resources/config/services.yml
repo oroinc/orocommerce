@@ -206,3 +206,8 @@ services:
             - { name: oro_workflow.condition, alias: 'payment_method_enabled' }
             - { name: oro_action.condition, alias: 'payment_method_enabled' }
             - { name: oro_layout.expression, alias: 'payment_method_enabled'  }
+
+    orob2b_payment.provider.address_extractor:
+        class: 'OroB2B\Bundle\PaymentBundle\Provider\AddressExtractor'
+        arguments:
+            - '@property_accessor'
