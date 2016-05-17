@@ -1,8 +1,14 @@
 parameters:
-    oro_seo.twig.extension.default_fallback_value.class: OroB2B\Bundle\SEOBundle\Twig\DefaultFallbackValueExtension
+    oro_seo.twig.extension.default_fallback_value.class: 'OroB2B\Bundle\SEOBundle\Twig\DefaultFallbackValueExtension'
+    orob2b_seo.twig.locale.class: 'OroB2B\Bundle\SEOBundle\Twig\LocaleExtension'
 
 services:
     oro_seo.twig.extension.default_fallback_value:
-        class: %oro_seo.twig.extension.default_fallback_value.class%
+        class: '%oro_seo.twig.extension.default_fallback_value.class%'
+        tags:
+            - { name: twig.extension }
+
+    orob2b_seo.twig.locale:
+        class: '%orob2b_seo.twig.locale.class%'
         tags:
             - { name: twig.extension }

@@ -1,24 +1,31 @@
 layout:
     actions:
+        - '@setBlockTheme':
+            themes: 'OroB2BSEOBundle:layouts:default/orob2b_product_frontend_product_view/layout.html.twig'
         - @add:
             id: meta_product_title
             parentId: head
             blockType: meta
             options:
                 name: 'title'
-                content: {@value: $data.product.metaTitles}
+                vars:
+                    values: { '@value': $data.product.names }
+#                    values: { '@value': $data.product.meta_titles }
         - @add:
             id: meta_product_description
             parentId: head
             blockType: meta
             options:
                 name: 'description'
-                content: {@value: $data.product.metaDescriptions}
-
+                vars:
+                    values: { '@value': $data.product.shortDescriptions }
+#                    values: { '@value': $data.product.meta_descriptions }
         - @add:
-            id: meta_product_key_words
+            id: meta_product_keywords
             parentId: head
             blockType: meta
             options:
                 name: 'keywords'
-                content: {@value: $data.product.metaKeyWords}
+                vars:
+                    values: { '@value': $data.product.shortDescriptions }
+#                    values: { '@value': $data.product.meta_keywords }

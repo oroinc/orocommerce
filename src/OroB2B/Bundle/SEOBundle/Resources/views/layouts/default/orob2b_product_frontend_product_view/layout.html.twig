@@ -1,0 +1,16 @@
+{% block _meta_product_title_widget %}
+    {{ block('fallback_locale_value') }}
+{% endblock %}
+
+{% block _meta_product_description_widget %}
+    {{ block('fallback_locale_value') }}
+{% endblock %}
+
+{% block _meta_product_keywords_widget %}
+    {{ block('fallback_locale_value') }}
+{% endblock %}
+
+{% block fallback_locale_value%}
+    {% set attr = attr|merge({content : oro_fallback_locale_value(oro_locale(), values)}) %}
+    {{ block('meta_widget') }}
+{% endblock %}
