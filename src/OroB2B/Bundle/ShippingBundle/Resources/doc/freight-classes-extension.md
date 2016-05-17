@@ -1,7 +1,8 @@
 Freight Classes Extension
 =========================
 
-Create you own extension
+You must specify which freight classes in the extension service can be processed, for this it is necessary to define a method isApplicable and register extension.
+
 ```php
 <?php
 

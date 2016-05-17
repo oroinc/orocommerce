@@ -1,7 +1,9 @@
 Provide Units of Length, Weight and Freight Classes
 ===================================================
 
-Add migration to load you own weight units, length units and freight classes.
+To expand the number of units or freight classes you must add the migration containing the required items.
+
+Adding migration to load you own weight units, length units and freight classes:
 ```php
 <?php
 
