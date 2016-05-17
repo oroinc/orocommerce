@@ -2,19 +2,20 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Symfony\Component\Translation\TranslatorInterface;
+
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-use OroB2B\Bundle\PricingBundle\EventListener\AccountDataGridListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
+use OroB2B\Bundle\PricingBundle\EventListener\AccountGroupDataGridListener;
 
 class AccountGroupDataGridListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @var \PHPUnit_Framework_MockObject_MockObject|Registry
      */
     protected $registry;
 
@@ -24,7 +25,7 @@ class AccountGroupDataGridListenerTest extends \PHPUnit_Framework_TestCase
     protected $manager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AccountDataGridListener
+     * @var \PHPUnit_Framework_MockObject_MockObject|AccountGroupDataGridListener
      */
     protected $listener;
 
@@ -38,11 +39,13 @@ class AccountGroupDataGridListenerTest extends \PHPUnit_Framework_TestCase
             ['OroB2BPricingBundle:PriceListToAccountGroup', $repository]
         ]);
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->registry->method('getManagerForClass')->willReturn($this->manager);
         /** @var TranslatorInterface $translator */
         $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->listener = new AccountDataGridListener($this->registry, $translator);
+        $this->listener = new AccountGroupDataGridListener($this->registry, $translator);
     }
 
     public function testOnResultAfter()
