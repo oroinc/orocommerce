@@ -36,7 +36,5 @@ class DependencyInjectionContainerTest extends WebTestCase
             $notRecommendedClassParameters,
             "Not recommended class parameters:\n" . implode("\n", $notRecommendedClassParameters)
         );
-
-        $this->assertFalse(true, 'Test failed assertion');
     }
 }
