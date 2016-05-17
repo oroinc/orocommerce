@@ -194,10 +194,10 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     }
 
     /**
-     * @param array Account[]|int[] $accountsIds
+     * @param array Account[]|int[] $holdersIds
      * @return PriceListToAccount[]
      */
-    public function getRelationsByHolders(array $accountsIds)
+    public function getRelationsByHolders(array $holdersIds)
     {
         $qb = $this->createQueryBuilder('relation');
         $qb->addSelect('website')
@@ -208,8 +208,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
             ->orderBy('relation.account')
             ->addOrderBy('relation.website')
             ->addOrderBy('relation.priority')
-            ->setParameter('accounts', $accountsIds);
-
+            ->setParameter('accounts', $holdersIds);
 
         return $qb->getQuery()->getResult();
     }

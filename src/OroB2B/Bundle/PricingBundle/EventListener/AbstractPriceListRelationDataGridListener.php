@@ -87,6 +87,7 @@ abstract class AbstractPriceListRelationDataGridListener
             }
         }
     }
+
     /**
      * @param DatagridConfiguration $config
      */
@@ -122,7 +123,7 @@ abstract class AbstractPriceListRelationDataGridListener
                 'type' => 'twig',
                 'template' => 'OroB2BPricingBundle:Datagrid:Column/priceLists.html.twig',
                 'frontend_type' => 'html',
-                'renderable' => true,
+                'renderable' => false,
             ]
         );
     }
