@@ -58,6 +58,9 @@ workflows:
             payment_validate:
                 type: bool
                 label: Payment validation required
+            payment_save_for_later:
+                type: bool
+                label: Save payment data for later use
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -178,6 +181,8 @@ workflows:
                         payment_method: ~
                         payment_validate:
                             form_type: checkbox
+                        payment_save_for_later:
+                            form_type: checkbox
 
             back_to_billing_address:
                 label: Edit Billing Information
@@ -247,6 +252,9 @@ workflows:
                 is_hidden: true
 
         transition_definitions:
+            __start___definition:
+                post_actions:
+                    - '@assign_value': [$payment_save_for_later, true]
             do_nothing:
                 pre_conditions:
                     '@not_equal': [$payment_in_progress, true]
@@ -372,6 +380,12 @@ workflows:
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
                                     id: $checkout.id
+                            - '@assign_url':
+                                attribute: $.result.errorUrl
+                                route: orob2b_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: 'payment_error'
                             - '@payment_validate':
                                 conditions:
                                     '@payment_method_supports':
@@ -381,8 +395,9 @@ workflows:
                                 object: $checkout
                                 paymentMethod: $checkout.paymentMethod
                                 transactionOptions:
+                                    saveForLaterUse: $payment_save_for_later
                                     successUrl: $.result.url
-                                    errorUrl: $.result.url
+                                    errorUrl: $.result.errorUrl
 
             verify_payment_definition:
                 pre_conditions:
@@ -495,7 +510,6 @@ workflows:
                         actions:
                             - '@payment_purchase':
                                 object: $checkout.order
-                                reference: $checkout
                                 amount: $checkout.order.total
                                 currency: $checkout.order.currency
                                 paymentMethod: $payment_method

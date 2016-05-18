@@ -133,11 +133,10 @@ class PaymentTransactionProvider
     }
 
     /**
-     * @param object $object
      * @param string $paymentMethod
      * @return PaymentTransaction
      */
-    public function getActiveValidatePaymentTransaction($object, $paymentMethod)
+    public function getActiveValidatePaymentTransaction($paymentMethod)
     {
         $accountUser = $this->getLoggedAccountUser();
         if (!$accountUser) {

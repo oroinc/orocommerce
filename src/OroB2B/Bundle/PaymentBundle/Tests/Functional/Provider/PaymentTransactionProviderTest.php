@@ -99,7 +99,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         );
 
         $this->assertEmpty(
-            $paymentTransactionProvider->getActiveValidatePaymentTransaction(new \stdClass(), 'payflow_gateway')
+            $paymentTransactionProvider->getActiveValidatePaymentTransaction('payflow_gateway')
         );
     }
 
@@ -123,7 +123,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         );
 
         $this->assertNotEmpty(
-            $paymentTransactionProvider->getActiveValidatePaymentTransaction(new \stdClass(), 'payflow_gateway')
+            $paymentTransactionProvider->getActiveValidatePaymentTransaction('payflow_gateway')
         );
     }
 
@@ -137,7 +137,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->getContainer()->get('security.token_storage')->setToken(null);
 
         $this->assertEmpty(
-            $paymentTransactionProvider->getActiveValidatePaymentTransaction(new \stdClass(), 'payflow_gateway')
+            $paymentTransactionProvider->getActiveValidatePaymentTransaction('payflow_gateway')
         );
     }
 
@@ -160,6 +160,7 @@ class PaymentTransactionProviderTest extends WebTestCase
             )
         );
 
+        /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = $paymentTransactionProvider->createPaymentTransaction(
             'paymentMethod',
             'authorize',
