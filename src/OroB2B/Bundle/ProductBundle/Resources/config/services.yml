@@ -316,7 +316,6 @@ services:
             - '@doctrine'
             - '@oro_attachment.manager'
             - '@orob2b_product.formatter.product_unit_label'
-            - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
