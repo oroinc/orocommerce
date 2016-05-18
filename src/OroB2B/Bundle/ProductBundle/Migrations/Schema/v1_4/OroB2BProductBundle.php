@@ -24,8 +24,5 @@ class OroB2BProductBundle implements Migration
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
-
     }
-
 }
-

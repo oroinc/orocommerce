@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -240,12 +241,17 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      *      }
      * )
      */
+    protected $additionalUnitPrecisions;
+
+    /**
+     * @var Collection|ProductUnitPrecision[]
+     */
     protected $unitPrecisions;
 
     /**
      * @var ProductUnitPrecision
      *
-     * @ORM\OneToOne(targetEntity="ProductUnitPrecision")
+     * @ORM\OneToOne(targetEntity="ProductUnitPrecision", cascade={"ALL"})
      * @ORM\JoinColumn(name="primary_product_unit_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -382,6 +388,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     {
         parent::__construct();
 
+        $this->additionalUnitPrecisions = new ArrayCollection();
         $this->unitPrecisions = new ArrayCollection();
         $this->names = new ArrayCollection();
         $this->descriptions = new ArrayCollection();
@@ -580,14 +587,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * @param ProductUnitPrecision $unitPrecision
      * @return Product
      */
-    public function addUnitPrecision(ProductUnitPrecision $unitPrecision)
+    public function addAdditionalUnitPrecision(ProductUnitPrecision $unitPrecision)
     {
         $productUnit = $unitPrecision->getUnit();
-        if ($productUnit && $existingUnitPrecision = $this->getUnitPrecision($productUnit->getCode())) {
+        if ($productUnit && $existingUnitPrecision = $this->getAdditionalUnitPrecision($productUnit->getCode())) {
             $existingUnitPrecision->setPrecision($unitPrecision->getPrecision());
         } else {
             $unitPrecision->setProduct($this);
-            $this->unitPrecisions->add($unitPrecision);
+            $this->additionalUnitPrecisions->add($unitPrecision);
         }
 
         return $this;
@@ -599,10 +606,10 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * @param ProductUnitPrecision $unitPrecisions
      * @return Product
      */
-    public function removeUnitPrecision(ProductUnitPrecision $unitPrecisions)
+    public function removeAdditionalUnitPrecision(ProductUnitPrecision $unitPrecisions)
     {
-        if ($this->unitPrecisions->contains($unitPrecisions)) {
-            $this->unitPrecisions->removeElement($unitPrecisions);
+        if ($this->additionalUnitPrecisions->contains($unitPrecisions)) {
+            $this->additionalUnitPrecisions->removeElement($unitPrecisions);
         }
 
         return $this;
@@ -613,9 +620,20 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      *
      * @return Collection|ProductUnitPrecision[]
      */
-    public function getUnitPrecisions()
+    public function getAdditionalUnitPrecisions()
     {
-        return $this->unitPrecisions;
+        $precisions = $this->additionalUnitPrecisions;
+        if ($precisions) {
+            $precisions->removeElement($this->primaryUnitPrecision);
+
+            $addPrecisions = new ArrayCollection();
+            foreach ($precisions as $precision) {
+                $addPrecisions->add($precision);
+            }
+            return $addPrecisions;
+        } else {
+            return $precisions;
+        }
     }
 
     /**
@@ -624,11 +642,11 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * @param string $unitCode
      * @return ProductUnitPrecision
      */
-    public function getUnitPrecision($unitCode)
+    public function getAdditionalUnitPrecision($unitCode)
     {
         $result = null;
 
-        foreach ($this->unitPrecisions as $unitPrecision) {
+        foreach ($this->additionalUnitPrecisions as $unitPrecision) {
             if ($unitPrecision->getUnit()->getCode() == $unitCode) {
                 $result = $unitPrecision;
                 break;
@@ -908,7 +926,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      *
      * @return Product
      */
-    public function setPrimaryUnitPrecision(\OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision $primaryUnitPrecision = null)
+    public function setPrimaryUnitPrecision(ProductUnitPrecision $primaryUnitPrecision = null)
     {
         $this->primaryUnitPrecision = $primaryUnitPrecision;
 
@@ -925,21 +943,30 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         return $this->primaryUnitPrecision;
     }
 
+
     /**
      * Get unitPrecisions
      *
      * @return Collection|ProductUnitPrecision[]
      */
-    public function getAdditionalUnitPrecisions()
+    public function getUnitPrecisions()
     {
-        $precisions = $this->unitPrecisions;
-        foreach ($precisions as  $key => $unitPrecision) {
-            if ($unitPrecision->getUnit()->getId() == $this->primaryUnitPrecision->getId()) {
-                unset($precisions[$key]);
-                break;
-            }
-        }
+        $precisions = $this->getAdditionalUnitPrecisions();
+        $precisions->add($this->primaryUnitPrecision);
+
         return $precisions;
     }
 
+    /**
+     * Get unitPrecisions by unit code
+     *
+     * @param string $unitCode
+     * @return ProductUnitPrecision
+     */
+    public function getUnitPrecision($unitCode)
+    {
+        $result = $this->getAdditionalUnitPrecision($unitCode);
+
+        return $result;
+    }
 }
