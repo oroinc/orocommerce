@@ -119,6 +119,7 @@ services:
 
     orob2b_shipping.provider.measure_units.weight:
         class: 'OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider'
+        public: true
         arguments:
             - '@orob2b_shipping.repository.weight_unit'
             - '@oro_config.manager'
@@ -126,6 +127,7 @@ services:
 
     orob2b_shipping.provider.measure_units.length:
         class: 'OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider'
+        public: true
         arguments:
             - '@orob2b_shipping.repository.length_unit'
             - '@oro_config.manager'
@@ -133,6 +135,7 @@ services:
 
     orob2b_shipping.provider.measure_units.freight:
         class: 'OroB2B\Bundle\ShippingBundle\Provider\FreightClassesProvider'
+        public: true
         arguments:
             - '@orob2b_shipping.repository.freight_class'
             - '@oro_config.manager'
@@ -145,6 +148,7 @@ services:
 
     orob2b_shipping.validator.unique_product_unit_shipping_options:
         class: 'OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator'
+        public: true
         tags:
             - { name: validator.constraint_validator, alias: orob2b_shipping_unique_product_unit_shipping_options_validator }
 
@@ -154,15 +158,18 @@ services:
 
     orob2b_shipping.form.data_transformer.length_unit:
         parent: 'orob2b_shipping.form.data_transformer.measure'
+        public: true
         arguments:
             - '@orob2b_shipping.repository.length_unit'
 
     orob2b_shipping.form.data_transformer.weight_unit:
         parent: 'orob2b_shipping.form.data_transformer.measure'
+        public: true
         arguments:
             - '@orob2b_shipping.repository.weight_unit'
 
     orob2b_shipping.form.data_transformer.freight_class:
         parent: 'orob2b_shipping.form.data_transformer.measure'
+        public: true
         arguments:
             - '@orob2b_shipping.repository.freight_class'

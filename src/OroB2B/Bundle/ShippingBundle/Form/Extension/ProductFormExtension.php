@@ -89,7 +89,7 @@ class ProductFormExtension extends AbstractTypeExtension
         }
 
         $data = $event->getData();
-        $options = $data[self::FORM_ELEMENT_NAME];
+        $options = array_key_exists(self::FORM_ELEMENT_NAME, $data) ? $data[self::FORM_ELEMENT_NAME] : [];
 
         /** @var ProductUnitHolderInterface[] $existingOptions */
         $existingOptions = $form->get(self::FORM_ELEMENT_NAME)->getData();
