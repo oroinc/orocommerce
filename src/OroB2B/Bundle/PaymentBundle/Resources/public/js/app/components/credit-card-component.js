@@ -56,7 +56,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options = _.defaults(options || {}, this.options);
+            this.options = _.extend({}, this.options, options);
 
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardNumberLuhnCheck');
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDate');
@@ -80,6 +80,12 @@ define(function(require) {
             mediator.on('checkout:place-order:response', _.bind(this.handleSubmit, this));
             mediator.on('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
             mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
+
+            mediator.once('page:afterChange', function() {
+                var paymentMethodObject = {};
+                mediator.trigger('checkout:payment:method:get-value', paymentMethodObject);
+                mediator.trigger('checkout:payment:method:changed', {paymentMethod: paymentMethodObject.value});
+            });
         },
 
         handleSubmit: function(eventData) {

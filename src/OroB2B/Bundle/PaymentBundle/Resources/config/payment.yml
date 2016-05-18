@@ -43,7 +43,6 @@ services:
             - '@form.factory'
             - '@oro_config.global'
             - '@orob2b_payment.provider.payment_transaction'
-            - '@oro_entity.doctrine_helper'
 
     orob2b_payment.payment_method.view.paypal_payments_pro:
         class: 'OroB2B\Bundle\PaymentBundle\Method\View\PayPalPaymentsProView'

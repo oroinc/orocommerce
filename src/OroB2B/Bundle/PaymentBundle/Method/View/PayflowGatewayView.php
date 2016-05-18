@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\PaymentBundle\Method\View;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
@@ -30,25 +29,19 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
 
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
     /**
      * @param FormFactoryInterface $formFactory
      * @param ConfigManager $configManager
      * @param PaymentTransactionProvider $paymentTransactionProvider
-     * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         FormFactoryInterface $formFactory,
         ConfigManager $configManager,
-        PaymentTransactionProvider $paymentTransactionProvider,
-        DoctrineHelper $doctrineHelper
+        PaymentTransactionProvider $paymentTransactionProvider
     ) {
         $this->formFactory = $formFactory;
         $this->configManager = $configManager;
         $this->paymentTransactionProvider = $paymentTransactionProvider;
-        $this->doctrineHelper = $doctrineHelper;
     }
 
     /** {@inheritdoc} */
@@ -72,12 +65,6 @@ class PayflowGatewayView implements PaymentMethodViewInterface
                 ->getActiveValidatePaymentTransaction($contextOptions['entity'], $this->getPaymentMethodType());
 
             if ($validateTransaction) {
-                $entityClass = $this->doctrineHelper->getEntityClass($contextOptions['entity']);
-                $entityIdentifier = $this->doctrineHelper->getSingleEntityIdentifier($contextOptions['entity']);
-
-                $currentValidation = $validateTransaction->getEntityClass() === $entityClass &&
-                    $validateTransaction->getEntityIdentifier() === $entityIdentifier;
-
                 $transactionOptions = $validateTransaction->getTransactionOptions();
                 $saveForLaterUse = isset($transactionOptions['saveForLaterUse']) ?
                     $transactionOptions['saveForLaterUse'] : false;
@@ -87,7 +74,6 @@ class PayflowGatewayView implements PaymentMethodViewInterface
 
                 $viewOptions['creditCardComponentOptions'] = [
                     'acct' => $this->getLast4($validateTransaction),
-//                    'currentValidation' => $currentValidation,
                     'saveForLaterUse' => $saveForLaterUse
                 ];
             }

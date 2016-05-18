@@ -36,11 +36,8 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            AuthorizedCreditCardComponent.__super__.initialize.call(this, options);
-
-            //this.options.currentValidation = false;
             this.options.saveForLaterUse = false;
-            this.options = _.defaults(options || {}, this.options);
+            AuthorizedCreditCardComponent.__super__.initialize.call(this, options);
 
             this.$authorizedCard = this.$el.find(this.authorizedOptions.authorizedCard);
             this.$differentCard = this.$el.find(this.authorizedOptions.differentCard);
@@ -96,11 +93,7 @@ define(function(require) {
             if (this.getGlobalPaymentValidate()) {
                 this.setSaveForLaterBasedOnForm();
             } else {
-                //if (this.options.currentValidation) {
-                //    mediator.trigger('checkout:payment:save-for-later:restore-default');
-                //} else {
-                    mediator.trigger('checkout:payment:save-for-later:change', this.options.saveForLaterUse);
-                //}
+                mediator.trigger('checkout:payment:save-for-later:change', this.options.saveForLaterUse);
             }
         },
 

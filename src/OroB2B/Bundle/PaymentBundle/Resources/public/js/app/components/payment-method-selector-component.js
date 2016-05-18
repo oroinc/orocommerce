@@ -28,19 +28,15 @@ define(function(require) {
         $el: null,
 
         /**
-         * @property {jQuery}
-         */
-        $radios: null,
-
-        /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.extend(this.options, options);
 
             this.$el = this.options._sourceElement;
-            this.$radios = this.$el.find(this.options.selectors.radio);
             this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
+
+            mediator.on('checkout:payment:method:get-value', _.bind(this.onGetValue, this));
 
             this.$el.on(
                 this.options.redirectEvent,
@@ -65,6 +61,8 @@ define(function(require) {
 
             this.$el.off();
 
+            mediator.off('checkout:payment:method:get-value', _.bind(this.onGetValue, this));
+
             PaymentMethodSelectorComponent.__super__.dispose.call(this);
         },
 
@@ -73,6 +71,14 @@ define(function(require) {
             this.$el.find(this.options.selectors.subform).hide();
             $element.parents(this.options.selectors.itemContainer).find(this.options.selectors.subform).show();
             mediator.trigger('checkout:payment:method:changed', {paymentMethod: $element.val()});
+        },
+
+        /**
+         * @param {Object} object
+         */
+        onGetValue: function(object) {
+            var $checkedRadio = this.$el.find(this.options.selectors.radio).filter(':checked');
+            object.value = $checkedRadio.val();
         }
     });
 
