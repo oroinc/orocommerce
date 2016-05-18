@@ -18,9 +18,9 @@ class LoadProductUnitPrecisions extends AbstractFixture implements DependentFixt
     public function load(ObjectManager $manager)
     {
         $this->createProductUnitPrecision($manager, 'product.1', 'product_unit.liter');
-        $this->createProductUnitPrecision($manager, 'product.1', 'product_unit.bottle', 2);
+        $this->createProductUnitPrecision($manager, 'product.1', 'product_unit.bottle', 2, 3, true);
         $this->createProductUnitPrecision($manager, 'product.2', 'product_unit.liter', 3);
-        $this->createProductUnitPrecision($manager, 'product.2', 'product_unit.bottle', 1);
+        $this->createProductUnitPrecision($manager, 'product.2', 'product_unit.bottle', 1, 2, true );
         $this->createProductUnitPrecision($manager, 'product.2', 'product_unit.box');
         $this->createProductUnitPrecision($manager, 'product.3', 'product_unit.liter', 3);
         $this->createProductUnitPrecision($manager, 'product.4', 'product_unit.box');
@@ -40,7 +40,9 @@ class LoadProductUnitPrecisions extends AbstractFixture implements DependentFixt
         ObjectManager $manager,
         $productReference,
         $unitReference,
-        $precision = 0
+        $precision = 0,
+        $conversionRate = 1,
+        $sell = false
     ) {
         /** @var Product $productReference */
         $product = $this->getReference($productReference);
@@ -51,6 +53,8 @@ class LoadProductUnitPrecisions extends AbstractFixture implements DependentFixt
         $productUnitPrecision->setProduct($product);
         $productUnitPrecision->setPrecision($precision);
         $productUnitPrecision->setUnit($unit);
+        $productUnitPrecision->setConversionRate($conversionRate);
+        $productUnitPrecision->setSell($sell);
         $manager->persist($productUnitPrecision);
         $this->addReference(
             sprintf('product_unit_precision.%s', implode('.', [$product->getSku(), $unit->getCode()])),
