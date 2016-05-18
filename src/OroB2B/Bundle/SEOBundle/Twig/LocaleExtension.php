@@ -36,11 +36,11 @@ class LocaleExtension extends \Twig_Extension
             return $locale === $value->getLocale();
         });
 
-        if ($filteredValues ->count() > 1) {
+        if ($filteredValues->count() > 1) {
             throw new \LogicException('There must be only one default name');
-        } elseif ($filteredValues ->count() === 1) {
-            return $filteredValues ->first();
-        } elseif ($filteredValues ->count() === 0 && $locale !== null) {
+        } elseif ($filteredValues->count() === 1) {
+            return $filteredValues->first();
+        } elseif ($filteredValues->count() === 0 && $locale !== null) {
             return $this->getFallbackLocaleValue(null, $values);
         }
 

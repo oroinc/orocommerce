@@ -9,8 +9,7 @@ layout:
             options:
                 name: 'title'
                 vars:
-                    values: { '@value': $data.product.names }
-#                    values: { '@value': $data.product.meta_titles }
+                    values: { '@value': $data.product.meta_titles }
         - @add:
             id: meta_product_description
             parentId: head
@@ -18,8 +17,7 @@ layout:
             options:
                 name: 'description'
                 vars:
-                    values: { '@value': $data.product.shortDescriptions }
-#                    values: { '@value': $data.product.meta_descriptions }
+                    values: { '@value': $data.product.meta_descriptions }
         - @add:
             id: meta_product_keywords
             parentId: head
@@ -27,5 +25,4 @@ layout:
             options:
                 name: 'keywords'
                 vars:
-                    values: { '@value': $data.product.shortDescriptions }
-#                    values: { '@value': $data.product.meta_keywords }
+                    values: { '@value': $data.product.meta_keywords }

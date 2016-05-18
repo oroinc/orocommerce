@@ -11,6 +11,8 @@
 {% endblock %}
 
 {% block fallback_locale_value%}
-    {% set attr = attr|merge({content : oro_fallback_locale_value(oro_locale(), values)}) %}
+    {% if values is not null  %}
+        {% set attr = attr|merge({content : oro_fallback_locale_value(oro_locale(), values)}) %}
+    {% endif %}
     {{ block('meta_widget') }}
 {% endblock %}
