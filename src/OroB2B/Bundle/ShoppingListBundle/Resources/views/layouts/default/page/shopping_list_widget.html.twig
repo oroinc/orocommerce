@@ -1,9 +1,17 @@
 {% block _main_menu_shopping_lists_wrapper_widget %}
-    {% set attr = attr|merge({
+    {% set attr = {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-options': {
+            view: 'oroui/js/app/views/layout-subtree-view',
+            rootId : block.vars.id,
+            reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete']
+        },
+        'data-dropdown-trigger': true
+    }|merge(attr|merge({
         class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg shopping-lists-frontend-widget"
-    }) %}
+    })) %}
 
-    <li {{ block('block_attributes') }} data-dropdown-trigger>
+    <li {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </li>
 {% endblock %}
@@ -73,9 +81,16 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_widget_content_new_item_btn_widget %}
-    <div data-page-component-module="orob2bshoppinglist/js/app/components/create-button-component">
-        <a class="order-widget__create-btn" href="javascript: void(0);">
-            <i class="cf-add_circle nmmt3-md"></i> {{ 'orob2b.frontend.shoppinglist.view.create_new_shopping_list.label'|trans }}
-        </a>
-    </div>
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {{ UI.clientLink({
+        'aCss': 'order-widget__create-btn',
+        'iCss': 'cf-add_circle nmmt3-md',
+        'label' : 'orob2b.frontend.shoppinglist.view.create_new_shopping_list.label'|trans,
+        'widget' : {
+            'type' : 'shopping-list-create',
+            'options': {
+                'createOnly': true
+            }
+        }
+    }) }}
 {% endblock %}

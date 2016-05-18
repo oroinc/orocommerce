@@ -5,10 +5,7 @@ layout:
         - '@addTree':
             items:
                 main_menu_shopping_lists_wrapper:
-                    blockType: widget
-                    options:
-                        vars:
-                            widgetAlias: shopping_lists_frontend_widget
+                    blockType: container
                 main_menu_shopping_lists_widget:
                     blockType: container
                     options:
