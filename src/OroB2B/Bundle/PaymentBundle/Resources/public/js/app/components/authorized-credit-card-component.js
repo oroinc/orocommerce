@@ -36,9 +36,8 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
+            this.options.saveForLaterUse = false;
             AuthorizedCreditCardComponent.__super__.initialize.call(this, options);
-
-            this.options = _.defaults(options || {}, this.options);
 
             this.$authorizedCard = this.$el.find(this.authorizedOptions.authorizedCard);
             this.$differentCard = this.$el.find(this.authorizedOptions.differentCard);
@@ -48,6 +47,9 @@ define(function(require) {
                 .on('click', this.authorizedOptions.differentCardHandle, _.bind(this.showDifferentCard, this));
         },
 
+        /**
+         * @returns {Boolean}
+         */
         showDifferentCard: function() {
             this.$authorizedCard
                 .css('position', 'absolute');
@@ -57,11 +59,15 @@ define(function(require) {
                 this.$authorizedCard.css('position', 'relative');
             }).bind(this));
 
-            this.setPaymentValidateRequired(true);
+            this.setGlobalPaymentValidate(true);
+            this.updateSaveForLater();
 
             return false;
         },
 
+        /**
+         * @returns {Boolean}
+         */
         showAuthorizedCard: function() {
             this.$authorizedCard
                 .css('position', 'absolute');
@@ -71,13 +77,31 @@ define(function(require) {
                 this.$authorizedCard.css('position', 'relative');
             }).bind(this));
 
-            this.setPaymentValidateRequired(false);
+            this.setGlobalPaymentValidate(false);
+            this.updateSaveForLater();
 
             return false;
         },
 
+        onCurrentPaymentMethodSelected: function() {
+            this.setGlobalPaymentValidate(this.paymentValidationRequiredComponentState);
+            this.updateSaveForLater();
+        },
+
+        updateSaveForLater: function() {
+
+            if (this.getGlobalPaymentValidate()) {
+                this.setSaveForLaterBasedOnForm();
+            } else {
+                mediator.trigger('checkout:payment:save-for-later:change', this.options.saveForLaterUse);
+            }
+        },
+
+        /**
+         * @inheritDoc
+         */
         beforeTransit: function(eventData) {
-            if (this.disposed || !this.getPaymentValidateRequired()) {
+            if (this.disposed || !this.getGlobalPaymentValidate()) {
                 return;
             }
 

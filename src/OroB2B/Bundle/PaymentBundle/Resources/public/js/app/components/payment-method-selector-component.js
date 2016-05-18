@@ -16,10 +16,7 @@ define(function(require) {
             selectors: {
                 radio: '[data-choice]',
                 itemContainer: '[data-item-container]',
-                subform: '[data-form-container]',
-                submitButton: '[data-payment-method-submit]',
-                noMethods: 'payment-no-methods',
-                paymentValidateRequired: '[name$="[payment_validate]"]'
+                subform: '[data-form-container]'
             },
             redirectEvent: 'scroll keypress mousedown tap',
             delay: 1000 * 60 * 15 // 15 minutes
@@ -47,8 +44,9 @@ define(function(require) {
             this.options = _.extend(this.options, options);
 
             this.$el = this.options._sourceElement;
-            this.$radios = this.$el.find(this.options.selectors.radio);
             this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
+
+            mediator.on('checkout:payment:method:get-value', _.bind(this.onGetValue, this));
 
             this.$el.on(
                 this.options.redirectEvent,
@@ -78,6 +76,8 @@ define(function(require) {
             mediator.off('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
             mediator.off('checkout:payment:before-hide-filled-form', _.bind(this.beforeHideFilledForm, this));
 
+            mediator.off('checkout:payment:method:get-value', _.bind(this.onGetValue, this));
+
             PaymentMethodSelectorComponent.__super__.dispose.call(this);
         },
 
@@ -98,6 +98,14 @@ define(function(require) {
             if (!$filledForm.is(this.$el)) {
                 this.dispose();
             }
+        },
+
+        /**
+         * @param {Object} object
+         */
+        onGetValue: function(object) {
+            var $checkedRadio = this.$el.find(this.options.selectors.radio).filter(':checked');
+            object.value = $checkedRadio.val();
         }
     });
 

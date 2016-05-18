@@ -7,8 +7,6 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Account;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use OroB2B\Bundle\PaymentBundle\Method\View\PayflowGatewayView;
 use OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType;
@@ -61,98 +59,165 @@ class PayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @dataProvider optionsProvider
-     * @param array $data
-     */
-    public function testGetOptions($data)
+    public function testGetOptionsWithoutZeroAmount()
     {
         $formView = $this->getMock('Symfony\Component\Form\FormView');
-
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
-        $form->expects($this->once())
-            ->method('createView')
-            ->willReturn($formView);
+        $form->expects($this->once())->method('createView')->willReturn($formView);
 
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(CreditCardType::NAME)
             ->willReturn($form);
-        
-        $expected = [
-            'formView' => $formView,
-            'allowedCreditCards' => $data['allowedCards'],
-        ];
 
         $this->configManager->expects($this->exactly(2))
             ->method('get')
-            ->withConsecutive($data['configsData'][0], $data['configsData'][1])
-            ->willReturnOnConsecutiveCalls($data['returnConfigs'][0], $data['returnConfigs'][1]);
-        $entity = new \stdClass();
+            ->withConsecutive(
+                [
+                    $this->getConfigKey(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY),
+                ],
+                [
+                    $this->getConfigKey(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY),
+                ]
+            )
+            ->willReturnOnConsecutiveCalls(false, ['visa', 'mastercard']);
 
-        $transactionEntity = null;
+        $this->paymentTransactionProvider->expects($this->never())->method('getActiveValidatePaymentTransaction');
 
-        if ($data['transactionEntityOptions'] !== null) {
-            /** @var PaymentTransaction $transactionEntity */
-            $transactionEntity = $this->getEntity(
-                'OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction',
-                $data['transactionEntityOptions']
-            );
-        }
-
-        if ($data['zero_amount']) {
-            $this->paymentTransactionProvider->expects($this->once())
-                ->method('getActiveValidatePaymentTransaction')
-                ->with($entity, PayflowGateway::TYPE)
-                ->willReturn($transactionEntity);
-
-            if ($transactionEntity) {
-                $expected = array_merge(
-                    $expected,
-                    [
-                        'creditCardComponent' => 'orob2bpayment/js/app/components/authorized-credit-card-component',
-                        'creditCardComponentOptions' => [
-                            'acct' => $data['last4']
-                        ]
-                    ]
-                );
-            }
-        }
-
-        $this->assertEquals($expected, $this->methodView->getOptions(['entity' => $entity]));
+        $this->assertEquals(
+            [
+                'formView' => $formView,
+                'allowedCreditCards' => ['visa', 'mastercard'],
+            ],
+            $this->methodView->getOptions()
+        );
     }
 
-    /**
-     * @return array
-     */
-    public function optionsProvider()
+    public function testGetOptionsWithZeroAmountWithoutTransaction()
     {
-        return [
-            [
+        $formView = $this->getMock('Symfony\Component\Form\FormView');
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $form->expects($this->once())->method('createView')->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(CreditCardType::NAME)
+            ->willReturn($form);
+
+        $this->configManager->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(
                 [
-                    'allowedCards' => ['visa', 'mastercard'],
-                    'configsData' => [
-                        [
-                            $this->getConfigKey(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY)
-                        ],
-                        [
-                            $this->getConfigKey(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY)
-                        ],
-                    ],
-                    'zero_amount' => true,
-                    'returnConfigs' => [
-                        ['visa', 'mastercard'],
-                        true
-                    ],
-                    'transactionEntityOptions' => [
-                        'id' => 5,
-                        'response' => [Account::ACCT => '1234567']
-                    ],
-                    'last4' => '4567'
+                    $this->getConfigKey(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY),
+                ],
+                [
+                    $this->getConfigKey(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY),
                 ]
+            )
+            ->willReturnOnConsecutiveCalls(true, ['visa', 'mastercard']);
+
+        $this->paymentTransactionProvider->expects($this->once())->method('getActiveValidatePaymentTransaction')
+            ->willReturn(null);
+
+        $this->assertEquals(
+            [
+                'formView' => $formView,
+                'allowedCreditCards' => ['visa', 'mastercard'],
             ],
-        ];
+            $this->methodView->getOptions()
+        );
+    }
+
+    public function testGetOptions()
+    {
+        $formView = $this->getMock('Symfony\Component\Form\FormView');
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $form->expects($this->once())->method('createView')->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(CreditCardType::NAME)
+            ->willReturn($form);
+
+        $this->configManager->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(
+                [
+                    $this->getConfigKey(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY),
+                ],
+                [
+                    $this->getConfigKey(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY),
+                ]
+            )
+            ->willReturnOnConsecutiveCalls(true, ['visa', 'mastercard']);
+
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setResponse(['ACCT' => '1111']);
+
+        $this->paymentTransactionProvider->expects($this->once())->method('getActiveValidatePaymentTransaction')
+            ->willReturn($paymentTransaction);
+
+        $this->assertEquals(
+            [
+                'formView' => $formView,
+                'allowedCreditCards' => ['visa', 'mastercard'],
+                'creditCardComponent' => 'orob2bpayment/js/app/components/authorized-credit-card-component',
+                'creditCardComponentOptions' => [
+                    'acct' => '1111',
+                    'saveForLaterUse' => false,
+                ],
+            ],
+            $this->methodView->getOptions()
+        );
+    }
+
+    public function testGetOptionsWithLaterUse()
+    {
+        $formView = $this->getMock('Symfony\Component\Form\FormView');
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $form->expects($this->once())->method('createView')->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(CreditCardType::NAME)
+            ->willReturn($form);
+
+        $this->configManager->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(
+                [
+                    $this->getConfigKey(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY),
+                ],
+                [
+                    $this->getConfigKey(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY),
+                ]
+            )
+            ->willReturnOnConsecutiveCalls(true, ['visa', 'mastercard']);
+
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setResponse(['ACCT' => '1111'])
+            ->setTransactionOptions(['saveForLaterUse' => true]);
+
+        $this->paymentTransactionProvider->expects($this->once())->method('getActiveValidatePaymentTransaction')
+            ->willReturn($paymentTransaction);
+
+        $this->assertEquals(
+            [
+                'formView' => $formView,
+                'allowedCreditCards' => ['visa', 'mastercard'],
+                'creditCardComponent' => 'orob2bpayment/js/app/components/authorized-credit-card-component',
+                'creditCardComponentOptions' => [
+                    'acct' => '1111',
+                    'saveForLaterUse' => true,
+                ],
+            ],
+            $this->methodView->getOptions()
+        );
     }
 
     public function testGetBlock()

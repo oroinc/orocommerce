@@ -23,7 +23,7 @@ define(function(require) {
                 cvv: '[data-card-cvv]',
                 cardNumber: '[data-card-number]',
                 validation: '[data-validation]',
-                paymentValidateRequired: '[name$="[payment_validate]"]'
+                saveForLater: '[data-save-for-later]'
             }
         },
 
@@ -61,7 +61,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options = _.defaults(options || {}, this.options);
+            this.options = _.extend({}, this.options, options);
 
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardNumberLuhnCheck');
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDate');
@@ -79,7 +79,8 @@ define(function(require) {
                     this.options.selectors.cardNumber,
                     _.bind(this.validate, this, this.options.selectors.cardNumber)
                 )
-                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
+                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv))
+                .on('change', this.options.selectors.saveForLater, _.bind(this.onSaveForLaterChange, this));
 
             mediator.on('checkout:place-order:response', _.bind(this.handleSubmit, this));
             mediator.on('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
@@ -87,7 +88,13 @@ define(function(require) {
             mediator.on('checkout:payment:before-hide-filled-form', _.bind(this.beforeHideFilledForm, this));
             mediator.on('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
 
-            this.setPaymentValidateRequired(this.paymentValidationRequiredComponentState);
+            mediator.once('page:afterChange', function() {
+                var paymentMethodObject = {};
+                mediator.trigger('checkout:payment:method:get-value', paymentMethodObject);
+                mediator.trigger('checkout:payment:method:changed', {paymentMethod: paymentMethodObject.value});
+            });
+
+            this.setGlobalPaymentValidate(this.paymentValidationRequiredComponentState);
         },
 
         handleSubmit: function(eventData) {
@@ -167,7 +174,8 @@ define(function(require) {
                     this.options.selectors.cardNumber,
                     _.bind(this.validate, this, this.options.selectors.cardNumber)
                 )
-                .off('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
+                .off('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv))
+                .off('change', this.options.selectors.saveForLater, _.bind(this.onSaveForLaterChange, this));
 
             mediator.off('checkout:place-order:response', _.bind(this.handleSubmit, this));
             mediator.off('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
@@ -233,29 +241,42 @@ define(function(require) {
         },
 
         /**
-         * @returns {jQuery|HTMLElement}
-         */
-        getPaymentValidateElement: function() {
-            if (!this.hasOwnProperty('$paymentValidateElement')) {
-                this.$paymentValidateElement = $(this.options.selectors.paymentValidateRequired);
-            }
-
-            return this.$paymentValidateElement;
-        },
-
-        /**
          * @param {Boolean} state
          */
-        setPaymentValidateRequired: function(state) {
+        setGlobalPaymentValidate: function(state) {
             this.paymentValidationRequiredComponentState = state;
-            this.getPaymentValidateElement().prop('checked', state);
+            mediator.trigger('checkout:payment:validate:change', state);
         },
 
         /**
          * @returns {Boolean}
          */
-        getPaymentValidateRequired: function() {
-            return this.getPaymentValidateElement().prop('checked');
+        getGlobalPaymentValidate: function() {
+            var validateValueObject = {};
+            mediator.trigger('checkout:payment:validate:get-value', validateValueObject);
+            return validateValueObject.value;
+        },
+
+        /**
+         * @returns {jQuery}
+         */
+        getSaveForLaterElement: function() {
+            if (!this.hasOwnProperty('$saveForLaterElement')) {
+                this.$saveForLaterElement = this.$form.find(this.options.selectors.saveForLater);
+            }
+
+            return this.$saveForLaterElement;
+        },
+
+        /**
+         * @returns {Boolean}
+         */
+        getSaveForLaterState: function() {
+            return this.getSaveForLaterElement().prop('checked');
+        },
+
+        setSaveForLaterBasedOnForm: function() {
+            mediator.trigger('checkout:payment:save-for-later:change', this.getSaveForLaterState());
         },
 
         /**
@@ -263,8 +284,21 @@ define(function(require) {
          */
         onPaymentMethodChanged: function(eventData) {
             if (eventData.paymentMethod === this.options.paymentMethod) {
-                this.setPaymentValidateRequired(this.paymentValidationRequiredComponentState);
+                this.onCurrentPaymentMethodSelected();
             }
+        },
+
+        onCurrentPaymentMethodSelected: function() {
+            this.setGlobalPaymentValidate(this.paymentValidationRequiredComponentState);
+            this.setSaveForLaterBasedOnForm();
+        },
+
+        /**
+         * @param {Object} e
+         */
+        onSaveForLaterChange: function(e) {
+            var $el = $(e.target);
+            mediator.trigger('checkout:payment:save-for-later:change', $el.prop('checked'));
         },
 
         /**

@@ -58,6 +58,9 @@ workflows:
             payment_validate:
                 type: bool
                 label: Payment validation required
+            payment_save_for_later:
+                type: bool
+                label: Save payment data for later use
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -178,6 +181,8 @@ workflows:
                         payment_method: ~
                         payment_validate:
                             form_type: checkbox
+                        payment_save_for_later:
+                            form_type: checkbox
 
             back_to_billing_address:
                 label: Edit Billing Information
@@ -247,6 +252,9 @@ workflows:
                 is_hidden: true
 
         transition_definitions:
+            __start___definition:
+                post_actions:
+                    - '@assign_value': [$payment_save_for_later, true]
             do_nothing:
                 pre_conditions:
                     '@not_equal': [$payment_in_progress, true]
@@ -368,10 +376,16 @@ workflows:
                         actions:
                             - '@assign_constant_value': [$.result.validateAction, OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
                             - '@assign_url':
-                                attribute: $.result.url
+                                attribute: $.result.successUrl
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
                                     id: $checkout.id
+                            - '@assign_url':
+                                attribute: $.result.failureUrl
+                                route: orob2b_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: 'payment_error'
                             - '@payment_validate':
                                 conditions:
                                     '@payment_method_supports':
@@ -381,8 +395,9 @@ workflows:
                                 object: $checkout
                                 paymentMethod: $checkout.paymentMethod
                                 transactionOptions:
-                                    successUrl: $.result.url
-                                    failureUrl: $.result.url
+                                    saveForLaterUse: $payment_save_for_later
+                                    successUrl: $.result.successUrl
+                                    failureUrl: $.result.failureUrl
 
             verify_payment_definition:
                 pre_conditions:
@@ -484,12 +499,6 @@ workflows:
                                 transactionOptions:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
-                            - '@send_email_template':
-                                parameters:
-                                    from: $checkout.order.owner.email
-                                    to: $checkout.order.accountUser.email
-                                    template: 'order_confirmation_email'
-                                    entity: $checkout.order
                             - '@assign_value': [$payment_in_progress, true]
                     - '@tree':
                         conditions:
@@ -501,7 +510,6 @@ workflows:
                         actions:
                             - '@payment_purchase':
                                 object: $checkout.order
-                                reference: $checkout
                                 amount: $checkout.order.total
                                 currency: $checkout.order.currency
                                 paymentMethod: $payment_method
@@ -511,7 +519,12 @@ workflows:
                                 route_parameters:
                                     id: $checkout.id
                                     transition: 'finish_checkout'
-
+                    - '@send_email_template':
+                        parameters:
+                            from: $checkout.order.owner.email
+                            to: $checkout.order.accountUser.email
+                            template: 'order_confirmation_email'
+                            entity: $checkout.order
 
             finish_checkout_definition:
                 conditions:
