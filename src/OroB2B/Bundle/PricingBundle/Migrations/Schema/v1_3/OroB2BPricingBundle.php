@@ -349,6 +349,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
             [
                 'product_id',
                 'combined_price_list_id',
+                'currency',
             ],
             'orob2b_minimal_price_uidx'
         );

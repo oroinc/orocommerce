@@ -258,6 +258,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
             [
                 'product_id',
                 'combined_price_list_id',
+                'currency',
             ],
             'orob2b_minimal_price_uidx'
         );
