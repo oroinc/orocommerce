@@ -1,0 +1,28 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroB2BSEOBundle:layouts:default/layout.html.twig'
+        - @add:
+            id: meta_title
+            parentId: head
+            blockType: meta
+            options:
+                name: 'title'
+                vars:
+                    values: { '@value': $data.category.meta_titles }
+        - @add:
+            id: meta_description
+            parentId: head
+            blockType: meta
+            options:
+                name: 'description'
+                vars:
+                    values: { '@value': $data.category.meta_descriptions }
+        - @add:
+            id: meta_keywords
+            parentId: head
+            blockType: meta
+            options:
+                name: 'keywords'
+                vars:
+                    values: { '@value': $data.category.meta_keywords }
