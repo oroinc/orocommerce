@@ -44,6 +44,16 @@ services:
         tags:
             - { name: security.voter }
 
+    orob2b_account.acl.voter.account_group:
+        class: 'OroB2B\Bundle\AccountBundle\Acl\Voter\AccountGroupVoter'
+        arguments:
+            - "@oro_entity.doctrine_helper"
+        calls:
+            - [setClassName, ["%orob2b_account.entity.account_group.class%"]]
+            - [setConfigManager, ["@oro_config.global"]]
+        tags:
+            - { name: security.voter }
+
     orob2b_product_viisbility.acl.voter.account:
         class: 'OroB2B\Bundle\AccountBundle\Acl\Voter\ProductVisibilityVoter'
         arguments:
@@ -51,6 +61,7 @@ services:
         calls:
             - [setClassName, ['%orob2b_product.entity.product.class%']]
             - [setModifier, ["@orob2b_account.model.product_visibility_query_builder_modifier"]]
+            - [setFrontendHelper, ["@orob2b_frontend.request.frontend_helper"]]
         tags:
             - { name: security.voter }
 
@@ -553,6 +564,7 @@ services:
         public: true
         arguments:
             - "@orob2b_account.visibility.resolver.category_visibility_resolver"
+            - "@orob2b_account.provider.account_user_relations_provider"
         tags:
             - {name: kernel.event_listener, event: orob2b_catalog.category.tree.create_after, method: onCreateAfter }
 
@@ -570,6 +582,7 @@ services:
             - "@oro_config.global"
             - "@security.token_storage"
             - "@orob2b_website.manager"
+            - "@orob2b_account.provider.account_user_relations_provider"
         calls:
             - [setProductVisibilitySystemConfigurationPath, ['oro_b2b_account.product_visibility']]
             - [setCategoryVisibilitySystemConfigurationPath, ['oro_b2b_account.category_visibility']]
@@ -854,3 +867,10 @@ services:
               - '@form.factory'
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_form }
+
+    orob2b_account.provider.account_user_relations_provider:
+        class: 'OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider'
+        public: true
+        arguments:
+            - '@oro_config.global'
+            - '@oro_entity.doctrine_helper'

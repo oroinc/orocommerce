@@ -183,9 +183,10 @@ class ImportExportTest extends WebTestCase
 
         $this->assertEquals(
             [
-                'success' => true,
-                'message' => 'File was successfully imported.',
-                'errorsUrl' => null,
+                'success'    => true,
+                'message'    => 'File was successfully imported.',
+                'errorsUrl'  => null,
+                'importInfo' => '1 entities were added, 0 entities were updated',
             ],
             $data
         );
@@ -345,7 +346,7 @@ class ImportExportTest extends WebTestCase
     {
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import_validation.yml';
 
-        return Yaml::parse($filePath);
+        return Yaml::parse(file_get_contents($filePath));
     }
 
     public function testImportRelations()

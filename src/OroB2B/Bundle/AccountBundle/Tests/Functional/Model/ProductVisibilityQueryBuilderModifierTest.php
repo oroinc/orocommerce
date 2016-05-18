@@ -60,7 +60,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->modifier = new ProductVisibilityQueryBuilderModifier(
             $this->configManager,
             $this->tokenStorage,
-            $this->getContainer()->get('orob2b_website.manager')
+            $this->getContainer()->get('orob2b_website.manager'),
+            $this->getContainer()->get('orob2b_account.provider.account_user_relations_provider')
         );
     }
 
