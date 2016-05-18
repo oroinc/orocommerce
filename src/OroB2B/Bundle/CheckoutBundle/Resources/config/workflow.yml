@@ -382,7 +382,7 @@ workflows:
                                 paymentMethod: $checkout.paymentMethod
                                 transactionOptions:
                                     successUrl: $.result.url
-                                    errorUrl: $.result.url
+                                    failureUrl: $.result.url
 
             verify_payment_definition:
                 pre_conditions:
@@ -470,7 +470,7 @@ workflows:
                                     id: $checkout.id
                                     transition: 'finish_checkout'
                             - '@assign_url':
-                                attribute: $.result.errorUrl
+                                attribute: $.result.failureUrl
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
                                     id: $checkout.id
@@ -483,7 +483,7 @@ workflows:
                                 paymentMethod: $payment_method
                                 transactionOptions:
                                     successUrl: $.result.successUrl
-                                    errorUrl: $.result.errorUrl
+                                    failureUrl: $.result.failureUrl
                             - '@send_email_template':
                                 parameters:
                                     from: $checkout.order.owner.email
