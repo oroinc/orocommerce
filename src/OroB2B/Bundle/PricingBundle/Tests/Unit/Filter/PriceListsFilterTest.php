@@ -69,97 +69,81 @@ class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
      * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
      * @expectedExceptionMessage Parameter relation_class_name is required
      */
-    public function testInitRelationEntityExceptions()
-    {
-        $this->priceListsFilter->init(
-            'price_list',
-            [PriceListsFilter::ENTITY_ALIAS_PARAMETER => 'account']
-        );
-    }
-
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Parameter entity_alias is required
-     */
     public function testInitEntityAliasExceptions()
     {
-        $this->priceListsFilter->init(
-            'price_list',
-            [PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroB2BPricingBundle:PriceListToAccount']
-        );
+        $this->priceListsFilter->init('price_list', []);
     }
 
-    /**
-     * @dataProvider applyDataProvider
-     * @param array|null $data
-     * @param bool $expected
-     */
-    public function testApply($data, $expected)
+    public function testApplyNoData()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FilterDatasourceAdapterInterface $ds */
         $ds = $this->getMockBuilder('Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter')
             ->disableOriginalConstructor()
             ->getMock();
 
-        if ($data) {
-            $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->priceListsFilter->init(
+            'price_list',
+            [
+                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroB2BPricingBundle:PriceListToAccount'
+            ]
+        );
 
-            $ds->expects($this->once())
-                ->method('getQueryBuilder')
-                ->willReturn($queryBuilder);
+        $result = $this->priceListsFilter->apply($ds, null);
 
-            $repository = $this
-                ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->assertFalse($result);
+    }
 
-            $repository->expects($this->once())
-                ->method('restrictByPriceList');
+    public function testApply()
+    {
+        $data = [
+            'type' => null,
+            'value' => [new PriceList()]
+        ];
 
-            $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-                ->disableOriginalConstructor()
-                ->getMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FilterDatasourceAdapterInterface $ds */
+        $ds = $this->getMockBuilder('Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-            $em->expects($this->once())
-                ->method('getRepository')
-                ->with('OroB2BPricingBundle:PriceListToAccount')
-                ->willReturn($repository);
+        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-            $this->registry->expects($this->once())
-                ->method('getManagerForClass')
-                ->with('OroB2BPricingBundle:PriceListToAccount')
-                ->willReturn($em);
-        }
+        $ds->expects($this->once())
+            ->method('getQueryBuilder')
+            ->willReturn($queryBuilder);
+
+        $repository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repository->expects($this->once())
+            ->method('restrictByPriceList');
+
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->with('OroB2BPricingBundle:PriceListToAccount')
+            ->willReturn($repository);
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with('OroB2BPricingBundle:PriceListToAccount')
+            ->willReturn($em);
 
         $this->priceListsFilter->init(
             'price_list',
             [
-                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroB2BPricingBundle:PriceListToAccount',
-                PriceListsFilter::ENTITY_ALIAS_PARAMETER => 'account',
+                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroB2BPricingBundle:PriceListToAccount'
             ]
         );
 
         $result = $this->priceListsFilter->apply($ds, $data);
 
-        $this->assertSame($expected, $result);
-    }
-
-    public function applyDataProvider()
-    {
-        return [
-            [
-                'data' => null,
-                'expected' => false
-            ],
-            [
-                'data' => [
-                    'type' => null,
-                    'value' => [new PriceList()]
-                ],
-                'expected' => true
-            ]
-        ];
+        $this->assertTrue($result);
     }
 }

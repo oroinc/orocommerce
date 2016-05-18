@@ -44,7 +44,7 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
         /** @var BasePriceList $priceList */
         $priceList = $this->getReference($priceList);
 
-        $qb = $this->getRepository()->restrictByPriceList($qb, $priceList, $alias, 'priceList');
+        $this->getRepository()->restrictByPriceList($qb, $priceList, 'priceList');
 
         $result = $qb->getQuery()->getResult();
 

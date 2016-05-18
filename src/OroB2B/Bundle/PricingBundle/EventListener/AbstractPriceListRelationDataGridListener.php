@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use OroB2B\Bundle\PricingBundle\Filter\PriceListsFilter;
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
@@ -13,6 +10,7 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use OroB2B\Bundle\PricingBundle\Filter\PriceListsFilter;
 
 abstract class AbstractPriceListRelationDataGridListener
 {
@@ -24,18 +22,11 @@ abstract class AbstractPriceListRelationDataGridListener
     protected $registry;
 
     /**
-     * @param TranslatorInterface $translator
-     */
-    protected $translator;
-
-    /**
      * @param Registry $registry
-     * @param TranslatorInterface $translator
      */
-    public function __construct(Registry $registry, TranslatorInterface $translator)
+    public function __construct(Registry $registry)
     {
         $this->registry = $registry;
-        $this->translator = $translator;
     }
 
     /**
@@ -62,14 +53,14 @@ abstract class AbstractPriceListRelationDataGridListener
             $priceListHoldersIds[] = $record->getValue('id');
         }
 
-        if (!empty($priceListHoldersIds)) {
+        if (count($priceListHoldersIds) > 0) {
             $groupedPriceLists = [];
             $relations = $this->getRelations($priceListHoldersIds);
             foreach ($relations as $relation) {
-                $groupedPriceLists[$this->getObjectId($relation)][$relation->getWebsite()->getId()]['website']
-                    = $relation->getWebsite();
-                $groupedPriceLists[$this->getObjectId($relation)][$relation->getWebsite()->getId()]['priceLists'][]
-                    = $relation->getPriceList();
+                $websiteId = $relation->getWebsite()->getId();
+                $relationId = $this->getObjectId($relation);
+                $groupedPriceLists[$relationId][$websiteId]['website'] = $relation->getWebsite();
+                $groupedPriceLists[$relationId][$websiteId]['priceLists'][] = $relation->getPriceList();
             }
 
             foreach ($records as $record) {
@@ -96,7 +87,6 @@ abstract class AbstractPriceListRelationDataGridListener
                 'type' => 'price-lists',
                 'data_name' => 'price_list',
                 PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => $this->getRelationClassName(),
-                PriceListsFilter::ENTITY_ALIAS_PARAMETER => $this->getEntityAlias(),
                 'options' => [
                     'field_type' => 'entity',
                     'field_options' => [
@@ -117,7 +107,7 @@ abstract class AbstractPriceListRelationDataGridListener
         $config->addColumn(
             'price_lists',
             [
-                'label' => $this->translator->trans('orob2b.pricing.pricelist.entity_plural_label'),
+                'label' => 'orob2b.pricing.pricelist.entity_plural_label',
                 'type' => 'twig',
                 'template' => 'OroB2BPricingBundle:Datagrid:Column/priceLists.html.twig',
                 'frontend_type' => 'html',
@@ -142,9 +132,4 @@ abstract class AbstractPriceListRelationDataGridListener
      * @return string
      */
     abstract protected function getRelationClassName();
-
-    /**
-     * @return string
-     */
-    abstract protected function getEntityAlias();
 }

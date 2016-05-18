@@ -14,25 +14,19 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
 
 class PriceListsFilter extends EntityFilter
 {
-    /** @var Registry */
-    protected $registry;
-
     const RELATION_CLASS_NAME_PARAMETER = 'relation_class_name';
-    const ENTITY_ALIAS_PARAMETER = 'entity_alias';
 
     /**
-     * {@inheritdoc}
+     * @var Registry
      */
+    protected $registry;
+
     public function init($name, array $params)
     {
         if (empty($params[self::RELATION_CLASS_NAME_PARAMETER])) {
-            throw new InvalidArgumentException('Parameter '
-                . self::RELATION_CLASS_NAME_PARAMETER . ' is required');
-        }
-
-        if (empty($params[self::ENTITY_ALIAS_PARAMETER])) {
-            throw new InvalidArgumentException('Parameter '
-                .self::ENTITY_ALIAS_PARAMETER . ' is required');
+            throw new InvalidArgumentException(
+                sprintf('Parameter %s is required', self::RELATION_CLASS_NAME_PARAMETER)
+            );
         }
 
         parent::init($name, $params);
@@ -43,6 +37,7 @@ class PriceListsFilter extends EntityFilter
      */
     public function apply(FilterDatasourceAdapterInterface $ds, $data)
     {
+        /** @var array $data */
         $data = $this->parseData($data);
         if (!$data) {
             return false;
@@ -54,12 +49,11 @@ class PriceListsFilter extends EntityFilter
         $queryBuilder = $ds->getQueryBuilder();
         $priceList = reset($data['value']);
         $relationClass = $this->params[self::RELATION_CLASS_NAME_PARAMETER];
-        $entityAlias = $this->params[self::ENTITY_ALIAS_PARAMETER];
 
         /** @var PriceListToAccountRepository|PriceListToAccountGroupRepository $repository */
         $repository = $this->registry->getManagerForClass($relationClass)
             ->getRepository($relationClass);
-        $repository->restrictByPriceList($queryBuilder, $priceList, $entityAlias, $parameterName);
+        $repository->restrictByPriceList($queryBuilder, $priceList, $parameterName);
 
         return true;
     }

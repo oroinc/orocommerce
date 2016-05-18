@@ -37,16 +37,15 @@ class PriceListToAccountRepositoryTest extends WebTestCase
      */
     public function testRestrictByPriceList($priceList, array $expectedAccounts)
     {
-        $alias = 'account';
         $qb = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroB2BAccountBundle:Account')
             ->getRepository('OroB2BAccountBundle:Account')
-            ->createQueryBuilder($alias);
+            ->createQueryBuilder('account');
 
         /** @var BasePriceList $priceList */
         $priceList = $this->getReference($priceList);
 
-        $qb = $this->getRepository()->restrictByPriceList($qb, $priceList, $alias, 'priceList');
+        $this->getRepository()->restrictByPriceList($qb, $priceList, 'priceList');
 
         $result = $qb->getQuery()->getResult();
 

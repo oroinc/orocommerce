@@ -286,7 +286,6 @@ services:
         abstract: true
         arguments:
             - '@doctrine'
-            - '@translator'
 
     orob2b_pricing.event_listener.account_accounts_grid:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\AccountDataGridListener'

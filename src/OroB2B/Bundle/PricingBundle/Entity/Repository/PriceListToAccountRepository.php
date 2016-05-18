@@ -216,27 +216,24 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     /**
      * @param QueryBuilder $queryBuilder
      * @param BasePriceList $priceList
-     * @param string $parentAlias
      * @param string $parameterName
-     * @return QueryBuilder
      */
     public function restrictByPriceList(
         QueryBuilder $queryBuilder,
         BasePriceList $priceList,
-        $parentAlias,
         $parameterName
     ) {
+        $parentAlias = $queryBuilder->getRootAliases()[0];
+
         $subQueryBuilder = $this->createQueryBuilder('relation');
         $subQueryBuilder->where(
             $subQueryBuilder->expr()->andX(
-                $subQueryBuilder->expr()->eq('relation.account', $parentAlias . '.id'),
+                $subQueryBuilder->expr()->eq('relation.account', $parentAlias),
                 $subQueryBuilder->expr()->eq('relation.priceList', ':' . $parameterName)
             )
         );
 
         $queryBuilder->andWhere($subQueryBuilder->expr()->exists($subQueryBuilder->getQuery()->getDQL()));
         $queryBuilder->setParameter($parameterName, $priceList);
-
-        return $queryBuilder;
     }
 }

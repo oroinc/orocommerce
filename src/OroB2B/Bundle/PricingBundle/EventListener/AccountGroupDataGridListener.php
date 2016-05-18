@@ -8,7 +8,6 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 class AccountGroupDataGridListener extends AbstractPriceListRelationDataGridListener
 {
     const RELATION_CLASS_NAME = 'OroB2BPricingBundle:PriceListToAccountGroup';
-    const ENTITY_ALIAS = 'account_group';
 
     /**
      * {@inheritdoc}
@@ -35,13 +34,5 @@ class AccountGroupDataGridListener extends AbstractPriceListRelationDataGridList
     protected function getRelationClassName()
     {
         return self::RELATION_CLASS_NAME;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getEntityAlias()
-    {
-        return self::ENTITY_ALIAS;
     }
 }

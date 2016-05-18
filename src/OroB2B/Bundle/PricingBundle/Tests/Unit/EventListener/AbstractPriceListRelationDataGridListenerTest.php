@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -40,19 +38,12 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit_Fr
      */
     protected $repository;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
-     */
-    protected $translator;
-
     public function setUp()
     {
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
         $this->registry->method('getManagerForClass')->willReturn($this->manager);
-        /** @var TranslatorInterface $translator */
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
     }
 
     public function testOnResultAfter()
@@ -75,7 +66,7 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit_Fr
         $this->assertSame(
             $configArray['columns']['price_lists'],
             [
-                'label' => null,
+                'label' => 'orob2b.pricing.pricelist.entity_plural_label',
                 'type' => 'twig',
                 'template' => 'OroB2BPricingBundle:Datagrid:Column/priceLists.html.twig',
                 'frontend_type' => 'html',

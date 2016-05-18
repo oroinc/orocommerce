@@ -21,7 +21,7 @@ class AccountGroupDataGridListenerTest extends AbstractPriceListRelationDataGrid
             ['OroB2BPricingBundle:PriceListToAccountGroup', $this->repository]
         ]);
         parent::setUp();
-        $this->listener = new AccountGroupDataGridListener($this->registry, $this->translator);
+        $this->listener = new AccountGroupDataGridListener($this->registry);
     }
 
     /**
