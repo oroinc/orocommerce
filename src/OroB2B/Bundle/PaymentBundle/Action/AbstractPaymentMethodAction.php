@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PaymentBundle\Action;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Component\Action\Action\AbstractAction;
@@ -158,7 +159,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),
                 ],
-                true
+                UrlGeneratorInterface::ABSOLUTE_URL
             ),
             'returnUrl' => $this->router->generate(
                 'orob2b_payment_callback_return',
@@ -166,7 +167,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),
                 ],
-                true
+                UrlGeneratorInterface::ABSOLUTE_URL
             ),
         ];
     }
