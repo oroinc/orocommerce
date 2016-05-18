@@ -49,10 +49,15 @@ class CategoryTreeProviderTest extends \PHPUnit_Framework_TestCase
 
         $user = new AccountUser();
 
-        $this->categoryTreeProvider->expects($this->once())
+        $this->categoryTreeProvider->expects($this->at(0))
             ->method('getCategories')
             ->with($user, null, null)
             ->willReturn($categories);
+
+        $this->categoryTreeProvider->expects($this->at(1))
+            ->method('getCategories')
+            ->with($user, $rootCategory, null)
+            ->willReturn([$mainCategory]);
 
         $context = new LayoutContext();
         $context->set('logged_user', $user);
