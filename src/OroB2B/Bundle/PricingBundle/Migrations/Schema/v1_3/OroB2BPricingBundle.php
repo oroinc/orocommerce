@@ -344,7 +344,6 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
         $table->addColumn('quantity', 'float', []);
         $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
         $table->addColumn('currency', 'string', ['length' => 3]);
-        $table->addColumn('merge_allowed', 'boolean');
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
             [
