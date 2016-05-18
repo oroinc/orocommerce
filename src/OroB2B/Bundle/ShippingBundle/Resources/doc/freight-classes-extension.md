@@ -3,7 +3,7 @@
 To expand "Freight Classes" within application, developer must add to its own Bundle the following:
 
  * migration, as described [here](./Resources/doc/provide-units.md)
- * 'Extension' class, [example](#markdown-header-example)
+ * 'Extension' class, [example](#example)
  * register extension at "services.yml"
 
 All "Freight Classes Extensions" must implement the 'FreightClassesExtensionInterface'.

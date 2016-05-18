@@ -1,13 +1,13 @@
 #Expand Units of Length, Units of Weight and Freight Classes#
 
-To expand "units" and/or "freight classes", first of all must be implemented migration ([example](#markdown-header-example-migration)), that contain all expected "units" and/or "freight classes" definitions.
+To expand "units" and/or "freight classes", first of all must be implemented migration ([example](#example-migration)), that contain all expected "units" and/or "freight classes" definitions.
 The migration must extend "LoadUnitsAndFreightClassesData" and should have the following properties regarding required items.
 
  * $weightUnits -- for Weight Units
  * $lengthUnits -- for Length Units
  * $freightClasses -- for Freight Classes
  
-At next step, translations should be added for all new "units" and/or "freight classes", at least, translations for default locale should be added. ([example](#markdown-header-example-translations))
+At next step, translations should be added for all new "units" and/or "freight classes", at least, translations for default locale should be added. ([example](#example-translations))
 
 After all above is done, "migration update script" must be executed to register new "units" and/or "freight classes" within application.
 ```bash
