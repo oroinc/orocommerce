@@ -1,9 +1,27 @@
-Provide Units of Length, Weight and Freight Classes
-===================================================
+#Expand Units of Length, Units of Weight and Freight Classes#
 
-To expand the number of units or freight classes you must add the migration containing the required items.
+To expand "units" and/or "freight classes", first of all must be implemented migration ([example](#markdown-header-example-migration)), that contain all expected "units" and/or "freight classes" definitions.
+The migration must extend "LoadUnitsAndFreightClassesData" and should have the following properties regarding required items.
 
-Adding migration to load you own weight units, length units and freight classes:
+ * $weightUnits -- for Weight Units
+ * $lengthUnits -- for Length Units
+ * $freightClasses -- for Freight Classes
+ 
+At next step, translations should be added for all new "units" and/or "freight classes", at least, translations for default locale should be added. ([example](#markdown-header-example-translations))
+
+After all above is done, "migration update script" must be executed to register new "units" and/or "freight classes" within application.
+```bash
+app/console cache:clear
+app/console oro:migration:data:load
+```
+At final step, all new "units" and/or "freight classes" should be activated at system configuration
+
+```code
+System -> Configuration -> Commerce -> Shipping -> Shipping Options
+```
+
+#### Example migration
+
 ```php
 <?php
 
@@ -32,7 +50,7 @@ class LoadUnitsAndFreightClassesData extends BaseLoadUnitData
 }
 ```
 
-Add translations to added units:
+#### Example translations
 ```yml
 orob2b:
     weight_unit.demo_lbs:
@@ -59,25 +77,5 @@ orob2b:
             short: dpel
             short_plural: dpels
 
-    freight_class.demo_class50:
-        label:
-            full: demo_class50
-            full_plural: demo_class50
-            short: dc50
-            short_plural: dc50
-
-    freight_class.demo_class55:
-        label:
-            full: demo_class55
-            full_plural: demo_class55
-            short: dc55
-            short_plural: dc55
+    ... More Translations ...
 ```
-
-Clear cache `app/console cache:clear`
-
-Load migration `app/console oro:migration:data:load`
-
-Activate new units and classes on system configuration `System -> Configuration -> Commerce -> Shipping -> Shipping Options`.
-
-All examples are available here [Demo Extension](https://github.com/laboro/dev/pull/386)

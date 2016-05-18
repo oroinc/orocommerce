@@ -1,18 +1,17 @@
-Freight Classes Extension
-=========================
+# Freight Classes Extension #
 
-You must specify which freight classes in the extension service can be processed, for this it is necessary to define a method isApplicable and register extension.
+To expand "Freight Classes" within application, developer must add to its own Bundle the following:
+
+ * migration, as described [here](./Resources/doc/provide-units.md)
+ * 'Extension' class, [example](#markdown-header-example)
+ * register extension at "services.yml"
+
+All "Freight Classes Extensions" must implement the 'FreightClassesExtensionInterface'.
+Method "isApplicable" is used to determine if "FreightClass" can be handled by extension for given shipping options.
+
+#### Example:
 
 ```php
-<?php
-
-namespace OroB2B\Bundle\ShippingDemoBundle\Extension\Shipping;
-
-use OroB2B\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface;
-
-use OroB2B\Bundle\ShippingBundle\Entity\FreightClassInterface;
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface;
-
 class FreightClassesExtension implements FreightClassesExtensionInterface
 {
     /**
@@ -28,33 +27,14 @@ class FreightClassesExtension implements FreightClassesExtensionInterface
 
         return false;
     }
-
-    /**
-     * @param ProductShippingOptionsInterface $options
-     * @return bool
-     */
-    protected function checkClass50(ProductShippingOptionsInterface $options)
-    {
-        $weight = $options->getWeight();
-
-        return $weight && $weight->getUnit()->getCode() === 'lbs' && $weight->getValue() >= 50;
-    }
-
-    /**
-     * @param ProductShippingOptionsInterface $options
-     * @return bool
-     */
-    protected function checkClass55(ProductShippingOptionsInterface $options)
-    {
-        $weight = $options->getWeight();
-
-        return $weight && $weight->getUnit()->getCode() === 'lbs'
-            && $weight->getValue() >= 35 && $weight->getValue() < 50;
-    }
+    
+    //Other protected methods that implement logic to verify given options against given freight class
 }
 ```
 
-Register extension in services as Freight Classes Extension
+
+Extension must be registered at "services.yml" with tag "*orob2b_shipping.extension.freight_classes*", that allow main service to collect all extensions
+
 ```yml
 services:
     orob2b_shipping_demo.extension.shipping_freight_classes:
@@ -63,5 +43,3 @@ services:
             - { name: orob2b_shipping.extension.freight_classes }
 
 ```
-
-All examples are available here [Demo Extension](https://github.com/laboro/dev/pull/386)
