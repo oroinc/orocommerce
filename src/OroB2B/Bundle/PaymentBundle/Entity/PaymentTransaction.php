@@ -269,6 +269,10 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     /** {@inheritdoc} */
     public function getRequest()
     {
+        if (!$this->request) {
+            return [];
+        }
+
         return $this->request;
     }
 
@@ -286,6 +290,10 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     /** {@inheritdoc} */
     public function getResponse()
     {
+        if (!$this->response) {
+            return [];
+        }
+
         return $this->response;
     }
 
@@ -453,6 +461,10 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      */
     public function getTransactionOptions()
     {
+        if (!$this->transactionOptions) {
+            return [];
+        }
+
         return $this->transactionOptions;
     }
 

@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\PaymentBundle\Method\View;
 
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
@@ -22,9 +21,6 @@ class PayflowGatewayView implements PaymentMethodViewInterface
 
     /** @var FormFactoryInterface */
     protected $formFactory;
-
-    /** @var OptionsResolver */
-    private $optionsResolver;
 
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
@@ -47,11 +43,9 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     /** {@inheritdoc} */
     public function getOptions(array $context = [])
     {
-        $contextOptions = $this->getOptionsResolver()->resolve($context);
+        $isZeroAmountAuthorizationEnabled = $this->isZeroAmountAuthorizationEnabled();
 
-        $formOptions = [
-            'zeroAmountAuthorizationEnabled' => $this->isZeroAmountAuthorizationEnabled()
-        ];
+        $formOptions = ['zeroAmountAuthorizationEnabled' => $isZeroAmountAuthorizationEnabled];
 
         $formView = $this->formFactory->create(CreditCardType::NAME, null, $formOptions)->createView();
 
@@ -60,24 +54,26 @@ class PayflowGatewayView implements PaymentMethodViewInterface
             'allowedCreditCards' => $this->getAllowedCreditCards(),
         ];
 
-        if ($this->isZeroAmountAuthorizationEnabled()) {
-            $validateTransaction = $this->paymentTransactionProvider
-                ->getActiveValidatePaymentTransaction($contextOptions['entity'], $this->getPaymentMethodType());
-
-            if ($validateTransaction) {
-                $transactionOptions = $validateTransaction->getTransactionOptions();
-                $saveForLaterUse = isset($transactionOptions['saveForLaterUse']) ?
-                    $transactionOptions['saveForLaterUse'] : false;
-
-                $viewOptions['creditCardComponent'] =
-                    'orob2bpayment/js/app/components/authorized-credit-card-component';
-
-                $viewOptions['creditCardComponentOptions'] = [
-                    'acct' => $this->getLast4($validateTransaction),
-                    'saveForLaterUse' => $saveForLaterUse
-                ];
-            }
+        if (!$isZeroAmountAuthorizationEnabled) {
+            return $viewOptions;
         }
+
+        $validateTransaction = $this->paymentTransactionProvider
+            ->getActiveValidatePaymentTransaction($this->getPaymentMethodType());
+
+        if (!$validateTransaction) {
+            return $viewOptions;
+        }
+
+        $transactionOptions = $validateTransaction->getTransactionOptions();
+
+        $viewOptions['creditCardComponent'] =
+            'orob2bpayment/js/app/components/authorized-credit-card-component';
+
+        $viewOptions['creditCardComponentOptions'] = [
+            'acct' => $this->getLast4($validateTransaction),
+            'saveForLaterUse' => !empty($transactionOptions['saveForLaterUse'])
+        ];
 
         return $viewOptions;
     }
@@ -125,21 +121,6 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     public function getAllowedCreditCards()
     {
         return (array)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY);
-    }
-
-    /**
-     * @return OptionsResolver
-     */
-    public function getOptionsResolver()
-    {
-        if (!$this->optionsResolver) {
-            $this->optionsResolver = new OptionsResolver();
-            $this->optionsResolver
-                ->setRequired('entity')
-                ->addAllowedTypes('entity', ['object']);
-        }
-
-        return $this->optionsResolver;
     }
 
     /**

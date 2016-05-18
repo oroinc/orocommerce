@@ -510,11 +510,9 @@ workflows:
                         actions:
                             - '@payment_purchase':
                                 object: $checkout.order
-                                reference: $checkout
                                 amount: $checkout.order.total
                                 currency: $checkout.order.currency
                                 paymentMethod: $payment_method
-                                allowReuseSourceTransaction: $payment_save_for_later
                             - '@assign_value': [$payment_in_progress, true]
                             - '@redirect':
                                 route: orob2b_checkout_frontend_checkout
