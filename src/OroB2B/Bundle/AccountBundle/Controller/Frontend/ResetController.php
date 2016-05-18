@@ -20,7 +20,7 @@ class ResetController extends Controller
     const SESSION_EMAIL = 'orob2b_account_user_reset_email';
 
     /**
-     * @Layout()
+     * @Layout(action="orob2b_account_frontend_account_user_security")
      * @Route("/reset-request", name="orob2b_account_frontend_account_user_reset_request")
      * @Method({"GET", "POST"})
      */
@@ -47,7 +47,7 @@ class ResetController extends Controller
     /**
      * Tell the user to check his email
      *
-     * @Layout()
+     * @Layout(action="orob2b_account_frontend_account_user_security")
      * @Route("/check-email", name="orob2b_account_frontend_account_user_reset_check_email")
      * @Method({"GET"})
      */

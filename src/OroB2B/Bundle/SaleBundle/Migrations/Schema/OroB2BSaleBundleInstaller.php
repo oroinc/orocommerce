@@ -212,7 +212,6 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('phone', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
     }
 

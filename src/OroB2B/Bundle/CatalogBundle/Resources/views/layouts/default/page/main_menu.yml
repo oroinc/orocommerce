@@ -32,5 +32,3 @@ layout:
                                     categories_main_menu_third_level:
                                         categories_main_menu_third_level_item: ~
                             categories_main_menu_second_level_sales: ~
-    conditions:
-        '@neq': [ $context.logged_user, null ]

@@ -394,6 +394,15 @@
         <attribute name="sample-data" default="n"/>
         <attribute name="organization-name" default="Oro Inc."/>
         <sequential>
+            <if>
+                <equals arg1="@{env}" arg2="prod"/>
+                <then>
+                    <var name="skipAssets" value=""/>
+                </then>
+                <else>
+                    <var name="skipAssets" value="--skip-assets"/>
+                </else>
+            </if>
             <exec dir="${basedir}" executable="php" failonerror="true">
                 <arg line="app/console oro:install"/>
                 <arg line="--env=@{env}"/>
@@ -405,6 +414,7 @@
                 <arg line="--sample-data=@{sample-data}"/>
                 <arg line="--organization-name=&quot;@{organization-name}&quot;"/>
                 <arg line="--no-interaction" />
+                <arg line="${skipAssets}" />
             </exec>
         </sequential>
     </macrodef>
@@ -579,6 +589,7 @@
             <arg line="--exclude=MenuBundle/Migrations/Schema"/>
             <arg line="--exclude=CheckoutBundle/Migrations/Schema"/>
             <arg line="--exclude=AlternativeCheckoutBundle/Migrations/Schema"/>
+            <arg line="--exclude=ShippingBundle/Migrations/Schema"/>
             <arg line="--exclude=SaleBundle/Entity"/>
             <arg line="--exclude=RFPBundle/Entity"/>
             <arg line="--exclude=AlternativeCheckoutBundle/Entity"/>

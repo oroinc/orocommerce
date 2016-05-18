@@ -7,8 +7,8 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 
 use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class ProductVisibilityVoter extends AbstractEntityVoter
 {
@@ -27,11 +27,16 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     protected $modifier;
 
     /**
+     * @var FrontendHelper
+     */
+    protected $frontendHelper;
+
+    /**
      * {@inheritdoc}
     */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
-        if ($token->getUser() instanceof AccountUser) {
+        if ($this->frontendHelper && $this->frontendHelper->isFrontendRequest()) {
             return parent::vote($token, $object, $attributes);
         }
 
@@ -43,7 +48,7 @@ class ProductVisibilityVoter extends AbstractEntityVoter
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
-        if (in_array($attribute, $this->supportedAttributes)) {
+        if (in_array($attribute, $this->supportedAttributes, true)) {
             $repository = $this->doctrineHelper
                 ->getEntityRepository($class);
             /** @var $repository ProductRepository */
@@ -67,5 +72,13 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     public function setModifier(ProductVisibilityQueryBuilderModifier $modifier)
     {
         $this->modifier = $modifier;
+    }
+
+    /**
+     * @param FrontendHelper $frontendHelper
+     */
+    public function setFrontendHelper(FrontendHelper $frontendHelper)
+    {
+        $this->frontendHelper = $frontendHelper;
     }
 }

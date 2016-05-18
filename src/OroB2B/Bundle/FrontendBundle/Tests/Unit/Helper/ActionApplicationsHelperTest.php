@@ -122,7 +122,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'expectedResult' => 'backend',
             ],
             'frontend user' => [
-                'token' => $this->createToken(new AccountUser(), $this->exactly(2)),
+                'token' => $this->createToken(new AccountUser()),
                 'expectedResult' => 'frontend',
             ],
             'not supported user' => [
@@ -153,7 +153,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             ],
             [
                 'applications' => ['backend', 'frontend'],
-                'token' => $this->createToken($accountUser, $this->exactly(2)),
+                'token' => $this->createToken($accountUser),
                 'expectedResult' => true
             ],
             [
@@ -163,7 +163,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             ],
             [
                 'applications' => ['backend'],
-                'token' => $this->createToken($accountUser, $this->exactly(2)),
+                'token' => $this->createToken($accountUser),
                 'expectedResult' => false
             ],
             [
@@ -173,7 +173,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             ],
             [
                 'applications' => ['frontend'],
-                'token' => $this->createToken($accountUser, $this->exactly(2)),
+                'token' => $this->createToken($accountUser),
                 'expectedResult' => true
             ],
             [
