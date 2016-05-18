@@ -16,6 +16,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 
 class ProductVisibilityQueryBuilderModifier
 {
@@ -45,6 +46,11 @@ class ProductVisibilityQueryBuilderModifier
     protected $websiteManager;
 
     /**
+     * @var AccountUserRelationsProvider
+     */
+    protected $relationsProvider;
+
+    /**
      * @var array
      */
     protected $configValue = [];
@@ -53,15 +59,18 @@ class ProductVisibilityQueryBuilderModifier
      * @param ConfigManager $configManager
      * @param TokenStorageInterface $tokenStorage
      * @param WebsiteManager $websiteManager
+     * @param AccountUserRelationsProvider $relationsProvider
      */
     public function __construct(
         ConfigManager $configManager,
         TokenStorageInterface $tokenStorage,
-        WebsiteManager $websiteManager
+        WebsiteManager $websiteManager,
+        AccountUserRelationsProvider $relationsProvider
     ) {
         $this->configManager = $configManager;
         $this->tokenStorage = $tokenStorage;
         $this->websiteManager = $websiteManager;
+        $this->relationsProvider = $relationsProvider;
     }
 
     /**
@@ -85,16 +94,19 @@ class ProductVisibilityQueryBuilderModifier
      */
     public function modify(QueryBuilder $queryBuilder)
     {
+        $accountUser = $this->getAccountUser();
         $visibilities = [$this->getProductVisibilityResolvedTerm($queryBuilder)];
 
-        $account = $this->getAccountIfApplicable();
+        $accountGroup = $this->relationsProvider->getAccountGroup($accountUser);
+        if ($accountGroup) {
+            $visibilities[] = $this->getAccountGroupProductVisibilityResolvedTerm(
+                $queryBuilder,
+                $accountGroup
+            );
+        }
+
+        $account = $this->relationsProvider->getAccount($accountUser);
         if ($account) {
-            if ($account->getGroup()) {
-                $visibilities[] = $this->getAccountGroupProductVisibilityResolvedTerm(
-                    $queryBuilder,
-                    $account->getGroup()
-                );
-            }
             $visibilities[] = $this->getAccountProductVisibilityResolvedTerm($queryBuilder, $account);
         }
 
@@ -102,14 +114,15 @@ class ProductVisibilityQueryBuilderModifier
     }
 
     /**
-     * @return Account|null
+     * @return AccountUser|null
      */
-    protected function getAccountIfApplicable()
+    protected function getAccountUser()
     {
         $token = $this->tokenStorage->getToken();
-        if ($token && ($user = $token->getUser()) instanceof AccountUser && $user->getAccount()) {
-            return $user->getAccount();
+        if ($token && ($user = $token->getUser()) instanceof AccountUser) {
+            return $user;
         }
+
         return null;
     }
 

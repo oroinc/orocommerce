@@ -16,22 +16,34 @@ use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 
 class PriceListTreeHandler
 {
-    /** @var ManagerRegistry */
+    /**
+     * @var ManagerRegistry
+     */
     protected $registry;
 
-    /**  @var WebsiteManager */
+    /**
+     * @var WebsiteManager
+     */
     protected $websiteManager;
 
-    /**  @var string */
+    /**
+     * @var string
+     */
     protected $priceListClass;
 
-    /**  @var PriceListRepository */
+    /**
+     * @var PriceListRepository
+     */
     protected $priceListRepository;
 
-    /** @var ConfigManager */
+    /**
+     * @var ConfigManager
+     */
     protected $configManager;
 
-    /** @var BasePriceList[] */
+    /**
+     * @var BasePriceList[]
+     */
     protected $priceLists = [];
 
     /**
@@ -64,14 +76,19 @@ class PriceListTreeHandler
         }
 
         if ($account) {
-            $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
-            if ($priceList) {
-                $this->priceLists[$key] = $priceList;
-                return $priceList;
+            if ($account->getId()) {
+                $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
+                if ($priceList) {
+                    $this->priceLists[$key] = $priceList;
+
+                    return $priceList;
+                }
             }
-            if ($account->getGroup()) {
+
+            $accountGroup = $account->getGroup();
+            if ($accountGroup && $accountGroup->getId()) {
                 $priceList = $this->getPriceListRepository()
-                    ->getPriceListByAccountGroup($account->getGroup(), $website);
+                    ->getPriceListByAccountGroup($accountGroup, $website);
                 if ($priceList) {
                     $this->priceLists[$key] = $priceList;
                     return $priceList;
@@ -83,8 +100,8 @@ class PriceListTreeHandler
         if (!$priceList) {
             $priceList = $this->getPriceListFromConfig();
         }
-
         $this->priceLists[$key] = $priceList;
+
         return $priceList;
     }
 

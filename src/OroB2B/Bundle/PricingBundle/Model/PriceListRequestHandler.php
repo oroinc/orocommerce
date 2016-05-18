@@ -6,13 +6,12 @@ use Doctrine\ORM\EntityRepository;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -24,11 +23,6 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
      * @var RequestStack
      */
     protected $requestStack;
-
-    /**
-     * @var SessionInterface
-     */
-    protected $session;
 
     /**
      * @var SecurityFacade
@@ -66,24 +60,29 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     protected $priceListRepository;
 
     /**
+     * @var AccountUserRelationsProvider
+     */
+    protected $relationsProvider;
+
+    /**
      * @param RequestStack $requestStack
-     * @param SessionInterface $session
      * @param SecurityFacade $securityFacade
      * @param PriceListTreeHandler $priceListTreeHandler
      * @param ManagerRegistry $registry
+     * @param AccountUserRelationsProvider $relationsProvider
      */
     public function __construct(
         RequestStack $requestStack,
-        SessionInterface $session,
         SecurityFacade $securityFacade,
         PriceListTreeHandler $priceListTreeHandler,
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
+        AccountUserRelationsProvider $relationsProvider
     ) {
         $this->requestStack = $requestStack;
-        $this->session = $session;
         $this->securityFacade = $securityFacade;
         $this->priceListTreeHandler = $priceListTreeHandler;
         $this->registry = $registry;
+        $this->relationsProvider = $relationsProvider;
     }
 
     /**
@@ -141,8 +140,9 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
 
         $currencies = $request->get(self::PRICE_LIST_CURRENCY_KEY);
 
-        if (null === $currencies && $this->session->has(self::PRICE_LIST_CURRENCY_KEY)) {
-            $currencies = (array)$this->session->get(self::PRICE_LIST_CURRENCY_KEY);
+        $session = $request->getSession();
+        if ($session && null === $currencies && $session->has(self::PRICE_LIST_CURRENCY_KEY)) {
+            $currencies = (array)$session->get(self::PRICE_LIST_CURRENCY_KEY);
         }
 
         if (null === $currencies || filter_var($currencies, FILTER_VALIDATE_BOOLEAN)) {
@@ -183,9 +183,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     {
         $user = $this->securityFacade->getLoggedUser();
 
-        if ($user instanceof AccountUser) {
-            return $user->getAccount();
-        } elseif ($user instanceof User) {
+        if ($user instanceof User) {
             $request = $this->getRequest();
             if ($request && $accountId = $request->get(self::ACCOUNT_ID_KEY)) {
                 return $this->registry
@@ -193,6 +191,8 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
                     ->getRepository('OroB2B\Bundle\AccountBundle\Entity\Account')
                     ->find($accountId);
             }
+        } else {
+            return $this->relationsProvider->getAccountIncludingEmpty($user);
         }
 
         return null;

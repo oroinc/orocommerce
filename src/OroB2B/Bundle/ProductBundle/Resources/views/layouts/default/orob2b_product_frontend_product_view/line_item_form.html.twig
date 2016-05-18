@@ -1,0 +1,27 @@
+{% block _line_item_form_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " line_item_form_product_view"}) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _line_item_buttons_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% if block.children is not empty %}
+        {% set attr = attr|merge({class: attr.class|default('') ~ " form__col "}) %}
+        <div {{ block('block_attributes') }}>
+            {{ UI.pinnedDropdownButton({
+                'html': block_widget(block),
+                'dataAttributes': {
+                    'layout': 'separate'
+                },
+                'options': {
+                    'widgetModule': 'orob2bproduct/js/content-processor/product-add-to-dropdown-button',
+                    'widgetName': 'productAddToDropdownButtonProcessor',
+                    'truncateLength': 15,
+                    'groupContainer': '<div class="btn btn-block btn-orange btn_has-dropdown btn_has-dropdown_lg"></div>'
+                }
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}
