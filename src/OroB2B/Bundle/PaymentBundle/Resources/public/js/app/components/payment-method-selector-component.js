@@ -46,15 +46,14 @@ define(function(require) {
             this.$el = this.options._sourceElement;
             this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
 
-            mediator.on('checkout:payment:method:get-value', _.bind(this.onGetValue, this));
+            mediator.on('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
+            mediator.on('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
+            mediator.on('checkout:payment:method:get-value', this.onGetValue, this);
 
             this.$el.on(
                 this.options.redirectEvent,
                 _.debounce(_.bind(this.redirectToHomepage, this), this.options.delay)
             );
-
-            mediator.on('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
-            mediator.on('checkout:payment:before-hide-filled-form', _.bind(this.beforeHideFilledForm, this));
         },
 
         redirectToHomepage: function() {
@@ -73,10 +72,10 @@ define(function(require) {
             }
 
             this.$el.off();
-            mediator.off('checkout:payment:before-restore-filled-form', _.bind(this.beforeRestoreFilledForm, this));
-            mediator.off('checkout:payment:before-hide-filled-form', _.bind(this.beforeHideFilledForm, this));
 
-            mediator.off('checkout:payment:method:get-value', _.bind(this.onGetValue, this));
+            mediator.off('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
+            mediator.off('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
+            mediator.off('checkout:payment:method:get-value', this.onGetValue, this);
 
             PaymentMethodSelectorComponent.__super__.dispose.call(this);
         },

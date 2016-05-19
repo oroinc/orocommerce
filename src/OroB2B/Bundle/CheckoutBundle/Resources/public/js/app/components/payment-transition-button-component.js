@@ -21,7 +21,7 @@ define(function(require) {
             PaymentTransitionButtonComponent.__super__.initialize.call(this, options);
 
             this.initPaymentMethod();
-            this.getPaymentMethodSelector().on('change', _.bind(this.onPaymentMethodChange, this));
+            this.getPaymentMethodSelector().on('change', $.proxy(this.onPaymentMethodChange, this));
         },
 
         initPaymentMethod: function() {
@@ -77,7 +77,7 @@ define(function(require) {
                 return;
             }
 
-            this.getPaymentMethodSelector().off('change', _.bind(this.onPaymentMethodChange, this));
+            this.getPaymentMethodSelector().off('change', $.proxy(this.onPaymentMethodChange, this));
 
             PaymentTransitionButtonComponent.__super__.dispose.call(this);
         },

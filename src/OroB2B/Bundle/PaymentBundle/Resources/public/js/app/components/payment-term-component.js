@@ -17,6 +17,11 @@ define(function(require) {
         },
 
         /**
+         * @property {Boolean}
+         */
+        disposable: true,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -25,6 +30,9 @@ define(function(require) {
             mediator.on('checkout:place-order:response', this.handleSubmit, this);
         },
 
+        /**
+         * @param {Object} eventData
+         */
         handleSubmit: function(eventData) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = true;
@@ -48,6 +56,13 @@ define(function(require) {
         },
 
         dispose: function() {
+            if (this.disposed || !this.disposable) {
+                return;
+            }
+
+            mediator.off('checkout:place-order:response', this.handleSubmit, this);
+
+            PaymentTermComponent.__super__.dispose.call(this);
         }
     });
 

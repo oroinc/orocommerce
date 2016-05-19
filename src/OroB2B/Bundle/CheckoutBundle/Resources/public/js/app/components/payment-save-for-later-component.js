@@ -34,8 +34,8 @@ define(function(require) {
             this.$el = $(options._sourceElement);
             this.defaultState = this.getCheckboxState();
 
-            mediator.on('checkout:payment:save-for-later:change', _.bind(this.onChange, this));
-            mediator.on('checkout:payment:save-for-later:restore-default', _.bind(this.onRestoreDefault, this));
+            mediator.on('checkout:payment:save-for-later:change', this.onChange, this);
+            mediator.on('checkout:payment:save-for-later:restore-default', this.onRestoreDefault, this);
         },
 
         /**
@@ -84,8 +84,8 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('checkout:payment:save-for-later:change', _.bind(this.onChange, this));
-            mediator.off('checkout:payment:save-for-later:restore-default', _.bind(this.onRestoreDefault, this));
+            mediator.off('checkout:payment:save-for-later:change', this.onChange, this);
+            mediator.off('checkout:payment:save-for-later:restore-default', this.onRestoreDefault, this);
 
             PaymentSaveForLaterComponent.__super__.dispose.call(this);
         }
