@@ -1,9 +1,9 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BSEOBundle:layouts:default/orob2b_product_frontend_product_view/layout.html.twig'
+            themes: 'OroB2BSEOBundle:layouts:default/layout.html.twig'
         - @add:
-            id: meta_product_title
+            id: meta_title
             parentId: head
             blockType: meta
             options:
@@ -11,7 +11,7 @@ layout:
                 vars:
                     values: { '@value': $data.product.meta_titles }
         - @add:
-            id: meta_product_description
+            id: meta_description
             parentId: head
             blockType: meta
             options:
@@ -19,7 +19,7 @@ layout:
                 vars:
                     values: { '@value': $data.product.meta_descriptions }
         - @add:
-            id: meta_product_keywords
+            id: meta_keywords
             parentId: head
             blockType: meta
             options:

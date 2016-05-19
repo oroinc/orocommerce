@@ -33,7 +33,9 @@ class LocaleExtension extends \Twig_Extension
     public function getFallbackLocaleValue($locale, Collection $values)
     {
         $filteredValues = $values->filter(function (LocalizedFallbackValue $value) use ($locale) {
-            return $locale === $value->getLocale();
+            $valueLocale = $value->getLocale();
+
+            return $locale === ($valueLocale ? $valueLocale->getCode() : null);
         });
 
         if ($filteredValues->count() > 1) {

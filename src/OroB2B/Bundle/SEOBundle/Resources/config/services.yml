@@ -1,6 +1,5 @@
 parameters:
     orob2b_seo.event_listener.form_view.class: 'OroB2B\Bundle\SEOBundle\EventListener\FormViewListener'
-    orob2b_seo.twig.locale.class: 'OroB2B\Bundle\SEOBundle\Twig\LocaleExtension'
 
 services:
     #EventListeners
