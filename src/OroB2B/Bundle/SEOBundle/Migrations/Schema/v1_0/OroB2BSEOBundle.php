@@ -77,6 +77,6 @@ class OroB2BSEOBundle implements Migration, ExtendExtensionAwareInterface
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],
             ]
-        );        
+        );
     }
 }

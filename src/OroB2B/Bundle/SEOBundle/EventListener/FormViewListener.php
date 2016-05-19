@@ -45,7 +45,7 @@ class FormViewListener
     }
 
     /**
-     * Insert SEO information 
+     * Insert SEO information
      *
      * @param BeforeListRenderEvent $event
      */

@@ -45,49 +45,49 @@ class ProductFormExtension extends AbstractTypeExtension
                     'label' => 'orob2b.seo.meta-title.label',
                     'required' => false,
                 ]
-        )
+            )
             ->add(
-            'metaDescriptions',
-            LocalizedFallbackValueCollectionType::NAME,
-            [
-                'label' => 'orob2b.seo.meta-description.label',
-                'required' => false,
-                'field' => 'text',
-                'type' => OroRichTextType::NAME,
-                'options' => [
-                    'wysiwyg_options' => [
-                        'statusbar' => true,
-                        'resize' => true,
-                        'width' => 500,
-                        'height' => 300,
-                        'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
-                        'toolbar' =>
-                            [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
+                'metaDescriptions',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label' => 'orob2b.seo.meta-description.label',
+                    'required' => false,
+                    'field' => 'text',
+                    'type' => OroRichTextType::NAME,
+                    'options' => [
+                        'wysiwyg_options' => [
+                            'statusbar' => true,
+                            'resize' => true,
+                            'width' => 500,
+                            'height' => 300,
+                            'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
+                            'toolbar' =>
+                                [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
+                        ],
                     ],
-                ],
-            ]
-        )
+                ]
+            )
             ->add(
-            'metaKeywords',
-            LocalizedFallbackValueCollectionType::NAME,
-            [
-                'label' => 'orob2b.seo.meta-keywords.label',
-                'required' => false,
-                'field' => 'text',
-                'type' => OroRichTextType::NAME,
-                'options' => [
-                    'wysiwyg_options' => [
-                        'statusbar' => true,
-                        'resize' => true,
-                        'width' => 500,
-                        'height' => 300,
-                        'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
-                        'toolbar' =>
-                            [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
+                'metaKeywords',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label' => 'orob2b.seo.meta-keywords.label',
+                    'required' => false,
+                    'field' => 'text',
+                    'type' => OroRichTextType::NAME,
+                    'options' => [
+                        'wysiwyg_options' => [
+                            'statusbar' => true,
+                            'resize' => true,
+                            'width' => 500,
+                            'height' => 300,
+                            'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
+                            'toolbar' =>
+                                [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
+                        ],
                     ],
-                ],
-            ]
-        );
+                ]
+            );
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
@@ -112,7 +112,7 @@ class ProductFormExtension extends AbstractTypeExtension
      * @param OroEntityManager $entityManager
      * @param LocalizedFallbackValue[] $metaFields
      */
-    private function persistMetaFields($entityManager, $metaFields)
+    private function persistMetaFields(OroEntityManager $entityManager, $metaFields = array())
     {
         foreach ($metaFields as $field) {
             $entityManager->persist($field);

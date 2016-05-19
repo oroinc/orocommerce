@@ -45,7 +45,7 @@ class PageFormExtension extends AbstractTypeExtension
                     'label' => 'orob2b.seo.meta-title.label',
                     'required' => false,
                 ]
-        )
+            )
             ->add(
                 'metaDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
