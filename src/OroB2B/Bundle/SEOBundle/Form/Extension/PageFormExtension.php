@@ -37,13 +37,14 @@ class PageFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add(
-            'metaTitles',
-            LocalizedFallbackValueCollectionType::NAME,
-            [
-                'label' => 'orob2b.seo.meta-title.label',
-                'required' => false,
-            ]
+        $builder
+            ->add(
+                'metaTitles',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label' => 'orob2b.seo.meta-title.label',
+                    'required' => false,
+                ]
         )
             ->add(
                 'metaDescriptions',

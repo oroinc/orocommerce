@@ -6,7 +6,6 @@ use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 
 class DefaultFallbackValueExtension extends \Twig_Extension
 {
-
     /**
      * {@inheritdoc}
      */
