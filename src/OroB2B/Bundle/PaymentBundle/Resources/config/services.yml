@@ -112,17 +112,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_credit_card_form_provider }
 
-<<<<<<< HEAD
-=======
-    orob2b_payment.provider.term_form_provider:
-        class: 'OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentTermFormProvider'
-        public: true
-        arguments:
-            - '@form.factory'
-        tags:
-            - { name: layout.data_provider, alias: orob2b_payment_payment_term_form_provider }
-
->>>>>>> master
     orob2b_payment.provider.methods_provider:
         class: 'OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider'
         public: true
@@ -202,17 +191,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_payment.callback.return, method: onReturn, priority: 10 }
             - { name: kernel.event_listener, event: orob2b_payment.callback.error, method: onError, priority: 10 }
-
-    orob2b_payment.event_listener.callback.payment_term:
-        class: 'OroB2B\Bundle\PaymentBundle\EventListener\Callback\PaymentTermListener'
-        public: true
-        lazy: true
-        arguments:
-            - '@property_accessor'
-            - '@oro_entity.doctrine_helper'
-            - '@orob2b_payment.provider.payment_term'
-        tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.return, method: onReturn }
 
     orob2b_payment.condition.payment_method_enabled:
         class: 'OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodEnabled'
