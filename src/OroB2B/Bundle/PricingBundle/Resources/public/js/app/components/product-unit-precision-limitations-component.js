@@ -21,7 +21,8 @@ define(function (require) {
          */
         listen: {
             'product:precision:remove mediator': 'onChange',
-            'product:precision:add mediator': 'onChange'
+            'product:precision:add mediator': 'onChange',
+            'product:primary:precision:change mediator': 'onChange'
         },
 
         /**
@@ -128,7 +129,16 @@ define(function (require) {
          * @returns {Object}
          */
         getUnits: function () {
-            return $(':data(' + this.options.unitsAttribute + ')').data(this.options.unitsAttribute) || {};
+            var units = {};
+            var attribute = this.options.unitsAttribute;
+            _.each($(':data(' + attribute + ')'), function(container){
+                var unit = $(container).data(attribute) || {};
+                _.each(unit, function(key, val){
+                    units[key] = val;
+                });
+            })
+            
+            return units;
         },
 
         dispose: function () {

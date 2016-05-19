@@ -118,7 +118,9 @@ class ProductUnitSelectionType extends AbstractProductAwareType
 
         if ($product) {
             foreach ($product->getUnitPrecisions() as $unitPrecision) {
-                $choices[] = $unitPrecision->getUnit();
+                if ($unitPrecision) {
+                    $choices[] = $unitPrecision->getUnit();
+                }
             }
         }
 
