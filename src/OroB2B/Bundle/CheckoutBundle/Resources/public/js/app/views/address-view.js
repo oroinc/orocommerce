@@ -30,19 +30,19 @@ define(function(require) {
             }
 
             this._onAddressChanged();
-            this._handleShipToBillingAddressCheckbox()
+            this._handleShipToBillingAddressCheckbox();
         },
 
-        _handleShipToBillingAddressCheckbox: function(e){
+        _handleShipToBillingAddressCheckbox: function(e) {
             var disabled = Boolean(this.$shipToBillingCheckbox.attr('checked'));
             if (!disabled && this._isFormVisible()) {
                 this._showForm();
             } else {
                 this._hideForm(true);
-                this.$addressSelector.parent().find('.chosen-single').focus();
+                this.$addressSelector.focus();
             }
             this.$addressSelector.attr('disabled', disabled);
-            this.$addressSelector.inputWidget('refresh')
+            this.$addressSelector.inputWidget('refresh');
         },
 
         _onAddressChanged: function(e) {
@@ -53,11 +53,11 @@ define(function(require) {
             }
         },
 
-        _isFormVisible: function(){
+        _isFormVisible: function() {
             return this.$addressSelector.val() === '0';
         },
 
-        _showForm: function(){
+        _showForm: function() {
             if (this.needCheckAddressTypes) {
                 this.shipToBillingContainer.removeClass('hidden');
             }
@@ -65,7 +65,7 @@ define(function(require) {
             this.$fieldsContainer.removeClass('hidden');
         },
 
-        _hideForm: function(showCheckbox){
+        _hideForm: function(showCheckbox) {
             if (this.needCheckAddressTypes) {
                 if (showCheckbox || _.indexOf(this.typesMapping[this.$addressSelector.val()], 'shipping') > -1) {
                     this.shipToBillingContainer.removeClass('hidden');
@@ -79,14 +79,14 @@ define(function(require) {
             this.$fieldsContainer.addClass('hidden');
         },
 
-        _setAddressSelectorState: function(state){
+        _setAddressSelectorState: function(state) {
             this.$addressSelector.attr('disabled', state);
             this.$addressSelector.inputWidget('refresh');
         },
 
         _onRegionListChanged: function(e) {
-            this.$regionSelector.chosen('destroy');
-            this.$regionSelector.chosen({disable_search_threshold: 10});
+            this.$regionSelector.inputWidget('dispose');
+            this.$regionSelector.inputWidget('create');
         }
     });
 
