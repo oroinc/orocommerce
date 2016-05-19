@@ -178,8 +178,8 @@ services:
             - { name: oro_action.datagrid.mass_action_provider, alias: orob2b_shopping_list_add_products }
 
     orob2b_shopping_list.layout.block.type.shopping_list_selector:
-        class: '%oro_layout.block_type.configurable.class%'
-        pubcli: true
+        parent: oro_layout.block_type.abstract_configurable
+        public: true
         calls:
             - [setOptions, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
             - [setName, ['shopping_list_selector']]
