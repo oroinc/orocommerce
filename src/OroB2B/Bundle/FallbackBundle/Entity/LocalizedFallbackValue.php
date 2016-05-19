@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
+use OroB2B\Bundle\FallbackBundle\Model\ExtendLocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
@@ -19,9 +20,9 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
  *      }
  * )
  * @ORM\Entity
- * @Config(mode="hidden")
+ * @Config()
  */
-class LocalizedFallbackValue
+class LocalizedFallbackValue extends ExtendLocalizedFallbackValue
 {
     /**
      * @var integer

@@ -12,3 +12,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.pageView, method: onLandingPageView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.page-edit, method: onLandingPageEdit }
+
+    #Forms
+    orob2b_seo.form.extension.page_type:
+        class: 'OroB2B\Bundle\SEOBundle\Form\Extension\PageFormExtension'
+        arguments:
+            - "@doctrine"
+        tags:
+            - { name: form.type_extension, alias: orob2b_cms_page }

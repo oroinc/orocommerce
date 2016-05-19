@@ -1,0 +1,8 @@
+parameters:
+    oro_seo.twig.extension.default_fallback_value.class: OroB2B\Bundle\SEOBundle\Twig\DefaultFallbackValueExtension
+
+services:
+    oro_seo.twig.extension.default_fallback_value:
+        class: %oro_seo.twig.extension.default_fallback_value.class%
+        tags:
+            - { name: twig.extension }

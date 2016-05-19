@@ -6,6 +6,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -47,22 +48,31 @@ class OroB2BSEOBundle implements Migration, ExtendExtensionAwareInterface
 
     private function addMetaInformation($schema, $ownerTable)
     {
-        $this->addMetaInformationField($schema, $ownerTable, 'meta_titles');
-        $this->addMetaInformationField($schema, $ownerTable, 'meta_descriptions');
-        $this->addMetaInformationField($schema, $ownerTable, 'meta_keywords');
+        $this->addMetaInformationField($schema, $ownerTable, 'metaTitles');
+        $this->addMetaInformationField($schema, $ownerTable, 'metaDescriptions');
+        $this->addMetaInformationField($schema, $ownerTable, 'metaKeywords');
     }
 
-    private function addMetaInformationField($schema, $ownerTable, $realationName)
+    private function addMetaInformationField($schema, $ownerTable, $relationName)
     {
+        $targetTable = $schema->getTable($ownerTable);
+
+        // Column names are used to show a title of target entity
+        $targetTitleColumnNames = $targetTable->getPrimaryKeyColumns();
+        // Column names are used to show detailed info about target entity
+        $targetDetailedColumnNames = $targetTable->getPrimaryKeyColumns();
+        // Column names are used to show target entity in a grid
+        $targetGridColumnNames = $targetTable->getPrimaryKeyColumns();
+
         $this->extendExtension->addManyToManyRelation(
             $schema,
-            $ownerTable,
-            $realationName,
+            $targetTable,
+            $relationName,
             self::FALLBACK_LOCALE_VALUE_TABLE_NAME,
-            ['id'],
-            ['id'],
-            ['id'],
-            ['extend' => ['owner' => ExtendScope::OWNER_SYSTEM, 'without_default' => true]]
+            $targetTitleColumnNames,
+            $targetDetailedColumnNames,
+            $targetGridColumnNames,
+            ['extend' => ['owner' => ExtendScope::OWNER_CUSTOM]]
         );        
     }
 }
