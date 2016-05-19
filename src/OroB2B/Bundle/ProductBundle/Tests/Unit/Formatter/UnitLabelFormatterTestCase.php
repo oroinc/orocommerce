@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Formatter;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-use OroB2B\Bundle\ProductBundle\Formatter\AbstractLabelFormatter;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 
 abstract class UnitLabelFormatterTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -14,7 +14,7 @@ abstract class UnitLabelFormatterTestCase extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
     protected $translator;
 
-    /** @var AbstractLabelFormatter */
+    /** @var UnitLabelFormatter */
     protected $formatter;
 
     protected function setUp()
@@ -70,6 +70,12 @@ abstract class UnitLabelFormatterTestCase extends \PHPUnit_Framework_TestCase
                 'isShort'   => true,
                 'isPlural'  => true,
                 'expected'  => static::TRANSLATION_PREFIX . '.item.label.short_plural',
+            ],
+            'empty code' => [
+                'unitCode'  => '',
+                'isShort'   => true,
+                'isPlural'  => true,
+                'expected'  => 'N/A',
             ],
         ];
     }

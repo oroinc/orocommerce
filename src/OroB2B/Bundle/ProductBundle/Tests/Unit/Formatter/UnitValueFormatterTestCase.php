@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Formatter;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-use OroB2B\Bundle\ProductBundle\Formatter\AbstractUnitValueFormatter;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 
 abstract class UnitValueFormatterTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -14,7 +14,7 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit_Framework_TestCase
     /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $translator;
 
-    /** @var AbstractUnitValueFormatter */
+    /** @var UnitValueFormatter */
     protected $formatter;
 
     protected function setUp()
@@ -27,9 +27,6 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit_Framework_TestCase
         unset($this->formatter, $this->translator);
     }
 
-    /**
-     * Test Format
-     */
     public function testFormat()
     {
         $this->translator->expects($this->once())
@@ -39,9 +36,6 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit_Framework_TestCase
         $this->formatter->format(42, $this->createObject('kg'));
     }
 
-    /**
-     * Test FormatShort
-     */
     public function testFormatShort()
     {
         $this->translator->expects($this->once())

@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ShippingBundle\DependencyInjection\CompilerPass;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class FreightClassesPass implements CompilerPassInterface
+class FreightClassExtensionPass implements CompilerPassInterface
 {
     const PROVIDER_TAG = 'orob2b_shipping.extension.freight_classes';
     const EXTENSION_SERVICE_ID = 'orob2b_shipping.provider.measure_units.freight';

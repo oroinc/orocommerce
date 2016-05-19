@@ -28,7 +28,7 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
     /** @var ContainerInterface */
     protected $container;
 
-    /** @var  DoctrineHelper */
+    /** @var DoctrineHelper */
     protected $doctrineHelper;
 
     /** @var array */
@@ -93,14 +93,13 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
 
             $currentPair = $product->getId() . '--' . $productUnit->getCode();
             //Skip already processed
-            if (in_array($currentPair, $processedPairs)) {
+            if (in_array($currentPair, $processedPairs, true)) {
                 continue;
             }
             $processedPairs[] = $currentPair;
 
             $productShippingOptions = new ProductShippingOptions();
-            $productShippingOptions
-                ->setProduct($product)
+            $productShippingOptions->setProduct($product)
                 ->setProductUnit($productUnit)
                 ->setFreightClass($this->getRandomFreightClass($manager));
 

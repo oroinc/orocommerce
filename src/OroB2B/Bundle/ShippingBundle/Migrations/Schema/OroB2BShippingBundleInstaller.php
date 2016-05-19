@@ -68,9 +68,9 @@ class OroB2BShippingBundleInstaller implements Installation
     {
         $table = $schema->createTable('orob2b_shipping_orig_warehouse');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
-        $table->addColumn('warehouse_id', 'integer', []);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
+        $table->addColumn('warehouse_id', 'integer', []);
+        $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('street', 'string', ['notnull' => false, 'length' => 500]);
         $table->addColumn('street2', 'string', ['notnull' => false, 'length' => 500]);
@@ -86,9 +86,7 @@ class OroB2BShippingBundleInstaller implements Installation
         $table->addColumn('created', 'datetime', []);
         $table->addColumn('updated', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['warehouse_id'], null);
-        $table->addIndex(['country_code'], null, []);
-        $table->addIndex(['region_code'], null, []);
+        $table->addUniqueIndex(['warehouse_id']);
     }
 
     /**
@@ -101,7 +99,7 @@ class OroB2BShippingBundleInstaller implements Installation
         $table = $schema->createTable('orob2b_shipping_product_opts');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('freight_class_code', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('product_id', 'integer', []);
+        $table->addColumn('product_id', 'integer');
         $table->addColumn('product_unit_code', 'string', ['length' => 255]);
         $table->addColumn('dimensions_unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('weight_unit_code', 'string', ['notnull' => false, 'length' => 255]);
@@ -114,11 +112,6 @@ class OroB2BShippingBundleInstaller implements Installation
             ['product_id', 'product_unit_code'],
             'shipping_product_opts__product_id__product_unit_code__uidx'
         );
-        $table->addIndex(['freight_class_code'], null, []);
-        $table->addIndex(['dimensions_unit_code'], null, []);
-        $table->addIndex(['weight_unit_code'], null, []);
-        $table->addIndex(['product_unit_code'], null, []);
-        $table->addIndex(['product_id'], null, []);
     }
 
     /**
@@ -143,9 +136,9 @@ class OroB2BShippingBundleInstaller implements Installation
     {
         $table = $schema->getTable('orob2b_shipping_orig_warehouse');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_dictionary_country'),
-            ['country_code'],
-            ['iso2_code'],
+            $schema->getTable('oro_dictionary_region'),
+            ['region_code'],
+            ['combined_code'],
             ['onDelete' => null, 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
@@ -155,9 +148,9 @@ class OroB2BShippingBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_dictionary_region'),
-            ['region_code'],
-            ['combined_code'],
+            $schema->getTable('oro_dictionary_country'),
+            ['country_code'],
+            ['iso2_code'],
             ['onDelete' => null, 'onUpdate' => null]
         );
     }

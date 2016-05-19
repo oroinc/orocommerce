@@ -60,9 +60,9 @@ class OroB2BShippingBundle implements Migration
     {
         $table = $schema->createTable('orob2b_shipping_orig_warehouse');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
-        $table->addColumn('warehouse_id', 'integer', []);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
+        $table->addColumn('warehouse_id', 'integer', []);
+        $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('street', 'string', ['notnull' => false, 'length' => 500]);
         $table->addColumn('street2', 'string', ['notnull' => false, 'length' => 500]);
@@ -78,9 +78,7 @@ class OroB2BShippingBundle implements Migration
         $table->addColumn('created', 'datetime', []);
         $table->addColumn('updated', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['warehouse_id'], null);
-        $table->addIndex(['country_code'], null, []);
-        $table->addIndex(['region_code'], null, []);
+        $table->addUniqueIndex(['warehouse_id']);
     }
 
     /**
@@ -135,9 +133,9 @@ class OroB2BShippingBundle implements Migration
     {
         $table = $schema->getTable('orob2b_shipping_orig_warehouse');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_dictionary_country'),
-            ['country_code'],
-            ['iso2_code'],
+            $schema->getTable('oro_dictionary_region'),
+            ['region_code'],
+            ['combined_code'],
             ['onDelete' => null, 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
@@ -147,9 +145,9 @@ class OroB2BShippingBundle implements Migration
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_dictionary_region'),
-            ['region_code'],
-            ['combined_code'],
+            $schema->getTable('oro_dictionary_country'),
+            ['country_code'],
+            ['iso2_code'],
             ['onDelete' => null, 'onUpdate' => null]
         );
     }

@@ -32,3 +32,18 @@ OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions:
             - Valid: ~
         freightClass:
             - Valid: ~
+
+OroB2B\Bundle\ShippingBundle\Model\Dimensions:
+    properties:
+        length:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        width:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        height:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+
+OroB2B\Bundle\ShippingBundle\Model\Weight:
+    properties:
+        value:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+

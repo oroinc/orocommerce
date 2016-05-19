@@ -4,14 +4,14 @@ namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\DependencyInjection\CompilerPa
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-use OroB2B\Bundle\ShippingBundle\DependencyInjection\CompilerPass\FreightClassesPass;
+use OroB2B\Bundle\ShippingBundle\DependencyInjection\CompilerPass\FreightClassExtensionPass;
 
-class FreightClassesPassTest extends \PHPUnit_Framework_TestCase
+class FreightClassExtensionPassTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder */
     protected $container;
 
-    /** @var FreightClassesPass */
+    /** @var FreightClassExtensionPass */
     protected $compilerPass;
 
     /**
@@ -23,14 +23,14 @@ class FreightClassesPassTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->compilerPass = new FreightClassesPass();
+        $this->compilerPass = new FreightClassExtensionPass();
     }
 
     public function testProcessServiceNotExists()
     {
         $this->container->expects($this->once())
             ->method('hasDefinition')
-            ->with(FreightClassesPass::EXTENSION_SERVICE_ID)
+            ->with(FreightClassExtensionPass::EXTENSION_SERVICE_ID)
             ->willReturn(false);
 
         $this->container->expects($this->never())->method('getDefinition');
@@ -43,12 +43,12 @@ class FreightClassesPassTest extends \PHPUnit_Framework_TestCase
     {
         $this->container->expects($this->once())
             ->method('hasDefinition')
-            ->with(FreightClassesPass::EXTENSION_SERVICE_ID)
+            ->with(FreightClassExtensionPass::EXTENSION_SERVICE_ID)
             ->willReturn(true);
 
         $this->container->expects($this->once())
             ->method('findTaggedServiceIds')
-            ->with(FreightClassesPass::PROVIDER_TAG)
+            ->with(FreightClassExtensionPass::PROVIDER_TAG)
             ->willReturn([]);
 
         $this->container->expects($this->never())->method('getDefinition');
@@ -60,12 +60,12 @@ class FreightClassesPassTest extends \PHPUnit_Framework_TestCase
     {
         $this->container->expects($this->once())
             ->method('hasDefinition')
-            ->with(FreightClassesPass::EXTENSION_SERVICE_ID)
+            ->with(FreightClassExtensionPass::EXTENSION_SERVICE_ID)
             ->willReturn(true);
 
         $this->container->expects($this->once())
             ->method('findTaggedServiceIds')
-            ->with(FreightClassesPass::PROVIDER_TAG)
+            ->with(FreightClassExtensionPass::PROVIDER_TAG)
             ->willReturn(['provider_service' => ['class' => '\stdClass']]);
 
         $definition = $this->getMock('Symfony\Component\DependencyInjection\Definition');
@@ -74,7 +74,7 @@ class FreightClassesPassTest extends \PHPUnit_Framework_TestCase
             ->method('getDefinition')
             ->willReturnMap(
                 [
-                    [FreightClassesPass::EXTENSION_SERVICE_ID, $definition],
+                    [FreightClassExtensionPass::EXTENSION_SERVICE_ID, $definition],
                     ['provider_service', $this->getMock('Symfony\Component\DependencyInjection\Definition')]
                 ]
             );
