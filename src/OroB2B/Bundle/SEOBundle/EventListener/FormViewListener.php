@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\SEOBundle\EventListener;
 
-use OroB2B\Bundle\CMSBundle\Entity\Page;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -58,6 +57,14 @@ class FormViewListener
     /**
      * @param BeforeListRenderEvent $event
      */
+    public function onProductEdit(BeforeListRenderEvent $event)
+    {
+        $this->addEditPageBlock($event, 'OroB2BSEOBundle:Product:seo_update.html.twig');
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     */
     public function onLandingPageView(BeforeListRenderEvent $event)
     {
         $this->addViewPageBlock($event, 'OroB2BCMSBundle:Page', 'OroB2BSEOBundle:Page:seo_view.html.twig');
@@ -82,7 +89,6 @@ class FormViewListener
         }
 
         $objectId = (int)$request->get('id');
-        /** @var Page $object */
         $object = $this->doctrineHelper->getEntityReference($entitiyClass, $objectId);
 
         $template = $event->getEnvironment()->render($template, ['entity' => $object]);
@@ -101,18 +107,6 @@ class FormViewListener
         );
 
         $this->addSEOBlock($event->getScrollData(), $template);
-    }
-
-    /**
-     * @param BeforeListRenderEvent $event
-     */
-    public function onProductEdit(BeforeListRenderEvent $event)
-    {
-        $template = $event->getEnvironment()->render(
-            'OroB2BSEOBundle:Product:seo_update.html.twig',
-            ['form' => $event->getFormView()]
-        );
-        $this->addProductPricesBlock($event->getScrollData(), $template);
     }
 
     /**

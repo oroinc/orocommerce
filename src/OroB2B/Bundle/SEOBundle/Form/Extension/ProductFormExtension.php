@@ -2,14 +2,20 @@
 
 namespace OroB2B\Bundle\SEOBundle\Form\Extension;
 
+use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
+
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 
 class ProductFormExtension extends AbstractTypeExtension
 {
@@ -31,13 +37,14 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add(
-            'metaTitles',
-            LocalizedFallbackValueCollectionType::NAME,
-            [
-                'label' => 'orob2b.seo.meta-title.label',
-                'required' => false,
-            ]
+        $builder
+            ->add(
+                'metaTitles',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label' => 'orob2b.seo.meta-title.label',
+                    'required' => false,
+                ]
         )
             ->add(
             'metaDescriptions',
@@ -90,7 +97,26 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function onPostSubmit(FormEvent $event)
     {
-        //TODO : add handling of meta title,description,keywords and save in FallbackLocaleValue
+        /* @var $product Product */
+        $product = $event->getData();
+        $entityManager = $this->registry->getManagerForClass('OroB2BFallbackBundle:LocalizedFallbackValue');
+
+        $this->persistMetaFields($entityManager, $product->getMetaTitles());
+        $this->persistMetaFields($entityManager, $product->getMetaDescriptions());
+        $this->persistMetaFields($entityManager, $product->getMetaKeywords());
+    }
+
+    /**
+     * Loop through list of LocalizedFallbackValue objects for a meta information field
+     *
+     * @param OroEntityManager $entityManager
+     * @param LocalizedFallbackValue[] $metaFields
+     */
+    private function persistMetaFields($entityManager, $metaFields)
+    {
+        foreach ($metaFields as $field) {
+            $entityManager->persist($field);
+        }
     }
 
     /**
