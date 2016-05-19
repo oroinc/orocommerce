@@ -86,15 +86,14 @@ class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
     protected function getAccountUserShoppingLists()
     {
         $accountUser = $this->securityFacade->getLoggedUser();
-        if (!$accountUser) {
-            return null;
+        $shoppingLists = [];
+        if ($accountUser) {
+            /** @var ShoppingListRepository $shoppingListRepository */
+            $shoppingListRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->shoppingListClass);
+
+            /** @var ShoppingList[] $shoppingLists */
+            $shoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
         }
-
-        /** @var ShoppingListRepository $shoppingListRepository */
-        $shoppingListRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->shoppingListClass);
-
-        /** @var ShoppingList[] $shoppingLists */
-        $shoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
 
         return ['shoppingLists' => $shoppingLists];
     }
