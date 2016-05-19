@@ -34,7 +34,7 @@ class ProductShippingOptionsType extends AbstractType
                 ProductUnitSelectionType::NAME,
                 [
                     'label' => 'orob2b.shipping.product_shipping_options.product_unit.label',
-                    'required' => true,
+                    'required' => false,
                 ]
             )
             ->add(

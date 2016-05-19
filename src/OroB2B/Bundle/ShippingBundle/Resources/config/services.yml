@@ -143,6 +143,7 @@ services:
 
     orob2b_shipping.extension.freight_classes:
         class: 'OroB2B\Bundle\ShippingBundle\Extension\FreightClassesExtension'
+        public: true
         tags:
             - { name: orob2b_shipping.extension.freight_classes }
 

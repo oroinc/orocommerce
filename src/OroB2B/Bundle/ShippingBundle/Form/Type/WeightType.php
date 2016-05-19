@@ -30,7 +30,7 @@ class WeightType extends AbstractType
     {
         $builder
             ->add('value', 'number', [
-                    'attr' => ['class' => 'value freight-class-update-trigger'],
+                    'attr' => ['class' => 'value'],
                     'required' => false,
                 ])
             ->add(
@@ -38,7 +38,6 @@ class WeightType extends AbstractType
                 WeightUnitSelectType::NAME,
                 [
                     'placeholder' => 'orob2b.shipping.form.placeholder.weight_unit.label',
-                    'attr' => ['class' => 'freight-class-update-trigger'],
                     'required' => false,
                 ]
             );

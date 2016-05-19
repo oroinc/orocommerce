@@ -30,7 +30,7 @@ define(function(require) {
                 itemContainer: 'tr.list-item',
                 unitSelect: 'select[name^="orob2b_product[product_shipping_options]"][name$="[productUnit]"]',
                 freightClassSelector: '.freight-class-select',
-                freightClassUpdateSelector: '.freight-class-update-trigger'
+                freightClassUpdateSelector: 'input, select:not(".freight-class-select")'
             }
         },
 
@@ -140,7 +140,7 @@ define(function(require) {
             this.$freightClassesSelect
                 .prop('disabled', disabled)
                 .val(null)
-                .find('option')
+                .find('option:not([value=""])')
                 .remove();
         },
 
@@ -170,14 +170,13 @@ define(function(require) {
                         self.$freightClassesSelect.append($('<option/>').val(code).text(label));
                     }
                 });
-                self.$freightClassesSelect.find('option[value=""]').hide();
-                self.$freightClassesSelect.val(value);
-                if (self.$freightClassesSelect.val() === null) {
-                    self.$freightClassesSelect.val(_.keys(units)[0]);
+                self.$freightClassesSelect.val(value).change();
+
+                if (!this.$freightClassesSelect.val()) {
+                    this.$freightClassesSelect.val(_.keys(units)[0]);
                 }
             } else {
-                self.$freightClassesSelect.append($('<option/>').val('').text(''));
-                self.$freightClassesSelect.val('');
+                this.$freightClassesSelect.val('');
             }
         },
 

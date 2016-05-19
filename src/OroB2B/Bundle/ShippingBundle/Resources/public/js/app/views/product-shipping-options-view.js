@@ -17,7 +17,8 @@ define(function(require) {
             selectors: {
                 itemsContainer: 'table.list-items',
                 itemContainer: 'table tr.list-item',
-                addButtonSelector: '.product-shipping-options-collection .add-list-item'
+                addButtonSelector: '.product-shipping-options-collection .add-list-item',
+                subselects: '.shipping-weight select, .shipping-dimensions select, .shipping-freight-class select'
             }
         },
 
@@ -32,7 +33,7 @@ define(function(require) {
         $itemsContainer: null,
 
         /**
-         * @inheritDoc
+         * {@inheritDoc}
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -46,7 +47,11 @@ define(function(require) {
                 .on('content:changed', _.bind(this.onContentChanged, this))
                 .on('content:remove', _.bind(this.onContentRemoved, this))
             ;
-            this.$itemsContainer.on('click', '.removeRow', _.bind(this.onRemoveRowClick, this));
+            this.$itemsContainer
+                .on('click', '.removeRow', _.bind(this.onRemoveRowClick, this))
+                .on('change', this.options.selectSelector, _.bind(this.onContentChanged, this));
+
+            this.$el.find(this.options.selectors.subselects).data('selected', true);
 
             this.onContentChanged();
         },
@@ -67,16 +72,19 @@ define(function(require) {
 
             _.each(this.getSelects(), function(select) {
                 var $select = $(select);
-                var currentValue = $select.val();
-                var clearChangeRequired = self.clearOptions(productUnits, $select);
-                var addChangeRequired = self.addOptions(productUnits, allSelectedUnits, currentValue, $select);
-                allSelectedUnits.push($select.val());
 
-                if (clearChangeRequired || addChangeRequired) {
-                    $select.trigger('change');
-                }
+                self.changeOptions(productUnits, allSelectedUnits, $select);
+
                 if (_.indexOf(selectedUnits, $select.val()) === -1) {
                     selectedUnits.push($select.val());
+                }
+            });
+
+            _.each(this.$el.find(this.options.selectors.subselects), function(select) {
+                var $first = $(select).find('option:not([value=""]):first');
+                if (!$(select).data('selected') && !$(select).val() && $first.length) {
+                    $(select).val($first.val()).change();
+                    $(select).data('selected', true);
                 }
             });
 
@@ -126,67 +134,39 @@ define(function(require) {
         },
 
         /**
-         * Clear options from selects
-         *
-         * @param {Array} units
-         * @param {jQuery.Element} $select
-         *
-         * @return {Boolean}
-         */
-        clearOptions: function(units, $select) {
-            var updateRequired = false;
-
-            _.each($select.find('option'), function(option) {
-                if (!units.hasOwnProperty(option.value)) {
-                    option.remove();
-
-                    updateRequired = true;
-
-                    return;
-                }
-                var $option = $(option);
-                if (!$option.is(':selected')) {
-                    option.remove();
-
-                    updateRequired = true;
-                }
-            });
-
-            return updateRequired;
-        },
-
-        /**
-         * Add options based on units configuration
-         *
          * @param {Array} units
          * @param {Array} allSelectedUnits
-         * @param {String} currentValue
          * @param {jQuery.Element} $select
-         *
-         * @return {Boolean}
          */
-        addOptions: function(units, allSelectedUnits, currentValue, $select) {
-            var updateRequired = false;
+        changeOptions: function(units, allSelectedUnits, $select) {
+            var currentValue = $select.val();
 
-            // if current value was removed
-            var needUpdateValue = (_.indexOf(_.keys(units), currentValue) === -1);
             _.each(units, function(text, value) {
                 if (!$select.find('option[value="' + value + '"]').length) {
                     $select.append($('<option/>').val(value).text(text));
-                    updateRequired = true;
-                }
-                if (needUpdateValue && (_.indexOf(allSelectedUnits, value) === -1)) {
-                    $select.val(value);
-                    needUpdateValue = false;
                 }
             });
 
-            // if no value found
-            if (needUpdateValue) {
-                $select.append($('<option/>').val('').text('')).val('');
-            }
+            _.each($select.find('option'), function(option) {
+                if (!units.hasOwnProperty(option.value) || !option.value ||
+                        _.indexOf(allSelectedUnits, option.value) !== -1 && option.value !== currentValue) {
 
-            return updateRequired;
+                    if (option.value === currentValue) {
+                        currentValue = '';
+                    }
+
+                    option.remove();
+                }
+            });
+
+            if (!currentValue) {
+                var $firstValue = $select.find('option:first');
+                $select.val($firstValue.length ? $firstValue.val() : '');
+
+                if ($firstValue.length) {
+                    $select.trigger('change');
+                }
+            }
         }
     });
 });

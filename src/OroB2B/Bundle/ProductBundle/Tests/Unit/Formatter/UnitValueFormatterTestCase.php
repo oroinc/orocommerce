@@ -69,13 +69,14 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit_Framework_TestCase
         $this->formatter->formatCode(42, 'item');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The parameter "value" must be a numeric, but it is of type string.
-     */
     public function testFormatWithInvalidValue()
     {
-        $this->formatter->formatShort('test', $this->createObject('item'));
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with('N/A')
+            ->willReturn('N/A');
+
+        $this->assertEquals('N/A', $this->formatter->formatShort('test', $this->createObject('item')));
     }
 
     /**
