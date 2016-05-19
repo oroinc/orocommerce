@@ -81,6 +81,14 @@ class FormViewListener
     /**
      * @param BeforeListRenderEvent $event
      */
+    public function onCategoryEdit(BeforeListRenderEvent $event)
+    {
+        $this->addEditPageBlock($event, 'OroB2BSEOBundle:Category:seo_update.html.twig');
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     */
     protected function addViewPageBlock(BeforeListRenderEvent $event, $entitiyClass, $template)
     {
         $request = $this->requestStack->getCurrentRequest();

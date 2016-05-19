@@ -14,6 +14,7 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.pageView, method: onLandingPageView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.page-edit, method: onLandingPageEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
 
     #Forms
     orob2b_seo.form.extension.page_type:
@@ -29,3 +30,9 @@ services:
             - "@doctrine"
         tags:
             - { name: form.type_extension, alias: orob2b_product }
+    orob2b_seo.form.extension.category_type:
+        class: 'OroB2B\Bundle\SEOBundle\Form\Extension\CategoryFormExtension'
+        arguments:
+            - "@doctrine"
+        tags:
+            - { name: form.type_extension, alias: orob2b_catalog_category }
