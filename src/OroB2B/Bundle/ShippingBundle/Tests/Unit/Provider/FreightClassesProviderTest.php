@@ -13,7 +13,7 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
     protected $provider;
 
     /**
-     * {@ihneritdoc}
+     * {@inheritdoc}
      */
     protected function setUp()
     {

@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\ShippingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
@@ -81,21 +79,21 @@ class ProductShippingOptions implements
      *
      * @ORM\Column(name="dimensions_length", type="float", nullable=true)
      */
-    protected $dimensionsLength = null;
+    protected $dimensionsLength;
 
     /**
      * @var float
      *
      * @ORM\Column(name="dimensions_width", type="float", nullable=true)
      */
-    protected $dimensionsWidth = null;
+    protected $dimensionsWidth;
 
     /**
      * @var float
      *
      * @ORM\Column(name="dimensions_height", type="float", nullable=true)
      */
-    protected $dimensionsHeight = null;
+    protected $dimensionsHeight;
 
     /**
      * @var LengthUnit
@@ -117,38 +115,6 @@ class ProductShippingOptions implements
      * @ORM\JoinColumn(name="freight_class_code", referencedColumnName="code")
      */
     protected $freightClass;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEntityIdentifier()
-    {
-        return $this->getId();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProductHolder()
-    {
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProductUnitCode()
-    {
-        return $this->getProductUnit()->getCode();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProductSku()
-    {
-        return $this->getProduct()->getSku();
-    }
 
     /**
      * @return int
@@ -257,6 +223,38 @@ class ProductShippingOptions implements
         $this->freightClass = $freightClass;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->getId();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductUnitCode()
+    {
+        return $this->getProductUnit()->getCode();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductSku()
+    {
+        return $this->getProduct()->getSku();
     }
 
     /**

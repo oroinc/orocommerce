@@ -29,10 +29,14 @@ class WeightType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('value', 'number', [
+            ->add(
+                'value',
+                'number',
+                [
                     'attr' => ['class' => 'value'],
                     'required' => false,
-                ])
+                ]
+            )
             ->add(
                 'unit',
                 WeightUnitSelectType::NAME,

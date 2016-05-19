@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Extension;
 
 use OroB2B\Bundle\ShippingBundle\Entity\FreightClass;
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface;
-
 use OroB2B\Bundle\ShippingBundle\Extension\FreightClassesExtension;
 
 class FreightClassesExtensionTest extends \PHPUnit_Framework_TestCase
@@ -31,10 +30,7 @@ class FreightClassesExtensionTest extends \PHPUnit_Framework_TestCase
         /* @var $options ProductShippingOptionsInterface|\PHPUnit_Framework_MockObject_MockObject */
         $options = $this->getMock('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface');
 
-        $this->assertEquals(
-            $expectedData,
-            $this->extension->isApplicable($inputData, $options)
-        );
+        $this->assertEquals($expectedData, $this->extension->isApplicable($inputData, $options));
     }
 
     /**

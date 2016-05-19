@@ -1,6 +1,6 @@
 {% macro _renderItemRow(shippingOption) %}
     <tr>
-        <td class="renderable"><div class="text-center">{{ shippingOption.productUnit|orob2b_format_product_unit_label(false, true) }}</div></td>
+        <td class="renderable"><div class="text-center">{{ shippingOption.productUnit|orob2b_format_product_unit_label }}</div></td>
         <td class="renderable"><div class="text-center">{{ shippingOption.weight.value|orob2b_weight_unit_format_value_short(shippingOption.weight.unit) }}</div></td>
         <td class="renderable"><div class="text-center">
             {% if shippingOption.dimensions.unit and (shippingOption.dimensions.length or shippingOption.dimensions.width or shippingOption.dimensions.height) %}
@@ -29,9 +29,9 @@
         <table class="grid table table-condensed table-bordered shipping-options-result-grid">
             {{ _self._renderItemsHead() }}
             <tbody>
-            {% for key, options in shippingOptions %}
-                {{ _self._renderItemRow(options) }}
-            {% endfor %}
+                {% for key, options in shippingOptions %}
+                    {{ _self._renderItemRow(options) }}
+                {% endfor %}
             </tbody>
         </table>
     {% endif %}

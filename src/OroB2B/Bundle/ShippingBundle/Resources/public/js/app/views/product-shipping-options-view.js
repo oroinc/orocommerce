@@ -22,6 +22,9 @@ define(function(require) {
             }
         },
 
+        /**
+         * @property {Object}
+         */
         listen: {
             'product:precision:remove mediator': 'onPrecisionRemoved',
             'product:precision:add mediator': 'onContentChanged'
@@ -115,7 +118,7 @@ define(function(require) {
             var selects = this.$el.find(this.options.selectSelector);
 
             _.each(selects, function(select) {
-                if(productUnits.hasOwnProperty($(select).val())) {
+                if (productUnits.hasOwnProperty($(select).val())) {
                     return;
                 }
 

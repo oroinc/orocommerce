@@ -1,5 +1,8 @@
 /*global define*/
-define(['underscore', 'orotranslation/js/translator', 'jquery'
+define([
+    'underscore',
+    'orotranslation/js/translator',
+    'jquery'
 ], function(_, __, $) {
     'use strict';
 
@@ -42,6 +45,12 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
      */
     return [
         'OroB2B\\Bundle\\ShippingBundle\\Validator\\Constraints\\UniqueProductUnitShippingOptions',
+
+        /**
+         * @param {String} value
+         * @param {Element} element
+         * @returns {Boolean}
+         */
         function(value, element) {
             var noDuplicationFound = true;
             var processedShippingOptions = [];
@@ -62,6 +71,11 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
 
             return noDuplicationFound;
         },
+
+        /**
+         * @param {Object} param
+         * @returns {String}
+         */
         function(param) {
             param = _.extend({}, defaultParam, param);
 
