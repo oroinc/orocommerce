@@ -151,7 +151,7 @@ class CheckoutController extends Controller
         $orderLineItemsCount = $manager->getData($checkout, true)->count();
         if ($orderLineItemsCount && $orderLineItemsCount !== $manager->getData($checkout)->count()) {
             $this->get('session')->getFlashBag()
-                ->add('warning', 'orob2b.checkout.order.line_items.order_line_item_has_without_prices.message');
+                ->add('warning', 'orob2b.checkout.order.line_items.line_item_has_no_price.message');
         }
     }
 

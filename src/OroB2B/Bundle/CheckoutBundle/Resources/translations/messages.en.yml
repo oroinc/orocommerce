@@ -159,4 +159,4 @@ orob2b:
 
         workflow.condition:
             order_line_item_has_count.message: No products can be added to this order. Please create an RFQ to request price.
-        order.line_items.order_line_item_has_without_prices.message: Some products have not been added to this order. Please create an RFQ to request price.
+        order.line_items.line_item_has_no_price.message: Some products have not been added to this order. Please create an RFQ to request price.

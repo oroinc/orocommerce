@@ -38,11 +38,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $selectedAddressId = $this->getSelectedAddressId($crawler, self::BILLING_ADDRESS);
-        $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
-        $this->assertEquals($this->getReference(self::DEFAULT_BILLING_ADDRESS)->getId(), $selectedAddressId);
-        $noProductsError = $translator
-            ->trans('orob2b.checkout.workflow.condition.order_line_item_has_count.message');
+        $noProductsError = $translator->trans('orob2b.checkout.workflow.condition.order_line_item_has_count.message');
         $this->assertContains($noProductsError, $crawler->html());
 
         $form = $this->getTransitionForm($crawler);
@@ -62,18 +58,14 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $selectedAddressId = $this->getSelectedAddressId($crawler, self::BILLING_ADDRESS);
-        $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
-        $this->assertEquals($this->getReference(self::DEFAULT_BILLING_ADDRESS)->getId(), $selectedAddressId);
         $noProductsError = $translator
-            ->trans('orob2b.checkout.order.line_items.order_line_item_has_without_prices.message');
+            ->trans('orob2b.checkout.order.line_items.line_item_has_no_price.message');
         $this->assertContains($noProductsError, $crawler->html());
 
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
         $data = $this->setFormData($values, self::BILLING_ADDRESS);
         $crawler = $this->client->request('POST', $form->getUri(), $data);
-        $this->assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
         $this->assertContains($noProductsError, $crawler->html());
 
         $productId = $this->getReference(LoadProductData::PRODUCT_5)->getId();
@@ -90,8 +82,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $noProductsError = $translator
-            ->trans('orob2b.checkout.workflow.condition.order_line_item_has_count.message');
+        $noProductsError = $translator->trans('orob2b.checkout.workflow.condition.order_line_item_has_count.message');
         $this->assertContains($noProductsError, $crawler->html());
     }
 }
