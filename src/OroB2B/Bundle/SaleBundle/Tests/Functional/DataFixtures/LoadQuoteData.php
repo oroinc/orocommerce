@@ -172,8 +172,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                 ->setPoNumber($poNumber)
                 ->setValidUntil(
                     array_key_exists('validUntil', $item)
-                        ? new \DateTime($item['validUntil'])
-                        : new \DateTime('+10 day')
+                    ? new \DateTime($item['validUntil'])
+                    : new \DateTime('+10 day')
                 )
                 ->setExpired(array_key_exists('expired', $item) ? $item['expired'] : null);
             ;
