@@ -49,7 +49,7 @@ define(function (require) {
         initialize: function (options) {
             this.options = _.defaults(options || {}, this.options);
             this.$el.on('click', '.removeLineItem', $.proxy(this._removeRow, this));
-            mediator.off('update:currency', this._updateCurrency, this);
+            mediator.on('update:currency', this._updateCurrency, this);
 
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
         },

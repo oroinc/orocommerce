@@ -101,7 +101,7 @@ define(function(require) {
          * @inheritDoc
          */
         beforeTransit: function(eventData) {
-            if (this.disposed || !this.getGlobalPaymentValidate()) {
+            if (!this.getGlobalPaymentValidate()) {
                 return;
             }
 
