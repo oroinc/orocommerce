@@ -26,6 +26,8 @@ define(function(require) {
             errorMessage: 'Sorry, unexpected error was occurred',
             triggerTimeout: 1500,
             activeUnitCodeParam: 'activeUnitCode',
+            excludeFields: ['descriptions', 'shortDescriptions', 'prices'],
+            excludeFilter: ':not([name^="orob2b_product[{{name}}]"])',
             selectors: {
                 itemContainer: 'tr.list-item',
                 unitSelect: 'select[name^="orob2b_product[product_shipping_options]"][name$="[productUnit]"]',
@@ -104,8 +106,14 @@ define(function(require) {
         callEntryPoint: function(e) {
             var self = this;
             var $itemContainer = $(e.target).closest(this.options.selectors.itemContainer);
-            var $form = $itemContainer.closest('form');
-            var formData = $form.find(':input[data-ftid]').serialize();
+
+            var inputsSelector = ':input[data-ftid]';
+            _.each(this.options.excludeFields, function(field) {
+                inputsSelector += self.options.excludeFilter.replace('{{name}}', field);
+            });
+            var $formInputs = $itemContainer.closest('form').find(inputsSelector);
+
+            var formData = $formInputs.serialize();
 
             this.listenerOff();
             this.$freightClassesSelect = $itemContainer.find(this.options.selectors.freightClassSelector);
@@ -170,7 +178,7 @@ define(function(require) {
                         self.$freightClassesSelect.append($('<option/>').val(code).text(label));
                     }
                 });
-                self.$freightClassesSelect.val(value).change();
+                this.$freightClassesSelect.val(value).change();
 
                 if (!this.$freightClassesSelect.val()) {
                     this.$freightClassesSelect.val(_.keys(units)[0]);

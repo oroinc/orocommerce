@@ -23,7 +23,7 @@ define(function(require) {
         },
 
         listen: {
-            'product:precision:remove mediator': 'onContentChanged',
+            'product:precision:remove mediator': 'onPrecisionRemoved',
             'product:precision:add mediator': 'onContentChanged'
         },
 
@@ -44,9 +44,8 @@ define(function(require) {
             this.$itemsContainer = this.$el.find(this.options.selectors.itemsContainer);
 
             this.$el
-                .on('content:changed', _.bind(this.onContentChanged, this))
-                .on('content:remove', _.bind(this.onContentRemoved, this))
-            ;
+                .on('content:changed', _.bind(this.onContentChanged, this));
+
             this.$itemsContainer
                 .on('click', '.removeRow', _.bind(this.onRemoveRowClick, this))
                 .on('change', this.options.selectSelector, _.bind(this.onContentChanged, this));
@@ -95,14 +94,6 @@ define(function(require) {
             );
         },
 
-        onContentRemoved: function() {
-            var items = this.$el.find(this.options.selectors.itemContainer);
-
-            if (items.length === 0) {
-                this.$itemsContainer.hide();
-            }
-        },
-
         /**
          * @param {jQuery.Event} e
          */
@@ -112,6 +103,26 @@ define(function(require) {
             $(e.target).closest('*[data-content]')
                 .trigger('content:remove')
                 .remove();
+            this.onContentChanged();
+        },
+
+        /**
+         * @param {Object} productUnits
+         */
+        onPrecisionRemoved: function(productUnits) {
+            var self = this;
+
+            var selects = this.$el.find(this.options.selectSelector);
+
+            _.each(selects, function(select) {
+                if(productUnits.hasOwnProperty($(select).val())) {
+                    return;
+                }
+
+                $(select).closest(self.options.selectors.itemContainer)
+                    .find('.removeRow').trigger('click');
+            });
+
             this.onContentChanged();
         },
 
