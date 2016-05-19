@@ -23,6 +23,7 @@ define(function (require) {
             dataContent: '*[data-content]',
             unitSelect: 'select[name$="[unit]"]',
             hiddenUnitClass: 'hidden-unit',
+            parentTableSelector: '',
             precisions: {}
         },
 
@@ -74,6 +75,8 @@ define(function (require) {
             var selects = this.options._sourceElement.find(this.options.unitSelect),
                 self = this;
 
+            self.toggleTableVisibility();
+            
             selects.each(function (index) {
                 var select = $(this);
 
@@ -157,6 +160,7 @@ define(function (require) {
                 this.getAddButton().show();
                 $(e.target).remove();
             }
+            this.toggleTableVisibility();
         },
 
         /**
@@ -270,6 +274,20 @@ define(function (require) {
          */
         saveData: function (data) {
             this.options._sourceElement.data(this.options.unitsAttribute, data);
+        },
+
+        /**
+         * Toggle Table visibility
+         */
+        toggleTableVisibility: function(){
+            var selects = this.options._sourceElement.find(this.options.unitSelect);
+            var table = this.options._sourceElement.find('table')
+
+            if (selects.length < 1) {
+                table.hide();
+            } else {
+                table.show();
+            }
         },
 
         /**

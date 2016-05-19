@@ -132,10 +132,10 @@ define(function (require) {
             var units = {};
             var attribute = this.options.unitsAttribute;
             _.each($(':data(' + attribute + ')'), function(container){
-                units = $(container).data(attribute) || {};
-                /*_.each(unit, function(key, val){
+                var unit = $(container).data(attribute) || {};
+                _.each(unit, function(key, val){
                     units[key] = val;
-                });*/
+                });
             })
             
             return units;

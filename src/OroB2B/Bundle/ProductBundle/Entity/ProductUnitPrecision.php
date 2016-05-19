@@ -39,7 +39,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Product", inversedBy="additionalUnitPrecisions")
+     * @ORM\ManyToOne(targetEntity="Product", inversedBy="unitPrecisions")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
