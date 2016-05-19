@@ -23,6 +23,11 @@ define(function(require) {
             }
         },
 
+        dispose: function() {
+            delete this.dropdownWidget;
+            ProductAddToRfqView.__super__.dispose.apply(this, arguments);
+        },
+
         onClick: function(e) {
             var $button = $(e.currentTarget);
             var productItems = {};

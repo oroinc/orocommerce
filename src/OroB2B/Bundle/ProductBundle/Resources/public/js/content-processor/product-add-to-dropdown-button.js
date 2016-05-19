@@ -63,11 +63,9 @@ define([
             },
 
             validateForm: function() {
-                var $form = $(this.getLayoutElement()).closest('form');
+                var $form = $(this.element).closest('form');
 
-                if ($form.data('validator')) {
-                    return $form.valid();
-                }
+                return $form.data('validator') ? $form.valid() : true;
             }
         })
     );
