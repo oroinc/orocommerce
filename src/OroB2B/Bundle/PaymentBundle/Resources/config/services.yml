@@ -173,6 +173,7 @@ services:
 
     orob2b_payment.action.validate:
         class: 'OroB2B\Bundle\PaymentBundle\Action\ValidateAction'
+        public: true
         arguments:
             - '@oro_action.context_accessor'
             - '@orob2b_payment.payment_method.registry'
@@ -204,6 +205,7 @@ services:
 
     orob2b_payment.condition.payment_method_supports:
         class: 'OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodSupports'
+        public: true
         arguments:
             - '@orob2b_payment.payment_method.registry'
         tags:
