@@ -53,6 +53,11 @@ define(function(require) {
         $form: null,
 
         /**
+         * @property {Boolean}
+         */
+        disposable: true,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -67,27 +72,34 @@ define(function(require) {
             this.$form = this.$el.find(this.options.selectors.form);
 
             this.$el
-                .on('change', this.options.selectors.month, _.bind(this.collectMonthDate, this))
-                .on('change', this.options.selectors.year, _.bind(this.collectYearDate, this))
+                .on('change', this.options.selectors.month, $.proxy(this.collectMonthDate, this))
+                .on('change', this.options.selectors.year, $.proxy(this.collectYearDate, this))
                 .on(
                     'focusout',
                     this.options.selectors.cardNumber,
-                    _.bind(this.validate, this, this.options.selectors.cardNumber)
+                    $.proxy(this.validate, this, this.options.selectors.cardNumber)
                 )
-                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv))
-                .on('change', this.options.selectors.saveForLater, _.bind(this.onSaveForLaterChange, this));
+                .on('focusout', this.options.selectors.cvv, $.proxy(this.validate, this, this.options.selectors.cvv))
+                .on('change', this.options.selectors.saveForLater, $.proxy(this.onSaveForLaterChange, this));
 
-            mediator.on('checkout:place-order:response', _.bind(this.handleSubmit, this));
-            mediator.on('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
-            mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
+            mediator.on('checkout:place-order:response', this.handleSubmit, this);
+            mediator.on('checkout:payment:method:changed', this.onPaymentMethodChanged, this);
+            mediator.on('checkout:payment:before-transit', this.beforeTransit, this);
+            mediator.on('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
+            mediator.on('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
 
             mediator.once('page:afterChange', function() {
                 var paymentMethodObject = {};
                 mediator.trigger('checkout:payment:method:get-value', paymentMethodObject);
                 mediator.trigger('checkout:payment:method:changed', {paymentMethod: paymentMethodObject.value});
             });
+
+            this.setGlobalPaymentValidate(this.paymentValidationRequiredComponentState);
         },
 
+        /**
+         * @param {Object} eventData
+         */
         handleSubmit: function(eventData) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = true;
@@ -96,9 +108,9 @@ define(function(require) {
                     {
                         'SECURETOKEN': false,
                         'SECURETOKENID': false,
-                        'errorUrl': false,
-                        'returnUrl': false,
-                        'formAction': false
+                        'errorUrl': '',
+                        'returnUrl': '',
+                        'formAction': ''
                     },
                     eventData.responseData
                 );
@@ -109,13 +121,19 @@ define(function(require) {
                 data.push({name: 'ERRORURL', value: resolvedEventData.errorUrl});
 
                 if (!resolvedEventData.formAction || !resolvedEventData.SECURETOKEN) {
-                    return this.postUrl(resolvedEventData.errorUrl, data);
+                    this.postUrl(resolvedEventData.errorUrl, data);
+
+                    return;
                 }
 
-                return this.postUrl(resolvedEventData.formAction, data);
+                this.postUrl(resolvedEventData.formAction, data);
             }
         },
 
+        /**
+         * @param {String} formAction
+         * @param {Object} data
+         */
         postUrl: function(formAction, data) {
             var $form = $('<form action="' + formAction + '" method="POST">');
             _.each(data, function(field) {
@@ -130,6 +148,9 @@ define(function(require) {
             $form.submit();
         },
 
+        /**
+         * @param {jQuery.Event} e
+         */
         collectMonthDate: function(e) {
             this.month = e.target.value;
 
@@ -137,6 +158,9 @@ define(function(require) {
             this.validate(this.options.selectors.expirationDate);
         },
 
+        /**
+         * @param {jQuery.Event} e
+         */
         collectYearDate: function(e) {
             this.year = e.target.value;
             this.setExpirationDate();
@@ -153,28 +177,24 @@ define(function(require) {
         },
 
         dispose: function() {
-            if (this.disposed) {
+            if (this.disposed || !this.disposable) {
                 return;
             }
 
-            this.$el
-                .off('change', this.options.selectors.month, _.bind(this.collectMonthDate, this))
-                .off('change', this.options.selectors.year, _.bind(this.collectYearDate, this))
-                .off(
-                    'focusout',
-                    this.options.selectors.cardNumber,
-                    _.bind(this.validate, this, this.options.selectors.cardNumber)
-                )
-                .off('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv))
-                .off('change', this.options.selectors.saveForLater, _.bind(this.onSaveForLaterChange, this));
+            this.$el.off();
 
-            mediator.off('checkout:place-order:response', _.bind(this.handleSubmit, this));
-            mediator.off('checkout:payment:method:changed', _.bind(this.onPaymentMethodChanged, this));
-            mediator.off('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
+            mediator.off('checkout:place-order:response', this.handleSubmit, this);
+            mediator.off('checkout:payment:method:changed', this.onPaymentMethodChanged, this);
+            mediator.off('checkout:payment:before-transit', this.beforeTransit, this);
+            mediator.off('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
+            mediator.off('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
 
             CreditCardComponent.__super__.dispose.call(this);
         },
 
+        /**
+         * @param {String} elementSelector
+         */
         validate: function(elementSelector) {
             var virtualForm = $('<form>');
             var clonedForm = this.$form.clone();
@@ -296,6 +316,24 @@ define(function(require) {
         beforeTransit: function(eventData) {
             if (eventData.data.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = !this.validate();
+            }
+        },
+
+        /**
+         * @param {jQuery.Element} $filledForm
+         */
+        beforeHideFilledForm: function($filledForm) {
+            if ($filledForm.find(this.$el).length !== 0) {
+                this.disposable = false;
+            }
+        },
+
+        /**
+         * @param {jQuery.Element} $filledForm
+         */
+        beforeRestoreFilledForm: function($filledForm) {
+            if ($filledForm.find(this.$el).length === 0) {
+                this.dispose();
             }
         }
     });

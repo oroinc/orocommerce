@@ -28,6 +28,16 @@ define(function(require) {
         $el: null,
 
         /**
+         * @property {jQuery}
+         */
+        $radios: null,
+
+        /**
+         * @property {Boolean}
+         */
+        disposable: true,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -36,7 +46,9 @@ define(function(require) {
             this.$el = this.options._sourceElement;
             this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
 
-            mediator.on('checkout:payment:method:get-value', _.bind(this.onGetValue, this));
+            mediator.on('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
+            mediator.on('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
+            mediator.on('checkout:payment:method:get-value', this.onGetValue, this);
 
             this.$el.on(
                 this.options.redirectEvent,
@@ -55,13 +67,15 @@ define(function(require) {
          * @inheritDoc
          */
         dispose: function() {
-            if (this.disposed) {
+            if (this.disposed || !this.disposable) {
                 return;
             }
 
             this.$el.off();
 
-            mediator.off('checkout:payment:method:get-value', _.bind(this.onGetValue, this));
+            mediator.off('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
+            mediator.off('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
+            mediator.off('checkout:payment:method:get-value', this.onGetValue, this);
 
             PaymentMethodSelectorComponent.__super__.dispose.call(this);
         },
@@ -71,6 +85,18 @@ define(function(require) {
             this.$el.find(this.options.selectors.subform).hide();
             $element.parents(this.options.selectors.itemContainer).find(this.options.selectors.subform).show();
             mediator.trigger('checkout:payment:method:changed', {paymentMethod: $element.val()});
+        },
+
+        beforeHideFilledForm: function($filledForm) {
+            if ($filledForm.is(this.$el)) {
+                this.disposable = false;
+            }
+        },
+
+        beforeRestoreFilledForm: function($filledForm) {
+            if (!$filledForm.is(this.$el)) {
+                this.dispose();
+            }
         },
 
         /**
