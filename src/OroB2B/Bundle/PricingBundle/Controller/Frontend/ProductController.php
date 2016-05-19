@@ -10,7 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class ProductController extends Controller
@@ -34,13 +33,10 @@ class ProductController extends Controller
      */
     protected function createCurrenciesForm()
     {
-        $accountUser = $this->getUser();
-        if (!$accountUser instanceof AccountUser) {
-            $accountUser = null;
-        }
+        $relationsProvider = $this->get('orob2b_account.provider.account_user_relations_provider');
 
         $priceList = $this->get('orob2b_pricing.model.price_list_tree_handler')
-            ->getPriceList($accountUser->getAccount());
+            ->getPriceList($relationsProvider->getAccountIncludingEmpty($this->getUser()));
 
         $currenciesList = null;
         $selectedCurrencies = [];

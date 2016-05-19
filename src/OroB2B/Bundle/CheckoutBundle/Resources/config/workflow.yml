@@ -103,6 +103,7 @@ workflows:
                 display_type: page
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
                 form_options:
                     attribute_fields:
                         billing_address:
@@ -122,6 +123,7 @@ workflows:
                             options:
                                 label: Save address
                         ship_to_billing_address:
+                            form_type: orob2b_ship_to_billing_address
                             options:
                                 label: Ship to this address
 
@@ -132,6 +134,7 @@ workflows:
                 display_type: page
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
                 form_options:
                     attribute_fields:
                         shipping_address:
@@ -151,15 +154,17 @@ workflows:
                             options:
                                 label: Save address
                         ship_to_billing_address:
+                            form_type: orob2b_ship_to_billing_address
                             options:
                                 label: Use billing address
 
             continue_to_payment:
                 label: Continue
                 step_to: enter_payment
-                transition_definition: do_nothing
+                transition_definition: continue_to_payment_definition
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
 
             continue_to_order_review:
                 label: Continue
@@ -167,6 +172,7 @@ workflows:
                 transition_definition: continue_to_order_review_definition
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
                     page_component_module: 'orob2bcheckout/js/app/components/payment-transition-button-component'
                 form_options:
                     attribute_fields:
@@ -253,7 +259,12 @@ workflows:
 
             continue_to_shipping_address_definition:
                 pre_conditions:
-                    '@not_equal': [$payment_in_progress, true]
+                    '@and':
+                        - '@not_equal': [$payment_in_progress, true]
+                        - '@order_line_item_has_count':
+                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
                 conditions:
                     '@not_empty': $checkout.billingAddress
                 post_actions:
@@ -307,7 +318,12 @@ workflows:
                             - '@flush_entity': $checkout.shippingAddress
             continue_to_shipping_method_definition:
                 pre_conditions:
-                    '@not_equal': [$payment_in_progress, true]
+                    '@and':
+                        - '@not_equal': [$payment_in_progress, true]
+                        - '@order_line_item_has_count':
+                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
                 conditions:
                     '@or':
                         - '@and':
@@ -339,9 +355,22 @@ workflows:
                                   - [[keep], [propertyName, [region]]]
                                   - [[keep], [propertyName, [organization]]]
                             - '@flush_entity': $checkout.shippingAddress
+
+            continue_to_payment_definition:
+                pre_conditions:
+                    '@order_line_item_has_count':
+                        message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                        parameters:
+                            entity: $checkout
+
             continue_to_order_review_definition:
                 pre_conditions:
-                    '@not_equal': [$payment_in_progress, true]
+                    '@and':
+                        - '@not_equal': [$payment_in_progress, true]
+                        - '@order_line_item_has_count':
+                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
                 conditions:
                     '@and':
                         - '@not_empty':
@@ -358,6 +387,10 @@ workflows:
                 pre_conditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
+                        - '@order_line_item_has_count':
+                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
                         - '@not':
                             - '@check_request':
                                 is_ajax: true

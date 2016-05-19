@@ -1,6 +1,7 @@
 services:
     orob2b_shipping.form.type.shipping_origin:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginType
+        public: true
         arguments:
             - '@oro_address.form.listener.address'
         calls:
@@ -10,16 +11,19 @@ services:
 
     orob2b_shipping.form.type.shipping_origin_config:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType
+        public: true
         tags:
             - {name: form.type, alias: orob2b_shipping_origin_config}
 
     orob2b_shipping.form.type.shipping_origin_warehouse:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType
+        public: true
         tags:
             - {name: form.type, alias: orob2b_shipping_origin_warehouse}
 
     orob2b_shipping.form.extension.warehouse_shipping_origin:
         class: OroB2B\Bundle\ShippingBundle\Form\Extension\WarehouseShippingOriginExtension
+        public: true
         arguments:
             - '@orob2b_shipping.shipping_origin.provider'
             - '@doctrine'

@@ -12,6 +12,7 @@ class TranslationStrategyPassTest extends \PHPUnit_Framework_TestCase
     {
         /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject $container */
         $container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
+            ->setMethods(['hasDefinition', 'addMethodCall'])
             ->disableOriginalConstructor()
             ->getMock();
         $container->expects($this->once())

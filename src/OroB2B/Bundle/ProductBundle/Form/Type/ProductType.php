@@ -29,11 +29,14 @@ class ProductType extends AbstractType
      */
     private $provider;
 
-/** @var DefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject $provider */
+    /**
+     * @var DefaultProductUnitProvider
+     */
     public function __construct(DefaultProductUnitProvider $provider)
     {
         $this->provider = $provider;
     }
+    
     /**
      * @param string $dataClass
      */
