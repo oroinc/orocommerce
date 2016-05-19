@@ -400,7 +400,6 @@ class CombinedProductPriceResolverTest extends WebTestCase
      */
     protected function getCombinedPrices(CombinedPriceList $combinedPriceList)
     {
-        $actualPrices = [];
         /** @var CombinedProductPriceRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroB2BPricingBundle:CombinedProductPrice')
@@ -444,7 +443,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
     }
 
     /**
-     * @param array $prices
+     * @param array|ProductPrice[] $prices
      * @return array
      */
     protected function formatPrices(array $prices)

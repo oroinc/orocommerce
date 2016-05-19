@@ -11,6 +11,11 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class MinimalProductPriceRepository extends ProductPriceRepository
 {
+    /**
+     * @param InsertFromSelectQueryExecutor $insertQueryExecutor
+     * @param CombinedPriceList $cpl
+     * @param Product|null $product
+     */
     public function updateMinimalPrices(
         InsertFromSelectQueryExecutor $insertQueryExecutor,
         CombinedPriceList $cpl,

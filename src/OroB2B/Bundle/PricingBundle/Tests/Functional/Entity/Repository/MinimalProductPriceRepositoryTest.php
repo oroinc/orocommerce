@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\MinimalProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
@@ -33,6 +34,7 @@ class MinimalProductPriceRepositoryTest extends WebTestCase
 
     public function testUpdateMinimalPrices()
     {
+        /** @var CombinedPriceList $cpl */
         $cpl = $this->getReference('1f');
         $this->getMinimalProductPriceRepository()->updateMinimalPrices($this->insertFromSelectQueryExecutor, $cpl);
 
