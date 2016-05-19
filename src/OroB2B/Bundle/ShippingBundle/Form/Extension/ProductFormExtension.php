@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ShippingBundle\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,7 +15,6 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
 use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
 
@@ -71,7 +71,8 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $shippingOptions = $this->getProductShippingOptionsRepository()->getShippingOptionsByProduct($product);
+        $shippingOptions = $this->getProductShippingOptionsRepository()
+            ->findBy(['product' => $product], ['productUnit' => 'ASC']);
 
         $event->getForm()->get(self::FORM_ELEMENT_NAME)->setData($shippingOptions);
     }
@@ -154,7 +155,10 @@ class ProductFormExtension extends AbstractTypeExtension
         }
 
         if ($product->getId()) {
-            $existingOptions = $this->getProductShippingOptionsRepository()->getShippingOptionsByProduct($product);
+            $existingOptions = $this->getProductShippingOptionsRepository()
+                ->findBy(['product' => $product], ['productUnit' => 'ASC']);
+
+            /** @var ProductShippingOptions[] $existingOptions */
             foreach ($existingOptions as $existingOption) {
                 if (!in_array($existingOption->getId(), $persistedOptionIds, true)) {
                     $entityManager->remove($existingOption);
@@ -172,7 +176,7 @@ class ProductFormExtension extends AbstractTypeExtension
     }
 
     /**
-     * @return ProductShippingOptionsRepository
+     * @return ObjectRepository
      */
     protected function getProductShippingOptionsRepository()
     {

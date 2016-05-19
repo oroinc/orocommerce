@@ -8,7 +8,7 @@ use OroB2B\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface;
 
 class FreightClassesProvider extends MeasureUnitProvider
 {
-    /** @var FreightClassesExtensionInterface[] */
+    /** @var array|FreightClassesExtensionInterface[] */
     protected $extensions = [];
 
     /**

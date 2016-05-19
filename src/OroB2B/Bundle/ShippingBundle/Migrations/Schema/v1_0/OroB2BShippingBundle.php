@@ -104,11 +104,6 @@ class OroB2BShippingBundle implements Migration
             ['product_id', 'product_unit_code'],
             'shipping_product_opts__product_id__product_unit_code__uidx'
         );
-        $table->addIndex(['freight_class_code'], null, []);
-        $table->addIndex(['dimensions_unit_code'], null, []);
-        $table->addIndex(['weight_unit_code'], null, []);
-        $table->addIndex(['product_unit_code'], null, []);
-        $table->addIndex(['product_id'], null, []);
     }
 
     /**

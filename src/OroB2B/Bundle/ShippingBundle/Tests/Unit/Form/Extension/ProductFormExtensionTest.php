@@ -41,8 +41,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->repo = $this
-            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository')
+        $this->repo = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -148,8 +147,8 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         $removedOption = $this->getEntity('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions', ['id' => 42]);
 
         $this->repo->expects($this->once())
-            ->method('getShippingOptionsByProduct')
-            ->with($product)
+            ->method('findBy')
+            ->with(['product' => $product], ['productUnit' => 'ASC'])
             ->willReturn([$removedOption]);
 
         $form->expects($this->once())
