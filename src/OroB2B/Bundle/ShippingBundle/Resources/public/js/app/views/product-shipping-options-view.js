@@ -33,7 +33,7 @@ define(function(require) {
         $itemsContainer: null,
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
