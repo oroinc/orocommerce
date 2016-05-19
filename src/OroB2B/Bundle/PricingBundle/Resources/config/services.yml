@@ -12,6 +12,7 @@ parameters:
     orob2b_pricing.entity.combined_product_price.class: OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice
     orob2b_pricing.entity.product_price_change_trigger.class: OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger
     orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
+    orob2b_pricing.entity.minimal_product_price.class: OroB2B\Bundle\PricingBundle\Entity\MinimalProductPrice
 
 services:
     orob2b_pricing.acl.voter.product_list:
@@ -320,8 +321,9 @@ services:
             - '@orob2b_product.formatter.product_unit_label'
             - '@orob2b_product.formatter.product_unit_value'
             - '@orob2b_pricing.provider.user_currency'
+            - '@doctrine'
         calls:
-            - [setProductPriceClass, ['%orob2b_pricing.entity.combined_product_price.class%']]
+            - [setProductPriceClass, ['%orob2b_pricing.entity.minimal_product_price.class%']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }

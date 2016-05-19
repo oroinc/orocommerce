@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity()
  * @ORM\Table(
  *      name="orob2b_price_product_minimal",
  *      uniqueConstraints={

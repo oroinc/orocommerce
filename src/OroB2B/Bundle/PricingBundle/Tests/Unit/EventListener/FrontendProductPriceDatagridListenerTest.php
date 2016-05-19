@@ -2,19 +2,29 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
+use Oro\Component\Testing\Unit\EntityTrait;
+
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
 class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatagridListenerTest
 {
+    use EntityTrait;
+
     /**
      * @var FrontendProductPriceDatagridListener
      */
@@ -40,6 +50,11 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
      */
     protected $currencyProvider;
 
+    /**
+     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
     public function setUp()
     {
         $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
@@ -57,6 +72,10 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         parent::setUp();
     }
 
@@ -71,7 +90,8 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
             $this->numberFormatter,
             $this->unitLabelFormatter,
             $this->unitValueFormatter,
-            $this->currencyProvider
+            $this->currencyProvider,
+            $this->registry
         );
     }
 
@@ -112,8 +132,6 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                     ],
                     'properties' => [
                         'prices' => ['type' => 'field', 'frontend_type' => 'row_array'],
-                        'price_units' => null,
-                        'price_quantities' => null,
                     ],
                     'filters' => [
                         'columns' => [
@@ -134,10 +152,7 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                     'source' => [
                         'query' => [
                             'select' => [
-                                'GROUP_CONCAT(product_price.value SEPARATOR \'{sep}\') as prices',
-                                'GROUP_CONCAT(IDENTITY(product_price.unit) SEPARATOR \'{sep}\') as price_units',
-                                'GROUP_CONCAT(product_price.quantity SEPARATOR \'{sep}\') as price_quantities',
-                                'MIN(product_price.value) as minimum_price',
+                                'product_price.value as minimum_price'
                             ],
                             'join' => [
                                 'left' => [
@@ -162,6 +177,7 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
      * @param string $priceCurrency
      * @param int|null $priceListId
      * @param array $sourceResults
+     * @param array $combinedPrices
      * @param array $expectedResults
      * @dataProvider onResultAfterDataProvider
      */
@@ -169,12 +185,36 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
         $priceCurrency,
         $priceListId = null,
         array $sourceResults = [],
+        array $combinedPrices = [],
         array $expectedResults = []
     ) {
         $sourceResultRecords = [];
         foreach ($sourceResults as $sourceResult) {
             $sourceResultRecords[] = new ResultRecord($sourceResult);
         }
+
+        $repository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repository->expects($this->once())
+            ->method('getPricesForProductsByPriceList')
+            ->willReturn($combinedPrices);
+
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->with('OroB2BPricingBundle:CombinedProductPrice')
+            ->willReturn($repository);
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with('OroB2BPricingBundle:CombinedProductPrice')
+            ->willReturn($em);
 
         $this->setUpPriceListRequestHandler($priceListId, [$priceCurrency]);
 
@@ -222,6 +262,29 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
      */
     public function onResultAfterDataProvider()
     {
+        /** @var Product $product */
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2]);
+
+        $price = new Price();
+        $price->setCurrency('EUR');
+        $price->setValue(20);
+
+        $cpl1 = new CombinedProductPrice;
+        $cpl1->setPrice($price);
+        $cpl1->setProduct($product);
+        $cpl1->setQuantity(1);
+        $cpl1->setUnit((new ProductUnit())->setCode('item'));
+
+        $price = new Price();
+        $price->setCurrency('EUR');
+        $price->setValue(21);
+
+        $cpl2 = new CombinedProductPrice;
+        $cpl2->setPrice($price);
+        $cpl2->setProduct($product);
+        $cpl2->setQuantity(2);
+        $cpl2->setUnit((new ProductUnit())->setCode('item'));
+
         return [
             'no price list id' => [
                 'priceCurrency' => 'USD',
@@ -235,18 +298,10 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                 'priceListId' => 1,
                 'sourceResults' => [
                     [
-                        'id' => 2,
-                        'prices' => '20.000{sep}21.000',
-                        'price_units' => 'item{sep}item',
-                        'price_quantities' => '1{sep}2',
-                    ],
-                    [
-                        'id' => 3,
-                        'prices' => '1.000{sep}2.000',
-                        'price_units' => 'box{sep}liter',
-                        'price_quantities' => '0.5{sep}1',
+                        'id' => 2
                     ],
                 ],
+                'combinedPrices' => [$cpl1, $cpl2],
                 'expectedResults' => [
                     [
                         'id' => 2,
@@ -272,32 +327,7 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                         ],
                         'price_units' => null,
                         'price_quantities' => null,
-                    ],
-                    [
-                        'id' => 3,
-                        'prices' => [
-                            'box_0.5' => [
-                                'price' => 1,
-                                'currency' => 'EUR',
-                                'formatted_price' => 'EUR1',
-                                'unit' => 'box',
-                                'formatted_unit' => 'box-formatted',
-                                'quantity' => 0.5,
-                                'quantity_with_unit' => '0.5-box-formatted',
-                            ],
-                            'liter_1' => [
-                                'price' => 2,
-                                'currency' => 'EUR',
-                                'formatted_price' => 'EUR2',
-                                'unit' => 'liter',
-                                'formatted_unit' => 'liter-formatted',
-                                'quantity' => 1,
-                                'quantity_with_unit' => '1-liter-formatted',
-                            ],
-                        ],
-                        'price_units' => null,
-                        'price_quantities' => null,
-                    ],
+                    ]
                 ],
             ],
         ];

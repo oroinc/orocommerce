@@ -7,7 +7,9 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -86,6 +88,26 @@ class CombinedProductPriceRepository extends ProductPriceRepository
         }
 
         $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param BasePriceList $priceList
+     * @param array $productIds
+     * @return CombinedProductPrice[]
+     */
+    public function getPricesForProductsByPriceList(BasePriceList $priceList, array $productIds)
+    {
+        $qb = $this->createQueryBuilder('cpp');
+
+        $qb->select('cpp')
+            ->where($qb->expr()->eq('cpp.priceList', ':priceList'))
+            ->andWhere($qb->expr()->in('cpp.product', ':productIds'))
+            ->setParameters([
+                'priceList' => $priceList,
+                'productIds' => $productIds
+            ]);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
