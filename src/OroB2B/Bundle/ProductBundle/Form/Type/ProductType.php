@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -16,7 +13,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use Doctrine\Common\Persistence\ObjectManager;
+use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 
 class ProductType extends AbstractType
 {
@@ -32,11 +29,14 @@ class ProductType extends AbstractType
      */
     private $provider;
 
-/** @var DefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject $provider */
+    /**
+     * @var DefaultProductUnitProvider
+     */
     public function __construct(DefaultProductUnitProvider $provider)
     {
         $this->provider = $provider;
     }
+    
     /**
      * @param string $dataClass
      */

@@ -2,10 +2,14 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\UnitProvider;
 
+use Oro\Component\Testing\Unit\EntityTrait;
+
 use OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
 class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var ProductUnitsProvider $productUnitsProvider
      */
@@ -18,7 +22,7 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
 
         foreach ($units as $v) {
             $productUnits[] = $this->
-            getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', $v, 'code');
+            getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => $v]);
         }
 
         $productUnitRepository = $this
@@ -41,8 +45,22 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
             ->willReturn($manager);
+        
+        $formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $formatter->expects($this->exactly(6))
+            ->method('format')
+            ->will($this->returnValueMap([
+                ['each', false, false, 'orob2b.product_unit.each.label.full'],
+                ['kg', false, false, 'orob2b.product_unit.kg.label.full'],
+                ['hour', false, false, 'orob2b.product_unit.hour.label.full'],
+                ['item', false, false, 'orob2b.product_unit.item.label.full'],
+                ['set', false, false, 'orob2b.product_unit.set.label.full'],
+                ['piece', false, false, 'orob2b.product_unit.piece.label.full'],
+            ]));
 
-        $this->productUnitsProvider = new ProductUnitsProvider($managerRegistry);
+        $this->productUnitsProvider = new ProductUnitsProvider($managerRegistry, $formatter);
     }
 
     public function testGetAvailableProductUnits()
@@ -58,23 +76,5 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnits());
-    }
-
-    /**
-     * @param string $className
-     * @param int|string $idValue
-     * @param string $idProperty
-     * @return object
-     */
-    protected function getEntity($className, $idValue, $idProperty = 'id')
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty($idProperty);
-        $method->setAccessible(true);
-        $method->setValue($entity, $idValue);
-
-        return $entity;
     }
 }

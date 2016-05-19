@@ -9,10 +9,13 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var DefaultProductUnitProvider $defaultProductUnitProvider
+     * @var DefaultProductUnitProvider
      */
     protected $defaultProductUnitProvider;
 
+    /**
+     * @var ProductUnitPrecision
+     */
     protected $expectedUnitPrecision;
 
     public function setUp()
@@ -40,7 +43,6 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
         $productUnit->setCode('kg');
         $productUnit->setDefaultPrecision('3');
         
-        
         $productUnitRepository->expects($this->once())
             ->method('findOneBy')
             ->will($this->returnValue($productUnit));
@@ -56,7 +58,6 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
             ->willReturn($manager);
-
 
         $this->expectedUnitPrecision = new ProductUnitPrecision();
         $this->expectedUnitPrecision->setUnit($productUnit)->setPrecision('3');
