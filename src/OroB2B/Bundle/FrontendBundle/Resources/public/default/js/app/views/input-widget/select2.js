@@ -10,24 +10,23 @@ define(function(require) {
 
     Select2InputWidget = AbstractInputWidget.extend({
         initializeOptions: {
-            containerCssClass: 'oro-select2-container',
-            dropdownCssClass: 'oro-select2-dropdown',
+            containerCssClass: 'oro-select2',
+            dropdownCssClass: 'oro-select2__dropdown',
+            placeholder: 'Select an Option',
             minimumResultsForSearch: Infinity // hiding the search box
-
         },
+
+        refreshOptions: '',
 
         widgetFunctionName: 'select2',
 
         destroyOptions: 'destroy',
 
-        refreshOptions: 'update',
-
         refreshOnChange: true,
 
-        dispose: function() {
-            AbstractInputWidget.__super__.dispose.apply(this, arguments);
-            this.close();
-            this.$el('destroy');
+        destroy: function() {
+            this.closeSelect();
+            this.$el[this.widgetFunctionName]('destroy');
         },
 
         isInitialized: function() {
@@ -42,12 +41,32 @@ define(function(require) {
             return this.$el[this.widgetFunctionName]('val');
         },
 
+        selOptions: function(obj) {
+            var options = this.$el.data(this.widgetFunctionName).opts;
+
+            _.each(obj, function(item, index) {
+                options[index] = item;
+            });
+        },
+
         setValue: function(value) {
             this.$el[this.widgetFunctionName]('val', value);
         },
 
         clear: function() {
             this.$el[this.widgetFunctionName]('val', '');
+        },
+
+        openSelect: function() {
+            this.$el[this.widgetFunctionName]('open');
+        },
+
+        closeSelect: function() {
+            this.$el[this.widgetFunctionName]('close');
+        },
+
+        focusSelect: function() {
+            this.$el[this.widgetFunctionName]('focus');
         },
 
         addEvent: function(eventName, callback) {
