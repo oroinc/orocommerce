@@ -54,9 +54,9 @@ orob2b:
                 shipping_options: Shipping Options
         form:
             placeholder:
-                length_unit.label: Select Unit Of Length
-                weight_unit.label: Select Unit Of Weight
-                freight_class.label: Select Freight Class
+                length_unit.label: Select unit of length
+                weight_unit.label: Select unit of weight
+                freight_class.label: Select freight class
 
     weight_unit.lbs:
         label:

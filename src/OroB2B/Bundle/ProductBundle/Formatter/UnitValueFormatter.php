@@ -7,25 +7,25 @@ use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 class UnitValueFormatter extends AbstractUnitFormatter
 {
     /**
-     * @param float|integer $value
+     * @param null|float|integer $value
      * @param MeasureUnitInterface $unit
      *
      * @return string
      */
-    public function format($value, MeasureUnitInterface $unit)
+    public function format($value, MeasureUnitInterface $unit = null)
     {
-        return $this->formatCode($value, $unit->getCode());
+        return $this->formatCode($value, $unit ? $unit->getCode() : null);
     }
 
     /**
-     * @param float|integer $value
+     * @param null|float|integer $value
      * @param MeasureUnitInterface $unit
      *
      * @return string
      */
-    public function formatShort($value, MeasureUnitInterface $unit)
+    public function formatShort($value, MeasureUnitInterface $unit = null)
     {
-        return $this->formatCode($value, $unit->getCode(), true);
+        return $this->formatCode($value, $unit ? $unit->getCode() : null, true);
     }
 
     /**
@@ -37,10 +37,8 @@ class UnitValueFormatter extends AbstractUnitFormatter
      */
     public function formatCode($value, $unitCode, $isShort = false)
     {
-        if (!is_numeric($value)) {
-            throw new \InvalidArgumentException(
-                sprintf('The parameter "value" must be a numeric, but it is of type %s.', gettype($value))
-            );
+        if (!is_numeric($value) || !$unitCode) {
+            return $this->translator->trans('N/A');
         }
 
         return $this->translator->transChoice(

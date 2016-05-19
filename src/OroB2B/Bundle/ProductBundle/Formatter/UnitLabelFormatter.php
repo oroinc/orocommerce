@@ -15,6 +15,10 @@ class UnitLabelFormatter extends AbstractUnitFormatter
      */
     public function format($code, $isShort = false, $isPlural = false)
     {
+        if (!$code) {
+            return $this->translator->trans('N/A');
+        }
+
         return $this->translator->trans(
             sprintf(
                 '%s.%s.label.%s%s',

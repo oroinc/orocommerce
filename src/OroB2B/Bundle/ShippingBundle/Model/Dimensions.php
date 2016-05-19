@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Model;
 
-use Doctrine\ORM\Mapping as ORM;
-
 use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
 
 class Dimensions

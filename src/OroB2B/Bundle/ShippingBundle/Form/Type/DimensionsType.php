@@ -31,19 +31,19 @@ class DimensionsType extends AbstractType
         $builder
             ->add('length', 'number', [
                     'attr' => [
-                        'class' => 'length freight-class-update-trigger'
+                        'class' => 'length'
                     ],
                     'required' => false,
                 ])
             ->add('width', 'number', [
                     'attr' => [
-                        'class' => 'width freight-class-update-trigger'
+                        'class' => 'width'
                     ],
                     'required' => false,
                 ])
             ->add('height', 'number', [
                     'attr' => [
-                        'class' => 'height freight-class-update-trigger'
+                        'class' => 'height'
                     ],
                     'required' => false,
                 ])
@@ -52,7 +52,6 @@ class DimensionsType extends AbstractType
                 LengthUnitSelectType::NAME,
                 [
                     'placeholder' => 'orob2b.shipping.form.placeholder.length_unit.label',
-                    'attr' => ['class' => 'freight-class-update-trigger'],
                     'required' => false,
                 ]
             );

@@ -135,8 +135,7 @@
                 </tr>
                 </thead>
                 <tbody data-last-index="{{ form.children|length}}"
-                       data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}
-                       data-page-component-module="orob2bshipping/js/app/components/product-shipping-freight-classes-component">
+                       data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                     {% if form.children|length %}
                         {% for child in form.children %}
                             {{ _self.orob2b_shipping_product_shipping_options_prototype(child) }}
@@ -160,7 +159,8 @@
         {% set name = widget.vars.full_name %}
     {% endif %}
 
-    <tr class="list-item" data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}>
+    <tr class="list-item" data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+        data-page-component-module="orob2bshipping/js/app/components/product-shipping-freight-classes-component">
         {{ form_widget(form) }}
         <td class="product-shipping-options-remove">
             <button type="button" class="removeRow btn icons-holder remove-list-item" data-related="{{ name }}"><i class="icon-remove"></i></button>

@@ -10,7 +10,7 @@ use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
  * @ORM\Table(name="orob2b_shipping_freight_class")
  * @ORM\Entity
  */
-class FreightClass implements MeasureUnitInterface
+class FreightClass implements MeasureUnitInterface, FreightClassInterface
 {
     /**
      * @var string
