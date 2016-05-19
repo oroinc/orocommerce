@@ -45,13 +45,22 @@ class ProductPriceResetStrategyTest extends WebTestCase
             ]
         );
 
-        $this->strategy = $this->getContainer()
-            ->get('orob2b_pricing.importexport.strategy.product_price.reset');
+        $container = $this->getContainer();
+
+        $this->strategy = new ProductPriceResetStrategy(
+            $container->get('event_dispatcher'),
+            $container->get('oro_importexport.strategy.import.helper'),
+            $container->get('oro_importexport.field.field_helper'),
+            $container->get('oro_importexport.field.database_helper'),
+            $container->get('oro_entity.entity_class_name_provider'),
+            $container->get('translator')
+        );
+        
         $this->stepExecution = new StepExecution('step', new JobExecution());
         $this->context = new StepExecutionProxyContext($this->stepExecution);
         $this->strategy->setImportExportContext($this->context);
         $this->strategy->setEntityName(
-            $this->getContainer()->getParameter('orob2b_pricing.entity.product_price.class')
+            $container->getParameter('orob2b_pricing.entity.product_price.class')
         );
     }
 

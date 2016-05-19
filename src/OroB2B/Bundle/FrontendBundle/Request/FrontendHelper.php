@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\FrontendBundle\Request;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class FrontendHelper
 {

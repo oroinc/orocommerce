@@ -149,6 +149,7 @@ class PriceList extends BasePriceList
     {
         $schedule->setPriceList($this);
         $this->schedules->add($schedule);
+        $this->containSchedule = true;
 
         return $this;
     }

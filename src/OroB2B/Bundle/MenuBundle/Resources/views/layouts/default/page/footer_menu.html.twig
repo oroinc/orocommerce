@@ -10,11 +10,13 @@
 
 {% block _footer_menu_widget %}
     {% for child in item.children %}
+        {% if child.extras.isAllowed %}
         <div class="footer-nav footer-nav_1-3">
             <h2 class="footer-nav__title">{{ child.label }}</h2>
             {% set item = child %}
 
             {{ block('menu_widget') }}
         </div>
+        {% endif %}
     {% endfor %}
 {% endblock %}
