@@ -1,0 +1,16 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroB2BAccountBundle:layouts:default/page/top_nav_anonymous.html.twig'
+        - '@addTree':
+            items:
+                top_sign_in:
+                    blockType: link
+                    options:
+                        route_name: orob2b_account_account_user_security_login
+                        text: orob2b.account.accountuser.profile.login
+            tree:
+                top_nav_controls:
+                    top_sign_in: ~
+    conditions:
+        '@eq': [ $context.logged_user, null ]

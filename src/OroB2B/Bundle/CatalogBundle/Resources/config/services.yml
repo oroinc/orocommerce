@@ -4,6 +4,7 @@ parameters:
 services:
     orob2b_catalog.category_tree_handler:
         class: 'OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler'
+        public: true
         arguments:
             - '%orob2b_catalog.entity.category.class%'
             - '@doctrine'
@@ -24,6 +25,7 @@ services:
 
     orob2b_catalog.category.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%orob2b_catalog.entity.category.class%'
@@ -31,6 +33,7 @@ services:
 
     orob2b_catalog.event_listener.form_view:
         class: 'OroB2B\Bundle\CatalogBundle\EventListener\FormViewListener'
+        public: true
         arguments:
             - "@translator"
             - "@oro_entity.doctrine_helper"
@@ -41,6 +44,7 @@ services:
 
     orob2b_catalog.event_listener.datagrid:
         class: 'OroB2B\Bundle\CatalogBundle\EventListener\DatagridListener'
+        public: true
         arguments:
             - "@doctrine"
             - "@orob2b_catalog.handler.request_product"
@@ -53,6 +57,7 @@ services:
 
     orob2b_catalog.event_listener.product_duplicate:
         class: 'OroB2B\Bundle\CatalogBundle\EventListener\ProductDuplicateListener'
+        public: true
         calls:
             - [setCategoryClass, ['%orob2b_catalog.entity.category.class%']]
             - [setDoctrineHelper, ["@oro_entity.doctrine_helper"]]
@@ -68,6 +73,7 @@ services:
 
     orob2b_catalog.event_listener.product_strategy:
         class: 'OroB2B\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener'
+        public: true
         parent: orob2b_catalog.event_listener.abstract_product_import
         tags:
             - { name: kernel.event_listener, event: orob2b_product.strategy.process_after, method: onProcessAfter }
@@ -75,11 +81,13 @@ services:
 
     orob2b_catalog.event_listener.product_data_converter:
         class: 'OroB2B\Bundle\CatalogBundle\EventListener\ProductDataConverterEventListener'
+        public: true
         tags:
             - { name: kernel.event_listener, event: orob2b_product.data_converter.backend_header, method: onBackendHeader }
 
     orob2b_catalog.event_listener.product_normalizer:
         class: 'OroB2B\Bundle\CatalogBundle\EventListener\ProductNormalizerEventListener'
+        public: true
         parent: orob2b_catalog.event_listener.abstract_product_import
         tags:
             - { name: kernel.event_listener, event: orob2b_product.normalizer.normalizer, method: onNormalize }
@@ -87,5 +95,6 @@ services:
 
     orob2b_catalog.handler.request_product:
         class: 'OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler'
+        public: true
         arguments:
             - "@request_stack"

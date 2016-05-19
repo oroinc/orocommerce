@@ -80,3 +80,20 @@ OroB2B\Bundle\ProductBundle\Model\ProductRow:
         productQuantity:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+
+OroB2B\Bundle\ProductBundle\Model\ProductLineItem:
+    properties:
+        product:
+            - NotBlank:
+                groups: [create, update, add_product]
+        quantity:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+                groups: [create, update, add_product]
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                value: 0
+                groups: [create, update, add_product]
+            - NotBlank:
+                groups: [create, update, add_product]
+        unit:
+            - NotBlank:
+                groups: [create, update, add_product]
