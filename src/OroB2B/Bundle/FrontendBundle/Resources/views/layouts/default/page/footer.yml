@@ -19,5 +19,3 @@ layout:
             id: footer
             parentId: wrapper
             siblingId: main
-    conditions:
-        '@neq': [ $context.logged_user, null ]

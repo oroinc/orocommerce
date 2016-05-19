@@ -127,22 +127,6 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $shoppingListItemHandler->expects($this->any())
-            ->method('createCurrent')
-            ->willReturn($shoppingList);
-
-        $shoppingListItemHandler->expects($this->any())
-            ->method('getForCurrentUser')
-            ->willReturn($shoppingList);
-
-        $shoppingListItemHandler->expects($this->any())
-            ->method('bulkAddLineItems')
-            ->willReturnCallback(
-                function (array $lineItems) {
-                    return count($lineItems);
-                }
-            );
-
         return $shoppingListItemHandler;
     }
 

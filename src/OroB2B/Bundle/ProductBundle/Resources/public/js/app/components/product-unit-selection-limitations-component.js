@@ -35,7 +35,7 @@ define(function (require) {
         },
 
         /**
-         * @inheritDoc
+         * {@inheritDoc}
          */
         initialize: function (options) {
             this.options = _.defaults(options || {}, this.options);

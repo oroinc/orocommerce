@@ -10,6 +10,7 @@ services:
 
     orob2b_shipping.event_listener.config.shipping_origin:
         class: OroB2B\Bundle\ShippingBundle\EventListener\Config\ShippingOriginEventListener
+        public: true
         arguments:
             - '@orob2b_shipping.factory.shipping_origin_model_factory'
         tags:
@@ -18,6 +19,7 @@ services:
 
     orob2b_shipping.shipping_origin.provider:
         class: OroB2B\Bundle\ShippingBundle\Provider\ShippingOriginProvider
+        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_config.global'
@@ -25,6 +27,7 @@ services:
 
     orob2b_shipping.event_listener.form_view:
         class: OroB2B\Bundle\ShippingBundle\EventListener\FormViewListener
+        public: true
         arguments:
             - '@translator'
             - '@oro_entity.doctrine_helper'

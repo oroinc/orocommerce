@@ -11,7 +11,9 @@ class ProductUnitsType extends AbstractType
 {
     const NAME = 'orob2b_product_units';
 
-    /** @var  ProductUnitsProvider */
+    /**
+     * @var  ProductUnitsProvider
+     */
     protected $productUnitsProvider;
 
     /**
@@ -23,7 +25,7 @@ class ProductUnitsType extends AbstractType
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -33,7 +35,7 @@ class ProductUnitsType extends AbstractType
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -41,7 +43,7 @@ class ProductUnitsType extends AbstractType
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getParent()
     {

@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\MenuBundle\Migrations\Data\ORM;
 use Knp\Menu\MenuFactory;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -15,7 +16,10 @@ use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
 
 use OroB2B\Bundle\MenuBundle\Entity\Manager\MenuItemManager;
 
-class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterface, VersionedFixtureInterface
+class LoadMenuItemData extends AbstractFixture implements
+    ContainerAwareInterface,
+    VersionedFixtureInterface,
+    OrderedFixtureInterface
 {
     /**
      * @var MenuFactory
@@ -38,6 +42,14 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     public function getVersion()
     {
         return '1.0';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 10;
     }
 
     /**

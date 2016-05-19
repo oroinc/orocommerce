@@ -17,9 +17,10 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
     const LINE_ITEM_2 = 'shopping_list_line_item.2';
     const LINE_ITEM_3 = 'shopping_list_line_item.3';
     const LINE_ITEM_4 = 'shopping_list_line_item.4';
+    const LINE_ITEM_5 = 'shopping_list_line_item.5';
 
     /** @var array */
-    protected $lineItems = [
+    protected static $lineItems = [
         self::LINE_ITEM_1 => [
             'product' => LoadProductData::PRODUCT_1,
             'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
@@ -44,6 +45,12 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
             'unit' => 'product_unit.box',
             'quantity' => 1
         ],
+        self::LINE_ITEM_5 => [
+            'product' => LoadProductData::PRODUCT_5,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
+            'unit' => 'product_unit.bottle',
+            'quantity' => 1
+        ],
     ];
 
     /**
@@ -62,7 +69,7 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
      */
     public function load(ObjectManager $manager)
     {
-        foreach ($this->lineItems as $name => $lineItem) {
+        foreach (static::$lineItems as $name => $lineItem) {
             /** @var ShoppingList $shoppingList */
             $shoppingList = $this->getReference($lineItem['shoppingList']);
 
