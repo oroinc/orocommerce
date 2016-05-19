@@ -94,9 +94,10 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
 
         $priceList = $this->priceListRequestHandler->getPriceListByAccount();
 
+        $currency = $this->getCurrencies()[0];
         $combinedPrices = $this->registry->getManagerForClass('OroB2BPricingBundle:CombinedProductPrice')
             ->getRepository('OroB2BPricingBundle:CombinedProductPrice')
-            ->getPricesForProductsByPriceList($priceList, $productIds);
+            ->getPricesForProductsByPriceList($priceList, $productIds, $currency);
 
         $resultProductPrices = [];
         foreach ($combinedPrices as $price) {

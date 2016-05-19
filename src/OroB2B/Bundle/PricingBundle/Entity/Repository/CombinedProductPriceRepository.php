@@ -93,18 +93,21 @@ class CombinedProductPriceRepository extends ProductPriceRepository
     /**
      * @param BasePriceList $priceList
      * @param array $productIds
+     * @param null $currency
      * @return CombinedProductPrice[]
      */
-    public function getPricesForProductsByPriceList(BasePriceList $priceList, array $productIds)
+    public function getPricesForProductsByPriceList(BasePriceList $priceList, array $productIds, $currency = null)
     {
         $qb = $this->createQueryBuilder('cpp');
 
         $qb->select('cpp')
             ->where($qb->expr()->eq('cpp.priceList', ':priceList'))
             ->andWhere($qb->expr()->in('cpp.product', ':productIds'))
+            ->andWhere($qb->expr()->in('cpp.currency', ':currency'))
             ->setParameters([
                 'priceList' => $priceList,
-                'productIds' => $productIds
+                'productIds' => $productIds,
+                'currency' => $currency
             ]);
 
         return $qb->getQuery()->getResult();

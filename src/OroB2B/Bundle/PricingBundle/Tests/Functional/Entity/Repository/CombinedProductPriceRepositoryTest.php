@@ -111,8 +111,9 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
      * @dataProvider getPricesForProductsByPriceListDataProvider
      * @param string $priceList
      * @param array $products
+     * @param string|null $currency
      */
-    public function testGetPricesForProductsByPriceList($priceList, array $products)
+    public function testGetPricesForProductsByPriceList($priceList, array $products, $currency = null)
     {
         /**
          * @var CombinedPriceList $priceList
@@ -132,13 +133,15 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 $this->getCombinedProductPriceRepository()->findBy(
                     [
                         'priceList' => $priceList,
-                        'product' => $this->getReference($product)
+                        'product' => $this->getReference($product),
+                        'currency' => $currency
                     ]
                 )
             );
         }
 
-        $result = $this->getCombinedProductPriceRepository()->getPricesForProductsByPriceList($priceList, $productIds);
+        $result = $this->getCombinedProductPriceRepository()
+            ->getPricesForProductsByPriceList($priceList, $productIds, $currency);
 
         $this->assertCount(count($expected), $result);
         foreach ($expected as $price) {
@@ -154,7 +157,8 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         return [
             [
                 'combinedPriceList' => '1t_2t_3t',
-                'products' => ['product.1']
+                'products' => ['product.1'],
+                'currency' => 'USD'
             ],
             [
                 'combinedPriceList' => '1t_2t_3t',
