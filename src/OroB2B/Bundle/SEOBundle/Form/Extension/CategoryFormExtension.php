@@ -45,7 +45,7 @@ class CategoryFormExtension extends AbstractTypeExtension
                     'label' => 'orob2b.seo.meta-title.label',
                     'required' => false,
                 ]
-        )
+            )
             ->add(
                 'metaDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
@@ -112,7 +112,7 @@ class CategoryFormExtension extends AbstractTypeExtension
      * @param OroEntityManager $entityManager
      * @param LocalizedFallbackValue[] $metaFields
      */
-    private function persistMetaFields($entityManager, $metaFields)
+    private function persistMetaFields(OroEntityManager $entityManager, $metaFields = array())
     {
         foreach ($metaFields as $field) {
             $entityManager->persist($field);
