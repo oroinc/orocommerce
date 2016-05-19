@@ -5,8 +5,6 @@ namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\EventListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Twig_Environment;
-
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
@@ -163,7 +161,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
     {
         $renderedHtml = 'rendered_html';
 
-        /** @var Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $twig */
+        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $twig */
         $twig = $this->getMockBuilder('\Twig_Environment')->disableOriginalConstructor()->getMock();
         $twig->expects($this->once())->method('render')->willReturn($renderedHtml);
 
@@ -325,7 +323,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
     {
         $renderedHtml = 'rendered_html';
 
-        /** @var Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $twig */
+        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $twig */
         $twig = $this->getMockBuilder('\Twig_Environment')->disableOriginalConstructor()->getMock();
         $twig->expects($this->once())->method('render')->willReturn($renderedHtml);
 
