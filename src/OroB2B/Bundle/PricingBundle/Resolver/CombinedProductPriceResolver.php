@@ -76,6 +76,11 @@ class CombinedProductPriceResolver
             $combinedPriceList->setPricesCalculated(true);
             $this->getManager()->flush($combinedPriceList);
         }
+        $this->getManager()->getRepository('OroB2BPricingBundle:MinimalProductPrice')->updateMinimalPrices(
+            $this->insertFromSelectQueryExecutor,
+            $combinedPriceList,
+            $product
+        );
     }
 
     /**
