@@ -418,6 +418,7 @@ services:
         public: true
         parent: orob2b_pricing.filter.product_price
         calls:
+            - [setRegistry, ['@doctrine']]
             - [setProductPriceClass, ['%orob2b_pricing.entity.combined_product_price.class%']]
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: frontend-product-price }

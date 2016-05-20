@@ -107,6 +107,61 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     }
 
     /**
+     * @dataProvider dataProviderRestrictByPrice
+     * @param $price
+     * @param array $expectProducts
+     */
+    public function testRestrictByPrice($price, array $expectProducts)
+    {
+        $qb = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BProductBundle:Product')
+            ->getRepository('OroB2BProductBundle:Product')
+            ->createQueryBuilder('product');
+
+        $productPriceAlias = 'productPrice';
+
+        $cpl = $this->getReference('1t_2t_3t');
+        $additionalCondition = $qb->expr()->andX(
+            $qb->expr()->eq($productPriceAlias . '.priceList', $cpl->getId()),
+            $qb->expr()->eq($productPriceAlias . '.product', 'product.id'),
+            $qb->expr()->lt($productPriceAlias . '.value', ':price')
+        );
+        $this->getCombinedProductPriceRepository()->restrictByPrice($qb, $productPriceAlias, $additionalCondition);
+        $qb->setParameter('price', $price);
+
+        $qb->select('PARTIAL product.{id, sku}');
+        $products = $qb->getQuery()->getArrayResult();
+        $products = array_map(
+            function ($element) { return $element['sku'];},
+            $products
+        );
+        $this->assertEquals($expectProducts, $products);
+    }
+
+    public function dataProviderRestrictByPrice()
+    {
+        return [
+            [
+                'price' => 0,
+                'expectProducts' => [],
+            ],
+            [
+                'price' => 999999,
+                'expectProducts' => [
+                    'product.1',
+                    'product.2',
+                ],
+            ],
+            [
+                'price' => 12,
+                'expectProducts' => [
+                    'product.1',
+                ],
+            ],
+        ];
+    }
+
+    /**
      * @return CombinedProductPriceRepository
      */
     protected function getCombinedProductPriceRepository()
