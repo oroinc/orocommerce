@@ -23,11 +23,19 @@ define(function (require) {
             dataContent: '*[data-content]',
             unitSelect: 'select[name$="[unit]"]',
             hiddenUnitClass: 'hidden-unit',
+            parentTableSelector: '',
             precisions: {}
         },
 
         /**
-         * @inheritDoc
+         * @property {Object}
+         */
+        listen: {
+            'product:primary:precision:change mediator': 'onPrimaryPrecisionChange'
+        },
+
+        /**
+         * {@inheritDoc}
          */
         initialize: function (options) {
             this.options = _.defaults(options || {}, this.options);
@@ -67,10 +75,24 @@ define(function (require) {
             var selects = this.options._sourceElement.find(this.options.unitSelect),
                 self = this;
 
+            self.toggleTableVisibility();
+            
             selects.each(function (index) {
                 var select = $(this);
 
                 selects.each(function (_index) {
+
+                    var primary = null;
+                    _.each(self.getPrimaryData(), function(text,val){
+                        primary = val;
+                    });
+
+                    var primaryOption = $(this).find("option[value='" + primary + "']");
+
+                    if (primaryOption) {
+                        primaryOption.remove();
+                    }
+                    
                     if (index == _index) {
                         return;
                     }
@@ -92,7 +114,7 @@ define(function (require) {
                     var value = self.options.precisions[option.val()];
 
                     if (value != undefined) {
-                        select.parents(self.options.selectParent).find('input').val(value);
+                        select.parents(self.options.selectParent).find('input[class="precision"]').val(value);
                     }
                 }
 
@@ -103,6 +125,25 @@ define(function (require) {
 
                 self.addData({value: option.val(), text: option.text()});
             });
+        },
+
+        /**
+         *  Handle changes in primary precision
+         */
+        onPrimaryPrecisionChange: function (e) {
+            var removed = e.removed;
+            var added = e.added;
+            var self = this;
+            if (!_.isEmpty(removed)) {
+                _.each(removed,function(text, val){
+                    self.addOptionToAllSelects(val,text);
+                })
+            }
+            if (!_.isEmpty(added)) {
+                _.each(added,function(text, val){
+                    self.removeOptionFromAllSelects(val,text);
+                })
+            }
         },
 
         /**
@@ -119,6 +160,7 @@ define(function (require) {
                 this.getAddButton().show();
                 $(e.target).remove();
             }
+            this.toggleTableVisibility();
         },
 
         /**
@@ -142,9 +184,25 @@ define(function (require) {
         addOptionToAllSelects: function (value, text) {
             this.options._sourceElement.find(this.options.unitSelect).each(function () {
                 var select = $(this);
-
+                
                 if (select.data('prevValue') != value) {
                     select.append($('<option></option>').val(value).text(text));
+                }
+            });
+        },
+
+        /**
+         * Remove options from all selects
+         *
+         * @param {String} value
+         * @param {String} text
+         */
+        removeOptionFromAllSelects: function (value, text) {
+            this.options._sourceElement.find(this.options.unitSelect).each(function () {
+                var select = $(this);
+                var option = select.find('option[value="'+value+'"]');
+                if (option != undefined) {
+                    option.remove();
                 }
             });
         },
@@ -174,7 +232,8 @@ define(function (require) {
          */
         addData: function (data) {
             var storedData = this.getData();
-            if (storedData.hasOwnProperty(data.value)) {
+            var primaryData = this.getPrimaryData();
+            if (storedData.hasOwnProperty(data.value) || primaryData.hasOwnProperty(data.value)) {
                 return;
             }
 
@@ -203,6 +262,10 @@ define(function (require) {
         getData: function () {
             return this.options._sourceElement.data(this.options.unitsAttribute) || {}
         },
+        
+        getPrimaryData: function () {
+           return $(':data(' + this.options.unitsAttribute + ')').data(this.options.unitsAttribute) || {};
+        },
 
         /**
          * Save data to data attribute
@@ -211,6 +274,20 @@ define(function (require) {
          */
         saveData: function (data) {
             this.options._sourceElement.data(this.options.unitsAttribute, data);
+        },
+
+        /**
+         * Toggle Table visibility
+         */
+        toggleTableVisibility: function(){
+            var selects = this.options._sourceElement.find(this.options.unitSelect);
+            var table = this.options._sourceElement.find('table')
+
+            if (selects.length < 1) {
+                table.hide();
+            } else {
+                table.show();
+            }
         },
 
         /**

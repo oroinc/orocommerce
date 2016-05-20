@@ -3,22 +3,26 @@
 namespace OroB2B\Bundle\ProductBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 
 class DefaultProductUnitProvider
 {
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var ConfigManager
+     */
     private $configManager;
 
-    /** @var  ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var  ManagerRegistry
+     */
     protected $registry;
 
-
     /**
-     * DefaultProductUnitProvider constructor.
      * @param ConfigManager $configManager
      * @param ManagerRegistry $registry
      */
@@ -29,7 +33,7 @@ class DefaultProductUnitProvider
     }
     
     /**
-     * @return ProductUnitPrecision $unitPrecision
+     * @return ProductUnitPrecision
      */
     public function getDefaultProductUnitPrecision()
     {

@@ -72,7 +72,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit((new ProductUnit())->setCode('kg'));
-        $product->addUnitPrecision($unitPrecision);
+        $product->setPrimaryUnitPrecision($unitPrecision);
 
         $this->assertEquals('{"id":123,"product_units":["kg"]}', json_encode($product));
     }
@@ -109,7 +109,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $product->getUnitPrecisions());
 
         // Add new ProductUnitPrecision
-        $this->assertSame($product, $product->addUnitPrecision($unitPrecision));
+        $this->assertSame($product, $product->addAdditionalUnitPrecision($unitPrecision));
         $this->assertCount(1, $product->getUnitPrecisions());
 
         $actual = $product->getUnitPrecisions();
@@ -117,11 +117,11 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([$unitPrecision], $actual->toArray());
 
         // Add already added ProductUnitPrecision
-        $this->assertSame($product, $product->addUnitPrecision($unitPrecision));
+        $this->assertSame($product, $product->addAdditionalUnitPrecision($unitPrecision));
         $this->assertCount(1, $product->getUnitPrecisions());
 
         // Remove ProductUnitPrecision
-        $this->assertSame($product, $product->removeUnitPrecision($unitPrecision));
+        $this->assertSame($product, $product->removeAdditionalUnitPrecision($unitPrecision));
         $this->assertCount(0, $product->getUnitPrecisions());
 
         $actual = $product->getUnitPrecisions();
@@ -142,7 +142,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ->setPrecision($unit->getDefaultPrecision());
 
         $product = new Product();
-        $product->addUnitPrecision($unitPrecision);
+        $product->addAdditionalUnitPrecision($unitPrecision);
 
         $this->assertNull($product->getUnitPrecision('item'));
         $this->assertEquals($unitPrecision, $product->getUnitPrecision('kg'));
@@ -161,7 +161,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ->setPrecision($unit->getDefaultPrecision());
 
         $product = new Product();
-        $product->addUnitPrecision($unitPrecision);
+        $product->setPrimaryUnitPrecision($unitPrecision);
 
         $this->assertEquals(['kg'], $product->getAvailableUnitCodes());
     }
@@ -170,7 +170,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
     {
         $id = 123;
         $product = new Product();
-        $product->getUnitPrecisions()->add(new ProductUnitPrecision());
+        $product->addAdditionalUnitPrecision(new ProductUnitPrecision());
         $product->getNames()->add(new LocalizedFallbackValue());
         $product->getDescriptions()->add(new LocalizedFallbackValue());
         $product->getShortDescriptions()->add(new LocalizedFallbackValue());
@@ -349,15 +349,27 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $unitPrecision2 = $this->createUnitPrecision('piece', 1);
         $unitPrecision3 = $this->createUnitPrecision('set', 1);
 
-        $product->addUnitPrecision($unitPrecision1);
-        $product->addUnitPrecision($unitPrecision2);
-        $product->addUnitPrecision($unitPrecision3);
-        $product->setPrimaryUnitPrecision($unitPrecision1);
-        
-        $expectedAdditionalUnits = [$unitPrecision2, $unitPrecision3];
+        $product->addAdditionalUnitPrecision($unitPrecision1);
+        $product->addAdditionalUnitPrecision($unitPrecision2);
+        $product->addAdditionalUnitPrecision($unitPrecision3);
+
+        $expectedAdditionalUnits = [$unitPrecision1, $unitPrecision2, $unitPrecision3];
         $actualAdditionalUnits = $product->getAdditionalUnitPrecisions()->toArray();
 
         $this->assertEquals($expectedAdditionalUnits, array_values($actualAdditionalUnits));
+    }
+
+    public function testGetPrimaryUnitPrecision()
+    {
+        $product = new Product();
+        $unitPrecision1 = $this->createUnitPrecision('kg', 3);
+
+        $product->setPrimaryUnitPrecision($unitPrecision1);
+
+        $expectedAdditionalUnits = $unitPrecision1;
+        $actualAdditionalUnits = $product->getPrimaryUnitPrecision();
+
+        $this->assertEquals($expectedAdditionalUnits, $actualAdditionalUnits);
     }
 
     /**

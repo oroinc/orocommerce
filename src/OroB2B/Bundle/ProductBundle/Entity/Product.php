@@ -245,7 +245,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     /**
      * @var ProductUnitPrecision
      *
-     * @ORM\OneToOne(targetEntity="ProductUnitPrecision")
+     * @ORM\OneToOne(targetEntity="ProductUnitPrecision", cascade={"ALL"})
      * @ORM\JoinColumn(name="primary_product_unit_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -908,9 +908,10 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      *
      * @return Product
      */
-    public function setPrimaryUnitPrecision(\OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision $primaryUnitPrecision = null)
+    public function setPrimaryUnitPrecision(ProductUnitPrecision $primaryUnitPrecision = null)
     {
         $this->primaryUnitPrecision = $primaryUnitPrecision;
+        $this->unitPrecisions->add($primaryUnitPrecision);
 
         return $this;
     }
@@ -926,12 +927,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     }
 
     /**
-     * Get unitPrecisions
+     * Get additional unitPrecisions
      *
      * @return Collection|ProductUnitPrecision[]
      */
     public function getAdditionalUnitPrecisions()
     {
+
         $precisions = clone($this->unitPrecisions);
         foreach ($precisions as  $unitPrecision) {
             if ($unitPrecision->getUnit()->getCode() == $this->primaryUnitPrecision->getUnit()->getCode()) {
@@ -941,5 +943,33 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         }
         return $precisions;
     }
+
+    /**
+     * Add additional unitPrecisions
+     *
+     * @param ProductUnitPrecision $unitPrecision
+     * @return Product
+     */
+    public function addAdditionalUnitPrecision(ProductUnitPrecision $unitPrecision)
+    {
+        $this->addUnitPrecision($unitPrecision);
+
+        return $this;
+    }
+
+    /**
+     * Remove additional unitPrecisions
+     *
+     * @param ProductUnitPrecision $unitPrecisions
+     * @return Product
+     */
+    public function removeAdditionalUnitPrecision(ProductUnitPrecision $unitPrecisions)
+    {
+        $this->removeUnitPrecision($unitPrecisions);
+
+        return $this;
+    }
+
+
 }
 

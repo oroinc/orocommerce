@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -16,7 +13,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use Doctrine\Common\Persistence\ObjectManager;
+use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 
 class ProductType extends AbstractType
 {
@@ -32,11 +29,14 @@ class ProductType extends AbstractType
      */
     private $provider;
 
-/** @var DefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject $provider */
+    /**
+     * @var DefaultProductUnitProvider
+     */
     public function __construct(DefaultProductUnitProvider $provider)
     {
         $this->provider = $provider;
     }
+    
     /**
      * @param string $dataClass
      */
@@ -128,10 +128,20 @@ class ProductType extends AbstractType
                 ]
             )
             ->add(
-                'unitPrecisions',
+                'primaryUnitPrecision',
+                ProductPrimaryUnitPrecisionType::NAME,
+                [
+                    'label'          => 'orob2b.product.primary_unit_precision.label',
+                    'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
+                    'error_bubbling' => false,
+                    'required'       => true,
+                ]
+            )
+            ->add(
+                'additionalUnitPrecisions',
                 ProductUnitPrecisionCollectionType::NAME,
                 [
-                    'label'          => 'orob2b.product.unit_precisions.label',
+                    'label'          => 'orob2b.product.additional_unit_precisions.label',
                     'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
                     'error_bubbling' => false,
                     'required'       => true,
@@ -156,7 +166,7 @@ class ProductType extends AbstractType
 
         if ($product->getId() == null) {
             $unitPrecision = $this->provider->getDefaultProductUnitPrecision();
-            $product->addUnitPrecision($unitPrecision);
+            $product->setPrimaryUnitPrecision($unitPrecision);
         }
         if ($product instanceof Product && $product->getHasVariants()) {
             $form

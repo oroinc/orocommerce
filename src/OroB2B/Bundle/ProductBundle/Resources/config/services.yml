@@ -179,6 +179,7 @@ services:
         class: 'OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider'
         arguments:
             - "@doctrine"
+            - "@orob2b_product.formatter.product_unit_label"
 
     orob2b_product.provider.default_product_unit_provider:
         class: 'OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider'

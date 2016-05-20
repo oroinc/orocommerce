@@ -20,7 +20,7 @@
                 }
                 ) }}
             {% endset %}
-            {{ UI.renderHtmlProperty('orob2b.product.unit_precision.label'|trans, primaryUnitPrecisionElement )}}
+            {{ UI.renderHtmlProperty('primary_unit_precision.label'|trans, primaryUnitPrecisionElement )}}
             {% set productUnitPrecisions = [] %}
 
             {% if product.additionalUnitPrecisions.count %}
@@ -40,7 +40,7 @@
                     {% set rows = rows|merge([row]) %}
                 {% endfor %}
                 {{ UI.renderHtmlProperty(
-                    'orob2b.product.unit_precisions.label'|trans,
+                    'additional_unit_precisions.label'|trans,
                      UI.renderTable(titles,rows,"grid table table-bordered table-condensed quote-line-items"))
                  }}
             {% endif %}

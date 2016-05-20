@@ -127,6 +127,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     public function testVote(array $inputData, $expectedResult)
     {
         $object = $inputData['object'];
+        if (is_null($object) && is_array($inputData['initObjectParams'])) {
+            $object = call_user_func_array([$this, 'getObject'], $inputData['initObjectParams']);
+        }
         $class  = is_object($object) ? get_class($object) : null;
 
         $this->doctrineHelper->expects($this->any())
@@ -228,7 +231,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             '!AccountUser' => [
                 'input' => [
                     'objectId'      => 2,
-                    'object'        => $this->getObject(2),
+                    'object'        => null,
+                    'initObjectParams'  => ['id' => 2],
                     'user'          => new \stdClass(),
                     'attributes'    => [],
                     'grantedViewBasic' => null,
@@ -245,6 +249,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => null,
                     'object'        => null,
+                    'initObjectParams'  => null,
                     'user'          => $this->getAccountUser(1),
                     'attributes'    => [],
                     'grantedViewBasic' => null,
@@ -261,6 +266,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => null,
                     'object'        => 'string',
+                    'initObjectParams'  => null,
                     'user'          => $this->getAccountUser(1),
                     'attributes'    => [],
                     'grantedViewBasic' => null,
@@ -276,7 +282,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             'Entity::VIEW_BASIC and different users' => [
                 'input' => [
                     'objectId'      => 1,
-                    'object'        => $this->getObject(1, 1),
+                    'object'        => null,
+                    'initObjectParams'  => ['id' => 1, 'accountUserId' => 1],
                     'user'          => $this->getAccountUser(2),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => true,
@@ -292,7 +299,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             'Entity::VIEW_BASIC and equal users' => [
                 'input' => [
                     'objectId'      => 2,
-                    'object'        => $this->getObject(2, 3),
+                    'object'        => null,
+                    'initObjectParams'  => ['id' => 2, 'accountUserId' => 3],
                     'user'          => $this->getAccountUser(3),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => true,
@@ -308,7 +316,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             'Entity::VIEW_LOCAL, different accounts and different users' => [
                 'input' => [
                     'objectId'      => 4,
-                    'object'        => $this->getObject(4, 5, 6),
+                    'object'        => null,
+                    'initObjectParams'  => ['id' => 4, 'accountUserId' => 5, 'accountId' => 6],
                     'user'          => $this->getAccountUser(7, 8),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => false,
@@ -324,7 +333,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             'Entity::VIEW_LOCAL, equal accounts and different users' => [
                 'input' => [
                     'objectId'      => 9,
-                    'object'        => $this->getObject(9, 10, 11),
+                    'object'        => null,
+                    'initObjectParams'  => ['id' => 9, 'accountUserId' => 10, 'accountId' => 11],
                     'user'          => $this->getAccountUser(12, 11),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => false,
@@ -340,7 +350,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             'Entity::VIEW_LOCAL, different accounts and equal users' => [
                 'input' => [
                     'objectId'      => 13,
-                    'object'        => $this->getObject(13, 14, 15),
+                    'object'        => null,
+                    'initObjectParams'  => ['id' => 13, 'accountUserId' => 14, 'accountId' => 15],
                     'user'          => $this->getAccountUser(14, 17),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => false,
@@ -356,7 +367,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             'Entity::EDIT_BASIC and different users' => [
                 'input' => [
                     'objectId'      => 21,
-                    'object'        => $this->getObject(21, 21),
+                    'object'        => null,
+                    'initObjectParams'  => ['id' => 21, 'accountUserId' => 21],
                     'user'          => $this->getAccountUser(22),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,
@@ -372,7 +384,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             'Entity::EDIT_BASIC and equal users' => [
                 'input' => [
                     'objectId'      => 22,
-                    'object'        => $this->getObject(22, 23),
+                    'object'        => null,
+                    'initObjectParams'  => ['id' => 22, 'accountUserId' => 23],
                     'user'          => $this->getAccountUser(23),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,
@@ -388,7 +401,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             'Entity::EDIT_LOCAL, different accounts and different users' => [
                 'input' => [
                     'objectId'      => 24,
-                    'object'        => $this->getObject(24, 25, 26),
+                    'object'        => null,
+                    'initObjectParams'  => ['id' => 24, 'accountUserId' => 25, 'accountId' => 26],
                     'user'          => $this->getAccountUser(27, 28),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,
@@ -404,7 +418,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             'Entity::EDIT_LOCAL, equal accounts and different users' => [
                 'input' => [
                     'objectId'      => 29,
-                    'object'        => $this->getObject(29, 30, 31),
+                    'object'        => null,
+                    'initObjectParams'  => ['id' => 29, 'accountUserId' => 30, 'accountId' => 31],
                     'user'          => $this->getAccountUser(32, 31),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,
@@ -420,7 +435,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             'Entity::EDIT_LOCAL, different accounts and equal users' => [
                 'input' => [
                     'objectId'      => 33,
-                    'object'        => $this->getObject(33, 34, 35),
+                    'object'        => null,
+                    'initObjectParams'  => ['id' => 33, 'accountUserId' => 34, 'accountId' => 35],
                     'user'          => $this->getAccountUser(34, 37),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,
@@ -437,6 +453,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => null,
                     'object'        => $this->getIdentity(),
+                    'initObjectParams'  => null,
                     'user'          => $this->getAccountUser(38, 39),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => null,
@@ -453,6 +470,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => null,
                     'object'        => $this->getIdentity(),
+                    'initObjectParams'  => null,
                     'user'          => $this->getAccountUser(40, 41),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,
@@ -469,6 +487,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => null,
                     'object'        => $this->getIdentity(),
+                    'initObjectParams'  => null,
                     'user'          => $this->getAccountUser(42, 43),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => null,
@@ -485,6 +504,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'objectId'      => null,
                     'object'        => $this->getIdentity(),
+                    'initObjectParams'  => null,
                     'user'          => $this->getAccountUser(44, 45),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,
@@ -616,11 +636,6 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             $mock = $this->getMockBuilder($className)
                 ->disableOriginalConstructor()
                 ->getMock()
-            ;
-
-            $mock->expects($this->any())
-                ->method('getId')
-                ->willReturn($id)
             ;
 
             $entities[$className][$id] = $mock;

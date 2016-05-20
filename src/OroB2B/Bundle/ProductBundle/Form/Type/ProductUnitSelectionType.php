@@ -46,7 +46,9 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $this->translator = $translator;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setAcceptableUnits']);
@@ -164,7 +166,9 @@ class ProductUnitSelectionType extends AbstractProductAwareType
             return;
         }
 
-        /* @var $productUnitHolder ProductUnitHolderInterface */
+        /**
+         * @var ProductUnitHolderInterface $productUnitHolder
+         */
         $productUnitHolder = $formParent->getData();
         if (!$productUnitHolder) {
             $this->formatChoiceViews($view, $options);
@@ -217,7 +221,9 @@ class ProductUnitSelectionType extends AbstractProductAwareType
      */
     protected function formatChoiceViews(FormView $view, array $options)
     {
-        /** @var ChoiceView $choiceView */
+        /**
+         * @var ChoiceView $choiceView
+         */
         foreach ($view->vars['choices'] as $choiceView) {
             $choiceView->label = $this->productUnitFormatter->format($choiceView->value, $options['compact']);
         }

@@ -6,19 +6,30 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductUnitsProvider
 {
-    /** @var  ManagerRegistry */
+    /**
+     * @var  ManagerRegistry
+     */
     protected $registry;
 
     /**
-     * @param ManagerRegistry $registry
+     * @var  ProductUnitLabelFormatter
      */
-    public function __construct(ManagerRegistry $registry)
+    protected $formatter;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param ProductUnitLabelFormatter $formatter
+     */
+    public function __construct(ManagerRegistry $registry, ProductUnitLabelFormatter $formatter)
     {
         $this->registry = $registry;
+        $this->formatter = $formatter;
     }
+    
     /**
      * @return array
      */
@@ -29,7 +40,7 @@ class ProductUnitsProvider
         $unitsFull = [];
         foreach ($productUnits as $unit) {
             $code = $unit->getCode();
-            $unitsFull[$code] = 'orob2b.product_unit.'.$code.'.label.full';
+            $unitsFull[$code] = $this->formatter->format($code);
         }
         return  $unitsFull;
     }
@@ -39,8 +50,6 @@ class ProductUnitsProvider
      */
     protected function getRepository()
     {
-        $manager = $this->registry
-            ->getManagerForClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
         return $this->registry
             ->getManagerForClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
             ->getRepository('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');

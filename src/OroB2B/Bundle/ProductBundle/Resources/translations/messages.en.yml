@@ -15,8 +15,8 @@ orob2b:
         status.label: Status
         owner.label: Owner
         organization.label: Organization
-        unit_precision.label: Unit of Quantity
-        unit_precisions.label: Additional Units of Quantity
+        primary_unit_precision.label: Unit of Quantity
+        additional_unit_precisions.label: Additional Units
         image.label: Image
         names.label: Name
         descriptions.label: Description

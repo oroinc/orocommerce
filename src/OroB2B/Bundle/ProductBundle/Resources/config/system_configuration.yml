@@ -42,7 +42,7 @@ oro_system_configuration:
                 label: orob2b.product.system_configuration.fields.general_frontend_inventory_statuses_visibility.label
 
         orob2b_product.default_unit:
-            data_type: array
+            data_type: string
             type: orob2b_product_units
             priority: 20
             options:
