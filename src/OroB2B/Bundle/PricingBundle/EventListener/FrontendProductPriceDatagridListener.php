@@ -18,8 +18,8 @@ use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 
 class FrontendProductPriceDatagridListener
 {
@@ -43,12 +43,12 @@ class FrontendProductPriceDatagridListener
     protected $numberFormatter;
 
     /**
-     * @var ProductUnitLabelFormatter
+     * @var UnitLabelFormatter
      */
     protected $unitLabelFormatter;
 
     /**
-     * @var ProductUnitValueFormatter
+     * @var UnitValueFormatter
      */
     protected $unitValueFormatter;
 
@@ -66,16 +66,16 @@ class FrontendProductPriceDatagridListener
      * @param TranslatorInterface $translator
      * @param PriceListRequestHandler $priceListRequestHandler
      * @param NumberFormatter $numberFormatter
-     * @param ProductUnitLabelFormatter $unitLabelFormatter
-     * @param ProductUnitValueFormatter $unitValueFormatter
+     * @param UnitLabelFormatter $unitLabelFormatter
+     * @param UnitValueFormatter $unitValueFormatter
      * @param UserCurrencyProvider $currencyProvider
      */
     public function __construct(
         TranslatorInterface $translator,
         PriceListRequestHandler $priceListRequestHandler,
         NumberFormatter $numberFormatter,
-        ProductUnitLabelFormatter $unitLabelFormatter,
-        ProductUnitValueFormatter $unitValueFormatter,
+        UnitLabelFormatter $unitLabelFormatter,
+        UnitValueFormatter $unitValueFormatter,
         UserCurrencyProvider $currencyProvider
     ) {
         $this->translator = $translator;
@@ -156,7 +156,7 @@ class FrontendProductPriceDatagridListener
         $selectPattern = '%s.value as %s';
         $select = sprintf($selectPattern, self::JOIN_ALIAS_PRICE, self::COLUMN_MINIMUM_PRICE);
 
-        $config->offsetAddToArrayByPath('[source][query][select]', $select);
+        $config->offsetAddToArrayByPath('[source][query][select]', [$select]);
         $config->offsetAddToArrayByPath(
             '[properties]',
             [
@@ -216,10 +216,12 @@ class FrontendProductPriceDatagridListener
         $config->offsetAddToArrayByPath(
             '[source][query][join][left]',
             [
-                'join' => 'OroB2BPricingBundle:MinimalProductPrice',
-                'alias' => $joinAlias,
-                'conditionType' => Expr\Join::WITH,
-                'condition' => (string)$joinExpr,
+                [
+                    'join' => 'OroB2BPricingBundle:MinimalProductPrice',
+                    'alias' => $joinAlias,
+                    'conditionType' => Expr\Join::WITH,
+                    'condition' => (string)$joinExpr,
+                ]
             ]
         );
     }
