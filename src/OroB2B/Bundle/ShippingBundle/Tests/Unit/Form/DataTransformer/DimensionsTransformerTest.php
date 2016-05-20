@@ -51,6 +51,10 @@ class DimensionsTransformerTest extends \PHPUnit_Framework_TestCase
                 'value' => 'string',
                 'expected' => null
             ],
+            'empty code' => [
+                'value' => $this->getDimensions(null, 2, 4, 6),
+                'expected' => null
+            ],
             'empty values' => [
                 'value' => $this->getDimensions($this->getLengthUnit('m'), null, null, null),
                 'expected' => null
@@ -109,13 +113,13 @@ class DimensionsTransformerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param LengthUnit $lengthUnit
+     * @param null|LengthUnit $lengthUnit
      * @param float $length
      * @param float $width
      * @param float $height
      * @return Dimensions
      */
-    protected function getDimensions(LengthUnit $lengthUnit, $length, $width, $height)
+    protected function getDimensions($lengthUnit, $length, $width, $height)
     {
         return Dimensions::create($length, $width, $height, $lengthUnit);
     }

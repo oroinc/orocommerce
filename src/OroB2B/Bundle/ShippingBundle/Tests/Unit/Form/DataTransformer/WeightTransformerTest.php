@@ -51,6 +51,10 @@ class WeightTransformerTest extends \PHPUnit_Framework_TestCase
                 'value' => 'string',
                 'expected' => null
             ],
+            'empty code' => [
+                'value' => $this->getWeight(null, 2),
+                'expected' => null
+            ],
             'empty value' => [
                 'value' => $this->getWeight($this->getWeightUnit('kg'), null),
                 'expected' => null
@@ -109,11 +113,11 @@ class WeightTransformerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param WeightUnit $weightUnit
+     * @param null|WeightUnit $weightUnit
      * @param float $value
      * @return Weight
      */
-    protected function getWeight(WeightUnit $weightUnit, $value)
+    protected function getWeight($weightUnit, $value)
     {
         return Weight::create($value, $weightUnit);
     }

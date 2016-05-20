@@ -26,6 +26,7 @@ class DimensionsTransformer implements DataTransformerInterface
     {
         if (!$dimensions instanceof Dimensions ||
             !$dimensions->getValue() instanceof DimensionsValue ||
+            !$dimensions->getUnit() ||
             $dimensions->getValue()->isEmpty() ||
             $this->isDimensionsValueInvalid($dimensions->getValue())
         ) {
