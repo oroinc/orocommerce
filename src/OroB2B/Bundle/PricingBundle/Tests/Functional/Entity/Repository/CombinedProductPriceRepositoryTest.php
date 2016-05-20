@@ -128,15 +128,16 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
 
         $expected = [];
         foreach ($products as $product) {
+            $searchConditions = [
+                'priceList' => $priceList,
+                'product' => $this->getReference($product)
+            ];
+            if ($currency) {
+                $searchConditions['currency'] = $currency;
+            }
             $expected = array_merge(
                 $expected,
-                $this->getCombinedProductPriceRepository()->findBy(
-                    [
-                        'priceList' => $priceList,
-                        'product' => $this->getReference($product),
-                        'currency' => $currency
-                    ]
-                )
+                $this->getCombinedProductPriceRepository()->findBy($searchConditions)
             );
         }
 
