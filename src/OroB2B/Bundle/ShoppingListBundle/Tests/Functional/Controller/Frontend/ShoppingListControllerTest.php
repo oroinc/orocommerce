@@ -99,7 +99,10 @@ class ShoppingListControllerTest extends WebTestCase
             ],
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
-                'expectedLineItemPrice' => 'N/A'
+                'expectedLineItemPrice' => [
+                    'N/A',
+                    '$0.00',
+                ]
             ],
         ];
     }
@@ -203,7 +206,11 @@ class ShoppingListControllerTest extends WebTestCase
      */
     protected function assertLineItemPriceEquals($expected, Crawler $crawler)
     {
-        $actual = trim($crawler->filter('[data-name="price-value"]')->text());
-        $this->assertEquals($expected, $actual);
+        $expected = (array)$expected;
+        $prices = $crawler->filter('[data-name="price-value"]');
+        $this->assertSameSize($expected, $prices);
+        foreach ($prices as $value) {
+            $this->assertContains(trim($value->nodeValue), $expected);
+        }
     }
 }
