@@ -35,7 +35,7 @@ class ProductUnitPrecisionType extends AbstractType
     {
         $builder
             ->add('precision', 'integer', ['type' => 'text', 'required' => false])
-            ->add('conversionRate', 'integer', ['type' => 'text', 'required' => false])
+            ->add('conversionRate', 'number', ['required' => false])
             ->add('sell', 'checkbox', ['required' => false])
         ;
 

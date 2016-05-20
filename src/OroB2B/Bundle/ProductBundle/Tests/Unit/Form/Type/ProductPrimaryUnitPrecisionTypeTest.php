@@ -12,18 +12,18 @@ use Symfony\Component\Validator\Validation;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
-class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
+class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision';
 
     /**
-     * @var ProductUnitPrecisionType
+     * @var ProductPrimaryUnitPrecisionType
      */
     protected $formType;
 
@@ -57,7 +57,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
                 }
             );
         $this->productUnitLabelFormatter = new ProductUnitLabelFormatter($this->translator);
-        $this->formType = new ProductUnitPrecisionType();
+        $this->formType = new ProductPrimaryUnitPrecisionType();
         $this->formType->setDataClass(self::DATA_CLASS);
         parent::setUp();
     }
@@ -101,14 +101,6 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
-
-        if ($defaultData->getUnit()) {
-            $unitDisabled = $form->get('unit_disabled');
-
-            $this->assertNotNull($unitDisabled);
-            $this->assertFormConfig($expectedOptions['unit_disabled'], $unitDisabled->getConfig());
-        }
-
         $this->assertFormConfig($expectedOptions['unit'], $form->get('unit')->getConfig());
 
         $form->submit($submittedData);
@@ -141,12 +133,8 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'unit' => [
                         'attr' => [
-                            'class' => 'hidden-unit'
+                            'class' => 'unit'
                         ]
-                    ],
-                    'unit_disabled' => [
-                        'disabled' => false,
-                        'mapped'   => false
                     ]
                 ],
                 'submittedData' => [],
@@ -156,7 +144,6 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
                 'defaultData'   => new ProductUnitPrecision(),
                 'expectedOptions' => [
                     'unit' => [],
-                    'unit_disabled' => []
                 ],
                 'submittedData' => [],
                 'expectedData'  => new ProductUnitPrecision()
@@ -165,19 +152,14 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
                 'defaultData'   => new ProductUnitPrecision(),
                 'expectedOptions' => [
                     'unit' => [],
-                    'unit_disabled' => []
                 ],
                 'submittedData' => [
                     'unit' => 'kg',
                     'precision' => 5,
-                    'conversionRate' => 2,
-                    'sell' => true,
                 ],
                 'expectedData'  => (new ProductUnitPrecision())
                     ->setUnit((new ProductUnit())->setCode('kg'))
                     ->setPrecision(5)
-                    ->setConversionRate(2)
-                    ->setSell(true)
             ]
         ];
     }
@@ -187,7 +169,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     public function testGetName()
     {
-        $this->assertEquals(ProductUnitPrecisionType::NAME, $this->formType->getName());
+        $this->assertEquals(ProductPrimaryUnitPrecisionType::NAME, $this->formType->getName());
     }
 
     /**

@@ -30,7 +30,7 @@ class ProductType extends AbstractType
     private $provider;
 
     /**
-     * @var DefaultProductUnitProvider
+     * @param DefaultProductUnitProvider $provider
      */
     public function __construct(DefaultProductUnitProvider $provider)
     {
@@ -144,7 +144,7 @@ class ProductType extends AbstractType
                     'label'          => 'orob2b.product.additional_unit_precisions.label',
                     'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
                     'error_bubbling' => false,
-                    'required'       => true,
+                    'required'       => false,
                 ]
             )
             ->add(
@@ -152,7 +152,6 @@ class ProductType extends AbstractType
                 ProductCustomFieldsChoiceType::NAME,
                 ['label' => 'orob2b.product.variant_fields.label']
             );
-
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
     }
 
