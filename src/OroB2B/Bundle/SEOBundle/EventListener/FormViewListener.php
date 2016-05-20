@@ -51,7 +51,7 @@ class FormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        $this->addViewPageBlock($event, 'OroB2BProductBundle:Product', 'OroB2BSEOBundle:Product:seo_view.html.twig');
+        $this->addViewPageBlock($event, 'OroB2BProductBundle:Product');
     }
 
     /**
@@ -59,7 +59,7 @@ class FormViewListener
      */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
-        $this->addEditPageBlock($event, 'OroB2BSEOBundle:Product:seo_update.html.twig');
+        $this->addEditPageBlock($event);
     }
 
     /**
@@ -67,7 +67,7 @@ class FormViewListener
      */
     public function onLandingPageView(BeforeListRenderEvent $event)
     {
-        $this->addViewPageBlock($event, 'OroB2BCMSBundle:Page', 'OroB2BSEOBundle:Page:seo_view.html.twig');
+        $this->addViewPageBlock($event, 'OroB2BCMSBundle:Page');
     }
 
     /**
@@ -75,7 +75,7 @@ class FormViewListener
      */
     public function onLandingPageEdit(BeforeListRenderEvent $event)
     {
-        $this->addEditPageBlock($event, 'OroB2BSEOBundle:Page:seo_update.html.twig');
+        $this->addEditPageBlock($event);
     }
 
     /**
@@ -83,13 +83,13 @@ class FormViewListener
      */
     public function onCategoryEdit(BeforeListRenderEvent $event)
     {
-        $this->addEditPageBlock($event, 'OroB2BSEOBundle:Category:seo_update.html.twig');
+        $this->addEditPageBlock($event);
     }
 
     /**
      * @param BeforeListRenderEvent $event
      */
-    protected function addViewPageBlock(BeforeListRenderEvent $event, $entitiyClass, $template)
+    protected function addViewPageBlock(BeforeListRenderEvent $event, $entitiyClass)
     {
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
@@ -97,9 +97,16 @@ class FormViewListener
         }
 
         $objectId = (int)$request->get('id');
-        $object = $this->doctrineHelper->getEntityReference($entitiyClass, $objectId);
+        if (!$objectId) {
+            return;
+        }
 
-        $template = $event->getEnvironment()->render($template, ['entity' => $object]);
+        $object = $this->doctrineHelper->getEntityReference($entitiyClass, $objectId);
+        if (!$object) {
+            return;
+        }
+
+        $template = $event->getEnvironment()->render('OroB2BSEOBundle:SEO:view.html.twig', ['entity' => $object]);
 
         $this->addSEOBlock($event->getScrollData(), $template);
     }
@@ -107,10 +114,10 @@ class FormViewListener
     /**
      * @param BeforeListRenderEvent $event
      */
-    protected function addEditPageBlock(BeforeListRenderEvent $event, $template)
+    protected function addEditPageBlock(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            $template,
+            'OroB2BSEOBundle:SEO:update.html.twig',
             ['form' => $event->getFormView()]
         );
 
