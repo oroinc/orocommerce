@@ -25,5 +25,3 @@ layout:
                     top_nav_container:
                         top_nav_controls: ~
                         top_nav: ~
-    conditions:
-        '@neq': [ $context.logged_user, null ]

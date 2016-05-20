@@ -12,17 +12,30 @@ define(function(require) {
             'click': 'onClick'
         },
 
+        dropdownWidget: null,
+
         initialize: function(options) {
             ProductAddToRfqView.__super__.initialize.apply(this, arguments);
 
+            this.dropdownWidget = options.dropdownWidget;
             if (options.productModel) {
                 this.model = options.productModel;
             }
         },
 
+        dispose: function() {
+            delete this.dropdownWidget;
+            ProductAddToRfqView.__super__.dispose.apply(this, arguments);
+        },
+
         onClick: function(e) {
             var $button = $(e.currentTarget);
             var productItems = {};
+
+            if (!this.dropdownWidget.validateForm()) {
+                return;
+            }
+
             productItems[this.model.get('id')] = [{
                 quantity: this.model.get('quantity'),
                 unit: this.model.get('unit')

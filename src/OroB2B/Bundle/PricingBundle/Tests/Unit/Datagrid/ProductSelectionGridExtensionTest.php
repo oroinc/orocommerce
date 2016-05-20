@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
@@ -75,18 +76,29 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function applicableDataProvider()
     {
-        $emptyToken = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $expectedToken = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $expectedToken->expects($this->any())
-            ->method('getUser')
-            ->will($this->returnValue(new AccountUser()));
-
         return [
             ['test', null, false],
-            ['products-select-grid-frontend', $emptyToken, false],
-            ['test', $expectedToken, false],
-            ['products-select-grid-frontend', $expectedToken, true],
+            ['products-select-grid-frontend', $this->getTockenMock(), false],
+            ['test', $this->getTockenMock(true), false],
+            ['products-select-grid-frontend', $this->getTockenMock(true), true],
         ];
+    }
+
+    /**
+     * @param bool $getUser
+     * @return \PHPUnit_Framework_MockObject_MockObject|TokenInterface
+     */
+    protected function getTockenMock($getUser = false)
+    {
+        $tokenMock = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+
+        if ($getUser) {
+            $tokenMock->expects($this->any())
+                ->method('getUser')
+                ->will($this->returnValue(new AccountUser()));
+        }
+
+        return $tokenMock;
     }
 
     /**

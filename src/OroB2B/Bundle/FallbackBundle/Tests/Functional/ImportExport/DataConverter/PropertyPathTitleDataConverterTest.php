@@ -12,6 +12,11 @@ use OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter\PropertyPathTitleDat
  */
 class PropertyPathTitleDataConverterTest extends WebTestCase
 {
+    /**
+     * @var PropertyPathTitleDataConverter
+     */
+    protected $converter;
+
     /** {@inheritdoc} */
     protected function setUp()
     {
@@ -20,6 +25,14 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
         $this->loadFixtures(
             ['OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData']
         );
+
+        $container = $this->getContainer();
+
+        $this->converter = new PropertyPathTitleDataConverter(
+            $container->get('oro_importexport.field.field_helper'),
+            $container->get('oro_importexport.data_converter.relation_calculator')
+        );
+        $this->converter->setDispatcher($container->get('event_dispatcher'));
     }
 
     /**
@@ -33,12 +46,9 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
         $fallbackClass = $this->getContainer()
             ->getParameter('orob2b_fallback.entity.localized_fallback_value.class');
 
-        /** @var PropertyPathTitleDataConverter $converter */
-        $converter = $this->getContainer()
-            ->get('orob2b_fallback.importexport.data_converter.property_path_title');
-        $converter->setEntityName($fallbackClass);
+        $this->converter->setEntityName($fallbackClass);
 
-        $this->assertEquals($expected, $converter->convertToImportFormat($data));
+        $this->assertEquals($expected, $this->converter->convertToImportFormat($data));
     }
 
     /**
@@ -73,12 +83,9 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
         $fallbackClass = $this->getContainer()
             ->getParameter('orob2b_fallback.entity.localized_fallback_value.class');
 
-        /** @var PropertyPathTitleDataConverter $converter */
-        $converter = $this->getContainer()
-            ->get('orob2b_fallback.importexport.data_converter.property_path_title');
-        $converter->setEntityName($fallbackClass);
+        $this->converter->setEntityName($fallbackClass);
 
-        $this->assertEquals($expected, $converter->convertToExportFormat($data));
+        $this->assertEquals($expected, $this->converter->convertToExportFormat($data));
     }
 
     /**

@@ -265,11 +265,13 @@ class ShoppingListManager
         $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
         /** @var ShoppingListRepository $repository */
         $repository = $em->getRepository('OroB2BShoppingListBundle:ShoppingList');
-        $shoppingList = null === $shoppingListId
-            ? $repository->findCurrentForAccountUser($this->getAccountUser())
-            : $repository->findByUserAndId($this->getAccountUser(), $shoppingListId);
+        if ($shoppingListId === null) {
+            $shoppingList = $repository->findCurrentForAccountUser($this->getAccountUser());
+        } else {
+            $shoppingList = $repository->findByUserAndId($this->getAccountUser(), $shoppingListId);
+        }
 
-        if (!($shoppingList instanceof ShoppingList)) {
+        if (!$shoppingList instanceof ShoppingList) {
             $shoppingList = $this->createCurrent();
         }
 

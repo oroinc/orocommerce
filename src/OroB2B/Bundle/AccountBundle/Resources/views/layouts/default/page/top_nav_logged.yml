@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BAccountBundle:layouts:default/page/top_nav.html.twig'
+            themes: 'OroB2BAccountBundle:layouts:default/page/top_nav_logged.html.twig'
         - '@addTree':
             items:
                 top_nav_left_logged_user:

@@ -5,6 +5,7 @@ parameters:
 services:
     orob2b_invoice.form.type.invoice:
         class: 'OroB2B\Bundle\InvoiceBundle\Form\Type\InvoiceType'
+        public: true
         calls:
             - [setDataClass, ['%orob2b_invoice.entity.invoice.class%']]
             - [setWebsiteClass, ['%orob2b_website.entity.website.class%']]
@@ -13,11 +14,13 @@ services:
 
     orob2b_invoice.form.type.invoice_line_item_collection:
         class: 'OroB2B\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemsCollectionType'
+        public: true
         tags:
             - { name: form.type, alias: "orob2b_invoice_line_items_collection" }
 
     orob2b_invoice.form.type.invoice_line_item:
         class: 'OroB2B\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemType'
+        public: true
         arguments:
             - "@doctrine"
             - "@orob2b_product.formatter.product_unit_label"
@@ -40,6 +43,7 @@ services:
 
     orob2b_invoice.event_listener.invoice_form_listener:
         class: OroB2B\Bundle\InvoiceBundle\EventListener\InvoiceFormListener
+        public: true
         arguments:
             - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item"
         tags:
@@ -47,6 +51,7 @@ services:
 
     orob2b_invoice.event_listener.total_calculate_listener:
         class: 'OroB2B\Bundle\InvoiceBundle\EventListener\TotalCalculateListener'
+        public: true
         arguments:
             - '@form.factory'
         tags:

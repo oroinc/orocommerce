@@ -9,6 +9,7 @@ services:
 
     orob2b_menu.form.type.menu_item:
         class: 'OroB2B\Bundle\MenuBundle\Form\Type\MenuItemType'
+        public: true
         calls:
             - [setDataClass, ['%orob2b_menu.entity.menu_item.class%']]
         tags:
@@ -16,6 +17,7 @@ services:
 
     orob2b_menu.tree.menu_item_tree_handler:
         class: 'OroB2B\Bundle\MenuBundle\JsTree\MenuItemTreeHandler'
+        public: true
         arguments:
             - '%orob2b_menu.entity.menu_item.class%'
             - "@doctrine"
@@ -23,9 +25,11 @@ services:
 
     orob2b_menu.entity.menu_item_manager:
         class: 'OroB2B\Bundle\MenuBundle\Entity\Manager\MenuItemManager'
+        public: true
 
     orob2b_menu.menu.factory:
         class: 'Knp\Menu\MenuFactory'
+        public: true
         calls:
             - [ addExtension, [ "@orob2b_menu.menu.acl_extension" ] ]
             - [ addExtension, [ "@orob2b_menu.menu.condition.condition_extension" ] ]
@@ -107,6 +111,7 @@ services:
 
     orob2b_menu.event_listener.menu_item_form_handler_listener:
         class: OroB2B\Bundle\MenuBundle\EventListener\MenuItemFormHandlerListener
+        public: true
         arguments:
             - "@orob2b_menu.menu_provider"
         tags:
@@ -123,6 +128,7 @@ services:
 
     orob2b_menu.layout.block_type.menu:
         class: OroB2B\Bundle\MenuBundle\Layout\Block\Type\MenuType
+        public: true
         arguments:
             - "@orob2b_menu.menu_provider"
             - "@knp_menu.matcher"
@@ -138,4 +144,4 @@ services:
         calls:
             - [setEntityClass, ['%orob2b_menu.entity.menu_item.class%']]
         tags:
-            - { name: kernel.cache_warmer}
+            - { name: kernel.cache_warmer }
