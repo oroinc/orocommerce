@@ -3,7 +3,7 @@ define(function(require) {
 
     var Select2InputWidget;
     var AbstractInputWidget = require('oroui/js/app/views/input-widget/abstract');
-    var _ = require('underscore');
+    var __ = require('orotranslation/js/translator');
     // current version: http://select2.github.io/select2/
     // last version: http://select2.github.io/examples.html
     require('jquery.select2');
@@ -12,90 +12,53 @@ define(function(require) {
         initializeOptions: {
             containerCssClass: 'oro-select2',
             dropdownCssClass: 'oro-select2__dropdown',
-            placeholder: 'Select an Option',
+            placeholder: __('Please select'),
             minimumResultsForSearch: Infinity // hiding the search box
         },
-
-        refreshOptions: '',
 
         widgetFunctionName: 'select2',
 
         destroyOptions: 'destroy',
 
-        refreshOnChange: true,
-
-        destroy: function() {
-            this.closeSelect();
-            this.$el[this.widgetFunctionName]('destroy');
+        isInitialized: function() {
+            return Boolean(this.$el.data(this.widgetFunctionName));
         },
 
-        isInitialized: function() {
-            return this.$el.data(this.widgetFunctionName) ? true : false;
+        disposeWidget: function() {
+            this.close();
+            return Select2InputWidget.__super__.disposeWidget.apply(this, arguments);
         },
 
         findContainer: function() {
             this.$container = this.$el.data(this.widgetFunctionName).container;
         },
 
-        getSelectetValue: function() {
-            return this.$el[this.widgetFunctionName]('val');
+        open: function() {
+            this.widgetFunction('open');
         },
 
-        selOptions: function(obj) {
-            var options = this.$el.data(this.widgetFunctionName).opts;
-
-            _.each(obj, function(item, index) {
-                options[index] = item;
-            });
+        close: function() {
+            this.widgetFunction('close');
         },
 
-        setValue: function(value) {
-            this.$el[this.widgetFunctionName]('val', value);
+        onOpening: function(callback) {
+            this._addEvent(this.widgetFunctionName + '-opening', callback);
         },
 
-        clear: function() {
-            this.$el[this.widgetFunctionName]('val', '');
+        onOpen: function(callback) {
+            this._addEvent(this.widgetFunctionName + '-open', callback);
         },
 
-        openSelect: function() {
-            this.$el[this.widgetFunctionName]('open');
+        onClose: function(callback) {
+            this._addEvent(this.widgetFunctionName + '-close', callback);
         },
 
-        closeSelect: function() {
-            this.$el[this.widgetFunctionName]('close');
+        onSelect: function(callback) {
+            this._addEvent(this.widgetFunctionName + '-selecting', callback);
         },
 
-        focusSelect: function() {
-            this.$el[this.widgetFunctionName]('focus');
-        },
-
-        addEvent: function(eventName, callback) {
-            var self = this;
-            this.$el.on(eventName, function() {
-                if (_.isFunction(callback)) {
-                    callback.apply(self, arguments);
-                }
-            });
-        },
-
-        opening: function(callback) {
-            this.addEvent(this.widgetFunctionName + '-opening', callback);
-        },
-
-        open: function(callback) {
-            this.addEvent(this.widgetFunctionName + '-open', callback);
-        },
-
-        close: function(callback) {
-            this.addEvent(this.widgetFunctionName + '-close', callback);
-        },
-
-        select: function(callback) {
-            this.addEvent(this.widgetFunctionName + '-selecting', callback);
-        },
-
-        unselect: function(callback) {
-            this.addEvent(this.widgetFunctionName + '-removing', callback);
+        onUnselect: function(callback) {
+            this._addEvent(this.widgetFunctionName + '-removing', callback);
         }
     });
 
