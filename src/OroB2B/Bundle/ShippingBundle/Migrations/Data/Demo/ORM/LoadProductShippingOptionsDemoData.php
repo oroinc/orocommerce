@@ -162,11 +162,13 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
      */
     protected function setProductDimensions(ProductShippingOptions $productShippingOptions, ObjectManager $manager)
     {
-        $model = new Dimensions();
-        $model->setUnit($this->getRandomLengthUnit($manager))
-            ->setLength(mt_rand(1, 10))
-            ->setHeight(mt_rand(1, 10))
-            ->setWidth(mt_rand(1, 10));
+        $model = Dimensions::create(
+            mt_rand(1, 10),
+            mt_rand(1, 10),
+            mt_rand(1, 10),
+            $this->getRandomLengthUnit($manager)
+        );
+
         $productShippingOptions->setDimensions($model);
     }
 
