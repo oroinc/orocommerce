@@ -178,7 +178,7 @@ class ProductRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('p');
         return $qb->select('partial p.{id}, image')
-            ->leftJoin('p.image', 'image', Expr\Join::WITH, $qb->expr()->isNotNull('image.id'))
+            ->join('p.image', 'image')
             ->where($qb->expr()->in('p', ':products'))
             ->setParameter('products', $products)
             ->getQuery()
