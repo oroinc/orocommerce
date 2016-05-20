@@ -50,6 +50,11 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
     protected $combinedPriceListToEntityClass = 'someOtherClass1';
 
     /**
+     * @var string
+     */
+    protected $fallbackClass = 'someOtherClass2';
+
+    /**
      * @var CombinedPriceListRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $combinedPriceListRepository;
@@ -63,6 +68,11 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $priceListToEntityRepository;
+
+    /**
+     * @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $fallbackRepository;
 
     /**
      * @var CombinedPriceListScheduleResolver
@@ -117,6 +127,18 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->fallbackRepository = $this
+            ->getMockBuilder('Doctrine\ORM\EntityRepository\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $fallbackEm = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
+        $fallbackEm->expects($this->any())
+            ->method('getRepository')
+            ->with($this->fallbackClass)
+            ->will($this->returnValue($this->fallbackRepository));
+
         $combinedPriceListEm = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
         $combinedPriceListEm->expects($this->any())
             ->method('getRepository')
@@ -150,6 +172,7 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
                         [$this->combinedPriceListClass, $combinedPriceListEm],
                         [$this->priceListToEntityClass, $priceListToEntityEm],
                         [$this->combinedPriceListToEntityClass, $combinedPriceListToEntityEm],
+                        [$this->fallbackClass, $fallbackEm],
                     ]
                 )
             );

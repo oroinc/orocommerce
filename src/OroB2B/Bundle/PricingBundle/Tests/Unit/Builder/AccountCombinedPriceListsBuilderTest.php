@@ -44,6 +44,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
         $this->builder->setPriceListToEntityClassName($this->priceListToEntityClass);
         $this->builder->setCombinedPriceListClassName($this->combinedPriceListClass);
         $this->builder->setCombinedPriceListToEntityClassName($this->combinedPriceListToEntityClass);
+        $this->builder->setFallbackClassName($this->fallbackClass);
     }
 
     /**
