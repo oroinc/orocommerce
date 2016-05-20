@@ -1,0 +1,4 @@
+orob2b_shipping_product_shipping_options_ajax:
+    resource:     "@OroB2BShippingBundle/Controller/AjaxProductShippingOptionsController.php"
+    type:         annotation
+    prefix:       /shipping/product-shipping
