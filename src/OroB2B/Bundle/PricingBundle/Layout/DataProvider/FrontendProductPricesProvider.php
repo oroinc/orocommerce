@@ -64,7 +64,22 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
                 ]
             );
         }
+        $data = $this->data[$productId];
 
-        return $this->data[$productId];
+        $unitPrecisions = $data[0]->getProduct()->getUnitPrecisions();
+        $unitsToSell = [];
+        foreach ($unitPrecisions as $unitPrecision) {
+            if ($unitPrecision->isSell()) {
+                $unitsToSell[] = $unitPrecision->getUnit();
+            }
+        }
+        foreach ($data as $key => $combinedProductPrice) {
+            if (!in_array($combinedProductPrice->getUnit(), $unitsToSell)) {
+                unset($data[$key]);
+            }
+        }
+
+        return $data;
     }
 }
+
