@@ -14,15 +14,16 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class LoadQuoteData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
-    const QUOTE1    = 'sale.quote.1';
-    const QUOTE2    = 'sale.quote.2';
-    const QUOTE3    = 'sale.quote.3';
-    const QUOTE4    = 'sale.quote.4';
-    const QUOTE5    = 'sale.quote.5';
-    const QUOTE6    = 'sale.quote.6';
-    const QUOTE7    = 'sale.quote.7';
-    const QUOTE8    = 'sale.quote.8';
-    const QUOTE9    = 'sale.quote.9';
+    const QUOTE1    = 'sale.quote.01';
+    const QUOTE2    = 'sale.quote.02';
+    const QUOTE3    = 'sale.quote.03';
+    const QUOTE4    = 'sale.quote.04';
+    const QUOTE5    = 'sale.quote.05';
+    const QUOTE6    = 'sale.quote.06';
+    const QUOTE7    = 'sale.quote.07';
+    const QUOTE8    = 'sale.quote.08';
+    const QUOTE9    = 'sale.quote.09';
+    const QUOTE10   = 'sale.quote.10';
 
     const PRODUCT1  = 'product.1';
     const PRODUCT2  = 'product.2';
@@ -108,7 +109,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'qid'           => self::QUOTE5,
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER3,
-            'validUntil'    => '',
+            'validUntil'    => 'now',
             'products'      => [],
         ],
         self::QUOTE6 => [
@@ -126,7 +127,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'qid'           => self::QUOTE8,
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER3,
-            'validUntil'    => '',
+            'validUntil'    => 'now',
             'expired'       => true,
             'products'      => [],
         ],
@@ -135,6 +136,14 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER3,
             'expired'       => true,
+            'products'      => [],
+        ],
+        self::QUOTE10 => [
+            'qid'           => self::QUOTE10,
+            'account'       => LoadUserData::ACCOUNT1,
+            'accountUser'   => LoadUserData::ACCOUNT1_USER3,
+            'validUntil'    => null,
+            'expired'       => false,
             'products'      => [],
         ],
     ];
@@ -172,7 +181,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                 ->setPoNumber($poNumber)
                 ->setValidUntil(
                     array_key_exists('validUntil', $item)
-                    ? new \DateTime($item['validUntil'])
+                    ? ($item['validUntil'] ? new \DateTime($item['validUntil']) : null)
                     : new \DateTime('+10 day')
                 )
                 ->setExpired(array_key_exists('expired', $item) ? $item['expired'] : null);

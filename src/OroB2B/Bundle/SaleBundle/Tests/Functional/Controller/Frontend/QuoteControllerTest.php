@@ -129,6 +129,9 @@ class QuoteControllerTest extends WebTestCase
                         [
                             'qid' => LoadQuoteData::QUOTE9,
                         ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE10,
+                        ],
                     ],
                     'columns' => [
                         'id',
@@ -166,6 +169,9 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'qid' => LoadQuoteData::QUOTE9,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE10,
                         ],
                     ],
                     'columns' => [
@@ -400,6 +406,34 @@ class QuoteControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'createOrderButton' => false,
+                    'columns' => [
+                        [
+                            'label' => 'orob2b.frontend.sale.quote.qid.label',
+                            'property' => 'qid',
+                        ],
+                        [
+                            'label' => 'orob2b.frontend.sale.quote.valid_until.label',
+                            'property' => 'valid_until',
+                        ],
+                        [
+                            'label' => 'orob2b.sale.quote.po_number.label',
+                            'property' => 'po_number',
+                        ],
+                        [
+                            'label' => 'orob2b.sale.quote.ship_until.label',
+                            'property' => 'ship_until',
+                        ],
+                    ],
+                ],
+            ],
+            'account1 user3 (AccountUser:VIEW_LOCAL, null Quote date)' => [
+                'input' => [
+                    'qid' => LoadQuoteData::QUOTE10,
+                    'login' => LoadUserData::ACCOUNT1_USER3,
+                    'password' => LoadUserData::ACCOUNT1_USER3,
+                ],
+                'expected' => [
+                    'createOrderButton' => true,
                     'columns' => [
                         [
                             'label' => 'orob2b.frontend.sale.quote.qid.label',
