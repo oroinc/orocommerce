@@ -40,7 +40,16 @@ class LocaleHelper
      */
     public function getCurrentLocale()
     {
-        return $this->getRepository()->findOneByCode('en');
+        return $this->getLocale('en');
+    }
+
+    /**
+     * @param string $code
+     * @return null|Locale
+     */
+    public function getLocale($code)
+    {
+        return $this->getRepository()->findOneByCode($code);
     }
 
     /**

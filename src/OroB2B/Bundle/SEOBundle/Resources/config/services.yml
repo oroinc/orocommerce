@@ -30,6 +30,7 @@ services:
             - "@doctrine"
         tags:
             - { name: form.type_extension, alias: orob2b_product }
+
     orob2b_seo.form.extension.category_type:
         class: 'OroB2B\Bundle\SEOBundle\Form\Extension\CategoryFormExtension'
         arguments:

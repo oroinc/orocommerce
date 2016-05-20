@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\FallbackBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
 
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 trait FallbackTrait
@@ -21,12 +22,24 @@ trait FallbackTrait
             }
         );
 
-        // TODO: implement with fallback
         if ($filteredValues->count() > 1) {
             $localeTitle = $locale ? $locale->getTitle() : 'default';
             throw new \LogicException(sprintf('There must be only one %s title', $localeTitle));
         }
+
         $value = $filteredValues->first();
+        if ($value) {
+            switch ($value->getFallback()) {
+                case FallbackType::PARENT_LOCALE:
+                    $value = $this->getLocalizedFallbackValue($values, $locale->getParentLocale());
+                    break;
+                case FallbackType::SYSTEM:
+                    $value = $this->getLocalizedFallbackValue($values);
+                    break;
+                default:
+                    return $value;
+            }
+        }
         if (!$value && $locale !== null) {
             $value = $this->getLocalizedFallbackValue($values); // get default value
         }

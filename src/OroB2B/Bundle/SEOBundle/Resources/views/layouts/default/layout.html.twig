@@ -12,7 +12,7 @@
 
 {% block fallback_locale_value %}
     {% if values is not null  %}
-        {% set attr = attr|merge({content : oro_fallback_locale_value(oro_locale(), values)}) %}
+        {% set attr = attr|merge({content : fallback_locale_value(values, oro_locale())}) %}
     {% endif %}
     {{ block('meta_widget') }}
 {% endblock %}
