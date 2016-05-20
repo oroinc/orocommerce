@@ -1,8 +1,6 @@
 <?php
 
-
 namespace OroB2B\Bundle\SEOBundle\Tests\Unit\EventListener;
-
 
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use OroB2B\Bundle\CMSBundle\Entity\Page;
@@ -37,7 +35,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 
-        $this->listener = new FormViewListener($requestStack ,$this->translator, $this->doctrineHelper);
+        $this->listener = new FormViewListener($requestStack, $this->translator, $this->doctrineHelper);
     }
 
     public function testOnProductView()
