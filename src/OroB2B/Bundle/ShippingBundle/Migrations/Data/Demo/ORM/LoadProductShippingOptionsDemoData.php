@@ -168,6 +168,7 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
             mt_rand(1, 10),
             $this->getRandomLengthUnit($manager)
         );
+
         $productShippingOptions->setDimensions($model);
     }
 
