@@ -3,14 +3,21 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Performance\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
+
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\AbstractFixture;
 
-class LoadQuoteDataForPerformanceTest extends LoadQuoteData
+class LoadQuoteDataForPerformance extends AbstractFixture
 {
-    const NUMBER_OF_QUOTE_GROUPS = 2100000 / 7;
+    /** Total quotes will be NUMBER_OF_QUOTE_GROUPS * 7 */
+    const NUMBER_OF_QUOTE_GROUPS = 10000;
 
-    protected $nrOfQuotesToExpire = 870;
+    const QUOTES_TO_EXPIRE = 10000;
 
+    /** @var int  */
+    protected $quotesToExpire = self::QUOTES_TO_EXPIRE;
+
+    /** @var array  */
     protected static $quoteUpdateFields = [
         'user_owner_id',
         'qid',
@@ -37,10 +44,11 @@ class LoadQuoteDataForPerformanceTest extends LoadQuoteData
             $params[] = "'%s'";
         }
         $valueSprintf = '(' . implode(', ', $params) . '),';
+        $UTC = new \DateTimeZone("UTC");
 
         for ($i = 1; $i <= static::NUMBER_OF_QUOTE_GROUPS; $i++) {
             $quoteSql = $insertQuoteBaseSql;
-            foreach (self::$items as $item) {
+            foreach (LoadQuoteData::$items as $item) {
                 $poNumber = 'CA' . rand(1000, 9999) . 'USD';
 
                 // generate VALUES sql
@@ -49,13 +57,13 @@ class LoadQuoteDataForPerformanceTest extends LoadQuoteData
                     $user->getId(),
                     $item['qid'],
                     $user->getOrganization()->getId(),
-                    (new \DateTime('+10 day'))->format('Y-m-d'),
+                    (new \DateTime('+10 day', $UTC))->format('Y-m-d'),
                     $poNumber,
-                    (new \DateTime())->format('Y-m-d'),
-                    (new \DateTime())->format('Y-m-d'),
+                    (new \DateTime('now', $UTC))->format('Y-m-d'),
+                    (new \DateTime('now', $UTC))->format('Y-m-d'),
                     0,
                     $this->getExpiredValue(),
-                    $this->getValidUntilValue()
+                    $this->getValidUntilValue($UTC)
                 );
             }
             $quoteSql = substr($quoteSql, 0, -1) . ';';
@@ -68,9 +76,9 @@ class LoadQuoteDataForPerformanceTest extends LoadQuoteData
      */
     protected function getUpdateQuotesBaseSql()
     {
-        $sql = 'INSERT INTO `orob2b_sale_quote` (';
+        $sql = "INSERT INTO orob2b_sale_quote (";
         foreach (self::$quoteUpdateFields as $field) {
-            $sql .= '`' . $field . '`, ';
+            $sql .= $field . ", ";
         }
         $sql = substr($sql, 0, -2) . ') VALUES ';
 
@@ -82,8 +90,8 @@ class LoadQuoteDataForPerformanceTest extends LoadQuoteData
      */
     protected function getExpiredValue()
     {
-        if ($this->nrOfQuotesToExpire > 0) {
-            $this->nrOfQuotesToExpire--;
+        if ($this->quotesToExpire >= 0) {
+            $this->quotesToExpire--;
 
             return 0;
         }
@@ -94,10 +102,23 @@ class LoadQuoteDataForPerformanceTest extends LoadQuoteData
     /**
      * @return string
      */
-    protected function getValidUntilValue()
+    protected function getValidUntilValue($timezone)
     {
-        return $this->nrOfQuotesToExpire > 0
-            ? (new \DateTime('-1days'))->format('Y-m-d H:i:s')
-            : (new \DateTime('+1days'))->format('Y-m-d H:i:s');
+        return $this->quotesToExpire >= 0
+            ? (new \DateTime('-1days', $timezone))->format('Y-m-d H:i:s')
+            : (new \DateTime('+1days', $timezone))->format('Y-m-d H:i:s');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return [
+            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
+            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses',
+            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+        ];
     }
 }

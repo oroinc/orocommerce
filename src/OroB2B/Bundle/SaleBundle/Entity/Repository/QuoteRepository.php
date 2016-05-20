@@ -35,22 +35,4 @@ class QuoteRepository extends EntityRepository
 
         return null;
     }
-
-    /**
-     * @param bool $onlyInvalid
-     * @return int
-     */
-    public function countQuotes($onlyInvalid = false)
-    {
-        $qb = $this->createQueryBuilder('q')
-            ->select('COUNT(q)');
-        if ($onlyInvalid) {
-            $qb = $qb->where('q.expired = 0')
-                ->andWhere('q.validUntil <= :date')
-                ->setParameter('date', new \DateTime());
-        }
-
-        return $qb->getQuery()
-            ->getSingleScalarResult();
-    }
 }

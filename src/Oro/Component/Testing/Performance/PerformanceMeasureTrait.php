@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Performance;
+namespace Oro\Component\Testing\Performance;
 
 use Symfony\Component\Stopwatch\Stopwatch;
 
@@ -14,7 +14,7 @@ trait PerformanceMeasureTrait
      */
     public static function startMeasurement($testName)
     {
-        self::verifyStopwatchInstance();
+        self::initializeStopwatch();
         self::$stopwatch->start($testName);
     }
 
@@ -24,13 +24,13 @@ trait PerformanceMeasureTrait
      */
     public static function stopMeasurement($testName)
     {
-        self::verifyStopwatchInstance();
+        self::initializeStopwatch();
         self::$stopwatch->stop($testName);
 
         return self::$stopwatch->getEvent($testName)->getDuration();
     }
 
-    private static function verifyStopwatchInstance()
+    private static function initializeStopwatch()
     {
         if (!self::$stopwatch) {
             self::$stopwatch = new Stopwatch();
