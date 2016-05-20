@@ -287,6 +287,9 @@ class ProductShippingOptions implements
         if ($this->weight) {
             $this->weightValue = $this->weight->getValue();
             $this->weightUnit = $this->weight->getUnit();
+        } else {
+            $this->weightValue = null;
+            $this->weightUnit = null;
         }
     }
 
@@ -296,11 +299,16 @@ class ProductShippingOptions implements
      */
     public function updateDimensions()
     {
-        if ($this->dimensions) {
-            $this->dimensionsLength = $this->dimensions->getLength();
-            $this->dimensionsWidth = $this->dimensions->getWidth();
-            $this->dimensionsHeight = $this->dimensions->getHeight();
+        if ($this->dimensions && $this->dimensions->getValue()) {
+            $this->dimensionsLength = $this->dimensions->getValue()->getLength();
+            $this->dimensionsWidth = $this->dimensions->getValue()->getWidth();
+            $this->dimensionsHeight = $this->dimensions->getValue()->getHeight();
             $this->dimensionsUnit = $this->dimensions->getUnit();
+        } else {
+            $this->dimensionsLength = null;
+            $this->dimensionsWidth = null;
+            $this->dimensionsHeight = null;
+            $this->dimensionsUnit = null;
         }
     }
 }

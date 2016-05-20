@@ -33,7 +33,7 @@ OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions:
         freightClass:
             - Valid: ~
 
-OroB2B\Bundle\ShippingBundle\Model\Dimensions:
+OroB2B\Bundle\ShippingBundle\Model\DimensionsValue:
     properties:
         length:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~

@@ -6,11 +6,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ShippingBundle\Form\DataTransformer\WeightTransformer;
-
-class WeightType extends AbstractType
+class DimensionsValueType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_weight';
+    const NAME = 'orob2b_shipping_dimensions_value';
 
     /** @var string */
     protected $dataClass;
@@ -30,23 +28,29 @@ class WeightType extends AbstractType
     {
         $builder
             ->add(
-                'value',
+                'length',
                 'number',
                 [
-                    'attr' => ['class' => 'value'],
+                    'attr' => ['class' => 'length'],
                     'required' => false,
                 ]
             )
             ->add(
-                'unit',
-                WeightUnitSelectType::NAME,
+                'width',
+                'number',
                 [
-                    'placeholder' => 'orob2b.shipping.form.placeholder.weight_unit.label',
+                    'attr' => ['class' => 'width'],
+                    'required' => false,
+                ]
+            )
+            ->add(
+                'height',
+                'number',
+                [
+                    'attr' => ['class' => 'height'],
                     'required' => false,
                 ]
             );
-
-        $builder->addViewTransformer(new WeightTransformer());
     }
 
     /**

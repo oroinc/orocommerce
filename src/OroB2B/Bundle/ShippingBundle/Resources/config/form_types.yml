@@ -79,6 +79,14 @@ services:
         tags:
             - { name: form.type, alias: orob2b_shipping_dimensions }
 
+    orob2b_shipping.form.type.dimensions_value:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsValueType
+        public: true
+        calls:
+            - [setDataClass, ['%orob2b_shipping.model.dimensions_value.class%']]
+        tags:
+            - { name: form.type, alias: orob2b_shipping_dimensions_value }
+
     orob2b_shipping.form.product_shipping_option:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType
         public: true

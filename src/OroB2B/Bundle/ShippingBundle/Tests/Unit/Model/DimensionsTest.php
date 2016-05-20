@@ -6,6 +6,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
 use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
+use OroB2B\Bundle\ShippingBundle\Model\DimensionsValue;
 
 class DimensionsTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,11 +30,20 @@ class DimensionsTest extends \PHPUnit_Framework_TestCase
         static::assertPropertyAccessors(
             $this->model,
             [
-                ['length', 12.3],
-                ['width', 45.6],
-                ['height', 78.9],
+                ['value', new DimensionsValue()],
                 ['unit', new LengthUnit()]
             ]
         );
+    }
+
+    public function testCreate()
+    {
+        $unit = new LengthUnit();
+
+        $model = Dimensions::create(12, 34, 56, $unit);
+
+        $this->assertInstanceOf('OroB2B\Bundle\ShippingBundle\Model\Dimensions', $model);
+        $this->assertAttributeEquals(DimensionsValue::create(12, 34, 56), 'value', $model);
+        $this->assertAttributeSame($unit, 'unit', $model);
     }
 }

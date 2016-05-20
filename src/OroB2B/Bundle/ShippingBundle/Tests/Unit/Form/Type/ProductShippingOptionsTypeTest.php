@@ -14,6 +14,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType;
+use OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsValueType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\FreightClassSelectType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
@@ -122,9 +123,11 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                         'unit' => 'kg',
                     ],
                     'dimensions' => [
-                        'length' => 2,
-                        'width' => 3,
-                        'height' => 4,
+                        'value' => [
+                            'length' => 2,
+                            'width' => 3,
+                            'height' => 4
+                        ],
                         'unit' => 'mm',
                     ],
                     'freightClass' => 'pl',
@@ -142,9 +145,11 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                         'unit' => 'kg',
                     ],
                     'dimensions' => [
-                        'length' => 2,
-                        'width' => 3,
-                        'height' => 4,
+                        'value' => [
+                            'length' => 2,
+                            'width' => 3,
+                            'height' => 4
+                        ],
                         'unit' => 'mm',
                     ],
                     'freightClass' => 'pl',
@@ -157,9 +162,11 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'productUnit' => 'item',
                     'dimensions' => [
-                        'length' => 2,
-                        'width' => 3,
-                        'height' => 4,
+                        'value' => [
+                            'length' => 2,
+                            'width' => 3,
+                            'height' => 4
+                        ],
                         'unit' => 'mm',
                     ],
                     'freightClass' => 'pl',
@@ -189,9 +196,11 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                         'unit' => 'kg',
                     ],
                     'dimensions' => [
-                        'length' => 2,
-                        'width' => 3,
-                        'height' => 4,
+                        'value' => [
+                            'length' => 2,
+                            'width' => 3,
+                            'height' => 4
+                        ],
                         'unit' => 'mm',
                     ],
                 ],
@@ -207,9 +216,11 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                         'unit' => 'kg',
                     ],
                     'dimensions' => [
-                        'length' => 2,
-                        'width' => 3,
-                        'height' => 4,
+                        'value' => [
+                            'length' => 2,
+                            'width' => 3,
+                            'height' => 4
+                        ],
                         'unit' => 'mm',
                     ],
                     'freightClass' => 'pl',
@@ -272,9 +283,14 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                 $this->getEntity(
                     'OroB2B\Bundle\ShippingBundle\Model\Dimensions',
                     [
-                        'length' => $dimensions[0],
-                        'width' => $dimensions[1],
-                        'height' => $dimensions[2],
+                        'value' => $this->getEntity(
+                            'OroB2B\Bundle\ShippingBundle\Model\DimensionsValue',
+                            [
+                                'length' => $dimensions[0],
+                                'width' => $dimensions[1],
+                                'height' => $dimensions[2]
+                            ]
+                        ),
                         'unit' => $this->getEntity(
                             'OroB2B\Bundle\ShippingBundle\Entity\LengthUnit',
                             [
@@ -331,11 +347,15 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         $dimensionsType = new DimensionsType();
         $dimensionsType->setDataClass('OroB2B\Bundle\ShippingBundle\Model\Dimensions');
 
+        $dimensionsValueType = new DimensionsValueType();
+        $dimensionsValueType->setDataClass('OroB2B\Bundle\ShippingBundle\Model\DimensionsValue');
+
         return [
             new PreloadedExtension(
                 [
                     $weightType->getName() => $weightType,
                     $dimensionsType->getName() => $dimensionsType,
+                    $dimensionsValueType->getName() => $dimensionsValueType,
                     FreightClassSelectType::NAME => new EntityType(
                         [
                             'pl' => $this->getEntity(

@@ -9,6 +9,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
 use OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType;
+use OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsValueType;
 use OroB2B\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
 use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
 
@@ -58,18 +59,22 @@ class DimensionsTypeTest extends FormIntegrationTestCase
         return [
             'empty default data' => [
                 'submittedData' => [
-                    'length' => '42',
-                    'width' => '42',
-                    'height' => '42',
+                    'value' => [
+                        'length' => '42',
+                        'width' => '42',
+                        'height' => '42'
+                    ],
                     'unit' => 'foot',
                 ],
                 'expectedData' => $this->getDimensions($this->getLengthUnit('foot'), 42, 42, 42)
             ],
             'full data' => [
                 'submittedData' => [
-                    'length' => '2',
-                    'width' => '4',
-                    'height' => '6',
+                    'value' => [
+                        'length' => '2',
+                        'width' => '4',
+                        'height' => '6'
+                    ],
                     'unit' => 'm',
                 ],
                 'expectedData' => $this->getDimensions($this->getLengthUnit('m'), 2, 4, 6),
@@ -109,6 +114,9 @@ class DimensionsTypeTest extends FormIntegrationTestCase
      */
     public function getExtensions()
     {
+        $valueType = new DimensionsValueType();
+        $valueType->setDataClass('OroB2B\Bundle\ShippingBundle\Model\DimensionsValue');
+
         return [
             new PreloadedExtension(
                 [
@@ -119,7 +127,8 @@ class DimensionsTypeTest extends FormIntegrationTestCase
                             'foot' => $this->getLengthUnit('foot')
                         ],
                         LengthUnitSelectType::NAME
-                    )
+                    ),
+                    $valueType->getName() => $valueType
                 ],
                 []
             ),

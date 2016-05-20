@@ -23,9 +23,9 @@ class WeightTransformer implements DataTransformerInterface
      */
     public function reverseTransform($weight)
     {
-        if (!$weight ||
-            !$weight instanceof Weight ||
-            $weight->getValue() && filter_var($weight->getValue(), FILTER_VALIDATE_FLOAT) === false
+        if (!$weight instanceof Weight ||
+            !$weight->getValue() ||
+            filter_var($weight->getValue(), FILTER_VALIDATE_FLOAT) === false
         ) {
             return null;
         }

@@ -37,19 +37,23 @@ class WeightTransformerTest extends \PHPUnit_Framework_TestCase
         return [
             'empty data' => [
                 'value' => null,
-                'expected' => null,
+                'expected' => null
             ],
             'full data' => [
                 'value' => $weight,
-                'expected' => $weight,
+                'expected' => $weight
             ],
             'bad data' => [
                 'value' => $this->getWeight($this->getWeightUnit('kg'), 'bad'),
-                'expected' => null,
+                'expected' => null
             ],
             'bad type' => [
                 'value' => 'string',
-                'expected' => null,
+                'expected' => null
+            ],
+            'empty value' => [
+                'value' => $this->getWeight($this->getWeightUnit('kg'), null),
+                'expected' => null
             ],
         ];
     }

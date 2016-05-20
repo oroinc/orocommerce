@@ -2,13 +2,7 @@
     <tr>
         <td class="renderable"><div class="text-center">{{ shippingOption.productUnit|orob2b_format_product_unit_label }}</div></td>
         <td class="renderable"><div class="text-center">{{ shippingOption.weight.value|orob2b_weight_unit_format_value_short(shippingOption.weight.unit) }}</div></td>
-        <td class="renderable"><div class="text-center">
-            {% if shippingOption.dimensions.unit and (shippingOption.dimensions.length or shippingOption.dimensions.width or shippingOption.dimensions.height) %}
-                {{ shippingOption.dimensions.length|default('N/A')|trans }} x {{ shippingOption.dimensions.width|default('N/A')|trans }} x {{ shippingOption.dimensions.height|default('N/A')|trans }} {{ shippingOption.dimensions.unit|orob2b_length_unit_format_label(true, true) }}
-            {% else %}
-                {{ 'N/A'|trans }}
-            {% endif %}
-        </div></td>
+        <td class="renderable"><div class="text-center">{{ shippingOption.dimensions.value|orob2b_dimensions_unit_format_value_short(shippingOption.dimensions.unit) }}</div></td>
         <td class="renderable"><div class="text-center">{{ shippingOption.freightClass|orob2b_freight_class_format_label() }}</div></td>
     </tr>
 {% endmacro %}

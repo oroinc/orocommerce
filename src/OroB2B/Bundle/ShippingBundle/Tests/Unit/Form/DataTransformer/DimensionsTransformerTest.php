@@ -37,20 +37,24 @@ class DimensionsTransformerTest extends \PHPUnit_Framework_TestCase
         return [
             'empty data' => [
                 'value' => null,
-                'expected' => null,
+                'expected' => null
             ],
             'full data' => [
                 'value' => $dimension,
-                'expected' => $dimension,
+                'expected' => $dimension
             ],
             'bad data' => [
                 'value' => $this->getDimensions($this->getLengthUnit('m'), 'bad', 4, 6),
-                'expected' => null,
+                'expected' => null
             ],
             'bad type' => [
                 'value' => 'string',
-                'expected' => null,
+                'expected' => null
             ],
+            'empty values' => [
+                'value' => $this->getDimensions($this->getLengthUnit('m'), null, null, null),
+                'expected' => null
+            ]
         ];
     }
 

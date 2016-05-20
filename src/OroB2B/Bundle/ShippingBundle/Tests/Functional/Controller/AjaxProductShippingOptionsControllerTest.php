@@ -30,9 +30,11 @@ class AjaxProductShippingOptionsControllerTest extends WebTestCase
                 'unit' => 'lbs'
             ],
             'dimensions' => [
-                'length' => 100,
-                'width' => 200,
-                'height' => 300,
+                'value' => [
+                    'length' => 100,
+                    'width' => 200,
+                    'height' => 300
+                ],
                 'unit' => 'foot'
             ],
             'freightClass' => $requiredFreightClass

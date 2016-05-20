@@ -29,24 +29,13 @@ class DimensionsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('length', 'number', [
-                    'attr' => [
-                        'class' => 'length'
-                    ],
+            ->add(
+                'value',
+                DimensionsValueType::NAME,
+                [
                     'required' => false,
-                ])
-            ->add('width', 'number', [
-                    'attr' => [
-                        'class' => 'width'
-                    ],
-                    'required' => false,
-                ])
-            ->add('height', 'number', [
-                    'attr' => [
-                        'class' => 'height'
-                    ],
-                    'required' => false,
-                ])
+                ]
+            )
             ->add(
                 'unit',
                 LengthUnitSelectType::NAME,
@@ -66,8 +55,7 @@ class DimensionsType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => $this->dataClass,
-                'error_bubbling' => false,
+                'data_class' => $this->dataClass
             ]
         );
     }

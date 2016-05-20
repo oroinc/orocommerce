@@ -7,19 +7,9 @@ use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
 class Dimensions
 {
     /**
-     * @var float
+     * @var DimensionsValue
      */
-    protected $length;
-
-    /**
-     * @var float
-     */
-    protected $width;
-
-    /**
-     * @var float
-     */
-    protected $height;
+    protected $value;
 
     /**
      * @var LengthUnit
@@ -36,72 +26,31 @@ class Dimensions
      */
     public static function create($length, $width, $height, LengthUnit $unit = null)
     {
+        $value = DimensionsValue::create($length, $width, $height);
+
         /* @var $dimensions Dimensions */
         $dimensions = new static();
-        $dimensions->setLength($length)
-            ->setWidth($width)
-            ->setHeight($height)
-            ->setUnit($unit);
+        $dimensions->setValue($value)->setUnit($unit);
 
         return $dimensions;
     }
 
     /**
-     * @return float
+     * @return DimensionsValue
      */
-    public function getLength()
+    public function getValue()
     {
-        return $this->length;
+        return $this->value;
     }
 
     /**
-     * @param float $length
+     * @param DimensionsValue $value
      *
      * @return $this
      */
-    public function setLength($length)
+    public function setValue(DimensionsValue $value)
     {
-        $this->length = $length;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param float $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    /**
-     * @param float $height
-     *
-     * @return $this
-     */
-    public function setHeight($height)
-    {
-        $this->height = $height;
+        $this->value = $value;
 
         return $this;
     }

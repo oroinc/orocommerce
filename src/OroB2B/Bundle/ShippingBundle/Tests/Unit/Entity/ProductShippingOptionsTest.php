@@ -11,6 +11,7 @@ use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
 use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
+use OroB2B\Bundle\ShippingBundle\Model\DimensionsValue;
 use OroB2B\Bundle\ShippingBundle\Model\Weight;
 
 class ProductShippingOptionsTest extends \PHPUnit_Framework_TestCase
@@ -99,6 +100,11 @@ class ProductShippingOptionsTest extends \PHPUnit_Framework_TestCase
         $this->entity->updateWeight();
         $this->assertAttributeEquals($weight->getValue(), 'weightValue', $this->entity);
         $this->assertAttributeEquals($weight->getUnit(), 'weightUnit', $this->entity);
+
+        $this->setProperty($this->entity, 'weight', null);
+        $this->entity->updateWeight();
+        $this->assertAttributeEquals(null, 'weightValue', $this->entity);
+        $this->assertAttributeEquals(null, 'weightUnit', $this->entity);
     }
 
     public function testSetGetDimensions()
@@ -124,9 +130,9 @@ class ProductShippingOptionsTest extends \PHPUnit_Framework_TestCase
 
         $dimensions = $this->entity->getDimensions();
         $this->assertInstanceOf('OroB2B\Bundle\ShippingBundle\Model\Dimensions', $dimensions);
-        $this->assertEquals($length, $dimensions->getLength());
-        $this->assertEquals($width, $dimensions->getWidth());
-        $this->assertEquals($height, $dimensions->getHeight());
+        $this->assertEquals($length, $dimensions->getValue()->getLength());
+        $this->assertEquals($width, $dimensions->getValue()->getWidth());
+        $this->assertEquals($height, $dimensions->getValue()->getHeight());
         $this->assertSame($unit, $dimensions->getUnit());
 
         $dimensions = Dimensions::create(32.1, 65.4, 98.7, new LengthUnit('inch'));
@@ -134,10 +140,17 @@ class ProductShippingOptionsTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($dimensions, $this->entity->getDimensions());
 
         $this->entity->updateDimensions();
-        $this->assertAttributeEquals($dimensions->getLength(), 'dimensionsLength', $this->entity);
-        $this->assertAttributeEquals($dimensions->getWidth(), 'dimensionsWidth', $this->entity);
-        $this->assertAttributeEquals($dimensions->getHeight(), 'dimensionsHeight', $this->entity);
+        $this->assertAttributeEquals($dimensions->getValue()->getLength(), 'dimensionsLength', $this->entity);
+        $this->assertAttributeEquals($dimensions->getValue()->getWidth(), 'dimensionsWidth', $this->entity);
+        $this->assertAttributeEquals($dimensions->getValue()->getHeight(), 'dimensionsHeight', $this->entity);
         $this->assertAttributeEquals($dimensions->getUnit(), 'dimensionsUnit', $this->entity);
+
+        $this->setProperty($this->entity, 'dimensions', null);
+        $this->entity->updateDimensions();
+        $this->assertAttributeEquals(null, 'dimensionsLength', $this->entity);
+        $this->assertAttributeEquals(null, 'dimensionsWidth', $this->entity);
+        $this->assertAttributeEquals(null, 'dimensionsHeight', $this->entity);
+        $this->assertAttributeEquals(null, 'dimensionsUnit', $this->entity);
     }
 
     /**

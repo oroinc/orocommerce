@@ -34,9 +34,11 @@ class ProductControllerTest extends WebTestCase
                 'unit' => 'lbs'
             ],
             'dimensions' => [
-                'length' => 100,
-                'width' => 200,
-                'height' => 300,
+                'value' => [
+                    'length' => 100,
+                    'width' => 200,
+                    'height' => 300
+                ],
                 'unit' => 'foot'
             ],
             'freightClass' => 'parcel'
@@ -70,9 +72,9 @@ class ProductControllerTest extends WebTestCase
         $this->assertNotEmpty($option);
         $this->assertEquals($data['weight']['value'], $option->getWeight()->getValue());
         $this->assertEquals($data['weight']['unit'], $option->getWeight()->getUnit()->getCode());
-        $this->assertEquals($data['dimensions']['length'], $option->getDimensions()->getLength());
-        $this->assertEquals($data['dimensions']['width'], $option->getDimensions()->getWidth());
-        $this->assertEquals($data['dimensions']['height'], $option->getDimensions()->getHeight());
+        $this->assertEquals($data['dimensions']['value']['length'], $option->getDimensions()->getValue()->getLength());
+        $this->assertEquals($data['dimensions']['value']['width'], $option->getDimensions()->getValue()->getWidth());
+        $this->assertEquals($data['dimensions']['value']['height'], $option->getDimensions()->getValue()->getHeight());
         $this->assertEquals($data['dimensions']['unit'], $option->getDimensions()->getUnit()->getCode());
         $this->assertEquals($data['freightClass'], $option->getFreightClass()->getCode());
 
@@ -143,9 +145,9 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(
             sprintf(
                 '%s x %s x %s %s',
-                $option->getDimensions()->getLength(),
-                $option->getDimensions()->getWidth(),
-                $option->getDimensions()->getHeight(),
+                $option->getDimensions()->getValue()->getLength(),
+                $option->getDimensions()->getValue()->getWidth(),
+                $option->getDimensions()->getValue()->getHeight(),
                 $lengthFormatter->format($option->getDimensions()->getUnit()->getCode(), true)
             ),
             $html
