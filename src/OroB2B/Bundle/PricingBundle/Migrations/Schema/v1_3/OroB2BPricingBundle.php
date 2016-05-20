@@ -55,6 +55,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_ws'));
         $queries->addPostQuery(new UpdateCPLNameQuery());
         $queries->addPostQuery(new AddJobQuery('oro:cron:price-lists:recalculate', ['--force']));
+        $queries->addPostQuery(new FillMinimalPrices());
     }
 
     /**

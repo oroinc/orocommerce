@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="orob2b_minimal_price_uidx",
- *              columns={"product_id", "combined_price_list_id"}
+ *              columns={"product_id", "combined_price_list_id", "currency"}
  *          )
  *      }
  * )

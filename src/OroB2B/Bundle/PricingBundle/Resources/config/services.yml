@@ -244,6 +244,7 @@ services:
 
     orob2b_pricing.price_list_change_trigger_handler:
         class: 'OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler'
+        public: true
         arguments:
             - '@doctrine'
             - '@event_dispatcher'
@@ -620,9 +621,11 @@ services:
 
     orob2b_pricing.duplicator.schedule:
         class: 'OroB2B\Bundle\PricingBundle\Duplicator\ScheduleDuplicator'
+        public: true
 
     orob2b_pricing.duplicator.product_price_duplicator:
         class: 'OroB2B\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator'
+        public: true
         arguments:
             - '@doctrine'
             - '@oro_entity.orm.insert_from_select_query_executor'
