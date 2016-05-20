@@ -2,9 +2,8 @@
 
 namespace OroB2B\Bundle\ShippingBundle\EventListener\Datagrid;
 
+use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\Query\Expr;
-
-use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
@@ -17,25 +16,27 @@ use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 class ProductShippingOptionsDatagridListener
 {
     const SHIPPING_OPTIONS_COLUMN = 'product_shipping_options';
-    const DATA_SEPARATOR = '{sep}';
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
-
-    /** @var TranslatorInterface */
-    protected $translator;
 
     /** @var string */
     protected $productShippingOptionsClass;
 
     /**
-     * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(TranslatorInterface $translator, DoctrineHelper $doctrineHelper)
+    public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
-        $this->translator = $translator;
+    }
+
+    /**
+     * @param string $productShippingOptionsClass
+     */
+    public function setProductShippingOptionsClass($productShippingOptionsClass)
+    {
+        $this->productShippingOptionsClass = $productShippingOptionsClass;
     }
 
     /**
@@ -44,12 +45,8 @@ class ProductShippingOptionsDatagridListener
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
-
-        $this->addConfigSelect($config, static::SHIPPING_OPTIONS_COLUMN);
-        $this->addConfigJoin($config, static::SHIPPING_OPTIONS_COLUMN);
-
         $column = [
-            'label' => $this->translator->trans('orob2b.shipping.datagrid.shipping_options.column.label'),
+            'label' => 'orob2b.shipping.datagrid.shipping_options.column.label',
             'type' => 'twig',
             'template' => 'OroB2BShippingBundle:Datagrid:Column/productShippingOptions.html.twig',
             'frontend_type' => 'html',
@@ -67,59 +64,34 @@ class ProductShippingOptionsDatagridListener
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
 
+        $productIds = array_map(
+            function (ResultRecord $record) {
+                return $record->getValue('id');
+            },
+            $records
+        );
+
+        $this->addProductShippingOptions($productIds, $records);
+    }
+
+    /**
+     * @param array $productIds
+     * @param array|ResultRecord[] $records
+     */
+    protected function addProductShippingOptions(array $productIds, array $records)
+    {
+        $groupedOptions = $this->getShippingOptions($productIds);
+
         foreach ($records as $record) {
             $data = [];
-            $shippingOptions = $record->getValue(static::SHIPPING_OPTIONS_COLUMN);
-            $shippingOptions = $shippingOptions ? explode(self::DATA_SEPARATOR, $shippingOptions) : [];
-            foreach ($shippingOptions as $optionId) {
-                /* @var $options ProductShippingOptions */
-                $options = $this->doctrineHelper->getEntityReference($this->productShippingOptionsClass, $optionId);
-                if ($options) {
-                    $data[$optionId] = $options;
-                }
+            $productId = $record->getValue('id');
+
+            if (array_key_exists($productId, $groupedOptions)) {
+                $data = $groupedOptions[$productId];
             }
-            $record->addData([static::SHIPPING_OPTIONS_COLUMN => $data]);
+
+            $record->addData([self::SHIPPING_OPTIONS_COLUMN => $data]);
         }
-    }
-
-    /**
-     * @param DatagridConfiguration $config
-     * @param string $columnName
-     */
-    protected function addConfigSelect(DatagridConfiguration $config, $columnName)
-    {
-        $joinAlias = $this->buildJoinAlias($columnName);
-
-        $selectPattern = 'GROUP_CONCAT(%s.id SEPARATOR %s) as %s';
-        $separator = (new Expr())->literal(self::DATA_SEPARATOR);
-
-        $this->addConfigElement(
-            $config,
-            '[source][query][select]',
-            sprintf($selectPattern, $joinAlias, $separator, $columnName)
-        );
-    }
-
-    /**
-     * @param DatagridConfiguration $config
-     * @param string $columnName
-     */
-    protected function addConfigJoin(DatagridConfiguration $config, $columnName)
-    {
-        $joinAlias = $this->buildJoinAlias($columnName);
-
-        $joinExpr = (new Expr())->andX(sprintf('%s.product = product.id', $joinAlias));
-
-        $this->addConfigElement(
-            $config,
-            '[source][query][join][left]',
-            [
-                'join' => $this->productShippingOptionsClass,
-                'alias' => $joinAlias,
-                'conditionType' => Expr\Join::WITH,
-                'condition' => (string)$joinExpr,
-            ]
-        );
     }
 
     /**
@@ -140,20 +112,27 @@ class ProductShippingOptionsDatagridListener
     }
 
     /**
-     * @param string $productShippingOptionsClass
+     * @return ObjectRepository
      */
-    public function setProductShippingOptionsClass($productShippingOptionsClass)
+    protected function getRepository()
     {
-        $this->productShippingOptionsClass = $productShippingOptionsClass;
+        return $this->doctrineHelper->getEntityRepository($this->productShippingOptionsClass);
     }
 
     /**
-     * @param string $columnName
-     *
-     * @return string
+     * @param array $productIds
+     * @return array
      */
-    protected function buildJoinAlias($columnName)
+    protected function getShippingOptions(array $productIds)
     {
-        return $columnName . '_table';
+        /** @var ProductShippingOptions[] $options */
+        $options = $this->getRepository()->findBy(['product' => $productIds], ['productUnit' => 'ASC']);
+
+        $result = [];
+        foreach ($options as $option) {
+            $result[$option->getProduct()->getId()][] = $option;
+        }
+
+        return $result;
     }
 }

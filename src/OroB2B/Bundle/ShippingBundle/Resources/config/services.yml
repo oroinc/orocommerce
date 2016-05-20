@@ -50,7 +50,6 @@ services:
         class: 'OroB2B\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener'
         public: true
         arguments:
-            - '@translator'
             - '@oro_entity.doctrine_helper'
         calls:
             - [setProductShippingOptionsClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]

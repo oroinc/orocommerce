@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\EventListener\Datagrid;
 
-use Symfony\Component\Translation\TranslatorInterface;
+use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -11,56 +11,40 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use Oro\Component\Testing\Unit\EntityTrait;
+
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener;
 
 class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     const PRODUCT_SHIPPING_OPTIONS_CLASS = 'OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions';
 
-    /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrineHelper;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $translator;
-
-    /**
-     * @var DatagridConfiguration
-     */
+    /** @var DatagridConfiguration */
     protected $config;
 
-    /**
-     * @var ProductShippingOptionsDatagridListener
-     */
+    /** @var ProductShippingOptionsDatagridListener */
     protected $listener;
 
     public function setUp()
     {
         $this->config = DatagridConfiguration::create([]);
 
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->willReturnCallback(
-                function ($id) {
-                    return $id . '.trans';
-                }
-            );
-
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = $this->createListener();
+        $this->listener = new ProductShippingOptionsDatagridListener($this->doctrineHelper);
     }
 
     protected function tearDown()
     {
-        unset($this->doctrineHelper, $this->translator, $this->listener, $this->config);
+        unset($this->doctrineHelper, $this->listener, $this->config);
     }
 
     public function testSetProductShippingOptionsClass()
@@ -72,12 +56,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
         $this->assertEquals('TestClass', $this->getProperty($this->listener, 'productShippingOptionsClass'));
     }
 
-    /**
-     * @param array $expectedConfig
-     *
-     * @dataProvider onBuildBeforeDataProvider
-     */
-    public function testOnBuildBefore(array $expectedConfig = [])
+    public function testOnBuildBefore()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
@@ -86,7 +65,20 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
 
         $this->listener->onBuildBefore(new BuildBefore($datagrid, $this->config));
 
-        $this->assertEquals($expectedConfig, $this->config->toArray());
+        $this->assertEquals(
+            [
+                'columns' => [
+                    'product_shipping_options' => [
+                        'label' => 'orob2b.shipping.datagrid.shipping_options.column.label',
+                        'type' => 'twig',
+                        'template' => 'OroB2BShippingBundle:Datagrid:Column/productShippingOptions.html.twig',
+                        'frontend_type' => 'html',
+                        'renderable' => false,
+                    ]
+                ]
+            ],
+            $this->config->toArray()
+        );
     }
 
     /**
@@ -97,13 +89,32 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
      */
     public function testOnResultAfter(array $sourceResults = [], array $expectedResults = [])
     {
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityReference')
-            ->willReturn(new ProductShippingOptions());
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository $repository */
+        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository->expects($this->once())
+            ->method('findBy')
+            ->with(['product' => [42, 100]], ['productUnit' => 'ASC'])
+            ->willReturn(
+                [
+                    $this->createShippingOptions(10, 42),
+                    $this->createShippingOptions(11, 42),
+                    $this->createShippingOptions(12, 42),
+                    $this->createShippingOptions(13, 42),
+                    $this->createShippingOptions(14, 42)
+                ]
+            );
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(self::PRODUCT_SHIPPING_OPTIONS_CLASS)
+            ->willReturn($repository);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+
         $event = new OrmResultAfter($datagrid, $sourceResults);
+
+        $this->listener->setProductShippingOptionsClass(self::PRODUCT_SHIPPING_OPTIONS_CLASS);
         $this->listener->onResultAfter($event);
 
         $this->assertEquals($expectedResults, $event->getRecords());
@@ -117,77 +128,51 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
         return [
             [
                 'sourceResults' => [
-                    $this->getResultRecord([
-                        [
-                            'id' => 2,
-                            'product_shipping_options' => '1{sep}2'
-                        ],
-                    ]),
+                    $this->getResultRecord([['id' => 42]]),
+                    $this->getResultRecord([['id' => 100]])
                 ],
                 'expectedResults' => [
                     $this->getResultRecord([
                         [
-                            'id' => 2,
-                            'product_shipping_options' => '1{sep}2'
+                            'id' => 42
                         ],
                         [
-                            'product_shipping_options' => [
-                                1 => new ProductShippingOptions(),
-                                2 => new ProductShippingOptions(),
-                            ],
+                            ProductShippingOptionsDatagridListener::SHIPPING_OPTIONS_COLUMN => [
+                                $this->createShippingOptions(10, 42),
+                                $this->createShippingOptions(11, 42),
+                                $this->createShippingOptions(12, 42),
+                                $this->createShippingOptions(13, 42),
+                                $this->createShippingOptions(14, 42)
+                            ]
                         ]
                     ]),
+                    $this->getResultRecord([
+                        [
+                            'id' => 100
+                        ],
+                        [
+                            ProductShippingOptionsDatagridListener::SHIPPING_OPTIONS_COLUMN => []
+                        ]
+                    ])
                 ],
             ],
         ];
     }
 
     /**
-     * @return array
+     * @param int $id
+     * @param int $productId
+     * @return ProductShippingOptions
      */
-    public function onBuildBeforeDataProvider()
+    protected function createShippingOptions($id, $productId)
     {
-        return [
+        return $this->getEntity(
+            'OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions',
             [
-                'expectedConfig' => [
-                    'source' => [
-                        'query' => [
-                            'select' => [
-                                0 => 'GROUP_CONCAT(product_shipping_options_table.id SEPARATOR \'{sep}\')'
-                                    . ' as product_shipping_options',
-                            ],
-                            'join' => [
-                                'left' => [
-                                    0 => [
-                                        'join' => 'OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions',
-                                        'alias' => 'product_shipping_options_table',
-                                        'conditionType' => 'WITH',
-                                        'condition' => 'product_shipping_options_table.product = product.id',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                    'columns' => [
-                        'product_shipping_options' => [
-                            'label' => 'orob2b.shipping.datagrid.shipping_options.column.label.trans',
-                            'type' => 'twig',
-                            'template' => 'OroB2BShippingBundle:Datagrid:Column/productShippingOptions.html.twig',
-                            'frontend_type' => 'html',
-                            'renderable' => false,
-                        ],
-                    ],
-                ]
+                'id' => $id,
+                'product' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $productId])
             ]
-        ];
-    }
-
-    /**
-     * @return ProductShippingOptionsDatagridListener
-     */
-    protected function createListener()
-    {
-        return new ProductShippingOptionsDatagridListener($this->translator, $this->doctrineHelper);
+        );
     }
 
     /**
