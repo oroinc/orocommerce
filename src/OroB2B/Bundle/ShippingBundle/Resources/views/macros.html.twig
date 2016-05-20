@@ -1,0 +1,32 @@
+{% macro _renderItemRow(shippingOption) %}
+    <tr>
+        <td class="renderable"><div class="text-center">{{ shippingOption.productUnit|orob2b_format_product_unit_label }}</div></td>
+        <td class="renderable"><div class="text-center">{{ shippingOption.weight.value|orob2b_weight_unit_format_value_short(shippingOption.weight.unit) }}</div></td>
+        <td class="renderable"><div class="text-center">{{ shippingOption.dimensions.value|orob2b_dimensions_unit_format_value_short(shippingOption.dimensions.unit) }}</div></td>
+        <td class="renderable"><div class="text-center">{{ shippingOption.freightClass|orob2b_freight_class_format_label() }}</div></td>
+    </tr>
+{% endmacro %}
+
+{% macro _renderItemsHead() %}
+    <thead>
+    <tr>
+        <th class="renderable">{{ 'orob2b.shipping.product_shipping_options.product_unit.label'|trans }}</th>
+        <th class="renderable">{{ 'orob2b.shipping.product_shipping_options.weight.label'|trans }}</th>
+        <th class="renderable">{{ 'orob2b.shipping.product_shipping_options.dimensions.label'|trans }}</th>
+        <th class="renderable">{{ 'orob2b.shipping.product_shipping_options.freight_class.label'|trans }}</th>
+    </tr>
+    </thead>
+{% endmacro %}
+
+{% macro renderProductShippingOptions(shippingOptions) %}
+    {% if shippingOptions and shippingOptions|length > 0 %}
+        <table class="grid table table-condensed table-bordered shipping-options-result-grid">
+            {{ _self._renderItemsHead() }}
+            <tbody>
+                {% for key, options in shippingOptions %}
+                    {{ _self._renderItemRow(options) }}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endmacro %}

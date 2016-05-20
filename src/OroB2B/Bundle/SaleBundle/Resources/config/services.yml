@@ -63,6 +63,7 @@ services:
 
     orob2b_sale.helper.notification:
         class: 'OroB2B\Bundle\SaleBundle\Notification\NotificationHelper'
+        public: true
         scope: request
         arguments:
             - "@doctrine"
