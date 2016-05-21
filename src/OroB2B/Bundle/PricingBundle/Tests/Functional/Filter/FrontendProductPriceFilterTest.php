@@ -36,7 +36,7 @@ class FrontendProductPriceFilterTest extends WebTestCase
         );
         $this->registry = $this->getContainer()->get('doctrine');
         $cpl = $this->getReference('1f');
-        /** @var PriceListRequestHandler $handler */
+        /** @var PriceListRequestHandler|\PHPUnit_Framework_MockObject_MockObject $handler */
         $handler = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();

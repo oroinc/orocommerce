@@ -7,6 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 
 class FrontendProductPriceFilter extends ProductPriceFilter
 {
@@ -28,8 +29,10 @@ class FrontendProductPriceFilter extends ProductPriceFilter
      */
     public function apply(FilterDatasourceAdapterInterface $ds, $data)
     {
+        /** @var array $data */
         $data = $this->parseData($data);
-        if (!$data || !($ds instanceof OrmFilterDatasourceAdapter)) {
+        $priceList = $this->getPriceList();
+        if (!$data || !$priceList || !($ds instanceof OrmFilterDatasourceAdapter)) {
             return false;
         }
 
@@ -53,14 +56,15 @@ class FrontendProductPriceFilter extends ProductPriceFilter
         
         $additionalCondition = $ds->expr()->andX(
             $priceCondition,
-            $ds->expr()->eq($productPriceAlias . '.priceList', $this->getPriceList()->getId()),
-            $ds->expr()->eq($productPriceAlias . '.product', $rootAlias . '.id'),
+            $ds->expr()->eq($productPriceAlias . '.priceList', $priceList->getId()),
+            $ds->expr()->eq($productPriceAlias . '.product', $rootAlias),
             $ds->expr()->eq($productPriceAlias . '.currency', ':' . $currencyParamName),
             $ds->expr()->eq($productPriceAlias . '.unit', ':' . $unitParamName)
         );
-        
-        $qbPrices = $this->registry->getRepository($this->productPriceClass)
-            ->createQueryBuilder($productPriceAlias);
+
+        /** @var ProductPriceRepository $repository */
+        $repository = $this->registry->getRepository($this->productPriceClass);
+        $qbPrices = $repository->createQueryBuilder($productPriceAlias);
         $qbPrices->andWhere($additionalCondition);
         $qb->andWhere($qb->expr()->exists($qbPrices->getQuery()->getDQL()));
 
@@ -71,6 +75,9 @@ class FrontendProductPriceFilter extends ProductPriceFilter
         return true;
     }
 
+    /**
+     * @param Registry $registry
+     */
     public function setRegistry(Registry $registry)
     {
         $this->registry = $registry;
