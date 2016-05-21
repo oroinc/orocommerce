@@ -64,7 +64,7 @@ class FrontendProductPriceFilterTest extends WebTestCase
     /**
      * @dataProvider filterDataProvider
      * @param array $data
-     * @param $productsCount
+     * @param int $productsCount
      */
     public function testFilter(array $data, $productsCount)
     {
