@@ -221,7 +221,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
 
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new OrmResultAfter($datagrid, [], $query);
@@ -237,7 +237,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
 
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new OrmResultAfter($datagrid, [new ResultRecord([])], $query);
@@ -283,7 +283,8 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
             ->willReturn($repository);
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
             ->disableOriginalConstructor()
-            ->getMock();
+            ->setMethods(['getEntityManager'])
+            ->getMockForAbstractClass();
         $query->expects($this->any())
             ->method('getEntityManager')
             ->willReturn($em);
