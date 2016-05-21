@@ -65,9 +65,9 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         foreach ($data as $item) {
             $product = new Product();
             $product
+                ->setSku($item['productCode'])
                 ->setOwner($businessUnit)
                 ->setOrganization($organization)
-                ->setSku($item['productCode'])
                 ->setInventoryStatus($inventoryStatuses[$item['inventoryStatus']])
                 ->setStatus($item['status']);
 
@@ -90,7 +90,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
             }
 
             $manager->persist($product);
-            $this->addReference($item['productCode'], $product);
+            $this->addReference($product->getSku(), $product);
         }
 
         $manager->flush();

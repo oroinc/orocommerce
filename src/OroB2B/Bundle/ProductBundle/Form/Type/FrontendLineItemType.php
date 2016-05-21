@@ -53,7 +53,6 @@ class FrontendLineItemType extends AbstractType
         $resolver->setDefaults(
             [
                 'validation_groups' => ['add_product'],
-                'data_class'=> 'OroB2B\Bundle\ProductBundle\Model\ProductLineItemInterface'
             ]
         );
     }

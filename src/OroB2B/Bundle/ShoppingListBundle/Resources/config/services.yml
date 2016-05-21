@@ -51,6 +51,7 @@ services:
 
     orob2b_shopping_list.handler.shopping_list_line_item:
         class: 'OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler'
+        public: true
         arguments:
             - "@doctrine"
             - "@orob2b_shopping_list.shopping_list.manager"
@@ -61,6 +62,7 @@ services:
 
     orob2b_shopping_list.service.message_generator:
         class: 'OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator'
+        public: true
         arguments:
             - "@translator"
             - "@router"
@@ -196,9 +198,6 @@ services:
         public: true
         arguments:
             - "@oro_security.security_facade"
-            - "@doctrine"
-            - "%orob2b_shopping_list.entity.shopping_list.class%"
-            - "%orob2b_shopping_list.entity.line_item.class%"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }

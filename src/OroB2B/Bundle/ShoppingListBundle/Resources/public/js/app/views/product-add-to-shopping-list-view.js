@@ -268,6 +268,11 @@ define(function(require) {
             var url = $button.data('url');
             var formData = this.$el.closest('form').serialize();
             var urlOptions = {};
+
+            if (!this.dropdownWidget.validateForm()) {
+                return;
+            }
+
             if (this.model) {
                 urlOptions.productId = this.model.get('id');
             }

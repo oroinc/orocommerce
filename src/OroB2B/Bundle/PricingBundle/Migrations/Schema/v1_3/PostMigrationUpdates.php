@@ -16,7 +16,7 @@ class PostMigrationUpdates implements Migration, OrderedMigrationInterface
      */
     public function getOrder()
     {
-        return 20;
+        return 30;
     }
 
     /**
@@ -36,7 +36,7 @@ class PostMigrationUpdates implements Migration, OrderedMigrationInterface
     {
         $queries->addPreQuery(
             new ParametrizedSqlMigrationQuery(
-                'UPDATE orob2b_price_list SET contain_schedule=TRUE WHERE contain_schedule IS NULL'
+                'UPDATE orob2b_price_list SET contain_schedule=FALSE WHERE contain_schedule IS NULL'
             )
         );
 
@@ -52,7 +52,7 @@ class PostMigrationUpdates implements Migration, OrderedMigrationInterface
     {
         $queries->addPreQuery(
             new ParametrizedSqlMigrationQuery(
-                'UPDATE orob2b_price_list_combined SET is_prices_calculated=FALSE WHERE is_prices_calculated IS NULL'
+                'UPDATE orob2b_price_list_combined SET is_prices_calculated=TRUE WHERE is_prices_calculated IS NULL'
             )
         );
 

@@ -196,10 +196,13 @@ class FrontendProductDatagridListener
         $products = $this->getProductRepository()->getProductsWithImage($productIds);
         $imageUrls = [];
         foreach ($products as $product) {
-            $imageUrls[$product->getId()] = $this->attachmentManager->getFilteredImageUrl(
-                $product->getImage(),
-                self::PRODUCT_IMAGE_FILTER
-            );
+            $image = $product->getImage();
+            if ($image) {
+                $imageUrls[$product->getId()] = $this->attachmentManager->getFilteredImageUrl(
+                    $image,
+                    self::PRODUCT_IMAGE_FILTER
+                );
+            }
         }
 
         foreach ($records as $record) {

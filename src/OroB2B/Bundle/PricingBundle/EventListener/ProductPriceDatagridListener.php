@@ -12,22 +12,33 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
-class ProductPriceDatagridListener extends AbstractProductPriceDatagridListener
+class ProductPriceDatagridListener
 {
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @var PriceListRequestHandler
+     */
+    protected $priceListRequestHandler;
+
     /**
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
 
     /**
-     * @var string
+     * @var PriceList
      */
-    protected $productUnitClass;
+    protected $priceList;
 
     /**
      * @param TranslatorInterface $translator
@@ -39,16 +50,9 @@ class ProductPriceDatagridListener extends AbstractProductPriceDatagridListener
         PriceListRequestHandler $priceListRequestHandler,
         DoctrineHelper $doctrineHelper
     ) {
-        parent::__construct($translator, $priceListRequestHandler);
+        $this->translator = $translator;
+        $this->priceListRequestHandler = $priceListRequestHandler;
         $this->doctrineHelper = $doctrineHelper;
-    }
-
-    /**
-     * @param string $productUnitClass
-     */
-    public function setProductUnitClass($productUnitClass)
-    {
-        $this->productUnitClass = $productUnitClass;
     }
 
     /**
@@ -62,14 +66,12 @@ class ProductPriceDatagridListener extends AbstractProductPriceDatagridListener
         }
 
         $config = $event->getConfig();
-
-        $units = $this->getAllUnits();
-
         // add prices for currencies
         foreach ($currencies as $currencyIsoCode) {
             $this->addProductPriceCurrencyColumn($config, $currencyIsoCode);
         }
 
+        $units = $this->getAllUnits();
         foreach ($currencies as $currencyIsoCode) {
             // add prices for units
             foreach ($units as $unit) {
@@ -144,16 +146,36 @@ class ProductPriceDatagridListener extends AbstractProductPriceDatagridListener
             $selectPattern = '%s.value as %s';
         }
 
-        $this->addConfigElement($config, '[source][query][select]', sprintf($selectPattern, $joinAlias, $columnName));
+        $config->offsetAddToArrayByPath('[source][query][select]', [sprintf($selectPattern, $joinAlias, $columnName)]);
 
         $this->addConfigProductPriceJoin($config, $currency, $unit);
 
         $column = $this->createPriceColumn($currency, $enabled, $unit);
-        $this->addConfigElement($config, '[columns]', $column, $columnName);
-
-        $this->addConfigElement($config, '[sorters][columns]', ['data_name' => $columnName], $columnName);
+        $config->offsetAddToArrayByPath('[columns]', [$columnName => $column]);
+        $config->offsetAddToArrayByPath('[sorters][columns]', [$columnName => ['data_name' => $columnName]]);
 
         $this->addConfigFilter($config, $currency, $enabled, $unit);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param string $currency
+     * @param bool $enabled
+     * @param ProductUnit|null $unit
+     */
+    protected function addConfigFilter(DatagridConfiguration $config, $currency, $enabled = true, $unit = null)
+    {
+        $columnName = $this->buildColumnName($currency, $unit);
+        $filter = ['type' => 'product-price', 'data_name' => $currency];
+        if ($unit) {
+            $filter = [
+                'type' => 'number-range',
+                'data_name' => $columnName,
+                'enabled' => $enabled,
+            ];
+        }
+
+        $config->offsetAddToArrayByPath('[filters][columns]', [$columnName => $filter]);
     }
 
     /**
@@ -197,19 +219,13 @@ class ProductPriceDatagridListener extends AbstractProductPriceDatagridListener
     }
 
     /**
-     * {@inheritDoc}
-     */
-    protected function providePriceList()
-    {
-        return $this->priceListRequestHandler->getPriceList();
-    }
-
-    /**
      * @return array|ProductUnit[]
      */
     protected function getAllUnits()
     {
-        return $this->doctrineHelper->getEntityRepository($this->productUnitClass)->findBy([], ['code' => 'ASC']);
+        return $this->doctrineHelper
+            ->getEntityRepository('OroB2BProductBundle:ProductUnit')
+            ->findBy([], ['code' => 'ASC']);
     }
 
     /**
@@ -239,7 +255,7 @@ class ProductPriceDatagridListener extends AbstractProductPriceDatagridListener
     protected function getPrices(array $records, $showTierPrices)
     {
         /** @var ProductPriceRepository $priceRepository */
-        $priceRepository = $this->doctrineHelper->getEntityRepository($this->productPriceClass);
+        $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:ProductPrice');
 
         $productIds = array_map(function (ResultRecord $record) {
             return $record->getValue('id');
@@ -268,12 +284,18 @@ class ProductPriceDatagridListener extends AbstractProductPriceDatagridListener
         if ($unit) {
             $joinExpr->add($expr->eq(sprintf('%s.unit', $joinAlias), $expr->literal($unit)));
         }
-        $this->addConfigElement($config, '[source][query][join][left]', [
-            'join' => $this->productPriceClass,
-            'alias' => $joinAlias,
-            'conditionType' => Expr\Join::WITH,
-            'condition' => (string)$joinExpr,
-        ]);
+
+        $config->offsetAddToArrayByPath(
+            '[source][query][join][left]',
+            [
+                [
+                    'join' => 'OroB2BPricingBundle:ProductPrice',
+                    'alias' => $joinAlias,
+                    'conditionType' => Expr\Join::WITH,
+                    'condition' => (string)$joinExpr
+                ]
+            ]
+        );
     }
 
     /**
@@ -283,5 +305,35 @@ class ProductPriceDatagridListener extends AbstractProductPriceDatagridListener
     protected function buildJoinAlias($columnName)
     {
         return $columnName . '_table';
+    }
+
+    /**
+     * @return PriceList
+     */
+    protected function getPriceList()
+    {
+        if (!$this->priceList) {
+            $this->priceList = $this->priceListRequestHandler->getPriceList();
+        }
+        return $this->priceList;
+    }
+
+    /**
+     * @param ProductPrice[] $prices
+     * @return array
+     */
+    protected function groupPrices(array $prices)
+    {
+        $groupedPrices = [];
+        foreach ($prices as $price) {
+            $productId = $price->getProduct()->getId();
+            $currencyIsoCode = $price->getPrice()->getCurrency();
+            if (!isset($groupedPrices[$productId][$currencyIsoCode])) {
+                $groupedPrices[$productId][$currencyIsoCode] = [];
+            }
+            $groupedPrices[$productId][$currencyIsoCode][] = $price;
+        }
+
+        return $groupedPrices;
     }
 }

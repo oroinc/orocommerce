@@ -60,6 +60,12 @@ define([
                 var $mainButton = this._super($button);
                 $mainButton.data('clone', $button);
                 return $mainButton;
+            },
+
+            validateForm: function() {
+                var $form = $(this.element).closest('form');
+
+                return $form.data('validator') ? $form.valid() : true;
             }
         })
     );
