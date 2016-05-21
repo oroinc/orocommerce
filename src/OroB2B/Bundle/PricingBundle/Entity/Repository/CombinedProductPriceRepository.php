@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\ORM\Query\Expr\Base;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
@@ -135,20 +134,5 @@ class CombinedProductPriceRepository extends ProductPriceRepository
 
         $qb->andWhere($qb->expr()->isNull('cpp.id'))
             ->setParameter('combinedPriceList', $combinedPriceList->getId());
-    }
-
-    /**
-     * @param QueryBuilder $qb
-     * @param string $alias
-     * @param Base $additionalCondition
-     * @return QueryBuilder
-     */
-    public function restrictByPrice(QueryBuilder $qb, $alias, Base $additionalCondition)
-    {
-        $qbPrices = $this->createQueryBuilder($alias);
-        $qbPrices->andWhere($additionalCondition);
-        $qb->andWhere($qb->expr()->exists($qbPrices->getQuery()->getDQL()));
-
-        return $qb;
     }
 }
