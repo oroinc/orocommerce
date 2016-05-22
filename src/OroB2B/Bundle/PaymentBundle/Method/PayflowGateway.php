@@ -12,6 +12,9 @@ use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class PayflowGateway implements PaymentMethodInterface
 {
     use ConfigTrait;
