@@ -320,10 +320,6 @@ define(function(require) {
          * @param {Object} eventData
          */
         beforeTransit: function(eventData) {
-            if (!this.paymentValidationRequiredComponentState) {
-                return;
-            }
-
             if (eventData.data.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = !this.validate();
             }
