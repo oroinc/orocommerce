@@ -34,7 +34,7 @@ class RedirectListener
 
         $event
             ->getPaymentTransaction()
-            ->setActive(false)
+            ->setActive(true)
             ->setSuccessful(true);
     }
 

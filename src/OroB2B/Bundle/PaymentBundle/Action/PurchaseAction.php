@@ -56,7 +56,10 @@ class PurchaseAction extends AbstractPaymentMethodAction
         $this->setAttributeValue(
             $context,
             array_merge(
-                ['paymentMethod' => $options['paymentMethod']],
+                [
+                    'paymentMethod' => $options['paymentMethod'],
+                    'paymentMethodSupportsValidation' => (bool)$isPaymentMethodSupportsValidation,
+                ],
                 $this->getCallbackUrls($paymentTransaction),
                 (array)$paymentTransaction->getTransactionOptions(),
                 $response

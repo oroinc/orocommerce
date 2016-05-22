@@ -112,7 +112,7 @@ define(function(require) {
          * @inheritDoc
          */
         dispose: function() {
-            if (this.disposed) {
+            if (this.disposed || !this.disposable) {
                 return;
             }
 

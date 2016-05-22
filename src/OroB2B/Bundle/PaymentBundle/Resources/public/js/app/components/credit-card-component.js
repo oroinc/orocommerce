@@ -93,8 +93,6 @@ define(function(require) {
                 mediator.trigger('checkout:payment:method:get-value', paymentMethodObject);
                 mediator.trigger('checkout:payment:method:changed', {paymentMethod: paymentMethodObject.value});
             });
-
-            this.setGlobalPaymentValidate(this.paymentValidationRequiredComponentState);
         },
 
         /**
@@ -103,30 +101,38 @@ define(function(require) {
         handleSubmit: function(eventData) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = true;
-                var data = this.$el.find('[data-gateway]').serializeArray();
+
                 var resolvedEventData = _.extend(
                     {
                         'SECURETOKEN': false,
                         'SECURETOKENID': false,
-                        'errorUrl': '',
                         'returnUrl': '',
-                        'formAction': ''
+                        'errorUrl': '',
+                        'formAction': '',
+                        'paymentMethodSupportsValidation': false
                     },
                     eventData.responseData
                 );
 
+                if (resolvedEventData.paymentMethodSupportsValidation) {
+                    mediator.execute('redirectTo', {url: resolvedEventData.returnUrl}, {redirect: true});
+
+                    return;
+                }
+
+                var data = this.$el.find('[data-gateway]').serializeArray();
                 data.push({name: 'SECURETOKENID', value: resolvedEventData.SECURETOKENID});
                 data.push({name: 'SECURETOKEN', value: resolvedEventData.SECURETOKEN});
                 data.push({name: 'RETURNURL', value: resolvedEventData.returnUrl});
                 data.push({name: 'ERRORURL', value: resolvedEventData.errorUrl});
 
-                if (!resolvedEventData.formAction || !resolvedEventData.SECURETOKEN) {
-                    this.postUrl(resolvedEventData.errorUrl, data);
+                if (resolvedEventData.formAction && resolvedEventData.SECURETOKEN) {
+                    this.postUrl(resolvedEventData.formAction, data);
 
                     return;
                 }
 
-                this.postUrl(resolvedEventData.formAction, data);
+                mediator.execute('redirectTo', {url: resolvedEventData.errorUrl}, {redirect: true});
             }
         },
 
@@ -314,25 +320,21 @@ define(function(require) {
          * @param {Object} eventData
          */
         beforeTransit: function(eventData) {
+            if (!this.paymentValidationRequiredComponentState) {
+                return;
+            }
+
             if (eventData.data.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = !this.validate();
             }
         },
 
-        /**
-         * @param {jQuery.Element} $filledForm
-         */
-        beforeHideFilledForm: function($filledForm) {
-            if ($filledForm.find(this.$el).length !== 0) {
-                this.disposable = false;
-            }
+        beforeHideFilledForm: function() {
+            this.disposable = false;
         },
 
-        /**
-         * @param {jQuery.Element} $filledForm
-         */
-        beforeRestoreFilledForm: function($filledForm) {
-            if ($filledForm.find(this.$el).length === 0) {
+        beforeRestoreFilledForm: function() {
+            if (this.disposable) {
                 this.dispose();
             }
         }

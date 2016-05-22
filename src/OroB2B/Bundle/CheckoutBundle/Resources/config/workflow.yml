@@ -84,6 +84,7 @@ workflows:
                 label: Payment
                 order: 40
                 allowed_transitions:
+                    - payment_error
                     - continue_to_order_review
                     - back_to_billing_address
                     - back_to_shipping_address
@@ -178,7 +179,7 @@ workflows:
                     page_component_module: 'orob2bcheckout/js/app/components/payment-transition-button-component'
                 form_options:
                     init_actions:
-                        - '@assign_value': [$payment_validate, true]
+                        - '@assign_value': [$payment_validate, false]
                     attribute_fields:
                         payment_method: ~
                         payment_validate:
@@ -473,12 +474,7 @@ workflows:
 
                     - '@tree':
                         conditions:
-                            '@and':
-                                - '@not_empty': $checkout.order.id
-                                - '@not':
-                                    - '@payment_method_supports':
-                                        payment_method: $payment_method
-                                        action: 'validate'
+                            '@not_empty': $checkout.order.id
                         actions:
                             - '@assign_url':
                                 attribute: $.result.successUrl
@@ -502,25 +498,6 @@ workflows:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
                             - '@assign_value': [$payment_in_progress, true]
-                    - '@tree':
-                        conditions:
-                            '@and':
-                                - '@not_empty': $checkout.order.id
-                                - '@payment_method_supports':
-                                    payment_method: $payment_method
-                                    action: 'validate'
-                        actions:
-                            - '@payment_purchase':
-                                object: $checkout.order
-                                amount: $checkout.order.total
-                                currency: $checkout.order.currency
-                                paymentMethod: $payment_method
-                            - '@assign_value': [$payment_in_progress, true]
-                            - '@redirect':
-                                route: orob2b_checkout_frontend_checkout
-                                route_parameters:
-                                    id: $checkout.id
-                                    transition: 'finish_checkout'
                     - '@send_email_template':
                         parameters:
                             from: $checkout.order.owner.email
@@ -653,7 +630,7 @@ workflows:
                             id: $checkout.order.id
 
             payment_error_definition:
-                pre_conditions:
-                    '@equal': [$payment_in_progress, true]
+#                pre_conditions:
+#                    '@equal': [$payment_in_progress, true]
                 post_actions:
                     - '@assign_value': [$payment_in_progress, false]

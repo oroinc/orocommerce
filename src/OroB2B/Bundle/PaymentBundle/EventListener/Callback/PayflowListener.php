@@ -71,7 +71,9 @@ class PayflowListener
             [PaymentMethodInterface::AUTHORIZE, PaymentMethodInterface::VALIDATE],
             true
         )) {
-            $paymentTransaction->setActive($response->isSuccessful());
+            $paymentTransaction
+                ->setActive($response->isSuccessful())
+                ->setSuccessful($response->isSuccessful());
         }
     }
 }

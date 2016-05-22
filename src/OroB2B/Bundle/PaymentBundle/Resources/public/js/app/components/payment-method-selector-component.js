@@ -54,6 +54,8 @@ define(function(require) {
                 this.options.redirectEvent,
                 _.debounce(_.bind(this.redirectToHomepage, this), this.options.delay)
             );
+
+            this.$el.find(this.options.selectors.radio).filter(':selected').trigger('change');
         },
 
         redirectToHomepage: function() {
@@ -87,14 +89,12 @@ define(function(require) {
             mediator.trigger('checkout:payment:method:changed', {paymentMethod: $element.val()});
         },
 
-        beforeHideFilledForm: function($filledForm) {
-            if ($filledForm.is(this.$el)) {
-                this.disposable = false;
-            }
+        beforeHideFilledForm: function() {
+            this.disposable = false;
         },
 
-        beforeRestoreFilledForm: function($filledForm) {
-            if (!$filledForm.is(this.$el)) {
+        beforeRestoreFilledForm: function() {
+            if (this.disposable) {
                 this.dispose();
             }
         },

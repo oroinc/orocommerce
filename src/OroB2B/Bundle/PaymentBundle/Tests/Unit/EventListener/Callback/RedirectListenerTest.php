@@ -55,7 +55,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onReturn($event);
 
-        $this->assertFalse($this->paymentTransaction->isActive());
+        $this->assertTrue($this->paymentTransaction->isActive());
         $this->assertTrue($this->paymentTransaction->isSuccessful());
 
         $this->assertResponses($expectedResponse, $event->getResponse());
