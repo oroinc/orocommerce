@@ -276,11 +276,9 @@
 {% endblock %}
 
 {% block _quote_view_accept_button_widget %}
-    {% if not quote.isExpired and (quote.validUntil is null or quote.validUntil >= date('now')) %}
-        <div{{ block('block_attributes') }}>
-            {{ block_widget(block) }}
-        </div>
-    {% endif %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block address_widget %}

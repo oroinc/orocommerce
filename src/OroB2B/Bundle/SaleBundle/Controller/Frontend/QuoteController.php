@@ -40,7 +40,7 @@ class QuoteController extends Controller
      */
     public function viewAction(Quote $quote)
     {
-        if ($quote->isExpired() || $quote->getValidUntil() && $quote->getValidUntil() < new \DateTime()) {
+        if (!$quote->isAcceptable()) {
             $this->addFlash('notice', $this->get('translator')->trans('orob2b.sale.controller.quote.expired.message'));
         }
 
@@ -101,8 +101,7 @@ class QuoteController extends Controller
      */
     public function choiceAction(Request $request, QuoteDemand $quoteDemand)
     {
-        $quote = $quoteDemand->getQuote();
-        if ($quote->isExpired() || $quote->getValidUntil() && $quote->getValidUntil() < new \DateTime()) {
+        if (!$quoteDemand->getQuote()->isAcceptable()) {
             return new RedirectResponse($request->headers->get('referer'));
         }
 
