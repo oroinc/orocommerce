@@ -211,6 +211,20 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $this->assertEquals('entity', $this->formType->getParent());
     }
 
+    /*
+     * @dataProvider getProductUnitsDataProvider
+     * @param array $product
+     *
+     */
+    public function testGetProductUnits($product)
+    {
+        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
+                     ->disableOriginalConstructor()
+                     ->getMock();
+        $choices = getProductUnits($form, $product);
+        $this->assertEquals(['item','set'], $choices);
+    }
+
     /**
      * @return array
      */
@@ -424,7 +438,8 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $productUnitCode,
         ProductUnit $productUnit = null,
         ProductHolderInterface $productHolder = null
-    ) {
+    )
+    {
         /* @var $productUmitHolder \PHPUnit_Framework_MockObject_MockObject|ProductUnitHolderInterface */
         $productUnitHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface');
         $productUnitHolder
@@ -484,7 +499,8 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $productUnit,
         array $options = [],
         $expectedFieldOverride = false
-    ) {
+    )
+    {
         $form = $this->factory->create($this->formType, $productUnitHolder, $options);
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $parentForm */
@@ -641,5 +657,24 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $method->setValue($entity, $id);
 
         return $entity;
+    }
+
+
+    /**
+    * @return array
+    */
+    public function getProductUnitsDataProvider()
+    {
+    return
+        [
+            'product' => [
+                'id' => 1,
+                'unitPrecisions' => [
+                    ['unit' => ['code' => 'item'], 'sell' => true],
+                    ['unit' => ['code' => 'set'], 'sell' => true],
+                    ['unit' => ['code' => 'kg'], 'sell' => false],
+                ],
+            ],
+        ];
     }
 }
