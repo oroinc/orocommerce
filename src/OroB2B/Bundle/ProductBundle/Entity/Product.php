@@ -56,9 +56,7 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * )
  * @ORM\HasLifecycleCallbacks()
  *
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD)
  */
 class Product extends ExtendProduct implements OrganizationAwareInterface, \JsonSerializable
 {
@@ -244,22 +242,31 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @var ProductUnitPrecision
-     *
-     * @ORM\OneToOne(targetEntity="ProductUnitPrecision", cascade={"ALL"})
-     * @ORM\JoinColumn(name="primary_product_unit_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=25,
-     *              "full"=true
-     *          }
-     *      }
-     * )
      */
     protected $primaryUnitPrecision;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="primary_product_unit_id",type="integer")
+     */
+    protected $primaryUnitPrecisionId;
+
+    /**
+     * @return int
+     */
+    public function getPrimaryUnitPrecisionId()
+    {
+        return $this->primaryUnitPrecisionId;
+    }
+
+    /**
+     * @param int $primaryUnitPrecisionId
+     */
+    public function setPrimaryUnitPrecisionId($primaryUnitPrecisionId)
+    {
+        $this->primaryUnitPrecisionId = $primaryUnitPrecisionId;
+    }
 
     /**
      * @var Collection|LocalizedFallbackValue[]
@@ -387,6 +394,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         $this->descriptions = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
         $this->variantLinks = new ArrayCollection();
+        //$this->primaryUnitPrecision = $this->getPrimaryUnitPrecision();
     }
 
     /**
@@ -910,8 +918,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function setPrimaryUnitPrecision(ProductUnitPrecision $primaryUnitPrecision = null)
     {
-        $this->primaryUnitPrecision = $primaryUnitPrecision;
-        $this->unitPrecisions->add($primaryUnitPrecision);
+        $this->addUnitPrecision($primaryUnitPrecision);
+        $this->primaryUnitPrecision =
+            $this->getPrimaryUnitPrecision() ? $this->getPrimaryUnitPrecision() : $primaryUnitPrecision;
 
         return $this;
     }
@@ -923,47 +932,73 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function getPrimaryUnitPrecision()
     {
-        return $this->primaryUnitPrecision;
-    }
-
-    /**
-     * Get additional unitPrecisions
-     *
-     * @return Collection|ProductUnitPrecision[]
-     */
-    public function getAdditionalUnitPrecisions()
-    {
-        $precisions = $this->unitPrecisions;
-        if ($precisions) {
-            $precisions->removeElement($this->primaryUnitPrecision);
+        if ($this->primaryUnitPrecision && $this->primaryUnitPrecision->getId()) {
+            return $this->primaryUnitPrecision;
+        } elseif ($this->getPrimaryUnitPrecisionId()) {
+            foreach ($this->getUnitPrecisions() as $precision) {
+                if ($precision->getId() == $this->getPrimaryUnitPrecisionId()) {
+                    $this->primaryUnitPrecision = $precision;
+                    return $this->primaryUnitPrecision;
+                }
+            }
+        } else {
+            return null;
         }
-
-        return $precisions;
     }
 
     /**
-     * Add additional unitPrecisions
+     * Add unitPrecisions
      *
      * @param ProductUnitPrecision $unitPrecision
      * @return Product
      */
     public function addAdditionalUnitPrecision(ProductUnitPrecision $unitPrecision)
     {
+        $productUnit = $unitPrecision->getUnit();
+        $primary = $this->getPrimaryUnitPrecision();
+        $primaryUnit = $primary ? $primary->getUnit() : null;
+        if ($productUnit == $primaryUnit) {
+            return $this;
+        }
         $this->addUnitPrecision($unitPrecision);
 
         return $this;
     }
 
     /**
-     * Remove additional unitPrecisions
+     * Remove unitPrecisions
      *
-     * @param ProductUnitPrecision $unitPrecisions
+     * @param ProductUnitPrecision $unitPrecision
      * @return Product
      */
-    public function removeAdditionalUnitPrecision(ProductUnitPrecision $unitPrecisions)
+    public function removeAdditionalUnitPrecision(ProductUnitPrecision $unitPrecision)
     {
-        $this->removeUnitPrecision($unitPrecisions);
+        $productUnit = $unitPrecision->getUnit();
+        $primary = $this->getPrimaryUnitPrecision();
+        $primaryUnit = $primary ? $primary->getUnit() : null;
+        if ($productUnit == $primaryUnit) {
+            return $this;
+        }
+        $this->removeUnitPrecision($unitPrecision);
 
         return $this;
+    }
+
+    /**
+     * Get unitPrecisions
+     *
+     * @return Collection|ProductUnitPrecision[]
+     */
+    public function getAdditionalUnitPrecisions()
+    {
+        $unitPrecisions = clone($this->unitPrecisions);
+        $unitPrecisions->removeElement($this->getPrimaryUnitPrecision());
+
+        $additionalPrecisions = new ArrayCollection();
+        foreach ($unitPrecisions as $v) {
+            $additionalPrecisions->add($v);
+        }
+
+        return $additionalPrecisions;
     }
 }

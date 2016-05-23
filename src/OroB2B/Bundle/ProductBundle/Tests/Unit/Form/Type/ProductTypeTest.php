@@ -179,12 +179,6 @@ class ProductTypeTest extends FormIntegrationTestCase
         /** @var Product $data */
         $data = $form->getData();
 
-        $collection = new ArrayCollection();
-
-        //$expectedData->setUnitPrecisions($collection);
-        //$expectedData->setPrimaryUnitPrecision(null);
-        //$data->setPrimaryUnitPrecision(null);
-
         $this->assertEquals($expectedData, $data);
     }
 
@@ -194,15 +188,11 @@ class ProductTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         return [
-            'simple product' => [
+            /*'simple product' => [
                 'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
-                    'unitPrecisions'=> [
-                        [
-                            0 => $this->getDefaultProductUnitPrecision(),
-                        ]
-                    ],
+                    //'primaryProductUnit' => ['unit' => 'kg', 'precision' => 3],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
@@ -210,15 +200,15 @@ class ProductTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
                 'rounding' => false
-            ]/*,
+            ],*/
             'product with unitPrecisions' => [
                 'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
-                    'unitPrecisions' => [
+                    'additionalUnitPrecisions' => [
                         [
-                            'unit' => 'kg',
-                            'precision' => 3
+                            'unit' => 'each',
+                            'precision' => 0
                         ]
                     ],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
@@ -228,7 +218,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
                 'rounding' => false
-            ],
+            ],/*
             'product with names and descriptions' => [
                 'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
@@ -282,6 +272,7 @@ class ProductTypeTest extends FormIntegrationTestCase
     ) {
         $expectedProduct = new StubProduct();
 
+        //$expectedProduct->setPrimaryUnitPrecision(new ProductUnitPrecision());
         $expectedProduct->setPrimaryUnitPrecision($this->getDefaultProductUnitPrecision());
 
         $expectedProduct->setHasVariants($hasVariants);
@@ -291,16 +282,16 @@ class ProductTypeTest extends FormIntegrationTestCase
         }
 
         $productUnit = new ProductUnit();
-        $productUnit->setCode('kg');
+        $productUnit->setCode('each');
 
         if ($withProductUnitPrecision) {
             $productUnitPrecision = new ProductUnitPrecision();
             $productUnitPrecision
                 ->setProduct($expectedProduct)
                 ->setUnit($productUnit)
-                ->setPrecision(3);
+                ->setPrecision(0);
 
-            $expectedProduct->addUnitPrecision($productUnitPrecision);
+            $expectedProduct->addAdditionalUnitPrecision($productUnitPrecision);
         }
 
         if ($withNamesAndDescriptions) {
@@ -354,7 +345,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         $defaultProduct = new StubProduct();
         $defaultProduct->setHasVariants($hasVariants);
 
-        $defaultProduct->setPrimaryUnitPrecision($this->getDefaultProductUnitPrecision());
+        //$defaultProduct->setPrimaryUnitPrecision($this->getDefaultProductUnitPrecision());
 
         if ($hasVariants) {
             $defaultProduct->setVariantFields(array_keys($this->exampleCustomFields));

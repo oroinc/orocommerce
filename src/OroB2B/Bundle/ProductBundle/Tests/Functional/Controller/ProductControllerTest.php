@@ -13,6 +13,8 @@ use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ *
  * @dbIsolation
  */
 class ProductControllerTest extends WebTestCase
@@ -75,9 +77,11 @@ class ProductControllerTest extends WebTestCase
         $formValues['orob2b_product']['names']['values']['default'] = self::DEFAULT_NAME;
         $formValues['orob2b_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
         $formValues['orob2b_product']['shortDescriptions']['values']['default'] = self::DEFAULT_SHORT_DESCRIPTION;
-        $formValues['orob2b_product']['unitPrecisions'][] = [
+        $formValues['orob2b_product']['additionalUnitPrecisions'][] = [
             'unit' => self::FIRST_UNIT_CODE,
             'precision' => self::FIRST_UNIT_PRECISION,
+            'conversionRate' => 10,
+            'sell' => true,
         ];
 
         $this->client->followRedirects(true);
@@ -118,7 +122,7 @@ class ProductControllerTest extends WebTestCase
                 'owner' => $this->getBusinessUnitId(),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'status' => Product::STATUS_ENABLED,
-                'unitPrecisions' => [
+                'additionalUnitPrecisions' => [
                     ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
                     ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
                     ['unit' => self::THIRD_UNIT_CODE, 'precision' => self::THIRD_UNIT_PRECISION]
@@ -157,18 +161,18 @@ class ProductControllerTest extends WebTestCase
 
         $actualUnitPrecisions = [
             [
-                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][0][unit]"] :selected')->html(),
-                'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][0][precision]"]')
+                'unit' => $crawler->filter('select[name="orob2b_product[additionalUnitPrecisions][0][unit]"] :selected')->html(),
+                'precision' => $crawler->filter('input[name="orob2b_product[additionalUnitPrecisions][0][precision]"]')
                     ->extract('value')[0],
             ],
             [
-                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][1][unit]"] :selected')->html(),
-                'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][1][precision]"]')
+                'unit' => $crawler->filter('select[name="orob2b_product[additionalUnitPrecisions][1][unit]"] :selected')->html(),
+                'precision' => $crawler->filter('input[name="orob2b_product[additionalUnitPrecisions][1][precision]"]')
                     ->extract('value')[0],
             ],
             [
-                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][2][unit]"] :selected')->html(),
-                'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][2][precision]"]')
+                'unit' => $crawler->filter('select[name="orob2b_product[additionalUnitPrecisions][2][unit]"] :selected')->html(),
+                'precision' => $crawler->filter('input[name="orob2b_product[additionalUnitPrecisions][2][precision]"]')
                     ->extract('value')[0],
             ]
         ];
@@ -507,11 +511,11 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertEquals(
             $expectedDefaultProductUnit,
-            $formValues['orob2b_product[unitPrecisions][0][unit]']
+            $formValues['orob2b_product[primaryUnitPrecision][unit]']
         );
         $this->assertEquals(
             $expectedDefaultProductUnitPrecision,
-            $formValues['orob2b_product[unitPrecisions][0][precision]']
+            $formValues['orob2b_product[primaryUnitPrecision][precision]']
         );
     }
 }

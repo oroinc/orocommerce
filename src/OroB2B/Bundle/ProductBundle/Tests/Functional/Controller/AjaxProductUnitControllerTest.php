@@ -69,7 +69,8 @@ class AjaxProductUnitControllerTest extends WebTestCase
                 'product.1',
                 [
                     'bottle' => 'orob2b.product_unit.bottle.label.full',
-                    'liter' => 'orob2b.product_unit.liter.label.full'
+                    'liter' => 'orob2b.product_unit.liter.label.full',
+                    'milliliter' => 'orob2b.product_unit.milliliter.label.full',
                 ],
                 false
             ],
@@ -78,7 +79,8 @@ class AjaxProductUnitControllerTest extends WebTestCase
                 [
                     'bottle' => 'orob2b.product_unit.bottle.label.full',
                     'box' => 'orob2b.product_unit.box.label.full',
-                    'liter' => 'orob2b.product_unit.liter.label.full'
+                    'liter' => 'orob2b.product_unit.liter.label.full',
+                    'milliliter' => 'orob2b.product_unit.milliliter.label.full',
                 ],
                 false
             ],
@@ -86,7 +88,8 @@ class AjaxProductUnitControllerTest extends WebTestCase
                 'product.1',
                 [
                     'bottle' => 'orob2b.product_unit.bottle.label.short',
-                    'liter' => 'orob2b.product_unit.liter.label.short'
+                    'liter' => 'orob2b.product_unit.liter.label.short',
+                    'milliliter' => 'orob2b.product_unit.milliliter.label.short',
                 ],
                 true
             ],
@@ -95,7 +98,8 @@ class AjaxProductUnitControllerTest extends WebTestCase
                 [
                     'bottle' => 'orob2b.product_unit.bottle.label.short',
                     'box' => 'orob2b.product_unit.box.label.short',
-                    'liter' => 'orob2b.product_unit.liter.label.short'
+                    'liter' => 'orob2b.product_unit.liter.label.short',
+                    'milliliter' => 'orob2b.product_unit.milliliter.label.short',
                 ],
                 true
             ]

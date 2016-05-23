@@ -56,7 +56,7 @@ class LoadProductUnitPrecisionDemoData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $this->loadPrimaryUnitPrecision($manager);
+        //$this->loadPrimaryUnitPrecision($manager);
         $this->loadAdditionalUnitPrecisions($manager);
     }
 
@@ -87,9 +87,9 @@ class LoadProductUnitPrecisionDemoData extends AbstractFixture implements
                 ->setPrecision((int)$row['precision'])
                 ->setConversionRate(1)
                 ->setSell(true);
-            $product->setPrimaryUnitPrecision($productUnitPrecision);
+            //$product->setPrimaryUnitPrecision($productUnitPrecision);
             $manager->persist($productUnitPrecision);
-            $manager->persist($product);
+            //$manager->persist($product);
         }
 
         fclose($handler);
