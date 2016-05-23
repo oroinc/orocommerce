@@ -14,8 +14,8 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function() {
-            mediator.on('checkout-content:updated', _.bind(this._onContentUpdated, this));
-            mediator.on('checkout-content:before-update', _.bind(this._onBeforeContentUpdate, this));
+            mediator.on('checkout-content:updated', this._onContentUpdated, this);
+            mediator.on('checkout-content:before-update', this._onBeforeContentUpdate, this);
             this.initTabs();
         },
 
@@ -51,8 +51,8 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('checkout-content:updated', _.bind(this._onContentUpdated, this));
-            mediator.off('checkout-content:before-update', _.bind(this._onBeforeContentUpdate, this));
+            mediator.off('checkout-content:updated', this._onContentUpdated, this);
+            mediator.off('checkout-content:before-update', this._onBeforeContentUpdate, this);
 
             CheckoutContentView.__super__.dispose.call(this);
         }
