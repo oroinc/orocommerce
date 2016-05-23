@@ -6,6 +6,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration as LocaleConfiguration;
 
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService;
@@ -54,8 +55,8 @@ class Configuration implements ConfigurationInterface
                 self::OFFSET_OF_PROCESSING_CPL_PRICES => [
                     'value' => CombinedPriceListsBuilder::DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES
                 ],
-                self::ENABLED_CURRENCIES => ['value' => [], 'type' => 'array'],
-                self::DEFAULT_CURRENCY => ['value' => null]
+                self::ENABLED_CURRENCIES => ['value' => [LocaleConfiguration::DEFAULT_CURRENCY], 'type' => 'array'],
+                self::DEFAULT_CURRENCY => ['value' => LocaleConfiguration::DEFAULT_CURRENCY]
             ]
         );
 
