@@ -45,13 +45,12 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
         $product = $context->data()->get('product');
         $productId = $product->getId();
 
-        if (!$this->data[$productId]) {
+        if (!$this->data[$productId]) { 
             $priceList = $this->priceListRequestHandler->getPriceListByAccount();
 
             /** @var ProductPriceRepository $priceRepository */
             $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
-
-            $this->data[$productId] = $priceRepository->findByPriceListIdAndProductIds(
+            $prices = $priceRepository->findByPriceListIdAndProductIds(
                 $priceList->getId(),
                 [$productId],
                 true,
@@ -63,23 +62,26 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
                     'quantity' => 'ASC',
                 ]
             );
-        }
-        $data = $this->data[$productId];
 
-        $unitPrecisions = $data[0]->getProduct()->getUnitPrecisions();
-        $unitsToSell = [];
-        foreach ($unitPrecisions as $unitPrecision) {
-            if ($unitPrecision->isSell()) {
-                $unitsToSell[] = $unitPrecision->getUnit();
+            $unitPrecisions = current($prices)->getProduct()->getUnitPrecisions();
+
+            $unitsToSell = [];
+            foreach ($unitPrecisions as $unitPrecision) {
+                if ($unitPrecision->isSell()) {
+                    $unitsToSell[] = $unitPrecision->getUnit();
+                }
             }
-        }
-        foreach ($data as $key => $combinedProductPrice) {
-            if (!in_array($combinedProductPrice->getUnit(), $unitsToSell)) {
-                unset($data[$key]);
+
+            foreach ($prices as $key => $combinedProductPrice) {
+                if (!in_array($combinedProductPrice->getUnit(), $unitsToSell)) {
+                    unset($prices[$key]);
+                }
             }
+
+            $this->data[$productId] = $prices;
         }
 
-        return $data;
+        return $this->data[$productId];
     }
 }
 
