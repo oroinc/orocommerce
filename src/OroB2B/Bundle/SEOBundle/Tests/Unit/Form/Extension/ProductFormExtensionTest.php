@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Extend\Entity\EX_OroB2BCatalogBundle_Category;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
-use OroB2B\Bundle\SEOBundle\Form\Extension\CategoryFormExtension;
+use OroB2B\Bundle\SEOBundle\Form\Extension\ProductFormExtension;
 use OroB2B\Bundle\SEOBundle\Tests\Unit\Entity\Stub\ProductStub;
 
 class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
@@ -34,7 +34,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with('OroB2BFallbackBundle:LocalizedFallbackValue')
             ->willReturn($this->manager);
-        $categoryExtension = new CategoryFormExtension($this->registry);
+        $categoryExtension = new ProductFormExtension($this->registry);
         $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
             ->disableOriginalConstructor()
             ->getMock();
@@ -73,7 +73,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         $builder->expects($this->once())
             ->method('addEventListener');
 
-        $categoryExtension = new CategoryFormExtension($this->registry);
+        $categoryExtension = new ProductFormExtension($this->registry);
         $categoryExtension->buildForm($builder, []);
     }
 }
