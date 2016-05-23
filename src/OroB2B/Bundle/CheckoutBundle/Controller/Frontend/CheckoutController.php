@@ -76,7 +76,8 @@ class CheckoutController extends Controller
                 return $this->redirect($workflowItem->getResult()->get('redirectUrl'));
             }
         }
-        if ($responseData) {
+
+        if ($responseData && $request->isXmlHttpRequest()) {
             return new JsonResponse($responseData);
         }
 

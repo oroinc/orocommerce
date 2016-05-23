@@ -2,6 +2,10 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Method;
 
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
@@ -18,20 +22,57 @@ class PaymentTerm implements PaymentMethodInterface
     /** @var PaymentTermProvider */
     protected $paymentTermProvider;
 
+   /** @var PropertyAccessor */
+    protected $propertyAccessor;
+
+    /** @var DoctrineHelper */
+    protected $doctrineHelper;
+
     /**
      * @param PaymentTermProvider $paymentTermProvider
      * @param ConfigManager $configManager
+     * @param PropertyAccessor $propertyAccessor
+     * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(PaymentTermProvider $paymentTermProvider, ConfigManager $configManager)
-    {
+    public function __construct(
+        PaymentTermProvider $paymentTermProvider,
+        ConfigManager $configManager,
+        PropertyAccessor $propertyAccessor,
+        DoctrineHelper $doctrineHelper
+    ) {
         $this->paymentTermProvider = $paymentTermProvider;
         $this->configManager = $configManager;
+        $this->propertyAccessor = $propertyAccessor;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /** {@inheritdoc} */
     public function execute(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setSuccessful(true);
+        $paymentTransaction
+            ->setSuccessful(true)
+            ->setActive(false);
+
+        $entity = $this->doctrineHelper->getEntityReference(
+            $paymentTransaction->getEntityClass(),
+            $paymentTransaction->getEntityIdentifier()
+        );
+
+        if (!$entity) {
+            return [];
+        }
+
+        $paymentTerm = $this->paymentTermProvider->getCurrentPaymentTerm();
+
+        if (!$paymentTerm) {
+            return [];
+        }
+
+        try {
+            $this->propertyAccessor->setValue($entity, 'paymentTerm', $paymentTerm);
+            $this->doctrineHelper->getEntityManager($entity)->flush($entity);
+        } catch (NoSuchPropertyException $e) {
+        }
 
         return [];
     }
@@ -70,5 +111,11 @@ class PaymentTerm implements PaymentMethodInterface
     {
         return $this->getConfigValue(Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY)
             === Configuration::ALLOWED_COUNTRIES_ALL;
+    }
+
+    /** {@inheritdoc} */
+    public function supports($actionName)
+    {
+        return $actionName === self::PURCHASE;
     }
 }
