@@ -8,6 +8,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -86,6 +87,36 @@ class CombinedProductPriceRepository extends ProductPriceRepository
         }
 
         $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param CombinedPriceList $priceList
+     * @param array $productIds
+     * @param null|string $currency
+     * @return CombinedProductPrice[]
+     */
+    public function getPricesForProductsByPriceList(CombinedPriceList $priceList, array $productIds, $currency = null)
+    {
+        if (count($productIds) === 0) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('cpp');
+
+        $qb->select('cpp')
+            ->where($qb->expr()->eq('cpp.priceList', ':priceList'))
+            ->andWhere($qb->expr()->in('cpp.product', ':productIds'))
+            ->setParameters([
+                'priceList' => $priceList,
+                'productIds' => $productIds
+            ]);
+
+        if ($currency) {
+            $qb->andWhere($qb->expr()->eq('cpp.currency', ':currency'))
+                ->setParameter('currency', $currency);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     /**

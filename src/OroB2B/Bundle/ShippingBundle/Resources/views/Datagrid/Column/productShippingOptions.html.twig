@@ -1,0 +1,5 @@
+{% import 'OroB2BShippingBundle::macros.html.twig' as PSO %}
+
+{% if value and value|length > 0 %}
+    {{ PSO.renderProductShippingOptions(value) }}
+{% endif %}

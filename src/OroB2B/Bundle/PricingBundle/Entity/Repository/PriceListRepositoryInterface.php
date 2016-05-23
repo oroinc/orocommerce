@@ -14,4 +14,10 @@ interface PriceListRepositoryInterface
      * @return BasePriceListRelation[]
      */
     public function getPriceLists($entity, Website $website, $sortOrder);
+
+    /**
+     * @param array|int[] $holdersIds
+     * @return BasePriceListRelation[]
+     */
+    public function getRelationsByHolders(array $holdersIds);
 }

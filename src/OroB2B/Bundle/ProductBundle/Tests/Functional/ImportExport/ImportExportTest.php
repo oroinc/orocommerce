@@ -346,7 +346,7 @@ class ImportExportTest extends WebTestCase
     {
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import_validation.yml';
 
-        return Yaml::parse($filePath);
+        return Yaml::parse(file_get_contents($filePath));
     }
 
     public function testImportRelations()
