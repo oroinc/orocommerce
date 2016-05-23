@@ -11,7 +11,7 @@ class CountryAwarePaymentMethodTraitStub
     /** @var array */
     protected $allowedCountries;
 
-    /** @var string */
+    /** @var bool */
     protected $allAllowed;
 
     /**

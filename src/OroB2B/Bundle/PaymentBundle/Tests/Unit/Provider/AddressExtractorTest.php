@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Provider;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Component\Testing\Unit\EntityTrait;
+
+use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\PaymentBundle\Provider\AddressExtractor;
 
 class AddressExtractorTest extends \PHPUnit_Framework_TestCase
@@ -112,7 +113,7 @@ class AddressExtractorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage "Oro\Bundle\LocaleBundle\Model\AddressInterface" expected, stdClass found
+     * @expectedExceptionMessage "Oro\Bundle\LocaleBundle\Model\AddressInterface" expected, "stdClass" found
      */
     public function testWrongType()
     {

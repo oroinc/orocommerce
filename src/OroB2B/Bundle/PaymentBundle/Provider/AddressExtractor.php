@@ -43,7 +43,7 @@ class AddressExtractor
         if (!$result instanceof AddressInterface) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    '"Oro\Bundle\LocaleBundle\Model\AddressInterface" expected, %s found',
+                    '"Oro\Bundle\LocaleBundle\Model\AddressInterface" expected, "%s" found',
                     is_object($result) ? get_class($result) : gettype($result)
                 )
             );
