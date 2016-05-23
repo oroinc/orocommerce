@@ -21,7 +21,7 @@ define(function(require) {
             PaymentTransitionButtonComponent.__super__.initialize.call(this, options);
 
             this.initPaymentMethod();
-            this.getPaymentMethodSelector().on('change', _.bind(this.onPaymentMethodChange, this));
+            this.getPaymentMethodSelector().on('change', $.proxy(this.onPaymentMethodChange, this));
         },
 
         initPaymentMethod: function() {
@@ -29,8 +29,10 @@ define(function(require) {
             var selectedValue = this.getPaymentMethodElement().val();
             if (filledForm.length > 0) {
                 if (selectedValue) {
+                    mediator.trigger('checkout:payment:before-restore-filled-form', filledForm);
                     filledForm.removeClass('hidden');
                     this.getPaymentForm().replaceWith(filledForm);
+                    delete this.$paymentForm;
                 } else {
                     filledForm.remove();
                 }
@@ -58,9 +60,11 @@ define(function(require) {
                 return;
             }
 
-            this.getPaymentForm()
+            var filledForm = this.getPaymentForm();
+            mediator.trigger('checkout:payment:before-hide-filled-form', filledForm);
+            filledForm
                 .addClass('hidden')
-                .insertAfter($(this.options.selectors.checkoutContent));
+                .insertAfter(this.getContent());
 
             PaymentTransitionButtonComponent.__super__.transit.call(this, e, data);
         },
@@ -73,7 +77,7 @@ define(function(require) {
                 return;
             }
 
-            this.getPaymentMethodSelector().off('change', _.bind(this.onPaymentMethodChange, this));
+            this.getPaymentMethodSelector().off('change', $.proxy(this.onPaymentMethodChange, this));
 
             PaymentTransitionButtonComponent.__super__.dispose.call(this);
         },

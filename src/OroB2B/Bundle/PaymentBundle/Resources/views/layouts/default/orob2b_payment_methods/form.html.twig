@@ -27,20 +27,43 @@
 {% endblock %}
 
 {% block _orob2b_payment_credit_card_widget %}
+    {% set creditCardComponent = options.creditCardComponent|default('orob2bpayment/js/app/components/credit-card-component') %}
+    {% set creditCardComponentOptions = options.creditCardComponentOptions|default({})|merge({paymentMethod: paymentMethod}) %}
+    {% set isAuthorizedCard = creditCardComponentOptions.acct is defined %}
+
     <div class="{{ class_prefix }}__form__payment-methods"
-            data-page-component-module="orob2bpayment/js/app/components/credit-card-component"
-            data-page-component-options="{{ {paymentMethod: paymentMethod}|json_encode }}">
-        <ul class="{{ class_prefix }}__form__payment-methods__list">
-            {% for cc_name in allowed_cc %}
-                <li><i class="credit-card-icon credit-card-icon_{{ cc_name }}"></i></li>
-            {% endfor %}
-        </ul>
-        <div class="{{ class_prefix }}__form__payment-methods__form" data-credit-card-form="data-credit-card-form">
-            {% for child in form.children %}
-                <div class="{{ class_prefix }}__form__row">
-                    {{ form_row(child, {class_prefix: class_prefix}) }}
+        data-page-component-module="{{ creditCardComponent }}"
+        data-page-component-options="{{ creditCardComponentOptions|json_encode }}">
+        {% if isAuthorizedCard %}
+            <div class="{{ class_prefix }}__form__payment-methods-authorized-card" data-authorized-card>
+                <p>
+                    {{ 'orob2b.payment.payflow.authorized_card'|trans({'{{ last4 }}': creditCardComponentOptions.acct}) }}
+                </p>
+                <a href="javascript: void(0);" class="{{ class_prefix }}__form__payment-methods-different-card-handle" data-different-card-handle>
+                    {{ 'orob2b.payment.payflow.use_different_card'|trans }}
+                </a>
+            </div>
+        {% endif %}
+        <div {% if isAuthorizedCard %} style="display: none;" data-different-card{% endif %}>
+            {% if isAuthorizedCard %}
+                <div class="{{ class_prefix }}__form__payment-methods-different-card">
+                    <a href="javascript: void(0);" class="{{ class_prefix }}__form__payment-methods-authorized-card-handle" data-authorized-card-handle>
+                        {{ 'orob2b.payment.payflow.use_authorized_card'|trans }}
+                    </a>
                 </div>
-            {% endfor %}
+            {% endif %}
+            <ul class="{{ class_prefix }}__form__payment-methods__list">
+                {% for cc_name in options.allowedCreditCards %}
+                    <li><i class="credit-card-icon credit-card-icon_{{ cc_name }}"></i></li>
+                {% endfor %}
+            </ul>
+            <div class="{{ class_prefix }}__form__payment-methods__form" data-credit-card-form="data-credit-card-form">
+                {% for child in form.children %}
+                    <div class="{{ class_prefix }}__form__row">
+                        {{ form_row(child, {class_prefix: class_prefix}) }}
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 {% endblock %}

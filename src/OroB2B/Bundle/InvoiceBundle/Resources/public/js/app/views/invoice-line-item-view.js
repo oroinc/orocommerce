@@ -48,8 +48,8 @@ define(function (require) {
          */
         initialize: function (options) {
             this.options = _.defaults(options || {}, this.options);
-            this.$el.on('click', '.removeLineItem', _.bind(this._removeRow, this));
-            mediator.on('update:currency', _.bind(this._updateCurrency, this));
+            this.$el.on('click', '.removeLineItem', $.proxy(this._removeRow, this));
+            mediator.on('update:currency', this._updateCurrency, this);
 
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
         },
@@ -161,7 +161,7 @@ define(function (require) {
                 .add(this.fieldsByName.productUnit)
                 .add(this.fieldsByName.quantity)
                 .add(this.fieldsByName.priceCurrency)
-                .on('change', _.bind(this._setTotalPrice, this));
+                .on('change', $.proxy(this._setTotalPrice, this));
         },
 
         /**
@@ -227,8 +227,10 @@ define(function (require) {
                 return;
             }
 
-            this.$el.off('click', '.removeLineItem', _.bind(this._removeRow, this));
-            mediator.off('update:currency', _.bind(this._updateCurrency, this));
+            this.$el.off('click', '.removeLineItem', $.proxy(this._removeRow, this));
+            mediator.off('update:currency', this._updateCurrency, this);
+            this.fieldsByName.priceValue.off('change', $.proxy(this._setTotalPrice, this));
+
             LineItemView.__super__.dispose.call(this);
         }
     });
