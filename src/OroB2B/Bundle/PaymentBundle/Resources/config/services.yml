@@ -112,19 +112,12 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_credit_card_form_provider }
 
-    orob2b_payment.provider.term_form_provider:
-        class: 'OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentTermFormProvider'
-        public: true
-        arguments:
-            - '@form.factory'
-        tags:
-            - { name: layout.data_provider, alias: orob2b_payment_payment_term_form_provider }
-
     orob2b_payment.provider.methods_provider:
         class: 'OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider'
         public: true
         arguments:
             - '@orob2b_payment.payment_method.view.registry'
+            - '@orob2b_payment.provider.address_extractor'
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_methods_provider }
 
@@ -209,5 +202,6 @@ services:
 
     orob2b_payment.provider.address_extractor:
         class: 'OroB2B\Bundle\PaymentBundle\Provider\AddressExtractor'
+        public: false
         arguments:
             - '@property_accessor'

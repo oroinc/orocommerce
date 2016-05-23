@@ -109,4 +109,16 @@ class AddressExtractorTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage "Oro\Bundle\LocaleBundle\Model\AddressInterface" expected, stdClass found
+     */
+    public function testWrongType()
+    {
+        $entity = new \stdClass();
+        $entity->billingAddress = new \stdClass();
+
+        $this->extractor->extractAddress($entity, 'billingAddress');
+    }
 }

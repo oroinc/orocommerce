@@ -26,6 +26,7 @@ class AddressExtractor
      * @param object|array $object
      * @param string $from
      * @return AddressInterface
+     * @throws \InvalidArgumentException in address missing or invalid
      */
     public function extractAddress($object, $from = self::PROPERTY_PATH)
     {
@@ -37,6 +38,15 @@ class AddressExtractor
 
         if ($result === null) {
             throw new \InvalidArgumentException('Object does not contains billingAddress');
+        }
+
+        if (!$result instanceof AddressInterface) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '"Oro\Bundle\LocaleBundle\Model\AddressInterface" expected, %s found',
+                    is_object($result) ? get_class($result) : gettype($result)
+                )
+            );
         }
 
         return $result;
