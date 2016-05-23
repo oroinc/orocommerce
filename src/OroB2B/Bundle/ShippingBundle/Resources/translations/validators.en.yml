@@ -1,0 +1,5 @@
+orob2b:
+    shipping:
+          validators:
+              product_unit_shipping_options:
+                  unique_entity.message: 'Product has duplication of shipping options. Field "Unit" should be unique.'

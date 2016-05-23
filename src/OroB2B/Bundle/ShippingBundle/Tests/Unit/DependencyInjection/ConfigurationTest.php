@@ -53,7 +53,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'settings' => [
                         'resolved' => true,
-                        'shipping_origin' => ['value' => [], 'scope' => 'app']
+                        'shipping_origin' => ['value' => [], 'scope' => 'app'],
+                        'length_units' => ['value' => ['inch', 'foot', 'cm', 'm'], 'scope' => 'app'],
+                        'weight_units' => ['value' => ['lbs', 'kg'], 'scope' => 'app'],
+                        'freight_classes' => ['value' => ['parcel'], 'scope' => 'app'],
                     ]
                 ]
             ]

@@ -36,7 +36,7 @@ define(function(require) {
             this.$form = this.$el.closest('form');
 
             this.updateDependentFields();
-            this.$el.on('change', _.bind(this.updateDependentFields, this));
+            this.$el.on('change', $.proxy(this.updateDependentFields, this));
         },
 
         /**
@@ -47,7 +47,7 @@ define(function(require) {
                 return;
             }
 
-            this.$el.off('change', _.bind(this.updateDependentFields, this));
+            this.$el.off('change', $.proxy(this.updateDependentFields, this));
 
             ConfigHideFieldsComponent.__super__.dispose.call(this);
         },

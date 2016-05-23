@@ -22,6 +22,8 @@ services:
         arguments:
             - '@orob2b_payment.provider.payment_term'
             - '@oro_config.global'
+            - '@property_accessor'
+            - '@oro_entity.doctrine_helper'
 
     orob2b_payment.payment_method.view.registry:
         class: 'OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry'
@@ -37,6 +39,7 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_config.global'
+            - '@orob2b_payment.provider.payment_transaction'
 
     orob2b_payment.payment_method.view.paypal_payments_pro:
         class: 'OroB2B\Bundle\PaymentBundle\Method\View\PayPalPaymentsProView'

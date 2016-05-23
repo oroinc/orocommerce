@@ -24,6 +24,7 @@ class AuthorizationRequest extends AbstractRequest
             ->addOption(new Option\SecureToken())
             ->addOption(new Option\BillingAddress())
             ->addOption(new Option\ShippingAddress())
+            ->addOption(new Option\OriginalTransaction())
             ->addOption(new Option\Invoice())
             ->addOption(new Option\Purchase())
             ->addOption(new Option\PartialAuthorization())

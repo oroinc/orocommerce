@@ -2,20 +2,36 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
-class ProductPriceDatagridListenerTest extends AbstractProductPriceDatagridListenerTest
+class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
+     */
+    protected $priceListRequestHandler;
+    
     /**
      * @var ProductPriceDatagridListener
      */
@@ -28,11 +44,26 @@ class ProductPriceDatagridListenerTest extends AbstractProductPriceDatagridListe
 
     public function setUp()
     {
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->with($this->isType('string'))
+            ->willReturnCallback(
+                function ($id, array $params = []) {
+                    $id = str_replace(array_keys($params), array_values($params), $id);
+
+                    return $id . '.trans';
+                }
+            );
+
+        $this->priceListRequestHandler = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-        parent::setUp();
-        $this->listener->setProductUnitClass('OroB2BProductBundle:ProductUnit');
+        $this->listener = $this->createListener();
     }
 
     /**
@@ -44,17 +75,6 @@ class ProductPriceDatagridListenerTest extends AbstractProductPriceDatagridListe
             $this->translator,
             $this->priceListRequestHandler,
             $this->doctrineHelper
-        );
-    }
-
-    public function testSetProductUnitClass()
-    {
-        $listener = $this->createListener();
-        $this->assertNull($this->getProperty($listener, 'productUnitClass'));
-        $listener->setProductUnitClass('OroB2BProductBundle:ProductUnit');
-        $this->assertEquals(
-            'OroB2BProductBundle:ProductUnit',
-            $this->getProperty($listener, 'productUnitClass')
         );
     }
 
@@ -75,13 +95,24 @@ class ProductPriceDatagridListenerTest extends AbstractProductPriceDatagridListe
     }
 
     /**
-     * {@inheritDoc}
+     * @param int|null $priceListId
+     * @param array $priceCurrencies
+     * @param array $expectedConfig
      * @dataProvider onBuildBeforeDataProvider
      */
     public function testOnBuildBefore($priceListId = null, array $priceCurrencies = [], array $expectedConfig = [])
     {
         $this->setUpRepository();
-        parent::testOnBuildBefore($priceListId, $priceCurrencies, $expectedConfig);
+        $this->setUpPriceListRequestHandler($priceListId, $priceCurrencies);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $config = DatagridConfiguration::create([]);
+
+        $event = new BuildBefore($datagrid, $config);
+        $this->listener->onBuildBefore($event);
+
+        $this->assertEquals($expectedConfig, $config->toArray());
     }
 
     /**
@@ -401,5 +432,32 @@ class ProductPriceDatagridListenerTest extends AbstractProductPriceDatagridListe
     protected function getUnit($unitCode)
     {
         return (new ProductUnit())->setCode($unitCode);
+    }
+
+    /**
+     * @param int $id
+     * @return PriceList
+     */
+    protected function getPriceList($id)
+    {
+        $priceList = new PriceList();
+        $reflection = new \ReflectionProperty(get_class($priceList), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($priceList, $id);
+
+        return $priceList;
+    }
+
+    /**
+     * @param object $object
+     * @param string $property
+     * @return mixed $value
+     */
+    protected function getProperty($object, $property)
+    {
+        $reflection = new \ReflectionProperty(get_class($object), $property);
+        $reflection->setAccessible(true);
+
+        return $reflection->getValue($object);
     }
 }

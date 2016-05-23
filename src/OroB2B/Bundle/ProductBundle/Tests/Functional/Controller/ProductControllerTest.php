@@ -13,6 +13,8 @@ use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ *
  * @dbIsolation
  */
 class ProductControllerTest extends WebTestCase
