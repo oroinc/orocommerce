@@ -8,7 +8,7 @@ define(function(require) {
 
     InputWidgetManager.removeWidget('uniform-select');
     InputWidgetManager.addWidget('select2', {
-        selector: 'select:not([data-not-select2])',
+        selector: 'select',
         Widget: Select2InputWidget
     });
 

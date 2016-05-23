@@ -13,6 +13,7 @@ define(function(require) {
             containerCssClass: 'oro-select2',
             dropdownCssClass: 'oro-select2__dropdown',
             placeholder: __('Please select'),
+            dropdownAutoWidth: true,
             minimumResultsForSearch: Infinity // hiding the search box
         },
 
@@ -59,6 +60,15 @@ define(function(require) {
 
         onUnselect: function(callback) {
             this._addEvent(this.widgetFunctionName + '-removing', callback);
+        },
+
+        val: function() {
+            Array.prototype.unshift.call(arguments, 'val');
+            return this.widgetFunction.apply(this, arguments);
+        },
+
+        valData: function() {
+            return this.widgetFunction('data');
         }
     });
 
