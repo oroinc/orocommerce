@@ -21,6 +21,7 @@ class Configuration implements ConfigurationInterface
     const FULL_COMBINED_PRICE_LIST = 'full_combined_price_list';
     const PRICE_LISTS_UPDATE_MODE = 'price_lists_update_mode';
     const OFFSET_OF_PROCESSING_CPL_PRICES = 'offset_of_processing_cpl_prices';
+    const DEFAULT_CURRENCY = 'default_currency';
 
     /**
      * @var string
@@ -53,7 +54,8 @@ class Configuration implements ConfigurationInterface
                 self::OFFSET_OF_PROCESSING_CPL_PRICES => [
                     'value' => CombinedPriceListsBuilder::DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES
                 ],
-                self::ENABLED_CURRENCIES => ['value' => [], 'type' => 'array']
+                self::ENABLED_CURRENCIES => ['value' => [], 'type' => 'array'],
+                self::DEFAULT_CURRENCY => ['value' => null]
             ]
         );
 

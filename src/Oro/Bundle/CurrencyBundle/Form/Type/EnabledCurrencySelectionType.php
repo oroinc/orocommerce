@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CurrencyBundle\Form\Type;
 
-class CurrencySelectionType extends AbstractCurrencySelectionType
+class EnabledCurrencySelectionType extends AbstractCurrencySelectionType
 {
-    const NAME = 'oro_currency_selection';
-    const CURRENCY_SELECTOR_CONFIG_KEY = 'oro_currency.allowed_currencies';
+    const NAME = 'oro_enabled_currency_selection';
+    const CURRENCY_SELECTOR_CONFIG_KEY = 'oro_b2b_pricing.enabled_currencies';
 
       /**
      * {@inheritDoc}
