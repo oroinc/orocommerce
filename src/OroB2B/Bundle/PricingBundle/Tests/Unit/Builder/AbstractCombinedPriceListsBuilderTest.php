@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\ORM\EntityRepository;
+
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
