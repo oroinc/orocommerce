@@ -1,5 +1,8 @@
 @oro-select2-arrow-height: 18px;
 @oro-select2-arrow-size: 5px;
+@oro-select2-size-l: 13px;
+@oro-select2-size-m: 10px;
+@oro-select2-size-s: 8px;
 
 .oro-select2-active-state {
   border: 1px solid @base-border-color;
@@ -9,21 +12,23 @@
 .oro-select2 {
   display: inline-block;
 
-  padding: 14px !important; //TODO: After remove .input classes from select delete !important
-
   background: @base-white-color;
 
   .base-ui-element-style();
+
+  padding: 0 !important; //TODO: After remove .input classes from select delete !important
 
   // Update styles for select2 from platform styles
   a.select2-choice {
     height: auto;
 
+    padding: @oro-select2-size-l;
+
     line-height: inherit;
 
     .select2-arrow {
       top: 50%;
-      right: 0;
+      right: @oro-select2-size-l;
 
       height: @oro-select2-arrow-height;
       width: @oro-select2-arrow-size * 2;
@@ -50,6 +55,7 @@
     .select2-chosen {
       max-width: inherit;
 
+      margin-right: 4px;
       padding: 0 26px 0 0;
     }
   }
@@ -63,7 +69,6 @@
   }
 
   .select2-search-field input {
-    margin: 0;
     padding: 0;
   }
 
@@ -139,8 +144,28 @@
 
   &--size {
     &-m {
-      padding: 7px 6px !important; //TODO: After remove .input classes from select delete !important
+      // Update styles for select2 from platform styles
+      a.select2-choice {
+        padding: @oro-select2-size-m;
 
+        .select2-arrow {
+          right: @oro-select2-size-m;
+        }
+      }
+      .select2-chosen {
+        padding-right: 16px !important;
+      }
+    }
+
+    &-s {
+      // Update styles for select2 from platform styles
+      a.select2-choice {
+        padding: @oro-select2-size-s;
+
+        .select2-arrow {
+          right: @oro-select2-size-s;
+        }
+      }
       .select2-chosen {
         padding-right: 16px !important;
       }

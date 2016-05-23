@@ -4744,8 +4744,11 @@
     display: inline-block;
   }
 
+  // Do not can add modifier (oro-select2--size-s) for select in this case
   .oro-select2 {
-    padding: 7px 6px !important; //TODO: After remove .input classes from select delete !important
+    .select2-choice {
+      padding: 8px;
+    }
 
     .select2-chosen {
       padding-right: 16px !important;
@@ -6666,17 +6669,35 @@
     display: inline-block;
     width: auto;
     height: auto;
+    padding: 7px;
 
     .select2-choice {
-      max-width: 230px;
+      max-width: 255px;
     }
   }
 }
 
 .select2-container {
+  a.select2-choice {
+    height: auto;
+
+    .select2-chosen {
+      padding: 11px 30px 11px 8px;
+    }
+
+    .select2-arrow,
+    .select2-search-choice-close {
+      top: 9px;
+    }
+  }
+
   .select2-chosen {
     max-width: 215px;
 
     margin-right: 12px;
+  }
+  &.input.input_block {
+    display: inline-block;
+    width: auto;
   }
 }
