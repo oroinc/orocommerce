@@ -35,7 +35,7 @@ datagrid:
                 label: orob2b.checkout.payment_method.label
                 type: twig
                 frontend_type: html
-                template: OroB2BCheckoutBundle:Checkout:Datagrid/peymentMethod.html.twig
+                template: OroB2BCheckoutBundle:Checkout:Datagrid/paymentMethod.html.twig
             poNumber:
                 label: orob2b.checkout.po_number.label
                 renderable: false

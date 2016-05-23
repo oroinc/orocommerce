@@ -89,6 +89,22 @@ class CreditCardType extends AbstractType
                     ]
                 ]
             );
+
+        if ($options['zeroAmountAuthorizationEnabled']) {
+            $builder->add(
+                'save_for_later',
+                'checkbox',
+                [
+                    'required' => false,
+                    'label' => 'orob2b.payment.credit_card.save_for_later.label',
+                    'mapped' => false,
+                    'data' => true,
+                    'attr' => [
+                        'data-save-for-later' => true
+                    ]
+                ]
+            );
+        }
     }
 
     /**
@@ -96,7 +112,11 @@ class CreditCardType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['label' => 'orob2b.payment.methods.credit_card.label', 'csrf_protection' => false]);
+        $resolver->setDefaults([
+            'label' => 'orob2b.payment.methods.credit_card.label',
+            'csrf_protection' => false,
+            'zeroAmountAuthorizationEnabled' => false,
+        ]);
     }
 
     /**

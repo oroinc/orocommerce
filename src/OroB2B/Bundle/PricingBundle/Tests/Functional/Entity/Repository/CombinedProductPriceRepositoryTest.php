@@ -40,10 +40,10 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     public function testInsertPricesByPriceList($combinedPriceList, $product, $expectedExists)
     {
         /**
-         * @var $combinedPriceList CombinedPriceList
-         * @var $product Product
+         * @var CombinedPriceList $combinedPriceList
          */
         $combinedPriceList = $this->getReference($combinedPriceList);
+        /** @var Product $product */
         $product = $this->getReference($product);
 
         $repository = $this->getCombinedPriceListToPriceListRepository();
@@ -102,6 +102,72 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 'combinedPriceList' => '2t_3f_1t',
                 'product' => 'product.7',
                 'expectedExists' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @depends testInsertPricesByPriceList
+     * @dataProvider getPricesForProductsByPriceListDataProvider
+     * @param string $priceList
+     * @param array $products
+     * @param string|null $currency
+     */
+    public function testGetPricesForProductsByPriceList($priceList, array $products, $currency = null)
+    {
+        /**
+         * @var CombinedPriceList $priceList
+         */
+        $priceList = $this->getReference($priceList);
+        $productIds = array_map(
+            function ($product) {
+                return $this->getReference($product)->getId();
+            },
+            $products
+        );
+
+        $expected = [];
+        foreach ($products as $product) {
+            $searchConditions = [
+                'priceList' => $priceList,
+                'product' => $this->getReference($product)
+            ];
+            if ($currency) {
+                $searchConditions['currency'] = $currency;
+            }
+            $expected = array_merge(
+                $expected,
+                $this->getCombinedProductPriceRepository()->findBy($searchConditions)
+            );
+        }
+
+        $result = $this->getCombinedProductPriceRepository()
+            ->getPricesForProductsByPriceList($priceList, $productIds, $currency);
+
+        $this->assertCount(count($expected), $result);
+        foreach ($expected as $price) {
+            $this->assertContains($price, $result);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getPricesForProductsByPriceListDataProvider()
+    {
+        return [
+            [
+                'combinedPriceList' => '1t_2t_3t',
+                'products' => ['product.1'],
+                'currency' => 'USD'
+            ],
+            [
+                'combinedPriceList' => '1t_2t_3t',
+                'products' => ['product.2']
+            ],
+            [
+                'combinedPriceList' => '1t_2t_3t',
+                'products' => ['product.1', 'product.2']
             ],
         ];
     }
