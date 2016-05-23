@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Doctrine\ORM\EntityRepository;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -129,10 +130,9 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
             ->getMock();
 
         $this->fallbackRepository = $this
-            ->getMockBuilder('Doctrine\ORM\EntityRepository\EntityRepository')
+            ->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-
         $fallbackEm = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
         $fallbackEm->expects($this->any())
             ->method('getRepository')
