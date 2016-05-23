@@ -11,6 +11,8 @@ use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class CaptureActionTest extends AbstractActionTest
 {
+    const PAYMENT_METHOD = 'testPaymentMethodType';
+
     public function testExecuteWithoutTransaction()
     {
         $options = [
@@ -18,6 +20,7 @@ class CaptureActionTest extends AbstractActionTest
             'amount' => 100.0,
             'currency' => 'USD',
             'attribute' => new PropertyPath('test'),
+            'paymentMethod' => self::PAYMENT_METHOD,
             'transactionOptions' => [],
         ];
 
@@ -61,19 +64,18 @@ class CaptureActionTest extends AbstractActionTest
         $this->paymentTransactionProvider
             ->expects($this->once())
             ->method('getActiveAuthorizePaymentTransaction')
+            ->with($options['object'], $options['amount'], $options['currency'], $options['paymentMethod'])
             ->willReturn($paymentTransaction);
 
-        $exceptionWillThrow = false;
         $responseValue = $this->returnValue($data['response']);
 
         if ($data['response'] instanceof \Exception) {
             $responseValue = $this->throwException($data['response']);
-            $exceptionWillThrow = true;
         }
 
         $capturePaymentTransaction = new PaymentTransaction();
         $capturePaymentTransaction
-            ->setPaymentMethod($data['testPaymentMethodType'])
+            ->setPaymentMethod($options['paymentMethod'])
             ->setEntityIdentifier($data['testEntityIdentifier']);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
@@ -86,16 +88,17 @@ class CaptureActionTest extends AbstractActionTest
         $this->paymentTransactionProvider
             ->expects($this->once())
             ->method('createPaymentTransaction')
+            ->with($options['paymentMethod'], PaymentMethodInterface::CAPTURE, $options['object'])
             ->willReturn($capturePaymentTransaction);
 
         $this->paymentMethodRegistry
             ->expects($this->once())
             ->method('getPaymentMethod')
-            ->with($data['testPaymentMethodType'])
+            ->with($options['paymentMethod'])
             ->willReturn($paymentMethod);
 
         $this->paymentTransactionProvider
-            ->expects($this->exactly($exceptionWillThrow ? 2 : 3))
+            ->expects($this->exactly(2))
             ->method('savePaymentTransaction')
             ->withConsecutive(
                 $paymentTransaction,
@@ -116,20 +119,22 @@ class CaptureActionTest extends AbstractActionTest
      */
     public function executeDataProvider()
     {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setPaymentMethod(self::PAYMENT_METHOD);
         return [
             'default' => [
                 'data' => [
-                    'paymentTransaction' => new PaymentTransaction(),
+                    'paymentTransaction' => $paymentTransaction,
                     'options' => [
                         'object' => new \stdClass(),
                         'amount' => 100.0,
                         'currency' => 'USD',
                         'attribute' => new PropertyPath('test'),
+                        'paymentMethod' => self::PAYMENT_METHOD,
                         'transactionOptions' => [
                             'testOption' => 'testOption'
                         ],
                     ],
-                    'testPaymentMethodType' => 'testPaymentMethodType',
                     'testEntityIdentifier' => 10,
                     'response' => ['testResponse' => 'testResponse'],
                 ],
@@ -142,17 +147,17 @@ class CaptureActionTest extends AbstractActionTest
             ],
             'throw exception' => [
                 'data' => [
-                    'paymentTransaction' => new PaymentTransaction(),
+                    'paymentTransaction' => $paymentTransaction,
                     'options' => [
                         'object' => new \stdClass(),
                         'amount' => 100.0,
                         'currency' => 'USD',
                         'attribute' => new PropertyPath('test'),
+                        'paymentMethod' => self::PAYMENT_METHOD,
                         'transactionOptions' => [
                             'testOption' => 'testOption'
                         ],
                     ],
-                    'testPaymentMethodType' => 'testPaymentMethodType',
                     'testEntityIdentifier' => 10,
                     'response' => new \Exception(),
                 ],
