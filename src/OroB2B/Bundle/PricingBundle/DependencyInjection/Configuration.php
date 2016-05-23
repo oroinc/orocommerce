@@ -15,6 +15,7 @@ class Configuration implements ConfigurationInterface
 {
     const DEFAULT_PRICE_LISTS = 'default_price_lists';
     const ROUNDING_TYPE = 'rounding_type';
+    const ENABLED_CURRENCIES = 'enabled_currencies';
     const PRECISION = 'precision';
     const COMBINED_PRICE_LIST = 'combined_price_list';
     const FULL_COMBINED_PRICE_LIST = 'full_combined_price_list';
@@ -51,7 +52,8 @@ class Configuration implements ConfigurationInterface
                 self::PRICE_LISTS_UPDATE_MODE => ['value' => CombinedPriceListQueueConsumer::MODE_REAL_TIME],
                 self::OFFSET_OF_PROCESSING_CPL_PRICES => [
                     'value' => CombinedPriceListsBuilder::DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES
-                ]
+                ],
+                self::ENABLED_CURRENCIES => ['value' => [], 'type' => 'array']
             ]
         );
 
