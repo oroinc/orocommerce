@@ -14,3 +14,36 @@ OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse:
             - NotBlank: ~
         warehouse:
             - NotBlank: ~
+
+OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields:  [ product, productUnit ]
+            message: orob2b.shipping.validators.product_unit_shipping_options.unique_entity.message
+    properties:
+        product:
+            - NotBlank: ~
+        productUnit:
+            - NotBlank: ~
+            - Valid: ~
+        weight:
+            - Valid: ~
+        dimensions:
+            - Valid: ~
+        freightClass:
+            - Valid: ~
+
+OroB2B\Bundle\ShippingBundle\Model\DimensionsValue:
+    properties:
+        length:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        width:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        height:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+
+OroB2B\Bundle\ShippingBundle\Model\Weight:
+    properties:
+        value:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+
