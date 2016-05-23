@@ -22,7 +22,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\AccountBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
@@ -76,7 +76,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
         $this->websiteManager = $this->getMockWithoutConstructor('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager');
         $this->setUpTokenStorage();
         $this->currencyProvider = $this
-            ->getMockWithoutConstructor('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider');
+            ->getMockWithoutConstructor('OroB2B\Bundle\AccountBundle\Provider\UserCurrencyProvider');
         $this->redirect = $this->getMockBuilder('Oro\Component\Action\Action\AbstractAction')
             ->disableOriginalConstructor()
             ->setMethods(['initialize', 'execute'])

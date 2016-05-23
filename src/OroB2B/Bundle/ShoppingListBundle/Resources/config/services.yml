@@ -157,7 +157,7 @@ services:
         arguments:
             - '@orob2b_pricing.provider.combined_product_price'
             - '@oro_security.security_facade'
-            - '@orob2b_pricing.provider.user_currency'
+            - '@orob2b_account.provider.user_currency'
             - '@orob2b_pricing.model.price_list_request_handler'
 
     orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_units:
@@ -166,7 +166,7 @@ services:
         arguments:
             - "@doctrine"
             - "@orob2b_pricing.model.price_list_request_handler"
-            - "@orob2b_pricing.provider.user_currency"
+            - "@orob2b_account.provider.user_currency"
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_products_units }
 

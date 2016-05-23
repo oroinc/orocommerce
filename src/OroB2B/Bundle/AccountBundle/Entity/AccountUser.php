@@ -13,6 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Model\FullNameInterface;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 use Oro\Bundle\UserBundle\Entity\User;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity
@@ -787,5 +788,26 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
         if (array_diff_key($event->getEntityChangeSet(), array_flip($excludedFields))) {
             $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
         }
+    }
+
+    /**
+     * @todo: Replace with implementation from BB-3247
+     * @param Website $website
+     * @return string
+     */
+    public function getCurrencyByWebsite(Website $website)
+    {
+        return 'USD';
+    }
+
+    /**
+     * @todo: Replace with implementation from BB-3247
+     * @param Website $website
+     * @param string $currency
+     * @return $this
+     */
+    public function setWebsiteCurrency(Website $website, $currency)
+    {
+        return $this;
     }
 }

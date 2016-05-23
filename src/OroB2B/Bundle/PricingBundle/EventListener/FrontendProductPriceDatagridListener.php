@@ -16,7 +16,7 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\AccountBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
