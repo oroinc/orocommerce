@@ -42,15 +42,35 @@ class PaymentMethodsProvider implements DataProviderInterface
     {
         if (null === $this->data) {
             $views = $this->registry->getPaymentMethodViews();
+            $options = ['entity' => $this->getEntity($context)];
             foreach ($views as $name => $view) {
                 $this->data[$name] = [
                     'label' => $view->getLabel(),
                     'block' => $view->getBlock(),
-                    'options' => $view->getOptions(),
+                    'options' => $view->getOptions($options),
                 ];
             }
         }
 
         return $this->data;
+    }
+
+    /**
+     * @param ContextInterface $context
+     * @return object|null
+     */
+    protected function getEntity(ContextInterface $context)
+    {
+        $entity = null;
+        $contextData = $context->data();
+        if ($contextData->has('entity')) {
+            $entity = $contextData->get('entity');
+        }
+
+        if (!$entity && $contextData->has('checkout')) {
+            $entity = $contextData->get('checkout');
+        }
+
+        return $entity;
     }
 }

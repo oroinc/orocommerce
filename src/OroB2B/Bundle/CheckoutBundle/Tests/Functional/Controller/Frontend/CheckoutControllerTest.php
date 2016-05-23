@@ -197,10 +197,14 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
 
         $this->assertCount(1, $checkoutSources);
         $form = $crawler->selectButton('Submit Order')->form();
-        $this->client->submit($form);
-        $result = $this->client->getResponse();
-        $this->assertResponseStatusCodeEquals($result, 200);
-        $data = json_decode($result->getContent(), true);
+        $this->client->request(
+            $form->getMethod(),
+            $form->getUri(),
+            $form->getPhpValues(),
+            $form->getPhpFiles(),
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
+        $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
         $this->assertContains(self::FINISH_SIGN, $crawler->html());

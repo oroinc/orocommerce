@@ -47,7 +47,7 @@ define(function(require) {
             }
             this.initFormValidation();
 
-            $(this.options.lineItemsSelector).on('quote-items-changed', _.bind(this.loadSubtotals, this));
+            $(this.options.lineItemsSelector).on('quote-items-changed', $.proxy(this.loadSubtotals, this));
         },
 
         initFormValidation: function() {
@@ -76,7 +76,9 @@ define(function(require) {
                 return;
             }
 
-            $(this.options.lineItemsSelector).off('quote-items-changed', _.bind(this.loadSubtotals, this));
+            $(this.options.lineItemsSelector).off('quote-items-changed', $.proxy(this.loadSubtotals, this));
+
+            QuoteDemandComponent.__super__.dispose.call(this);
         },
 
         loadSubtotals: function() {

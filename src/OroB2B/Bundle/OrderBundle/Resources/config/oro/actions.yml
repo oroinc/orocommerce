@@ -24,6 +24,7 @@ operations:
                 object: $.data
                 amount: $.data.total
                 currency: $.data.currency
+                paymentMethod: $.authorizePaymentTransaction.paymentMethod
                 transactionOptions: []
             - '@flash_message':
                 conditions:
