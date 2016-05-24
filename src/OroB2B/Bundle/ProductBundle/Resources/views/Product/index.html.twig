@@ -39,7 +39,7 @@
         <div class="product-index-content">
             {{ oro_widget_render({
                 'widgetType': 'block',
-                'url': path('oro_datagrid_widget', widgetRouteParameters),
+                'url': path('oro_datagrid_widget', widgetRouteParameters|merge({route: 'orob2b_product_index'})),
                 'title': '',
                 'alias': 'products-grid-widget'
             }) }}

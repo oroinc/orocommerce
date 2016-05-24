@@ -1,7 +1,7 @@
 definitions:
     expire_quotes:
         label:   'Expire old Quotes'
-        enabled: false
+        enabled: true
         order:   50
         entity:  OroB2B\Bundle\RFPBundle\Entity\Request
         actions_configuration:
@@ -21,7 +21,7 @@ definitions:
                 value: $.quote
                 actions:
                     - '@run_action_group':
-                        action_group: orob2b_sale_expire_quote_action
+                        action_group: orob2b_sale_expire_quote
                         parameters_mapping:
                             data: $.quote
 
@@ -43,3 +43,7 @@ definitions:
                         action_group: orob2b_sale_send_no_quote_alert
                         parameters_mapping:
                             data: $.request
+triggers:
+    expire_quotes:
+        -
+            cron: '1 * * * *'
