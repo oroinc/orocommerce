@@ -209,8 +209,7 @@ services:
         public: true
         arguments:
             - '@orob2b_payment.payment_method.registry'
-        calls:
-            - ['setAddressExtractor', ['@orob2b_payment.provider.address_extractor']]
+            - '@orob2b_payment.provider.address_extractor'
         tags:
             - { name: oro_workflow.condition, alias: 'payment_method_applicable' }
             - { name: oro_action.condition, alias: 'payment_method_applicable' }
