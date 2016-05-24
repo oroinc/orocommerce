@@ -15,3 +15,25 @@ services:
             - '@orob2b_pricing.layout.data_provider.frontend_product_prices'
         tags:
             - { name: layout.data_provider, alias: product_units_without_prices }
+
+    orob2b_pricing.layout.data_provider.default_currency:
+        class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\DefaultCurrencyProvider'
+        public: true
+        arguments:
+            - '@oro_config.global'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_pricing_default_currency }
+
+    orob2b_pricing.layout.data_provider.enabled_currencies:
+        class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\EnabledCurrenciesProvider'
+        public: true
+        arguments:
+            - '@oro_config.global'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_pricing_enabled_currencies }
+
+    orob2b_account.layout.block_type.address_book:
+        class: OroB2B\Bundle\PricingBundle\Layout\Block\Type\CurrencySwitcherType
+        public: true
+        tags:
+             - { name: layout.block_type, alias: currency_switcher }

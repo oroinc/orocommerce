@@ -1,0 +1,10 @@
+layout:
+    actions:
+        - '@add':
+            id: currency_switcher
+            parentId: top_nav_container
+#            siblingId: product_specification
+            blockType: currency_switcher
+            options:
+                currencies: {'@value': $data.orob2b_pricing_enabled_currencies}
+                selected_currency: {'@value': $data.orob2b_pricing_default_currency}
