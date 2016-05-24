@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\SEOBundle\Twig;
 
 use Doctrine\Common\Collections\Collection;
 use OroB2B\Bundle\FallbackBundle\Entity\FallbackTrait;
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\WebsiteBundle\Locale\LocaleHelper;
 
 class FallbackValueExtension extends \Twig_Extension
