@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Provider;
+namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
