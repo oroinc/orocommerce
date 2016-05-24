@@ -58,7 +58,7 @@ class PaymentMethodEnabled extends AbstractCondition implements ContextAccessorA
     /** {@inheritdoc} */
     protected function isConditionAllowed($context)
     {
-        $paymentMethod = $this->resolveValue($context, $this->paymentMethod);
+        $paymentMethod = $this->resolveValue($context, $this->paymentMethod, false);
 
         try {
             return $this->paymentMethodRegistry->getPaymentMethod($paymentMethod)->isEnabled();

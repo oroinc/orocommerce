@@ -82,7 +82,7 @@ class PaymentMethodApplicable extends AbstractCondition implements ContextAccess
     /** {@inheritdoc} */
     protected function isConditionAllowed($context)
     {
-        $paymentMethodName = $this->resolveValue($context, $this->paymentMethod);
+        $paymentMethodName = $this->resolveValue($context, $this->paymentMethod, false);
 
         try {
             $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentMethodName);
@@ -94,7 +94,7 @@ class PaymentMethodApplicable extends AbstractCondition implements ContextAccess
             return false;
         }
 
-        $entity = $this->resolveValue($context, $this->entity);
+        $entity = $this->resolveValue($context, $this->entity, false);
 
         return $paymentMethod
             ->isApplicable(['entity' => $entity, 'country' => $this->addressExtractor->getCountryIso2($entity)]);
