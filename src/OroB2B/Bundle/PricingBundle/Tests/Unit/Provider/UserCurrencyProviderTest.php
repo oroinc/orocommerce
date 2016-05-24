@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Provider;
+namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -12,7 +12,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\AccountBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 
 class UserCurrencyProviderTest extends \PHPUnit_Framework_TestCase
 {
