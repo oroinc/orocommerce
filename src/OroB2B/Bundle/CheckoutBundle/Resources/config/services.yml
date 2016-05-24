@@ -114,7 +114,7 @@ services:
             - '@oro_action.context_accessor'
             - '@doctrine'
             - '@orob2b_website.manager'
-            - '@orob2b_account.provider.user_currency'
+            - '@orob2b_pricing.provider.user_currency'
             - '@security.token_storage'
             - '@property_accessor'
             - '@oro_action.action.redirect'

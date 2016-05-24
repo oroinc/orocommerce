@@ -23,7 +23,7 @@ use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-use OroB2B\Bundle\AccountBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 
 class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
@@ -100,7 +100,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
             $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $this->currencyProvider = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Provider\UserCurrencyProvider')
+        $this->currencyProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
