@@ -110,7 +110,7 @@ class ProductControllerTest extends WebTestCase
 
         $response = $this->client->requestGrid(
             'products-grid',
-            ['oro_segments-grid[_filter][sku][value]' => $product->getSku()]
+            ['products-grid[_filter][sku][value]' => $product->getSku()]
         );
 
         $result = $this->getJsonResponseContent($response, 200);
