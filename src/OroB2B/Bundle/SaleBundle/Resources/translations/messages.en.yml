@@ -189,6 +189,7 @@ orob2b:
         controller:
             quote:
                 saved.message: 'Quote has been saved'
+                expired.message: 'This quote has expired. You may submit a new request for quote.'
 
         btn:
             add_seller_notes: 'Add Seller Notes'

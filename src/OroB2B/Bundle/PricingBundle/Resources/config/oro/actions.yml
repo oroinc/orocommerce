@@ -153,6 +153,17 @@ operations:
                 route_parameters:
                     id: $.newPriceList.id
 
+    orob2b_pricing_delete_product_price:
+        extends: DELETE
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - preconditions
+        preconditions:
+            '@not_blank': $.data
+        datagrids:
+            - price-list-product-prices-grid
+
 action_groups:
     orob2b_pricing_add_product_price:
         parameters:
