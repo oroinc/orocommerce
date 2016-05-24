@@ -130,10 +130,12 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $unit1 = new ProductUnit();
         $unit1->setCode('test01');
         $precision1->setUnit($unit1);
+        $precision1->setSell(true);
         $precision2 = new ProductUnitPrecision();
         $unit2 = new ProductUnit();
         $unit2->setCode('test02');
         $precision2->setUnit($unit2);
+        $precision2->setSell(true);
 
         $productUnitHolder = $this->createProductUnitHolder(
             1,
@@ -211,17 +213,20 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $this->assertEquals('entity', $this->formType->getParent());
     }
 
-    /*
+    /**
      * @dataProvider getProductUnitsDataProvider
      * @param array $product
      *
-     */
+     **/
     public function testGetProductUnits($product)
     {
         $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
                      ->disableOriginalConstructor()
                      ->getMock();
-        $choices = getProductUnits($form, $product);
+        $formTypeClass = new \ReflectionClass('OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType');
+        $method = $formTypeClass->getMethod('getProductUnits');
+        $method->setAccessible(true);
+        $choices = $method->invoke($this->formType, $form, $product);
         $this->assertEquals(['item','set'], $choices);
     }
 
@@ -290,6 +295,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $unit = new ProductUnit();
         $unit->setCode('code');
         $precision->setUnit($unit);
+        $precision->setSell(true);
 
         return [
             'without parent form' => [
@@ -584,6 +590,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     {
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit($this->getProductUnit());
+        $unitPrecision->setSell(true);
         $productHolder = $this->createProductHolder($code, (new Product())->addUnitPrecision($unitPrecision));
 
         return $productHolder;
@@ -624,6 +631,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $productUnit->setCode($code);
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit($productUnit);
+        $unitPrecision->setSell(true);
         $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1);
         $product->addUnitPrecision($unitPrecision);
 
@@ -659,22 +667,27 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         return $entity;
     }
 
-
     /**
     * @return array
     */
     public function getProductUnitsDataProvider()
     {
-    return
-        [
-            'product' => [
-                'id' => 1,
-                'unitPrecisions' => [
-                    ['unit' => ['code' => 'item'], 'sell' => true],
-                    ['unit' => ['code' => 'set'], 'sell' => true],
-                    ['unit' => ['code' => 'kg'], 'sell' => false],
-                ],
-            ],
-        ];
+        $product = new Product(1);
+        $unitPrecisionsData = [['unit' => ['code' => 'item'], 'sell' => true],
+            ['unit' => ['code' => 'set'], 'sell' => true],
+            ['unit' => ['code' => 'kg'], 'sell' => false]];
+
+        foreach ($unitPrecisionsData as $unitPrecisionData) {
+
+            $unitPrecision = new ProductUnitPrecision();
+            $productUnit = new ProductUnit();
+            $productUnit->setCode($unitPrecisionData['unit']['code']);
+            $unitPrecision->setUnit($productUnit);
+            $unitPrecision->setSell($unitPrecisionData['sell']);
+            $product->addUnitPrecision($unitPrecision);
+
+        }
+        return[['product'=> $product]];
     }
 }
+
