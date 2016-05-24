@@ -326,6 +326,21 @@ datagrid:
 
     account-account-user-grid:
         extends: account-account-user-grid-base
+        source:
+            query:
+                select:
+                    - account.name as account_name
+                join:
+                    left:
+                        - { join: accountUser.account, alias: account }
+        columns:
+            account_name:
+                label: orob2b.account.accountuser.account.label
+                order: -1
+        sorters:
+            columns:
+                account_name:
+                    data_name: account_name
         actions:
             view:
                 type:          navigate
