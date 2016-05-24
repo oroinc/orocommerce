@@ -839,25 +839,4 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
             $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
         }
     }
-
-    /**
-     * @todo: Replace with implementation from BB-3247
-     * @param Website $website
-     * @return string
-     */
-    public function getCurrencyByWebsite(Website $website)
-    {
-        return 'USD';
-    }
-
-    /**
-     * @todo: Replace with implementation from BB-3247
-     * @param Website $website
-     * @param string $currency
-     * @return $this
-     */
-    public function setWebsiteCurrency(Website $website, $currency)
-    {
-        return $this;
-    }
 }
