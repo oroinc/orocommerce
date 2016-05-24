@@ -2,8 +2,8 @@ layout:
     actions:
         - '@add':
             id: currency_switcher
-            parentId: top_nav_container
-#            siblingId: product_specification
+            parentId: top_nav_menu_container
+            siblingId: top_nav
             blockType: currency_switcher
             options:
                 currencies: {'@value': $data.orob2b_pricing_enabled_currencies}

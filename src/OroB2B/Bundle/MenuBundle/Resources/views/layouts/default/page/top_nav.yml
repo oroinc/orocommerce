@@ -8,6 +8,8 @@ layout:
                     blockType: container
                     siblingId: ~
                     prepend: true
+                top_nav_menu_container:
+                    blockType: container
                 top_nav:
                     blockType: menu
                     options:
@@ -24,4 +26,5 @@ layout:
                 header:
                     top_nav_container:
                         top_nav_controls: ~
-                        top_nav: ~
+                        top_nav_menu_container:
+                            top_nav: ~

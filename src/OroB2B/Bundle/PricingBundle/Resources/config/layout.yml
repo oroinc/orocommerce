@@ -32,8 +32,17 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_pricing_enabled_currencies }
 
-    orob2b_account.layout.block_type.address_book:
-        class: OroB2B\Bundle\PricingBundle\Layout\Block\Type\CurrencySwitcherType
+    orob2b_pricing.provider.fronted_account_user_currency:
+        class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendAccountUserCurrencyProvider'
+        public: true
+        arguments:
+            - '@orob2b_pricing.provider.user_currency'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_currency }
+
+    orob2b_pricing.layout.block_type.currency_switcher:
+        class: 'OroB2B\Bundle\PricingBundle\Layout\Block\Type\CurrencySwitcherType'
         public: true
         tags:
              - { name: layout.block_type, alias: currency_switcher }
+

@@ -1,23 +1,23 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
+namespace OroB2B\Bundle\PricingBundle\Layout\DataProvider;
 
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
 
-use OroB2B\Bundle\AccountBundle\Provider\UserCurrencyProvider as CurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 
 class FrontendAccountUserCurrencyProvider implements DataProviderInterface
 {
     /**
-     * @var CurrencyProvider
+     * @var UserCurrencyProvider
      */
     protected $userCurrencyProvider;
 
     /**
-     * @param CurrencyProvider $userCurrencyProvider
+     * @param UserCurrencyProvider $userCurrencyProvider
      */
-    public function __construct(CurrencyProvider $userCurrencyProvider)
+    public function __construct(UserCurrencyProvider $userCurrencyProvider)
     {
         $this->userCurrencyProvider = $userCurrencyProvider;
     }

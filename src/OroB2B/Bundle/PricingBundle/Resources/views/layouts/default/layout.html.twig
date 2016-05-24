@@ -1,13 +1,14 @@
 {% block currency_switcher_widget %}
     <div class="currency" data-topbar-dropdown-trigger>
-        <span>$</span>
-        <i class="icon-down-open-mini"></i>
-
+        <span>{{ oro_currency_symbol(selected_currency) }}</span>
+        <i class="cf-down-open-mini"></i>
         <div class="topbar__dropdown" data-topbar-dropdown>
             <ul class="topbar__dropdown__list">
-                <li><a href="#"><strong class="mmr3-md">&dollar;</strong> US Dollar</a></li>
-                <li><a href="#"><strong class="mmr3-md">&euro;</strong> Euro</a></li>
-                <li><a href="#"><strong class="mmr3-md">&pound;</strong> British Pound</a></li>
+                {% for currency in currencies %}
+                <li><a href="#" data-currency="{{ currency }}">
+                    <strong class="mmr3-md">{{ oro_currency_symbol(currency) }}</strong> {{ oro_currency_name(currency) }}</a>
+                </li>
+                {% endfor %}
             </ul>
         </div>
     </div>
