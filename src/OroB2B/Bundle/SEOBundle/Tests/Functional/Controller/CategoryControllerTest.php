@@ -10,7 +10,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 class CategoryControllerTest extends WebTestCase
 {
     use SEOViewSectionTrait;
-    
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
