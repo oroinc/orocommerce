@@ -341,6 +341,11 @@ datagrid:
             columns:
                 account_name:
                     data_name: account_name
+        filters:
+            columns:
+                account_name:
+                    type:      string
+                    data_name: account_name
         actions:
             view:
                 type:          navigate
