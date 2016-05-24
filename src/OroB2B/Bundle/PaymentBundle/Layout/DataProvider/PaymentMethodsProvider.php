@@ -68,12 +68,7 @@ class PaymentMethodsProvider implements DataProviderInterface
     protected function processContext(ContextInterface $context)
     {
         $entity = $this->getEntity($context);
-
-        try {
-            $countryCode = $this->addressExtractor->extractAddress($entity)->getCountryIso2();
-        } catch (\InvalidArgumentException $e) {
-            $countryCode = null;
-        }
+        $countryCode = $this->addressExtractor->getCountryIso2($entity);
 
         return [
             'entity' => $entity,

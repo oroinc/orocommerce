@@ -30,6 +30,10 @@ class AddressExtractor
      */
     public function extractAddress($object, $from = self::PROPERTY_PATH)
     {
+        if ($object === null) {
+            throw new \InvalidArgumentException('Object should not be empty');
+        }
+
         try {
             $result = $this->propertyAccessor->getValue($object, $from);
         } catch (NoSuchPropertyException $e) {
@@ -50,5 +54,19 @@ class AddressExtractor
         }
 
         return $result;
+    }
+
+    /**
+     * @param object $entity
+     * @return null|string
+     */
+    public function getCountryIso2($entity)
+    {
+        try {
+            return $this->extractAddress($entity)->getCountryIso2();
+        } catch (\InvalidArgumentException $e) {
+        }
+
+        return null;
     }
 }

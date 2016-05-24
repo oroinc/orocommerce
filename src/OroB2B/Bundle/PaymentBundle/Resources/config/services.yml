@@ -204,6 +204,18 @@ services:
             - { name: oro_action.condition, alias: 'payment_method_enabled' }
             - { name: oro_layout.expression, alias: 'payment_method_enabled'  }
 
+    orob2b_payment.condition.payment_method_applicable:
+        class: 'OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodApplicable'
+        public: true
+        arguments:
+            - '@orob2b_payment.payment_method.registry'
+        calls:
+            - ['setAddressExtractor', ['@orob2b_payment.provider.address_extractor']]
+        tags:
+            - { name: oro_workflow.condition, alias: 'payment_method_applicable' }
+            - { name: oro_action.condition, alias: 'payment_method_applicable' }
+            - { name: oro_layout.expression, alias: 'payment_method_applicable'  }
+
     orob2b_payment.provider.address_extractor:
         class: 'OroB2B\Bundle\PaymentBundle\Provider\AddressExtractor'
         public: false
