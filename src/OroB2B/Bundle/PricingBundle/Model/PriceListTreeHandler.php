@@ -8,6 +8,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -68,39 +69,59 @@ class PriceListTreeHandler
      */
     public function getPriceList(Account $account = null, Website $website = null)
     {
-        $website = $website ?: $this->websiteManager->getCurrentWebsite();
+        if (!$website) {
+            $website = $this->websiteManager->getCurrentWebsite();
+        }
 
         $key = $this->getUniqueKey($account, $website);
         if (array_key_exists($key, $this->priceLists)) {
             return $this->priceLists[$key];
         }
 
+        $priceList = null;
         if ($account) {
-            if ($account->getId()) {
-                $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
-                if ($priceList) {
-                    $this->priceLists[$key] = $priceList;
-
-                    return $priceList;
-                }
-            }
-
-            $accountGroup = $account->getGroup();
-            if ($accountGroup && $accountGroup->getId()) {
-                $priceList = $this->getPriceListRepository()
-                    ->getPriceListByAccountGroup($accountGroup, $website);
-                if ($priceList) {
-                    $this->priceLists[$key] = $priceList;
-                    return $priceList;
-                }
-            }
+            $priceList = $this->getPriceListByAccount($account, $website);
         }
-
-        $priceList = $this->getPriceListRepository()->getPriceListByWebsite($website);
+        if (!$priceList) {
+            $priceList = $this->getPriceListRepository()->getPriceListByWebsite($website);
+        }
         if (!$priceList) {
             $priceList = $this->getPriceListFromConfig();
         }
         $this->priceLists[$key] = $priceList;
+
+        return $priceList;
+    }
+
+    /**
+     * @param Account|null $account
+     * @param Website|null $website
+     * @return null|CombinedPriceList
+     */
+    protected function getPriceListByAccount(Account $account = null, Website $website = null)
+    {
+        if ($account->getId()) {
+            $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
+            if ($priceList) {
+                return $priceList;
+            }
+        }
+
+        return $this->getPriceListByAccountGroup($account, $website);
+    }
+
+    /**
+     * @param Account|null $account
+     * @param Website|null $website
+     * @return null|CombinedPriceList
+     */
+    protected function getPriceListByAccountGroup(Account $account = null, Website $website = null)
+    {
+        $priceList = null;
+        $accountGroup = $account->getGroup();
+        if ($accountGroup && $accountGroup->getId()) {
+            $priceList = $this->getPriceListRepository()->getPriceListByAccountGroup($accountGroup, $website);
+        }
 
         return $priceList;
     }

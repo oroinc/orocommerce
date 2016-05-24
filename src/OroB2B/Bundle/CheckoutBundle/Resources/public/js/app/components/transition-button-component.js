@@ -33,9 +33,9 @@ define(function(require) {
             this.initializeTriggers();
             if (this.options.hasForm) {
                 this.$form = this.$el.closest('form');
-                this.$form.on('submit', _.bind(this.onSubmit, this));
+                this.$form.on('submit', $.proxy(this.onSubmit, this));
             } else {
-                this.$el.on('click', _.bind(this.transit, this));
+                this.$el.on('click', $.proxy(this.transit, this));
             }
         },
 
@@ -45,7 +45,7 @@ define(function(require) {
                 .find(this.options.selectors.transitionTrigger);
 
             this.$transitionTriggers.css('cursor', 'pointer');
-            this.$transitionTriggers.on('click', _.bind(this.transit, this));
+            this.$transitionTriggers.on('click', $.proxy(this.transit, this));
         },
 
         onSubmit: function(e) {
@@ -121,10 +121,10 @@ define(function(require) {
             }
 
             if (this.$form) {
-                this.$form.off('submit', _.bind(this.onSubmit, this));
+                this.$form.off('submit', $.proxy(this.onSubmit, this));
             }
-            this.$el.off('click', _.bind(this.transit, this));
-            this.$transitionTriggers.off('click', _.bind(this.transit, this));
+            this.$el.off('click', $.proxy(this.transit, this));
+            this.$transitionTriggers.off('click', $.proxy(this.transit, this));
 
             TransitionButtonComponent.__super__.dispose.call(this);
         }

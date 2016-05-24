@@ -12,6 +12,7 @@ parameters:
     orob2b_pricing.entity.combined_product_price.class: OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice
     orob2b_pricing.entity.product_price_change_trigger.class: OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger
     orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
+    orob2b_pricing.entity.minimal_product_price.class: OroB2B\Bundle\PricingBundle\Entity\MinimalProductPrice
 
 services:
     orob2b_pricing.acl.voter.product_list:
@@ -243,6 +244,7 @@ services:
 
     orob2b_pricing.price_list_change_trigger_handler:
         class: 'OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler'
+        public: true
         arguments:
             - '@doctrine'
             - '@event_dispatcher'
@@ -261,25 +263,38 @@ services:
             - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onQueueChanged }
             - { name: kernel.event_listener, event: orob2b_pricing.product_price.change, method: onProductPriceChanged }
 
-    orob2b_pricing.event_listener.abstract_product_price_datagrid:
-        class: 'OroB2B\Bundle\PricingBundle\EventListener\AbstractProductPriceDatagridListener'
-        abstract: true
-        calls:
-            - [setProductPriceClass, ['%orob2b_pricing.entity.product_price.class%']]
-
     orob2b_pricing.event_listener.product_price_datagrid:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener'
         public: true
-        parent: orob2b_pricing.event_listener.abstract_product_price_datagrid
         arguments:
             - '@translator'
             - '@orob2b_pricing.model.price_list_request_handler'
             - '@oro_entity.doctrine_helper'
-        calls:
-            - [setProductUnitClass, ['%orob2b_product.entity.product_unit.class%']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
+
+    orob2b_pricing.event_listener.abstract_price_list_relation_data_grid_listener:
+        class: 'OroB2B\Bundle\PricingBundle\EventListener\AbstractPriceListRelationDataGridListener'
+        abstract: true
+        arguments:
+            - '@doctrine'
+
+    orob2b_pricing.event_listener.account_accounts_grid:
+        class: 'OroB2B\Bundle\PricingBundle\EventListener\AccountDataGridListener'
+        parent: orob2b_pricing.event_listener.abstract_price_list_relation_data_grid_listener
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.account-accounts-grid, method: onResultAfter }
+
+    orob2b_pricing.event_listener.account_groups_grid:
+        class: 'OroB2B\Bundle\PricingBundle\EventListener\AccountGroupDataGridListener'
+        parent: orob2b_pricing.event_listener.abstract_price_list_relation_data_grid_listener
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.account-groups-grid, method: onResultAfter }
 
     orob2b_pricing.event_listener.price_list_datagrid:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\PriceListDatagridListener'
@@ -290,7 +305,6 @@ services:
     orob2b_pricing.event_listener.frontend.product_price_datagrid:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener'
         public: true
-        parent: orob2b_pricing.event_listener.abstract_product_price_datagrid
         arguments:
             - '@translator'
             - '@orob2b_pricing.model.price_list_request_handler'
@@ -298,8 +312,6 @@ services:
             - '@orob2b_product.formatter.product_unit_label'
             - '@orob2b_product.formatter.product_unit_value'
             - '@orob2b_pricing.provider.user_currency'
-        calls:
-            - [setProductPriceClass, ['%orob2b_pricing.entity.combined_product_price.class%']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
@@ -381,11 +393,22 @@ services:
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: product-price }
 
+    orob2b_pricing.filter.price_lists:
+        class: 'OroB2B\Bundle\PricingBundle\Filter\PriceListsFilter'
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+        calls:
+            - [setRegistry, ['@doctrine']]
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: price-lists }
+
     orob2b_pricing.filter.frontend_product_price:
         class: 'OroB2B\Bundle\PricingBundle\Filter\FrontendProductPriceFilter'
         public: true
         parent: orob2b_pricing.filter.product_price
         calls:
+            - [setRegistry, ['@doctrine']]
             - [setProductPriceClass, ['%orob2b_pricing.entity.combined_product_price.class%']]
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: frontend-product-price }
@@ -586,9 +609,11 @@ services:
 
     orob2b_pricing.duplicator.schedule:
         class: 'OroB2B\Bundle\PricingBundle\Duplicator\ScheduleDuplicator'
+        public: true
 
     orob2b_pricing.duplicator.product_price_duplicator:
         class: 'OroB2B\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator'
+        public: true
         arguments:
             - '@doctrine'
             - '@oro_entity.orm.insert_from_select_query_executor'
