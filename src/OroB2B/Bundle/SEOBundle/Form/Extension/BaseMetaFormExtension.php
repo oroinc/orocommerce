@@ -51,18 +51,6 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                     'label' => 'orob2b.seo.meta-description.label',
                     'required' => false,
                     'field' => 'text',
-                    'type' => OroRichTextType::NAME,
-                    'options' => [
-                        'wysiwyg_options' => [
-                            'statusbar' => true,
-                            'resize' => true,
-                            'width' => 500,
-                            'height' => 300,
-                            'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
-                            'toolbar' =>
-                                [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
-                        ],
-                    ],
                 ]
             )
             ->add(
@@ -72,18 +60,6 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                     'label' => 'orob2b.seo.meta-keywords.label',
                     'required' => false,
                     'field' => 'text',
-                    'type' => OroRichTextType::NAME,
-                    'options' => [
-                        'wysiwyg_options' => [
-                            'statusbar' => true,
-                            'resize' => true,
-                            'width' => 500,
-                            'height' => 300,
-                            'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
-                            'toolbar' =>
-                                [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
-                        ],
-                    ],
                 ]
             );
 
