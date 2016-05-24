@@ -238,6 +238,7 @@ services:
             class: 'OroB2B\Bundle\ProductBundle\EventListener\ProductPrimaryUnitPrecisionListener'
             arguments:
                 - '@oro_entity.doctrine_helper'
+                - '@session'
             tags:
                 - { name: doctrine.event_listener, event: postPersist }
 

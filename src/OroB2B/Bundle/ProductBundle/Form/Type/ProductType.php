@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -33,11 +34,18 @@ class ProductType extends AbstractType
     private $provider;
 
     /**
-     * @param DefaultProductUnitProvider $provider
+     * @var  Session
      */
-    public function __construct(DefaultProductUnitProvider $provider)
+    private $session;
+
+    /**
+     * @param DefaultProductUnitProvider $provider
+     * @param Session $session
+     */
+    public function __construct(DefaultProductUnitProvider $provider, Session $session)
     {
         $this->provider = $provider;
+        $this->session = $session;
     }
     
     /**
@@ -198,13 +206,7 @@ class ProductType extends AbstractType
     public function preSubmitDataListener(FormEvent $event)
     {
         $data = $event->getData();
-        
-        /*$additional = $data['additionalUnitPrecisions'] ? $data['additionalUnitPrecisions'] : [];
-        $all = $additional;
-        $all[] = $data['primaryUnitPrecision'];
-        $data['primaryUnitPrecision']['conversionRate'] = 1;
-        $data['primaryUnitPrecision']['sell'] = true;
-        $event->setData($data);*/
+        $this->session->set('primaryUnitPrecisionCode', $data['primaryUnitPrecision']['unit']);
     }
 
     /**

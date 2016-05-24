@@ -86,7 +86,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setInventoryStatus($inventoryStatus)
             ->addName($name)
             ->addName($localizedName)
-            ->addUnitPrecision($productUnitPrecision)
+            ->setPrimaryUnitPrecision($productUnitPrecision)
             ->addDescription($description)
             ->addDescription($localizedDescription)
             ->addShortDescription($shortDescription)

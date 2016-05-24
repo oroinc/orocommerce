@@ -188,7 +188,7 @@ class ProductTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         return [
-            /*'simple product' => [
+            'simple product' => [
                 'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
@@ -200,8 +200,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
                 'rounding' => false
-            ],*/
-            'product with unitPrecisions' => [
+            ],
+            /*'product with unitPrecisions' => [
                 'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',

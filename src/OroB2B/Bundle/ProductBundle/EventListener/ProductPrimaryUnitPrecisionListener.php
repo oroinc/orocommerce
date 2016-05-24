@@ -14,6 +14,8 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
+use Symfony\Component\HttpFoundation\Session\Session;
+
 class ProductPrimaryUnitPrecisionListener
 {
     /**
@@ -22,11 +24,18 @@ class ProductPrimaryUnitPrecisionListener
     protected $doctrineHelper;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
+     * @var Session
      */
-    public function __construct(DoctrineHelper $doctrineHelper)
+    protected $request;
+
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     * @param Session $session
+     */
+    public function __construct(DoctrineHelper $doctrineHelper, Session $session)
     {
         $this->doctrineHelper = $doctrineHelper;
+        $this->session = $session;
     }
 
     /**
@@ -52,8 +61,10 @@ class ProductPrimaryUnitPrecisionListener
             }
 
             $primaryUnitPrecisionId = $entity->getId();
+            $actualPrimaryCode = $entity->getUnit()->getCode();
+            $expectedPrimaryCode = $this->session->get('primaryUnitPrecisionCode');
 
-            if ($product->getPrimaryUnitPrecision() && $primaryUnitPrecisionId == $product->getPrimaryUnitPrecision()->getId()) {
+            if ($actualPrimaryCode == $expectedPrimaryCode) {
                 $unitOfWork = $args->getEntityManager()->getUnitOfWork();
                 $unitOfWork->scheduleExtraUpdate($product, [
                     'primaryUnitPrecisionId' => [
@@ -61,6 +72,7 @@ class ProductPrimaryUnitPrecisionListener
                         $primaryUnitPrecisionId
                     ]
                 ]);
+                $this->session->remove('primaryUnitPrecisionCode');
             }
         }
     }
