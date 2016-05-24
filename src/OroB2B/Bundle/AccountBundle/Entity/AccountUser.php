@@ -308,10 +308,23 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      */
     protected $updatedAt;
 
+    /**
+     * @var ArrayCollection|AccountUserCurrency[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserCurrency",
+     *      mappedBy="accountUser",
+     *      cascade={"all"},
+     *      orphanRemoval=true
+     * )
+     */
+    protected $currencies;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
         $this->salesRepresentatives = new ArrayCollection();
+        $this->currencies = new ArrayCollection();
         parent::__construct();
     }
 
@@ -756,6 +769,43 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     public function setUpdatedAt(\DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @param Website $website
+     * @return null|AccountUserCurrency
+     */
+    public function getCurrencyByWebsite(Website $website)
+    {
+        foreach ($this->currencies as $currency) {
+            if ($currency->getWebsite() === $website) {
+                return $currency;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param Website $website
+     * @param string $currency
+     * @return $this
+     */
+    public function setWebsiteCurrency(Website $website, $currency)
+    {
+        $userCurrency = $this->getCurrencyByWebsite($website);
+
+        if (null === $userCurrency) {
+            $userCurrency = new AccountUserCurrency();
+            $this->currencies->add($userCurrency);
+        }
+
+        $userCurrency->setWebsite($website)
+            ->setWebsite($website)
+            ->setAccountUser($this)
+            ->setCurrency($currency);
 
         return $this;
     }
