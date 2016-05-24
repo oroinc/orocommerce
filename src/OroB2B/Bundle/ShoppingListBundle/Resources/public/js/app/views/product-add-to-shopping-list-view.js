@@ -3,7 +3,7 @@ define(function(require) {
 
     var ProductAddToShoppingListView;
     var BaseView = require('oroui/js/app/views/base/view');
-    var ShoppingListWidget = require('orob2bshoppinglist/js/app/widget/shopping-list-widget');
+    var ShoppingListCreateWidget = require('oro/shopping-list-create-widget');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
     var Error = require('oroui/js/error');
@@ -287,7 +287,7 @@ define(function(require) {
         },
 
         _createNewShoppingList: function(url, urlOptions, formData) {
-            var dialog = new ShoppingListWidget({});
+            var dialog = new ShoppingListCreateWidget({});
             dialog.on('formSave', _.bind(function(response) {
                 urlOptions.shoppingListId = response;
                 this._addProductToShoppingList(url, urlOptions, formData);
