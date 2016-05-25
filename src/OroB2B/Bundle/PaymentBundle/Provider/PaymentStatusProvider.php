@@ -48,6 +48,10 @@ class PaymentStatusProvider
             return self::FULL;
         }
 
+        if ($this->hasPartialTransactions($paymentTransactions, $total)) {
+            return self::PARTIALLY;
+        }
+
         if ($this->hasAuthorizeTransactions($paymentTransactions)) {
             return self::AUTHORIZED;
         }
@@ -61,12 +65,11 @@ class PaymentStatusProvider
 
     /**
      * @param ArrayCollection $paymentTransactions
-     * @param Subtotal $total
      * @return ArrayCollection
      */
-    protected function hasSuccessfulTransactions(ArrayCollection $paymentTransactions, Subtotal $total)
+    protected function getSuccessfulTransactions(ArrayCollection $paymentTransactions)
     {
-        $successfulAmounts = $paymentTransactions
+        return $paymentTransactions
             ->filter(
                 function (PaymentTransaction $paymentTransaction) {
                     return $paymentTransaction->isSuccessful()
@@ -80,12 +83,45 @@ class PaymentStatusProvider
                         true
                     );
                 }
-            )
-            ->map(function (PaymentTransaction $paymentTransaction) {
-                return $paymentTransaction->getAmount();
-            });
+            );
+    }
 
-        return array_sum($successfulAmounts->toArray()) == $total->getAmount();
+    /**
+     * @param ArrayCollection $paymentTransactions
+     * @return float
+     */
+    protected function getTransactionAmounts(ArrayCollection $paymentTransactions)
+    {
+        $amounts = $paymentTransactions->map(function (PaymentTransaction $paymentTransaction) {
+            return $paymentTransaction->getAmount();
+        });
+
+        return array_sum($amounts->toArray());
+    }
+
+    /**
+     * @param ArrayCollection $paymentTransactions
+     * @param Subtotal $total
+     * @return ArrayCollection
+     */
+    protected function hasSuccessfulTransactions(ArrayCollection $paymentTransactions, Subtotal $total)
+    {
+        $transactionAmount = $this->getTransactionAmounts($this->getSuccessfulTransactions($paymentTransactions));
+
+        return $transactionAmount == $total->getAmount();
+    }
+
+    /**
+     * @param ArrayCollection $paymentTransactions
+     * @param Subtotal $total
+     * @return ArrayCollection
+     */
+    protected function hasPartialTransactions(ArrayCollection $paymentTransactions, Subtotal $total)
+    {
+        $successfulTransactions = $this->getSuccessfulTransactions($paymentTransactions);
+        $transactionAmount = $this->getTransactionAmounts($successfulTransactions);
+
+        return $successfulTransactions->count() > 0 && $transactionAmount < $total->getAmount();
     }
 
     /**

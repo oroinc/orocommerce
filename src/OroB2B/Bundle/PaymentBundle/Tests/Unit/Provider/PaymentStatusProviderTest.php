@@ -83,6 +83,17 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
                 100,
                 PaymentStatusProvider::FULL,
             ],
+            'partial if has successful capture but less amount' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CAPTURE)
+                        ->setAmount(50),
+                ],
+                100,
+                PaymentStatusProvider::PARTIALLY,
+            ],
             'declined if has unsuccessful capture' => [
                 [
                     (new PaymentTransaction())
@@ -105,6 +116,17 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
                 100,
                 PaymentStatusProvider::FULL,
             ],
+            'partial if has successful charge but less amount' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CHARGE)
+                        ->setAmount(40),
+                ],
+                100,
+                PaymentStatusProvider::PARTIALLY,
+            ],
             'declined if has unsuccessful charge' => [
                 [
                     (new PaymentTransaction())
@@ -126,6 +148,17 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 100,
                 PaymentStatusProvider::FULL,
+            ],
+            'partial  if has successful purchase but less amount' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::PURCHASE)
+                        ->setAmount(60),
+                ],
+                100,
+                PaymentStatusProvider::PARTIALLY,
             ],
             'declined if has unsuccessful purchase' => [
                 [
@@ -214,6 +247,38 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
                 100,
                 PaymentStatusProvider::FULL,
             ],
+            'partial has higher priority than authorized' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CHARGE)
+                        ->setAmount(40),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(true)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE)
+                        ->setAmount(100),
+                ],
+                100,
+                PaymentStatusProvider::PARTIALLY,
+            ],
+            'partial has higher priority than declined' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CHARGE)
+                        ->setAmount(40),
+                    (new PaymentTransaction())
+                        ->setSuccessful(false)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE)
+                        ->setAmount(100),
+                ],
+                100,
+                PaymentStatusProvider::PARTIALLY,
+            ],
             'authorize has higher priority than declined' => [
                 [
                     (new PaymentTransaction())
@@ -266,6 +331,22 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 100,
                 PaymentStatusProvider::FULL,
+            ],
+            'partial with few successful' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::PURCHASE)
+                        ->setAmount(40),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::PURCHASE)
+                        ->setAmount(20),
+                ],
+                100,
+                PaymentStatusProvider::PARTIALLY,
             ],
             'pending if has validation' => [
                 [
