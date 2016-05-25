@@ -466,8 +466,6 @@ workflows:
                         object: $checkout.sourceEntity.sourceDocument
                         attribute: $.result.sourceDocumentEntityClassName
                     - '@create_entity':
-                        conditions:
-                            '@empty': $checkout.order
                         parameters:
                             attribute: $checkout.order
                             class: OroB2B\Bundle\OrderBundle\Entity\Order
@@ -504,7 +502,7 @@ workflows:
 
                     - '@tree':
                         conditions:
-                            '@not_empty': $checkout.order.id
+                            '@not_empty': $checkout.orderPurchaseAction.id
                         actions:
                             - '@assign_url':
                                 attribute: $.result.successUrl
