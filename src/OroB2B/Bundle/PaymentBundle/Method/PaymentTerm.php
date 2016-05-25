@@ -80,8 +80,7 @@ class PaymentTerm implements PaymentMethodInterface
     /** {@inheritdoc} */
     public function isEnabled()
     {
-        return (bool)$this->paymentTermProvider->getCurrentPaymentTerm() &&
-            $this->getConfigValue(Configuration::PAYMENT_TERM_ENABLED_KEY);
+        return $this->getConfigValue(Configuration::PAYMENT_TERM_ENABLED_KEY);
     }
 
     /** {@inheritdoc} */
@@ -93,7 +92,7 @@ class PaymentTerm implements PaymentMethodInterface
     /** {@inheritdoc} */
     public function isApplicable(array $context = [])
     {
-        return $this->isCountryApplicable($context);
+        return $this->isCountryApplicable($context) && (bool)$this->paymentTermProvider->getCurrentPaymentTerm();
     }
 
     /**
