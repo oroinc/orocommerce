@@ -1,5 +1,5 @@
 datagrid:
-    quotes-grid-base:
+    base-quote-grid:
         acl_resource: orob2b_sale_quote_view
         extended_entity_name: %orob2b_sale.entity.quote.class%
         options:
@@ -87,7 +87,7 @@ datagrid:
                 rowAction:     true
 
     quotes-grid:
-        extends: quotes-grid-base
+        extends: base-quote-grid
         source:
             query:
                 select:
