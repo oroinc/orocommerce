@@ -9,7 +9,7 @@ use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\AbstractFixture;
 
 class LoadQuoteDataForPerformance extends AbstractFixture
 {
-    /** Total quotes will be NUMBER_OF_QUOTE_GROUPS * 7 */
+    /** Total quotes will be NUMBER_OF_QUOTE_GROUPS * count(LoadQuoteData::$items) */
     const NUMBER_OF_QUOTE_GROUPS = 10000;
 
     const QUOTES_TO_EXPIRE = 10000;
