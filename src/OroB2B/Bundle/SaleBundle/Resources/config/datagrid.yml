@@ -1,5 +1,5 @@
 datagrid:
-    quotes-grid:
+    quotes-grid-base:
         acl_resource: orob2b_sale_quote_view
         extended_entity_name: %orob2b_sale.entity.quote.class%
         options:
@@ -12,8 +12,6 @@ datagrid:
                     - quote.id
                     - quote.qid
                     - CONCAT(quoteOwner.firstName, ' ', quoteOwner.lastName) as ownerName
-                    - CONCAT(quoteAccountUser.firstName, ' ', quoteAccountUser.lastName) as accountUserName
-                    - quoteAccount.name as accountName
                     - quote.poNumber
                     - quote.shipUntil
                     - quote.createdAt
@@ -26,17 +24,11 @@ datagrid:
                 join:
                     left:
                         - { join: quote.owner, alias: quoteOwner }
-                        - { join: quote.accountUser, alias: quoteAccountUser }
-                        - { join: quote.account, alias: quoteAccount }
         columns:
             qid:
                 label:         orob2b.sale.quote.qid.label
             ownerName:
                 label:         orob2b.sale.quote.owner.label
-            accountUserName:
-                label:         orob2b.sale.quote.account_user.label
-            accountName:
-                label:         orob2b.sale.quote.account.label
             locked:
                 label:         orob2b.sale.quote.locked.label
                 frontend_type: boolean
@@ -69,10 +61,6 @@ datagrid:
                     data_name: quote.qid
                 ownerName:
                     data_name: ownerName
-                accountUserName:
-                    data_name: accountUserName
-                accountName:
-                    data_name: accountName
                 locked:
                     data_name: quote.locked
                 expired:
@@ -89,6 +77,39 @@ datagrid:
                     data_name: quote.validUntil
             default:
                 qid: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_sale_quote_view
+                rowAction:     true
+
+    quotes-grid:
+        extends: quotes-grid-base
+        source:
+            query:
+                select:
+                    - CONCAT(quoteAccountUser.firstName, ' ', quoteAccountUser.lastName) as accountUserName
+                    - quoteAccount.name as accountName
+                join:
+                    left:
+                        - { join: quote.accountUser, alias: quoteAccountUser }
+                        - { join: quote.account, alias: quoteAccount }
+        columns:
+            accountUserName:
+                label: orob2b.sale.quote.account_user.label
+                order: 2
+            accountName:
+                label: orob2b.sale.quote.account.label
+                order: 3
+        sorters:
+            columns:
+                accountUserName:
+                    data_name: accountUserName
+                accountName:
+                    data_name: accountName
         filters:
             columns:
                 qid:
@@ -124,14 +145,6 @@ datagrid:
                 updatedAt:
                     type:      datetime
                     data_name: quote.updatedAt
-        actions:
-            view:
-                type:          navigate
-                label:         oro.grid.action.view
-                link:          view_link
-                icon:          eye-open
-                acl_resource:  orob2b_sale_quote_view
-                rowAction:     true
 
     frontend-quotes-grid:
         acl_resource: orob2b_sale_quote_frontend_index
