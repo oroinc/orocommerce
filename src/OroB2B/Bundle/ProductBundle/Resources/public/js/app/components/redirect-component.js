@@ -14,7 +14,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * {@inheritDoc}
          */
         initialize: function(options) {
             var targetUrl = options.targetUrl || null;
