@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\AddressBundle\Entity\Country;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -121,5 +122,39 @@ class AddressExtractorTest extends \PHPUnit_Framework_TestCase
         $entity->billingAddress = new \stdClass();
 
         $this->extractor->extractAddress($entity, 'billingAddress');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Object should not be empty
+     */
+    public function testNotAnObject()
+    {
+        $this->extractor->extractAddress(null);
+    }
+
+    public function testGetCountryIso2Failed()
+    {
+        $entity = new \stdClass();
+
+        $this->assertNull(
+            $this->extractor->getCountryIso2($entity)
+        );
+    }
+
+    public function testGetCountryIso2()
+    {
+        $iso2code = 'US';
+
+        $entity = new \stdClass();
+        $entity->billingAddress = $this->getEntity(
+            'OroB2B\Bundle\OrderBundle\Entity\OrderAddress',
+            ['country' => new Country($iso2code)]
+        );
+
+        $this->assertEquals(
+            $iso2code,
+            $this->extractor->getCountryIso2($entity)
+        );
     }
 }

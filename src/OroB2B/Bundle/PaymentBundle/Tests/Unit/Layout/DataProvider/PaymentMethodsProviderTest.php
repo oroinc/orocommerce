@@ -2,13 +2,12 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider;
 use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
-use OroB2B\Bundle\PaymentBundle\Provider\AddressExtractor;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
 class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,9 +19,9 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var AddressExtractor|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentContextProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $addressExtractor;
+    protected $paymentContextProvider;
 
     /**
      * @var PaymentMethodsProvider
@@ -35,18 +34,12 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->addressExtractor = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\AddressExtractor')
+        $this->paymentContextProvider = $this
+            ->getMockBuilder('\OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $orderAddress = $this->getEntity(
-            'OroB2B\Bundle\OrderBundle\Entity\OrderAddress',
-            ['country' => new Country('US')]
-        );
-
-        $this->addressExtractor->expects($this->any())->method('extractAddress')->willReturn($orderAddress);
-
-        $this->provider = new PaymentMethodsProvider($this->registry, $this->addressExtractor);
+        $this->provider = new PaymentMethodsProvider($this->registry, $this->paymentContextProvider);
     }
 
     public function testGetIdentifier()
@@ -62,6 +55,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getPaymentMethodViews')
             ->willReturn([]);
 
+        $this->paymentContextProvider->expects($this->any())->method('processContext')->willReturn([]);
 
         $data = $this->provider->getData($context);
         $this->assertEmpty($data);
@@ -80,6 +74,8 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getPaymentMethodViews')
             ->willReturn(['payment' => $view]);
 
+        $this->paymentContextProvider->expects($this->any())->method('processContext')->willReturn([]);
+
         $data = $this->provider->getData($context);
         $this->assertEquals(['payment' => ['label' => 'label', 'block' => 'block', 'options' => []]], $data);
     }
@@ -90,6 +86,9 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 
         $context = new LayoutContext();
         $context->data()->set('entity', 'entity', $entity);
+
+        $this->paymentContextProvider->expects($this->once())->method('processContext')
+            ->willReturn(['entity' => $entity]);
 
         $view = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
         $view->expects($this->once())->method('getOptions')->with(
@@ -115,6 +114,9 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 
         $context = new LayoutContext();
         $context->data()->set('checkout', 'checkout', $checkout);
+
+        $this->paymentContextProvider->expects($this->once())->method('processContext')
+            ->willReturn(['entity' => $checkout]);
 
         $view = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
         $view->expects($this->once())->method('getOptions')->with(
@@ -143,6 +145,9 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $context->data()->set('entity', 'entity', $entity);
         $context->data()->set('checkout', 'checkout', $checkout);
 
+        $this->paymentContextProvider->expects($this->once())->method('processContext')
+            ->willReturn(['entity' => $entity]);
+
         $view = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
         $view->expects($this->once())->method('getOptions')->with(
             $this->callback(
@@ -159,27 +164,5 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $this->registry->expects($this->once())->method('getPaymentMethodViews')->willReturn(['payment' => $view]);
 
         $this->provider->getData($context);
-    }
-
-    public function testNoCountryInContext()
-    {
-        /** @var AddressExtractor|\PHPUnit_Framework_MockObject_MockObject $addressExtractor */
-        $addressExtractor = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\AddressExtractor')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $addressExtractor->expects($this->any())->method('extractAddress')
-            ->willThrowException(new \InvalidArgumentException());
-
-        $provider = new PaymentMethodsProvider($this->registry, $addressExtractor);
-        $this->registry->expects($this->once())->method('getPaymentMethodViews')
-            ->with(
-                [
-                    'entity' => null,
-                    'country' => null,
-                ]
-            )
-            ->willReturn([]);
-
-        $provider->getData(new LayoutContext());
     }
 }

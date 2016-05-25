@@ -117,7 +117,7 @@ services:
         public: true
         arguments:
             - '@orob2b_payment.payment_method.view.registry'
-            - '@orob2b_payment.provider.address_extractor'
+            - '@orob2b_payment.provider.payment_context'
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_methods_provider }
 
@@ -209,17 +209,34 @@ services:
         public: true
         arguments:
             - '@orob2b_payment.payment_method.registry'
-            - '@orob2b_payment.provider.address_extractor'
+            - '@orob2b_payment.provider.payment_context'
         tags:
             - { name: oro_workflow.condition, alias: 'payment_method_applicable' }
             - { name: oro_action.condition, alias: 'payment_method_applicable' }
             - { name: oro_layout.expression, alias: 'payment_method_applicable'  }
+
+    orob2b_payment.condition.has_applicable_payment_methods:
+        class: 'OroB2B\Bundle\PaymentBundle\Condition\HasApplicablePaymentMethods'
+        public: true
+        arguments:
+            - '@orob2b_payment.payment_method.registry'
+            - '@orob2b_payment.provider.payment_context'
+        tags:
+            - { name: oro_workflow.condition, alias: 'has_applicable_payment_methods' }
+            - { name: oro_action.condition, alias: 'has_applicable_payment_methods' }
+            - { name: oro_layout.expression, alias: 'has_applicable_payment_methods'  }
 
     orob2b_payment.provider.address_extractor:
         class: 'OroB2B\Bundle\PaymentBundle\Provider\AddressExtractor'
         public: false
         arguments:
             - '@property_accessor'
+
+    orob2b_payment.provider.payment_context:
+        class: 'OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider'
+        public: false
+        arguments:
+            - '@orob2b_payment.provider.address_extractor'
 
     orob2b_payment.condition.payment_method_supports:
         class: 'OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodSupports'

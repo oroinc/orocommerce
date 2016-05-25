@@ -2,16 +2,16 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Condition;
 
-use OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodApplicable;
+use OroB2B\Bundle\PaymentBundle\Condition\HasApplicablePaymentMethods;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
-class PaymentMethodApplicableTest extends \PHPUnit_Framework_TestCase
+class HasApplicablePaymentMethodsTest extends \PHPUnit_Framework_TestCase
 {
     const METHOD = 'Method';
 
-    /** @var PaymentMethodApplicable */
+    /** @var HasApplicablePaymentMethods */
     protected $condition;
 
     /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
@@ -30,7 +30,7 @@ class PaymentMethodApplicableTest extends \PHPUnit_Framework_TestCase
 
         $this->paymentContextProvider->expects($this->any())->method('processContext')->willReturn([]);
 
-        $this->condition = new PaymentMethodApplicable($this->paymentMethodRegistry, $this->paymentContextProvider);
+        $this->condition = new HasApplicablePaymentMethods($this->paymentMethodRegistry, $this->paymentContextProvider);
     }
 
     protected function tearDown()
@@ -40,30 +40,18 @@ class PaymentMethodApplicableTest extends \PHPUnit_Framework_TestCase
 
     public function testGetName()
     {
-        $this->assertEquals('payment_method_applicable', $this->condition->getName());
-    }
-
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Missing "payment_method" option
-     */
-    public function testInitializeInvalidFirstArguments()
-    {
-        $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
-            $this->condition->initialize([])
-        );
+        $this->assertEquals('get_payment_methods', $this->condition->getName());
     }
 
     /**
      * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
      * @expectedExceptionMessage Missing "entity" option
      */
-    public function testInitializeInvalidSecondArguments()
+    public function testInitializeInvalid()
     {
         $this->assertInstanceOf(
             'Oro\Component\ConfigExpression\Condition\AbstractCondition',
-            $this->condition->initialize(['payment_method'])
+            $this->condition->initialize([])
         );
     }
 
@@ -91,9 +79,8 @@ class PaymentMethodApplicableTest extends \PHPUnit_Framework_TestCase
         $paymentMethod->expects($this->any())->method('isApplicable')->willReturn($isApplicable);
 
         $this->paymentMethodRegistry->expects($this->once())
-            ->method('getPaymentMethod')
-            ->with(self::METHOD)
-            ->willReturn($paymentMethod);
+            ->method('getPaymentMethods')
+            ->willReturn([$paymentMethod]);
 
         $this->condition->initialize(['payment_method' => self::METHOD, 'entity' => new \stdClass()]);
         $this->assertEquals($expected, $this->condition->evaluate($context));
@@ -128,24 +115,13 @@ class PaymentMethodApplicableTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testEvaluateWithException()
-    {
-        $context = [];
-
-        $this->paymentMethodRegistry->expects($this->once())
-            ->method('getPaymentMethod')
-            ->will($this->throwException(new \InvalidArgumentException));
-
-        $this->condition->initialize(['payment_method' => self::METHOD, 'entity' => new \stdClass()]);
-        $this->assertFalse($this->condition->evaluate($context));
-    }
-
     public function testToArray()
     {
-        $this->condition->initialize(['payment_method' => self::METHOD, 'entity' => new \stdClass()]);
+        $stdClass = new \stdClass();
+        $this->condition->initialize(['entity' => $stdClass]);
         $result = $this->condition->toArray();
 
-        $key = '@' . PaymentMethodApplicable::NAME;
+        $key = '@'.HasApplicablePaymentMethods::NAME;
 
         $this->assertInternalType('array', $result);
         $this->assertArrayHasKey($key, $result);
@@ -153,21 +129,20 @@ class PaymentMethodApplicableTest extends \PHPUnit_Framework_TestCase
         $resultSection = $result[$key];
         $this->assertInternalType('array', $resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
-        $this->assertContains(self::METHOD, $resultSection['parameters']);
+        $this->assertContains($stdClass, $resultSection['parameters']);
     }
 
     public function testCompile()
     {
         $toStringStub = new ToStringStub();
-        $options = ['payment_method' => self::METHOD, 'entity' => $toStringStub];
+        $options = ['entity' => $toStringStub];
 
         $this->condition->initialize($options);
         $result = $this->condition->compile('$factory');
         $this->assertEquals(
             sprintf(
-                '$factory->create(\'%s\', [\'%s\', %s])',
-                PaymentMethodApplicable::NAME,
-                self::METHOD,
+                '$factory->create(\'%s\', [%s])',
+                HasApplicablePaymentMethods::NAME,
                 $toStringStub
             ),
             $result

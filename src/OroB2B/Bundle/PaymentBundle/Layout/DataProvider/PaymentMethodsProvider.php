@@ -6,7 +6,7 @@ use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
-use OroB2B\Bundle\PaymentBundle\Provider\AddressExtractor;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
 class PaymentMethodsProvider implements DataProviderInterface
 {
@@ -20,17 +20,17 @@ class PaymentMethodsProvider implements DataProviderInterface
     /** @var PaymentMethodViewRegistry */
     protected $registry;
 
-    /** @var AddressExtractor */
-    private $addressExtractor;
+    /** @var PaymentContextProvider */
+    protected $paymentContextProvider;
 
     /**
      * @param PaymentMethodViewRegistry $registry
-     * @param AddressExtractor $addressExtractor
+     * @param PaymentContextProvider $paymentContextProvider
      */
-    public function __construct(PaymentMethodViewRegistry $registry, AddressExtractor $addressExtractor)
+    public function __construct(PaymentMethodViewRegistry $registry, PaymentContextProvider $paymentContextProvider)
     {
         $this->registry = $registry;
-        $this->addressExtractor = $addressExtractor;
+        $this->paymentContextProvider = $paymentContextProvider;
     }
 
     /**
@@ -41,39 +41,24 @@ class PaymentMethodsProvider implements DataProviderInterface
         return self::NAME;
     }
 
-
     /** {@inheritdoc} */
     public function getData(ContextInterface $context)
     {
         if (null === $this->data) {
-            $contextData = $this->processContext($context);
+            $entity = $this->getEntity($context);
+            $paymentContext = $this->paymentContextProvider->processContext($context, $entity);
 
-            $views = $this->registry->getPaymentMethodViews($contextData);
+            $views = $this->registry->getPaymentMethodViews($paymentContext);
             foreach ($views as $name => $view) {
                 $this->data[$name] = [
                     'label' => $view->getLabel(),
                     'block' => $view->getBlock(),
-                    'options' => $view->getOptions($contextData),
+                    'options' => $view->getOptions($paymentContext),
                 ];
             }
         }
 
         return $this->data;
-    }
-
-    /**
-     * @param ContextInterface $context
-     * @return array
-     */
-    protected function processContext(ContextInterface $context)
-    {
-        $entity = $this->getEntity($context);
-        $countryCode = $this->addressExtractor->getCountryIso2($entity);
-
-        return [
-            'entity' => $entity,
-            'country' => $countryCode,
-        ];
     }
 
     /**
