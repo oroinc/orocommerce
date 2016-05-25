@@ -86,6 +86,7 @@ oro_system_configuration:
                 required: true
                 multiple: false
                 constraints:
+                    - 'OroB2B\Bundle\PricingBundle\Validator\Constraints\DefaultCurrency': ~
                     - NotBlank: ~
 
     tree:

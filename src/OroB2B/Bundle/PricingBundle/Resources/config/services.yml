@@ -338,6 +338,14 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_price_list_product_prices_currency_validator }
 
+    orob2b_pricing.validator.default_currency:
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\DefaultCurrencyValidator'
+        public: true
+        arguments:
+            - "@oro_config.global"
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing_default_currency_validator }
+
     orob2b_pricing.validator.dates_chain:
         class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\DatesChainValidator'
         public: true

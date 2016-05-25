@@ -14,3 +14,4 @@ orob2b:
                   not_existing_product.message: 'Product does not exist.'
                   not_existing_unit.message: 'Product unit does not exist.'
                   quantity.blank: Qantity should not be blank.
+              default_currency.message: 'Currency "%invalidCurrency%" is not valid default currency. Selected currency must be in enabled list'
