@@ -56,25 +56,18 @@ class DefaultCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider validateDataProvider
+     * @dataProvider validateValidDataProvider
      * @param string $value
      * @param array $availableCurrencies
-     * @param bool $valid
      */
-    public function testValidate($value, array $availableCurrencies, $valid)
+    public function testValidateValid($value, array $availableCurrencies)
     {
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_b2b_pricing.enabled_currencies')
             ->willReturn($availableCurrencies);
 
-        if (!$valid) {
-            $this->context->expects($this->once())
-                ->method('addViolation');
-        } else {
-            $this->context->expects($this->never())
-                ->method('addViolation');
-        }
+        $this->context->expects($this->never())->method('addViolation');
 
         $this->validator->validate($value, $this->constraint);
     }
@@ -82,18 +75,42 @@ class DefaultCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function validateDataProvider()
+    public function validateValidDataProvider()
     {
         return [
-            'valid' => [
+            [
                 'value' => 'USD',
-                'availableCurrencies' => ['USD', 'EUR', 'CAD'],
-                'valid' => true
-            ],
-            'invalid' => [
+                'availableCurrencies' => ['USD', 'EUR', 'CAD']
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider validateInvalidDataProvider
+     * @param string $value
+     * @param array $availableCurrencies
+     */
+    public function testValidateInvalid($value, array $availableCurrencies)
+    {
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_b2b_pricing.enabled_currencies')
+            ->willReturn($availableCurrencies);
+
+        $this->context->expects($this->once())->method('addViolation');
+
+        $this->validator->validate($value, $this->constraint);
+    }
+
+    /**
+     * @return array
+     */
+    public function validateInvalidDataProvider()
+    {
+        return [
+            [
                 'value' => 'EUR',
-                'availableCurrencies' => ['USD', 'CAD'],
-                'valid' => false
+                'availableCurrencies' => ['USD', 'CAD']
             ]
         ];
     }
