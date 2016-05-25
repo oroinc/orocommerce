@@ -10,8 +10,6 @@ trait MetaFieldSetterGetterTrait
 
     public function __construct()
     {
-        parent::__construct();
-
         $this->metaTitles = new \Doctrine\Common\Collections\ArrayCollection();
         $this->metaDescriptions = new \Doctrine\Common\Collections\ArrayCollection();
         $this->metaKeywords = new \Doctrine\Common\Collections\ArrayCollection();

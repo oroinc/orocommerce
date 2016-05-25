@@ -17,6 +17,9 @@ class CategoryControllerTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData']);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testEditCategory()
     {
         $repository = $this->getContainer()->get('doctrine')->getRepository(

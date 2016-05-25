@@ -6,5 +6,13 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryStub extends Category
 {
-    use MetaFieldSetterGetterTrait;
+    use MetaFieldSetterGetterTrait {
+        MetaFieldSetterGetterTrait::__construct as private traitConstructor;
+    }
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->traitConstructor();
+    }
 }
