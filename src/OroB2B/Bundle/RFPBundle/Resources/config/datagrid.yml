@@ -1,5 +1,5 @@
 datagrid:
-    rfp-requests-grid:
+    base-rfq-grid:
         acl_resource: orob2b_rfp_request_view
         extended_entity_name: %orob2b_rfp.entity.request.class%
         options:
@@ -10,14 +10,6 @@ datagrid:
             query:
                 select:
                     - request.id
-                    - requestAccount.name as accountName
-                    - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
-                    - request.firstName
-                    - request.lastName
-                    - request.email
-                    - request.phone
-                    - request.company
-                    - request.role
                     - request.poNumber
                     - request.shipUntil
                     - status.label as status_label
@@ -29,29 +21,11 @@ datagrid:
                 join:
                     left:
                         - { join: request.status, alias: status }
-                        - { join: request.account, alias: requestAccount }
-                        - { join: request.accountUser, alias: requestAccountUser }
             hints:
                 - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
             id:
                 label:         orob2b.rfp.request.id.label
-            firstName:
-                label:         orob2b.rfp.request.first_name.label
-            lastName:
-                label:         orob2b.rfp.request.last_name.label
-            email:
-                label:         orob2b.rfp.request.email.label
-            phone:
-                label:         orob2b.rfp.request.phone.label
-            company:
-                label:         orob2b.rfp.request.company.label
-            role:
-                label:         orob2b.rfp.request.role.label
-            accountUserName:
-                label:         orob2b.rfp.request.account_user.label
-            accountName:
-                label:         orob2b.rfp.request.account.label
             status_label:
                 label:         orob2b.rfp.request.status.label
             poNumber:
@@ -74,6 +48,73 @@ datagrid:
             columns:
                 id:
                     data_name: request.id
+                status_label:
+                    data_name: status_order
+                poNumber:
+                    data_name: request.poNumber
+                shipUntil:
+                    data_name: request.shipUntil
+                createdAt:
+                    data_name: request.createdAt
+                updatedAt:
+                    data_name: request.updatedAt
+            default:
+                updatedAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_rfp_request_view
+                rowAction:     true
+    rfp-requests-grid:
+        extends: base-rfq-grid
+        source:
+            type:         orm
+            query:
+                select:
+                    - requestAccount.name as accountName
+                    - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
+                    - request.firstName
+                    - request.lastName
+                    - request.email
+                    - request.phone
+                    - request.company
+                    - request.role
+                join:
+                    left:
+                        - { join: request.account, alias: requestAccount }
+                        - { join: request.accountUser, alias: requestAccountUser }
+            hints:
+                - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
+        columns:
+            firstName:
+                label:         orob2b.rfp.request.first_name.label
+                order:         1
+            lastName:
+                label:         orob2b.rfp.request.last_name.label
+                order:         2
+            email:
+                label:         orob2b.rfp.request.email.label
+                order:         3
+            phone:
+                label:         orob2b.rfp.request.phone.label
+                order:         4
+            company:
+                label:         orob2b.rfp.request.company.label
+                order:         5
+            role:
+                label:         orob2b.rfp.request.role.label
+                order:         6
+            accountUserName:
+                label:         orob2b.rfp.request.account_user.label
+                order:         7
+            accountName:
+                label:         orob2b.rfp.request.account.label
+                order:         8
+        sorters:
+            columns:
                 firstName:
                     data_name: request.firstName
                 lastName:
@@ -90,18 +131,6 @@ datagrid:
                     data_name: accountUserName
                 accountName:
                     data_name: accountName
-                status_label:
-                    data_name: status_order
-                poNumber:
-                    data_name: request.poNumber
-                shipUntil:
-                    data_name: request.shipUntil
-                createdAt:
-                    data_name: request.createdAt
-                updatedAt:
-                    data_name: request.updatedAt
-            default:
-                updatedAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
                 id:
@@ -151,14 +180,6 @@ datagrid:
                 updatedAt:
                     type:      datetime
                     data_name: request.updatedAt
-        actions:
-            view:
-                type:          navigate
-                label:         oro.grid.action.view
-                link:          view_link
-                icon:          eye-open
-                acl_resource:  orob2b_rfp_request_view
-                rowAction:     true
 
     rfp-request-statuses-grid:
         acl_resource: orob2b_rfp_request_status_view
