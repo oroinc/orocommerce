@@ -56,6 +56,10 @@ services:
         public: true
         arguments:
             - '@session'
+            - '@security.token_storage'
+            - '@oro_config.global'
+            - '@orob2b_website.manager'
+            - '@orob2b_account_user.manager'
 
     orob2b_pricing.provider.abstract_product_price:
         class: 'OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider'

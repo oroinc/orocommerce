@@ -17,7 +17,7 @@ class AccountUserCurrency
      *
      * @ORM\Id
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser", inversedBy="currencies")
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $accountUser;
