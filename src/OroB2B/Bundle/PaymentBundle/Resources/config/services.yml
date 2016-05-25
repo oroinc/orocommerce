@@ -146,6 +146,7 @@ services:
         public: true
         arguments:
             - '@orob2b_payment.provider.payment_transaction'
+            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
 
     orob2b_payment.action.capture:
         class: 'OroB2B\Bundle\PaymentBundle\Action\CaptureAction'
