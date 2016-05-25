@@ -68,6 +68,26 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_rfp_request_view
                 rowAction:     true
+
+    account-view-rfq-grid:
+        extends: base-rfq-grid
+        source:
+            query:
+                select:
+                    - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
+                where:
+                    and:
+                        - requestAccountUser.account = :account_id
+                join:
+                    left:
+                        - { join: request.accountUser, alias: requestAccountUser }
+            bind_parameters:
+                - account_id
+        columns:
+            accountUserName:
+                label:         orob2b.rfp.request.account_user.label
+                order:         1
+
     rfp-requests-grid:
         extends: base-rfq-grid
         source:
