@@ -1,5 +1,10 @@
 {% block currency_switcher_widget %}
-    <div class="oro-toolbar" data-topbar-dropdown-trigger>
+    <div class="oro-toolbar" data-topbar-dropdown-trigger
+         data-page-component-module="orob2bpricing/js/app/components/currency-switcher-component"
+         data-page-component-options="{{ {
+             'selectedCurrency': selected_currency,
+             'currencySwitcherRoute': 'orob2b_pricing_frontend_set_current_currency'
+         }|json_encode }}">
         <div class="oro-toolbar__content">
             {{ oro_currency_symbol(selected_currency) }}
             <span class="oro-toolbar__icon">
