@@ -25,17 +25,27 @@ services:
         class: 'OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService'
         parent: orob2b_product.service.abstract_rounding
 
-    orob2b_product.formatter.product_unit_value:
-        class: 'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
-        public: true
+    orob2b_product.formatter.unit_value:
+        abstract: true
+        class: 'OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter'
         arguments:
             - "@translator"
 
-    orob2b_product.formatter.product_unit_label:
-        class: 'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
-        public: true
+    orob2b_product.formatter.unit_label:
+        abstract: true
+        class: 'OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter'
         arguments:
             - "@translator"
+
+    orob2b_product.formatter.product_unit_value:
+        parent: orob2b_product.formatter.unit_value
+        class: 'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
+        public: true
+
+    orob2b_product.formatter.product_unit_label:
+        parent: orob2b_product.formatter.unit_label
+        class: 'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+        public: true
 
     orob2b_product.twig.product_unit_value:
         class: 'OroB2B\Bundle\ProductBundle\Twig\ProductUnitValueExtension'
@@ -174,6 +184,18 @@ services:
     orob2b_product.provider.product_status_provider:
         class: 'OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider'
         public: true
+
+    orob2b_product.provider.product_units_provider:
+        class: 'OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider'
+        arguments:
+            - "@doctrine"
+            - "@orob2b_product.formatter.product_unit_label"
+
+    orob2b_product.provider.default_product_unit_provider:
+        class: 'OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider'
+        arguments:
+            - "@oro_config.manager"
+            - "@doctrine"
 
     orob2b_product.provider.quick_add_form_provider:
         class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider'
@@ -316,7 +338,6 @@ services:
             - '@doctrine'
             - '@oro_attachment.manager'
             - '@orob2b_product.formatter.product_unit_label'
-            - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }

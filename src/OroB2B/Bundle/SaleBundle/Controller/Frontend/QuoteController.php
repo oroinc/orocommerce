@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
@@ -39,6 +40,10 @@ class QuoteController extends Controller
      */
     public function viewAction(Quote $quote)
     {
+        if (!$quote->isAcceptable()) {
+            $this->addFlash('notice', $this->get('translator')->trans('orob2b.sale.controller.quote.expired.message'));
+        }
+
         return [
             'data' => ['entity' => $quote, 'quote' => $quote]
         ];
@@ -96,6 +101,10 @@ class QuoteController extends Controller
      */
     public function choiceAction(Request $request, QuoteDemand $quoteDemand)
     {
+        if (!$quoteDemand->getQuote()->isAcceptable()) {
+            return new RedirectResponse($request->headers->get('referer'));
+        }
+
         $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);

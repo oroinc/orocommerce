@@ -12,7 +12,9 @@ class ProductStatusType extends AbstractType
 {
     const NAME = 'orob2b_product_status';
 
-    /** @var  ProductStatusProvider $productStatuses */
+    /**
+     * @var  ProductStatusProvider $productStatuses
+     */
     protected $productStatusProvider;
 
     /**
@@ -24,7 +26,7 @@ class ProductStatusType extends AbstractType
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -35,7 +37,7 @@ class ProductStatusType extends AbstractType
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getName()
     {
@@ -43,7 +45,7 @@ class ProductStatusType extends AbstractType
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getParent()
     {

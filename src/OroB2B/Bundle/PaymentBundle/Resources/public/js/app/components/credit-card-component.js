@@ -22,9 +22,15 @@ define(function(require) {
                 expirationDate: '[data-expiration-date]',
                 cvv: '[data-card-cvv]',
                 cardNumber: '[data-card-number]',
-                validation: '[data-validation]'
+                validation: '[data-validation]',
+                saveForLater: '[data-save-for-later]'
             }
         },
+
+        /**
+         * @property {Boolean}
+         */
+        paymentValidationRequiredComponentState: true,
 
         /**
          * @property {jQuery}
@@ -47,12 +53,15 @@ define(function(require) {
         $form: null,
 
         /**
+         * @property {Boolean}
+         */
+        disposable: true,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options = _.defaults(options || {}, this.options);
-
-            mediator.on('checkout:place-order:response', this.handleSubmit, this);
+            this.options = _.extend({}, this.options, options);
 
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardNumberLuhnCheck');
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDate');
@@ -63,46 +72,74 @@ define(function(require) {
             this.$form = this.$el.find(this.options.selectors.form);
 
             this.$el
-                .on('change', this.options.selectors.month, _.bind(this.collectMonthDate, this))
-                .on('change', this.options.selectors.year, _.bind(this.collectYearDate, this))
+                .on('change', this.options.selectors.month, $.proxy(this.collectMonthDate, this))
+                .on('change', this.options.selectors.year, $.proxy(this.collectYearDate, this))
                 .on(
                     'focusout',
                     this.options.selectors.cardNumber,
-                    _.bind(this.validate, this, this.options.selectors.cardNumber)
+                    $.proxy(this.validate, this, this.options.selectors.cardNumber)
                 )
-                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
+                .on('focusout', this.options.selectors.cvv, $.proxy(this.validate, this, this.options.selectors.cvv))
+                .on('change', this.options.selectors.saveForLater, $.proxy(this.onSaveForLaterChange, this));
 
-            mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
+            mediator.on('checkout:place-order:response', this.handleSubmit, this);
+            mediator.on('checkout:payment:method:changed', this.onPaymentMethodChanged, this);
+            mediator.on('checkout:payment:before-transit', this.beforeTransit, this);
+            mediator.on('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
+            mediator.on('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
+
+            mediator.once('page:afterChange', function() {
+                var paymentMethodObject = {};
+                mediator.trigger('checkout:payment:method:get-value', paymentMethodObject);
+                mediator.trigger('checkout:payment:method:changed', {paymentMethod: paymentMethodObject.value});
+            });
         },
 
+        /**
+         * @param {Object} eventData
+         */
         handleSubmit: function(eventData) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = true;
-                var data = this.$el.find('[data-gateway]').serializeArray();
+
                 var resolvedEventData = _.extend(
                     {
                         'SECURETOKEN': false,
                         'SECURETOKENID': false,
-                        'errorUrl': false,
-                        'returnUrl': false,
-                        'formAction': false
+                        'returnUrl': '',
+                        'errorUrl': '',
+                        'formAction': '',
+                        'paymentMethodSupportsValidation': false
                     },
                     eventData.responseData
                 );
 
+                if (resolvedEventData.paymentMethodSupportsValidation) {
+                    mediator.execute('redirectTo', {url: resolvedEventData.returnUrl}, {redirect: true});
+
+                    return;
+                }
+
+                var data = this.$el.find('[data-gateway]').serializeArray();
                 data.push({name: 'SECURETOKENID', value: resolvedEventData.SECURETOKENID});
                 data.push({name: 'SECURETOKEN', value: resolvedEventData.SECURETOKEN});
                 data.push({name: 'RETURNURL', value: resolvedEventData.returnUrl});
                 data.push({name: 'ERRORURL', value: resolvedEventData.errorUrl});
 
-                if (!resolvedEventData.formAction || !resolvedEventData.SECURETOKEN) {
-                    return this.postUrl(resolvedEventData.errorUrl, data);
+                if (resolvedEventData.formAction && resolvedEventData.SECURETOKEN) {
+                    this.postUrl(resolvedEventData.formAction, data);
+
+                    return;
                 }
 
-                return this.postUrl(resolvedEventData.formAction, data);
+                mediator.execute('redirectTo', {url: resolvedEventData.errorUrl}, {redirect: true});
             }
         },
 
+        /**
+         * @param {String} formAction
+         * @param {Object} data
+         */
         postUrl: function(formAction, data) {
             var $form = $('<form action="' + formAction + '" method="POST">');
             _.each(data, function(field) {
@@ -117,6 +154,9 @@ define(function(require) {
             $form.submit();
         },
 
+        /**
+         * @param {jQuery.Event} e
+         */
         collectMonthDate: function(e) {
             this.month = e.target.value;
 
@@ -124,6 +164,9 @@ define(function(require) {
             this.validate(this.options.selectors.expirationDate);
         },
 
+        /**
+         * @param {jQuery.Event} e
+         */
         collectYearDate: function(e) {
             this.year = e.target.value;
             this.setExpirationDate();
@@ -140,13 +183,24 @@ define(function(require) {
         },
 
         dispose: function() {
-            if (this.disposed) {
+            if (this.disposed || !this.disposable) {
                 return;
             }
 
-            mediator.off('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
+            this.$el.off();
+
+            mediator.off('checkout:place-order:response', this.handleSubmit, this);
+            mediator.off('checkout:payment:method:changed', this.onPaymentMethodChanged, this);
+            mediator.off('checkout:payment:before-transit', this.beforeTransit, this);
+            mediator.off('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
+            mediator.off('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
+
+            CreditCardComponent.__super__.dispose.call(this);
         },
 
+        /**
+         * @param {String} elementSelector
+         */
         validate: function(elementSelector) {
             var virtualForm = $('<form>');
             var clonedForm = this.$form.clone();
@@ -201,9 +255,83 @@ define(function(require) {
             return isValid;
         },
 
+        /**
+         * @param {Boolean} state
+         */
+        setGlobalPaymentValidate: function(state) {
+            this.paymentValidationRequiredComponentState = state;
+            mediator.trigger('checkout:payment:validate:change', state);
+        },
+
+        /**
+         * @returns {Boolean}
+         */
+        getGlobalPaymentValidate: function() {
+            var validateValueObject = {};
+            mediator.trigger('checkout:payment:validate:get-value', validateValueObject);
+            return validateValueObject.value;
+        },
+
+        /**
+         * @returns {jQuery}
+         */
+        getSaveForLaterElement: function() {
+            if (!this.hasOwnProperty('$saveForLaterElement')) {
+                this.$saveForLaterElement = this.$form.find(this.options.selectors.saveForLater);
+            }
+
+            return this.$saveForLaterElement;
+        },
+
+        /**
+         * @returns {Boolean}
+         */
+        getSaveForLaterState: function() {
+            return this.getSaveForLaterElement().prop('checked');
+        },
+
+        setSaveForLaterBasedOnForm: function() {
+            mediator.trigger('checkout:payment:save-for-later:change', this.getSaveForLaterState());
+        },
+
+        /**
+         * @param {Object} eventData
+         */
+        onPaymentMethodChanged: function(eventData) {
+            if (eventData.paymentMethod === this.options.paymentMethod) {
+                this.onCurrentPaymentMethodSelected();
+            }
+        },
+
+        onCurrentPaymentMethodSelected: function() {
+            this.setGlobalPaymentValidate(this.paymentValidationRequiredComponentState);
+            this.setSaveForLaterBasedOnForm();
+        },
+
+        /**
+         * @param {Object} e
+         */
+        onSaveForLaterChange: function(e) {
+            var $el = $(e.target);
+            mediator.trigger('checkout:payment:save-for-later:change', $el.prop('checked'));
+        },
+
+        /**
+         * @param {Object} eventData
+         */
         beforeTransit: function(eventData) {
             if (eventData.data.paymentMethod === this.options.paymentMethod) {
                 eventData.stopped = !this.validate();
+            }
+        },
+
+        beforeHideFilledForm: function() {
+            this.disposable = false;
+        },
+
+        beforeRestoreFilledForm: function() {
+            if (this.disposable) {
+                this.dispose();
             }
         }
     });

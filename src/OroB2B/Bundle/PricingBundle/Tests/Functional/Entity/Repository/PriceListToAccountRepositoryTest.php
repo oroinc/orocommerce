@@ -6,6 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
@@ -27,6 +28,70 @@ class PriceListToAccountRepositoryTest extends WebTestCase
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
             ]
         );
+    }
+
+    /**
+     * @dataProvider restrictByPriceListDataProvider
+     * @param $priceList
+     * @param array $expectedAccounts
+     */
+    public function testRestrictByPriceList($priceList, array $expectedAccounts)
+    {
+        $qb = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:Account')
+            ->getRepository('OroB2BAccountBundle:Account')
+            ->createQueryBuilder('account');
+
+        /** @var BasePriceList $priceList */
+        $priceList = $this->getReference($priceList);
+
+        $this->getRepository()->restrictByPriceList($qb, $priceList, 'priceList');
+
+        $result = $qb->getQuery()->getResult();
+
+        $this->assertCount(count($expectedAccounts), $result);
+
+        foreach ($expectedAccounts as $expectedAccount) {
+            $this->assertContains($this->getReference($expectedAccount), $result);
+        }
+    }
+
+    public function restrictByPriceListDataProvider()
+    {
+        return [
+            [
+                'priceList' => 'price_list_2',
+                'expectedAccounts' => [
+                    'account.level_1_1',
+                    'account.level_1.2',
+                    'account.level_1.3'
+                ]
+            ],
+            [
+                'priceList' => 'price_list_5',
+                'expectedAccounts' => [
+                    'account.level_1.1.1'
+                ]
+            ],
+            [
+                'priceList' => 'price_list_4',
+                'expectedAccounts' => [
+                    'account.level_1.3'
+                ]
+            ],
+            [
+                'priceList' => 'price_list_6',
+                'expectedAccounts' => [
+                    'account.level_1.3'
+                ]
+            ],
+            [
+                'priceList' => 'price_list_1',
+                'expectedAccounts' => [
+                    'account.level_1_1'
+                ]
+            ]
+        ];
     }
 
     public function testFindByPrimaryKey()
@@ -205,6 +270,53 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $this->getRepository()->delete($account, $website);
         $this->assertCount(5, $this->getRepository()->findAll());
         $this->assertCount(0, $this->getRepository()->findBy(['account' => $account, 'website' => $website]));
+    }
+
+    /**
+     * @dataProvider dataProviderRelationsByAccount
+     * @param $accounts
+     * @param $expectsResult
+     */
+    public function testGetRelationsByHolders($accounts, $expectsResult)
+    {
+        $accountsObjects = [];
+        foreach ($accounts as $accountName) {
+            $accountsObjects[] = $this->getReference($accountName);
+        }
+        $relations = $this->getRepository()->getRelationsByHolders($accountsObjects);
+        $relations = array_map(function (PriceListToAccount $relation) {
+            return [
+                $relation->getAccount()->getName(),
+                $relation->getWebsite()->getName(),
+                $relation->getPriceList()->getName()
+            ];
+        }, $relations);
+        $this->assertEquals($expectsResult, $relations);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderRelationsByAccount()
+    {
+        return [
+            [
+                'accounts' => [],
+                'expectsResult' => [],
+            ],
+            [
+                'accounts' => [
+                    'account.level_1.2',
+                    'account.level_1.3',
+                ],
+                'expectsResult' => [
+                    ['account.level_1.2', 'US', 'priceList2'],
+                    ['account.level_1.3', 'US', 'priceList6'],
+                    ['account.level_1.3', 'US', 'priceList2'],
+                    ['account.level_1.3', 'US', 'priceList4'],
+                ],
+            ],
+        ];
     }
 
     /**

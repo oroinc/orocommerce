@@ -43,11 +43,13 @@ define(function (require) {
                 matchedPricesRoute: this.options.matchedPricesRoute
             }));
 
-            this.$el.on('content:changed', _.bind(this._reindexLineItems, this));
-            this.$el.on('content:remove', _.bind(this._reindexLineItems, this));
-            this.$el.on('content:remove', _.bind(this._handleRemoveItem, this));
-            mediator.on('invoice-line-item:created', _.bind(this._setNextSortOrder, this));
-            mediator.on('update:currency', _.bind(this._setPrototypeCurrency, this));
+            this.$el.on('content:changed', $.proxy(this._reindexLineItems, this));
+            this.$el.on('content:remove', $.proxy(this._reindexLineItems, this));
+            this.$el.on('content:remove', $.proxy(this._handleRemoveItem, this));
+
+            mediator.on('invoice-line-item:created', this._setNextSortOrder, this);
+            mediator.on('update:currency', this._setPrototypeCurrency, this);
+
             this.initLayout();
             this.options.nextSortOrder = this._fetchLastSortOrder() + 1;
             this._reindexLineItems();
@@ -57,6 +59,9 @@ define(function (require) {
             return +this.$el.find(this.options.selectors.lineItem).last().find(this.options.selectors.sortOrder).val();
         },
 
+        /**
+         * @param {Object} e
+         */
         _reindexLineItems: function (e) {
             var i = 1;
             this.$el.find(this.options.selectors.lineItem).each(_.bind(function (index, element) {
@@ -71,6 +76,9 @@ define(function (require) {
             mediator.trigger('line-items-totals:update');
         },
 
+        /**
+         * @param {jQuery.Element} $lineItem
+         */
         _setNextSortOrder: function ($lineItem) {
             var $sortOrder = $lineItem.find(this.options.selectors.sortOrder);
             if(!$sortOrder.val()){
@@ -79,6 +87,9 @@ define(function (require) {
             }
         },
 
+        /**
+         * @param {String} val
+         */
         _setPrototypeCurrency: function (val) {
             this.options.currency = val;
             var prototype = $(this.options.selectors.prototypeHolder).attr('data-prototype');
@@ -95,11 +106,12 @@ define(function (require) {
                 return;
             }
 
-            this.$el.off('content:changed', _.bind(this._reindexLineItems, this));
-            this.$el.off('content:remove', _.bind(this._reindexLineItems, this));
-            this.$el.off('content:remove', _.bind(this._handleRemoveItem, this));
-            mediator.off('invoice-line-item:created', _.bind(this._setNextSortOrder, this));
-            mediator.off('update:currency', _.bind(this._setPrototypeCurrency, this));
+            this.$el.off('content:changed', $.proxy(this._reindexLineItems, this));
+            this.$el.off('content:remove', $.proxy(this._reindexLineItems, this));
+            this.$el.off('content:remove', $.proxy(this._handleRemoveItem, this));
+
+            mediator.off('invoice-line-item:created', this._setNextSortOrder, this);
+            mediator.off('update:currency', this._setPrototypeCurrency, this);
 
             LineItemsView.__super__.dispose.call(this);
         }

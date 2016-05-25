@@ -145,3 +145,11 @@ services:
             - [setCache, ['@orob2b_checkout.grid_totals_metadata.cache']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
+
+    orob2b_checkout.workflow.condition.order_line_item_has_count:
+        class: 'OroB2B\Bundle\CheckoutBundle\Model\Condition\OrderLineItemsHasCount'
+        public: true
+        arguments:
+            - '@orob2b_checkout.data_provider.manager.checkout_line_items'
+        tags:
+            - { name: oro_workflow.condition, alias: order_line_item_has_count }
