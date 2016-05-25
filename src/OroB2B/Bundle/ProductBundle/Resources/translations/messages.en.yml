@@ -112,9 +112,12 @@ orob2b:
                 backend_inventory_statuses_visibility.title: 'Allowed Inventory Statuses (Management Console)'
                 product_inventory.title: 'Inventory'
                 product_unit.title: 'Product Unit'
+                default_product_unit.title: 'Primary Unit'
             fields:
                 unit_rounding_type.label: 'Unit Rounding Type'
                 general_frontend_inventory_statuses_visibility.label: 'Visible Inventory Statuses'
+                default_unit.label: 'Default Primary Unit'
+                default_unit_precision.label: 'Default Primary Unit Precision'
 
         grid:
             action:
