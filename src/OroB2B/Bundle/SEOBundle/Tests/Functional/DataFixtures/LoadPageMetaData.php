@@ -22,9 +22,9 @@ class LoadPageMetaData extends AbstractFixture implements DependentFixtureInterf
      */
     public static $metadata = [
         LoadPageData::PAGE_1 => [
-            self::META_TITLES => LoadPageData::PAGE_1 . self::META_TITLES,
-            self::META_DESCRIPTIONS => LoadPageData::PAGE_1 . self::META_DESCRIPTIONS,
-            self::META_KEYWORDS => LoadPageData::PAGE_1 . self::META_KEYWORDS,
+            self::META_TITLES => LoadPageData::PAGE_1,
+            self::META_DESCRIPTIONS => self::META_DESCRIPTIONS,
+            self::META_KEYWORDS => self::META_KEYWORDS,
         ]
     ];
 

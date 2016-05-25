@@ -22,9 +22,9 @@ class LoadProductMetaData extends AbstractFixture implements DependentFixtureInt
      */
     public static $metadata = [
         LoadProductData::PRODUCT_1 => [
-            self::META_TITLES => LoadProductData::PRODUCT_1 . self::META_TITLES,
-            self::META_DESCRIPTIONS => LoadProductData::PRODUCT_1 . self::META_DESCRIPTIONS,
-            self::META_KEYWORDS => LoadProductData::PRODUCT_1 . self::META_KEYWORDS,
+            self::META_TITLES => LoadProductData::PRODUCT_1,
+            self::META_DESCRIPTIONS => self::META_DESCRIPTIONS,
+            self::META_KEYWORDS => self::META_KEYWORDS,
         ]
     ];
 

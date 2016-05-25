@@ -34,7 +34,6 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         if (!$container->hasParameter('orob2b_product.entity.product.class')) {
             $this->markTestSkipped('ProductBundle is missing');
         }
-
         $this->loadFixtures(
             ['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']
         );

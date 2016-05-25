@@ -22,9 +22,9 @@ class LoadCategoryMetaData extends AbstractFixture implements DependentFixtureIn
      */
     public static $metadata = [
         LoadCategoryData::FIRST_LEVEL => [
-            self::META_TITLES => LoadCategoryData::FIRST_LEVEL . self::META_TITLES,
-            self::META_DESCRIPTIONS => LoadCategoryData::FIRST_LEVEL . self::META_DESCRIPTIONS,
-            self::META_KEYWORDS => LoadCategoryData::FIRST_LEVEL . self::META_KEYWORDS,
+            self::META_TITLES => LoadCategoryData::FIRST_LEVEL,
+            self::META_DESCRIPTIONS => self::META_DESCRIPTIONS,
+            self::META_KEYWORDS => self::META_KEYWORDS,
         ]
     ];
 
