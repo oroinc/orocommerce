@@ -2,17 +2,17 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\PricingBundle\Layout\DataProvider\EnabledCurrenciesProvider;
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 
 class EnabledCurrenciesProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $configManager;
+    protected $userCurrencyProvider;
 
     /**
      * @var EnabledCurrenciesProvider
@@ -21,10 +21,11 @@ class EnabledCurrenciesProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+        $this->userCurrencyProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->enabledCurrenciesProvider = new EnabledCurrenciesProvider($this->configManager);
+        $this->enabledCurrenciesProvider = new EnabledCurrenciesProvider($this->userCurrencyProvider);
     }
 
     public function testGetIdentifier()
@@ -37,9 +38,8 @@ class EnabledCurrenciesProviderTest extends \PHPUnit_Framework_TestCase
         /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context **/
         $context = $this->getMock('Oro\Component\Layout\ContextInterface');
 
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_b2b_pricing.enabled_currencies')
+        $this->userCurrencyProvider->expects($this->once())
+            ->method('getAvailableCurrencies')
             ->willReturn(['EUR']);
         $this->assertEquals(['EUR'], $this->enabledCurrenciesProvider->getData($context));
     }

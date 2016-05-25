@@ -2,23 +2,24 @@
 
 namespace OroB2B\Bundle\PricingBundle\Layout\DataProvider;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
+
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 
 class DefaultCurrencyProvider implements DataProviderInterface
 {
     /**
-     * @var ConfigManager
+     * @var UserCurrencyProvider
      */
-    protected $configManager;
+    protected $userCurrencyProvider;
 
     /**
-     * @param ConfigManager $configManager
+     * @param UserCurrencyProvider $userCurrencyProvider
      */
-    public function __construct(ConfigManager $configManager)
+    public function __construct(UserCurrencyProvider $userCurrencyProvider)
     {
-        $this->configManager = $configManager;
+        $this->userCurrencyProvider = $userCurrencyProvider;
     }
 
     /**
@@ -34,6 +35,6 @@ class DefaultCurrencyProvider implements DataProviderInterface
      */
     public function getData(ContextInterface $context)
     {
-        return $this->configManager->get('oro_b2b_pricing.default_currency');
+        return $this->userCurrencyProvider->getDefaultCurrency();
     }
 }
