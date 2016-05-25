@@ -14,7 +14,8 @@ define(function(require) {
             dropdownCssClass: 'oro-select2__dropdown',
             placeholder: __('Please select'),
             dropdownAutoWidth: true,
-            minimumResultsForSearch: Infinity // hiding the search box
+            minimumInputLength: 0,
+            minimumResultsForSearch: 7
         },
 
         widgetFunctionName: 'select2',
@@ -31,7 +32,7 @@ define(function(require) {
         },
 
         findContainer: function() {
-            this.$container = this.$el.data(this.widgetFunctionName).container;
+            return this.$el.data(this.widgetFunctionName).container;
         },
 
         open: function() {

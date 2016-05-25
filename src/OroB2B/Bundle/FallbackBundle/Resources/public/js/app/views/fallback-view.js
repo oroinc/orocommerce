@@ -290,7 +290,7 @@ define(function(require) {
          * @param {Boolean} enable
          */
         enableDisableFallback: function($fallback, enable) {
-            var $fallbackContainer = $fallback.inputWidget('getContainer');
+            var $fallbackContainer = $fallback.inputWidget('container');
 
             if (enable) {
                 $fallback.removeAttr('disabled');

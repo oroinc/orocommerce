@@ -181,13 +181,9 @@ define(function(require) {
                 self.unitSelector.val('');
             }
 
-            var $unitSelectorContainer = this.unitSelector.inputWidget('getContainer');
+            var $unitSelectorContainer = this.unitSelector.inputWidget('container');
             if ($unitSelectorContainer) {
-                if (disabled) {
-                    $unitSelectorContainer.addClass('disabled');
-                } else {
-                    $unitSelectorContainer.removeClass('disabled');
-                }
+                $unitSelectorContainer.toggleClass('disabled', disabled);
             }
 
             this.unitSelector
