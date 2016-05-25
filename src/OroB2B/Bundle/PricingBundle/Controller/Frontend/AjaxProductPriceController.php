@@ -64,11 +64,9 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function setCurrentCurrencyAction(Request $request)
     {
         $currency = $request->get('currency');
-        $currencyProvider = $this->get('orob2b_pricing.provider.currency');
         $result = 'failed';
-        //TODO: use UserCurrencyProvider::getAvailableCurrencies when it will be ready
-        if (in_array($currency, $currencyProvider->getAvailableCurrencies())) {
-            $userCurrencyProvider = $this->get('orob2b_pricing.provider.user_currency');
+        $userCurrencyProvider = $this->get('orob2b_pricing.provider.user_currency');
+        if (in_array($currency, $userCurrencyProvider->getAvailableCurrencies())) {
             $userCurrencyProvider->saveSelectedCurrency($currency);
             $result = 'saved';
         }

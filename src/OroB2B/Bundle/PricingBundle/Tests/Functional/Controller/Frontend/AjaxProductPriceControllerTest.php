@@ -64,7 +64,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
             ]
         );
 
