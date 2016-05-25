@@ -273,32 +273,19 @@ class QuoteControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'createOrderButton' => false,
-                    'columns' => [
+                    'columns' => array_merge(
+                        $this->getQuoteDefaultColumns(),
                         [
-                            'label' => 'orob2b.frontend.sale.quote.qid.label',
-                            'property' => 'qid',
-                        ],
-                        [
-                            'label' => 'orob2b.frontend.sale.quote.valid_until.label',
-                            'property' => 'valid_until',
-                        ],
-                        [
-                            'label' => 'orob2b.sale.quote.po_number.label',
-                            'property' => 'po_number',
-                        ],
-                        [
-                            'label' => 'orob2b.sale.quote.ship_until.label',
-                            'property' => 'ship_until',
-                        ],
-                        [
-                            'label' => 'orob2b.frontend.sale.quote.ship_estimate.label',
-                            'property' => 'shipping_estimate',
-                        ],
-                        [
-                            'label' => 'orob2b.sale.quote.sections.shipping_address',
-                            'property' => 'shippingAddress.street',
+                            [
+                                'label' => 'orob2b.frontend.sale.quote.ship_estimate.label',
+                                'property' => 'shipping_estimate',
+                            ],
+                            [
+                                'label' => 'orob2b.sale.quote.sections.shipping_address',
+                                'property' => 'shippingAddress.street',
+                            ]
                         ]
-                    ],
+                    ),
                 ],
             ],
             'account1 user3 (AccountUser:VIEW_LOCAL)' => [
@@ -309,32 +296,19 @@ class QuoteControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'createOrderButton' => true,
-                    'columns' => [
+                    'columns' => array_merge(
+                        $this->getQuoteDefaultColumns(),
                         [
-                            'label' => 'orob2b.frontend.sale.quote.qid.label',
-                            'property' => 'qid',
-                        ],
-                        [
-                            'label' => 'orob2b.frontend.sale.quote.valid_until.label',
-                            'property' => 'valid_until',
-                        ],
-                        [
-                            'label' => 'orob2b.sale.quote.po_number.label',
-                            'property' => 'po_number',
-                        ],
-                        [
-                            'label' => 'orob2b.sale.quote.ship_until.label',
-                            'property' => 'ship_until',
-                        ],
-                        [
-                            'label' => 'orob2b.frontend.sale.quote.ship_estimate.label',
-                            'property' => 'shipping_estimate',
-                        ],
-                        [
-                            'label' => 'orob2b.sale.quote.sections.shipping_address',
-                            'property' => 'shippingAddress.street',
+                            [
+                                'label' => 'orob2b.frontend.sale.quote.ship_estimate.label',
+                                'property' => 'shipping_estimate',
+                            ],
+                            [
+                                'label' => 'orob2b.sale.quote.sections.shipping_address',
+                                'property' => 'shippingAddress.street',
+                            ]
                         ]
-                    ],
+                    ),
                 ],
             ],
             'account1 user3 (AccountUser:VIEW_LOCAL, Quote date)' => [
@@ -345,24 +319,7 @@ class QuoteControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'createOrderButton' => false,
-                    'columns' => [
-                        [
-                            'label' => 'orob2b.frontend.sale.quote.qid.label',
-                            'property' => 'qid',
-                        ],
-                        [
-                            'label' => 'orob2b.frontend.sale.quote.valid_until.label',
-                            'property' => 'valid_until',
-                        ],
-                        [
-                            'label' => 'orob2b.sale.quote.po_number.label',
-                            'property' => 'po_number',
-                        ],
-                        [
-                            'label' => 'orob2b.sale.quote.ship_until.label',
-                            'property' => 'ship_until',
-                        ],
-                    ],
+                    'columns' => $this->getQuoteDefaultColumns(),
                 ],
             ],
             'account1 user3 (AccountUser:VIEW_LOCAL, Quote expired)' => [
@@ -373,24 +330,7 @@ class QuoteControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'createOrderButton' => false,
-                    'columns' => [
-                        [
-                            'label' => 'orob2b.frontend.sale.quote.qid.label',
-                            'property' => 'qid',
-                        ],
-                        [
-                            'label' => 'orob2b.frontend.sale.quote.valid_until.label',
-                            'property' => 'valid_until',
-                        ],
-                        [
-                            'label' => 'orob2b.sale.quote.po_number.label',
-                            'property' => 'po_number',
-                        ],
-                        [
-                            'label' => 'orob2b.sale.quote.ship_until.label',
-                            'property' => 'ship_until',
-                        ],
-                    ],
+                    'columns' => $this->getQuoteDefaultColumns(),
                 ],
             ],
             'account1 user3 (AccountUser:VIEW_LOCAL, null Quote date)' => [
@@ -401,25 +341,30 @@ class QuoteControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'createOrderButton' => true,
-                    'columns' => [
-                        [
-                            'label' => 'orob2b.frontend.sale.quote.qid.label',
-                            'property' => 'qid',
-                        ],
-                        [
-                            'label' => 'orob2b.frontend.sale.quote.valid_until.label',
-                            'property' => 'valid_until',
-                        ],
-                        [
-                            'label' => 'orob2b.sale.quote.po_number.label',
-                            'property' => 'po_number',
-                        ],
-                        [
-                            'label' => 'orob2b.sale.quote.ship_until.label',
-                            'property' => 'ship_until',
-                        ],
-                    ],
+                    'columns' => $this->getQuoteDefaultColumns(),
                 ],
+            ],
+        ];
+    }
+
+    protected function getQuoteDefaultColumns()
+    {
+        return [
+            [
+                'label' => 'orob2b.frontend.sale.quote.qid.label',
+                'property' => 'qid',
+            ],
+            [
+                'label' => 'orob2b.frontend.sale.quote.valid_until.label',
+                'property' => 'valid_until',
+            ],
+            [
+                'label' => 'orob2b.sale.quote.po_number.label',
+                'property' => 'po_number',
+            ],
+            [
+                'label' => 'orob2b.sale.quote.ship_until.label',
+                'property' => 'ship_until',
             ],
         ];
     }
