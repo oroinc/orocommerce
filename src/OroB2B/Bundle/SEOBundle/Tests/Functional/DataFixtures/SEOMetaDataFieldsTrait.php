@@ -14,7 +14,7 @@ trait SEOMetaDataFieldsTrait
     public function load(ObjectManager $manager)
     {
         foreach (self::$metadata as $entityReference => $metadataFields) {
-            $entity = $this->getReference($entityReference);
+            $entity = parent::getReference($entityReference);
             foreach ($metadataFields as $fieldName => $matedataField) {
                 $localizedFallbackValue = new LocalizedFallbackValue();
                 $localizedFallbackValue->setString($matedataField);

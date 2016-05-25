@@ -17,9 +17,6 @@ class CategoryControllerTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData']);
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
     public function testEditCategory()
     {
         $repository = $this->getContainer()->get('doctrine')->getRepository(
@@ -28,7 +25,8 @@ class CategoryControllerTest extends WebTestCase
 
         $category = $repository->findOneBy(['id' => 1]);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $category->getId()]));
+        $id = $category->getId();
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
 
         $this->checkSeoSectionExistence($crawler);
     }
