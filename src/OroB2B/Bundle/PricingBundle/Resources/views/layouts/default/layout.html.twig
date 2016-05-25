@@ -1,12 +1,19 @@
 {% block currency_switcher_widget %}
-    <div class="currency" data-topbar-dropdown-trigger>
-        <span>{{ oro_currency_symbol(selected_currency) }}</span>
-        <i class="cf-down-open-mini"></i>
-        <div class="topbar__dropdown" data-topbar-dropdown>
-            <ul class="topbar__dropdown__list">
+    <div class="oro-toolbar" data-topbar-dropdown-trigger>
+        <div class="oro-toolbar__content">
+            {{ oro_currency_symbol(selected_currency) }}
+            <span class="oro-toolbar__icon">
+                <i class="cf-down-open-mini"></i>
+            </span>
+        </div>
+
+        <div class="oro-toolbar__dropdown" data-topbar-dropdown>
+            <ul class="oro-toolbar__list">
                 {% for currency in currencies %}
-                <li><a href="#" data-currency="{{ currency }}">
-                    <strong class="mmr3-md">{{ oro_currency_symbol(currency) }}</strong> {{ oro_currency_name(currency) }}</a>
+                <li class="oro-toolbar__list-item">
+                    <a class="oro-toolbar__link" href="#" data-currency="{{ currency }}">
+                        <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>{{ oro_currency_name(currency) }}
+                    </a>
                 </li>
                 {% endfor %}
             </ul>

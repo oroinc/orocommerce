@@ -14,8 +14,6 @@ layout:
                     blockType: menu
                     options:
                         menu: top-nav
-                        attr:
-                            class: pull-right
                         allow_safe_labels: true
                 top_nav_controls:
                     blockType: container
