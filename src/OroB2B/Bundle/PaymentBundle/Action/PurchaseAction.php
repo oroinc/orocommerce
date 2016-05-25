@@ -45,12 +45,10 @@ class PurchaseAction extends AbstractPaymentMethodAction
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
         if ($isPaymentMethodSupportsValidation) {
-            $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
-            $sourcePaymentTransactionOptions = $sourcePaymentTransaction->getTransactionOptions();
-            if (empty($sourcePaymentTransactionOptions[self::SAVE_FOR_LATER_USE])) {
-                $sourcePaymentTransaction->setActive(false);
-                $this->paymentTransactionProvider->savePaymentTransaction($sourcePaymentTransaction);
-            }
+            $this->handleSaveForLaterUse($paymentTransaction);
+
+            // Don't need to set attributes if payment method supports validation
+            return;
         }
 
         $this->setAttributeValue(
@@ -76,5 +74,18 @@ class PurchaseAction extends AbstractPaymentMethodAction
         return $this->paymentMethodRegistry
             ->getPaymentMethod($paymentTransaction->getPaymentMethod())
             ->supports(PaymentMethodInterface::VALIDATE);
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     */
+    private function handleSaveForLaterUse(PaymentTransaction $paymentTransaction)
+    {
+        $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
+        $sourcePaymentTransactionOptions = $sourcePaymentTransaction->getTransactionOptions();
+        if (empty($sourcePaymentTransactionOptions[self::SAVE_FOR_LATER_USE])) {
+            $sourcePaymentTransaction->setActive(false);
+            $this->paymentTransactionProvider->savePaymentTransaction($sourcePaymentTransaction);
+        }
     }
 }

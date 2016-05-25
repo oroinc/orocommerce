@@ -528,6 +528,20 @@ workflows:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
                             - '@assign_value': [$payment_in_progress, true]
+                    - '@tree':
+                        conditions:
+                            '@and':
+                                - '@not_empty': $checkout.order.id
+                                - '@payment_method_supports':
+                                    payment_method: $payment_method
+                                    action: 'validate'
+                        actions:
+                            - '@redirect':
+                                route: orob2b_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: 'finish_checkout'
+
                     - '@send_email_template':
                         parameters:
                             from: $checkout.order.owner.email
