@@ -216,11 +216,11 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         return [
             [
                 'currency' => 'USD',
-                'expectedResult' => ['result' => 'saved'] ,
+                'expectedResult' => ['success' => true] ,
             ],
             [
                 'currency' => 'USD2',
-                'expectedResult' => ['result' => 'failed'] ,
+                'expectedResult' => ['success' => false] ,
             ],
         ];
     }
