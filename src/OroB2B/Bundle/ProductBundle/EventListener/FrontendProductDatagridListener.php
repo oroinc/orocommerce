@@ -88,7 +88,7 @@ class FrontendProductDatagridListener
         $config->offsetAddToArrayByPath('[source][query][select]', [$select]);
         $config->offsetAddToArrayByPath(
             '[source][query][join][left]',
-            [['join' => 'product.unitPrecisions', 'alias' => 'unit_precisions']]
+            [['join' => 'product.unitPrecisions', 'alias' => 'unit_precisions', "conditionType" => 'WITH', 'condition' =>'unit_precisions.sell=true']]
         );
         $config->offsetAddToArrayByPath(
             '[properties]',
