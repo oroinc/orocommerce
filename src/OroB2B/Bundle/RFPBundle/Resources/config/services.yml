@@ -7,6 +7,7 @@ parameters:
 services:
     orob2b_rfp.datagrid.action_permission_provider:
         class: 'OroB2B\Bundle\RFPBundle\Datagrid\ActionPermissionProvider'
+        public: true
         arguments:
             - "@oro_config.manager"
 
@@ -43,6 +44,7 @@ services:
 
     orob2b_rfp.service.request_to_quote_data_storage:
         class: 'OroB2B\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage'
+        public: true
         arguments:
             - "@orob2b_product.storage.product_data_storage"
 
@@ -140,6 +142,7 @@ services:
 
     orob2b_rfp.layout.data_provider.request_form:
         class: 'OroB2B\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider'
+        public: true
         arguments:
             - '@form.factory'
         tags:
@@ -147,6 +150,7 @@ services:
 
     orob2b_rfp.request.manager:
         class: 'OroB2B\Bundle\RFPBundle\Model\RequestManager'
+        public: true
         arguments:
             - '@oro_security.security_facade'
             - '@oro_entity.doctrine_helper'

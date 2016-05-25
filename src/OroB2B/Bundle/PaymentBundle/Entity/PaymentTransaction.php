@@ -6,14 +6,39 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+
 /**
  * @ORM\Table(name="orob2b_payment_transaction")
  * @ORM\Entity
+ * @Config(
+ *       mode="hidden",
+ *       defaultValues={
+ *          "ownership"={
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="frontendOwner",
+ *              "frontend_owner_column_name"="frontend_owner_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
+ *          }
+ *      }
+ * )
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class PaymentTransaction
+class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterface
 {
+    use DatesAwareTrait;
+
     /**
      * @var int
      * @ORM\Id
@@ -82,7 +107,6 @@ class PaymentTransaction
      */
     protected $active = false;
 
-
     /**
      * @var bool
      * @ORM\Column(name="successful", type="boolean")
@@ -127,6 +151,22 @@ class PaymentTransaction
      * @ORM\Column(name="transaction_options", type="array", nullable=true)
      */
     protected $transactionOptions;
+
+    /**
+     * @param AccountUser
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $frontendOwner;
+
+    /**
+     * @var OrganizationInterface
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
 
     /**
      * @return string
@@ -229,6 +269,10 @@ class PaymentTransaction
     /** {@inheritdoc} */
     public function getRequest()
     {
+        if (!$this->request) {
+            return [];
+        }
+
         return $this->request;
     }
 
@@ -236,7 +280,7 @@ class PaymentTransaction
      * @param array $request
      * @return PaymentTransaction
      */
-    public function setRequest(array $request)
+    public function setRequest(array $request = null)
     {
         $this->request = $request;
 
@@ -246,6 +290,10 @@ class PaymentTransaction
     /** {@inheritdoc} */
     public function getResponse()
     {
+        if (!$this->response) {
+            return [];
+        }
+
         return $this->response;
     }
 
@@ -253,7 +301,7 @@ class PaymentTransaction
      * @param array $response
      * @return PaymentTransaction
      */
-    public function setResponse(array $response)
+    public function setResponse(array $response = null)
     {
         $this->response = $response;
 
@@ -323,7 +371,7 @@ class PaymentTransaction
      */
     public function setAmount($amount)
     {
-        $this->amount = (string)$amount;
+        $this->amount = (string)round($amount, 2);
 
         return $this;
     }
@@ -413,6 +461,10 @@ class PaymentTransaction
      */
     public function getTransactionOptions()
     {
+        if (!$this->transactionOptions) {
+            return [];
+        }
+
         return $this->transactionOptions;
     }
 
@@ -463,5 +515,44 @@ class PaymentTransaction
     public function getAccessToken()
     {
         return $this->accessToken;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    public function getFrontendOwner()
+    {
+        return $this->frontendOwner;
+    }
+
+    /**
+     * @param AccountUser $frontendOwner
+     * @return PaymentTransaction
+     */
+    public function setFrontendOwner(AccountUser $frontendOwner = null)
+    {
+        $this->frontendOwner = $frontendOwner;
+
+        return $this;
+    }
+
+    /**
+     * Get organization
+     *
+     * @return OrganizationInterface
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOrganization(OrganizationInterface $organization = null)
+    {
+        $this->organization = $organization;
+
+        return $this;
     }
 }

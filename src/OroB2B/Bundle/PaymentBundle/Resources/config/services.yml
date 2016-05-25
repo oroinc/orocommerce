@@ -5,6 +5,7 @@ parameters:
 services:
     orob2b_payment.payment_term.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%orob2b_payment.entity.payment_term.class%'
@@ -42,6 +43,7 @@ services:
 
     orob2b_payment.event_listener.form_view:
         class: 'OroB2B\Bundle\PaymentBundle\EventListener\FormViewListener'
+        public: true
         arguments:
             - "@request_stack"
             - "@translator"
@@ -55,6 +57,7 @@ services:
 
     orob2b_payment.event_listener.datagrid:
         class: 'OroB2B\Bundle\PaymentBundle\EventListener\DatagridListener'
+        public: true
         calls:
             - [setPaymentTermClass, ['%orob2b_payment.entity.payment_term.class%']]
         tags:
@@ -63,6 +66,7 @@ services:
 
     orob2b_payment.event_listener.config.paypal_encrypt:
         class: 'OroB2B\Bundle\PaymentBundle\EventListener\Config\PayPalConfigurationEncryptListener'
+        public: true
         arguments:
             - '@oro_security.encoder.mcrypt'
         tags:
@@ -82,11 +86,13 @@ services:
 
     orob2b_payment.event_listener.config.paypal_selected_countries:
         class: 'OroB2B\Bundle\PaymentBundle\EventListener\Config\PayPalSelectedCountriesListener'
+        public: true
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
     orob2b_payment.extension.action.type.payment_delete:
         class: 'OroB2B\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction'
+        public: true
         scope: prototype
         tags:
             - { name: oro_datagrid.extension.action.type, type: payment-delete }
@@ -100,20 +106,15 @@ services:
 
     orob2b_payment.provider.credit_form_provider:
         class: 'OroB2B\Bundle\PaymentBundle\Layout\DataProvider\CreditCardFormProvider'
+        public: true
         arguments:
             - '@form.factory'
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_credit_card_form_provider }
 
-    orob2b_payment.provider.term_form_provider:
-        class: 'OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentTermFormProvider'
-        arguments:
-            - '@form.factory'
-        tags:
-            - { name: layout.data_provider, alias: orob2b_payment_payment_term_form_provider }
-
     orob2b_payment.provider.methods_provider:
         class: 'OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider'
+        public: true
         arguments:
             - '@orob2b_payment.payment_method.view.registry'
         tags:
@@ -121,6 +122,7 @@ services:
 
     orob2b_payment.event.callback_handler:
         class: 'OroB2B\Bundle\PaymentBundle\Event\CallbackHandler'
+        public: true
         lazy: true
         arguments:
             - '@event_dispatcher'
@@ -131,17 +133,23 @@ services:
 
     orob2b_payment.provider.payment_transaction:
         class: 'OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider'
+        public: true
         arguments:
             - '@oro_api.doctrine_helper'
+            - '@security.token_storage'
             - '%orob2b_payment.entity.payment_transaction.class%'
+        calls:
+            - ['setLogger', ['@logger']]
 
     orob2b_payment.provider.payment_status:
         class: 'OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider'
+        public: true
         arguments:
             - '@orob2b_payment.provider.payment_transaction'
 
     orob2b_payment.action.capture:
         class: 'OroB2B\Bundle\PaymentBundle\Action\CaptureAction'
+        public: true
         arguments:
             - '@oro_action.context_accessor'
             - '@orob2b_payment.payment_method.registry'
@@ -153,6 +161,7 @@ services:
 
     orob2b_payment.action.purchase:
         class: 'OroB2B\Bundle\PaymentBundle\Action\PurchaseAction'
+        public: true
         arguments:
             - '@oro_action.context_accessor'
             - '@orob2b_payment.payment_method.registry'
@@ -162,8 +171,21 @@ services:
             - { name: oro_workflow.action, alias: payment_purchase }
             - { name: oro_action.action, alias: payment_purchase }
 
+    orob2b_payment.action.validate:
+        class: 'OroB2B\Bundle\PaymentBundle\Action\ValidateAction'
+        public: true
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@orob2b_payment.payment_method.registry'
+            - '@orob2b_payment.provider.payment_transaction'
+            - '@router'
+        tags:
+            - { name: oro_workflow.action, alias: payment_validate }
+            - { name: oro_action.action, alias: payment_validate }
+
     orob2b_payment.event_listener.callback.redirect:
         class: 'OroB2B\Bundle\PaymentBundle\EventListener\Callback\RedirectListener'
+        public: true
         lazy: true
         arguments:
             - '@session'
@@ -171,21 +193,21 @@ services:
             - { name: kernel.event_listener, event: orob2b_payment.callback.return, method: onReturn, priority: 10 }
             - { name: kernel.event_listener, event: orob2b_payment.callback.error, method: onError, priority: 10 }
 
-    orob2b_payment.event_listener.callback.payment_term:
-        class: 'OroB2B\Bundle\PaymentBundle\EventListener\Callback\PaymentTermListener'
-        lazy: true
-        arguments:
-            - '@property_accessor'
-            - '@oro_entity.doctrine_helper'
-            - '@orob2b_payment.provider.payment_term'
-        tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.return, method: onReturn }
-
     orob2b_payment.condition.payment_method_enabled:
         class: 'OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodEnabled'
+        public: true
         arguments:
             - '@orob2b_payment.payment_method.registry'
         tags:
             - { name: oro_workflow.condition, alias: 'payment_method_enabled' }
             - { name: oro_action.condition, alias: 'payment_method_enabled' }
             - { name: oro_layout.expression, alias: 'payment_method_enabled'  }
+
+    orob2b_payment.condition.payment_method_supports:
+        class: 'OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodSupports'
+        public: true
+        arguments:
+            - '@orob2b_payment.payment_method.registry'
+        tags:
+            - { name: oro_workflow.condition, alias: 'payment_method_supports' }
+            - { name: oro_action.condition, alias: 'payment_method_supports' }

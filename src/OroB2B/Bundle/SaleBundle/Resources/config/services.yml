@@ -8,12 +8,14 @@ parameters:
 services:
     orob2b_sale.provider.quote_product_price:
         class: 'OroB2B\Bundle\SaleBundle\Provider\QuoteProductPriceProvider'
+        public: true
         arguments:
             - "@orob2b_pricing.provider.combined_product_price"
             - "@orob2b_pricing.model.price_list_tree_handler"
 
     orob2b_sale.validator.quote_product:
         class: 'OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductValidator'
+        public: true
         tags:
             - { name: validator.constraint_validator, alias: orob2b_sale.validator.quote_product }
 
@@ -47,6 +49,7 @@ services:
 
     orob2b_sale.service.quote_product_offer_matcher:
         class: 'OroB2B\Bundle\SaleBundle\Model\QuoteProductOfferMatcher'
+        public: true
 
     orob2b_sale.event_listener.product_select_db_query:
         class: '%orob2b_product.event_listener.scoped_product_select_db_query.common_class%'
@@ -60,6 +63,7 @@ services:
 
     orob2b_sale.helper.notification:
         class: 'OroB2B\Bundle\SaleBundle\Notification\NotificationHelper'
+        public: true
         scope: request
         arguments:
             - "@doctrine"
@@ -72,6 +76,7 @@ services:
 
     orob2b_sale.service.request_helper:
         class: 'OroB2B\Bundle\SaleBundle\Model\RequestHelper'
+        public: true
         arguments:
             - "@doctrine"
             - '%orob2b_sale.entity.quote.class%'
@@ -98,6 +103,7 @@ services:
 
     orob2b_sale.provider.quote_address_security:
         class: 'OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider'
+        public: true
         arguments:
             - "@oro_security.security_facade"
             - "@orob2b_sale.provider.quote_address"
@@ -106,6 +112,7 @@ services:
 
     orob2b_sale.service.quote_request_handler:
         class: 'OroB2B\Bundle\SaleBundle\Model\QuoteRequestHandler'
+        public: true
         arguments:
             - "@doctrine"
             - "@request_stack"
@@ -114,11 +121,12 @@ services:
 
     orob2b_sale.data_provider.checkout_line_item:
         class: 'OroB2B\Bundle\SaleBundle\Provider\QuoteCheckoutLineItemDataProvider'
+        public: true
         tags:
              - { name: checkout.data_provider.line_item }
 
     orob2b_sale.manager.quote_demand_manager:
-        class: "OroB2B\Bundle\SaleBundle\Manager\QuoteDemandManager"
+        class: 'OroB2B\Bundle\SaleBundle\Manager\QuoteDemandManager'
         arguments:
             - "@orob2b_pricing.subtotal_processor.total_processor_provider"
             - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item"

@@ -18,5 +18,3 @@ layout:
                         middle_bar_center: ~
                             #middle_bar_search: ~
                         middle_bar_logo: ~
-    conditions:
-        '@neq': [ $context.logged_user, null ]

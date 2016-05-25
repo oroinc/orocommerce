@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\FrontendBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 /**
  * @dbIsolation
@@ -24,32 +23,15 @@ class FrontendControllerTest extends WebTestCase
         $this->setTheme(self::DEFAULT_THEME);
     }
 
-    public function testRedirectToLogin()
+    public function testRedirectToProduct()
     {
         $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
         $crawler = $this->client->followRedirect();
         $this->assertNotContains($this->getBackendPrefix(), $crawler->html());
         $this->assertEquals(
-            'Sign In',
-            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
+            $this->getUrl('orob2b_product_frontend_product_index'),
+            $this->client->getRequest()->getPathInfo()
         );
-    }
-
-    public function testRedirectToProduct()
-    {
-        $this->markTestSkipped();
-        $this->initClient(
-            [],
-            array_merge(
-                $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
-                ['HTTP_X-CSRF-Header' => 1]
-            )
-        );
-
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
-        $crawler = $this->client->followRedirect();
-        $this->assertNotContains($this->getBackendPrefix(), $crawler->html());
-        $this->assertEquals('Products', $crawler->filter('h1.oro-subtitle')->html());
     }
 
     public function testThemeSwitch()
@@ -62,7 +44,7 @@ class FrontendControllerTest extends WebTestCase
 
         $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
         $crawler = $this->client->followRedirect();
-        $this->assertEquals('Login', $crawler->filter('title')->html());
+        $this->assertEquals('Products', $crawler->filter('title')->html());
 
         // Check that backend theme was not affected
         $crawler = $this->client->request(
@@ -78,10 +60,10 @@ class FrontendControllerTest extends WebTestCase
         $this->setTheme(self::DEFAULT_THEME);
 
         $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
-        $crawler = $this->client->followRedirect();
+        $this->client->followRedirect();
         $this->assertEquals(
-            'Sign In',
-            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
+            $this->getUrl('orob2b_product_frontend_product_index'),
+            $this->client->getRequest()->getPathInfo()
         );
     }
 
