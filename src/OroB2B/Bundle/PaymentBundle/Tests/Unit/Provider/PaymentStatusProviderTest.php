@@ -332,6 +332,22 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
                 100,
                 PaymentStatusProvider::FULL,
             ],
+            'full with few successful and amount more than required' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::PURCHASE)
+                        ->setAmount(70),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::PURCHASE)
+                        ->setAmount(60),
+                ],
+                100,
+                PaymentStatusProvider::FULL,
+            ],
             'partial with few successful' => [
                 [
                     (new PaymentTransaction())

@@ -108,7 +108,7 @@ class PaymentStatusProvider
     {
         $transactionAmount = $this->getTransactionAmounts($this->getSuccessfulTransactions($paymentTransactions));
 
-        return $transactionAmount == $total->getAmount();
+        return $transactionAmount >= $total->getAmount();
     }
 
     /**
