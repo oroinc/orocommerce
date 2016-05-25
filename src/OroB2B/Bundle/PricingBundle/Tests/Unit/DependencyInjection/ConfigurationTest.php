@@ -57,11 +57,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'scope' => 'app'
                 ],
                 'enabled_currencies' => [
-                    'value' => [],
+                    'value' => ['USD'],
                     'scope' => 'app'
                 ],
                 'default_currency' => [
-                    'value' => null,
+                    'value' => 'USD',
                     'scope' => 'app'
                 ]
             ]
