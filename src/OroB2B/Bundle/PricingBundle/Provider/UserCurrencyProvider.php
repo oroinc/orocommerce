@@ -85,9 +85,9 @@ class UserCurrencyProvider
             }
         }
 
-        $allowedCurrencies = (array)$this->configManager->get('oro_b2b_pricing.enabled_currencies', []);
+        $allowedCurrencies = $this->getAvailableCurrencies();
         if (!$currency || !in_array($currency, $allowedCurrencies, true)) {
-            $currency = $this->configManager->get('oro_b2b_pricing.default_currency');
+            $currency = $this->getDefaultCurrency();
         }
 
         return $currency;
@@ -96,7 +96,6 @@ class UserCurrencyProvider
     /**
      * @param string $currency
      * @param Website|null $website
-     * @return bool
      */
     public function saveSelectedCurrency($currency, Website $website = null)
     {
@@ -116,6 +115,22 @@ class UserCurrencyProvider
                 $this->session->set(self::SESSION_CURRENCIES, $sessionCurrencies);
             }
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getAvailableCurrencies()
+    {
+        return (array)$this->configManager->get('oro_b2b_pricing.enabled_currencies', []);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDefaultCurrency()
+    {
+        return $this->configManager->get('oro_b2b_pricing.default_currency');
     }
 
     /**
