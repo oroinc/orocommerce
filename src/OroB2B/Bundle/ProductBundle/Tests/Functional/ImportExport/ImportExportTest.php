@@ -389,6 +389,7 @@ class ImportExportTest extends WebTestCase
 
         /** @var Product $product */
         $product = $em->getRepository($productClass)->findOneBy(['sku' => 'SKU099']);
+        $product->getPrimaryUnitPrecision();
         $this->assertNotEmpty($product);
         $this->assertEquals('enabled', $product->getStatus());
         $this->assertEquals('in_stock', $product->getInventoryStatus()->getId());

@@ -25,17 +25,27 @@ services:
         class: 'OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService'
         parent: orob2b_product.service.abstract_rounding
 
-    orob2b_product.formatter.product_unit_value:
-        class: 'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
-        public: true
+    orob2b_product.formatter.unit_value:
+        abstract: true
+        class: 'OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter'
         arguments:
             - "@translator"
 
-    orob2b_product.formatter.product_unit_label:
-        class: 'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
-        public: true
+    orob2b_product.formatter.unit_label:
+        abstract: true
+        class: 'OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter'
         arguments:
             - "@translator"
+
+    orob2b_product.formatter.product_unit_value:
+        parent: orob2b_product.formatter.unit_value
+        class: 'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
+        public: true
+
+    orob2b_product.formatter.product_unit_label:
+        parent: orob2b_product.formatter.unit_label
+        class: 'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+        public: true
 
     orob2b_product.twig.product_unit_value:
         class: 'OroB2B\Bundle\ProductBundle\Twig\ProductUnitValueExtension'
@@ -224,6 +234,14 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orob2b_product-product_variants-product_edit, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.orob2b_product-product_variants-product_edit, method: onResultAfter }
 
+    orob2b_product.event_listener.product_primary_unit_precision:
+            class: 'OroB2B\Bundle\ProductBundle\EventListener\ProductPrimaryUnitPrecisionListener'
+            arguments:
+                - '@oro_entity.doctrine_helper'
+                - '@session'
+            tags:
+                - { name: doctrine.event_listener, event: postPersist }
+
     orob2b_product.validator.unique_variant_links:
         class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator'
         public: true
@@ -328,7 +346,6 @@ services:
             - '@doctrine'
             - '@oro_attachment.manager'
             - '@orob2b_product.formatter.product_unit_label'
-            - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }

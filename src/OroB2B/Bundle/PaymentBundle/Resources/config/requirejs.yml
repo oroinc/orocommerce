@@ -5,3 +5,4 @@ config:
         'orob2bpayment/js/app/components/config-hide-fields-component': 'bundles/orob2bpayment/js/app/components/config-hide-fields-component.js'
         'orob2bpayment/js/app/components/credit-card-component': 'bundles/orob2bpayment/js/app/components/credit-card-component.js'
         'orob2bpayment/js/app/components/payment-term-component': 'bundles/orob2bpayment/js/app/components/payment-term-component.js'
+        'orob2bpayment/js/app/components/authorized-credit-card-component': 'bundles/orob2bpayment/js/app/components/authorized-credit-card-component.js'

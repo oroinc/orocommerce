@@ -7,6 +7,8 @@
                 <tr>
                     <td>{{ form_widget(form.unit, { 'attr': {'style': 'width: 100px'}}) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled, { 'attr': {'style': 'width: 100px'}}) }}{% endif %}</td>
                     <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision', 'style': 'width: 40px'} }) }}</td>
+                    <td>{{ form_widget(form.conversionRate) }}</td>
+                    <td>{{ form_widget(form.sell) }}</td>
                 </tr>
                 <tr>
                     <td>{{ form_errors(form.unit) }}</td>
@@ -64,10 +66,10 @@
             <div>
                 <table class="grid table-hover table table-bordered table-condensed">
                     <thead class="grid-header">
-                        <th class="grid-header-row">Unit</th>
-                        <th class="grid-header-row">Precision</th>
-                        <th class="grid-header-row">Conversion Rate</th>
-                        <th class="grid-header-row">Sell</th>
+                        <th class="grid-header-row">{{ 'orob2b.product.productunitprecision.unit.label'|trans }}</th>
+                        <th class="grid-header-row">{{ 'orob2b.product.productunitprecision.precision.label'|trans }}</th>
+                        <th class="grid-header-row">{{ 'orob2b.product.productunitprecision.conversion_rate.label'|trans }}</th>
+                        <th class="grid-header-row">{{ 'orob2b.product.productunitprecision.sell.label'|trans }}</th>
                         <th class="grid-header-row"></th>
                     </thead>
                     <tbody {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>

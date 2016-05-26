@@ -11,10 +11,14 @@ use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
 class ProductNormalizer extends ConfigurableEntityNormalizer
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $productClass;
 
-    /** @var EventDispatcherInterface */
+    /**
+     * @var EventDispatcherInterface
+     */
     protected $eventDispatcher;
 
     /**
@@ -39,7 +43,21 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
     public function normalize($object, $format = null, array $context = [])
     {
         $data = parent::normalize($object, $format, $context);
+        $primaryUnitCode = null;
+        if ($object->getPrimaryUnitPrecision()) {
+            $primaryUnitCode = $object->getPrimaryUnitPrecision()->getUnit()->getCode();
+        }
 
+        if (array_key_exists('unitPrecisions', $data)) {
+            foreach ($data['unitPrecisions'] as $v) {
+                if ($v['unit']['code'] == $primaryUnitCode) {
+                    $data['primaryUnitPrecision'] = $v;
+                } else {
+                    $data['additionalUnitPrecisions'][] = $v;
+                }
+            }
+            unset($data['unitPrecisions']);
+        }
         if ($this->eventDispatcher) {
             $event = new ProductNormalizerEvent($object, $data, $context);
             $this->eventDispatcher->dispatch(ProductNormalizerEvent::NORMALIZE, $event);
@@ -54,8 +72,23 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
+        if (array_key_exists('additionalUnitPrecisions', $data)) {
+            $data['unitPrecisions'] = $data['additionalUnitPrecisions'];
+            unset($data['additionalUnitPrecisions']);
+        }
+        $primaryCode = null;
+        if (array_key_exists('primaryUnitPrecision', $data)) {
+            $data['unitPrecisions'][] = $data['primaryUnitPrecision'];
+            $primaryCode = $data['primaryUnitPrecision']['unit']['code'];
+            unset($data['primaryUnitPrecision']);
+        }
+
         /** @var Product $object */
         $object = parent::denormalize($data, $class, $format, $context);
+        $primaryPrecision = $object->getUnitPrecision($primaryCode);
+        if ($primaryPrecision) {
+            $object->setPrimaryUnitPrecision($primaryPrecision);
+        }
 
         if ($this->eventDispatcher) {
             $event = new ProductNormalizerEvent($object, $data, $context);

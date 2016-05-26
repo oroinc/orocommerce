@@ -14,7 +14,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD)
  */
 class ProductTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,7 +28,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['sku', 'sku-test-01'],
             ['owner', new User()],
             ['organization', new Organization()],
-            ['primaryUnitPrecision',  new ProductUnitPrecision()],
+            //['primaryUnitPrecisionId',  '123'],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
             ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED]
@@ -169,8 +169,12 @@ class ProductTest extends \PHPUnit_Framework_TestCase
     public function testClone()
     {
         $id = 123;
+        $unit = new ProductUnit();
+        $unit->setCode('kg')->setDefaultPrecision(3);
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setUnit($unit);
         $product = new Product();
-        $product->addAdditionalUnitPrecision(new ProductUnitPrecision());
+        $product->addAdditionalUnitPrecision($unitPrecision);
         $product->getNames()->add(new LocalizedFallbackValue());
         $product->getDescriptions()->add(new LocalizedFallbackValue());
         $product->getShortDescriptions()->add(new LocalizedFallbackValue());
@@ -342,40 +346,27 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty('array', Product::getStatuses());
     }
 
-    public function testGetAdditionalUnitPrecisions()
+    public function testUnitPrecisions()
     {
         $product = new Product();
         $unitPrecision1 = $this->createUnitPrecision('kg', 3);
         $unitPrecision2 = $this->createUnitPrecision('piece', 1);
         $unitPrecision3 = $this->createUnitPrecision('set', 1);
 
-        $product->addAdditionalUnitPrecision($unitPrecision1);
+        $product->setPrimaryUnitPrecision($unitPrecision1);
         $product->addAdditionalUnitPrecision($unitPrecision2);
         $product->addAdditionalUnitPrecision($unitPrecision3);
 
         $expectedAdditionalUnits = [$unitPrecision1, $unitPrecision2, $unitPrecision3];
-        $actualAdditionalUnits = $product->getAdditionalUnitPrecisions()->toArray();
+        $actualAdditionalUnits = $product->getUnitPrecisions()->toArray();
 
         $this->assertEquals($expectedAdditionalUnits, array_values($actualAdditionalUnits));
-    }
-
-    public function testGetPrimaryUnitPrecision()
-    {
-        $product = new Product();
-        $unitPrecision1 = $this->createUnitPrecision('kg', 3);
-
-        $product->setPrimaryUnitPrecision($unitPrecision1);
-
-        $expectedAdditionalUnits = $unitPrecision1;
-        $actualAdditionalUnits = $product->getPrimaryUnitPrecision();
-
-        $this->assertEquals($expectedAdditionalUnits, $actualAdditionalUnits);
     }
 
     /**
      * @param string $code
      * @param integer $precisionValue
-     * @return UnitPrecision $unitPrecision
+     * @return ProductUnitPrecision $unitPrecision
      */
     private function createUnitPrecision($code, $precisionValue)
     {

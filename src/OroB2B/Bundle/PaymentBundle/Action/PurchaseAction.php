@@ -2,31 +2,12 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Action;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class PurchaseAction extends AbstractPaymentMethodAction
 {
-    /** {@inheritdoc} */
-    protected function configureOptionsResolver(OptionsResolver $resolver)
-    {
-        parent::configureOptionsResolver($resolver);
-
-        $resolver
-            ->setRequired('paymentMethod')
-            ->addAllowedTypes('paymentMethod', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface']);
-    }
-
-    /** {@inheritdoc} */
-    protected function configureValuesResolver(OptionsResolver $resolver)
-    {
-        parent::configureValuesResolver($resolver);
-
-        $resolver
-            ->setRequired('paymentMethod')
-            ->addAllowedTypes('paymentMethod', 'string');
-    }
+    const SAVE_FOR_LATER_USE = 'saveForLaterUse';
 
     /** {@inheritdoc} */
     protected function executeAction($context)
@@ -39,6 +20,18 @@ class PurchaseAction extends AbstractPaymentMethodAction
             $options['object']
         );
 
+        $isPaymentMethodSupportsValidation = $this->isPaymentMethodSupportsValidation($paymentTransaction);
+        if ($isPaymentMethodSupportsValidation) {
+            $sourcePaymentTransaction = $this->paymentTransactionProvider
+                ->getActiveValidatePaymentTransaction($options['paymentMethod']);
+
+            if (!$sourcePaymentTransaction) {
+                throw new \RuntimeException('Validation payment transaction not found');
+            }
+
+            $paymentTransaction->setSourcePaymentTransaction($sourcePaymentTransaction);
+        }
+
         $paymentTransaction
             ->setAmount($options['amount'])
             ->setCurrency($options['currency']);
@@ -47,17 +40,17 @@ class PurchaseAction extends AbstractPaymentMethodAction
             $paymentTransaction->setTransactionOptions($options['transactionOptions']);
         }
 
+        $response = $this->executePaymentTransaction($paymentTransaction);
+
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
-        $response = [];
-
-        try {
-            $response = $this->paymentMethodRegistry
-                ->getPaymentMethod($options['paymentMethod'])
-                ->execute($paymentTransaction);
-
-            $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
-        } catch (\Exception $e) {
+        if ($isPaymentMethodSupportsValidation) {
+            $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
+            $sourcePaymentTransactionOptions = $sourcePaymentTransaction->getTransactionOptions();
+            if (empty($sourcePaymentTransactionOptions[self::SAVE_FOR_LATER_USE])) {
+                $sourcePaymentTransaction->setActive(false);
+                $this->paymentTransactionProvider->savePaymentTransaction($sourcePaymentTransaction);
+            }
         }
 
         $this->setAttributeValue(
@@ -65,25 +58,23 @@ class PurchaseAction extends AbstractPaymentMethodAction
             array_merge(
                 [
                     'paymentMethod' => $options['paymentMethod'],
-                    'errorUrl' => $this->router->generate(
-                        'orob2b_payment_callback_error',
-                        [
-                            'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                            'accessToken' => $paymentTransaction->getAccessToken(),
-                        ],
-                        true
-                    ),
-                    'returnUrl' => $this->router->generate(
-                        'orob2b_payment_callback_return',
-                        [
-                            'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                            'accessToken' => $paymentTransaction->getAccessToken(),
-                        ],
-                        true
-                    ),
+                    'paymentMethodSupportsValidation' => (bool)$isPaymentMethodSupportsValidation,
                 ],
+                $this->getCallbackUrls($paymentTransaction),
+                (array)$paymentTransaction->getTransactionOptions(),
                 $response
             )
         );
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return bool
+     */
+    protected function isPaymentMethodSupportsValidation(PaymentTransaction $paymentTransaction)
+    {
+        return $this->paymentMethodRegistry
+            ->getPaymentMethod($paymentTransaction->getPaymentMethod())
+            ->supports(PaymentMethodInterface::VALIDATE);
     }
 }

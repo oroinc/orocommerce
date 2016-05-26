@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -15,6 +16,9 @@ use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 
+/**
+ * @SuppressWarnings(PHPMD)
+ */
 class ProductType extends AbstractType
 {
     const NAME = 'orob2b_product';
@@ -30,11 +34,18 @@ class ProductType extends AbstractType
     private $provider;
 
     /**
-     * @var DefaultProductUnitProvider
+     * @var  Session
      */
-    public function __construct(DefaultProductUnitProvider $provider)
+    private $session;
+
+    /**
+     * @param DefaultProductUnitProvider $provider
+     * @param Session $session
+     */
+    public function __construct(DefaultProductUnitProvider $provider, Session $session)
     {
         $this->provider = $provider;
+        $this->session = $session;
     }
     
     /**
@@ -144,7 +155,7 @@ class ProductType extends AbstractType
                     'label'          => 'orob2b.product.additional_unit_precisions.label',
                     'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
                     'error_bubbling' => false,
-                    'required'       => true,
+                    'required'       => false,
                 ]
             )
             ->add(
@@ -152,8 +163,8 @@ class ProductType extends AbstractType
                 ProductCustomFieldsChoiceType::NAME,
                 ['label' => 'orob2b.product.variant_fields.label']
             );
-
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmitDataListener']);
     }
 
     /**
@@ -165,8 +176,19 @@ class ProductType extends AbstractType
         $form = $event->getForm();
 
         if ($product->getId() == null) {
-            $unitPrecision = $this->provider->getDefaultProductUnitPrecision();
-            $product->setPrimaryUnitPrecision($unitPrecision);
+            $form->remove('primaryUnitPrecision');
+            $form->add(
+                'primaryUnitPrecision',
+                ProductPrimaryUnitPrecisionType::NAME,
+                [
+                    'label'          => 'orob2b.product.primary_unit_precision.label',
+                    'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
+                    'error_bubbling' => false,
+                    'required'       => true,
+                    'data'           => $this->provider->getDefaultProductUnitPrecision()
+                ]
+            );
+
         }
         if ($product instanceof Product && $product->getHasVariants()) {
             $form
@@ -176,6 +198,15 @@ class ProductType extends AbstractType
                     ['product_class' => $this->dataClass, 'by_reference' => false]
                 );
         }
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSubmitDataListener(FormEvent $event)
+    {
+        $data = $event->getData();
+        $this->session->set('primaryUnitPrecisionCode', $data['primaryUnitPrecision']['unit']);
     }
 
     /**

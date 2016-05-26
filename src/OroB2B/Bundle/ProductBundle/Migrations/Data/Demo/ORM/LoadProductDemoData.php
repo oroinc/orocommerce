@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,6 +27,11 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var array
+     */
+    protected $productUnis = [];
 
     /**
      * {@inheritdoc}
@@ -91,6 +98,18 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->addDescription($description)
                 ->addShortDescription($shortDescription);
 
+            $productUnit = $this->getProductUnit($manager, $row['unit']);
+
+            $productUnitPrecision = new ProductUnitPrecision();
+            $productUnitPrecision
+                ->setProduct($product)
+                ->setUnit($productUnit)
+                ->setPrecision((int)$row['precision'])
+                ->setConversionRate(1)
+                ->setSell(true);
+            
+            $product->setPrimaryUnitPrecision($productUnitPrecision);
+
             $image = $this->getImageForProductSku($manager, $locator, $row['sku']);
             if ($image) {
                 $product->setImage($image);
@@ -145,5 +164,19 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         }
 
         return $image;
+    }
+
+    /**
+     * @param EntityManager $manager
+     * @param string $code
+     * @return ProductUnit|null
+     */
+    protected function getProductUnit(EntityManager $manager, $code)
+    {
+        if (!array_key_exists($code, $this->productUnis)) {
+            $this->productUnis[$code] = $manager->getRepository('OroB2BProductBundle:ProductUnit')->find($code);
+        }
+
+        return $this->productUnis[$code];
     }
 }

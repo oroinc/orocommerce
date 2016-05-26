@@ -133,7 +133,7 @@ define(function (require) {
             var attribute = this.options.unitsAttribute;
             _.each($(':data(' + attribute + ')'), function(container){
                 var unit = $(container).data(attribute) || {};
-                _.each(unit, function(key, val){
+                _.each(unit, function(val, key){
                     units[key] = val;
                 });
             })

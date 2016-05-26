@@ -12,14 +12,25 @@ use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
 class ProductStrategy extends LocalizedFallbackValueAwareStrategy
 {
-    /** @var SecurityFacade */
+    /**
+     * @var SecurityFacade
+     */
     protected $securityFacade;
 
-    /** @var BusinessUnit */
+    /**
+     * @var BusinessUnit
+     */
     protected $owner;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $variantLinkClass;
+
+    /**
+     * @var  integer
+     */
+    protected $primaryCode;
 
     /**
      * @param SecurityFacade $securityFacade
@@ -43,6 +54,12 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
      */
     protected function beforeProcessEntity($entity)
     {
+        $data = $this->context->getValue('itemData');
+        $data['unitPrecisions'] = $data['additionalUnitPrecisions'];
+        $data['unitPrecisions'][] = $data['primaryUnitPrecision'];
+        $this->primaryCode = $data['primaryUnitPrecision']['unit']['code'];
+
+        $this->context->setValue('itemData', $data);
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
         $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_BEFORE, $event);
 
@@ -56,7 +73,9 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     protected function afterProcessEntity($entity)
     {
         $this->populateOwner($entity);
+        $this->populatePrimaryUnitPrecision($entity);
 
+        
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
         $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_AFTER, $event);
 
@@ -115,5 +134,19 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
         }
 
         return parent::findEntityByIdentityValues($entityName, $identityValues);
+    }
+
+    /**
+     * @param Product $entity
+     */
+    protected function populatePrimaryUnitPrecision(Product $entity)
+    {
+        if (!$this->primaryCode) {
+            return;
+        }
+        $primaryPrecision = $entity->getUnitPrecision($this->primaryCode);
+        if ($primaryPrecision) {
+            $entity->setPrimaryUnitPrecision($primaryPrecision);
+        }
     }
 }

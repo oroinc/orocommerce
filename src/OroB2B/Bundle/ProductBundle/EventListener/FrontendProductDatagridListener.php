@@ -1,105 +1,70 @@
 <?php
-
 namespace OroB2B\Bundle\ProductBundle\EventListener;
-
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Doctrine\ORM\Query\Expr;
-
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-
 class FrontendProductDatagridListener
 {
     const COLUMN_PRODUCT_UNITS = 'product_units';
-
-    const DATA_SEPARATOR = '{sep}';
     const PRODUCT_IMAGE_FILTER = 'product_large';
-
     /**
      * @var DataGridThemeHelper
      */
     protected $themeHelper;
-
     /**
      * @var RegistryInterface
      */
     protected $registry;
-
     /**
      * @var AttachmentManager
      */
     protected $attachmentManager;
-
     /**
      * @var ProductUnitLabelFormatter
      */
     protected $unitFormatter;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
     /**
      * @param DataGridThemeHelper $themeHelper
      * @param RegistryInterface $registry
      * @param AttachmentManager $attachmentManager
      * @param ProductUnitLabelFormatter $unitFormatter
-     * @param TranslatorInterface $translator
      */
     public function __construct(
         DataGridThemeHelper $themeHelper,
         RegistryInterface $registry,
         AttachmentManager $attachmentManager,
-        ProductUnitLabelFormatter $unitFormatter,
-        TranslatorInterface $translator
+        ProductUnitLabelFormatter $unitFormatter
     ) {
         $this->themeHelper = $themeHelper;
         $this->registry = $registry;
         $this->attachmentManager = $attachmentManager;
         $this->unitFormatter = $unitFormatter;
-        $this->translator = $translator;
     }
-
     /**
      * @param PreBuild $event
      */
     public function onPreBuild(PreBuild $event)
     {
         $config = $event->getConfig();
-
-        // add all product units
-        $select = sprintf(
-            'GROUP_CONCAT(IDENTITY(unit_precisions.unit) SEPARATOR %s) as %s',
-            (new Expr())->literal(self::DATA_SEPARATOR),
-            self::COLUMN_PRODUCT_UNITS
-        );
-        $config->offsetAddToArrayByPath('[source][query][select]', [$select]);
-        $config->offsetAddToArrayByPath(
-            '[source][query][join][left]',
-            [['join' => 'product.unitPrecisions', 'alias' => 'unit_precisions', 'conditionType' => 'WITH', 'condition' =>'unit_precisions.sell=true']]
-        );
+     
         $config->offsetAddToArrayByPath(
             '[properties]',
             [self::COLUMN_PRODUCT_UNITS => ['type' => 'field', 'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY]]
         );
-
         // add theme processing
         $gridName = $config->getName();
         $this->updateConfigByView($config, $this->themeHelper->getTheme($gridName));
     }
-
     /**
      * @param DatagridConfiguration $config
      * @param string $viewName
@@ -119,7 +84,6 @@ class FrontendProductDatagridListener
                 break;
         }
     }
-
     /**
      * @param DatagridConfiguration $config
      * @return array
@@ -138,13 +102,12 @@ class FrontendProductDatagridListener
             ],
             '[columns]' => [
                 'image' => [
-                    'label' => $this->translator->trans('orob2b.product.image.label'),
+                    'label' => 'orob2b.product.image.label',
                 ]
             ],
         ];
         $this->applyUpdatesToConfig($config, $updates);
     }
-
     /**
      * @param DatagridConfiguration $config
      */
@@ -164,13 +127,12 @@ class FrontendProductDatagridListener
             ],
             '[columns]' => [
                 'shortDescription' => [
-                    'label' => $this->translator->trans('orob2b.product.short_descriptions.label'),
+                    'label' => 'orob2b.product.short_descriptions.label',
                 ]
             ],
         ];
         $this->applyUpdatesToConfig($config, $updates);
     }
-
     /**
      * @param DatagridConfiguration $config
      * @param array $updates
@@ -181,7 +143,6 @@ class FrontendProductDatagridListener
             $config->offsetAddToArrayByPath($path, $update);
         }
     }
-
     /**
      * @param OrmResultAfter $event
      */
@@ -189,48 +150,79 @@ class FrontendProductDatagridListener
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
-
-        // handle product units
-        foreach ($records as $record) {
-            $units = [];
-            $concatenatedUnits = $record->getValue(self::COLUMN_PRODUCT_UNITS);
-            if ($concatenatedUnits) {
-                foreach (explode(self::DATA_SEPARATOR, $concatenatedUnits) as $unitCode) {
-                    $units[$unitCode] = $this->unitFormatter->format($unitCode);
-                }
-            }
-            $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);
-        }
-
-        // handle views
+        $productIds = array_map(
+            function (ResultRecord $record) {
+                return $record->getValue('id');
+            },
+            $records
+        );
+        $this->addProductUnits($productIds, $records);
+        $this->addProductImages($event, $productIds, $records);
+    }
+    /**
+     * @param OrmResultAfter $event
+     * @param array $productIds
+     * @param ResultRecord[] $records
+     */
+    protected function addProductImages(OrmResultAfter $event, array $productIds, array $records)
+    {
         $gridName = $event->getDatagrid()->getName();
         $supportedViews = [DataGridThemeHelper::VIEW_GRID, DataGridThemeHelper::VIEW_TILES];
         if (!in_array($this->themeHelper->getTheme($gridName), $supportedViews, true)) {
             return;
         }
-
-        /** @var ProductRepository $repository */
-        $repository = $this->registry->getManagerForClass('OroB2BProductBundle:Product')
-            ->getRepository('OroB2BProductBundle:Product');
-
-        /** @var Product[] $products */
-        $products = $repository->getProductsWithImage(array_map(function (ResultRecord $record) {
-            return $record->getValue('id');
-        }, $records));
-
+        $products = $this->getProductRepository()->getProductsWithImage($productIds);
+        $imageUrls = [];
+        foreach ($products as $product) {
+            $image = $product->getImage();
+            if ($image) {
+                $imageUrls[$product->getId()] = $this->attachmentManager->getFilteredImageUrl(
+                    $image,
+                    self::PRODUCT_IMAGE_FILTER
+                );
+            }
+        }
         foreach ($records as $record) {
-            $imageUrl = null;
             $productId = $record->getValue('id');
-            foreach ($products as $product) {
-                if ($product->getId() === $productId) {
-                    $imageUrl = $this->attachmentManager->getFilteredImageUrl(
-                        $product->getImage(),
-                        self::PRODUCT_IMAGE_FILTER
-                    );
-                    break;
+            if (array_key_exists($productId, $imageUrls)) {
+                $record->addData(['image' => $imageUrls[$productId]]);
+            }
+        }
+    }
+    /**
+     * @param array $productIds
+     * @param ResultRecord[] $records
+     */
+    protected function addProductUnits($productIds, $records)
+    {
+        $productUnits = $this->getProductUnitRepository()->getProductsUnits($productIds);
+        foreach ($records as $record) {
+            $units = [];
+            $productId = $record->getValue('id');
+            if (array_key_exists($productId, $productUnits)) {
+                foreach ($productUnits[$productId] as $unitCode) {
+                    $units[$unitCode] = $this->unitFormatter->format($unitCode);
                 }
             }
-            $record->addData(['image' => $imageUrl]);
+            $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);
         }
+    }
+    /**
+     * @return ProductRepository
+     */
+    protected function getProductRepository()
+    {
+        return $this->registry
+            ->getManagerForClass('OroB2BProductBundle:Product')
+            ->getRepository('OroB2BProductBundle:Product');
+    }
+    /**
+     * @return ProductUnitRepository
+     */
+    protected function getProductUnitRepository()
+    {
+        return $this->registry
+            ->getManagerForClass('OroB2BProductBundle:ProductUnit')
+            ->getRepository('OroB2BProductBundle:ProductUnit');
     }
 }

@@ -4,13 +4,12 @@ namespace OroB2B\Bundle\ProductBundle\ImportExport\TemplateFixture;
 
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
-
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
+
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
 class ProductFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
@@ -73,24 +72,60 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setText('US Product Short Description')
             ->setFallback('system');
 
-        $productUnit = (new ProductUnit())
+        $primaryProductUnit = (new ProductUnit())
             ->setCode('kg')
             ->setDefaultPrecision(3);
 
-        $productUnitPrecision = (new ProductUnitPrecision())
-            ->setUnit($productUnit)
-            ->setPrecision($productUnit->getDefaultPrecision());
+        $additionalProductUnit = (new ProductUnit())
+            ->setCode('item')
+            ->setDefaultPrecision(0);
+
+        $primaryProductUnitPrecision = $this
+            ->createEntityWithId('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision', 1);
+        $primaryProductUnitPrecision
+            ->setUnit($primaryProductUnit)
+            ->setPrecision($primaryProductUnit->getDefaultPrecision())
+            ->setConversionRate(1)
+            ->setSell(true);
+
+        $additionalProductUnitPrecision = $this
+            ->createEntityWithId('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision', 2);
+        $additionalProductUnitPrecision
+            ->setUnit($additionalProductUnit)
+            ->setPrecision($additionalProductUnit->getDefaultPrecision())
+            ->setConversionRate(5)
+            ->setSell(false);
 
         $entity->setSku('sku_001')
             ->setStatus('enabled')
             ->setInventoryStatus($inventoryStatus)
             ->addName($name)
             ->addName($localizedName)
-            ->addUnitPrecision($productUnitPrecision)
+            ->setPrimaryUnitPrecision($primaryProductUnitPrecision)
+            ->setPrimaryUnitPrecisionId(1)
+            ->addAdditionalUnitPrecision($additionalProductUnitPrecision)
             ->addDescription($description)
             ->addDescription($localizedDescription)
             ->addShortDescription($shortDescription)
             ->addShortDescription($localizedShortDescription)
             ->setHasVariants(true);
+    }
+
+    /**
+     * @param string $className
+     * @param int $id
+     *
+     * @return object
+     */
+    protected function createEntityWithId($className, $id)
+    {
+        $entity = new $className;
+
+        $reflectionClass = new \ReflectionClass($className);
+        $method = $reflectionClass->getProperty('id');
+        $method->setAccessible(true);
+        $method->setValue($entity, $id);
+
+        return $entity;
     }
 }

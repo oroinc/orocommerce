@@ -22,6 +22,9 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 'shipping_origin' => ['type' => 'array', 'value' => []],
+                'length_units' => ['type' => 'array', 'value' => ['inch', 'foot', 'cm', 'm']],
+                'weight_units' => ['type' => 'array', 'value' => ['lbs', 'kg']],
+                'freight_classes' => ['type' => 'array', 'value' => ['parcel']]
             ]
         );
         

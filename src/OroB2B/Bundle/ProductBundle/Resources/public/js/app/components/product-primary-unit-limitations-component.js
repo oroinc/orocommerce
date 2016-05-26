@@ -83,16 +83,17 @@ define(function (require) {
             var select = this.options._sourceElement.find(this.options.unitSelect);
             var options = select.find('option');
             var selected = select.find('option:selected');
-            delete precisions[selected.value];
+            delete precisions[selected.val()];
 
             _.each(options, function(option){
-                if (option.value != selected.value) {
+                if (option.value != selected.val()) {
                     option.remove();
                 }
-            })
+            });
             _.each(precisions, function(text,val){
                 select.append($('<option></option>').val(val).text(text));
-            });           
+            }); 
+            $(select).find(selected.val()).selected(true).trigger('change');
         },
 
         /**

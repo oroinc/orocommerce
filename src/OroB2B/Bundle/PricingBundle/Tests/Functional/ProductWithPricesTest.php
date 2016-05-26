@@ -66,11 +66,12 @@ class ProductWithPricesTest extends WebTestCase
             'owner'  => $this->getBusinessUnitId(),
             'sku'    => self::TEST_SKU,
             'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
-            'unitPrecisions' => [
-                [
-                    'unit'      => self::FIRST_UNIT_CODE,
-                    'precision' => self::FIRST_UNIT_PRECISION
-                ],
+            'primaryUnitPrecision' => [
+                'unit'      => self::FIRST_UNIT_CODE,
+                'precision' => self::FIRST_UNIT_PRECISION
+            ],
+            'additionalUnitPrecisions' => [
+
                 [
                     'unit'      => self::SECOND_UNIT_CODE,
                     'precision' => self::SECOND_UNIT_PRECISION
@@ -216,7 +217,7 @@ class ProductWithPricesTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
-        $this->assertContains('orob2b_product[unitPrecisions][0]', $crawler->html());
+        $this->assertContains('orob2b_product[additionalUnitPrecisions][0]', $crawler->html());
         $this->assertNotContains('orob2b_product[prices][0]', $crawler->html());
     }
 
