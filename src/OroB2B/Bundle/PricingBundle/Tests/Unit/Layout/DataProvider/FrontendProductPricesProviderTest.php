@@ -9,6 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 
 class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,20 +24,29 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler */
     protected $priceListRequestHandler;
 
+    /**
+     * @var UserCurrencyProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $userCurrencyProvider;
+
     public function setUp()
     {
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->priceListRequestHandler = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler'
-        )
+        $this->priceListRequestHandler = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->userCurrencyProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->provider = new FrontendProductPricesProvider(
             $this->doctrineHelper,
-            $this->priceListRequestHandler
+            $this->priceListRequestHandler,
+            $this->userCurrencyProvider
         );
     }
 
@@ -66,7 +76,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('findByPriceListIdAndProductIds')
-            ->with($priceListId, [$productId], true, null, null, $priceSorting)
+            ->with($priceListId, [$productId], true, 'EUR', null, $priceSorting)
             ->willReturn($prices);
 
         $this->doctrineHelper->expects($this->once())
@@ -77,6 +87,9 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
         $this->priceListRequestHandler->expects($this->once())
             ->method('getPriceListByAccount')
             ->willReturn($priceList);
+        $this->userCurrencyProvider->expects($this->once())
+            ->method('getUserCurrency')
+            ->willReturn('EUR');
 
         $actual = $this->provider->getData($context);
 
