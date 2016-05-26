@@ -501,8 +501,6 @@ workflows:
                     - '@flush_entity': $checkout.order
 
                     - '@tree':
-                        conditions:
-                            '@not_empty': $checkout.orderPurchaseAction.id
                         actions:
                             - '@assign_url':
                                 attribute: $.result.successUrl
