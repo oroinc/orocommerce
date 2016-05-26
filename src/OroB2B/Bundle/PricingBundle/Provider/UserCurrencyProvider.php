@@ -78,6 +78,9 @@ class UserCurrencyProvider
         $user = $this->getLoggedUser();
         if ($user instanceof AccountUser) {
             $currency = $user->getCurrencyByWebsite($website);
+            if ($currency) {
+                $currency = $currency->getCurrency();
+            }
         } else {
             $sessionStoredCurrencies = $this->getSessionCurrencies();
             if (array_key_exists($website->getId(), $sessionStoredCurrencies)) {
