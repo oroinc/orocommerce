@@ -145,7 +145,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
                         ]
                     ],
                     'unit_disabled' => [
-                        'disabled' => true,
+                        'disabled' => false,
                         'mapped'   => false
                     ]
                 ],

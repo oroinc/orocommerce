@@ -14,7 +14,8 @@ class CaptureAction extends AbstractPaymentMethodAction
         $paymentTransaction = $this->paymentTransactionProvider->getActiveAuthorizePaymentTransaction(
             $options['object'],
             $options['amount'],
-            $options['currency']
+            $options['currency'],
+            $options['paymentMethod']
         );
 
         if (!$paymentTransaction) {
@@ -36,15 +37,7 @@ class CaptureAction extends AbstractPaymentMethodAction
             $capturePaymentTransaction->setTransactionOptions($options['transactionOptions']);
         }
 
-        $response = [];
-        try {
-            $response = $this->paymentMethodRegistry
-                ->getPaymentMethod($capturePaymentTransaction->getPaymentMethod())
-                ->execute($capturePaymentTransaction);
-
-            $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
-        } catch (\Exception $e) {
-        }
+        $response = $this->executePaymentTransaction($capturePaymentTransaction);
 
         $this->paymentTransactionProvider->savePaymentTransaction($capturePaymentTransaction);
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
@@ -54,7 +47,7 @@ class CaptureAction extends AbstractPaymentMethodAction
             array_merge(
                 [
                     'transaction' => $capturePaymentTransaction->getEntityIdentifier(),
-                    'successful' => false,
+                    'successful' => $capturePaymentTransaction->isSuccessful(),
                     'message' => null,
                 ],
                 $response

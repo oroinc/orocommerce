@@ -4,4 +4,6 @@ config:
         'orob2bcheckout/js/app/components/payment-transition-button-component': 'bundles/orob2bcheckout/js/app/components/payment-transition-button-component.js'
         'orob2bcheckout/js/app/views/address-view': 'bundles/orob2bcheckout/js/app/views/address-view.js'
         'orob2bcheckout/js/app/components/clear-field-data-component': 'bundles/orob2bcheckout/js/app/components/clear-field-data-component.js'
+        'orob2bcheckout/js/app/components/payment-save-for-later-component': 'bundles/orob2bcheckout/js/app/components/payment-save-for-later-component.js'
+        'orob2bcheckout/js/app/components/payment-validate-component': 'bundles/orob2bcheckout/js/app/components/payment-validate-component.js'
         'orob2bcheckout/js/app/views/checkout-content-view': 'bundles/orob2bcheckout/js/app/views/checkout-content-view.js'

@@ -39,17 +39,24 @@ class ProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @param PriceList $priceList
+     * @param BasePriceList $priceList
+     * @param Product $product
      */
-    public function deleteByPriceList(PriceList $priceList)
+    public function deleteByPriceList(BasePriceList $priceList, Product $product = null)
     {
         $qb = $this->createQueryBuilder('productPrice');
 
         $qb
             ->delete()
             ->where($qb->expr()->eq('productPrice.priceList', ':priceList'))
-            ->setParameter('priceList', $priceList)
-            ->getQuery()
+            ->setParameter('priceList', $priceList);
+
+        if ($product) {
+            $qb->andWhere($qb->expr()->eq('productPrice.product', ':product'))
+                ->setParameter('product', $product);
+        }
+
+        $qb->getQuery()
             ->execute();
     }
 

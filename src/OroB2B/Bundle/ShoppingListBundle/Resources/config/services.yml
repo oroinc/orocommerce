@@ -198,9 +198,6 @@ services:
         public: true
         arguments:
             - "@oro_security.security_facade"
-            - "@doctrine"
-            - "%orob2b_shopping_list.entity.shopping_list.class%"
-            - "%orob2b_shopping_list.entity.line_item.class%"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }

@@ -18,7 +18,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      }
  * )
  */
-class ProductUnit
+class ProductUnit implements MeasureUnitInterface
 {
     /**
      * @var string
