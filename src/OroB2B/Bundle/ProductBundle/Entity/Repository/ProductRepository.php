@@ -177,7 +177,7 @@ class ProductRepository extends EntityRepository
     public function getProductsWithImage(array $products)
     {
         $qb = $this->createQueryBuilder('p');
-        return $qb->select('partial p.{id, image}')
+        return $qb->select('p')
             ->where('p.images IS NOT EMPTY')
             ->andwhere($qb->expr()->in('p', ':products'))
             ->setParameter('products', $products)
