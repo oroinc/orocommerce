@@ -15,7 +15,6 @@ class AccountUserActionsTest extends AbstractAccountUserActionsTest
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'

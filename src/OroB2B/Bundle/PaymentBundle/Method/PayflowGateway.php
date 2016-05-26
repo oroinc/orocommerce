@@ -17,7 +17,7 @@ use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
  */
 class PayflowGateway implements PaymentMethodInterface
 {
-    use ConfigTrait;
+    use ConfigTrait, CountryAwarePaymentMethodTrait;
 
     const TYPE = 'payflow_gateway';
 
@@ -313,6 +313,29 @@ class PayflowGateway implements PaymentMethodInterface
     protected function getPurchaseAction()
     {
         return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PAYMENT_ACTION_KEY);
+    }
+
+    /** {@inheritdoc} */
+    public function isApplicable(array $context = [])
+    {
+        return $this->isCountryApplicable($context);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function getAllowedCountries()
+    {
+        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_SELECTED_COUNTRIES_KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isAllCountriesAllowed()
+    {
+        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_COUNTRIES_KEY)
+            === Configuration::ALLOWED_COUNTRIES_ALL;
     }
 
     /**
