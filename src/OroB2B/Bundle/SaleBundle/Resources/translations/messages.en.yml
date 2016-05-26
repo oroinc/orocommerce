@@ -75,6 +75,11 @@ orob2b:
                     choose: Select an address
                     choose_or_create: Select an existing address or enter a new address below
                     manual: Enter other address
+
+            datagrid:
+                account.label: 'Requests for Quote'
+                account_user.label: 'Requests for Quote'
+
         system_configuration:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'
