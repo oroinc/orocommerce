@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\DataProvider\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
@@ -43,6 +44,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->currencyProvider->expects($this->any())->method('getUserCurrency')->willReturn('USD');
 
         $this->checkoutLineItemsConverter->expects($this->any())
             ->method('convert')
@@ -141,16 +143,19 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     {
         $productWithPrice = $this->getProductDataWithPrice();
         $productWithoutPrice = $this->getProductDataWithoutPrice();
+        $productWithAnotherCurrency = $this->getProductDataWithoutPrice();
+        $productWithAnotherCurrency['price'] = Price::create('2', 'CAD');
+        
         return [
             [
-                'providerData' => [$productWithPrice, $productWithoutPrice],
+                'providerData' => [$productWithPrice, $productWithoutPrice, $productWithAnotherCurrency],
                 'disablePriceFilter' => false,
                 'expectedData' => [$productWithPrice],
             ],
             [
-                'providerData' => [$productWithPrice, $productWithoutPrice],
+                'providerData' => [$productWithPrice, $productWithoutPrice, $productWithAnotherCurrency],
                 'disablePriceFilter' => true,
-                'expectedData' => [$productWithPrice, $productWithoutPrice],
+                'expectedData' => [$productWithPrice, $productWithoutPrice, $productWithAnotherCurrency],
             ],
         ];
     }
@@ -168,7 +173,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
             'quantity' => 10,
             'productUnit' => $productUnitLitre,
             'productUnitCode' => $productUnitLitre->getCode(),
-            'price' => $this->getEntity('Oro\Bundle\CurrencyBundle\Entity\Price')
+            'price' => Price::create('1', 'USD')
         ];
     }
 
