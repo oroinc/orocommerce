@@ -77,8 +77,8 @@ orob2b:
                     manual: Enter other address
 
             datagrid:
-                account.label: 'Requests for Quote'
-                account_user.label: 'Requests for Quote'
+                account.label: 'Quotes'
+                account_user.label: 'Quotes'
 
         system_configuration:
             fields:
