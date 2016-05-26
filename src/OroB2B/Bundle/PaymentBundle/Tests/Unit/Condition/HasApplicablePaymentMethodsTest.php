@@ -20,6 +20,9 @@ class HasApplicablePaymentMethodsTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentContextProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentContextProvider;
 
+    /** @var array */
+    protected $contextData = ['contextData' => 'data'];
+
     protected function setUp()
     {
         $this->paymentMethodRegistry = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
@@ -28,7 +31,7 @@ class HasApplicablePaymentMethodsTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->paymentContextProvider->expects($this->any())->method('processContext')->willReturn([]);
+        $this->paymentContextProvider->expects($this->any())->method('processContext')->willReturn($this->contextData);
 
         $this->condition = new HasApplicablePaymentMethods($this->paymentMethodRegistry, $this->paymentContextProvider);
     }
@@ -40,7 +43,7 @@ class HasApplicablePaymentMethodsTest extends \PHPUnit_Framework_TestCase
 
     public function testGetName()
     {
-        $this->assertEquals('get_payment_methods', $this->condition->getName());
+        $this->assertEquals('has_applicable_payment_methods', $this->condition->getName());
     }
 
     /**
@@ -76,7 +79,10 @@ class HasApplicablePaymentMethodsTest extends \PHPUnit_Framework_TestCase
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
         $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())->method('isEnabled')->willReturn($isEnabled);
-        $paymentMethod->expects($this->any())->method('isApplicable')->willReturn($isApplicable);
+        $paymentMethod->expects($isEnabled ? $this->once() : $this->never())
+            ->method('isApplicable')
+            ->with($this->contextData)
+            ->willReturn($isApplicable);
 
         $this->paymentMethodRegistry->expects($this->once())
             ->method('getPaymentMethods')
@@ -121,7 +127,7 @@ class HasApplicablePaymentMethodsTest extends \PHPUnit_Framework_TestCase
         $this->condition->initialize(['entity' => $stdClass]);
         $result = $this->condition->toArray();
 
-        $key = '@'.HasApplicablePaymentMethods::NAME;
+        $key = '@' . HasApplicablePaymentMethods::NAME;
 
         $this->assertInternalType('array', $result);
         $this->assertArrayHasKey($key, $result);

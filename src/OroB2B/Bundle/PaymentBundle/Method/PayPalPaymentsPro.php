@@ -66,7 +66,7 @@ class PayPalPaymentsPro extends PayflowGateway
     protected function isAllCountriesAllowed()
     {
         return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_COUNTRIES_KEY)
-        === Configuration::ALLOWED_COUNTRIES_ALL;
+            === Configuration::ALLOWED_COUNTRIES_ALL;
     }
 
     /**

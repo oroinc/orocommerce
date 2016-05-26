@@ -20,7 +20,7 @@ class HasApplicablePaymentMethods extends AbstractCondition implements ContextAc
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'get_payment_methods';
+    const NAME = 'has_applicable_payment_methods';
 
     /** @var PaymentMethodRegistry */
     protected $paymentMethodRegistry;

@@ -28,6 +28,9 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $provider;
 
+    /** @var array */
+    protected $contextData = ['contextData' => 'data'];
+
     public function setUp()
     {
         $this->registry = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry')
@@ -51,11 +54,12 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
     {
         $context = new LayoutContext();
 
+        $this->paymentContextProvider->expects($this->any())->method('processContext')->willReturn($this->contextData);
+
         $this->registry->expects($this->once())
             ->method('getPaymentMethodViews')
+            ->with($this->contextData)
             ->willReturn([]);
-
-        $this->paymentContextProvider->expects($this->any())->method('processContext')->willReturn([]);
 
         $data = $this->provider->getData($context);
         $this->assertEmpty($data);
@@ -66,15 +70,20 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $context = new LayoutContext();
 
         $view = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
-        $view->expects($this->any())->method('getLabel')->will($this->returnValue('label'));
-        $view->expects($this->any())->method('getBlock')->will($this->returnValue('block'));
-        $view->expects($this->any())->method('getOptions')->will($this->returnValue([]));
+        $view->expects($this->once())->method('getLabel')->willReturn('label');
+        $view->expects($this->once())->method('getBlock')->willReturn('block');
+        $view->expects($this->once())
+            ->method('getOptions')
+            ->with($this->contextData)
+            ->willReturn([]);
 
         $this->registry->expects($this->once())
             ->method('getPaymentMethodViews')
             ->willReturn(['payment' => $view]);
 
-        $this->paymentContextProvider->expects($this->any())->method('processContext')->willReturn([]);
+        $this->paymentContextProvider->expects($this->once())
+            ->method('processContext')
+            ->willReturn($this->contextData);
 
         $data = $this->provider->getData($context);
         $this->assertEquals(['payment' => ['label' => 'label', 'block' => 'block', 'options' => []]], $data);
@@ -87,21 +96,14 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $context = new LayoutContext();
         $context->data()->set('entity', 'entity', $entity);
 
-        $this->paymentContextProvider->expects($this->once())->method('processContext')
-            ->willReturn(['entity' => $entity]);
+        $contextData = ['entity' => $entity];
+        $this->paymentContextProvider->expects($this->once())
+            ->method('processContext')
+            ->with($context, $this->identicalTo($entity))
+            ->willReturn($contextData);
 
         $view = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
-        $view->expects($this->once())->method('getOptions')->with(
-            $this->callback(
-                function ($options) use ($entity) {
-                    $this->assertInternalType('array', $options);
-                    $this->assertArrayHasKey('entity', $options);
-                    $this->assertSame($entity, $options['entity']);
-
-                    return true;
-                }
-            )
-        );
+        $view->expects($this->once())->method('getOptions')->with($contextData);
 
         $this->registry->expects($this->once())->method('getPaymentMethodViews')->willReturn(['payment' => $view]);
 
@@ -115,21 +117,14 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $context = new LayoutContext();
         $context->data()->set('checkout', 'checkout', $checkout);
 
-        $this->paymentContextProvider->expects($this->once())->method('processContext')
-            ->willReturn(['entity' => $checkout]);
+        $contextData = ['entity' => $checkout];
+        $this->paymentContextProvider->expects($this->once())
+            ->method('processContext')
+            ->with($context, $this->identicalTo($checkout))
+            ->willReturn($contextData);
 
         $view = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
-        $view->expects($this->once())->method('getOptions')->with(
-            $this->callback(
-                function ($options) use ($checkout) {
-                    $this->assertInternalType('array', $options);
-                    $this->assertArrayHasKey('entity', $options);
-                    $this->assertSame($checkout, $options['entity']);
-
-                    return true;
-                }
-            )
-        );
+        $view->expects($this->once())->method('getOptions')->with($contextData);
 
         $this->registry->expects($this->once())->method('getPaymentMethodViews')->willReturn(['payment' => $view]);
 
@@ -145,21 +140,14 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $context->data()->set('entity', 'entity', $entity);
         $context->data()->set('checkout', 'checkout', $checkout);
 
-        $this->paymentContextProvider->expects($this->once())->method('processContext')
-            ->willReturn(['entity' => $entity]);
+        $contextData = ['entity' => $entity];
+        $this->paymentContextProvider->expects($this->once())
+            ->method('processContext')
+            ->with($context, $this->identicalTo($entity))
+            ->willReturn($contextData);
 
         $view = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
-        $view->expects($this->once())->method('getOptions')->with(
-            $this->callback(
-                function ($options) use ($entity) {
-                    $this->assertInternalType('array', $options);
-                    $this->assertArrayHasKey('entity', $options);
-                    $this->assertSame($entity, $options['entity']);
-
-                    return true;
-                }
-            )
-        );
+        $view->expects($this->once())->method('getOptions')->with($contextData);
 
         $this->registry->expects($this->once())->method('getPaymentMethodViews')->willReturn(['payment' => $view]);
 
