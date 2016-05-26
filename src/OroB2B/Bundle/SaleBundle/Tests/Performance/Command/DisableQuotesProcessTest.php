@@ -8,6 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Performance\PerformanceMeasureTrait;
 
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use OroB2B\Bundle\SaleBundle\Tests\Performance\DataFixtures\LoadQuoteDataForPerformance;
 
 /**
@@ -44,7 +45,10 @@ class DisableQuotesProcessTest extends WebTestCase
         $quotesToExpire = $this->getQuoteCount(true);
 
         // Assert that quotes were imported
-        $this->assertEquals(LoadQuoteDataForPerformance::NUMBER_OF_QUOTE_GROUPS * 7, $totalQuotes);
+        $this->assertEquals(
+            LoadQuoteDataForPerformance::NUMBER_OF_QUOTE_GROUPS * count(LoadQuoteData::$items),
+            $totalQuotes
+        );
         $this->assertEquals(LoadQuoteDataForPerformance::QUOTES_TO_EXPIRE, $quotesToExpire);
 
         $expireQuotesTrigger = $this->doctrineHelper->getEntityRepository('OroWorkflowBundle:ProcessTrigger')

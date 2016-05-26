@@ -7,9 +7,6 @@ layout:
                 main_menu_container:
                     blockType: container
                     siblingId: middle_bar
-                    options:
-                        attr:
-                            id: main-menu
                 main_menu:
                     blockType: menu
                     options:
