@@ -16,6 +16,7 @@ config:
         'orob2bproduct/js/app/datagrid/frontend-product-display-options-builder': 'bundles/orob2bproduct/js/app/datagrid/frontend-product-display-options-builder.js'
         'orob2bproduct/js/app/views/base-product-view': 'bundles/orob2bproduct/js/app/views/base-product-view.js'
         'orob2bproduct/js/content-processor/product-add-to-dropdown-button': 'bundles/orob2bproduct/js/content-processor/product-add-to-dropdown-button.js'
+        'orob2bproduct/js/app/components/product-image-type-radio-control-component': 'bundles/orob2bproduct/js/app/components/product-image-type-radio-control-component.js'
 
     shim:
         'tinymce/plugins/fullscreen/plugin.min':

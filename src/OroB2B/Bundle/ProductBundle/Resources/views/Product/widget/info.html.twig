@@ -1,5 +1,6 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
@@ -8,10 +9,12 @@
             {{ UI.renderProperty('orob2b.product.names.label'|trans, product.defaultName) }}
             {{ UI.renderHtmlProperty('orob2b.product.inventory_status.label'|trans, product.inventoryStatus) }}
 
-            {{ UI.renderHtmlProperty(
-                'orob2b.product.image.label'|trans,
-                oro_image_view(product, product.image, null, 'image')
-            ) }}
+            {% if product.images.count %}
+                {{ UI.renderHtmlProperty(
+                    'orob2b.product.images.label'|trans,
+                    Image.renderProductImages(product.images, imageTypes)
+                ) }}
+            {% endif %}
 
             {% if product.unitPrecisions.count %}
                 {% set productUnitPrecisions = [] %}

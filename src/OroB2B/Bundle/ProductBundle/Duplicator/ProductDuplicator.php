@@ -132,9 +132,14 @@ class ProductDuplicator
             $productCopy->addShortDescription(clone $shortDescription);
         }
 
-        if ($imageFile = $product->getImage()) {
-            $imageFileCopy = $this->attachmentManager->copyAttachmentFile($imageFile);
-            $productCopy->setImage($imageFileCopy);
+        foreach ($product->getImages() as $productImage) {
+            $productImageCopy = clone $productImage;
+            $productImageCopy->setProduct($productCopy);
+
+            $imageFileCopy = $this->attachmentManager->copyAttachmentFile($productImageCopy->getImage());
+            $productImageCopy->setImage($imageFileCopy);
+
+            $this->doctrineHelper->getEntityManager($productImageCopy)->persist($productImageCopy);
         }
 
         $attachments = $this->attachmentProvider->getEntityAttachments($product);

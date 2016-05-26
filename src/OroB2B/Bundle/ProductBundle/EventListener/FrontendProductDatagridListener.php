@@ -106,15 +106,6 @@ class FrontendProductDatagridListener
     protected function addImageToConfig(DatagridConfiguration $config)
     {
         $updates = [
-            '[source][query][select]' => [
-                'productImage.filename as image',
-            ],
-            '[source][query][join][left]' => [
-                [
-                    'join' => 'product.image',
-                    'alias' => 'productImage',
-                ]
-            ],
             '[columns]' => [
                 'image' => [
                     'label' => 'orob2b.product.image.label',
@@ -194,22 +185,24 @@ class FrontendProductDatagridListener
         }
 
         $products = $this->getProductRepository()->getProductsWithImage($productIds);
-        $imageUrls = [];
-        foreach ($products as $product) {
-            $image = $product->getImage();
-            if ($image) {
-                $imageUrls[$product->getId()] = $this->attachmentManager->getFilteredImageUrl(
-                    $image,
-                    self::PRODUCT_IMAGE_FILTER
-                );
-            }
-        }
 
         foreach ($records as $record) {
+            $imageUrl = null;
             $productId = $record->getValue('id');
-            if (array_key_exists($productId, $imageUrls)) {
-                $record->addData(['image' => $imageUrls[$productId]]);
+            foreach ($products as $product) {
+                if ($product->getId() === $productId) {
+                    $listingImages = $product->getImagesByType('listing');
+
+                    if ($listingImages->count() > 0) {
+                        $imageUrl = $this->attachmentManager->getFilteredImageUrl(
+                            $listingImages->first()->getImage(),
+                            self::PRODUCT_IMAGE_FILTER
+                        );
+                    }
+                    break;
+                }
             }
+            $record->addData(['image' => $imageUrl]);
         }
     }
 

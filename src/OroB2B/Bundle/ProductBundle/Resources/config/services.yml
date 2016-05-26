@@ -3,6 +3,7 @@ parameters:
     orob2b_product.entity.product_unit.class: OroB2B\Bundle\ProductBundle\Entity\ProductUnit
     orob2b_product.entity.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision
     orob2b_product.entity.product_variant_link.class: OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink
+    orob2b_product.entity.product_image.class: OroB2B\Bundle\ProductBundle\Entity\ProductImage
 
     orob2b_product.event_listener.scoped_product_select_db_query.common_class: OroB2B\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener
 
@@ -123,6 +124,21 @@ services:
             - "@doctrine"
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_product_by_sku_validator }
+
+    orob2b_product.validator.product_image:
+        class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator'
+        public: true
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_product_image_validator }
+
+    orob2b_product.validator.product_image_collection:
+        class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageCollectionValidator'
+        public: true
+        arguments:
+            - "@oro_layout.provider.image_type"
+            - "@translator"
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_product_image_collection_validator }
 
     orob2b_product.component_processor.filter:
         class: 'OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter'
