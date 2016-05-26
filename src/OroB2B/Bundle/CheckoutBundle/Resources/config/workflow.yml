@@ -532,6 +532,7 @@ workflows:
                         conditions:
                             '@and':
                                 - '@not_empty': $checkout.order.id
+                                - '@not_empty': $.result.responseData[redirectTransition]
                                 - '@payment_method_supports':
                                     payment_method: $payment_method
                                     action: 'validate'
@@ -540,7 +541,7 @@ workflows:
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
                                     id: $checkout.id
-                                    transition: 'finish_checkout'
+                                    transition: $.result.responseData[redirectTransition]
 
                     - '@send_email_template':
                         parameters:

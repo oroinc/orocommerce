@@ -21,6 +21,12 @@ class PurchaseAction extends AbstractPaymentMethodAction
         );
 
         $isPaymentMethodSupportsValidation = $this->isPaymentMethodSupportsValidation($paymentTransaction);
+
+        $attributes = [
+            'paymentMethod' => $options['paymentMethod'],
+            'paymentMethodSupportsValidation' => (bool)$isPaymentMethodSupportsValidation,
+        ];
+
         if ($isPaymentMethodSupportsValidation) {
             $sourcePaymentTransaction = $this->paymentTransactionProvider
                 ->getActiveValidatePaymentTransaction($options['paymentMethod']);
@@ -45,19 +51,15 @@ class PurchaseAction extends AbstractPaymentMethodAction
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
         if ($isPaymentMethodSupportsValidation) {
-            $this->handleSaveForLaterUse($paymentTransaction);
+            $attributes['redirectTransition'] = $this->getRedirectTransition($paymentTransaction);
 
-            // Don't need to set attributes if payment method supports validation
-            return;
+            $this->handleSaveForLaterUse($paymentTransaction);
         }
 
         $this->setAttributeValue(
             $context,
             array_merge(
-                [
-                    'paymentMethod' => $options['paymentMethod'],
-                    'paymentMethodSupportsValidation' => (bool)$isPaymentMethodSupportsValidation,
-                ],
+                $attributes,
                 $this->getCallbackUrls($paymentTransaction),
                 (array)$paymentTransaction->getTransactionOptions(),
                 $response
@@ -78,8 +80,17 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
     /**
      * @param PaymentTransaction $paymentTransaction
+     * @return string
      */
-    private function handleSaveForLaterUse(PaymentTransaction $paymentTransaction)
+    protected function getRedirectTransition(PaymentTransaction $paymentTransaction)
+    {
+        return $paymentTransaction->isSuccessful() ? 'finish_checkout' : 'payment_error';
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     */
+    protected function handleSaveForLaterUse(PaymentTransaction $paymentTransaction)
     {
         $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
         $sourcePaymentTransactionOptions = $sourcePaymentTransaction->getTransactionOptions();
