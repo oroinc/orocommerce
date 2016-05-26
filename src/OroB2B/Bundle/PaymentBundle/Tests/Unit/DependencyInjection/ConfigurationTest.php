@@ -239,6 +239,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => '30',
                             'scope' => 'app'
                         ],
+                        'payment_term_allowed_countries' => [
+                            'value' => 'all',
+                            'scope' => 'app'
+                        ],
+                        'payment_term_selected_countries' => [
+                            'value' => [],
+                            'scope' => 'app'
+                        ]
                     ]
                 ]
             ]

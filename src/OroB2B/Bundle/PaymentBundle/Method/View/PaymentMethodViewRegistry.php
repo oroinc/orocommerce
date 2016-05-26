@@ -31,15 +31,20 @@ class PaymentMethodViewRegistry
     }
 
     /**
+     * @param array $context
      * @return PaymentMethodViewInterface[]
      */
-    public function getPaymentMethodViews()
+    public function getPaymentMethodViews(array $context = [])
     {
         $paymentMethodViews = [];
 
         foreach ($this->paymentMethodViews as $paymentMethodView) {
             $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentMethodView->getPaymentMethodType());
             if (!$paymentMethod->isEnabled()) {
+                continue;
+            }
+
+            if (!$paymentMethod->isApplicable($context)) {
                 continue;
             }
 

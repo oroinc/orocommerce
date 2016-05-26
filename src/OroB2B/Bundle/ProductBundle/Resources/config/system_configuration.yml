@@ -10,6 +10,9 @@ oro_system_configuration:
             icon: 'icon-briefcase'
         product_unit_rounding:
             title: orob2b.product.system_configuration.groups.product_unit_rounding.title
+        default_product_unit:
+            title: orob2b.product.system_configuration.groups.default_product_unit.title
+            icon: 'icon-briefcase'
         frontend_inventory_statuses_visibility:
             title: orob2b.product.system_configuration.groups.frontend_inventory_statuses_visibility.title
         backend_inventory_statuses_visibility:
@@ -38,6 +41,20 @@ oro_system_configuration:
             options:
                 label: orob2b.product.system_configuration.fields.general_frontend_inventory_statuses_visibility.label
 
+        orob2b_product.default_unit:
+            data_type: string
+            type: orob2b_product_units
+            priority: 20
+            options:
+                label: orob2b.product.system_configuration.fields.default_unit.label
+
+        orob2b_product.default_unit_precision:
+            data_type: integer
+            type: integer
+            priority: 10
+            options:
+                label: orob2b.product.system_configuration.fields.default_unit_precision.label
+
     tree:
         system_configuration:
             commerce:
@@ -57,3 +74,7 @@ oro_system_configuration:
                                     product_unit_rounding:
                                         children:
                                             - orob2b_product.unit_rounding_type
+                                    default_product_unit:
+                                        children:
+                                            - orob2b_product.default_unit
+                                            - orob2b_product.default_unit_precision

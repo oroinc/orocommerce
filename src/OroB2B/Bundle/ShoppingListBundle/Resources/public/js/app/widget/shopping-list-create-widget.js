@@ -1,18 +1,23 @@
 define(function(require) {
     'use strict';
 
-    var ShoppingListWidget;
+    var ShoppingListCreateWidget;
     var routing = require('routing');
     var DialogWidget = require('oro/dialog-widget');
     var __ = require('orotranslation/js/translator');
     var mediator = require('oroui/js/mediator');
 
-    ShoppingListWidget = DialogWidget.extend({
+    ShoppingListCreateWidget = DialogWidget.extend({
         initialize: function(options) {
             var self = this;
 
+            var urlOptions = {};
+            if (options.createOnly) {
+                urlOptions.createOnly = true;
+            }
+            this.options.url = options.url = routing.generate('orob2b_shopping_list_frontend_create', urlOptions);
+
             this.options.title = __('orob2b.shoppinglist.widget.add_to_new_shopping_list');
-            this.options.url = routing.generate('orob2b_shopping_list_frontend_create');
             this.options.regionEnabled = false;
             this.options.incrementalPosition = false;
 
@@ -32,9 +37,9 @@ define(function(require) {
                 });
             });
 
-            ShoppingListWidget.__super__.initialize.apply(this, arguments);
+            ShoppingListCreateWidget.__super__.initialize.apply(this, arguments);
         }
     });
 
-    return ShoppingListWidget;
+    return ShoppingListCreateWidget;
 });

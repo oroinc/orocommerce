@@ -31,6 +31,8 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType;
+use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 use OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
@@ -54,6 +56,9 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected $roundingService;
 
+    /** @var  DefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $defaultProductUnitProvider;
+
     /**
      * @var array
      */
@@ -73,8 +78,23 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
+        $this->defaultProductUnitProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->type = new ProductType($this->roundingService);
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('kg');
+        $productUnit->setDefaultPrecision('3');
+        $productUnitPrecision = new ProductUnitPrecision();
+        $productUnitPrecision->setUnit($productUnit)->setPrecision('3');
+
+        $this->defaultProductUnitProvider
+            ->expects($this->any())
+            ->method('getDefaultProductUnitPrecision')
+            ->will($this->returnValue($productUnitPrecision));
+
+        $this->type = new ProductType($this->defaultProductUnitProvider, $this->roundingService);
         $this->type->setDataClass(self::DATA_CLASS);
 
         $image1 = new StubProductImage();
@@ -333,7 +353,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create($this->type, $this->createDefaultProductEntity());
 
         $this->assertTrue($form->has('sku'));
         $this->assertTrue($form->has('unitPrecisions'));

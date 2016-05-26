@@ -7,7 +7,7 @@
     {% else %}
         {% include 'OroNavigationBundle:HashNav:hashNavAjax.html.twig' with {
             'data': {
-                'content': block_widget(blocks.content),
+                'content': block_widget(blocks.wrapper),
             }
         } %}
     {% endif %}
