@@ -130,18 +130,6 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertShoppingListItemSaved($currentShoppingList, $product->getSku(), 30);
     }
 
-    public function testWidget()
-    {
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_shopping_list_frontend_widget')
-        );
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-
-        $this->assertContains('"alias":"shopping_lists_frontend_widget"', $crawler->html());
-        $this->assertContains('"elementFirst":false', $crawler->html());
-    }
-
     /**
      * @param Crawler $crawler
      * @param array $products
