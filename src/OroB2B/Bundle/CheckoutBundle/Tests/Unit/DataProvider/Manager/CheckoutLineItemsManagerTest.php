@@ -10,6 +10,7 @@ use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConvert
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
 class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
@@ -26,10 +27,20 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected $checkoutLineItemsManager;
 
+    /**
+     * @var UserCurrencyProvider
+     */
+    protected $currencyProvider;
+
     protected function setUp()
     {
         $this->checkoutLineItemsConverter = $this
             ->getMockBuilder('OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->currencyProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -43,7 +54,10 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
                 return $result;
             }));
 
-        $this->checkoutLineItemsManager = new CheckoutLineItemsManager($this->checkoutLineItemsConverter);
+        $this->checkoutLineItemsManager = new CheckoutLineItemsManager(
+            $this->checkoutLineItemsConverter,
+            $this->currencyProvider
+        );
     }
 
     public function testAddProvider()
