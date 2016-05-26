@@ -5,6 +5,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@orob2b_pricing.model.price_list_request_handler'
+            - '@orob2b_pricing.provider.user_currency'
         tags:
             - { name: layout.data_provider, alias: frontend_product_prices }
 
