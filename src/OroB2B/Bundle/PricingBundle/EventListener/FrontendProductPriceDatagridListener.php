@@ -13,20 +13,29 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 
-class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridListener
+class FrontendProductPriceDatagridListener
 {
     const COLUMN_PRICES = 'prices';
-    const COLUMN_UNITS = 'price_units';
-    const COLUMN_QUANTITIES = 'price_quantities';
-    const JOIN_ALIAS_PRICE = 'product_price';
     const COLUMN_MINIMUM_PRICE = 'minimum_price';
+    const JOIN_ALIAS_PRICE = '_min_product_price';
 
-    const DATA_SEPARATOR = '{sep}';
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @var PriceListRequestHandler
+     */
+    protected $priceListRequestHandler;
 
     /**
      * @var NumberFormatter
@@ -34,12 +43,12 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
     protected $numberFormatter;
 
     /**
-     * @var ProductUnitLabelFormatter
+     * @var UnitLabelFormatter
      */
     protected $unitLabelFormatter;
 
     /**
-     * @var ProductUnitValueFormatter
+     * @var UnitValueFormatter
      */
     protected $unitValueFormatter;
 
@@ -49,22 +58,28 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
     protected $currencyProvider;
 
     /**
+     * @var CombinedPriceList
+     */
+    protected $priceList;
+
+    /**
      * @param TranslatorInterface $translator
      * @param PriceListRequestHandler $priceListRequestHandler
      * @param NumberFormatter $numberFormatter
-     * @param ProductUnitLabelFormatter $unitLabelFormatter
-     * @param ProductUnitValueFormatter $unitValueFormatter
+     * @param UnitLabelFormatter $unitLabelFormatter
+     * @param UnitValueFormatter $unitValueFormatter
      * @param UserCurrencyProvider $currencyProvider
      */
     public function __construct(
         TranslatorInterface $translator,
         PriceListRequestHandler $priceListRequestHandler,
         NumberFormatter $numberFormatter,
-        ProductUnitLabelFormatter $unitLabelFormatter,
-        ProductUnitValueFormatter $unitValueFormatter,
+        UnitLabelFormatter $unitLabelFormatter,
+        UnitValueFormatter $unitValueFormatter,
         UserCurrencyProvider $currencyProvider
     ) {
-        parent::__construct($translator, $priceListRequestHandler);
+        $this->translator = $translator;
+        $this->priceListRequestHandler = $priceListRequestHandler;
         $this->numberFormatter = $numberFormatter;
         $this->unitLabelFormatter = $unitLabelFormatter;
         $this->unitValueFormatter = $unitValueFormatter;
@@ -78,46 +93,52 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
+        if (count($records) === 0) {
+            return;
+        }
 
-        $currencyIsoCode = $this->getCurrencies()[0];
-        $priceColumn = self::COLUMN_PRICES;
-        foreach ($records as $record) {
-            $resultPrices = [];
-            $prices = $this->parseArrayValue($record, $priceColumn);
-            $units = $this->parseArrayValue($record, self::COLUMN_UNITS);
-            $quantities = $this->parseArrayValue($record, self::COLUMN_QUANTITIES);
-            if ($prices) {
-                foreach ($prices as $key => $price) {
-                    // order of all parts is the same
-                    $price = (double)$price;
-                    $unit = $units[$key];
-                    $quantity = (double)$quantities[$key];
-                    $index = sprintf('%s_%s', $unit, $quantity);
+        $priceList = $this->getPriceList();
+        if (!$priceList) {
+            return;
+        }
 
-                    if (isset($resultPrices[$index])) { // there might be duplicated because of multiple units
-                        continue;
-                    }
+        $productIds = array_map(
+            function (ResultRecord $record) {
+                return $record->getValue('id');
+            },
+            $records
+        );
 
-                    $resultPrices[$index] = [
-                        'price' => $price,
-                        'currency' => $currencyIsoCode,
-                        'formatted_price' => $this->numberFormatter->formatCurrency($price, $currencyIsoCode),
-                        'unit' => $unit,
-                        'formatted_unit' => $this->unitLabelFormatter->format($unit),
-                        'quantity' => $quantity,
-                        'quantity_with_unit' => $this->unitValueFormatter->formatCode($quantity, $unit)
-                    ];
-                }
+        $currency = $this->currencyProvider->getUserCurrency();
+
+        $em = $event->getQuery()->getEntityManager();
+        /** @var CombinedProductPriceRepository $repository */
+        $repository = $em->getRepository('OroB2BPricingBundle:CombinedProductPrice');
+        $combinedPrices = $repository->getPricesForProductsByPriceList($priceList, $productIds, $currency);
+
+        $resultProductPrices = [];
+        foreach ($combinedPrices as $price) {
+            $index = sprintf('%s_%s', $price->getProductUnitCode(), $price->getQuantity());
+
+            $productId = $price->getProduct()->getId();
+            if (isset($resultProductPrices[$productId][$index])) {
+                continue;
             }
-            $record->addData([
-                $priceColumn => $resultPrices,
-                self::COLUMN_UNITS => null,
-                self::COLUMN_QUANTITIES => null
-            ]);
+
+            $resultProductPrices[$productId][$index] = $this->prepareResultPrice($price);
+        }
+
+        foreach ($records as $record) {
+            $productId = $record->getValue('id');
+            if (array_key_exists($productId, $resultProductPrices)) {
+                $record->addData(
+                    [
+                        self::COLUMN_PRICES => $resultProductPrices[$productId]
+                    ]
+                );
+            }
         }
     }
-
-
 
     /**
      * {@inheritDoc}
@@ -125,83 +146,57 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
-        $currency = $this->getCurrencies()[0];
+        $currency = $this->currencyProvider->getUserCurrency();
         if (!$currency) {
             return;
         }
 
-        $pricesColumnName = self::COLUMN_PRICES;
-        $unitColumnName = self::COLUMN_UNITS;
-        $quantitiesColumnName = self::COLUMN_QUANTITIES;
-        $minimumPriceColumnName = self::COLUMN_MINIMUM_PRICE;
-        $joinAlias = self::JOIN_ALIAS_PRICE;
-        $separator = (new Expr())->literal(self::DATA_SEPARATOR);
-
-        $selectPattern = 'GROUP_CONCAT(%s.value SEPARATOR %s) as %s';
-        $select = sprintf($selectPattern, $joinAlias, $separator, $pricesColumnName);
-        $this->addConfigElement($config, '[source][query][select]', $select);
-
-        $selectPattern = 'GROUP_CONCAT(IDENTITY(%s.unit) SEPARATOR %s) as %s';
-        $select = sprintf($selectPattern, $joinAlias, $separator, $unitColumnName);
-        $this->addConfigElement($config, '[source][query][select]', $select);
-
-        $selectPattern = 'GROUP_CONCAT(%s.quantity SEPARATOR %s) as %s';
-        $select = sprintf($selectPattern, $joinAlias, $separator, $quantitiesColumnName);
-        $this->addConfigElement($config, '[source][query][select]', $select);
-
-        $selectPattern = 'MIN(%s.value) as %s';
-        $select = sprintf($selectPattern, $joinAlias, $minimumPriceColumnName);
-        $this->addConfigElement($config, '[source][query][select]', $select);
-
         $this->addConfigProductPriceJoin($config, $currency);
 
-        $this->addConfigElement(
-            $config,
-            '[properties]',
-            ['type' => 'field', 'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY],
-            $pricesColumnName
-        );
-        $this->addConfigElement($config, '[properties]', null, $unitColumnName);
-        $this->addConfigElement($config, '[properties]', null, $quantitiesColumnName);
+        $selectPattern = '%s.value as %s';
+        $select = sprintf($selectPattern, self::JOIN_ALIAS_PRICE, self::COLUMN_MINIMUM_PRICE);
 
-        $this->addConfigElement(
-            $config,
+        $config->offsetAddToArrayByPath('[source][query][select]', [$select]);
+        $config->offsetAddToArrayByPath(
+            '[properties]',
+            [
+                self::COLUMN_PRICES => [
+                    'type' => 'field',
+                    'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY
+                ]
+            ]
+        );
+
+        $config->offsetAddToArrayByPath(
             '[columns]',
             [
-                'label' => $this->translator->trans('orob2b.pricing.productprice.price_in_%currency%', [
-                    '%currency%' => $currency
-                ])
-            ],
-            $minimumPriceColumnName
+                self::COLUMN_MINIMUM_PRICE=> [
+                    'label' => $this->translator->trans(
+                        'orob2b.pricing.productprice.price_in_%currency%',
+                        ['%currency%' => $currency]
+                    )
+                ]
+            ]
         );
-        $this->addConfigElement(
-            $config,
+
+        $config->offsetAddToArrayByPath(
             '[sorters][columns]',
             [
-                'data_name' => $minimumPriceColumnName,
-                'type' => PropertyInterface::TYPE_CURRENCY,
-            ],
-            $minimumPriceColumnName
+                self::COLUMN_MINIMUM_PRICE =>[
+                    'data_name' => self::COLUMN_MINIMUM_PRICE,
+                    'type' => PropertyInterface::TYPE_CURRENCY,
+                ]
+            ]
         );
-
-        $filter = ['type' => 'frontend-product-price', 'data_name' => $currency];
-        $this->addConfigElement($config, '[filters][columns]', $filter, $minimumPriceColumnName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function providePriceList()
-    {
-        return $this->priceListRequestHandler->getPriceListByAccount();
-    }
-
-    /**
-     * @return array
-     */
-    protected function getCurrencies()
-    {
-        return [$this->currencyProvider->getUserCurrency()];
+        $config->offsetAddToArrayByPath(
+            '[filters][columns]',
+            [
+                self::COLUMN_MINIMUM_PRICE => [
+                    'type' => 'frontend-product-price',
+                    'data_name' => $currency
+                ]
+            ]
+        );
     }
 
     /**
@@ -217,22 +212,53 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
             ->andX(sprintf('%s.product = product.id', $joinAlias))
             ->add($expr->eq(sprintf('%s.currency', $joinAlias), $expr->literal($currency)))
             ->add($expr->eq(sprintf('%s.priceList', $joinAlias), $expr->literal($priceList->getId())));
-        $this->addConfigElement($config, '[source][query][join][left]', [
-            'join' => $this->productPriceClass,
-            'alias' => $joinAlias,
-            'conditionType' => Expr\Join::WITH,
-            'condition' => (string)$joinExpr,
-        ]);
+
+        $config->offsetAddToArrayByPath(
+            '[source][query][join][left]',
+            [
+                [
+                    'join' => 'OroB2BPricingBundle:MinimalProductPrice',
+                    'alias' => $joinAlias,
+                    'conditionType' => Expr\Join::WITH,
+                    'condition' => (string)$joinExpr,
+                ]
+            ]
+        );
     }
 
     /**
-     * @param ResultRecord $record
-     * @param string $columnName
+     * @param CombinedProductPrice $price
      * @return array
      */
-    protected function parseArrayValue(ResultRecord $record, $columnName)
+    protected function prepareResultPrice(CombinedProductPrice $price)
     {
-        $values = $record->getValue($columnName);
-        return $values ? explode(self::DATA_SEPARATOR, $values) : [];
+        $priceValue = $price->getPrice()->getValue();
+        $unitCode = $price->getUnit()->getCode();
+        $quantity = $price->getQuantity();
+        $currencyIsoCode = $price->getPrice()->getCurrency();
+
+        $resultPrices = [
+            'price' => $priceValue,
+            'currency' => $currencyIsoCode,
+            'formatted_price' => $this->numberFormatter->formatCurrency($priceValue, $currencyIsoCode),
+            'unit' => $unitCode,
+            'formatted_unit' => $this->unitLabelFormatter->format($unitCode),
+            'quantity' => $quantity,
+            'quantity_with_unit' => $this->unitValueFormatter->formatCode($quantity, $unitCode)
+        ];
+
+        return $resultPrices;
+    }
+
+    /**
+     * @return CombinedPriceList
+     */
+    protected function getPriceList()
+    {
+        if (!$this->priceList) {
+            $this->priceList = $this->priceListRequestHandler->getPriceListByAccount();
+        }
+
+        return $this->priceList;
     }
 }

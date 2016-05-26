@@ -669,6 +669,8 @@
     > li {
       > a {
         padding: .8rem 2rem;
+        white-space: normal;
+        line-height: 1.3;
       }
     }
   }
@@ -826,7 +828,27 @@
     background: @theme-error-font-color;
   }
 
+  &.badge_alert {
+    color: #fff;
+    background: @theme-alert-font-color;
+  }
+
+  &.badge_warning {
+    color: #fff;
+    background: @theme-alert-font-color;
+  }
+
+  &.badge_success {
+    color: #fff;
+    background: @theme-notice-font-color;
+  }
+
   &.badge_notice {
+    color: #fff;
+    background: @theme-notice-font-color;
+  }
+
+  &.badge_info {
     color: #fff;
     background: @theme-notice-font-color;
   }

@@ -7,7 +7,7 @@
     {% else %}
         {% include 'OroNavigationBundle:HashNav:hashNavAjax.html.twig' with {
             'data': {
-                'content': block_widget(blocks.content),
+                'content': block_widget(blocks.wrapper),
             }
         } %}
     {% endif %}
@@ -133,13 +133,12 @@
     }) %}
     <div{{ block('block_attributes') }}></div>
     <script type="text/template" id="message-item-template">
-        <% if (type !== "error") { %>
-        <div class="container-fluid alert mt1-md notification notification_notice notification_lg">
-            <span class="badge badge_sm_xs badge_notice"><i class="cf-check"></i></span>
-        <% } else { %>
-        <div class="container-fluid alert mt1-md notification notification_error notification_lg">
-            <span class="badge badge_sm_xs badge_error"><i class="cf-attention"></i></span>
-        <% } %>
+        <% iconClass = 'cf-check' %>
+        <% if (type === "error" || type === "warning") {
+            iconClass = 'cf-attention';
+        }%>
+        <div class="container-fluid alert mt1-md notification notification_<%= type %> notification_lg">
+            <span class="badge badge_sm_xs badge_<%= type %>"><i class="<%= iconClass %>"></i></span>
             <span class="fs16 ml1-sm"><%= message %></span>
             <i class="cf-clear" data-dismiss="alert"></i>
         </div>

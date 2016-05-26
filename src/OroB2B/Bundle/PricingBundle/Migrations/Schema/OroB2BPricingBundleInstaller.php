@@ -50,6 +50,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->createOrob2BPriceProductTable($schema);
         $this->createOrob2BPriceListCombinedTable($schema);
         $this->createOrob2BPriceProductCombinedTable($schema);
+        $this->createOrob2BPriceProductMinimalTable($schema);
         $this->createOrob2BPlistCurrCombinedTable($schema);
         $this->createOrob2BPriceListAccountFallbackTable($schema);
         $this->createOrob2BPriceListAccGroupFallbackTable($schema);
@@ -70,6 +71,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->addOrob2BPriceListToWebsiteForeignKeys($schema);
         $this->addOrob2BPriceProductForeignKeys($schema);
         $this->addOrob2BPriceProductCombinedForeignKeys($schema);
+        $this->addOrob2BPriceProductMinimalForeignKeys($schema);
         $this->addOrob2BPlistCurrCombinedForeignKeys($schema);
         $this->addOrob2BPriceListAccountFallbackForeignKeys($schema);
         $this->addOrob2BPriceListAccGroupFallbackForeignKeys($schema);
@@ -232,6 +234,33 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
                 'currency'
             ],
             'orob2b_combined_price_uidx'
+        );
+    }
+
+    /**
+     * Create orob2b_price_product_minimal table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BPriceProductMinimalTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_product_minimal');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('unit_code', 'string', ['length' => 255]);
+        $table->addColumn('product_id', 'integer', []);
+        $table->addColumn('combined_price_list_id', 'integer', []);
+        $table->addColumn('product_sku', 'string', ['length' => 255]);
+        $table->addColumn('quantity', 'float', []);
+        $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
+        $table->addColumn('currency', 'string', ['length' => 3]);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(
+            [
+                'product_id',
+                'combined_price_list_id',
+                'currency',
+            ],
+            'orob2b_minimal_price_uidx'
         );
     }
 
@@ -559,6 +588,34 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     protected function addOrob2BPriceProductCombinedForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_product_combined');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product_unit'),
+            ['unit_code'],
+            ['code'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product'),
+            ['product_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_price_list_combined'),
+            ['combined_price_list_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_price_product_minimal foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BPriceProductMinimalForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_product_minimal');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_product_unit'),
             ['unit_code'],

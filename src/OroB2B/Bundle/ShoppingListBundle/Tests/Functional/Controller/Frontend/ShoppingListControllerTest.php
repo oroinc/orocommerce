@@ -99,7 +99,10 @@ class ShoppingListControllerTest extends WebTestCase
             ],
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
-                'expectedLineItemPrice' => 'N/A'
+                'expectedLineItemPrice' => [
+                    'N/A',
+                    '$0.00',
+                ]
             ],
         ];
     }
@@ -125,18 +128,6 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertShoppingListItemSaved($currentShoppingList, $product->getSku(), 15);
         $this->assertQuickAddFormSubmitted($crawler, $products, $currentShoppingList->getId());//add to specific
         $this->assertShoppingListItemSaved($currentShoppingList, $product->getSku(), 30);
-    }
-
-    public function testWidget()
-    {
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_shopping_list_frontend_widget')
-        );
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-
-        $this->assertContains('"alias":"shopping_lists_frontend_widget"', $crawler->html());
-        $this->assertContains('"elementFirst":false', $crawler->html());
     }
 
     /**
@@ -203,7 +194,11 @@ class ShoppingListControllerTest extends WebTestCase
      */
     protected function assertLineItemPriceEquals($expected, Crawler $crawler)
     {
-        $actual = trim($crawler->filter('[data-name="price-value"]')->text());
-        $this->assertEquals($expected, $actual);
+        $expected = (array)$expected;
+        $prices = $crawler->filter('[data-name="price-value"]');
+        $this->assertSameSize($expected, $prices);
+        foreach ($prices as $value) {
+            $this->assertContains(trim($value->nodeValue), $expected);
+        }
     }
 }

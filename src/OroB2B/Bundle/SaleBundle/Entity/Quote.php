@@ -681,6 +681,17 @@ class Quote extends ExtendQuote implements
     }
 
     /**
+     * Check if quote is available for acceptance.
+     *
+     * @return bool
+     */
+    public function isAcceptable()
+    {
+        return !$this->isExpired()
+            && (!$this->getValidUntil() || $this->getValidUntil() >= new \DateTime('now', new \DateTimeZone('UTC')));
+    }
+
+    /**
      * @ORM\PostLoad
      */
     public function postLoad()

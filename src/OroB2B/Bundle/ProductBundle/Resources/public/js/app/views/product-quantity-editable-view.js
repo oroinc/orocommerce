@@ -92,6 +92,7 @@ define(function(require) {
         },
 
         initValidator: function(options) {
+            var $form = this.$el.find('form');
             var validationRules = {};
             validationRules[this.elements.quantity.attr('name')] = options.validation.rules.quantity;
             validationRules[this.elements.unit.attr('name')] = options.validation.rules.unit;
@@ -105,12 +106,21 @@ define(function(require) {
                 waitors.push(tools.loadModuleAndReplace(options.validation, 'showErrorsHandler').then(
                     _.bind(function() {
                         validationOptions.showErrors = options.validation.showErrorsHandler;
-                        this.validator = this.$el.find('form').validate(validationOptions);
+                        this.updateValidation($form, validationOptions);
                     }, this)
                 ));
                 this.deferredInit = $.when.apply($, waitors);
             } else {
-                this.validator = this.$el.find('form').validate(validationOptions);
+                this.updateValidation($form, validationOptions);
+            }
+        },
+
+        updateValidation: function($form, options) {
+            this.validator = $form.validate();
+
+            if (_.isObject(options)) {
+                var settings = this.validator.settings;
+                settings = $.extend(true, settings, options);
             }
         },
 

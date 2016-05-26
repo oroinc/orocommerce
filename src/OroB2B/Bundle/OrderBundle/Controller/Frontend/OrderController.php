@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Controller\Frontend;
 
-use Doctrine\Common\Util\ClassUtils;
-
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +18,6 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\OrderBundle\Controller\AbstractOrderController;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
-use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
 use OroB2B\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
 

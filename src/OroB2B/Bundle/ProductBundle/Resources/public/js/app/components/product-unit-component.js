@@ -49,7 +49,7 @@ define(function(require) {
         unitSelector: null,
 
         /**
-         * @inheritDoc
+         * {@inheritDoc}
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
