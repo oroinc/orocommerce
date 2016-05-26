@@ -87,6 +87,20 @@ datagrid:
             accountUserName:
                 label:         orob2b.rfp.request.account_user.label
                 order:         1
+        sorters:
+            columns:
+                accountUserName:
+                    data_name: accountUserName
+
+    account-user-view-rfq-grid:
+        extends: base-rfq-grid
+        source:
+            query:
+                where:
+                    and:
+                        - request.accountUser = :account_user_id
+            bind_parameters:
+                - account_user_id
 
     rfp-requests-grid:
         extends: base-rfq-grid

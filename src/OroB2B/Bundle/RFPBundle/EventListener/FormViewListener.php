@@ -43,6 +43,9 @@ class FormViewListener
         $this->requestStack = $requestStack;
     }
 
+    /**
+     * @param BeforeListRenderEvent $event
+     */
     public function onAccountView(BeforeListRenderEvent $event)
     {
         /** @var Account $account */
@@ -52,12 +55,37 @@ class FormViewListener
                 'OroB2BRFPBundle:Account:rfp_view.html.twig',
                 ['entity' => $account]
             );
-            $this->addRequestForQuotesBlock($event->getScrollData(), $template);
+
+            $this->addRequestForQuotesBlock(
+                $event->getScrollData(),
+                $template,
+                $this->translator->trans('orob2b.rfp.datagrid.account.label')
+            );
         }
     }
 
     /**
-     * @param $className
+     * @param BeforeListRenderEvent $event
+     */
+    public function onAccountUserView(BeforeListRenderEvent $event)
+    {
+        /** @var Account $accountUser */
+        $accountUser = $this->getEntityFromRequestId('OroB2BAccountBundle:AccountUser');
+        if ($accountUser) {
+            $template = $event->getEnvironment()->render(
+                'OroB2BRFPBundle:AccountUser:rfp_view.html.twig',
+                ['entity' => $accountUser]
+            );
+            $this->addRequestForQuotesBlock(
+                $event->getScrollData(),
+                $template,
+                $this->translator->trans('orob2b.rfp.datagrid.account_user.label')
+            );
+        }
+    }
+
+    /**
+     * @param string $className
      * @return null|object
      */
     protected function getEntityFromRequestId($className)
@@ -83,10 +111,10 @@ class FormViewListener
     /**
      * @param ScrollData $scrollData
      * @param string $html
+     * @param string $blockLabel
      */
-    protected function addRequestForQuotesBlock(ScrollData $scrollData, $html)
+    protected function addRequestForQuotesBlock(ScrollData $scrollData, $html, $blockLabel)
     {
-        $blockLabel = $this->translator->trans('orob2b.rfp.datagrid.account.label');
         $blockId = $scrollData->addBlock($blockLabel);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);
