@@ -336,14 +336,14 @@ class PurchaseActionTest extends AbstractActionTest
                 $successfulTransaction,
                 new PaymentTransaction(),
                 [
-                    'redirectTransition' => 'finish_checkout',
+                    'purchaseSuccessful' => true,
                 ],
             ],
             'unsuccessful transaction with validation' => [
                 $unsuccessfulTransaction,
                 new PaymentTransaction(),
                 [
-                    'redirectTransition' => 'payment_error',
+                    'purchaseSuccessful' => false,
                 ],
             ],
         ];

@@ -51,7 +51,7 @@ class PurchaseAction extends AbstractPaymentMethodAction
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
         if ($isPaymentMethodSupportsValidation) {
-            $attributes['redirectTransition'] = $this->getRedirectTransition($paymentTransaction);
+            $attributes['purchaseSuccessful'] = $paymentTransaction->isSuccessful();
 
             $this->handleSaveForLaterUse($paymentTransaction);
         }
@@ -76,15 +76,6 @@ class PurchaseAction extends AbstractPaymentMethodAction
         return $this->paymentMethodRegistry
             ->getPaymentMethod($paymentTransaction->getPaymentMethod())
             ->supports(PaymentMethodInterface::VALIDATE);
-    }
-
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return string
-     */
-    protected function getRedirectTransition(PaymentTransaction $paymentTransaction)
-    {
-        return $paymentTransaction->isSuccessful() ? 'finish_checkout' : 'payment_error';
     }
 
     /**
