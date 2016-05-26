@@ -127,7 +127,9 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                 'left' => [
                                     [
                                         'join' => 'product.unitPrecisions',
-                                        'alias' => 'unit_precisions'
+                                        'alias' => 'unit_precisions',
+                                        'conditionType' => 'WITH',
+                                        'condition' =>'unit_precisions.sell=true'
                                     ]
                                 ],
                             ],
@@ -156,7 +158,9 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                 'left' => [
                                     [
                                         'join' => 'product.unitPrecisions',
-                                        'alias' => 'unit_precisions'
+                                        'alias' => 'unit_precisions',
+                                         'conditionType' => 'WITH',
+                                         'condition' =>'unit_precisions.sell=true'
                                     ],
                                     [
                                         'join' => 'product.image',
@@ -200,7 +204,9 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                 'left' => [
                                     [
                                         'join' => 'product.unitPrecisions',
-                                        'alias' => 'unit_precisions'
+                                        'alias' => 'unit_precisions',
+                                        'conditionType' => 'WITH',
+                                        'condition' =>'unit_precisions.sell=true'
                                     ],
                                     [
                                         'join' => 'product.image',
