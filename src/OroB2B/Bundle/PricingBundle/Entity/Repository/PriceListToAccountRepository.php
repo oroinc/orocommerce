@@ -191,6 +191,49 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
             ->setParameter('website', $website)
             ->getQuery()
             ->execute();
+    }
 
+    /**
+     * @param array Account[]|int[] $holdersIds
+     * @return PriceListToAccount[]
+     */
+    public function getRelationsByHolders(array $holdersIds)
+    {
+        $qb = $this->createQueryBuilder('relation');
+        $qb->addSelect('partial website.{id, name}')
+            ->addSelect('partial priceList.{id, name}')
+            ->leftJoin('relation.website', 'website')
+            ->leftJoin('relation.priceList', 'priceList')
+            ->where($qb->expr()->in('relation.account', ':accounts'))
+            ->orderBy('relation.account')
+            ->addOrderBy('relation.website')
+            ->addOrderBy('relation.priority')
+            ->setParameter('accounts', $holdersIds);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param BasePriceList $priceList
+     * @param string $parameterName
+     */
+    public function restrictByPriceList(
+        QueryBuilder $queryBuilder,
+        BasePriceList $priceList,
+        $parameterName
+    ) {
+        $parentAlias = $queryBuilder->getRootAliases()[0];
+
+        $subQueryBuilder = $this->createQueryBuilder('relation');
+        $subQueryBuilder->where(
+            $subQueryBuilder->expr()->andX(
+                $subQueryBuilder->expr()->eq('relation.account', $parentAlias),
+                $subQueryBuilder->expr()->eq('relation.priceList', ':' . $parameterName)
+            )
+        );
+
+        $queryBuilder->andWhere($subQueryBuilder->expr()->exists($subQueryBuilder->getQuery()->getDQL()));
+        $queryBuilder->setParameter($parameterName, $priceList);
     }
 }

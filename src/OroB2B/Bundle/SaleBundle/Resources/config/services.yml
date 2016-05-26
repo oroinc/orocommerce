@@ -63,6 +63,7 @@ services:
 
     orob2b_sale.helper.notification:
         class: 'OroB2B\Bundle\SaleBundle\Notification\NotificationHelper'
+        public: true
         scope: request
         arguments:
             - "@doctrine"
@@ -125,7 +126,7 @@ services:
              - { name: checkout.data_provider.line_item }
 
     orob2b_sale.manager.quote_demand_manager:
-        class: "OroB2B\Bundle\SaleBundle\Manager\QuoteDemandManager"
+        class: 'OroB2B\Bundle\SaleBundle\Manager\QuoteDemandManager'
         arguments:
             - "@orob2b_pricing.subtotal_processor.total_processor_provider"
             - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item"

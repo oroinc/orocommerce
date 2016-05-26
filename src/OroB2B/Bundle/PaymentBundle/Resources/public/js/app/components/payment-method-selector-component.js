@@ -15,10 +15,8 @@ define(function(require) {
         options: {
             selectors: {
                 radio: '[data-choice]',
-                item_container: '[data-item-container]',
-                subform: '[data-form-container]',
-                submit_button: '[data-payment-method-submit]',
-                no_methods: 'payment-no-methods'
+                itemContainer: '[data-item-container]',
+                subform: '[data-form-container]'
             },
             redirectEvent: 'scroll keypress mousedown tap',
             delay: 1000 * 60 * 15 // 15 minutes
@@ -35,19 +33,29 @@ define(function(require) {
         $radios: null,
 
         /**
+         * @property {Boolean}
+         */
+        disposable: true,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.extend(this.options, options);
 
             this.$el = this.options._sourceElement;
-            this.$radios = this.$el.find(this.options.selectors.radio);
             this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
+
+            mediator.on('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
+            mediator.on('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
+            mediator.on('checkout:payment:method:get-value', this.onGetValue, this);
 
             this.$el.on(
                 this.options.redirectEvent,
                 _.debounce(_.bind(this.redirectToHomepage, this), this.options.delay)
             );
+
+            this.$el.find(this.options.selectors.radio).filter(':selected').trigger('change');
         },
 
         redirectToHomepage: function() {
@@ -61,19 +69,42 @@ define(function(require) {
          * @inheritDoc
          */
         dispose: function() {
-            if (this.disposed) {
+            if (this.disposed || !this.disposable) {
                 return;
             }
 
             this.$el.off();
 
+            mediator.off('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
+            mediator.off('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
+            mediator.off('checkout:payment:method:get-value', this.onGetValue, this);
+
             PaymentMethodSelectorComponent.__super__.dispose.call(this);
         },
 
         updateForms: function(e) {
-            var element =  e.target;
+            var $element =  $(e.target);
             this.$el.find(this.options.selectors.subform).hide();
-            $(element).parents(this.options.selectors.item_container).find(this.options.selectors.subform).show();
+            $element.parents(this.options.selectors.itemContainer).find(this.options.selectors.subform).show();
+            mediator.trigger('checkout:payment:method:changed', {paymentMethod: $element.val()});
+        },
+
+        beforeHideFilledForm: function() {
+            this.disposable = false;
+        },
+
+        beforeRestoreFilledForm: function() {
+            if (this.disposable) {
+                this.dispose();
+            }
+        },
+
+        /**
+         * @param {Object} object
+         */
+        onGetValue: function(object) {
+            var $checkedRadio = this.$el.find(this.options.selectors.radio).filter(':checked');
+            object.value = $checkedRadio.val();
         }
     });
 

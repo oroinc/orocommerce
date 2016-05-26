@@ -38,9 +38,11 @@ class ProductControllerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('orob2b_product_frontend_product_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($this->getProduct(LoadProductData::PRODUCT_1)->getSku(), $result->getContent());
-        $this->assertContains($this->getProduct(LoadProductData::PRODUCT_2)->getSku(), $result->getContent());
-        $this->assertContains($this->getProduct(LoadProductData::PRODUCT_3)->getSku(), $result->getContent());
+        $content = $result->getContent();
+        $this->assertNotEmpty($content);
+        $this->assertContains(LoadProductData::PRODUCT_1, $content);
+        $this->assertContains(LoadProductData::PRODUCT_2, $content);
+        $this->assertContains(LoadProductData::PRODUCT_3, $content);
     }
 
     public function testIndexDatagridViews()

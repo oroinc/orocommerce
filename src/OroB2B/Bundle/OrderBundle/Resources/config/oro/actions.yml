@@ -24,6 +24,7 @@ operations:
                 object: $.data
                 amount: $.data.total
                 currency: $.data.currency
+                paymentMethod: $.authorizePaymentTransaction.paymentMethod
                 transactionOptions: []
             - '@flash_message':
                 conditions:
@@ -42,3 +43,25 @@ operations:
     DELETE:
         exclude_datagrids:
             - order-line-items-grid
+
+    orob2b_order_update_order:
+        extends: UPDATE
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - preconditions
+        preconditions:
+            '@not_blank': $.data
+        datagrids:
+            - account-user-orders-grid
+
+    orob2b_order_delete_order:
+        extends: DELETE
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - preconditions
+        preconditions:
+            '@not_blank': $.data
+        datagrids:
+            - account-user-orders-grid

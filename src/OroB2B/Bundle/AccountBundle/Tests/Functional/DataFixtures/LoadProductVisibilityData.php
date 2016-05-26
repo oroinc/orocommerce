@@ -172,6 +172,6 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     {
         $fixturesFileName = __DIR__ . '/data/product_visibilities.yml';
 
-        return Yaml::parse($fixturesFileName);
+        return Yaml::parse(file_get_contents($fixturesFileName));
     }
 }

@@ -6,7 +6,6 @@ config:
         'orob2bshoppinglist/js/app/views/line-items-view': 'bundles/orob2bshoppinglist/js/app/views/line-items-view.js'
         'orob2bshoppinglist/js/app/views/product-add-to-shopping-list-view': 'bundles/orob2bshoppinglist/js/app/views/product-add-to-shopping-list-view.js'
         'orob2bshoppinglist/js/app/views/product-quick-add-to-shopping-list-view': 'bundles/orob2bshoppinglist/js/app/views/product-quick-add-to-shopping-list-view.js'
-        'orob2bshoppinglist/js/app/widget/shopping-list-widget': 'bundles/orob2bshoppinglist/js/app/widget/shopping-list-widget.js'
+        'oro/shopping-list-create-widget': 'bundles/orob2bshoppinglist/js/app/widget/shopping-list-create-widget.js'
         'orob2bshoppinglist/js/shopping-list-item-errors-handler': 'bundles/orob2bshoppinglist/js/shopping-list-item-errors-handler.js'
-        'orob2bshoppinglist/js/app/components/create-button-component': 'bundles/orob2bshoppinglist/js/app/components/create-button-component.js'
         'orob2bshoppinglist/js/app/components/shoppinglist-view-component': 'bundles/orob2bshoppinglist/js/app/components/shoppinglist-view-component.js'

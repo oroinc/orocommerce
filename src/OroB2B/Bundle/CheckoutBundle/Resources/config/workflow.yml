@@ -55,6 +55,12 @@ workflows:
             payment_in_progress:
                 type: bool
                 label: Flag indicates that payment is in progress
+            payment_validate:
+                type: bool
+                label: Payment validation required
+            payment_save_for_later:
+                type: bool
+                label: Save payment data for later use
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -78,6 +84,7 @@ workflows:
                 label: Payment
                 order: 40
                 allowed_transitions:
+                    - payment_error
                     - continue_to_order_review
                     - back_to_billing_address
                     - back_to_shipping_address
@@ -103,6 +110,7 @@ workflows:
                 display_type: page
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
                 form_options:
                     attribute_fields:
                         billing_address:
@@ -133,6 +141,7 @@ workflows:
                 display_type: page
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
                 form_options:
                     attribute_fields:
                         shipping_address:
@@ -159,9 +168,10 @@ workflows:
             continue_to_payment:
                 label: Continue
                 step_to: enter_payment
-                transition_definition: do_nothing
+                transition_definition: continue_to_payment_definition
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
 
             continue_to_order_review:
                 label: Continue
@@ -169,10 +179,17 @@ workflows:
                 transition_definition: continue_to_order_review_definition
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
                     page_component_module: 'orob2bcheckout/js/app/components/payment-transition-button-component'
                 form_options:
+                    init_actions:
+                        - '@assign_value': [$payment_validate, false]
                     attribute_fields:
                         payment_method: ~
+                        payment_validate:
+                            form_type: checkbox
+                        payment_save_for_later:
+                            form_type: checkbox
 
             back_to_billing_address:
                 label: Edit Billing Information
@@ -242,6 +259,9 @@ workflows:
                 is_hidden: true
 
         transition_definitions:
+            __start___definition:
+                post_actions:
+                    - '@assign_value': [$payment_save_for_later, true]
             do_nothing:
                 pre_conditions:
                     '@not_equal': [$payment_in_progress, true]
@@ -255,7 +275,12 @@ workflows:
 
             continue_to_shipping_address_definition:
                 pre_conditions:
-                    '@not_equal': [$payment_in_progress, true]
+                    '@and':
+                        - '@not_equal': [$payment_in_progress, true]
+                        - '@order_line_item_has_count':
+                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
                 conditions:
                     '@not_empty': $checkout.billingAddress
                 post_actions:
@@ -309,7 +334,12 @@ workflows:
                             - '@flush_entity': $checkout.shippingAddress
             continue_to_shipping_method_definition:
                 pre_conditions:
-                    '@not_equal': [$payment_in_progress, true]
+                    '@and':
+                        - '@not_equal': [$payment_in_progress, true]
+                        - '@order_line_item_has_count':
+                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
                 conditions:
                     '@or':
                         - '@and':
@@ -341,9 +371,22 @@ workflows:
                                   - [[keep], [propertyName, [region]]]
                                   - [[keep], [propertyName, [organization]]]
                             - '@flush_entity': $checkout.shippingAddress
+
+            continue_to_payment_definition:
+                pre_conditions:
+                    '@order_line_item_has_count':
+                        message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                        parameters:
+                            entity: $checkout
+
             continue_to_order_review_definition:
                 pre_conditions:
-                    '@not_equal': [$payment_in_progress, true]
+                    '@and':
+                        - '@not_equal': [$payment_in_progress, true]
+                        - '@order_line_item_has_count':
+                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
                 conditions:
                     '@and':
                         - '@not_empty':
@@ -355,11 +398,48 @@ workflows:
                                 is_ajax: true
                                 expected_key: _wid
                                 expected_value: ajax_checkout
+                post_actions:
+                    - '@tree':
+                        conditions:
+                            '@equal': [$payment_validate, true]
+                        actions:
+                            - '@assign_constant_value': [$.result.validateAction, OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
+                            - '@assign_url':
+                                attribute: $.result.successUrl
+                                route: orob2b_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                            - '@assign_url':
+                                attribute: $.result.failureUrl
+                                route: orob2b_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: 'payment_error'
+                            - '@payment_validate':
+                                conditions:
+                                    '@payment_method_supports':
+                                        payment_method: $checkout.paymentMethod
+                                        action: $.result.validateAction
+                                attribute: $.result.responseData
+                                object: $checkout
+                                paymentMethod: $checkout.paymentMethod
+                                transactionOptions:
+                                    saveForLaterUse: $payment_save_for_later
+                                    successUrl: $.result.successUrl
+                                    failureUrl: $.result.failureUrl
 
             verify_payment_definition:
                 pre_conditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
+                        - '@order_line_item_has_count':
+                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
+                        - '@not':
+                            - '@payment_method_supports':
+                                payment_method: $payment_method
+                                action: 'validate'
                         - '@not':
                             - '@check_request':
                                 is_ajax: true
@@ -433,7 +513,7 @@ workflows:
                                     id: $checkout.id
                                     transition: 'finish_checkout'
                             - '@assign_url':
-                                attribute: $.result.errorUrl
+                                attribute: $.result.failureUrl
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
                                     id: $checkout.id
@@ -446,15 +526,14 @@ workflows:
                                 paymentMethod: $payment_method
                                 transactionOptions:
                                     successUrl: $.result.successUrl
-                                    errorUrl: $.result.errorUrl
-                            - '@send_email_template':
-                                parameters:
-                                    from: $checkout.order.owner.email
-                                    to: $checkout.order.accountUser.email
-                                    template: 'order_confirmation_email'
-                                    entity: $checkout.order
+                                    failureUrl: $.result.failureUrl
                             - '@assign_value': [$payment_in_progress, true]
-
+                    - '@send_email_template':
+                        parameters:
+                            from: $checkout.order.owner.email
+                            to: $checkout.order.accountUser.email
+                            template: 'order_confirmation_email'
+                            entity: $checkout.order
 
             finish_checkout_definition:
                 conditions:
@@ -581,7 +660,7 @@ workflows:
                             id: $checkout.order.id
 
             payment_error_definition:
-                pre_conditions:
-                    '@equal': [$payment_in_progress, true]
+#                pre_conditions:
+#                    '@equal': [$payment_in_progress, true]
                 post_actions:
                     - '@assign_value': [$payment_in_progress, false]

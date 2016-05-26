@@ -44,6 +44,7 @@ services:
 
     orob2b_rfp.service.request_to_quote_data_storage:
         class: 'OroB2B\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage'
+        public: true
         arguments:
             - "@orob2b_product.storage.product_data_storage"
 
@@ -57,18 +58,22 @@ services:
 
     orob2b_rfp.factory.duplicator_factory:
         class: 'OroB2B\Bundle\RFPBundle\Factory\DuplicatorFactory'
+        public: true
         calls:
             - [setFilterFactory,  ["@orob2b_rfp.factory.duplicator_filter_factory"]]
             - [setMatcherFactory,  ["@orob2b_rfp.factory.duplicator_matcher_factory"]]
 
     orob2b_rfp.factory.duplicator_filter_factory:
         class: 'OroB2B\Component\Duplicator\Filter\FilterFactory'
+        public: true
 
     orob2b_rfp.factory.duplicator_matcher_factory:
         class: 'OroB2B\Component\Duplicator\Matcher\MatcherFactory'
+        public: true
 
     orob2b_rfp.duplicator_filter_type.set_null:
         class: 'OroB2B\Component\Duplicator\ObjectType'
+        public: true
         arguments:
             - setNull
             - DeepCopy\Filter\SetNullFilter
@@ -77,6 +82,7 @@ services:
 
     orob2b_rfp.duplicator_filter_type.keep:
         class: 'OroB2B\Component\Duplicator\ObjectType'
+        public: true
         arguments:
             - keep
             - DeepCopy\Filter\KeepFilter
@@ -85,6 +91,7 @@ services:
 
     orob2b_rfp.duplicator_filter_type.collection:
         class: 'OroB2B\Component\Duplicator\ObjectType'
+        public: true
         arguments:
             - collection
             - DeepCopy\Filter\Doctrine\DoctrineCollectionFilter
@@ -93,6 +100,7 @@ services:
 
     orob2b_rfp.duplicator_filter_type.empty_collection:
         class: 'OroB2B\Component\Duplicator\ObjectType'
+        public: true
         arguments:
             - emptyCollection
             - DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter
@@ -101,6 +109,7 @@ services:
 
     orob2b_rfp.duplicator_filter_type.replace_value:
         class: 'OroB2B\Component\Duplicator\ObjectType'
+        public: true
         arguments:
             - replaceValue
             - OroB2B\Component\Duplicator\Filter\ReplaceValueFilter
@@ -109,6 +118,7 @@ services:
 
     orob2b_rfp.duplicator_filter_type.shallow_copy:
         class: 'OroB2B\Component\Duplicator\ObjectType'
+        public: true
         arguments:
             - shallowCopy
             - OroB2B\Component\Duplicator\Filter\ShallowCopyFilter
@@ -117,6 +127,7 @@ services:
 
     orob2b_rfp.duplicator_matcher_type.property:
         class: 'OroB2B\Component\Duplicator\ObjectType'
+        public: true
         arguments:
             - property
             - DeepCopy\Matcher\PropertyMatcher
@@ -125,6 +136,7 @@ services:
 
     orob2b_rfp.duplicator_mather_type.property_name:
         class: 'OroB2B\Component\Duplicator\ObjectType'
+        public: true
         arguments:
             - propertyName
             - DeepCopy\Matcher\PropertyNameMatcher
@@ -133,6 +145,7 @@ services:
 
     orob2b_rfp.duplicator_matcher_type.property_type:
         class: 'OroB2B\Component\Duplicator\ObjectType'
+        public: true
         arguments:
             - propertyType
             - DeepCopy\Matcher\PropertyTypeMatcher

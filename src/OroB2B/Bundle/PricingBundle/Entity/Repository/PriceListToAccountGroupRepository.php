@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
@@ -126,5 +127,49 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
             ->setParameter('website', $website)
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param array AccountGroup[]|int[] $holdersIds
+     * @return PriceListToAccountGroup[]
+     */
+    public function getRelationsByHolders(array $holdersIds)
+    {
+        $qb = $this->createQueryBuilder('relation');
+        $qb->addSelect('partial website.{id, name}')
+            ->addSelect('partial priceList.{id, name}')
+            ->leftJoin('relation.website', 'website')
+            ->leftJoin('relation.priceList', 'priceList')
+            ->where($qb->expr()->in('relation.accountGroup', ':groups'))
+            ->orderBy('relation.accountGroup')
+            ->addOrderBy('relation.website')
+            ->addOrderBy('relation.priority')
+            ->setParameter('groups', $holdersIds);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param BasePriceList $priceList
+     * @param string $parameterName
+     */
+    public function restrictByPriceList(
+        QueryBuilder $queryBuilder,
+        BasePriceList $priceList,
+        $parameterName
+    ) {
+        $parentAlias = $queryBuilder->getRootAliases()[0];
+
+        $subQueryBuilder = $this->createQueryBuilder('relation');
+        $subQueryBuilder->where(
+            $subQueryBuilder->expr()->andX(
+                $subQueryBuilder->expr()->eq('relation.accountGroup', $parentAlias),
+                $subQueryBuilder->expr()->eq('relation.priceList', ':' . $parameterName)
+            )
+        );
+
+        $queryBuilder->andWhere($subQueryBuilder->expr()->exists($subQueryBuilder->getQuery()->getDQL()));
+        $queryBuilder->setParameter($parameterName, $priceList);
     }
 }

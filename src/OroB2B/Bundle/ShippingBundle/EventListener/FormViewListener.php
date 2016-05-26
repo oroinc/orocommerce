@@ -9,6 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 
@@ -75,7 +76,7 @@ class FormViewListener
             'OroB2BShippingBundle:Warehouse:shipping_origin_view.html.twig',
             ['entity' => $shippingOrigin]
         );
-        $this->addWarehouseBlock($event->getScrollData(), $template);
+        $this->addBlock($event->getScrollData(), $template, 'orob2b.shipping.warehouse.section.shipping_origin');
     }
 
     /**
@@ -87,17 +88,70 @@ class FormViewListener
             'OroB2BShippingBundle:Warehouse:shipping_origin_update.html.twig',
             ['form' => $event->getFormView()]
         );
-        $this->addWarehouseBlock($event->getScrollData(), $template);
+        $this->addBlock($event->getScrollData(), $template, 'orob2b.shipping.warehouse.section.shipping_origin');
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     */
+    public function onProductView(BeforeListRenderEvent $event)
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            return;
+        }
+
+        $productId = (int)$request->get('id');
+        if (!$productId) {
+            return;
+        }
+
+        /** @var Product $product */
+        $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
+        if (!$product) {
+            return;
+        }
+
+        $shippingOptions = $this->doctrineHelper
+            ->getEntityRepositoryForClass('OroB2BShippingBundle:ProductShippingOptions')
+            ->findBy(['product' => $productId]);
+
+        if (0 === count($shippingOptions)) {
+            return;
+        }
+
+        $template = $event->getEnvironment()->render(
+            'OroB2BShippingBundle:Product:shipping_options_view.html.twig',
+            [
+                'entity' => $product,
+                'shippingOptions' => $shippingOptions
+            ]
+        );
+        $this->addBlock($event->getScrollData(), $template, 'orob2b.shipping.product.section.shipping_options');
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     */
+    public function onProductEdit(BeforeListRenderEvent $event)
+    {
+        $template = $event->getEnvironment()->render(
+            'OroB2BShippingBundle:Product:shipping_options_update.html.twig',
+            ['form' => $event->getFormView()]
+        );
+        $this->addBlock($event->getScrollData(), $template, 'orob2b.shipping.product.section.shipping_options');
     }
 
     /**
      * @param ScrollData $scrollData
-     * @param string     $html
+     * @param string $html
+     * @param string $label
+     * @param int $priority
      */
-    protected function addWarehouseBlock(ScrollData $scrollData, $html)
+    protected function addBlock(ScrollData $scrollData, $html, $label, $priority = 100)
     {
-        $blockLabel = $this->translator->trans('orob2b.shipping.warehouse.section.shipping_origin');
-        $blockId    = $scrollData->addBlock($blockLabel, 100);
+        $blockLabel = $this->translator->trans($label);
+        $blockId    = $scrollData->addBlock($blockLabel, $priority);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);
     }

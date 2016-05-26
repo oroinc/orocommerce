@@ -219,7 +219,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
                     'frontend-products-grid[_filter][minimum_price][type]' => NumberFilterType::TYPE_GREATER_EQUAL,
                     'frontend-products-grid[_filter][minimum_price][unit]' => 'liter'
                 ],
-                'expected' => ['product.2']
+                'expected' => ['product.1', 'product.2']
             ],
             'less 10 USD per liter' => [
                 'filter' => [

@@ -31,33 +31,31 @@ class CallbackControllerTest extends WebTestCase
 
     public function testCallbacks()
     {
+        $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+
+        /** @var PaymentTransaction $paymentTransaction */
+        $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_AUTHORIZE_TRANSACTION);
+
         foreach (['POST', 'GET'] as $method) {
             foreach (['orob2b_payment_callback_return', 'orob2b_payment_callback_error'] as $route) {
-                $this->assertCallback($method, $route);
+                $this->assertCallback($paymentTransaction, $method, $route);
             }
         }
     }
 
     /**
+     * @param PaymentTransaction $paymentTransaction
      * @param string $method
      * @param string $route
      */
-    protected function assertCallback($method, $route)
+    protected function assertCallback(PaymentTransaction $paymentTransaction, $method, $route)
     {
         $parameters = [
-            'PNREF' => 'Transaction Reference',
+            'PNREF' => 'Transaction Reference ' . $method . $route,
             'RESULT' => '0',
             'SECURETOKEN' => 'SECURETOKEN',
             'SECURETOKENID' => 'SECURETOKENID',
         ];
-
-        $this->loadFixtures(
-            ['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData'],
-            true
-        );
-
-        /** @var PaymentTransaction $paymentTransaction */
-        $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_TRANSACTION);
 
         $expectedData = $parameters + $paymentTransaction->getRequest();
         $this->client->request(
@@ -72,21 +70,13 @@ class CallbackControllerTest extends WebTestCase
             $expectedData
         );
 
-        $paymentTransaction->setEntityClass('stdClass');
+        $objectManager = $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BPaymentBundle:PaymentTransaction');
 
-        $manager = $this->getContainer()->get('doctrine')->getManager();
-        $manager->flush();
-        $manager->clear();
-
-        $paymentTransaction = $manager->find(
-            'OroB2BPaymentBundle:PaymentTransaction',
-            $paymentTransaction->getId()
-        );
-
-        $this->assertNotEquals('stdClass', $paymentTransaction->getEntityClass());
+        $paymentTransaction = $objectManager->find($paymentTransaction->getId());
 
         $this->assertEquals(true, $paymentTransaction->isActive());
-        $this->assertEquals('Transaction Reference', $paymentTransaction->getReference());
+        $this->assertEquals('Transaction Reference ' . $method . $route, $paymentTransaction->getReference());
         $this->assertEquals($expectedData, $paymentTransaction->getResponse());
     }
 }
