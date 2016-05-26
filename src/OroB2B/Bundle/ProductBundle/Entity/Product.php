@@ -249,6 +249,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * @var integer
      *
      * @ORM\Column(name="primary_product_unit_id",type="integer")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $primaryUnitPrecisionId;
 
@@ -262,10 +269,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param int $primaryUnitPrecisionId
+     * @return $this
      */
     public function setPrimaryUnitPrecisionId($primaryUnitPrecisionId)
     {
         $this->primaryUnitPrecisionId = $primaryUnitPrecisionId;
+        
+        return $this;
     }
 
     /**
@@ -394,7 +404,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         $this->descriptions = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
         $this->variantLinks = new ArrayCollection();
-        //$this->primaryUnitPrecision = $this->getPrimaryUnitPrecision();
     }
 
     /**
@@ -637,7 +646,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         $result = null;
 
         foreach ($this->unitPrecisions as $unitPrecision) {
-            if ($unitPrecision->getUnit()->getCode() == $unitCode) {
+            if ($unitPrecision->getUnit() && $unitPrecision->getUnit()->getCode() == $unitCode) {
                 $result = $unitPrecision;
                 break;
             }
@@ -928,22 +937,25 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     /**
      * Get primaryUnitPrecision
      *
-     * @return \OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision
+     * @return \OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision|null
      */
     public function getPrimaryUnitPrecision()
     {
         if ($this->primaryUnitPrecision && $this->primaryUnitPrecision->getId()) {
-            return $this->primaryUnitPrecision;
+            $result = $this->primaryUnitPrecision;
         } elseif ($this->getPrimaryUnitPrecisionId()) {
             foreach ($this->getUnitPrecisions() as $precision) {
                 if ($precision->getId() == $this->getPrimaryUnitPrecisionId()) {
                     $this->primaryUnitPrecision = $precision;
-                    return $this->primaryUnitPrecision;
+                    $result = $this->primaryUnitPrecision;
+                    return $result;
                 }
             }
+            $result = null;
         } else {
-            return null;
+            $result = null;
         }
+        return $result;
     }
 
     /**

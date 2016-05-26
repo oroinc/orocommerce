@@ -28,6 +28,19 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter
     protected function getBackendHeader()
     {
         $backendHeader = parent::getBackendHeader();
+        foreach ($backendHeader as &$v) {
+            $arr = explode(":", $v);
+            if ($arr[0] == "unitPrecisions" && $arr[1] == "0") {
+                $arr[0] = "primaryUnitPrecision";
+                unset($arr[1]);
+                $v = implode(":", $arr);
+            } elseif ($arr[0] == "unitPrecisions") {
+                $arr[0] = "additionalUnitPrecisions";
+                $arr[1] = $arr[1] - 1;
+                $v = implode(":", $arr);
+            }
+        }
+        unset($v);
 
         if ($this->eventDispatcher) {
             $event = new ProductDataConverterEvent($backendHeader);

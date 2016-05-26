@@ -1,17 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vdenchyk
- * Date: 20.05.16
- * Time: 20:43
- */
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -47,9 +40,10 @@ class ProductPrimaryUnitPrecisionListener
     }
 
     /**
-     * Set workflow item entity ID
+     * Set PrimaryUnitPrecision entity ID
      *
      * @param LifecycleEventArgs $args
+     * @throws \Exception
      */
     protected function updateProductUnitPrecisionRelation(LifecycleEventArgs $args)
     {
@@ -63,8 +57,12 @@ class ProductPrimaryUnitPrecisionListener
             $primaryUnitPrecisionId = $entity->getId();
             $actualPrimaryCode = $entity->getUnit()->getCode();
             $expectedPrimaryCode = $this->session->get('primaryUnitPrecisionCode');
+            $fixtureExpectedPrimaryId = null;
+            if ($product->getPrimaryUnitPrecision()) {
+                $fixtureExpectedPrimaryId = $product->getPrimaryUnitPrecision()->getId();
+            }
 
-            if ($actualPrimaryCode == $expectedPrimaryCode) {
+            if ($actualPrimaryCode == $expectedPrimaryCode || $primaryUnitPrecisionId == $fixtureExpectedPrimaryId) {
                 $unitOfWork = $args->getEntityManager()->getUnitOfWork();
                 $unitOfWork->scheduleExtraUpdate($product, [
                     'primaryUnitPrecisionId' => [
@@ -76,5 +74,4 @@ class ProductPrimaryUnitPrecisionListener
             }
         }
     }
-
 }

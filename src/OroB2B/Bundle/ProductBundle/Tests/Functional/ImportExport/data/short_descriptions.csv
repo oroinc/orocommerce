@@ -1,9 +1,9 @@
-sku,status,inventory_status.id,unitPrecisions.1.unit.code,unitPrecisions.1.precision,names.default.fallback,names.default.value,shortDescriptions.default.fallback,shortDescriptions.default.value,shortDescriptions.en.fallback,shortDescriptions.en.value
-SKU001,enabled,in_stock,kg,3,,Name,,,,
-SKU002,enabled,in_stock,kg,3,,Name,,Short Description,,En Short Description
-SKU003,enabled,in_stock,kg,3,,Name,not_valid,,not_valid,
-SKU004,enabled,in_stock,kg,3,,Name,not_valid,Short Description,not_valid,En Short Description
-SKU005,enabled,in_stock,kg,3,,Name,system,,system,
-SKU006,enabled,in_stock,kg,3,,Name,system,Short Description,system,En Short Description
-SKU007,enabled,in_stock,kg,3,,Name,parent_locale,,parent_locale,
-SKU008,enabled,in_stock,kg,3,,Name,parent_locale,Short Description,parent_locale,En Short Description
+sku,status,inventory_status.id,primaryUnitPrecision:unit:code,primaryUnitPrecision:precision,primaryUnitPrecision:conversionRate,primaryUnitPrecision:sell,names.default.fallback,names.default.value,shortDescriptions.default.fallback,shortDescriptions.default.value,shortDescriptions.en.fallback,shortDescriptions.en.value
+SKU001,enabled,in_stock,kg,3,1,1,,Name,,,,
+SKU002,enabled,in_stock,kg,3,1,1,,Name,,Short Description,,En Short Description
+SKU003,enabled,in_stock,kg,3,1,1,,Name,not_valid,,not_valid,
+SKU004,enabled,in_stock,kg,3,1,1,,Name,not_valid,Short Description,not_valid,En Short Description
+SKU005,enabled,in_stock,kg,3,1,1,,Name,system,,system,
+SKU006,enabled,in_stock,kg,3,1,1,,Name,system,Short Description,system,En Short Description
+SKU007,enabled,in_stock,kg,3,1,1,,Name,parent_locale,,parent_locale,
+SKU008,enabled,in_stock,kg,3,1,1,,Name,parent_locale,Short Description,parent_locale,En Short Description

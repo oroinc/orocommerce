@@ -281,7 +281,7 @@ define(function (require) {
          */
         toggleTableVisibility: function(){
             var selects = this.options._sourceElement.find(this.options.unitSelect);
-            var table = this.options._sourceElement.find('table')
+            var table = this.options._sourceElement.find('table');
 
             if (selects.length < 1) {
                 table.hide();

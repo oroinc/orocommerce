@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
@@ -80,7 +81,9 @@ class ProductTypeTest extends FormIntegrationTestCase
             ->method('getDefaultProductUnitPrecision')
             ->will($this->returnValue($this->getDefaultProductUnitPrecision()));
 
-        $this->type = new ProductType($this->defaultProductUnitProvider, $this->roundingService);
+        $session = new Session(new MockArraySessionStorage());
+
+        $this->type = new ProductType($this->defaultProductUnitProvider, $session, $this->roundingService);
         $this->type->setDataClass(self::DATA_CLASS);
 
         parent::setUp();
@@ -171,13 +174,13 @@ class ProductTypeTest extends FormIntegrationTestCase
         }
 
         $form = $this->factory->create($this->type, $defaultData);
-        $init_data = $form->getData();
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
 
         /** @var Product $data */
         $data = $form->getData();
+        $data->getPrimaryUnitPrecision();
 
         $this->assertEquals($expectedData, $data);
     }
@@ -192,7 +195,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
-                    //'primaryProductUnit' => ['unit' => 'kg', 'precision' => 3],
+                    'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
@@ -201,15 +204,19 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'expectedData'  => $this->createExpectedProductEntity(),
                 'rounding' => false
             ],
-            /*'product with unitPrecisions' => [
+            'product with additionalUnitPrecisions' => [
                 'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
+                    'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
                     'additionalUnitPrecisions' => [
                         [
-                            'unit' => 'each',
-                            'precision' => 0
-                        ]
+                            'unit' => 'kg',
+                            'precision' => 3,
+                            'conversionRate' => 5,
+                            'sell' => true,
+
+                        ],
                     ],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
@@ -218,12 +225,12 @@ class ProductTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
                 'rounding' => false
-            ],/*
+            ],
             'product with names and descriptions' => [
                 'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
-                    'unitPrecisions' => [],
+                    'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
@@ -248,14 +255,14 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'defaultData'   => $this->createDefaultProductEntity(false),
                 'submittedData' => [
                     'sku' => 'test sku',
-                    'unitPrecisions' => [],
+                    'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, false, false),
                 'rounding' => false
-            ],*/
+            ],
         ];
     }
 
@@ -272,27 +279,29 @@ class ProductTypeTest extends FormIntegrationTestCase
     ) {
         $expectedProduct = new StubProduct();
 
-        //$expectedProduct->setPrimaryUnitPrecision(new ProductUnitPrecision());
-        $expectedProduct->setPrimaryUnitPrecision($this->getDefaultProductUnitPrecision());
-
         $expectedProduct->setHasVariants($hasVariants);
 
         if ($hasVariants) {
             $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
         }
 
-        $productUnit = new ProductUnit();
-        $productUnit->setCode('each');
-
         if ($withProductUnitPrecision) {
+
+            $productUnit = new ProductUnit();
+            $productUnit->setCode('kg');
+
             $productUnitPrecision = new ProductUnitPrecision();
             $productUnitPrecision
                 ->setProduct($expectedProduct)
                 ->setUnit($productUnit)
-                ->setPrecision(0);
+                ->setPrecision(3)
+                ->setConversionRate(5)
+                ->setSell(true);
 
             $expectedProduct->addAdditionalUnitPrecision($productUnitPrecision);
         }
+
+        $expectedProduct->setPrimaryUnitPrecision($this->getDefaultProductUnitPrecision());
 
         if ($withNamesAndDescriptions) {
             $expectedProduct
@@ -345,8 +354,6 @@ class ProductTypeTest extends FormIntegrationTestCase
         $defaultProduct = new StubProduct();
         $defaultProduct->setHasVariants($hasVariants);
 
-        //$defaultProduct->setPrimaryUnitPrecision($this->getDefaultProductUnitPrecision());
-
         if ($hasVariants) {
             $defaultProduct->setVariantFields(array_keys($this->exampleCustomFields));
         }
@@ -360,10 +367,9 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected function getDefaultProductUnitPrecision()
     {
         $productUnit = new ProductUnit();
-        $productUnit->setCode('kg');
-        $productUnit->setDefaultPrecision('3');
+        $productUnit->setCode('each');
         $productUnitPrecision = new ProductUnitPrecision();
-        $productUnitPrecision->setUnit($productUnit)->setPrecision('3');
+        $productUnitPrecision->setUnit($productUnit)->setPrecision('0');
 
         return $productUnitPrecision;
     }

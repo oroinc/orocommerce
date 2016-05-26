@@ -89,7 +89,7 @@ define(function (require) {
                 if (option.value != selected.val()) {
                     option.remove();
                 }
-            })
+            });
             _.each(precisions, function(text,val){
                 select.append($('<option></option>').val(val).text(text));
             }); 
