@@ -10,9 +10,10 @@ use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserCurrency;
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 
 class UserCurrencyProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -84,7 +85,10 @@ class UserCurrencyProviderTest extends \PHPUnit_Framework_TestCase
     {
         /** @var Website $website **/
         $website = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
-        $currency = 'EUR';
+
+        $currency = new AccountUserCurrency();
+        $currency->setCurrency('EUR');
+
         $user = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
@@ -107,7 +111,7 @@ class UserCurrencyProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->willReturn($token);
 
-        $this->assertEquals($currency, $this->userCurrencyProvider->getUserCurrency($website));
+        $this->assertEquals($currency->getCurrency(), $this->userCurrencyProvider->getUserCurrency($website));
     }
 
     public function testGetUserCurrencyLoggedUserUnsupportedCurrency()
@@ -129,10 +133,13 @@ class UserCurrencyProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->willReturn($token);
 
+        $currentCurrency = new AccountUserCurrency();
+        $currentCurrency->setCurrency('UAH');
+
         $user->expects($this->once())
             ->method('getCurrencyByWebsite')
             ->with($website)
-            ->willReturn('UAH');
+            ->willReturn($currentCurrency);
         $this->configManager->expects($this->any())
             ->method('get')
             ->willReturnMap(
