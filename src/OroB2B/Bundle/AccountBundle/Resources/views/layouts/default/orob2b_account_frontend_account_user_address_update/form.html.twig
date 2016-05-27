@@ -117,10 +117,11 @@
         {% set label = id|humanize %}
     {%- endif -%}
 
-    <div class="oro-checkbox">
-        <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %}>
-        <label for="{{ id }}">{{ label|block_text(translation_domain) }} </label>
-    </div>
+    <label class="oro-checkbox" for="{{ id }}">
+        <input class="oro-checkbox__input" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %}>
+        <span class="oro-checkbox__icon"></span>
+        <span class="oro-checkbox__text">{{ label|block_text(translation_domain) }} </span>
+    </label>
 
     {{- form_errors(form) -}}
 {%- endblock checkbox_widget -%}
