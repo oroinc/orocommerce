@@ -65,7 +65,6 @@ class ProductUnitRepositoryTest extends WebTestCase
             return $product->getId();
         }, $products);
         $expectedData = array_combine($productIds, $expectedData);
-        $actualData = $this->getRepository()->getProductsUnits($products);
         $this->assertEquals($expectedData, $this->getRepository()->getProductsUnits($products));
     }
 

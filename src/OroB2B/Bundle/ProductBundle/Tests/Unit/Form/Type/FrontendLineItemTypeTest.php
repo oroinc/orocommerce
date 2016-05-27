@@ -48,7 +48,10 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $productUnitSelection = new ProductUnitSelectionTypeStub($this->prepareProductUnitSelectionChoices(), FrontendProductUnitSelectionType::NAME);
+        $productUnitSelection = new ProductUnitSelectionTypeStub(
+            $this->prepareProductUnitSelectionChoices(),
+            FrontendProductUnitSelectionType::NAME
+        );
 
         return [
             new PreloadedExtension(

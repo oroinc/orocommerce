@@ -1,7 +1,10 @@
 <?php
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
+
 use Symfony\Bridge\Doctrine\RegistryInterface;
+
 use Oro\Component\Testing\Unit\EntityTrait;
+
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
@@ -9,32 +12,40 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use OroB2B\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+
 class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
+    
     /**
      * @var FrontendProductDatagridListener
      */
     protected $listener;
+    
     /**
      * @var DataGridThemeHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $themeHelper;
+    
     /**
      * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $doctrine;
+    
     /**
      * @var AttachmentManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $attachmentManager;
+    
     /**
      * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $unitFormatter;
+    
     public function setUp()
     {
         $this->themeHelper = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper')
@@ -52,6 +63,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $this->unitFormatter
         );
     }
+    
     /**
      * @dataProvider onPreBuildDataProvider
      *
@@ -70,6 +82,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onPreBuild($event);
         $this->assertEquals($expectedConfig, $config->toArray());
     }
+    
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
@@ -161,6 +174,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
+    
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @dataProvider onResultAfterDataProvider
@@ -184,14 +198,18 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $ids[] = $record['id'];
             $records[] = new ResultRecord($record);
         }
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /**
+         * @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event
+         */
         $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\OrmResultAfter')
             ->disableOriginalConstructor()
             ->getMock();
         $event->expects($this->once())
             ->method('getRecords')
             ->willReturn($records);
-        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /**
+         * @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid
+         */
         $datagrid = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Datagrid')
             ->disableOriginalConstructor()->getMock();
         $gridName = 'grid-name';

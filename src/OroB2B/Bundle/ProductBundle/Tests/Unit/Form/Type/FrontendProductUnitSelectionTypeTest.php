@@ -30,7 +30,9 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTy
  */
 class FrontendProductUnitSelectionTypeTest extends FormIntegrationTestCase
 {
-    /** @var FrontendProductUnitSelectionType */
+    /**
+     * @var FrontendProductUnitSelectionType
+     */
     protected $formType;
 
     /**
@@ -92,7 +94,9 @@ class FrontendProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        /**
+         * @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver
+         */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects(static::exactly(2))
             ->method('setDefaults')
@@ -278,7 +282,10 @@ class FrontendProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
         if (isset($view->vars['choices'])) {
             $choices = [];
-            /* @var $choice ChoiceView */
+            
+            /**
+             * @var ChoiceView $choice
+             */
             foreach ($view->vars['choices'] as $choice) {
                 $choices[$choice->value] = $choice->label;
             }
@@ -453,9 +460,10 @@ class FrontendProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $productUnitCode,
         ProductUnit $productUnit = null,
         ProductHolderInterface $productHolder = null
-    )
-    {
-        /* @var $productUmitHolder \PHPUnit_Framework_MockObject_MockObject|ProductUnitHolderInterface */
+    ) {
+        /**
+         * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitHolderInterface $productUnitHolder
+         */
         $productUnitHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface');
         $productUnitHolder
             ->expects(static::any())
@@ -484,7 +492,9 @@ class FrontendProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     protected function createProductHolder($productSku, Product $product = null)
     {
-        /* @var $productHolder \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface */
+        /**
+         * @var \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface $productHolder
+         */
         $productHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
 
         $productHolder
@@ -514,15 +524,18 @@ class FrontendProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $productUnit,
         array $options = [],
         $expectedFieldOverride = false
-    )
-    {
+    ) {
         $form = $this->factory->create($this->formType, $productUnitHolder, $options);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $parentForm */
+        /**
+         * @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $parentForm
+         */
         $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $parentForm->expects($this->any())->method('has')->willReturn($expectedFieldOverride);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $productForm */
+        /**
+         * @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $productForm
+         */
         $productForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->setParent($parentForm);
 
@@ -699,4 +712,3 @@ class FrontendProductUnitSelectionTypeTest extends FormIntegrationTestCase
         return[['product'=> $product]];
     }
 }
-

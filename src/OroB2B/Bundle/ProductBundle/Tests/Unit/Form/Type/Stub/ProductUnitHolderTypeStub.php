@@ -6,8 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-
 class ProductUnitHolderTypeStub extends AbstractType
 {
     const NAME = 'orob2b_stub_product_unit_holder';

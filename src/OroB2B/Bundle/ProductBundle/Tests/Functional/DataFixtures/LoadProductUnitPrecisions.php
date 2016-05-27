@@ -34,6 +34,8 @@ class LoadProductUnitPrecisions extends AbstractFixture implements DependentFixt
      * @param string $productReference
      * @param string $unitReference
      * @param int $precision
+     * @param float $conversionRate
+     * @param boolean $sell
      * @return ProductUnitPrecision
      */
     protected function createProductUnitPrecision(
@@ -41,7 +43,7 @@ class LoadProductUnitPrecisions extends AbstractFixture implements DependentFixt
         $productReference,
         $unitReference,
         $precision = 0,
-        $conversionRate = 1,
+        $conversionRate = 1.0,
         $sell = false
     ) {
         /** @var Product $productReference */

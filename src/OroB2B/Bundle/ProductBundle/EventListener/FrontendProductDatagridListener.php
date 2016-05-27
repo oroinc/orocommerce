@@ -1,7 +1,10 @@
 <?php
 namespace OroB2B\Bundle\ProductBundle\EventListener;
+
 use Symfony\Bridge\Doctrine\RegistryInterface;
+
 use Doctrine\ORM\Query\Expr;
+
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
@@ -13,26 +16,32 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+
 class FrontendProductDatagridListener
 {
     const COLUMN_PRODUCT_UNITS = 'product_units';
     const PRODUCT_IMAGE_FILTER = 'product_large';
+    
     /**
      * @var DataGridThemeHelper
      */
     protected $themeHelper;
+    
     /**
      * @var RegistryInterface
      */
     protected $registry;
+    
     /**
      * @var AttachmentManager
      */
     protected $attachmentManager;
+    
     /**
      * @var ProductUnitLabelFormatter
      */
     protected $unitFormatter;
+    
     /**
      * @param DataGridThemeHelper $themeHelper
      * @param RegistryInterface $registry
@@ -50,6 +59,7 @@ class FrontendProductDatagridListener
         $this->attachmentManager = $attachmentManager;
         $this->unitFormatter = $unitFormatter;
     }
+    
     /**
      * @param PreBuild $event
      */
@@ -65,6 +75,7 @@ class FrontendProductDatagridListener
         $gridName = $config->getName();
         $this->updateConfigByView($config, $this->themeHelper->getTheme($gridName));
     }
+    
     /**
      * @param DatagridConfiguration $config
      * @param string $viewName
@@ -84,6 +95,7 @@ class FrontendProductDatagridListener
                 break;
         }
     }
+    
     /**
      * @param DatagridConfiguration $config
      * @return array
@@ -108,6 +120,7 @@ class FrontendProductDatagridListener
         ];
         $this->applyUpdatesToConfig($config, $updates);
     }
+    
     /**
      * @param DatagridConfiguration $config
      */
@@ -133,6 +146,7 @@ class FrontendProductDatagridListener
         ];
         $this->applyUpdatesToConfig($config, $updates);
     }
+    
     /**
      * @param DatagridConfiguration $config
      * @param array $updates
@@ -143,6 +157,7 @@ class FrontendProductDatagridListener
             $config->offsetAddToArrayByPath($path, $update);
         }
     }
+    
     /**
      * @param OrmResultAfter $event
      */
@@ -159,6 +174,7 @@ class FrontendProductDatagridListener
         $this->addProductUnits($productIds, $records);
         $this->addProductImages($event, $productIds, $records);
     }
+    
     /**
      * @param OrmResultAfter $event
      * @param array $productIds
@@ -189,6 +205,7 @@ class FrontendProductDatagridListener
             }
         }
     }
+    
     /**
      * @param array $productIds
      * @param ResultRecord[] $records
@@ -207,6 +224,7 @@ class FrontendProductDatagridListener
             $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);
         }
     }
+    
     /**
      * @return ProductRepository
      */
@@ -216,6 +234,7 @@ class FrontendProductDatagridListener
             ->getManagerForClass('OroB2BProductBundle:Product')
             ->getRepository('OroB2BProductBundle:Product');
     }
+    
     /**
      * @return ProductUnitRepository
      */
