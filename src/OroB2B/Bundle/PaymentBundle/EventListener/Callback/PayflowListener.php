@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\PaymentBundle\EventListener\Callback;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
@@ -28,8 +27,6 @@ class PayflowListener
      */
     public function onError(AbstractCallbackEvent $event)
     {
-        $this->onCallback($event);
-
         $eventData = $event->getData();
         $response = new Response($eventData);
 
@@ -41,39 +38,60 @@ class PayflowListener
     /**
      * @param AbstractCallbackEvent $event
      */
-    public function onCallback(AbstractCallbackEvent $event)
+    public function onRetrieve(AbstractCallbackEvent $event)
+    {
+        $eventData = $event->getData();
+
+        $criteria = $this->getCriteria($eventData);
+
+        $event->setCriteria($criteria);
+    }
+
+    /**
+     * @param array $eventData
+     * @return array
+     */
+    protected function getCriteria(array $eventData)
+    {
+        $criteria = [];
+
+        if (array_key_exists(Option\Optional::USER1, $eventData)) {
+            $criteria['accessIdentifier'] = $eventData[Option\Optional::USER1];
+        }
+
+        if (array_key_exists(Option\Optional::USER2, $eventData)) {
+            $criteria['accessToken'] = $eventData[Option\Optional::USER2];
+        }
+
+        return [];
+    }
+
+    /**
+     * @param AbstractCallbackEvent $event
+     */
+    public function onNotify(AbstractCallbackEvent $event)
     {
         $eventData = $event->getData();
         $response = new Response($eventData);
 
         $paymentTransaction = $event->getPaymentTransaction();
-        $paymentTransactionData = $paymentTransaction->getResponse();
-
-        $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
-        $keys = array_flip($keys);
-        $dataToken = array_intersect_key($eventData, $keys);
-        $transactionDataToken = array_intersect_key($paymentTransactionData, $keys);
-
-        if (!$dataToken || !$transactionDataToken) {
+        if (!$paymentTransaction) {
             return;
         }
 
-        if ($dataToken != $transactionDataToken) {
+        $paymentTransactionData = [
+            'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+            'accessToken' => $paymentTransaction->getAccessToken(),
+        ];
+
+        if ($paymentTransactionData != $this->getCriteria($eventData)) {
             return;
         }
 
         $paymentTransaction
             ->setReference($response->getReference())
-            ->setResponse(array_replace($paymentTransactionData, $eventData));
-
-        if (in_array(
-            $paymentTransaction->getAction(),
-            [PaymentMethodInterface::AUTHORIZE, PaymentMethodInterface::VALIDATE],
-            true
-        )) {
-            $paymentTransaction
-                ->setActive($response->isSuccessful())
-                ->setSuccessful($response->isSuccessful());
-        }
+            ->setResponse(array_replace($paymentTransaction->getResponse(), $eventData))
+            ->setActive($response->isSuccessful())
+            ->setSuccessful($response->isSuccessful());
     }
 }

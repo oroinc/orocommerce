@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Method;
 
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -264,25 +265,26 @@ class PayflowGateway implements PaymentMethodInterface
     protected function getSecureTokenOptions(PaymentTransaction $paymentTransaction)
     {
         return [
-            Option\SecureTokenIdentifier::SECURETOKENID => Option\SecureTokenIdentifier::generate(),
+            Option\SecureTokenIdentifier::SECURETOKENID => UUIDGenerator::v4(),
             Option\CreateSecureToken::CREATESECURETOKEN => true,
             Option\TransparentRedirect::SILENTTRAN => true,
             Option\ReturnUrl::RETURNURL => $this->router->generate(
                 'orob2b_payment_callback_return',
-                [
-                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                    'accessToken' => $paymentTransaction->getAccessToken(),
-                ],
+                ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
                 true
             ),
             Option\ErrorUrl::ERRORURL => $this->router->generate(
                 'orob2b_payment_callback_error',
-                [
-                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                    'accessToken' => $paymentTransaction->getAccessToken(),
-                ],
+                ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
                 true
             ),
+            Option\SilentPost::SILENTPOSTURL => $this->router->generate(
+                'orob2b_payment_callback_notify',
+                ['paymentMethodName' => $paymentTransaction->getPaymentMethod()],
+                true
+            ),
+            Option\Optional::USER1 => $paymentTransaction->getAccessIdentifier(),
+            Option\Optional::USER2 => $paymentTransaction->getAccessToken(),
         ];
     }
 

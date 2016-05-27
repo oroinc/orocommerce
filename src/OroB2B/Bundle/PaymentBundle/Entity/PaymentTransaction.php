@@ -15,6 +15,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 /**
@@ -168,20 +169,12 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      */
     protected $organization;
 
-    /**
-     * @return string
-     */
-    public static function generate()
-    {
-        return md5(microtime() . uniqid('PaymentTransaction', true));
-    }
-
     public function __construct()
     {
         $this->relatedPaymentTransactions = new ArrayCollection();
 
-        $this->accessIdentifier = self::generate();
-        $this->accessToken = self::generate();
+        $this->accessIdentifier = UUIDGenerator::v4();
+        $this->accessToken = UUIDGenerator::v4();
     }
 
     /**
