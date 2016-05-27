@@ -387,6 +387,8 @@ workflows:
                             message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
+                        - '@has_applicable_payment_methods':
+                            entity: $checkout
                 conditions:
                     '@and':
                         - '@not_empty':

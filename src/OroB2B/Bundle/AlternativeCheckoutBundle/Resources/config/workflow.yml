@@ -651,7 +651,9 @@ workflows:
             continue_to_order_review_definition:
                 pre_conditions:
                     '@and':
-                        - '@payment_method_enabled': 'payment_term'
+                        - '@payment_method_applicable':
+                            payment_method: 'payment_term'
+                            entity: $checkout
                         - '@order_line_item_has_count':
                             message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
