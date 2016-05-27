@@ -33,6 +33,8 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
      */
     public function testNormalize(array $actualData, array $expectedData = [])
     {
+        $actualData = $this->convertArrayToEntities($actualData);
+
         /** @var LocalizedFallbackValueCollectionNormalizer $normalizer */
         $normalizer = new LocalizedFallbackValueCollectionNormalizer(
             $this->getContainer()->get('doctrine'),
@@ -54,45 +56,80 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
         return [
             'without locale' => [
                 [
-                    $this->getEntity(
-                        'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                        ['fallback' => 'system', 'string' => 'value', 'locale' => null]
-                    ),
+                    [
+                        'testEntity' => 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
+                        'testProperties' => [
+                            'fallback' => 'system',
+                            'string' => 'value',
+                            'locale' => null
+                        ]
+                    ],
                 ],
                 ['default' => ['fallback' => 'system', 'string' => 'value', 'text' => null]],
             ],
             'locale without code' => [
                 [
-                    $this->getEntity(
-                        'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                        ['fallback' => 'system', 'text' => 'value', 'locale' => new Locale()]
-                    ),
+                    [
+                        'testEntity' => 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
+                        'testProperties' => [
+                            'fallback' => 'system',
+                            'text' => 'value',
+                            'locale' => ['testEntity' => 'OroB2B\Bundle\WebsiteBundle\Entity\Locale'],
+                        ]
+                    ],
                 ],
                 ['default' => ['fallback' => 'system', 'string' => null, 'text' => 'value']],
             ],
             'locale with code' => [
                 [
-                    $this->getEntity(
-                        'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                        ['fallback' => 'system', 'text' => 'value', 'locale' => (new Locale())->setCode('en')]
-                    ),
+                    [
+                        'testEntity' => 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
+                        'testProperties' => [
+                            'fallback' => 'system',
+                            'text' => 'value',
+                            'locale' => [
+                                'testEntity' => 'OroB2B\Bundle\WebsiteBundle\Entity\Locale',
+                                'testProperties' => ['code' => 'en']
+                            ],
+                        ]
+                    ],
                 ],
                 ['en' => ['fallback' => 'system', 'string' => null, 'text' => 'value']],
             ],
             'mixed' => [
                 [
-                    $this->getEntity(
-                        'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                        ['fallback' => 'system', 'text' => 'value', 'locale' => (new Locale())->setCode('en')]
-                    ),
-                    $this->getEntity(
-                        'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                        ['fallback' => 'system', 'string' => 'value', 'locale' => (new Locale())->setCode('en_CA')]
-                    ),
-                    $this->getEntity(
-                        'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                        ['fallback' => 'system', 'text' => 'value', 'locale' => new Locale()]
-                    ),
+                    [
+                        'testEntity' => 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
+                        'testProperties' => [
+                            'fallback' => 'system',
+                            'text' => 'value',
+                            'locale' => [
+                                'testEntity' => 'OroB2B\Bundle\WebsiteBundle\Entity\Locale',
+                                'testProperties' => ['code' => 'en']
+                            ],
+                        ],
+                    ],
+                    [
+                        'testEntity' => 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
+                        'testProperties' => [
+                            'fallback' => 'system',
+                            'string' => 'value',
+                            'locale' => [
+                                'testEntity' => 'OroB2B\Bundle\WebsiteBundle\Entity\Locale',
+                                'testProperties' => ['code' => 'en_CA']
+                            ],
+                        ],
+                    ],
+                    [
+                        'testEntity' => 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
+                        'testProperties' => [
+                            'fallback' => 'system',
+                            'text' => 'value',
+                            'locale' => [
+                                'testEntity' => 'OroB2B\Bundle\WebsiteBundle\Entity\Locale',
+                            ],
+                        ],
+                    ],
                 ],
                 [
                     'en' => ['fallback' => 'system', 'string' => null, 'text' => 'value'],
@@ -106,12 +143,14 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
     /**
      * @param mixed $actualData
      * @param string $class
-     * @param ArrayCollection $expectedData
+     * @param array $expectedData
      *
      * @dataProvider denormalizeDataProvider
      */
-    public function testDenormalizer($actualData, $class, ArrayCollection $expectedData)
+    public function testDenormalizer($actualData, $class, array $expectedData)
     {
+        $expectedData = new ArrayCollection($this->convertArrayToEntities($expectedData));
+
         /** @var LocalizedFallbackValueCollectionNormalizer $normalizer */
         $normalizer = new LocalizedFallbackValueCollectionNormalizer(
             $this->getContainer()->get('doctrine'),
@@ -131,41 +170,47 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
             'not and array' => [
                 'value',
                 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                new ArrayCollection(),
+                [],
             ],
             'wrong type' => [
                 [],
                 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                new ArrayCollection(),
+                [],
             ],
             'type' => [
                 [],
                 'ArrayCollection<OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue>',
-                new ArrayCollection(),
+                [],
             ],
             'without locale' => [
                 ['default' => ['fallback' => 'system', 'string' => 'value', 'text' => null]],
                 'ArrayCollection<OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue>',
-                new ArrayCollection(
-                    [
-                        'default' => $this->getEntity(
-                            'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                            ['fallback' => 'system', 'string' => 'value']
-                        ),
-                    ]
-                ),
+                [
+                    'default' => [
+                        'testEntity' => 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
+                        'testProperties' => [
+                            'fallback' => 'system',
+                            'string' => 'value',
+                        ],
+                    ],
+                ]
             ],
             'locale with code' => [
                 ['en' => ['fallback' => 'system', 'string' => 'value']],
                 'ArrayCollection<OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue>',
-                new ArrayCollection(
-                    [
-                        'en' => $this->getEntity(
-                            'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                            ['fallback' => 'system', 'string' => 'value', 'locale' => (new Locale())->setCode('en')]
-                        ),
-                    ]
-                ),
+                [
+                    'en' => [
+                        'testEntity' => 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
+                        'testProperties' => [
+                            'fallback' => 'system',
+                            'string' => 'value',
+                            'locale' => [
+                                'testEntity' => 'OroB2B\Bundle\WebsiteBundle\Entity\Locale',
+                                'testProperties' => ['code' => 'en']
+                            ],
+                        ],
+                    ],
+                ]
             ],
             'mixed' => [
                 [
@@ -174,26 +219,36 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
                     'en_CA' => ['fallback' => 'parent_locale', 'text' => 'value'],
                 ],
                 'ArrayCollection<OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue>',
-                new ArrayCollection(
-                    [
-                        'default' => $this->getEntity(
-                            'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                            ['fallback' => 'system', 'string' => 'value']
-                        ),
-                        'en' => $this->getEntity(
-                            'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                            ['string' => 'value', 'locale' => (new Locale())->setCode('en')]
-                        ),
-                        'en_CA' => $this->getEntity(
-                            'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                            [
-                                'fallback' => 'parent_locale',
-                                'text' => 'value',
-                                'locale' => (new Locale())->setCode('en_CA'),
-                            ]
-                        ),
-                    ]
-                ),
+                [
+                    'default' => [
+                        'testEntity' => 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
+                        'testProperties' => [
+                            'fallback' => 'system',
+                            'string' => 'value',
+                        ],
+                    ],
+                    'en' => [
+                        'testEntity' => 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
+                        'testProperties' => [
+                            'string' => 'value',
+                            'locale' => [
+                                'testEntity' => 'OroB2B\Bundle\WebsiteBundle\Entity\Locale',
+                                'testProperties' => ['code' => 'en']
+                            ],
+                        ],
+                    ],
+                    'en_CA' => [
+                        'testEntity' => 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
+                        'testProperties' => [
+                            'fallback' => 'parent_locale',
+                            'text' => 'value',
+                            'locale' => [
+                                'testEntity' => 'OroB2B\Bundle\WebsiteBundle\Entity\Locale',
+                                'testProperties' => ['code' => 'en_CA']
+                            ],
+                        ],
+                    ],
+                ]
             ],
         ];
     }
