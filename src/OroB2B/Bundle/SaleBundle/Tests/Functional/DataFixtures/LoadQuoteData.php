@@ -139,6 +139,18 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     ];
 
     /**
+     * @param string $quoteFieldName
+     * @param string $quoteFieldValue
+     * @return array
+     */
+    public static function getQuotesFor($quoteFieldName, $quoteFieldValue)
+    {
+        return array_filter(self::$items, function ($item) use ($quoteFieldName, $quoteFieldValue) {
+            return array_key_exists($quoteFieldName, $item) && $item[$quoteFieldName] == $quoteFieldValue;
+        });
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getDependencies()
