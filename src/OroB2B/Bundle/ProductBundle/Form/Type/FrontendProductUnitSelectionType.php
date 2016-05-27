@@ -17,9 +17,9 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
-class ProductUnitSelectionType extends AbstractProductAwareType
+class FrontendProductUnitSelectionType extends AbstractProductAwareType
 {
-    const NAME = 'orob2b_product_unit_selection';
+    const NAME = 'orob2b_frontend_product_unit_selection';
 
     /**
      * @var TranslatorInterface
@@ -120,7 +120,9 @@ class ProductUnitSelectionType extends AbstractProductAwareType
 
         if ($product) {
             foreach ($product->getUnitPrecisions() as $unitPrecision) {
+                if ($unitPrecision->isSell()) {
                     $choices[] = $unitPrecision->getUnit();
+                }
             }
         }
 

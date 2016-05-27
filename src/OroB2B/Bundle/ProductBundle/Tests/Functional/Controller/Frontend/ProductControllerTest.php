@@ -99,7 +99,7 @@ class ProductControllerTest extends WebTestCase
     public function testViewProduct()
     {
         $product = $this->getProduct(LoadProductData::PRODUCT_1);
-
+        $product->getPrimaryUnitPrecision();
         $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
 
         $this->client->request(

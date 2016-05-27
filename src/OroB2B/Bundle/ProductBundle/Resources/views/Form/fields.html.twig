@@ -23,12 +23,12 @@
     {% set name = form.vars.full_name %}
 
             <tr data-content="{{ name }}" data-validation-optional-group class="oro-multiselect-holder grid-row">
-                <td class="select-row-cell grid-cell grid-body-cell renderable">{{ form_widget(form.unit, { 'attr': {'style': 'width: 100px'}}) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled, { 'attr': {'style': 'width: 100px'}}) }}{% endif %}</td>
-                <td class="string-cell renderable grid-cell grid-body-cell">{{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}</td>
-                <td class="string-cell renderable grid-cell grid-body-cell">{{ form_widget(form.conversionRate, { 'attr': {'class': 'conversionRate'} }) }}</td>
-                <td class="select-row-cell renderable grid-cell grid-body-cell">{{ form_widget(form.sell, { 'attr': {'class': 'sell'} }) }}</td>
+                <td>{{ form_widget(form.unit, { 'attr': {'style': 'width: 100px'}}) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled, { 'attr': {'style': 'width: 100px'}}) }}{% endif %}</td>
+                <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}</td>
+                <td>{{ form_widget(form.conversionRate, { 'attr': {'class': 'conversionRate'} }) }}</td>
+                <td>{{ form_widget(form.sell, { 'attr': {'class': 'sell'} }) }}</td>
                 {% if form.parent.vars.allow_delete %}
-                    <td{# class="string-cell renderable grid-cell grid-body-cell"#}><button class="removeRow btn btn-action btn-link" type="button" data-related="{{ name }}">×</button></td>
+                    <td><button class="removeLineItem btn icons-holder" type="button" data-related="{{ name }}"><i class="icon-remove"></i></button></td>
                 {% endif %}
             </tr>
 
@@ -64,13 +64,13 @@
         <div class="row-oro">
             {% set prototype_name = form.vars.prototype_name %}
             <div>
-                <table class="grid table-hover table table-bordered table-condensed">
-                    <thead class="grid-header">
-                        <th class="grid-header-row">{{ 'orob2b.product.productunitprecision.unit.label'|trans }}</th>
-                        <th class="grid-header-row">{{ 'orob2b.product.productunitprecision.precision.label'|trans }}</th>
-                        <th class="grid-header-row">{{ 'orob2b.product.productunitprecision.conversion_rate.label'|trans }}</th>
-                        <th class="grid-header-row">{{ 'orob2b.product.productunitprecision.sell.label'|trans }}</th>
-                        <th class="grid-header-row"></th>
+                <table class="grid table table-condensed table-bordered table-hover">
+                    <thead>
+                        <th>{{ 'orob2b.product.productunitprecision.unit.label'|trans }}</th>
+                        <th>{{ 'orob2b.product.productunitprecision.precision.label'|trans }}</th>
+                        <th>{{ 'orob2b.product.productunitprecision.conversion_rate.label'|trans }}</th>
+                        <th>{{ 'orob2b.product.productunitprecision.sell.label'|trans }}</th>
+                        <th></th>
                     </thead>
                     <tbody {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                     {% if form.children|length %}

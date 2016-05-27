@@ -43,7 +43,7 @@ define(function (require) {
             this.options._sourceElement
                 .on('content:changed', _.bind(this.onChange, this))
                 .on('content:remove', _.bind(this.askConfirmation, this))
-                .on('click', '.removeRow', _.bind(this.onRemoveRow, this));
+                .on('click', '.removeLineItem', _.bind(this.onRemoveRow, this));
 
             this.options._sourceElement.trigger('content:changed');
         },

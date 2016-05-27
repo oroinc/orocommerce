@@ -30,7 +30,7 @@ class ProductUnitRepository extends EntityRepository
         if (count($products) === 0) {
             return [];
         }
-        
+
         $productsUnits = $this->getProductsUnitsQueryBuilder($products)
             ->select('IDENTITY(productUnitPrecision.product) AS productId, unit.code AS code')
             ->getQuery()->getArrayResult();

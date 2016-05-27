@@ -13,12 +13,26 @@ class ProductUnitHolderTypeStub extends AbstractType
     const NAME = 'orob2b_stub_product_unit_holder';
 
     /**
+     * @var string
+     */
+    protected $formTypeName;
+
+    /**
+     * ProductUnitHolderTypeStub constructor.
+     * @param string $formTypeName
+     */
+    public function __construct($formTypeName)
+    {
+        $this->formTypeName = $formTypeName;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('productUnit', ProductUnitSelectionType::NAME, [
+            ->add('productUnit', $this->formTypeName, [
                 'label' =>  'orob2b.productunit.entity_label',
             ])
         ;

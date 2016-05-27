@@ -65,6 +65,7 @@ class ProductUnitRepositoryTest extends WebTestCase
             return $product->getId();
         }, $products);
         $expectedData = array_combine($productIds, $expectedData);
+        $actualData = $this->getRepository()->getProductsUnits($products);
         $this->assertEquals($expectedData, $this->getRepository()->getProductsUnits($products));
     }
 
@@ -97,9 +98,9 @@ class ProductUnitRepositoryTest extends WebTestCase
                     'product.3',
                 ],
                 'expectedData' => [
-                    'product.1' => ['bottle', 'liter', 'milliliter'],
-                    'product.2' => ['bottle', 'box', 'liter', 'milliliter'],
-                    'product.3' => ['liter', 'milliliter']
+                    'product.1' => ['bottle', 'milliliter'],
+                    'product.2' => ['bottle', 'milliliter'],
+                    'product.3' => ['milliliter']
                 ],
             ],
         ];
@@ -146,12 +147,12 @@ class ProductUnitRepositoryTest extends WebTestCase
                     'product.3',
                 ],
                 'codes' => [
-                    'liter',
-                    'box',
+                    'bottle',
+                    'milliliter',
                 ],
                 'expectedData' => [
-                    'liter',
-                    'box',
+                    'bottle',
+                    'milliliter',
                 ],
             ],
             [

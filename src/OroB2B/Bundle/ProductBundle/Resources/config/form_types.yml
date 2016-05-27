@@ -34,6 +34,17 @@ services:
         tags:
             - { name: form.type, alias: orob2b_product_unit_selection }
 
+    orob2b_product.form.type.frontend_product_unit_selection:
+            class: 'OroB2B\Bundle\ProductBundle\Form\Type\FrontendProductUnitSelectionType'
+            public: true
+            arguments:
+                - "@orob2b_product.formatter.product_unit_label"
+                - "@translator"
+            calls:
+                - [setEntityClass, ['%orob2b_product.entity.product_unit.class%']]
+            tags:
+                - { name: form.type, alias: orob2b_frontend_product_unit_selection }
+
     orob2b_product.form.type.quantity_type:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\QuantityType'
         public: true
