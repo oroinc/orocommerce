@@ -700,7 +700,6 @@ class FrontendProductUnitSelectionTypeTest extends FormIntegrationTestCase
             ['unit' => ['code' => 'kg'], 'sell' => false]];
 
         foreach ($unitPrecisionsData as $unitPrecisionData) {
-
             $unitPrecision = new ProductUnitPrecision();
             $productUnit = new ProductUnit();
             $productUnit->setCode($unitPrecisionData['unit']['code']);

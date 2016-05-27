@@ -55,9 +55,17 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     protected function beforeProcessEntity($entity)
     {
         $data = $this->context->getValue('itemData');
-        $data['unitPrecisions'] = $data['additionalUnitPrecisions'];
-        $data['unitPrecisions'][] = $data['primaryUnitPrecision'];
-        $this->primaryCode = $data['primaryUnitPrecision']['unit']['code'];
+
+        if (array_key_exists('additionalUnitPrecisions', $data)) {
+            $data['unitPrecisions'] = $data['additionalUnitPrecisions'];
+            unset($data['additionalUnitPrecisions']);
+        }
+        $this->primaryCode = null;
+        if (array_key_exists('primaryUnitPrecision', $data)) {
+            $data['unitPrecisions'][] = $data['primaryUnitPrecision'];
+            $this->primaryCode = $data['primaryUnitPrecision']['unit']['code'];
+            unset($data['primaryUnitPrecision']);
+        }
 
         $this->context->setValue('itemData', $data);
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));

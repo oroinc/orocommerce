@@ -286,7 +286,6 @@ class ProductTypeTest extends FormIntegrationTestCase
         }
 
         if ($withProductUnitPrecision) {
-
             $productUnit = new ProductUnit();
             $productUnit->setCode('kg');
 

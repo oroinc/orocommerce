@@ -67,7 +67,6 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         $data = Yaml::parse(file_get_contents($filePath));
 
         foreach ($data as $item) {
-
             $unit = $this->getReference('product_unit.milliliter');
 
             $unitPrecision = new ProductUnitPrecision();

@@ -65,7 +65,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getId')
             ->willReturn($productId);
 
-        $unitPrecisions[] = $this->createUnitPrecision('each',  true);
+        $unitPrecisions[] = $this->createUnitPrecision('each', true);
         $unitPrecisions[] = $this->createUnitPrecision('set', false);
 
         $product->expects($this->once())
@@ -133,7 +133,10 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function createProductPrice($unit, $product)
     {
-        $p = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice', array('getUnit', 'getProduct'))
+        $p = $this->getMockBuilder(
+            'OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice',
+            array('getUnit', 'getProduct')
+        )
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -148,4 +151,3 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
         return $p;
     }
 }
-

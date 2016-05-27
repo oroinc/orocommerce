@@ -45,7 +45,7 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
         $product = $context->data()->get('product');
         $productId = $product->getId();
 
-        if (!$this->data[$productId]) { 
+        if (!$this->data[$productId]) {
             $priceList = $this->priceListRequestHandler->getPriceListByAccount();
 
             /** @var ProductPriceRepository $priceRepository */
@@ -85,4 +85,3 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
         return $this->data[$productId];
     }
 }
-
