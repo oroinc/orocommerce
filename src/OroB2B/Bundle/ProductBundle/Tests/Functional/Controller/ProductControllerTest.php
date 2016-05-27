@@ -621,7 +621,7 @@ class ProductControllerTest extends WebTestCase
         $crawler->filter(self::IMAGES_VIEW_BODY_SELECTOR)->each(
             function (Crawler $node) use (&$result) {
                 $data = [];
-                $data[] = $node->children()->first()->children()->first()->attr(self::IMAGE_FILENAME_ATTR);
+                $data[] = $node->filter('a')->first()->attr(self::IMAGE_FILENAME_ATTR);
 
                 /** @var \DOMElement $child */
                 foreach ($node->children()->nextAll() as $child) {
