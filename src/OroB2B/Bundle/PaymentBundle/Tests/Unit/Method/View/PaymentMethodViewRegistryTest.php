@@ -43,11 +43,12 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
         $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->exactly(3))->method('isEnabled')
             ->willReturnOnConsecutiveCalls(true, true, false);
+        $paymentMethod->expects($this->exactly(2))->method('isApplicable')->willReturnOnConsecutiveCalls(true, false);
         $this->paymentMethodRegistry->expects($this->exactly(3))->method('getPaymentMethod')
             ->willReturn($paymentMethod);
 
         $views = $this->registry->getPaymentMethodViews();
-        $this->assertCount(2, $views);
+        $this->assertCount(1, $views);
         $this->assertEquals($testView2, reset($views));
         $this->assertEquals($testView, end($views));
     }
