@@ -15,3 +15,4 @@ orob2b:
                   not_existing_unit.message: 'Product unit does not exist.'
                   quantity.blank: Qantity should not be blank.
               default_currency.message: 'Currency "%invalidCurrency%" is not valid default currency. Selected currency must be in enabled list'
+              using_as_available: "{1} currency %curr% is already using as available|]1,Inf[currencies %curr% is already using as available"
