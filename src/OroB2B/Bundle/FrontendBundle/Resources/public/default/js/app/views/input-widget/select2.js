@@ -3,6 +3,7 @@ define(function(require) {
 
     var Select2InputWidget;
     var AbstractInputWidget = require('oroui/js/app/views/input-widget/abstract');
+    var $ = require('jquery');
     var __ = require('orotranslation/js/translator');
     // current version: http://select2.github.io/select2/
     // last version: http://select2.github.io/examples.html
@@ -15,12 +16,21 @@ define(function(require) {
             placeholder: __('Please select'),
             dropdownAutoWidth: true,
             minimumInputLength: 0,
-            minimumResultsForSearch: 7
+            minimumResultsForSearch: 7,
+            adaptContainerCssClass: function() {
+                return false;
+            }
         },
 
         widgetFunctionName: 'select2',
 
         destroyOptions: 'destroy',
+
+        initialize: function(options) {
+            //fix select2.each2 bug, when empty string is FALSE
+            this.$el.attr('class', $.trim(this.$el.attr('class')));
+            return Select2InputWidget.__super__.initialize.apply(this, arguments);
+        },
 
         isInitialized: function() {
             return Boolean(this.$el.data(this.widgetFunctionName));
@@ -70,6 +80,19 @@ define(function(require) {
 
         valData: function() {
             return this.widgetFunction('data');
+        },
+
+        updatePosition: function() {
+            return this.widgetFunction('positionDropdown');
+        },
+
+        focus: function() {
+            return this.widgetFunction('focus');
+        },
+
+        search: function() {
+            Array.prototype.unshift.call(arguments, 'search');
+            return this.widgetFunction.apply(this, arguments);
         }
     });
 

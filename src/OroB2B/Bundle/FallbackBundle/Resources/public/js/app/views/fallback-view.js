@@ -445,7 +445,7 @@ define(function(require) {
          */
         fixFallbackWidth: function() {
             var $fallback = this.$el.find(this.options.selectors.itemFallback).find('select');
-            $fallback.inputWidget('setWidth', this.options.fallbackWidth);
+            $fallback.inputWidget('width', this.options.fallbackWidth);
         },
 
         /**
