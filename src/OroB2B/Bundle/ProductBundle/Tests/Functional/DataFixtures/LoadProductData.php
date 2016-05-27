@@ -72,7 +72,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
 
             $unitPrecision = new ProductUnitPrecision();
             $unitPrecision->setUnit($unit)
-                ->setPrecision((int)$item['primaryProductUnit']['precision'])
+                ->setPrecision((int)$item['primaryUnitPrecision']['precision'])
                 ->setConversionRate(1)
                 ->setSell(true);
 
