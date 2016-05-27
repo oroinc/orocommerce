@@ -62,19 +62,20 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
                     'quantity' => 'ASC',
                 ]
             );
+            if (count($prices)) {
+                $unitPrecisions = current($prices)->getProduct()->getUnitPrecisions();
 
-            $unitPrecisions = current($prices)->getProduct()->getUnitPrecisions();
-
-            $unitsToSell = [];
-            foreach ($unitPrecisions as $unitPrecision) {
-                if ($unitPrecision->isSell()) {
-                    $unitsToSell[] = $unitPrecision->getUnit();
+                $unitsToSell = [];
+                foreach ($unitPrecisions as $unitPrecision) {
+                    if ($unitPrecision->isSell()) {
+                        $unitsToSell[] = $unitPrecision->getUnit();
+                    }
                 }
-            }
 
-            foreach ($prices as $key => $combinedProductPrice) {
-                if (!in_array($combinedProductPrice->getUnit(), $unitsToSell)) {
-                    unset($prices[$key]);
+                foreach ($prices as $key => $combinedProductPrice) {
+                    if (!in_array($combinedProductPrice->getUnit(), $unitsToSell)) {
+                        unset($prices[$key]);
+                    }
                 }
             }
 
