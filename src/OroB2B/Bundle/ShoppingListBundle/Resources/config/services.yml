@@ -37,7 +37,7 @@ services:
             - "@orob2b_product.service.quantity_rounding"
             - "@orob2b_pricing.subtotal_processor.total_processor_provider"
             - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced"
-            - "@oro_locale.settings"
+            - '@orob2b_pricing.user_currency_manager'
             - "@orob2b_website.manager"
 
     orob2b_shopping_list.shopping_list.manager.link:
@@ -157,7 +157,7 @@ services:
         arguments:
             - '@orob2b_pricing.provider.combined_product_price'
             - '@oro_security.security_facade'
-            - '@orob2b_pricing.provider.user_currency'
+            - '@orob2b_pricing.user_currency_manager'
             - '@orob2b_pricing.model.price_list_request_handler'
 
     orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_units:
@@ -166,7 +166,7 @@ services:
         arguments:
             - "@doctrine"
             - "@orob2b_pricing.model.price_list_request_handler"
-            - "@orob2b_pricing.provider.user_currency"
+            - '@orob2b_pricing.user_currency_manager'
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_products_units }
 

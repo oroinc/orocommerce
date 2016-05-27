@@ -52,7 +52,7 @@ class ShippingCostSubtotalProvider implements SubtotalProviderInterface
     public function getSubtotal($entity)
     {
         if (!$this->isSupported($entity)) {
-            throw new \InvalidArgumentException("Entity not supported for provider");
+            throw new \InvalidArgumentException('Entity not supported for provider');
         }
         $subtotal = new Subtotal();
 

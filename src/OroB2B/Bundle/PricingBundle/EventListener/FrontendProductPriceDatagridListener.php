@@ -16,7 +16,7 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
@@ -53,9 +53,9 @@ class FrontendProductPriceDatagridListener
     protected $unitValueFormatter;
 
     /**
-     * @var UserCurrencyProvider
+     * @var UserCurrencyManager
      */
-    protected $currencyProvider;
+    protected $currencyManager;
 
     /**
      * @var CombinedPriceList
@@ -68,7 +68,7 @@ class FrontendProductPriceDatagridListener
      * @param NumberFormatter $numberFormatter
      * @param UnitLabelFormatter $unitLabelFormatter
      * @param UnitValueFormatter $unitValueFormatter
-     * @param UserCurrencyProvider $currencyProvider
+     * @param UserCurrencyManager $currencyManager
      */
     public function __construct(
         TranslatorInterface $translator,
@@ -76,14 +76,14 @@ class FrontendProductPriceDatagridListener
         NumberFormatter $numberFormatter,
         UnitLabelFormatter $unitLabelFormatter,
         UnitValueFormatter $unitValueFormatter,
-        UserCurrencyProvider $currencyProvider
+        UserCurrencyManager $currencyManager
     ) {
         $this->translator = $translator;
         $this->priceListRequestHandler = $priceListRequestHandler;
         $this->numberFormatter = $numberFormatter;
         $this->unitLabelFormatter = $unitLabelFormatter;
         $this->unitValueFormatter = $unitValueFormatter;
-        $this->currencyProvider = $currencyProvider;
+        $this->currencyManager = $currencyManager;
     }
 
     /**
@@ -109,7 +109,7 @@ class FrontendProductPriceDatagridListener
             $records
         );
 
-        $currency = $this->currencyProvider->getUserCurrency();
+        $currency = $this->currencyManager->getUserCurrency();
 
         $em = $event->getQuery()->getEntityManager();
         /** @var CombinedProductPriceRepository $repository */
@@ -146,7 +146,7 @@ class FrontendProductPriceDatagridListener
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
-        $currency = $this->currencyProvider->getUserCurrency();
+        $currency = $this->currencyManager->getUserCurrency();
         if (!$currency) {
             return;
         }

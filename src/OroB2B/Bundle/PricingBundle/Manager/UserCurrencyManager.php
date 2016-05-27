@@ -1,7 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Provider;
+namespace OroB2B\Bundle\PricingBundle\Manager;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -12,7 +13,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
-class UserCurrencyProvider
+class UserCurrencyManager
 {
     const SESSION_CURRENCIES = 'currency_by_website';
 
@@ -70,16 +71,16 @@ class UserCurrencyProvider
     {
         $currency = null;
         $website = $this->getWebsite($website);
-        
+
         if (!$website) {
             return null;
         }
 
         $user = $this->getLoggedUser();
         if ($user instanceof AccountUser) {
-            $currency = $user->getCurrencyByWebsite($website);
-            if ($currency) {
-                $currency = $currency->getCurrency();
+            $userSettings = $user->getWebsiteSettings($website);
+            if ($userSettings) {
+                $currency = $userSettings->getCurrency();
             }
         } else {
             $sessionStoredCurrencies = $this->getSessionCurrencies();
@@ -109,7 +110,12 @@ class UserCurrencyProvider
 
         $user = $this->getLoggedUser();
         if ($user instanceof AccountUser) {
-            $user->setWebsiteCurrency($website, $currency);
+            $userWebsiteSettings = $user->getWebsiteSettings($website);
+            if (!$userWebsiteSettings) {
+                $userWebsiteSettings = new AccountUserSettings($website);
+                $user->setWebsiteSettings($userWebsiteSettings);
+            }
+//            $userWebsiteSettings->setCurrency($currency);
             $this->userManager->getStorageManager()->flush();
         } else {
             $sessionCurrencies = $this->getSessionCurrencies();

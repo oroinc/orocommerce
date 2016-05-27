@@ -19,7 +19,7 @@ services:
         class: 'OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager'
         arguments:
             - '@orob2b_checkout.data_provider.converter.checkout_line_items'
-            - '@orob2b_pricing.provider.user_currency'
+            - '@orob2b_pricing.user_currency_manager'
 
     orob2b_checkout.layout.data_provider.summary:
         class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\SummaryDataProvider'
@@ -115,7 +115,7 @@ services:
             - '@oro_action.context_accessor'
             - '@doctrine'
             - '@orob2b_website.manager'
-            - '@orob2b_pricing.provider.user_currency'
+            - '@orob2b_pricing.user_currency_manager'
             - '@security.token_storage'
             - '@property_accessor'
             - '@oro_action.action.redirect'

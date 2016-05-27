@@ -51,8 +51,8 @@ services:
             - '@doctrine'
             - '%orob2b_pricing.entity.product_price.class%'
 
-    orob2b_pricing.provider.user_currency:
-        class: 'OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider'
+    orob2b_pricing.user_currency_manager:
+        class: 'OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager'
         public: true
         arguments:
             - '@session'
@@ -315,7 +315,7 @@ services:
             - '@oro_locale.formatter.number'
             - '@orob2b_product.formatter.product_unit_label'
             - '@orob2b_product.formatter.product_unit_value'
-            - '@orob2b_pricing.provider.user_currency'
+            - '@orob2b_pricing.user_currency_manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
@@ -387,7 +387,7 @@ services:
         public: true
         arguments:
             - '@oro_action.context_accessor'
-            - '@orob2b_pricing.provider.user_currency'
+            - '@orob2b_pricing.user_currency_manager'
         tags:
             - { name: oro_workflow.action, alias: assign_user_currency }
             - { name: oro_action.action, alias: assign_user_currency }

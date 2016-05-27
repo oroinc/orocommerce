@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendAccountUserCurrencyProvider;
 
 use Oro\Component\Layout\ContextInterface;
@@ -10,9 +10,9 @@ use Oro\Component\Layout\ContextInterface;
 class FrontendAccountUserCurrencyProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var UserCurrencyProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $userCurrencyProvider;
+    protected $userCurrencyManager;
 
     /**
      * @var FrontendAccountUserCurrencyProvider
@@ -21,11 +21,11 @@ class FrontendAccountUserCurrencyProviderTest extends \PHPUnit_Framework_TestCas
 
     protected function setUp()
     {
-        $this->userCurrencyProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
+        $this->userCurrencyManager = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->dataProvider = new FrontendAccountUserCurrencyProvider($this->userCurrencyProvider);
+        $this->dataProvider = new FrontendAccountUserCurrencyProvider($this->userCurrencyManager);
     }
 
     public function testGetIdentifier()
@@ -38,7 +38,7 @@ class FrontendAccountUserCurrencyProviderTest extends \PHPUnit_Framework_TestCas
         /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context **/
         $context = $this->getMock('Oro\Component\Layout\ContextInterface');
 
-        $this->userCurrencyProvider->expects($this->once())
+        $this->userCurrencyManager->expects($this->once())
             ->method('getUserCurrency')
             ->willReturn('UAH');
         $this->assertEquals('UAH', $this->dataProvider->getData($context));

@@ -42,7 +42,7 @@ services:
             - { name: doctrine.orm.entity_listener }
 
     orob2b_invoice.event_listener.invoice_form_listener:
-        class: OroB2B\Bundle\InvoiceBundle\EventListener\InvoiceFormListener
+        class: 'OroB2B\Bundle\InvoiceBundle\EventListener\InvoiceFormListener'
         public: true
         arguments:
             - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item"

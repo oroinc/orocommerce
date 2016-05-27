@@ -309,7 +309,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     protected $updatedAt;
 
     /**
-     * @var ArrayCollection|AccountUserCurrency[]
+     * @var ArrayCollection|AccountUserSettings[]
      *
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserCurrency",
@@ -318,13 +318,13 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *      orphanRemoval=true
      * )
      */
-    protected $currencies;
+    protected $settings;
 
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
         $this->salesRepresentatives = new ArrayCollection();
-        $this->currencies = new ArrayCollection();
+        $this->settings = new ArrayCollection();
         parent::__construct();
     }
 
@@ -775,13 +775,13 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param Website $website
-     * @return null|AccountUserCurrency
+     * @return null|AccountUserSettings
      */
-    public function getCurrencyByWebsite(Website $website)
+    public function getWebsiteSettings(Website $website)
     {
-        foreach ($this->currencies as $currency) {
-            if ($currency->getWebsite() === $website) {
-                return $currency;
+        foreach ($this->settings as $setting) {
+            if ($setting->getWebsite() === $website) {
+                return $setting;
             }
         }
 
@@ -789,23 +789,18 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
-     * @param Website $website
-     * @param string $currency
+     * @param AccountUserSettings $websiteSettings
      * @return $this
      */
-    public function setWebsiteCurrency(Website $website, $currency)
+    public function setWebsiteSettings(AccountUserSettings $websiteSettings)
     {
-        $userCurrency = $this->getCurrencyByWebsite($website);
-
-        if (null === $userCurrency) {
-            $userCurrency = new AccountUserCurrency();
-            $this->currencies->add($userCurrency);
+        $existing = $this->getWebsiteSettings($websiteSettings->getWebsite());
+        if ($existing) {
+            $this->settings->removeElement($existing);
         }
 
-        $userCurrency->setWebsite($website)
-            ->setWebsite($website)
-            ->setAccountUser($this)
-            ->setCurrency($currency);
+        $websiteSettings->setAccountUser($this);
+        $this->settings->add($websiteSettings);
 
         return $this;
     }

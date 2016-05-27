@@ -10,7 +10,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
@@ -31,23 +31,23 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
     protected $priceListRequestHandler;
 
     /**
-     * @var UserCurrencyProvider
+     * @var UserCurrencyManager
      */
-    protected $userCurrencyProvider;
+    protected $userCurrencyManager;
 
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param PriceListRequestHandler $priceListRequestHandler
-     * @param UserCurrencyProvider $userCurrencyProvider
+     * @param UserCurrencyManager $userCurrencyManager
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         PriceListRequestHandler $priceListRequestHandler,
-        UserCurrencyProvider $userCurrencyProvider
+        UserCurrencyManager $userCurrencyManager
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->priceListRequestHandler = $priceListRequestHandler;
-        $this->userCurrencyProvider = $userCurrencyProvider;
+        $this->userCurrencyManager = $userCurrencyManager;
     }
 
     /**
@@ -70,7 +70,7 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
                 $priceList->getId(),
                 [$productId],
                 true,
-                $this->userCurrencyProvider->getUserCurrency(),
+                $this->userCurrencyManager->getUserCurrency(),
                 null,
                 [
                     'unit' => 'ASC',

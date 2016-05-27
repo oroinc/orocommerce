@@ -9,13 +9,12 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
@@ -60,9 +59,9 @@ class ShoppingListManager
     protected $lineItemNotPricedSubtotalProvider;
 
     /**
-     * @var LocaleSettings
+     * @var UserCurrencyManager
      */
-    protected $localeSettings;
+    protected $userCurrencyManager;
 
     /**
      * @var WebsiteManager
@@ -76,7 +75,7 @@ class ShoppingListManager
      * @param QuantityRoundingService $rounding
      * @param TotalProcessorProvider $totalProvider
      * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
-     * @param LocaleSettings $localeSettings
+     * @param UserCurrencyManager $userCurrencyManager
      * @param WebsiteManager $websiteManager
      */
     public function __construct(
@@ -86,7 +85,7 @@ class ShoppingListManager
         QuantityRoundingService $rounding,
         TotalProcessorProvider $totalProvider,
         LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider,
-        LocaleSettings $localeSettings,
+        UserCurrencyManager $userCurrencyManager,
         WebsiteManager $websiteManager
     ) {
         $this->managerRegistry = $managerRegistry;
@@ -95,7 +94,7 @@ class ShoppingListManager
         $this->rounding = $rounding;
         $this->totalProvider = $totalProvider;
         $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
-        $this->localeSettings = $localeSettings;
+        $this->userCurrencyManager = $userCurrencyManager;
         $this->websiteManager = $websiteManager;
     }
 
@@ -111,7 +110,7 @@ class ShoppingListManager
             ->setOrganization($this->getAccountUser()->getOrganization())
             ->setAccount($this->getAccountUser()->getAccount())
             ->setAccountUser($this->getAccountUser())
-            ->setCurrency($this->localeSettings->getCurrency())
+            ->setCurrency($this->userCurrencyManager->getUserCurrency())
             ->setWebsite($this->websiteManager->getCurrentWebsite());
 
         return $shoppingList;
