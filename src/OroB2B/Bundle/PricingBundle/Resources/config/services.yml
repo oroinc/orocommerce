@@ -2,12 +2,19 @@ parameters:
     orob2b_pricing.entity.price_list.class: OroB2B\Bundle\PricingBundle\Entity\PriceList
     orob2b_pricing.entity.price_list_schedule.class: OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule
     orob2b_pricing.entity.combined_price_list.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList
+
     orob2b_pricing.entity.price_list_to_account.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount
     orob2b_pricing.entity.price_list_to_account_group.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup
     orob2b_pricing.entity.price_list_to_website.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite
+
+    orob2b_pricing.entity.price_list_account_fallback.class: OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback
+    orob2b_pricing.entity.price_list_account_group_fallback.class: OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback
+    orob2b_pricing.entity.price_list_website_fallback.class: OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback
+
     orob2b_pricing.entity.combined_price_list_to_account.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount
     orob2b_pricing.entity.combined_price_list_to_account_group.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup
     orob2b_pricing.entity.combined_price_list_to_website.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite
+
     orob2b_pricing.entity.product_price.class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
     orob2b_pricing.entity.combined_product_price.class: OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice
     orob2b_pricing.entity.product_price_change_trigger.class: OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger
@@ -137,6 +144,7 @@ services:
         calls:
             - [setPriceListToEntityClassName, ['%orob2b_pricing.entity.price_list_to_account.class%']]
             - [setCombinedPriceListToEntityClassName, ['%orob2b_pricing.entity.combined_price_list_to_account.class%']]
+            - [setFallbackClassName, ['%orob2b_pricing.entity.price_list_account_fallback.class%']]
 
     orob2b_pricing.builder.account_group_combined_price_list_builder:
         class: 'OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder'
@@ -146,6 +154,7 @@ services:
             - [setAccountCombinedPriceListsBuilder,  ['@orob2b_pricing.builder.account_combined_price_list_builder']]
             - [setPriceListToEntityClassName, ['%orob2b_pricing.entity.price_list_to_account_group.class%']]
             - [setCombinedPriceListToEntityClassName, ['%orob2b_pricing.entity.combined_price_list_to_account_group.class%']]
+            - [setFallbackClassName, ['%orob2b_pricing.entity.price_list_account_group_fallback.class%']]
 
     orob2b_pricing.builder.website_combined_price_list_builder:
         class: 'OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder'
@@ -155,6 +164,7 @@ services:
             - [setAccountGroupCombinedPriceListsBuilder,  ['@orob2b_pricing.builder.account_group_combined_price_list_builder']]
             - [setPriceListToEntityClassName, ['%orob2b_pricing.entity.price_list_to_website.class%']]
             - [setCombinedPriceListToEntityClassName, ['%orob2b_pricing.entity.combined_price_list_to_website.class%']]
+            - [setFallbackClassName, ['%orob2b_pricing.entity.price_list_website_fallback.class%']]
 
     orob2b_pricing.builder.combined_price_list_builder:
         class: 'OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder'
