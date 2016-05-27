@@ -414,7 +414,7 @@ define(function(require) {
         },
 
         updateSkuLabel: function() {
-            var productData = this.$el.find(this.options.productSelect).inputWidget('valData') || {};
+            var productData = this.$el.find(this.options.productSelect).inputWidget('data') || {};
 
             this.$el.find(this.options.productSkuLabel).html(productData.sku || '');
         },

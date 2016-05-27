@@ -138,7 +138,7 @@ define(function(require) {
                 this.fieldsByName.product.change(_.bind(function() {
                     this.resetData();
 
-                    var data = this.fieldsByName.product.inputWidget('valData') || {};
+                    var data = this.fieldsByName.product.inputWidget('data') || {};
                     this.$el.find(this.options.selectors.productSku).html(data.sku || null);
                 }, this));
             }

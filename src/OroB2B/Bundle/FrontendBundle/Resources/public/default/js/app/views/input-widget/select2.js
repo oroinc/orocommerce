@@ -78,8 +78,9 @@ define(function(require) {
             return this.widgetFunction.apply(this, arguments);
         },
 
-        valData: function() {
-            return this.widgetFunction('data');
+        data: function() {
+            Array.prototype.unshift.call(arguments, 'data');
+            return this.widgetFunction.apply(this, arguments);
         },
 
         updatePosition: function() {
