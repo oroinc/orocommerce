@@ -116,21 +116,9 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'source' => [
                         'query' => [
                             'select' => [
-                                'GROUP_CONCAT(IDENTITY(unit_precisions.unit) SEPARATOR \'{sep}\') as product_units',
-                                'productImage.filename as image',
                                 'productShortDescriptions.text as shortDescription'
                             ],
                             'join' => [
-                                'left' => [
-                                    [
-                                        'join' => 'product.unitPrecisions',
-                                        'alias' => 'unit_precisions'
-                                    ],
-                                    [
-                                        'join' => 'product.image',
-                                        'alias' => 'productImage'
-                                    ]
-                                ],
                                 'inner' => [
                                     [
                                         'join' => 'product.shortDescriptions',
@@ -158,26 +146,6 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 DataGridThemeHelper::VIEW_TILES,
                 [
                     'name' => 'grid-name',
-                    'source' => [
-                        'query' => [
-                            'select' => [
-                                'GROUP_CONCAT(IDENTITY(unit_precisions.unit) SEPARATOR \'{sep}\') as product_units',
-                                'productImage.filename as image',
-                            ],
-                            'join' => [
-                                'left' => [
-                                    [
-                                        'join' => 'product.unitPrecisions',
-                                        'alias' => 'unit_precisions'
-                                    ],
-                                    [
-                                        'join' => 'product.image',
-                                        'alias' => 'productImage'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
                     'properties' => [
                         'product_units' => [
                             'type' => 'field',
