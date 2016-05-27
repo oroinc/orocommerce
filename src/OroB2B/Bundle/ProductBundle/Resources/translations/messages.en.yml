@@ -56,6 +56,8 @@ orob2b:
             precision.label: Precision
             conversion_rate.label: Conversion Rate
             sell.label: Sell
+            sell_yes.label: yes
+            sell_not.label: not
 
             representation: "{0} {{ label }} (whole numbers)|{1} {{ label }} (fractional, %count% decimal digit)|]1,Inf[ {{ label }} (fractional, %count% decimal digits)"
             conversion: ", %count% of {{ label }}"

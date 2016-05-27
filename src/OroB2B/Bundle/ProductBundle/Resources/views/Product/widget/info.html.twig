@@ -32,7 +32,11 @@
                 %}
                 {% set rows = [] %}
                 {% for unitPrecision in product.additionalUnitPrecisions %}
-                    {% set sell = unitPrecision.sell ? '+' : '-' %}
+                    {% set sell = unitPrecision.sell ?
+                        'orob2b.product.productunitprecision.sell_yes.label'|trans
+                        :
+                        'orob2b.product.productunitprecision.sell_not.label'|trans
+                    %}
                     {% set row = [('orob2b.product_unit.'~ unitPrecision.unit.code ~'.label.full')|trans,
                                     unitPrecision.precision,
                                     unitPrecision.conversionRate,
@@ -42,7 +46,7 @@
                 {% endfor %}
                 {{ UI.renderHtmlProperty(
                     'orob2b.product.additional_unit_precisions.label'|trans,
-                     UI.renderTable(titles,rows,"table-condensed"))
+                     UI.renderTable(titles,rows,"grid table-hover table table-bordered unit-table"))
                  }}
             {% endif %}
         </div>
