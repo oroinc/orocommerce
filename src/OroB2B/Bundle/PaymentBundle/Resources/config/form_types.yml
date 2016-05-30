@@ -54,3 +54,12 @@ services:
         parent: orob2b_payment.form.extension.abstract
         tags:
             - { name: form.type_extension, alias: orob2b_account_group_type }
+
+    orob2b_payment.form.type.currency_selection:
+        class: 'OroB2B\Bundle\PaymentBundle\Form\Type\CurrencySelectionType'
+        public: true
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_locale.settings'
+        tags:
+            - { name: form.type, alias: orob2b_payment_currency_selection }
