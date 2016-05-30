@@ -44,6 +44,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
         $this->builder->setPriceListToEntityClassName($this->priceListToEntityClass);
         $this->builder->setCombinedPriceListClassName($this->combinedPriceListClass);
         $this->builder->setCombinedPriceListToEntityClassName($this->combinedPriceListToEntityClass);
+        $this->builder->setFallbackClassName($this->fallbackClass);
     }
 
     /**
@@ -66,11 +67,13 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
                 ->expects($this->exactly($callExpects))
                 ->method('delete')
                 ->with($account, $website);
+            $this->fallbackRepository->expects($this->exactly($callExpects))->method('findOneBy');
         } else {
             $this->combinedPriceListToEntityRepository
                 ->expects($this->never())
                 ->method('delete');
-
+            $this->fallbackRepository->expects($this->never())->method('findOneBy');
+            
             $this->assertRebuild($website, $account);
         }
         $this->builder->build($website, $account);
