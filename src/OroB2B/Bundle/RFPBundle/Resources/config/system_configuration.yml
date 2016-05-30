@@ -33,6 +33,36 @@ oro_system_configuration:
             type: orob2b_product_inventory_status_select
             options:
                 label: orob2b.rfp.system_configuration.fields.frontend_product_visibility.title
+        oro_b2b_rfp.notify_assigned_sales_reps_of_the_account:
+            data_type: string
+            type: choice
+            options:
+                label: orob2b.rfp.system_configuration.fields.notification.sales_reps.label
+                choices:
+                    always: orob2b.rfp.system_configuration.fields.notification.sales_reps.always_notify_sale_reps_of_account
+                    noSaleReps: orob2b.rfp.system_configuration.fields.notification.sales_reps.if_no_sales_reps_assigned
+                constraints:
+                    - NotBlank: ~
+        oro_b2b_rfp.notify_owner_of_account_user_record:
+            data_type: string
+            type: choice
+            options:
+                label: orob2b.rfp.system_configuration.fields.notification.account_user_record.label
+                choices:
+                    always: orob2b.rfp.system_configuration.fields.notification.account_user_record.always_notify_owner
+                    noSaleReps: orob2b.rfp.system_configuration.fields.notification.account_user_record.if_no_sales_reps_assigned
+                constraints:
+                    - NotBlank: ~
+        oro_b2b_rfp.notify_owner_of_account:
+            data_type: string
+            type: choice
+            options:
+                label: orob2b.rfp.system_configuration.fields.notification.account.label
+                choices:
+                    always: orob2b.rfp.system_configuration.fields.notification.account.always_notify_owner
+                    noSaleReps: orob2b.rfp.system_configuration.fields.notification.account.if_no_sales_reps_assigned
+                constraints:
+                    - NotBlank: ~
 
     tree:
         system_configuration:
@@ -49,6 +79,9 @@ oro_system_configuration:
                                     notifications:
                                         children:
                                             - oro_b2b_rfp.default_user_for_notifications
+                                            - oro_b2b_rfp.notify_assigned_sales_reps_of_the_account
+                                            - oro_b2b_rfp.notify_owner_of_account_user_record
+                                            - oro_b2b_rfp.notify_owner_of_account
                     product:
                         children:
                             product_inventory:
