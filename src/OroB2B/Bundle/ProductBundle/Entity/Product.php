@@ -943,6 +943,10 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     {
         if ($this->primaryUnitPrecision && $this->primaryUnitPrecision->getId()) {
             $result = $this->primaryUnitPrecision;
+        } elseif ($this->getPrimaryUnitPrecisionId() && count($this->getUnitPrecisions()) == 1) {
+            $this->primaryUnitPrecision = $this->getUnitPrecisions()->first();
+            $result = $this->primaryUnitPrecision;
+            return $result;
         } elseif ($this->getPrimaryUnitPrecisionId()) {
             foreach ($this->getUnitPrecisions() as $precision) {
                 if ($precision->getId() == $this->getPrimaryUnitPrecisionId()) {
