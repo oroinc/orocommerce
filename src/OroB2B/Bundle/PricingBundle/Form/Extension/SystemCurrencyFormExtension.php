@@ -11,8 +11,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
-
 class SystemCurrencyFormExtension extends AbstractTypeExtension
 {
     const ALLOWED_CURRENCIES = 'oro_currency.allowed_currencies';
@@ -43,7 +41,7 @@ class SystemCurrencyFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return AccountType::NAME;
+        return 'oro_currency';
     }
 
     /**
@@ -51,17 +49,20 @@ class SystemCurrencyFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSetData']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }
 
-    public function postSetData(FormEvent $event)
+    /**
+     * @param FormEvent $event
+     */
+    public function postSubmit(FormEvent $event)
     {
         $form = $event->getForm();
         $restrict = $form->getConfig()->getOption('restrict');
         $enabledCurrencies = $this->configManager->get('oro_b2b_pricing.enabled_currencies');
 
         if ($restrict && $enabledCurrencies) {
-            $allowedCurrencies = $form->getData();
+            $allowedCurrencies = (array) $form->getData();
             $alreadyInUse = array_diff($enabledCurrencies, $allowedCurrencies);
 
             if ($alreadyInUse) {
