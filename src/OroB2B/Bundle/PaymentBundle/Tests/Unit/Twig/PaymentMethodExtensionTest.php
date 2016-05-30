@@ -2,9 +2,10 @@
 
 namespace OroB2B\src\OroB2B\Bundle\PaymentBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use OroB2B\Bundle\PaymentBundle\Twig\PaymentMethodExtension;
 
@@ -16,9 +17,14 @@ class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
     protected $paymentTransactionProvider;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodViewRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $configManager;
+    protected $paymentMethodViewRegistry;
+
+    /**
+     * @var PaymentMethodViewInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $paymentMethodView;
 
     /**
      * @var PaymentMethodExtension
@@ -31,18 +37,26 @@ class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->configManager = $this
-            ->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+        $this->paymentMethodViewRegistry = $this
+            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extension = new PaymentMethodExtension($this->paymentTransactionProvider, $this->configManager);
+        $this->extension = new PaymentMethodExtension(
+            $this->paymentTransactionProvider,
+            $this->paymentMethodViewRegistry
+        );
+        $this->paymentMethodView = $this
+            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     public function testGetFunctions()
     {
         $this->assertEquals(
             [
-                new \Twig_SimpleFunction('get_payment_methods', [$this->extension, 'getPaymentMethods'])
+                new \Twig_SimpleFunction('get_payment_methods', [$this->extension, 'getPaymentMethods']),
+                new \Twig_SimpleFunction('get_payment_method_label', [$this->extension, 'getPaymentMethodLabel'])
             ],
             $this->extension->getFunctions()
         );
@@ -56,7 +70,8 @@ class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
     public function testGetPaymentMethods()
     {
         $entity = new PaymentTerm();
-        $paymentMethodConstant = 'SomePaymentMethod';
+        $label = 'label';
+        $paymentMethodConstant = 'payment_term';
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod($paymentMethodConstant);
         $this->paymentTransactionProvider
@@ -64,12 +79,41 @@ class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getPaymentTransactions')
             ->with($entity)
             ->willReturn([$paymentTransaction]);
-        $label = 'label';
-        $this->configManager
+        $this->paymentMethodViewRegistry
             ->expects($this->once())
-            ->method('get')
-            ->with(sprintf('orob2b_payment.%s_label', $paymentMethodConstant))
+            ->method('getPaymentMethodView')
+            ->with($paymentMethodConstant)
+            ->willReturn($this->paymentMethodView);
+        $this->paymentMethodView
+            ->expects($this->once())
+            ->method('getLabel')
             ->willReturn($label);
+
         $this->assertEquals($this->extension->getPaymentMethods($entity), [$label]);
+    }
+
+    public function testGetPaymentMethodLabel()
+    {
+        $label = 'label';
+        $paymentMethodConstant = 'payment_term';
+        $paymentMethodNotExistsConstant = 'not_exists_method';
+        $this->paymentMethodViewRegistry
+            ->expects($this->at(0))
+            ->method('getPaymentMethodView')
+            ->with($paymentMethodConstant)
+            ->willReturn($this->paymentMethodView);
+        $this->paymentMethodViewRegistry
+            ->expects($this->at(1))
+            ->method('getPaymentMethodView')
+            ->with($paymentMethodNotExistsConstant)
+            ->willThrowException(new \InvalidArgumentException());
+
+        $this->paymentMethodView
+            ->expects($this->once())
+            ->method('getLabel')
+            ->willReturn($label);
+
+        $this->assertEquals($this->extension->getPaymentMethodLabel($paymentMethodConstant), $label);
+        $this->assertEquals($this->extension->getPaymentMethodLabel($paymentMethodNotExistsConstant), '');
     }
 }

@@ -78,6 +78,7 @@ class PayflowGatewayView implements PaymentMethodViewInterface
         $viewOptions['creditCardComponentOptions'] = [
             'acct' => $this->getLast4($validateTransaction),
             'saveForLaterUse' => !empty($transactionOptions['saveForLaterUse']),
+            'authorizationForRequiredAmount' => $this->isAuthorizationForRequiredAmountEnabled()
         ];
 
         return $viewOptions;
@@ -134,5 +135,13 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     protected function isZeroAmountAuthorizationEnabled()
     {
         return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isAuthorizationForRequiredAmountEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
     }
 }

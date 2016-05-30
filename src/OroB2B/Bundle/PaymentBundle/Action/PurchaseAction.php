@@ -21,6 +21,12 @@ class PurchaseAction extends AbstractPaymentMethodAction
         );
 
         $isPaymentMethodSupportsValidation = $this->isPaymentMethodSupportsValidation($paymentTransaction);
+
+        $attributes = [
+            'paymentMethod' => $options['paymentMethod'],
+            'paymentMethodSupportsValidation' => (bool)$isPaymentMethodSupportsValidation,
+        ];
+
         if ($isPaymentMethodSupportsValidation) {
             $sourcePaymentTransaction = $this->paymentTransactionProvider
                 ->getActiveValidatePaymentTransaction($options['paymentMethod']);
@@ -45,21 +51,15 @@ class PurchaseAction extends AbstractPaymentMethodAction
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
         if ($isPaymentMethodSupportsValidation) {
-            $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
-            $sourcePaymentTransactionOptions = $sourcePaymentTransaction->getTransactionOptions();
-            if (empty($sourcePaymentTransactionOptions[self::SAVE_FOR_LATER_USE])) {
-                $sourcePaymentTransaction->setActive(false);
-                $this->paymentTransactionProvider->savePaymentTransaction($sourcePaymentTransaction);
-            }
+            $attributes['purchaseSuccessful'] = $paymentTransaction->isSuccessful();
+
+            $this->handleSaveForLaterUse($paymentTransaction);
         }
 
         $this->setAttributeValue(
             $context,
             array_merge(
-                [
-                    'paymentMethod' => $options['paymentMethod'],
-                    'paymentMethodSupportsValidation' => (bool)$isPaymentMethodSupportsValidation,
-                ],
+                $attributes,
                 $this->getCallbackUrls($paymentTransaction),
                 (array)$paymentTransaction->getTransactionOptions(),
                 $response
@@ -76,5 +76,18 @@ class PurchaseAction extends AbstractPaymentMethodAction
         return $this->paymentMethodRegistry
             ->getPaymentMethod($paymentTransaction->getPaymentMethod())
             ->supports(PaymentMethodInterface::VALIDATE);
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     */
+    protected function handleSaveForLaterUse(PaymentTransaction $paymentTransaction)
+    {
+        $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
+        $sourcePaymentTransactionOptions = $sourcePaymentTransaction->getTransactionOptions();
+        if (empty($sourcePaymentTransactionOptions[self::SAVE_FOR_LATER_USE])) {
+            $sourcePaymentTransaction->setActive(false);
+            $this->paymentTransactionProvider->savePaymentTransaction($sourcePaymentTransaction);
+        }
     }
 }

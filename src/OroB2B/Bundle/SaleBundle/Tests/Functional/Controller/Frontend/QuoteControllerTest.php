@@ -261,6 +261,8 @@ class QuoteControllerTest extends WebTestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function viewProvider()
     {
