@@ -139,6 +139,12 @@ class RequestController extends Controller
             $rfpRequest,
             $this->get('orob2b_rfp.layout.data_provider.request_form')->getForm($rfpRequest),
             function (RFPRequest $rfpRequest) use ($securityFacade) {
+                if ($rfpRequest->getId()) {
+                    $this
+                        ->get('orob2b_rfp.mailer.request_to_quote_representatives_notifier')
+                        ->notifyRepresentatives($rfpRequest);
+                }
+
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     $route = $securityFacade->isGranted('ACCOUNT_EDIT', $rfpRequest)
                         ? 'orob2b_rfp_frontend_request_update'
@@ -156,6 +162,12 @@ class RequestController extends Controller
                 ];
             },
             function (RFPRequest $rfpRequest) use ($securityFacade) {
+                if ($rfpRequest->getId()) {
+                    $this
+                        ->get('orob2b_rfp.mailer.request_to_quote_representatives_notifier')
+                        ->notifyRepresentatives($rfpRequest);
+                }
+
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     return [
                         'route' => 'orob2b_rfp_frontend_request_view',

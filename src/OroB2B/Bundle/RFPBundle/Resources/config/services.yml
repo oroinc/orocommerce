@@ -20,6 +20,12 @@ services:
             - "@oro_email.email_holder_helper"
             - "@oro_email.direct_mailer"
 
+    orob2b_rfp.mailer.request_to_quote_representatives_notifier:
+        class: 'OroB2B\Bundle\RFPBundle\Mailer\RequestToQuoteRepresentativesNotifier'
+        public: true
+        arguments:
+            - "@orob2b_rfp.mailer.processor"
+
     orob2b_rfp.processor.quick_add:
         parent: orob2b_product.component_processor.data_storage_aware.processor
         calls:
