@@ -65,6 +65,8 @@ class Configuration implements ConfigurationInterface
     const PAYMENT_TERM_ENABLED_KEY = 'payment_term_enabled';
     const PAYMENT_TERM_LABEL_KEY = 'payment_term_label';
     const PAYMENT_TERM_SORT_ORDER_KEY = 'payment_term_sort_order';
+    const PAYMENT_TERM_ALLOWED_COUNTRIES_KEY = 'payment_term_allowed_countries';
+    const PAYMENT_TERM_SELECTED_COUNTRIES_KEY = 'payment_term_selected_countries';
     const PAYMENT_TERM_ALLOWED_CURRENCIES = 'payment_term_allowed_currencies';
 
     const CARD_VISA = 'visa';
@@ -202,7 +204,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYFLOW_GATEWAY_ALLOWED_COUNTRIES_KEY => [
                     'type' => 'text',
-                    'value' => 'all'
+                    'value' => self::ALLOWED_COUNTRIES_ALL
                 ],
                 self::PAYFLOW_GATEWAY_SELECTED_COUNTRIES_KEY => [
                     'type' => 'array',
@@ -288,6 +290,14 @@ class Configuration implements ConfigurationInterface
                 self::PAYMENT_TERM_SORT_ORDER_KEY => [
                     'type' => 'string',
                     'value' => '30'
+                ],
+                self::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY => [
+                    'type' => 'text',
+                    'value' => self::ALLOWED_COUNTRIES_ALL
+                ],
+                self::PAYMENT_TERM_SELECTED_COUNTRIES_KEY => [
+                    'type' => 'array',
+                    'value' => []
                 ],
                 self::PAYMENT_TERM_ALLOWED_CURRENCIES => [
                     'type' => 'array',

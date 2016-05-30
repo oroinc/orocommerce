@@ -465,6 +465,34 @@ oro_system_configuration:
                 constraints:
                     - NotBlank: ~
 
+        orob2b_payment.payment_term_allowed_countries:
+            data_type: string
+            type: choice
+            priority: 70
+            options:
+                label: orob2b.payment.system_configuration.fields.allowed_countries.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    all: orob2b.payment.system_configuration.fields.allowed_countries.all
+                    selected: orob2b.payment.system_configuration.fields.allowed_countries.selected
+                attr:
+                    'data-page-component-module': 'orob2bpayment/js/app/components/config-hide-fields-component'
+                    'data-dependency-id': 'payment_term_allowed_countries'
+
+        orob2b_payment.payment_term_selected_countries:
+            data_type: string
+            type: oro_locale_country
+            priority: 60
+            options:
+                label: orob2b.payment.system_configuration.fields.selected_countries.label
+                multiple: true
+                attr:
+                    'data-depends-on-field': 'payment_term_allowed_countries'
+                    'data-depends-on-field-value': 'selected'
+
     tree:
         system_configuration:
             commerce:
@@ -556,4 +584,6 @@ oro_system_configuration:
                                             - orob2b_payment.payment_term_enabled
                                             - orob2b_payment.payment_term_label
                                             - orob2b_payment.payment_term_sort_order
+                                            - orob2b_payment.payment_term_allowed_countries
+                                            - orob2b_payment.payment_term_selected_countries
                                             - orob2b_payment.payment_term_allowed_currencies
