@@ -10,8 +10,9 @@ trait CurrencyAwarePaymentMethodTrait
      */
     public function isCurrencyApplicable(array $context = [])
     {
-        if (!empty($context['currency']) && $this->getAllowedCurrencies()) {
-            return in_array($context['currency'], $this->getAllowedCurrencies(), true);
+        $currencies = $this->getAllowedCurrencies();
+        if (!empty($context['currency']) && $currencies) {
+            return in_array($context['currency'], $currencies, true);
         }
 
         return false;
