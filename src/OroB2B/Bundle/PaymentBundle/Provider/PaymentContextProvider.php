@@ -2,17 +2,28 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Provider;
 
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+
 class PaymentContextProvider
 {
-    /** @var AddressExtractor */
+    /**
+     * @var AddressExtractor
+     */
     protected $addressExtractor;
 
     /**
-     * @param AddressExtractor $addressExtractor
+     * @var UserCurrencyProvider
      */
-    public function __construct(AddressExtractor $addressExtractor)
+    protected $currencyProvider;
+
+    /**
+     * @param AddressExtractor $addressExtractor
+     * @param UserCurrencyProvider $currencyProvider
+     */
+    public function __construct(AddressExtractor $addressExtractor, UserCurrencyProvider $currencyProvider)
     {
         $this->addressExtractor = $addressExtractor;
+        $this->currencyProvider = $currencyProvider;
     }
 
     /**
@@ -33,6 +44,7 @@ class PaymentContextProvider
         return [
             'entity' => $entity,
             'country' => $this->addressExtractor->getCountryIso2($entity),
+            'currency' => $this->currencyProvider->getUserCurrency(),
         ];
     }
 }

@@ -235,6 +235,7 @@ services:
         class: 'OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider'
         arguments:
             - '@orob2b_payment.provider.address_extractor'
+            - '@orob2b_pricing.provider.user_currency'
 
     orob2b_payment.condition.payment_method_supports:
         class: 'OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodSupports'
