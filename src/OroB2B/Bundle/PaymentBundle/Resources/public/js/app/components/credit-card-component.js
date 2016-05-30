@@ -123,8 +123,6 @@ define(function(require) {
                 var data = this.$el.find('[data-gateway]').serializeArray();
                 data.push({name: 'SECURETOKENID', value: resolvedEventData.SECURETOKENID});
                 data.push({name: 'SECURETOKEN', value: resolvedEventData.SECURETOKEN});
-                data.push({name: 'RETURNURL', value: resolvedEventData.returnUrl});
-                data.push({name: 'ERRORURL', value: resolvedEventData.errorUrl});
 
                 if (resolvedEventData.formAction && resolvedEventData.SECURETOKEN) {
                     this.postUrl(resolvedEventData.formAction, data);

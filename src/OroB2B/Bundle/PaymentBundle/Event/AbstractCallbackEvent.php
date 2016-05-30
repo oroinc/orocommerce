@@ -19,10 +19,9 @@ abstract class AbstractCallbackEvent extends AbstractTransactionEvent
     {
         $this->data = $data;
 
-        $this->response = new Response(
-            Response::$statusTexts[Response::HTTP_FORBIDDEN],
-            Response::HTTP_FORBIDDEN
-        );
+        $this->response = new Response();
+
+        $this->markFailed();
     }
 
     /**
@@ -62,4 +61,14 @@ abstract class AbstractCallbackEvent extends AbstractTransactionEvent
      * @return mixed
      */
     abstract public function getEventName();
+
+    public function markSuccessful()
+    {
+        $this->response->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function markFailed()
+    {
+        $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
+    }
 }

@@ -61,7 +61,6 @@ class PurchaseAction extends AbstractPaymentMethodAction
                     'paymentMethodSupportsValidation' => (bool)$isPaymentMethodSupportsValidation,
                 ],
                 $this->getCallbackUrls($paymentTransaction),
-                (array)$paymentTransaction->getTransactionOptions(),
                 $response
             )
         );

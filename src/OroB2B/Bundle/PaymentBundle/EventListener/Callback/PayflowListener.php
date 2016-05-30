@@ -63,7 +63,7 @@ class PayflowListener
             $criteria['accessToken'] = $eventData[Option\Optional::USER2];
         }
 
-        return [];
+        return $criteria;
     }
 
     /**
@@ -93,5 +93,7 @@ class PayflowListener
             ->setResponse(array_replace($paymentTransaction->getResponse(), $eventData))
             ->setActive($response->isSuccessful())
             ->setSuccessful($response->isSuccessful());
+        
+        $event->markSuccessful();
     }
 }

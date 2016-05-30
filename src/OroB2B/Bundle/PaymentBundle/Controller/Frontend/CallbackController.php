@@ -39,7 +39,7 @@ class CallbackController extends Controller
 
     /**
      * @Route(
-     *     "/return/{accessIdentifier}",
+     *     "/error/{accessIdentifier}",
      *     name="orob2b_payment_callback_error",
      *     requirements={"accessIdentifier"="[a-zA-Z0-9_-]+"}
      * )
