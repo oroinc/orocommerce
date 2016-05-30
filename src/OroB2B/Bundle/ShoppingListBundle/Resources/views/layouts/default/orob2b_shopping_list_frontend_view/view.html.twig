@@ -203,7 +203,7 @@
                                     </div>
                                 </div>
                                 <div class="product__select inline va-m_md">
-                                    <select class="oro-select2" name="product_unit" data-name="field__unit" required>
+                                    <select class="input input_block input_sm" name="product_unit" data-name="field__unit" required>
                                         {% if productsUnits[lineItem.product.id] is defined %}
                                             {% for unit in productsUnits[lineItem.product.id] %}
                                             <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|orob2b_format_product_unit_label}}</option>

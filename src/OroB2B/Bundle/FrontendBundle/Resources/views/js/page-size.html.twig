@@ -1,7 +1,7 @@
 <script type="text/html" id="template-datagrid-toolbar-page-size">
     <span class="fs14 va-m_md"><%- _.__("View per page") %>: &nbsp;</span>
     <div class="action-selectbox_custom_in-pager">
-        <select name="action" class="oro-select2--size-s" data-grid-pagesize-selector>
+        <select name="action" data-grid-pagesize-selector>
             <% _.each(items, function (item) { %>
                 <option
                         <% if (item === currentSizeLabel || (_.isUndefined(item.size) && item.size === currentSizeLabel)) { %>selected<% } %>

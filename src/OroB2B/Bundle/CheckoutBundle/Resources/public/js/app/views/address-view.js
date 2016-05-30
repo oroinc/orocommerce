@@ -41,8 +41,7 @@ define(function(require) {
                 this._hideForm(true);
                 this.$addressSelector.focus();
             }
-            this.$addressSelector.attr('disabled', disabled);
-            this.$addressSelector.inputWidget('refresh');
+            this.$addressSelector.prop('disabled', disabled).inputWidget('refresh');
         },
 
         _onAddressChanged: function(e) {
@@ -80,13 +79,11 @@ define(function(require) {
         },
 
         _setAddressSelectorState: function(state) {
-            this.$addressSelector.attr('disabled', state);
-            this.$addressSelector.inputWidget('refresh');
+            this.$addressSelector.prop('disabled', state).inputWidget('refresh');
         },
 
         _onRegionListChanged: function(e) {
-            this.$regionSelector.inputWidget('dispose');
-            this.$regionSelector.inputWidget('create');
+            this.$regionSelector.inputWidget('refresh');
         }
     });
 
