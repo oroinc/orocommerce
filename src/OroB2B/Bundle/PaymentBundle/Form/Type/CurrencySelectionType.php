@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PaymentBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\AbstractCurrencySelectionType;
+
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Currency;
 
 class CurrencySelectionType extends AbstractCurrencySelectionType
