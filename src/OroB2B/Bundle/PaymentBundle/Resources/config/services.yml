@@ -37,7 +37,7 @@ services:
         class: 'OroB2B\Bundle\PaymentBundle\Twig\PaymentMethodExtension'
         arguments:
             - "@orob2b_payment.provider.payment_transaction"
-            - "@oro_config.manager"
+            - "@orob2b_payment.payment_method.view.registry"
         tags:
             - { name: twig.extension }
 
