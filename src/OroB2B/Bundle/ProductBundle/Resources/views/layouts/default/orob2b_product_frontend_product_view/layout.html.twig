@@ -28,17 +28,12 @@
             <div class="product-gallery__image-holder">
                 <div class="product-gallery__image-holder__carousel" data-product-gallery>
                     <div class="product-gallery__image-holder__container">
-                        {% if product.imagesByType('main')|length > 0 %}
-                            {% set productImage = product.imagesByType('main').first %}
-                        {% endif %}
-
-                        {% if productImage is defined and productImage.image %}
-                            <img src="{{ Image.url(productImage.image, 'product_large') }}"
-                                 alt="{{ product.defaultName }}"
-                                 data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
-                                 width="378"
-                                 height="378"/>
-                        {% endif %}
+                        {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
+                        <img src="{{ Image.url(productImage, 'product_large') }}"
+                             alt="{{ product.defaultName }}"
+                             data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
+                             width="378"
+                             height="378"/>
                     </div>
                     {% for productImage in product.imagesByType('additional') %}
                         <img src="{{ Image.url(productImage.image, 'product_small') }}"
