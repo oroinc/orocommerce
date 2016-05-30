@@ -63,7 +63,10 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
         $this->primaryCode = null;
         if (array_key_exists('primaryUnitPrecision', $data)) {
             $data['unitPrecisions'][] = $data['primaryUnitPrecision'];
-            $this->primaryCode = $data['primaryUnitPrecision']['unit']['code'];
+            if (array_key_exists('unit', $data['primaryUnitPrecision']) &&
+                array_key_exists('code', $data['primaryUnitPrecision']['unit'])) {
+                $this->primaryCode = $data['primaryUnitPrecision']['unit']['code'];
+            }
             unset($data['primaryUnitPrecision']);
         }
 
