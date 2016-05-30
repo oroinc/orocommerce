@@ -58,7 +58,6 @@ services:
     orob2b_payment.form.type.currency_selection:
         class: 'OroB2B\Bundle\PaymentBundle\Form\Type\CurrencySelectionType'
         public: true
-        parent:
         arguments:
             - '@oro_config.manager'
             - '@oro_locale.settings'
