@@ -42,6 +42,7 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orodatagrid/js/datagrid/fo
          */
         initialize: function(options) {
             this.grid = options.grid;
+            this.grid.refreshAction.execute();
 
             var inputSelector = options.options.metadata.options.cellSelection.selector;
             var quantityValidationOptions = $(inputSelector).first().data('level-quantity-options');
@@ -118,7 +119,7 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orodatagrid/js/datagrid/fo
             }
 
             var editorInput = cell.$el.find(':input').first();
-            editorInput.parent().addClass('controls');
+            editorInput.parent().addClass('controls').removeClass('editable');
             editorInput.attr('name', 'quantity_' + cell.model.cid);
             editorInput.data('validation', constraints);
             editorInput.valid();

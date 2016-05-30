@@ -8,6 +8,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller\ProductControllerTest as BaseTest;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use OroB2B\Bundle\FrontendBundle\Test\Client;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
@@ -16,6 +17,11 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 class ProductControllerTest extends BaseTest
 {
     const SIDEBAR_ROUTE = 'orob2b_catalog_frontend_category_product_sidebar';
+
+    /**
+     * @var Client
+     */
+    protected $client;
 
     protected function setUp()
     {
@@ -36,12 +42,14 @@ class ProductControllerTest extends BaseTest
     {
         /** @var Category $secondLevelCategory */
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-        $response = $this->requestFrontendGrid(
+        $response = $this->client->requestFrontendGrid(
             [
                 'gridName' => 'frontend-products-grid',
                 RequestProductHandler::CATEGORY_ID_KEY => $secondLevelCategory->getId(),
                 RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY => $includeSubcategories,
-            ]
+            ],
+            [],
+            true
         );
         $result = $this->getJsonResponseContent($response, 200);
         $count = count($expected);

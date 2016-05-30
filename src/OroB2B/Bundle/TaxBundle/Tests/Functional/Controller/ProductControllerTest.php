@@ -20,6 +20,8 @@ class ProductControllerTest extends WebTestCase
     const INVENTORY_STATUS = 'In Stock';
     const DEFAULT_NAME = 'default name';
     const DEFAULT_DESCRIPTION = 'default description';
+    const FIRST_UNIT_CODE = 'item';
+    const FIRST_UNIT_PRECISION = '0';
 
     protected function setUp()
     {
@@ -42,17 +44,22 @@ class ProductControllerTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_product[sku]'] = self::TEST_SKU;
-        $form['orob2b_product[owner]'] = $this->getBusinessUnitId();
 
-        $form['orob2b_product[inventoryStatus]'] = Product::INVENTORY_STATUS_IN_STOCK;
-        $form['orob2b_product[status]'] = Product::STATUS_DISABLED;
-        $form['orob2b_product[names][values][default]'] = self::DEFAULT_NAME;
-        $form['orob2b_product[descriptions][values][default]'] = self::DEFAULT_DESCRIPTION;
-        $form['orob2b_product[taxCode]'] = $productTaxCode->getId();
+        $formValues = $form->getPhpValues();
+        $formValues['orob2b_product']['sku'] = self::TEST_SKU;
+        $formValues['orob2b_product']['owner'] = $this->getBusinessUnitId();
+        $formValues['orob2b_product']['inventoryStatus'] = Product::INVENTORY_STATUS_IN_STOCK;
+        $formValues['orob2b_product']['status'] = Product::STATUS_DISABLED;
+        $formValues['orob2b_product']['names']['values']['default'] = self::DEFAULT_NAME;
+        $formValues['orob2b_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
+        $formValues['orob2b_product']['taxCode'] = $productTaxCode->getId();
+        $formValues['orob2b_product']['unitPrecisions'][] = [
+            'unit' => self::FIRST_UNIT_CODE,
+            'precision' => self::FIRST_UNIT_PRECISION,
+        ];
 
         $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -74,10 +81,8 @@ class ProductControllerTest extends WebTestCase
             LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1
         );
 
-        $result = $this->getProductDataBySku(self::TEST_SKU);
-        $id = (int)$result['id'];
-
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $id]));
+        $product = $this->getProductDataBySku(self::TEST_SKU);
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $product->getId()]));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -136,22 +141,17 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @param string $sku
-     * @return array
+     * @return Product
      */
     private function getProductDataBySku($sku)
     {
-        $response = $this->client->requestGrid(
-            'products-grid',
-            ['products-grid[_filter][sku][value]' => $sku]
-        );
+        /** @var Product $product */
+        $product = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BProductBundle:Product')
+            ->getRepository('OroB2BProductBundle:Product')
+            ->findOneBy(['sku' => $sku]);
+        $this->assertNotEmpty($product);
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayHasKey('data', $result);
-        $this->assertNotEmpty($result['data']);
-
-        $result = reset($result['data']);
-        $this->assertNotEmpty($result);
-
-        return $result;
+        return $product;
     }
 }

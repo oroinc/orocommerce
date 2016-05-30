@@ -119,7 +119,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
             'enabled' => true,
             'priceListsToAccounts' => [],
             'priceListsToAccountGroups' => [],
-            'websites' => ['default'],
+            'websites' => [LoadWebsiteData::WEBSITE2],
             'priceListRelations' => [
                 [
                     'priceList' => 'price_list_2',
@@ -138,9 +138,9 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
 
         foreach ($this->data as $priceListData) {
             $combinedPriceList = new CombinedPriceList();
-
+            $combinedPriceList->setPricesCalculated(true);
             $combinedPriceList
-                ->setName($priceListData['name'])
+                ->setName(md5($priceListData['name']))
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now)
                 ->setEnabled($priceListData['enabled']);
@@ -258,14 +258,16 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
         array $priceListData,
         CombinedPriceList $combinedPriceList
     ) {
+        $websiteRepository = $manager->getRepository('OroB2BWebsiteBundle:Website');
         foreach ($priceListData['websites'] as $websiteReference) {
             if ($websiteReference === 'default') {
                 /** @var Website $website */
-                $website = $manager->getRepository('OroB2BWebsiteBundle:Website')->find(1);
+                $website = $websiteRepository->find(1);
             } else {
                 /** @var Website $website */
                 $website = $this->getReference($websiteReference);
             }
+
             $priceListToWebsite = new CombinedPriceListToWebsite();
             $priceListToWebsite->setWebsite($website);
             $priceListToWebsite->setPriceList($combinedPriceList);

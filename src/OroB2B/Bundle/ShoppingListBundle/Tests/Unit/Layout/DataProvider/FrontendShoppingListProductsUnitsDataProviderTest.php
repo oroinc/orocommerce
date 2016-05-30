@@ -73,7 +73,7 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Undefined data item index: shoppingList.
+     * @expectedExceptionMessage Undefined data item index: entity.
      */
     public function testGetDataWithEmptyContext()
     {
@@ -89,36 +89,26 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
     public function testGetData($shoppingList, $expected)
     {
         $context = new LayoutContext();
-        $context->data()->set('shoppingList', null, $shoppingList);
+        $context->data()->set('entity', null, $shoppingList);
 
         if ($shoppingList) {
-            /** @var PriceList $priceList */
-            $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id'=> 42]);
-            $this->requestHandler->expects($this->once())
-                ->method('getPriceListByAccount')
-                ->willReturn($priceList);
-
-            $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+            $repository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
                 ->disableOriginalConstructor()
                 ->getMock();
             $repository->expects($this->once())
-                ->method('getProductsUnitsByPriceList')
+                ->method('getProductsUnits')
                 ->willReturn($expected);
 
             $em = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
             $em->expects($this->once())
                 ->method('getRepository')
-                ->with('OroB2BPricingBundle:CombinedProductPrice')
+                ->with('OroB2BProductBundle:ProductUnit')
                 ->willReturn($repository);
 
             $this->registry->expects($this->once())
                 ->method('getManagerForClass')
-                ->with('OroB2BPricingBundle:CombinedProductPrice')
+                ->with('OroB2BProductBundle:ProductUnit')
                 ->willReturn($em);
-
-            $this->userCurrencyProvider->expects($this->once())
-                ->method('getUserCurrency')
-                ->willReturn(self::TEST_CURRENCY);
         }
 
         $actual = $this->provider->getData($context);
@@ -148,14 +138,14 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
 
         return [
             [
-                'shoppingList' => $shoppingList,
+                'entity' => $shoppingList,
                 'expected' => [
                     '123' => ['liter', 'bottle'],
                     '321' => ['piece' ]
                 ]
             ],
             [
-                'shoppingList' => null,
+                'entity' => null,
                 'expected' => null
             ]
         ];

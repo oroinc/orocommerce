@@ -6,7 +6,9 @@ orob2b.pricing:
         id.label: Id
         name.label: Name
         default.label: Is Default
+        active.label: Active
         currencies.label: Currencies
+        schedule.label: Schedule
         has_price_list.label: Has Price List
         set_default:
             label: Set default
@@ -19,9 +21,25 @@ orob2b.pricing:
         merge_allowed.label: Merge Allowed
         merge_allowed.yes.label: Yes
         merge_allowed.no.label: No
+        contain_schedule.label: Contain Schedules
+        owner.label: 'Owner'
+        organization.label: 'Organization'
 
         form:
             pricelist_required: Please select a price list first...
+        status:
+            label: Status
+            disable: Disable
+            enable: Enable
+            enabled: Enabled
+            disabled: Disabled
+            message:
+              enabled: Price List was enabled successfully
+              disabled: Price List was disabled successfully
+        duplicate:
+            label: Duplicate Price List
+            message: Price List was Duplicated successfull
+
     quantity.label: Quantity
     fallback:
         label: Fallback
@@ -62,9 +80,28 @@ orob2b.pricing:
             save: Save
             cancel: Cancel
         save.success: Product Price has been added
+        applicable_from: 'Price is applicable starting from %amount%'
+
     price_type:
         bundled: 'bundle'
         unit: 'per unit'
+
+    pricelist_schedule:
+        active.label: Enabled
+        activity.label: Status
+        active_at.label: 'Active At'
+        deactivate_at.label: 'Deactivate At'
+        was_activated: Was activated on %date%.
+        was_deactivated: Was deactived on %date%.
+        will_be_acitivated: Will become active on %date%.
+        will_be_deacitivated: Will be deactivated on %date%.
+        active_now: Is active now.
+        not_active_now: Is not active now.
+        active: Active
+        inactive: Inactive
+        disabled: Disabled
+
+    add_schedule: 'Add'
 
     menu:
         price_lists_tab.label: Price lists management
@@ -97,7 +134,7 @@ orob2b.pricing:
             default_price_lists.title: Default Price Lists
             price_rounding.title: Pricing Rounding
             pricing.title: Pricing
-            price_lists_update_mode.title: 'Price List Calculations'
+            price_lists_update.title: 'Price List Calculations'
         fields:
             price_lists.title: Price Lists
             precision.label: Pricing Precision
@@ -118,6 +155,9 @@ orob2b.pricing:
                 choices:
                     scheduled.label: 'Deferred'
                     real_time.label: 'Immediate'
+            offset_of_processing_cpl_prices:
+                label: "Offset of processing CPL prices"
+                tooltip: 'Time before CPL prices calculation starts before activation.'
 
     lineitem:
         subtotal.label: 'Line items subtotal'
@@ -134,6 +174,9 @@ orob2b.pricing:
                 your_price: 'Your Price:'
                 listed_price: 'Listed Price:'
                 msrp: 'MSRP:'
+        product_prices:
+            empty_prices: Price not available
+            price_not_found: Price for requested quantity is not available
 
 oro:
     importexport:

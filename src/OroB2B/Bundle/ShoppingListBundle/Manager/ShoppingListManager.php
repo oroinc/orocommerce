@@ -16,6 +16,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -190,6 +191,31 @@ class ShoppingListManager
 
     /**
      * @param ShoppingList $shoppingList
+     * @param Product $product
+     * @param bool $flush
+     * @return int                       Number of removed line items
+     */
+    public function removeProduct(ShoppingList $shoppingList, Product $product, $flush = true)
+    {
+        $objectManager = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+        $repository = $objectManager->getRepository('OroB2BShoppingListBundle:LineItem');
+
+        $lineItems = $repository->getItemsByShoppingListAndProduct($shoppingList, $product);
+
+        foreach ($lineItems as $lineItem) {
+            $shoppingList->removeLineItem($lineItem);
+            $objectManager->remove($lineItem);
+        }
+
+        if ($lineItems && $flush) {
+            $objectManager->flush();
+        }
+
+        return count($lineItems);
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
      * @param bool|true $flush
      */
     public function recalculateSubtotals(ShoppingList $shoppingList, $flush = true)
@@ -239,11 +265,13 @@ class ShoppingListManager
         $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
         /** @var ShoppingListRepository $repository */
         $repository = $em->getRepository('OroB2BShoppingListBundle:ShoppingList');
-        $shoppingList = null === $shoppingListId
-            ? $repository->findCurrentForAccountUser($this->getAccountUser())
-            : $repository->findByUserAndId($this->getAccountUser(), $shoppingListId);
+        if ($shoppingListId === null) {
+            $shoppingList = $repository->findCurrentForAccountUser($this->getAccountUser());
+        } else {
+            $shoppingList = $repository->findByUserAndId($this->getAccountUser(), $shoppingListId);
+        }
 
-        if (!($shoppingList instanceof ShoppingList)) {
+        if (!$shoppingList instanceof ShoppingList) {
             $shoppingList = $this->createCurrent();
         }
 

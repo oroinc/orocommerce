@@ -18,7 +18,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
     /**
      * @var array
      */
-    protected $data = [
+    protected static $data = [
         [
             'product' => 'product.1',
             'priceList' => '1f',
@@ -145,6 +145,33 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'currency' => 'USD',
             'reference' => 'product_price.14'
         ],
+        [
+            'product' => 'product.4',
+            'priceList' => '1f',
+            'qty' => 10,
+            'unit' => 'product_unit.bottle',
+            'price' => 200.5,
+            'currency' => 'USD',
+            'reference' => 'product_price.15'
+        ],
+        [
+            'product' => 'product.5',
+            'priceList' => '1f',
+            'qty' => 1,
+            'unit' => 'product_unit.bottle',
+            'price' => 0,
+            'currency' => 'USD',
+            'reference' => 'product_price.16'
+        ],
+        [
+            'product' => 'product.1',
+            'priceList' => '1f',
+            'qty' => 1,
+            'unit' => 'product_unit.bottle',
+            'price' => 13.1,
+            'currency' => 'USD',
+            'reference' => 'product_price.17'
+        ],
     ];
 
     /**
@@ -152,7 +179,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
      */
     public function load(ObjectManager $manager)
     {
-        foreach ($this->data as $data) {
+        foreach (static::$data as $data) {
             /** @var Product $product */
             $product = $this->getReference($data['product']);
 

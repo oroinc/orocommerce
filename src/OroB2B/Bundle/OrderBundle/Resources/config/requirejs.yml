@@ -5,6 +5,7 @@ config:
         'orob2border/js/app/components/entry-point-component': 'bundles/orob2border/js/app/components/entry-point-component.js'
         'orob2border/js/app/components/totals-component': 'bundles/orob2border/js/app/components/totals-component.js'
         'orob2border/js/app/components/products-prices-component': 'bundles/orob2border/js/app/components/products-prices-component.js'
+        'orob2border/js/app/components/data-load-component': 'bundles/orob2border/js/app/components/data-load-component.js'
         'orob2border/js/app/views/address-view': 'bundles/orob2border/js/app/views/address-view.js'
         'orob2border/js/app/views/frontend-line-item-view': 'bundles/orob2border/js/app/views/frontend-line-item-view.js'
         'orob2border/js/app/views/line-item-view': 'bundles/orob2border/js/app/views/line-item-view.js'

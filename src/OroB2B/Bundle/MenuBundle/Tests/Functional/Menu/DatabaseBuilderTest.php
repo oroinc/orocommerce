@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\MenuBundle\Tests\Functional\Menu;
 
 use Knp\Menu\Util\MenuManipulator;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseBuilder;
@@ -25,7 +25,12 @@ class DatabaseBuilderTest extends WebTestCase
 
         $this->loadFixtures(['OroB2B\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData']);
 
-        $this->builder = $this->getContainer()->get('orob2b_menu.menu.database_builder');
+        $container = $this->getContainer();
+
+        $this->builder = new DatabaseBuilder(
+            $container->get('doctrine'),
+            $container->get('orob2b_menu.menu.factory')
+        );
     }
 
     /**

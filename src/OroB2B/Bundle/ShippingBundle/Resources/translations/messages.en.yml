@@ -1,0 +1,114 @@
+orob2b:
+    shipping:
+        datagrid:
+            shipping_options:
+                column.label:         Shipping Options
+        system_configuration:
+            groups:
+                shipping.title: Shipping
+                shipping_origin.label: Shipping Origin
+                shipping_origin.title: Address
+                shipping_options.label: Shipping Options
+                shipping_options.title: Shipping Options
+            fields:
+                length_units.label: Allowed Units Of Length
+                weight_units.label: Allowed Units Of Weight
+                freight_classes.label: Allowed Freight Classes
+        shipping_origin:
+            country.label:       Country
+            region.label:        Region/State
+            region_text.label:   State
+            postal_code.label:   Zip/Postal Code
+            city.label:          City
+            street.label:        Street Address 1
+            street2.label:       Street Address 2
+        product_shipping_options:
+            entity_label: Shipping Option
+            entity_plural_label: Shipping Options
+            add_label: Add Options
+            product_unit.label: Unit
+            weight.label: Weight
+            dimensions.label: Dimensions
+            freight_class.label: Freight Class            
+        weightunit:
+            entity_label: Unit Of Weight
+            entity_plural_label: Units Of Weight
+            code.label: Code
+            conversion_rates.label: Conversion Rates
+        lengthunit:
+            entity_label: Unit Of Length
+            entity_plural_label: Units Of Length
+            code.label: Code
+            conversion_rates.label: Conversion Rates
+        freightclass:
+            entity_label: Freight Class
+            entity_plural_label: Freight Classes
+            code.label: Code
+        warehouse:
+            use_system_configuration: Use System Configuration
+            system_configuration.label: '(system configuration)'
+            section:
+                shipping_origin: Shipping Origin
+        product:
+            section:
+                shipping_options: Shipping Options
+        form:
+            placeholder:
+                length_unit.label: Select unit of length
+                weight_unit.label: Select unit of weight
+                freight_class.label: Select freight class
+
+    weight_unit.lbs:
+        label:
+            full: pound
+            full_plural: pounds
+            short: lb
+            short_plural: lbs
+        value:
+            full: '{0} none|{1} %count% pound|]1,Inf] %count% pounds'
+            short: '{0} none|{1} %count% lb|]1,Inf] %count% lbs'
+
+    weight_unit.kg:
+        label:
+            full: kilogram
+            full_plural: kilograms
+            short: kg
+            short_plural: kgs
+        value:
+            full: '{0} none|{1} %count% kilogram|]1,Inf] %count% kilograms'
+            short: '{0} none|{1} %count% kg|]1,Inf] %count% kg'
+
+    length_unit.inch:
+        label:
+            full: inch
+            full_plural: inches
+            short: in
+            short_plural: in
+
+    length_unit.foot:
+        label:
+            full: foot
+            full_plural: feet
+            short: ft
+            short_plural: ft
+
+    length_unit.cm:
+        label:
+            full: centimeter
+            full_plural: centimeters
+            short: cm
+            short_plural: cm
+
+    length_unit.m:
+        label:
+            full: meter
+            full_plural: meters
+            short: m
+            short_plural: m
+
+    freight_class.parcel:
+        label:
+            full: parcel
+            full_plural: parcels
+            short: pel
+            short_plural: pels

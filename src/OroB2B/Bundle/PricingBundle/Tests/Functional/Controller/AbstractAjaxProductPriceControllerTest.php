@@ -61,11 +61,17 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
         $data = json_decode($result->getContent(), true);
-        $expectedData = [
-            $product->getId() => $expected
-        ];
 
-        $this->assertEquals($expectedData, $data);
+        $this->assertArrayHasKey($product->getId(), $data);
+        $actualData = $data[$product->getId()];
+
+        foreach ($expected as $unit => $prices) {
+            $this->assertArrayHasKey($unit, $actualData);
+            $this->assertCount(count($prices), $actualData[$unit]);
+            foreach ($prices as $price) {
+                $this->assertContains($price, $actualData[$unit]);
+            }
+        }
     }
 
     /**

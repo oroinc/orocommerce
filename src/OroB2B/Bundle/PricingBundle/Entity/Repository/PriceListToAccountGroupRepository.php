@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
@@ -37,23 +38,23 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
      */
     public function getPriceLists($accountGroup, Website $website, $sortOrder = Criteria::DESC)
     {
-        return $this->createQueryBuilder('PriceListToAccountGroup')
-            ->innerJoin('PriceListToAccountGroup.priceList', 'priceList')
-            ->innerJoin('PriceListToAccountGroup.accountGroup', 'accountGroup')
-            ->where('accountGroup = :accountGroup')
-            ->andWhere('PriceListToAccountGroup.website = :website')
-            ->orderBy('PriceListToAccountGroup.priority', $sortOrder)
-            ->setParameters(['accountGroup' => $accountGroup, 'website' => $website])
-            ->getQuery()
-            ->getResult();
+        $qb = $this->createQueryBuilder('relation');
+        $qb->innerJoin('relation.priceList', 'priceList')
+            ->where($qb->expr()->eq('relation.accountGroup', ':accountGroup'))
+            ->andWhere($qb->expr()->eq('relation.website', ':website'))
+            ->andWhere($qb->expr()->eq('priceList.active', ':active'))
+            ->orderBy('relation.priority', $sortOrder)
+            ->setParameters(['accountGroup' => $accountGroup, 'website' => $website, 'active' => true]);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
      * @param Website $website
-     * @param int $fallback
+     * @param int|null $fallback
      * @return BufferedQueryResultIterator|AccountGroup[]
      */
-    public function getAccountGroupIteratorByDefaultFallback(Website $website, $fallback)
+    public function getAccountGroupIteratorByDefaultFallback(Website $website, $fallback = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct accountGroup')
@@ -78,14 +79,18 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
                 $qb->expr()->eq('priceListFallBack.website', ':website')
             )
         )
-        ->where(
-            $qb->expr()->orX(
-                $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite'),
-                $qb->expr()->isNull('priceListFallBack.fallback')
-            )
-        )
         ->setParameter('website', $website)
-        ->setParameter('fallbackToWebsite', $fallback);
+        ->orderBy('accountGroup.id', Criteria::ASC);
+
+        if ($fallback !== null) {
+            $qb->where(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite'),
+                    $qb->expr()->isNull('priceListFallBack.fallback')
+                )
+            )
+                ->setParameter('fallbackToWebsite', $fallback);
+        }
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }
@@ -122,5 +127,49 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
             ->setParameter('website', $website)
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param array AccountGroup[]|int[] $holdersIds
+     * @return PriceListToAccountGroup[]
+     */
+    public function getRelationsByHolders(array $holdersIds)
+    {
+        $qb = $this->createQueryBuilder('relation');
+        $qb->addSelect('partial website.{id, name}')
+            ->addSelect('partial priceList.{id, name}')
+            ->leftJoin('relation.website', 'website')
+            ->leftJoin('relation.priceList', 'priceList')
+            ->where($qb->expr()->in('relation.accountGroup', ':groups'))
+            ->orderBy('relation.accountGroup')
+            ->addOrderBy('relation.website')
+            ->addOrderBy('relation.priority')
+            ->setParameter('groups', $holdersIds);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param BasePriceList $priceList
+     * @param string $parameterName
+     */
+    public function restrictByPriceList(
+        QueryBuilder $queryBuilder,
+        BasePriceList $priceList,
+        $parameterName
+    ) {
+        $parentAlias = $queryBuilder->getRootAliases()[0];
+
+        $subQueryBuilder = $this->createQueryBuilder('relation');
+        $subQueryBuilder->where(
+            $subQueryBuilder->expr()->andX(
+                $subQueryBuilder->expr()->eq('relation.accountGroup', $parentAlias),
+                $subQueryBuilder->expr()->eq('relation.priceList', ':' . $parameterName)
+            )
+        );
+
+        $queryBuilder->andWhere($subQueryBuilder->expr()->exists($subQueryBuilder->getQuery()->getDQL()));
+        $queryBuilder->setParameter($parameterName, $priceList);
     }
 }

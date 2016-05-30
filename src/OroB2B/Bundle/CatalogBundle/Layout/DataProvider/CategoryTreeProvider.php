@@ -11,10 +11,14 @@ use OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider as CategoryProvide
 
 class CategoryTreeProvider extends AbstractServerRenderDataProvider
 {
-    /** @var array */
-    protected $data;
+    /**
+     * @var array
+     */
+    protected $data = [];
 
-    /** @var CategoryProvider */
+    /**
+     * @var CategoryProvider
+     */
     protected $categoryProvider;
 
     /**
@@ -34,13 +38,13 @@ class CategoryTreeProvider extends AbstractServerRenderDataProvider
         $user = $context->get('logged_user');
         $userId = $user ? $user->getId() : null;
 
-        if (!$this->data[$userId]) {
+        if (!array_key_exists($userId, $this->data)) {
             $categories = $this->categoryProvider->getCategories($user, null, false);
             $rootCategory = $this->findRootCategory($categories);
 
             $this->data[$userId] = [
                 'all' => $categories,
-                'main' => $rootCategory ? $rootCategory->getChildCategories()->toArray() : [],
+                'main' => $rootCategory ? $this->categoryProvider->getCategories($user, $rootCategory, false) : [],
             ];
         }
 

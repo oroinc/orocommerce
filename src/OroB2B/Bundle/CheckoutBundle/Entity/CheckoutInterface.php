@@ -19,11 +19,16 @@ interface CheckoutInterface extends WorkflowAwareInterface
     /**
      * @return string
      */
-    public function getType();
+    public function getCheckoutType();
 
     /**
      * @param CheckoutSource $source
      * @return $this
      */
     public function setSource(CheckoutSource $source);
+
+    /**
+     * @return CheckoutSource
+     */
+    public function getSource();
 }

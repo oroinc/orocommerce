@@ -151,7 +151,10 @@ class ImportExportTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $data['url']
+            $data['url'],
+            [],
+            [],
+            $this->generateNoHashNavigationHeader()
         );
 
         $result = $this->client->getResponse();
@@ -180,9 +183,10 @@ class ImportExportTest extends WebTestCase
 
         $this->assertEquals(
             [
-                'success' => true,
-                'message' => 'File was successfully imported.',
-                'errorsUrl' => null,
+                'success'    => true,
+                'message'    => 'File was successfully imported.',
+                'errorsUrl'  => null,
+                'importInfo' => '1 entities were added, 0 entities were updated',
             ],
             $data
         );
@@ -300,7 +304,7 @@ class ImportExportTest extends WebTestCase
         $configuration = [
             'import_validation' => [
                 'processorAlias' => 'orob2b_product_product.add_or_replace',
-                'entityName' => $this->getContainer()->getParameter('orob2b_product.product.class'),
+                'entityName' => $this->getContainer()->getParameter('orob2b_product.entity.product.class'),
                 'filePath' => $filePath,
             ],
         ];
@@ -342,7 +346,7 @@ class ImportExportTest extends WebTestCase
     {
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import_validation.yml';
 
-        return Yaml::parse($filePath);
+        return Yaml::parse(file_get_contents($filePath));
     }
 
     public function testImportRelations()
@@ -359,7 +363,7 @@ class ImportExportTest extends WebTestCase
 
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import.csv';
 
-        $productClass = $this->getContainer()->getParameter('orob2b_product.product.class');
+        $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
         $configuration = [
             'import' => [
                 'processorAlias' => 'orob2b_product_product.add_or_replace',

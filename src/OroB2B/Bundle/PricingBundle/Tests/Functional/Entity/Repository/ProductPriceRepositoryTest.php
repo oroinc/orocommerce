@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\PricingBundle\Entity\BaseProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -194,7 +195,9 @@ class ProductPriceRepositoryTest extends WebTestCase
                     'product_price.3',
                     'product_price.12',
                     'product_price.5',
-                    'product_price.4'
+                    'product_price.4',
+                    'product_price.16',
+                    'product_price.15',
                 ],
             ],
         ];
@@ -540,6 +543,51 @@ class ProductPriceRepositoryTest extends WebTestCase
 
         $this->repository->deleteByPriceList($priceList2);
         $this->assertEmpty($this->repository->findBy(['priceList' => $priceList2->getId()]));
+    }
+
+    public function testCopyPrices()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_1');
+        $newPriceList = new PriceList();
+        $newPriceList->setName('test');
+
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:ProductPrice');
+        $em->persist($newPriceList);
+        $em->flush();
+
+        $priceRepository = $em->getRepository('OroB2BPricingBundle:ProductPrice');
+        $priceRepository->copyPrices(
+            $priceList,
+            $newPriceList,
+            $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor')
+        );
+
+        $sourcePrices = $priceRepository->findBy(
+            ['priceList' => $priceList],
+            ['product' => 'ASC', 'quantity' => 'ASC', 'value' => 'ASC']
+        );
+
+        $targetPrices = $priceRepository->findBy(
+            ['priceList' => $newPriceList],
+            ['product' => 'ASC', 'quantity' => 'ASC', 'value' => 'ASC']
+        );
+
+        $priceToArrayCallback = function (BaseProductPrice $price) {
+            return [
+                'product' => $price->getProduct()->getId(),
+                'productSku' => $price->getProductSku(),
+                'quantity' => $price->getQuantity(),
+                'unit' => $price->getProductUnitCode(),
+                'value' => $price->getPrice()->getValue(),
+                'currency' => $price->getPrice()->getCurrency(),
+            ];
+        };
+
+        $sourcePricesArray = array_map($priceToArrayCallback, $sourcePrices);
+        $targetPricesArray = array_map($priceToArrayCallback, $targetPrices);
+
+        $this->assertSame($sourcePricesArray, $targetPricesArray);
     }
 
     /**

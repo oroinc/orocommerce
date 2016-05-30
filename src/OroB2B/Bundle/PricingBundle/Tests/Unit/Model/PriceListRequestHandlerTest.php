@@ -16,11 +16,13 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -65,6 +67,11 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     protected $em;
 
     /**
+     * @var AccountUserRelationsProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $relationsProvider;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -80,6 +87,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $this->request->expects($this->any())->method('getSession')->willReturn($this->session);
         $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 
@@ -94,6 +102,10 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2B\Bundle\PricingBundle\Entity\PriceList')
             ->willReturn($this->em);
         $this->em->expects($this->any())->method('getRepository')->willReturn($this->repository);
+        $this->relationsProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     protected function tearDown()
@@ -105,7 +117,8 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             $this->handler,
             $this->request,
             $this->requestStack,
-            $this->repository
+            $this->repository,
+            $this->relationsProvider
         );
     }
 
@@ -116,10 +129,10 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     {
         return new PriceListRequestHandler(
             $this->requestStack,
-            $this->session,
             $this->securityFacade,
             $this->priceListTreeHandler,
-            $this->registry
+            $this->registry,
+            $this->relationsProvider
         );
     }
 
@@ -179,15 +192,13 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getPriceListByAccountDataProvider
+     * @dataProvider getPriceListByAccountForUserDataProvider
      *
-     * @param int $websiteId
      * @param int $accountId
      * @param AbstractUser|null $user
      * @param Account $expectedAccount
      */
-    public function testGetPriceListByAccount(
-        $websiteId,
+    public function testGetPriceListByAccountForUser(
         $accountId,
         AbstractUser $user = null,
         Account $expectedAccount = null
@@ -197,42 +208,17 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
             ->willReturn($user);
-        $this->request->expects($this->at(0))
+
+        $this->request->expects($this->any())
             ->method('get')
-            ->with(PriceListRequestHandler::WEBSITE_KEY)
-            ->willReturn($websiteId);
-
-        $website = null;
-
-        if ($websiteId) {
-            $website = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId);
-
-            $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-                ->disableOriginalConstructor()->getMock();
-            $repository->expects($this->once())
-                ->method('find')
-                ->with($websiteId)
-                ->willReturn($website);
-            $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-            $em->expects($this->any())->method('getRepository')->willReturn($repository);
-
-            $this->registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
-                ->disableOriginalConstructor()
-                ->getMock();
-
-            $this->registry->expects($this->once())
-                ->method('getManagerForClass')
-                ->with('OroB2B\Bundle\WebsiteBundle\Entity\Website')
-                ->willReturn($em);
-        }
+            ->willReturnMap(
+                [
+                    [PriceListRequestHandler::ACCOUNT_ID_KEY, null, false, $accountId]
+                ]
+            );
 
         if ($accountId) {
-            $this->request->expects($this->at(1))
-                ->method('get')
-                ->with(PriceListRequestHandler::ACCOUNT_ID_KEY)
-                ->willReturn($accountId);
             $expectedAccount = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $accountId);
-
             $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
                 ->disableOriginalConstructor()->getMock();
             $repository->expects($this->once())
@@ -254,6 +240,80 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
+            ->with($expectedAccount, null)
+            ->willReturn($priceList);
+
+        $this->assertSame($priceList, $this->createHandler()->getPriceListByAccount());
+    }
+
+    /**
+     * @return array
+     */
+    public function getPriceListByAccountForUserDataProvider()
+    {
+        return [
+            'user, with account id' => [
+                'accountId' => 1,
+                'user' => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 11),
+                'expectedAccount' => new Account(),
+            ],
+            'default price list' => [
+                'accountId' => null,
+                'user' => null,
+                'expectedAccount' => null,
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider accountUserAccountDataProvider
+     * @param AccountUser|null $user
+     * @param Account|null $expectedAccount
+     */
+    public function testGetPriceListByAccountForAccountUser($user, $expectedAccount)
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList', 42);
+        $websiteId = 1;
+
+        $this->request->expects($this->any())
+            ->method('get')
+            ->willReturnMap(
+                [
+                    [PriceListRequestHandler::WEBSITE_KEY, null, false, $websiteId]
+                ]
+            );
+        $website = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId);
+
+        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()->getMock();
+        $repository->expects($this->once())
+            ->method('find')
+            ->with($websiteId)
+            ->willReturn($website);
+        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em->expects($this->any())->method('getRepository')->willReturn($repository);
+
+        $this->registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with('OroB2B\Bundle\WebsiteBundle\Entity\Website')
+            ->willReturn($em);
+
+        $this->securityFacade->expects($this->once())
+            ->method('getLoggedUser')
+            ->willReturn($user);
+
+        $this->relationsProvider->expects($this->once())
+            ->method('getAccountIncludingEmpty')
+            ->with($user)
+            ->will($this->returnValue($expectedAccount));
+
+        $this->priceListTreeHandler->expects($this->once())
+            ->method('getPriceList')
             ->with($expectedAccount, $website)
             ->willReturn($priceList);
 
@@ -263,46 +323,19 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function getPriceListByAccountDataProvider()
+    public function accountUserAccountDataProvider()
     {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 11);
-        $account = new Account();
-        $accountUser->setAccount($account);
-        $user = $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 11);
-
         return [
-            'accountUser, without websiteID' => [
-                'websiteId' => null,
-                'accountId' => null,
-                'user' => $accountUser,
-                'expectedAccount' => $account,
-            ],
-            'accountUser, with websiteID' => [
-                'websiteId' => 1,
-                'accountId' => null,
-                'user' => $accountUser,
-                'expectedAccount' => $account,
-            ],
-            'user, with account id' => [
-                'websiteId' => null,
-                'accountId' => 1,
-                'user' => $user,
-                'expectedAccount' => null,
-            ],
-            'default price list' => [
-                'websiteId' => null,
-                'accountId' => null,
-                'user' => null,
-                'expectedAccount' => null,
-            ]
+            [null, null],
+            [null, new Account()],
+            [new AccountUser(), new Account()]
         ];
     }
 
     public function testGetPriceListCurrenciesWithoutRequest()
     {
         $priceList = $this->getPriceList(2, ['USD']);
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects($this->any())
             ->method('getCurrentRequest')
             ->willReturn(null);
         $this->assertSame(['USD'], $this->createHandler()->getPriceListSelectedCurrencies($priceList));

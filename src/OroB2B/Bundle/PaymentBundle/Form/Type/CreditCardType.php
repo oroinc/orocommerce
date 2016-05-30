@@ -34,7 +34,7 @@ class CreditCardType extends AbstractType
                                 'payload' => null,
                             ],
                         ],
-                        'class' => 'credit-card-number',
+                        'data-card-number' => true,
                         'autocomplete' => 'off',
                         'data-gateway' => true,
                     ],
@@ -56,9 +56,9 @@ class CreditCardType extends AbstractType
                         'year' => 'Year',
                         'month' => 'Month',
                     ],
-                    'constraints' => [
-                        new NotBlank(),
-                    ],
+                    'attr' => [
+                        'data-expiration-date' => true
+                    ]
                 ]
             )
             ->add(
@@ -84,11 +84,27 @@ class CreditCardType extends AbstractType
                         new Length(['min' => 3, 'max' => 4]),
                     ],
                     'attr' => [
-                        'class' => 'credit-card-cvv',
+                        'data-card-cvv' => true,
                         'data-gateway' => true,
                     ]
                 ]
             );
+
+        if ($options['zeroAmountAuthorizationEnabled']) {
+            $builder->add(
+                'save_for_later',
+                'checkbox',
+                [
+                    'required' => false,
+                    'label' => 'orob2b.payment.credit_card.save_for_later.label',
+                    'mapped' => false,
+                    'data' => true,
+                    'attr' => [
+                        'data-save-for-later' => true
+                    ]
+                ]
+            );
+        }
     }
 
     /**
@@ -96,7 +112,11 @@ class CreditCardType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['label' => 'orob2b.payment.methods.credit_card.label', 'csrf_protection' => false]);
+        $resolver->setDefaults([
+            'label' => 'orob2b.payment.methods.credit_card.label',
+            'csrf_protection' => false,
+            'zeroAmountAuthorizationEnabled' => false,
+        ]);
     }
 
     /**

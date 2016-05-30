@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\FrontendBundle\Request;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class FrontendHelper
 {
@@ -36,7 +35,8 @@ class FrontendHelper
     {
         $request = $request ?: $this->requestStack->getCurrentRequest();
         if (!$request) {
-            throw new BadRequestHttpException('Request is not defined');
+            // no request means CLI i.e. not frontend
+            return false;
         }
 
         // the least time consuming method to check whether URL is frontend

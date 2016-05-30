@@ -2,10 +2,12 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Filter;
 
-use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
+use Oro\Bundle\EntityBundle\ORM\Registry;
+use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\PricingBundle\Filter\FrontendProductPriceFilter;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 /**
@@ -14,34 +16,65 @@ use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 class FrontendProductPriceFilterTest extends WebTestCase
 {
     /**
-     * {@inheritDoc}
+     * @var Registry
      */
-    protected function setUp()
+    protected $registry;
+
+    /**
+     * @var FrontendProductPriceFilter
+     */
+    protected $filter;
+
+    public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices']);
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+            ]
+        );
+        $this->registry = $this->getContainer()->get('doctrine');
+        $cpl = $this->getReference('1f');
+        /** @var PriceListRequestHandler|\PHPUnit_Framework_MockObject_MockObject $handler */
+        $handler = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $handler->expects($this->once())->method('getPriceListByAccount')->willReturn($cpl);
+        $this->filter = new FrontendProductPriceFilter(
+            $this->getContainer()->get('form.factory'),
+            $this->getContainer()->get('oro_filter.filter_utility'),
+            $this->getContainer()->get('orob2b_product.formatter.product_unit_label'),
+            $handler
+        );
+        $this->filter->init(
+            'minimum_price',
+            [
+                'type' => 'frontend-product-price',
+                'data_name' => 'USD',
+                'enabled' => true,
+                'translatable' => true,
+                'label' => 'Price (USD)'
+            ]
+        );
+        $this->filter->setRegistry($this->registry);
+        $this->filter->setProductPriceClass('OroB2BPricingBundle:CombinedProductPrice');
     }
 
     /**
      * @dataProvider filterDataProvider
-     * @param array $filter
-     * @param array $expected
+     * @param array $data
+     * @param int $productsCount
      */
-    public function testFilter(array $filter, array $expected)
+    public function testFilter(array $data, $productsCount)
     {
-        $account = $this->getReference('account.level_1.2');
-        $response = $this->client->requestGrid([
-            'gridName' => 'frontend-products-grid',
-            PriceListRequestHandler::ACCOUNT_ID_KEY => $account->getId(),
-        ], $filter);
-        $result = $this->getJsonResponseContent($response, 200);
+        $qb = $this->registry->getRepository('OroB2BProductBundle:Product')->createQueryBuilder('product');
+        $adapter = new OrmFilterDatasourceAdapter($qb);
 
-        $this->assertArrayHasKey('data', $result);
-        $this->assertSameSize($expected, $result['data']);
+        $this->filter->apply($adapter, $data);
 
-        foreach ($result['data'] as $product) {
-            $this->assertContains($product['sku'], $expected);
-        }
+        $products = $adapter->getQueryBuilder()->getQuery()->getResult();
+        $this->assertCount($productsCount, $products);
     }
 
     /**
@@ -50,46 +83,35 @@ class FrontendProductPriceFilterTest extends WebTestCase
     public function filterDataProvider()
     {
         return [
-            'equal 1.1 USD per bottle' => [
-                'filter' => [
-                    'frontend-products-grid[_filter][minimum_price][value]' => 1.1,
-                    'frontend-products-grid[_filter][minimum_price][type]'  => null,
-                    'frontend-products-grid[_filter][minimum_price][unit]'  => 'bottle'
+            [
+                'data' => [
+                    'data_name' => 'p',
+                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                    'value' => 1,
+                    'value_end' => 10,
+                    'unit' => 'liter',
                 ],
-                'expected' => []
+                'count' => 2,
             ],
-            'equal 10 USD per liter' => [
-                'filter' => [
-                    'frontend-products-grid[_filter][minimum_price][value]' => 10,
-                    'frontend-products-grid[_filter][minimum_price][type]'  => null,
-                    'frontend-products-grid[_filter][minimum_price][unit]'  => 'liter'
+            [
+                'data' => [
+                    'data_name' => 'p',
+                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                    'value' => 1,
+                    'value_end' => 13,
+                    'unit' => 'liter',
                 ],
-                'expected' => ['product.1']
+                'count' => 3,
             ],
-            'greater equal 12.2 USD per liter' => [
-                'filter' => [
-                    'frontend-products-grid[_filter][minimum_price][value]' => 12.2,
-                    'frontend-products-grid[_filter][minimum_price][type]' => NumberFilterType::TYPE_GREATER_EQUAL,
-                    'frontend-products-grid[_filter][minimum_price][unit]' => 'liter'
+            [
+                'data' => [
+                    'data_name' => 'p',
+                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                    'value' => 10,
+                    'value_end' => 12,
+                    'unit' => 'liter',
                 ],
-                'expected' => ['product.2']
-            ],
-            'less 10 USD per liter' => [
-                'filter' => [
-                    'frontend-products-grid[_filter][minimum_price][value]' => 10,
-                    'frontend-products-grid[_filter][minimum_price][type]'  => NumberFilterType::TYPE_LESS_THAN,
-                    'frontend-products-grid[_filter][minimum_price][unit]'  => 'liter'
-                ],
-                'expected' => ['product.3']
-            ],
-            'greater 10 USD per liter AND less 20 EUR per bottle' => [
-                'filter' => [
-                    'frontend-products-grid[_filter][minimum_price][value]' => 1,
-                    'frontend-products-grid[_filter][minimum_price][value_end]' => 10,
-                    'frontend-products-grid[_filter][minimum_price][type]'  => NumberRangeFilterType::TYPE_BETWEEN,
-                    'frontend-products-grid[_filter][minimum_price][unit]'  => 'liter',
-                ],
-                'expected' => ['product.1', 'product.3']
+                'count' => 1,
             ],
         ];
     }

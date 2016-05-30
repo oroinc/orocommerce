@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -47,6 +48,22 @@ class LineItemRepository extends EntityRepository
             ->join('product.names', 'names')
             ->where('li.shoppingList = :shoppingList')
             ->setParameter('shoppingList', $shoppingList);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param Product $product
+     * @return array|LineItem[]
+     */
+    public function getItemsByShoppingListAndProduct(ShoppingList $shoppingList, Product $product)
+    {
+        $qb = $this->createQueryBuilder('li')
+            ->select('li')
+            ->where('li.shoppingList = :shoppingList', 'li.product = :product')
+            ->setParameter('shoppingList', $shoppingList)
+            ->setParameter('product', $product);
 
         return $qb->getQuery()->getResult();
     }

@@ -8,8 +8,8 @@
                     {% for name, view in views if views is defined and view is iterable %}
                         {% set selected = currentPaymentMethod == name %}
                         <div class="{{ class_prefix }}__form__radio" data-item-container>
-                            <label class="radio_custom radio_custom_blue {% if selected %}checked{% endif %}" data-radio>
-                                <input type="radio" name="paymentMethod" data-choice="{{ name }}" value="{{ name }}" {% if selected%}checked{% endif %} />
+                            <label class="radio_custom radio_custom_blue {% if selected %}checked{% endif %}" data-radio tabindex="0">
+                                <input type="radio" name="paymentMethod" data-choice="{{ name }}" value="{{ name }}" {% if selected%}checked="checked"{% endif %} />
                                 <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
                                 <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
                                 <span class="checkbox_custom__text fs13">{{ view.label }}</span>
@@ -38,6 +38,6 @@
 {% block _payment_methods_credit_card_widget %}
     {{ form_widget(
         view.options.formView,
-        {class_prefix: class_prefix, paymentMethod: name, allowed_cc: view.options.allowedCreditCards})
+        {class_prefix: class_prefix, paymentMethod: name, options: view.options})
     }}
 {% endblock %}

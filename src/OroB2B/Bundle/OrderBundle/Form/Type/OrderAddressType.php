@@ -12,9 +12,6 @@ class OrderAddressType extends AbstractOrderAddressType
 {
     const NAME = 'orob2b_order_address_type';
 
-    const APPLICATION_FRONTEND = 'frontend';
-    const APPLICATION_BACKEND = 'backend';
-
     /**
      * @param FormBuilderInterface $builder
      * @param string $type - address type

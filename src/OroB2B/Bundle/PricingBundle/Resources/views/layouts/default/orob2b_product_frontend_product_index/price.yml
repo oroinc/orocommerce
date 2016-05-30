@@ -1,15 +1,16 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BPricingBundle:layouts:default/orob2b_product_frontend_product_index/price.html.twig'
-        - @addTree:
+        - '@addTree':
             items:
                 product_grid_row_listed_price:
                     parentId: product_grid_row_secondary_content_first_container
                     blockType: block
                     siblingId: product_grid_row_specification_delivery
                     options:
-                        visible: false
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_msrp:
                     parentId: product_grid_row_secondary_content_first_container
                     blockType: block

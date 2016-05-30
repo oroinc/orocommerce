@@ -64,17 +64,22 @@ class ProductControllerTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_product[sku]'] = self::TEST_SKU;
-        $form['orob2b_product[owner]'] = $this->getBusinessUnitId();
 
-        $form['orob2b_product[inventoryStatus]'] = Product::INVENTORY_STATUS_IN_STOCK;
-        $form['orob2b_product[status]'] = Product::STATUS_DISABLED;
-        $form['orob2b_product[names][values][default]'] = self::DEFAULT_NAME;
-        $form['orob2b_product[descriptions][values][default]'] = self::DEFAULT_DESCRIPTION;
-        $form['orob2b_product[shortDescriptions][values][default]'] = self::DEFAULT_SHORT_DESCRIPTION;
+        $formValues = $form->getPhpValues();
+        $formValues['orob2b_product']['sku'] = self::TEST_SKU;
+        $formValues['orob2b_product']['owner'] = $this->getBusinessUnitId();
+        $formValues['orob2b_product']['inventoryStatus'] = Product::INVENTORY_STATUS_IN_STOCK;
+        $formValues['orob2b_product']['status'] = Product::STATUS_DISABLED;
+        $formValues['orob2b_product']['names']['values']['default'] = self::DEFAULT_NAME;
+        $formValues['orob2b_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
+        $formValues['orob2b_product']['shortDescriptions']['values']['default'] = self::DEFAULT_SHORT_DESCRIPTION;
+        $formValues['orob2b_product']['unitPrecisions'][] = [
+            'unit' => self::FIRST_UNIT_CODE,
+            'precision' => self::FIRST_UNIT_PRECISION,
+        ];
 
         $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -84,6 +89,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(self::TEST_SKU, $html);
         $this->assertContains(self::INVENTORY_STATUS, $html);
         $this->assertContains(self::STATUS, $html);
+        $this->assertContains(self::FIRST_UNIT_CODE, $html);
     }
 
     /**
@@ -92,12 +98,8 @@ class ProductControllerTest extends WebTestCase
      */
     public function testUpdate()
     {
-        $result = $this->getProductDataBySku(self::TEST_SKU);
-
-        $this->assertEquals(self::TEST_SKU, $result['sku']);
-
-        $id = (int)$result['id'];
-        $product = $this->getContainer()->get('doctrine')->getRepository('OroB2BProductBundle:Product')->find($id);
+        $product = $this->getProductDataBySku(self::TEST_SKU);
+        $id = $product->getId();
         $locale = $this->getLocale();
         $localizedName = $this->getLocalizedName($product, $locale);
 
@@ -217,7 +219,8 @@ class ProductControllerTest extends WebTestCase
         $button = $crawler->filterXPath('//a[@title="Duplicate"]');
         $this->assertEquals(1, $button->count());
 
-        $this->client->request('GET', $button->eq(0)->link()->getUri(), [], [], $this->generateWsseAuthHeader());
+        $headers = ['HTTP_X-Requested-With' => 'XMLHttpRequest'];
+        $this->client->request('GET', $button->eq(0)->link()->getUri(), [], [], $headers);
         $response = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($response, 200);
         $data = json_decode($response->getContent(), true);
@@ -246,9 +249,9 @@ class ProductControllerTest extends WebTestCase
             $html
         );
 
-        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
+        $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
-        return $result['id'];
+        return $product->getId();
     }
 
     /**
@@ -258,10 +261,8 @@ class ProductControllerTest extends WebTestCase
      */
     public function testSaveAndDuplicate()
     {
-        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
-
-        $id = (int)$result['id'];
-        $product = $this->getContainer()->get('doctrine')->getRepository('OroB2BProductBundle:Product')->find($id);
+        $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
+        $id = $product->getId();
         $locale = $this->getLocale();
         $localizedName = $this->getLocalizedName($product, $locale);
 
@@ -331,9 +332,9 @@ class ProductControllerTest extends WebTestCase
             $html
         );
 
-        $result = $this->getProductDataBySku(self::UPDATED_SKU);
+        $product = $this->getProductDataBySku(self::UPDATED_SKU);
 
-        return $result['id'];
+        return $product->getId();
     }
 
     /**
@@ -343,15 +344,29 @@ class ProductControllerTest extends WebTestCase
     public function testDelete($id)
     {
         $this->client->request(
-            'DELETE',
-            $this->getUrl('orob2b_api_delete_product', ['id' => $id]),
+            'GET',
+            $this->getUrl(
+                'oro_action_operation_execute',
+                [
+                    'operationName' => 'DELETE',
+                    'entityId' => $id,
+                    'entityClass' => $this->getContainer()->getParameter('orob2b_product.entity.product.class'),
+                ]
+            ),
             [],
             [],
-            $this->generateWsseAuthHeader()
+            ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
-
-        $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertEquals(
+            [
+                'success' => true,
+                'message' => '',
+                'messages' => [],
+                'redirectUrl' => $this->getUrl('orob2b_product_index')
+            ],
+            json_decode($this->client->getResponse()->getContent(), true)
+        );
 
         $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $id]));
 
@@ -391,23 +406,18 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @param string $sku
-     * @return array
+     * @return Product
      */
     private function getProductDataBySku($sku)
     {
-        $response = $this->client->requestGrid(
-            'products-grid',
-            ['products-grid[_filter][sku][value]' => $sku]
-        );
+        /** @var Product $product */
+        $product = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BProductBundle:Product')
+            ->getRepository('OroB2BProductBundle:Product')
+            ->findOneBy(['sku' => $sku]);
+        $this->assertNotEmpty($product);
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayHasKey('data', $result);
-        $this->assertNotEmpty($result['data']);
-
-        $result = reset($result['data']);
-        $this->assertNotEmpty($result);
-
-        return $result;
+        return $product;
     }
 
     /**

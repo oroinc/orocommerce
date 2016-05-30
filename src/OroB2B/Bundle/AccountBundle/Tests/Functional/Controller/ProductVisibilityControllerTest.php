@@ -7,7 +7,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Doctrine\ORM\EntityManager;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
@@ -85,6 +85,7 @@ class ProductVisibilityControllerTest extends WebTestCase
             [
                 'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
             ]
@@ -165,14 +166,17 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_api_action_execute_operations',
+                'oro_action_operation_execute',
                 [
                     'operationName' => 'orob2b_product_duplicate',
                     'route' => 'orob2b_product_view',
                     'entityId' => $this->product->getId(),
                     'entityClass' => 'OroB2B\Bundle\ProductBundle\Entity\Product'
                 ]
-            )
+            ),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
@@ -300,7 +304,8 @@ class ProductVisibilityControllerTest extends WebTestCase
             $this->getUrl(
                 'orob2b_product_visibility_website',
                 ['productId' => $productId, 'id' => $websiteId]
-            )
+            ),
+            ['_widgetContainer' => 'widget']
         );
 
         return [

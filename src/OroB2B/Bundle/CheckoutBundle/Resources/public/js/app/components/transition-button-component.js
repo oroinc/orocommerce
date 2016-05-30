@@ -15,7 +15,9 @@ define(function(require) {
             hasForm: false,
             selectors: {
                 checkoutSidebar: '[data-role="checkout-sidebar"]',
-                checkoutContent: '[data-role="checkout-content"]'
+                checkoutContent: '[data-role="checkout-content"]',
+                transitionTriggerContainer: '[data-role="transition-trigger-container"]',
+                transitionTrigger: '[data-role="transition-trigger"]'
             }
         },
 
@@ -28,12 +30,22 @@ define(function(require) {
             this.inProgress = false;
 
             this.$el = options._sourceElement;
+            this.initializeTriggers();
             if (this.options.hasForm) {
                 this.$form = this.$el.closest('form');
-                this.$form.on('submit', _.bind(this.onSubmit, this));
+                this.$form.on('submit', $.proxy(this.onSubmit, this));
             } else {
-                this.$el.on('click', _.bind(this.transit, this));
+                this.$el.on('click', $.proxy(this.transit, this));
             }
+        },
+
+        initializeTriggers: function() {
+            this.$transitionTriggers = this.$el
+                .closest(this.options.selectors.transitionTriggerContainer)
+                .find(this.options.selectors.transitionTrigger);
+
+            this.$transitionTriggers.css('cursor', 'pointer');
+            this.$transitionTriggers.on('click', $.proxy(this.transit, this));
         },
 
         onSubmit: function(e) {
@@ -108,7 +120,11 @@ define(function(require) {
                 return;
             }
 
-            this.$el.off('click', _.bind(this.transit, this));
+            if (this.$form) {
+                this.$form.off('submit', $.proxy(this.onSubmit, this));
+            }
+            this.$el.off('click', $.proxy(this.transit, this));
+            this.$transitionTriggers.off('click', $.proxy(this.transit, this));
 
             TransitionButtonComponent.__super__.dispose.call(this);
         }

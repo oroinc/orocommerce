@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -55,7 +55,7 @@ class ProductControllerTest extends WebTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
 
-        $this->assertCount(0, $shoppingList->getLineItems());
+        $this->assertCount(1, $shoppingList->getLineItems());
 
         $tokenManager = $this->getContainer()->get('security.csrf.token_manager');
 
@@ -69,10 +69,10 @@ class ProductControllerTest extends WebTestCase
                 ]
             ),
             [
-                'orob2b_shopping_list_frontend_line_item' => [
+                'orob2b_product_frontend_line_item' => [
                     'quantity' => 5,
                     'unit' => 'liter',
-                    '_token' => $tokenManager->getToken('orob2b_shopping_list_frontend_line_item')->getValue()
+                    '_token' => $tokenManager->getToken('orob2b_product_frontend_line_item')->getValue()
                 ]
             ]
         );
@@ -83,9 +83,9 @@ class ProductControllerTest extends WebTestCase
         $this->assertTrue($result['successful']);
         $this->assertArrayHasKey('message', $result);
         $this->assertEquals(
-            'Product has been added to "<a href=\'' .
+            'Product has been added to "<a href="' .
             $this->getUrl('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()]) .
-            '\'>'.$shoppingList->getLabel().'</a>"',
+            '">'.$shoppingList->getLabel().'</a>"',
             $result['message']
         );
 
@@ -93,11 +93,11 @@ class ProductControllerTest extends WebTestCase
         $shoppingList = $this->getContainer()->get('doctrine')->getManagerForClass($shoppingListClass)
             ->find($shoppingListClass, $shoppingList->getId());
 
-        $this->assertCount(1, $shoppingList->getLineItems());
+        $this->assertCount(2, $shoppingList->getLineItems());
 
         /** @var LineItem $lineItem */
         $lineItem = $shoppingList->getLineItems()->first();
         $this->assertEquals(5, $lineItem->getQuantity());
-        $this->assertEquals('liter', $lineItem->getUnit()->getCode());
+        $this->assertEquals('bottle', $lineItem->getUnit()->getCode());
     }
 }

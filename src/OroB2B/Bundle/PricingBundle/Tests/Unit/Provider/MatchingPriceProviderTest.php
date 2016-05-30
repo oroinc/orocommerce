@@ -6,6 +6,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
@@ -71,6 +72,8 @@ class MatchingPriceProviderTest extends \PHPUnit_Framework_TestCase
 
         /** @var Product $product */
         $product = $this->getEntity('\OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
+        /** @var BasePriceList $priceList */
+        $priceList = $this->getEntity('\OroB2B\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 2]);
 
         /** @var ProductUnit $productUnit */
         $productUnit = $this->getEntity(
@@ -93,12 +96,12 @@ class MatchingPriceProviderTest extends \PHPUnit_Framework_TestCase
         ];
         $this->productPriceProvider->expects($this->once())
             ->method('getMatchedPrices')
-            ->with([new ProductPriceCriteria($product, $productUnit, $qty, $currency)])
+            ->with([new ProductPriceCriteria($product, $productUnit, $qty, $currency)], $priceList)
             ->willReturn($expectedMatchedPrices);
 
         $this->assertEquals(
             $this->formatPrices($expectedMatchedPrices),
-            $this->provider->getMatchingPrices($lineItems)
+            $this->provider->getMatchingPrices($lineItems, $priceList)
         );
     }
 

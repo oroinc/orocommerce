@@ -7,6 +7,8 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
@@ -37,17 +39,24 @@ class ProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @param PriceList $priceList
+     * @param BasePriceList $priceList
+     * @param Product $product
      */
-    public function deleteByPriceList(PriceList $priceList)
+    public function deleteByPriceList(BasePriceList $priceList, Product $product = null)
     {
         $qb = $this->createQueryBuilder('productPrice');
 
         $qb
             ->delete()
             ->where($qb->expr()->eq('productPrice.priceList', ':priceList'))
-            ->setParameter('priceList', $priceList)
-            ->getQuery()
+            ->setParameter('priceList', $priceList);
+
+        if ($product) {
+            $qb->andWhere($qb->expr()->eq('productPrice.product', ':product'))
+                ->setParameter('product', $product);
+        }
+
+        $qb->getQuery()
             ->execute();
     }
 
@@ -280,5 +289,42 @@ class ProductPriceRepository extends EntityRepository
         }
 
         return $result;
+    }
+
+    /**
+     * @param BasePriceList $sourcePriceList
+     * @param BasePriceList $targetPriceList
+     * @param InsertFromSelectQueryExecutor $insertQueryExecutor
+     */
+    public function copyPrices(
+        BasePriceList $sourcePriceList,
+        BasePriceList $targetPriceList,
+        InsertFromSelectQueryExecutor $insertQueryExecutor
+    ) {
+        $qb = $this->createQueryBuilder('productPrice');
+        $qb
+            ->select(
+                'IDENTITY(productPrice.product)',
+                'IDENTITY(productPrice.unit)',
+                (string)$qb->expr()->literal($targetPriceList->getId()),
+                'productPrice.productSku',
+                'productPrice.quantity',
+                'productPrice.value',
+                'productPrice.currency'
+            )
+            ->where($qb->expr()->eq('productPrice.priceList', ':sourcePriceList'))
+            ->setParameter('sourcePriceList', $sourcePriceList);
+
+        $fields = [
+            'product',
+            'unit',
+            'priceList',
+            'productSku',
+            'quantity',
+            'value',
+            'currency',
+        ];
+
+        $insertQueryExecutor->execute($this->getClassName(), $fields, $qb);
     }
 }

@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\AccountBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Symfony\Component\Yaml\Yaml;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use OroB2B\Bundle\FrontendBundle\Migrations\Data\ORM\AbstractRolesData;

@@ -32,11 +32,10 @@
 }
 
 .clearfix() {
-  &:before, &:after {
-    content: "";
+  &:after {
+    content: '';
     display: block;
     clear: both;
-    height: 0;
   }
 }
 
@@ -109,6 +108,14 @@
 .checkbox_custom {
   cursor: pointer;
 
+  &:focus i {
+    outline: thin dotted;
+    outline-color: rgba(99, 153, 239, 0.47);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: -2px !important;
+  }
+
   input[type="checkbox"] {
     display: none;
   }
@@ -158,6 +165,10 @@
     }
   }
 
+  i {
+    margin-left: .1rem;
+  }
+
   .checkbox_checked {
     display: none;
   }
@@ -174,6 +185,12 @@
 
 .radio_custom {
   cursor: pointer;
+
+  &:focus i {
+    outline: thin dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+  }
 
   input[type="radio"] {
     display: none;

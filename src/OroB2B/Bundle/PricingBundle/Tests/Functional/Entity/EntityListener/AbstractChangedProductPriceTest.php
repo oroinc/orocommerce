@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
@@ -30,7 +30,7 @@ abstract class AbstractChangedProductPriceTest extends WebTestCase
      */
     protected function getProduct()
     {
-        $productClassName = $this->getContainer()->getParameter('orob2b_product.product.class');
+        $productClassName = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
 
         $manager = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityManager($productClassName);
         /** @var ObjectRepository $repository */
@@ -57,7 +57,7 @@ abstract class AbstractChangedProductPriceTest extends WebTestCase
      */
     protected function getProductUnit()
     {
-        $productUnitClassName = $this->getContainer()->getParameter('orob2b_product.product_unit.class');
+        $productUnitClassName = $this->getContainer()->getParameter('orob2b_product.entity.product_unit.class');
 
         $manager = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityManager($productUnitClassName);
         $repository = $manager->getRepository('OroB2BProductBundle:ProductUnit');

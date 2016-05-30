@@ -4,10 +4,17 @@ namespace OroB2B\Bundle\FrontendBundle\Test;
 
 use Symfony\Component\DomCrawler\Crawler;
 
+use Symfony\Component\HttpFoundation\Response;
+
 use Oro\Bundle\TestFrameworkBundle\Test\Client as BaseClient;
 
 class Client extends BaseClient
 {
+    /**
+     * @var bool
+     */
+    protected $isHashNavigation = true;
+
     /**
      * {@inheritdoc}
      */
@@ -25,6 +32,37 @@ class Client extends BaseClient
         $this->checkForBackendUrls($uri, $crawler);
 
         return $crawler;
+    }
+
+    /**
+     * @param array|string $gridParameters
+     * @param array $filter
+     * @param bool $isRealRequest
+     * @return Response
+     */
+    public function requestFrontendGrid($gridParameters, $filter = [], $isRealRequest = false)
+    {
+        if ($isRealRequest) {
+            list($gridName, $gridParameters) = $this->parseGridParameters($gridParameters, $filter);
+
+            $this->request(
+                'GET',
+                $this->getUrl('orob2b_frontend_datagrid_index', $gridParameters)
+            );
+
+            return $this->getResponse();
+        } else {
+            return $this->requestGrid($gridParameters, $filter, $isRealRequest);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function isHashNavigationRequest($uri, array $parameters, array $server)
+    {
+        // no hash navigation at frontend
+        return parent::isHashNavigationRequest($uri, $parameters, $server) && !$this->isFrontendUri($uri);
     }
 
     /**

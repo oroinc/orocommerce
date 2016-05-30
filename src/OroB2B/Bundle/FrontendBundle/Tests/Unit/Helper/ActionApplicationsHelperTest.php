@@ -81,7 +81,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
-                    'execution' => 'oro_api_action_execute_operations',
+                    'execution' => 'oro_action_operation_execute',
                 ],
             ],
             'frontend user' => [
@@ -89,7 +89,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'orob2b_frontend_action_widget_buttons',
                     'dialog' => 'orob2b_frontend_action_widget_form',
-                    'execution' => 'orob2b_api_frontend_action_execute_operations',
+                    'execution' => 'orob2b_frontend_action_operation_execute',
                 ],
             ],
             'not supported user' => [
@@ -97,7 +97,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
-                    'execution' => 'oro_api_action_execute_operations',
+                    'execution' => 'oro_action_operation_execute',
                 ],
             ],
             'empty token' => [
@@ -105,7 +105,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
-                    'execution' => 'oro_api_action_execute_operations',
+                    'execution' => 'oro_action_operation_execute',
                 ],
             ],
         ];
@@ -122,7 +122,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'expectedResult' => 'backend',
             ],
             'frontend user' => [
-                'token' => $this->createToken(new AccountUser(), $this->exactly(2)),
+                'token' => $this->createToken(new AccountUser()),
                 'expectedResult' => 'frontend',
             ],
             'not supported user' => [
@@ -153,7 +153,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             ],
             [
                 'applications' => ['backend', 'frontend'],
-                'token' => $this->createToken($accountUser, $this->exactly(2)),
+                'token' => $this->createToken($accountUser),
                 'expectedResult' => true
             ],
             [
@@ -163,7 +163,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             ],
             [
                 'applications' => ['backend'],
-                'token' => $this->createToken($accountUser, $this->exactly(2)),
+                'token' => $this->createToken($accountUser),
                 'expectedResult' => false
             ],
             [
@@ -173,7 +173,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             ],
             [
                 'applications' => ['frontend'],
-                'token' => $this->createToken($accountUser, $this->exactly(2)),
+                'token' => $this->createToken($accountUser),
                 'expectedResult' => true
             ],
             [

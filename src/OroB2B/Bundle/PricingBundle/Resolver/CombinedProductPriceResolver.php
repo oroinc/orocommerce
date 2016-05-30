@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Resolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -17,6 +18,11 @@ class CombinedProductPriceResolver
      * @var ManagerRegistry
      */
     protected $registry;
+
+    /**
+     * @var EntityManager
+     */
+    protected $manager;
 
     /**
      * @var InsertFromSelectQueryExecutor
@@ -66,6 +72,29 @@ class CombinedProductPriceResolver
                 $product
             );
         }
+        if (!$product) {
+            $combinedPriceList->setPricesCalculated(true);
+            $this->getManager()->flush($combinedPriceList);
+        }
+        $this->getManager()->getRepository('OroB2BPricingBundle:MinimalProductPrice')->updateMinimalPrices(
+            $this->insertFromSelectQueryExecutor,
+            $combinedPriceList,
+            $product
+        );
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getManager()
+    {
+        if (!$this->manager) {
+            $className = 'OroB2BPricingBundle:CombinedPriceList';
+            $this->manager = $this->registry
+                ->getManagerForClass($className);
+        }
+
+        return $this->manager;
     }
 
     /**

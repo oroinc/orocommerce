@@ -11,11 +11,14 @@ config:
 
         'orob2bfrontend/js/app/views/editor/title-editor-view': 'bundles/orob2bfrontend/js/app/views/editor/title-editor-view.js'
         'orob2bfrontend/js/app/views/editor/multiline-text-editor-view': 'bundles/orob2bfrontend/js/app/views/editor/multiline-text-editor-view.js'
+        'orob2bfrontend/js/app/views/scrollable-table': 'bundles/orob2bfrontend/js/app/views/scrollable-table.js'
 
         'orob2bfrontend/js/app/views/inline-editable-wrapper-view': 'bundles/orob2bfrontend/js/app/views/inline-editable-wrapper-view.js'
         'orob2bfrontend/js/app/modules/inline-editor-types-map-module': 'bundles/orob2bfrontend/js/app//modules/inline-editor-types-map-module.js'
         'orob2bfrontend/js/app/components/delete-item-component': 'bundles/orob2bfrontend/js/app/components/delete-item-component.js'
         'orob2bfrontend/js/app/components/empty-items-component': 'bundles/orob2bfrontend/js/app/components/empty-items-component.js'
         'orob2bfrontend/js/app/components/delete-confirmation': 'bundles/orob2bfrontend/js/app/components/delete-confirmation.js'
+
+        'orob2bfrontend/js/app/elements-helper': 'bundles/orob2bfrontend/js/app/elements-helper.js'
     appmodules:
         - orob2bfrontend/js/app/modules/inline-editor-types-map-module

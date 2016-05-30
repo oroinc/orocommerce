@@ -1,0 +1,18 @@
+{% set priceLists = record.getValue('price_lists') %}
+{% set priceListViewGranted = resource_granted('orob2b_pricing_price_list_view') %}
+{% if priceLists %}
+    {% for priceList in priceLists %}
+        <strong class="text-center">{{ priceList.website.name|capitalize }}</strong>
+        <ul class="radio-ul">
+        {% for websitePriceList in priceList.priceLists  %}
+            <li>
+                {% if priceListViewGranted %}
+                    <a href="{{ path('orob2b_pricing_price_list_view', {'id': websitePriceList.id}) }}">{{ websitePriceList.name }}</a>
+                {% else %}
+                    {{ websitePriceList.name }}
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+{% endif %}

@@ -19,7 +19,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvent;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 
@@ -34,28 +34,28 @@ class CheckoutController extends Controller
      * Create checkout form
      *
      * @Route(
-     *     "/{id}/{type}",
+     *     "/{id}/{checkoutType}",
      *     name="orob2b_checkout_frontend_checkout",
-     *     requirements={"id"="\d+", "type"="\w+"}
+     *     requirements={"id"="\d+", "checkoutType"="\w+"}
      * )
      * @Layout(vars={"workflowStepName", "workflowName"})
      * @Acl(
      *      id="orob2b_checkout_frontend_checkout",
      *      type="entity",
      *      class="OroB2BCheckoutBundle:Checkout",
-     *      permission="CREATE",
+     *      permission="ACCOUNT_EDIT",
      *      group_name="commerce"
      * )
      *
      * @param Request $request
      * @param int $id
-     * @param null|string $type
+     * @param null|string $checkoutType
      * @return array|Response
      * @throws \Exception
      */
-    public function checkoutAction(Request $request, $id, $type = null)
+    public function checkoutAction(Request $request, $id, $checkoutType = null)
     {
-        $checkout = $this->getCheckout($id, $type);
+        $checkout = $this->getCheckout($id, $checkoutType);
 
         if (!$checkout) {
             throw new NotFoundHttpException(sprintf('Checkout not found'));
@@ -63,6 +63,7 @@ class CheckoutController extends Controller
 
         $workflowItem = $this->handleTransition($checkout, $request);
         $currentStep = $this->validateStep($workflowItem);
+        $this->validateOrderLineItems($workflowItem, $checkout, $request);
 
         $responseData = [];
         if ($workflowItem->getResult()->has('responseData')) {
@@ -75,7 +76,8 @@ class CheckoutController extends Controller
                 return $this->redirect($workflowItem->getResult()->get('redirectUrl'));
             }
         }
-        if ($responseData) {
+
+        if ($responseData && $request->isXmlHttpRequest()) {
             return new JsonResponse($responseData);
         }
 
@@ -118,6 +120,40 @@ class CheckoutController extends Controller
         }
 
         return $currentStep;
+    }
+
+    /**
+     * @param WorkflowItem $workflowItem
+     * @param CheckoutInterface $checkout
+     * @param Request $request
+     */
+    protected function validateOrderLineItems(WorkflowItem $workflowItem, CheckoutInterface $checkout, Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            return;
+        }
+        $continueTransition = $this->get('orob2b_checkout.layout.data_provider.continue_transition')
+            ->getContinueTransition($workflowItem);
+        if (!$continueTransition) {
+            return;
+        }
+        $frontendOptions = $continueTransition->getTransition()->getFrontendOptions();
+        if (!array_key_exists('is_checkout_show_errors', $frontendOptions)) {
+            return;
+        }
+        $errors = $continueTransition->getErrors();
+        foreach ($errors as $error) {
+            $this->get('session')->getFlashBag()->add('error', $error['message']);
+        }
+        if (!$errors->isEmpty()) {
+            return;
+        }
+        $manager = $this->get('orob2b_checkout.data_provider.manager.checkout_line_items');
+        $orderLineItemsCount = $manager->getData($checkout, true)->count();
+        if ($orderLineItemsCount && $orderLineItemsCount !== $manager->getData($checkout)->count()) {
+            $this->get('session')->getFlashBag()
+                ->add('warning', 'orob2b.checkout.order.line_items.line_item_has_no_price.message');
+        }
     }
 
     /**
@@ -187,18 +223,12 @@ class CheckoutController extends Controller
      */
     protected function getCheckout($id, $type)
     {
-        if (!$type) {
-            $checkout = $this->getDoctrine()->getRepository('OroB2BCheckoutBundle:Checkout')
-                ->find($id);
-        } else {
-            $event = new CheckoutEvent();
-            $event->setCheckoutId($id)
-                ->setType($type);
-            $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
+        $type = (string)$type;
+        $event = new CheckoutEntityEvent();
+        $event->setCheckoutId($id)
+            ->setType($type);
+        $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
 
-            $checkout = $event->getCheckoutEntity();
-        }
-
-        return $checkout;
+        return $event->getCheckoutEntity();
     }
 }

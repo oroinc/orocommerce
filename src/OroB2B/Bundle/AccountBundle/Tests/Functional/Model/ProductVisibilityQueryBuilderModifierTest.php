@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
@@ -60,7 +60,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->modifier = new ProductVisibilityQueryBuilderModifier(
             $this->configManager,
             $this->tokenStorage,
-            $this->getContainer()->get('orob2b_website.manager')
+            $this->getContainer()->get('orob2b_website.manager'),
+            $this->getContainer()->get('orob2b_account.provider.account_user_relations_provider')
         );
     }
 

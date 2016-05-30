@@ -6,6 +6,7 @@ define(function(require) {
     var CreateButtonComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
     var ShoppingListWidget = require('orob2bshoppinglist/js/app/widget/shopping-list-widget');
+    var widgetManager = require('oroui/js/widget-manager');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var _ = require('underscore');
@@ -14,7 +15,9 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        options: {},
+        options: {
+            widgetAlias: 'shopping_lists_frontend_widget'
+        },
 
         /**
          * @property {jQuery.Element}
@@ -28,15 +31,22 @@ define(function(require) {
             _.extend(this.options, options || {});
 
             this.options._sourceElement.on('click', 'a', _.bind(this.onClick, this));
+
+            mediator
+                .on('shopping-list:created', this.renderWidget, this)
+                .on('shopping-list:updated', this.renderWidget, this)
+                .on('frontend:item:delete', this.renderWidget, this);
+        },
+
+        renderWidget: function() {
+            widgetManager.getWidgetInstanceByAlias(this.options.widgetAlias, function(widget) {
+                widget.render();
+            });
         },
 
         onClick: function() {
             this.dialog = new ShoppingListWidget({});
             this.dialog.setUrl(routing.generate('orob2b_shopping_list_frontend_create', {createOnly: true}));
-
-            this.dialog.on('formSave', _.bind(function() {
-                mediator.execute('redirectTo', {url: window.location.href}, {redirect: true});
-            }, this));
 
             this.dialog.render();
         },
@@ -45,6 +55,11 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
+
+            mediator
+                .off('shopping-list:created', this.renderWidget, this)
+                .off('shopping-list:updated', this.renderWidget, this)
+                .off('frontend:item:delete', this.renderWidget, this);
 
             this.options._sourceElement.off();
 

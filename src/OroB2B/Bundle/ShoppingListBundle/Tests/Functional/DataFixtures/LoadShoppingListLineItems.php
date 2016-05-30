@@ -7,19 +7,58 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadShoppingListLineItems extends AbstractFixture implements DependentFixtureInterface
 {
+    const LINE_ITEM_1 = 'shopping_list_line_item.1';
+    const LINE_ITEM_2 = 'shopping_list_line_item.2';
+    const LINE_ITEM_3 = 'shopping_list_line_item.3';
+    const LINE_ITEM_4 = 'shopping_list_line_item.4';
+    const LINE_ITEM_5 = 'shopping_list_line_item.5';
+
+    /** @var array */
+    protected static $lineItems = [
+        self::LINE_ITEM_1 => [
+            'product' => LoadProductData::PRODUCT_1,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
+            'unit' => 'product_unit.bottle',
+            'quantity' => 23.15
+        ],
+        self::LINE_ITEM_2 => [
+            'product' => LoadProductData::PRODUCT_4,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_3,
+            'unit' => 'product_unit.bottle',
+            'quantity' => 5
+        ],
+        self::LINE_ITEM_3 => [
+            'product' => LoadProductData::PRODUCT_5,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
+            'unit' => 'product_unit.bottle',
+            'quantity' => 1
+        ],
+        self::LINE_ITEM_4 => [
+            'product' => LoadProductData::PRODUCT_1,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
+            'unit' => 'product_unit.box',
+            'quantity' => 1
+        ],
+        self::LINE_ITEM_5 => [
+            'product' => LoadProductData::PRODUCT_5,
+            'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
+            'unit' => 'product_unit.bottle',
+            'quantity' => 1
+        ],
+    ];
+
     /**
      * {@inheritdoc}
      */
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits',
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists'
         ];
@@ -30,14 +69,18 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
      */
     public function load(ObjectManager $manager)
     {
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-        /** @var ProductUnit $unit */
-        $unit = $this->getReference('product_unit.bottle');
-        /** @var Product $product */
-        $product = $this->getReference('product.1');
+        foreach (static::$lineItems as $name => $lineItem) {
+            /** @var ShoppingList $shoppingList */
+            $shoppingList = $this->getReference($lineItem['shoppingList']);
 
-        $this->createLineItem($manager, $shoppingList, $unit, $product, 'shopping_list_line_item.1');
+            /** @var ProductUnit $unit */
+            $unit = $this->getReference($lineItem['unit']);
+
+            /** @var Product $product */
+            $product = $this->getReference($lineItem['product']);
+
+            $this->createLineItem($manager, $shoppingList, $unit, $product, $lineItem['quantity'], $name);
+        }
 
         $manager->flush();
     }
@@ -47,6 +90,7 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
      * @param ShoppingList $shoppingList
      * @param ProductUnit $unit
      * @param Product $product
+     * @param float $quantity
      * @param string $referenceName
      */
     protected function createLineItem(
@@ -54,16 +98,17 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
         ShoppingList $shoppingList,
         ProductUnit $unit,
         Product $product,
+        $quantity,
         $referenceName
     ) {
         $item = new LineItem();
-        $item->setNotes('Test Notes');
-        $item->setAccountUser($shoppingList->getAccountUser());
-        $item->setOrganization($shoppingList->getOrganization());
-        $item->setShoppingList($shoppingList);
-        $item->setUnit($unit);
-        $item->setProduct($product);
-        $item->setQuantity(23.15);
+        $item->setNotes('Test Notes')
+            ->setAccountUser($shoppingList->getAccountUser())
+            ->setOrganization($shoppingList->getOrganization())
+            ->setShoppingList($shoppingList)
+            ->setUnit($unit)
+            ->setProduct($product)
+            ->setQuantity($quantity);
 
         $manager->persist($item);
         $this->addReference($referenceName, $item);

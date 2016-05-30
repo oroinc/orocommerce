@@ -1,6 +1,7 @@
 //Toolbar
 .grid-scrollable-container {
-  overflow: visible;
+  overflow-y: visible;
+  overflow-x: auto;
 }
 
 .grid-toolbar {
@@ -1388,7 +1389,8 @@
               }
             }
 
-            > a {
+            > a,
+            > span {
               text-transform: none;
               font-size: 1.4rem;
               line-height: 1.4rem;

@@ -10,15 +10,15 @@ operations:
             icon: icon-time
         acl_resource: orob2b_alternativecheckout_checkout_approve
         preactions:
-            - @alternative_checkout_to_quote:
+            - '@alternative_checkout_to_quote':
                 quote: $.data
                 checkout: $.checkout
         preconditions:
-            @and:
-                - @not_empty: $.checkout
-                - @equal: [$.checkout.requestedForApprove, true]
+            '@and':
+                - '@not_empty': $.checkout
+                - '@equal': [$.checkout.requestedForApprove, true]
         actions:
-            - @redirect:
+            - '@redirect':
                 route: 'orob2b_checkout_frontend_checkout'
                 route_parameters:
                     id: $.checkout.id

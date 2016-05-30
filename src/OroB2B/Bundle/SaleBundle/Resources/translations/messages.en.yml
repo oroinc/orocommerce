@@ -182,6 +182,9 @@ orob2b:
             entity_plural_label: 'Quote Demands'
             id.label: 'Id'
             quote.label: 'Quote'
+            total.label: 'Total'
+            subtotal.label: 'Subtotal'
+            total_currency.label: 'Total Currency'
 
         controller:
             quote:
@@ -262,9 +265,12 @@ orob2b:
                 price.label: 'Target Price'
                 column_summary: 'Summary'
 
+            product.view.request_a_quote: 'Request a Quote'
+
             btn:
                 accept_quote_create_order: 'Accept and Submit to Order'
                 widget_accept_quote_create_order: 'Submit to Order'
+                add_to_rfp: 'Request A Quote'
 
             message:
                 quote.create_order.success: 'Your sales order was submitted successfully'

@@ -16,9 +16,10 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
-use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
+use OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
@@ -47,6 +48,9 @@ class FrontendOrderType extends AbstractType
     /** @var SubtotalSubscriber */
     protected $subtotalSubscriber;
 
+    /** @var PriceListRequestHandler */
+    protected $priceListRequestHandler;
+
     /**
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param SecurityFacade $securityFacade
@@ -54,6 +58,7 @@ class FrontendOrderType extends AbstractType
      * @param ProductPriceProvider $productPriceProvider
      * @param OrderCurrencyHandler $orderCurrencyHandler
      * @param SubtotalSubscriber $subtotalSubscriber
+     * @param PriceListRequestHandler $priceListRequestHandler
      */
     public function __construct(
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
@@ -61,7 +66,8 @@ class FrontendOrderType extends AbstractType
         PaymentTermProvider $paymentTermProvider,
         ProductPriceProvider $productPriceProvider,
         OrderCurrencyHandler $orderCurrencyHandler,
-        SubtotalSubscriber $subtotalSubscriber
+        SubtotalSubscriber $subtotalSubscriber,
+        PriceListRequestHandler $priceListRequestHandler
     ) {
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->securityFacade = $securityFacade;
@@ -69,6 +75,7 @@ class FrontendOrderType extends AbstractType
         $this->productPriceProvider = $productPriceProvider;
         $this->orderCurrencyHandler = $orderCurrencyHandler;
         $this->subtotalSubscriber = $subtotalSubscriber;
+        $this->priceListRequestHandler = $priceListRequestHandler;
     }
 
     /**
@@ -219,7 +226,10 @@ class FrontendOrderType extends AbstractType
      */
     protected function fillLineItemsPrice(array $productsPriceCriteria, array $lineItemsWithIdentifier)
     {
-        $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria);
+        $prices = $this->productPriceProvider->getMatchedPrices(
+            $productsPriceCriteria,
+            $this->priceListRequestHandler->getPriceListByAccount()
+        );
 
         foreach ($lineItemsWithIdentifier as $identifier => $lineItem) {
             if (array_key_exists($identifier, $prices) && $prices[$identifier] instanceof Price) {

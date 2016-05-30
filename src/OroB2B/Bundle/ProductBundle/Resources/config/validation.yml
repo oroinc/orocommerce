@@ -5,7 +5,8 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
         - OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks: ~
     properties:
         sku:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.product.sku.blank'
             - Length:
                 min: 3
                 max: 255
@@ -14,7 +15,9 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
         organization:
             - NotBlank: ~
         unitPrecisions:
-            - Valid: ~
+            - Count:
+                min: 1
+                minMessage: 'orob2b.product.unit_precisions_items.blank'
         status:
             - NotBlank: ~
             - Choice: { callback: getStatuses }
@@ -60,9 +63,11 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
             fields: [ product, unit ]
     properties:
         unit:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.product.productunit.unit.blank'
         precision:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.product.productunit.precision.blank'
             - Range:
                 min: 0
                 max: 10
@@ -75,3 +80,20 @@ OroB2B\Bundle\ProductBundle\Model\ProductRow:
         productQuantity:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+
+OroB2B\Bundle\ProductBundle\Model\ProductLineItem:
+    properties:
+        product:
+            - NotBlank:
+                groups: [create, update, add_product]
+        quantity:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+                groups: [create, update, add_product]
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                value: 0
+                groups: [create, update, add_product]
+            - NotBlank:
+                groups: [create, update, add_product]
+        unit:
+            - NotBlank:
+                groups: [create, update, add_product]

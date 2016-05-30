@@ -1,0 +1,67 @@
+oro_system_configuration:
+    groups:
+        shipping:
+            title: orob2b.shipping.system_configuration.groups.shipping.title
+        shipping_origin:
+            title: orob2b.shipping.system_configuration.groups.shipping_origin.label
+        shipping_origin_settings:
+            title: orob2b.shipping.system_configuration.groups.shipping_origin.title
+        shipping_options:
+            title: orob2b.shipping.system_configuration.groups.shipping_options.label
+        shipping_options_settings:
+            title: orob2b.shipping.system_configuration.groups.shipping_options.title
+    fields:
+        orob2b_shipping.shipping_origin:
+            data_type: array
+            type: orob2b_shipping_origin_config
+        orob2b_shipping.length_units:
+            data_type: array
+            type: orob2b_shipping_length_unit_select
+            options:
+                label: orob2b.shipping.system_configuration.fields.length_units.label
+                multiple: true
+                full_list: true
+                data_transformer: orob2b_shipping.form.data_transformer.length_unit
+                constraints:
+                    - NotBlank: ~
+        orob2b_shipping.weight_units:
+            data_type: array
+            type: orob2b_shipping_weight_unit_select
+            options:
+                label: orob2b.shipping.system_configuration.fields.weight_units.label
+                multiple: true
+                full_list: true
+                data_transformer: orob2b_shipping.form.data_transformer.weight_unit
+                constraints:
+                    - NotBlank: ~
+        orob2b_shipping.freight_classes:
+            data_type: array
+            type: orob2b_shipping_freight_class_select
+            options:
+                label: orob2b.shipping.system_configuration.fields.freight_classes.label
+                multiple: true
+                full_list: true
+                data_transformer: orob2b_shipping.form.data_transformer.freight_class
+                constraints:
+                    - NotBlank: ~
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    shipping:
+                        priotity: 550
+                        children:
+                            shipping_origin:
+                                priority: 100
+                                children:
+                                    shipping_origin_settings:
+                                        children:
+                                            - orob2b_shipping.shipping_origin
+                            shipping_options:
+                                priority: 100
+                                children:
+                                    shipping_options_settings:
+                                        children:
+                                            - orob2b_shipping.length_units
+                                            - orob2b_shipping.weight_units
+                                            - orob2b_shipping.freight_classes

@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Model\Action;
 
-use Doctrine\ORM\EntityRepository;
-
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -27,6 +25,8 @@ use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
 
 class StartCheckoutTest extends \PHPUnit_Framework_TestCase
 {
@@ -74,8 +74,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = $this->getMockWithoutConstructor('Symfony\Bridge\Doctrine\ManagerRegistry');
         $this->websiteManager = $this->getMockWithoutConstructor('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager');
-        $this->tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+        $this->setUpTokenStorage();
         $this->currencyProvider = $this
             ->getMockWithoutConstructor('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider');
         $this->redirect = $this->getMockBuilder('Oro\Component\Action\Action\AbstractAction')
@@ -123,17 +122,23 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
     public function testExecute(array $options, CheckoutSource $checkoutSource = null)
     {
         $checkout = new Checkout();
-        $checkout->setWorkflowItem(new WorkflowItem());
         $entity = new ShoppingList();
+
+        $this->eventDispatcher
+            ->expects($this->any())
+            ->method('dispatch')
+            ->willReturnCallback(function ($eventName, $event) use ($checkout) {
+                if ($eventName === CheckoutEvents::GET_CHECKOUT_ENTITY && $event instanceof CheckoutEntityEvent) {
+                    $event->setCheckoutEntity($checkout);
+                }
+            });
+
         $context = new ActionData(['data' => $entity]);
 
         $this->action->initialize($options);
 
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $checkoutRepository */
-        $checkoutRepository = $this->getMockWithoutConstructor('Doctrine\ORM\EntityRepository');
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $checkoutRepository */
         $checkoutSourceRepository = $this->getMockWithoutConstructor('Doctrine\ORM\EntityRepository');
-        $checkoutSourceRepository->expects($this->any())
+        $checkoutSourceRepository->expects($this->once())
             ->method('findOneBy')
             ->with([$options[StartCheckout::SOURCE_FIELD_KEY] => $options[StartCheckout::SOURCE_ENTITY_KEY]])
             ->willReturn($checkoutSource);
@@ -144,27 +149,12 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->any())
             ->method('getRepository')
-            ->willReturnMap(
-                [
-                    ['OroB2BCheckoutBundle:Checkout', $checkoutRepository],
-                    ['OroB2BCheckoutBundle:CheckoutSource', $checkoutSourceRepository]
-                ]
-            );
+            ->with('OroB2BCheckoutBundle:CheckoutSource')
+            ->willReturn($checkoutSourceRepository);
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->will($this->returnValue($em));
-
-        $account = new Account();
-        $account->setOwner(new User());
-        $account->setOrganization(new Organization());
-        $user = new AccountUser();
-        $user->setAccount($account);
-
-        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->any())->method('getUser')->willReturn($user);
-        $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
 
         if (!$checkoutSource) {
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
@@ -192,19 +182,16 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                 );
             $em->expects($this->exactly(2))->method('flush');
         } else {
-            $checkoutRepository
-                ->expects($this->once())
-                ->method('findOneBy')
-                ->with(['source' => $checkoutSource])
-                ->willReturn($checkout);
+            $checkout->setWorkflowItem(new WorkflowItem());
         }
+
         $this->redirect
             ->expects($this->once())
             ->method('initialize')
             ->with(
                 [
                     'route' => 'orob2b_checkout_frontend_checkout',
-                    'route_parameters' => ['id' => $checkout->getId(), 'type' => $checkout->getType()]
+                    'route_parameters' => ['id' => $checkout->getId(), 'checkoutType' => $checkout->getCheckoutType()]
                 ]
             );
         $this->redirect->expects($this->once())
@@ -258,7 +245,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                         'remove_source' => true
                     ]
                 ],
-                'checkoutSource' => new CheckoutSourceStub()
+                'checkoutSource' => (new CheckoutSourceStub())->setId(1)
             ],
             'with_force' => [
                 'options' => [
@@ -275,7 +262,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                     ],
                     'force' => true
                 ],
-                'checkoutSource' => new CheckoutSourceStub(),
+                'checkoutSource' => (new CheckoutSourceStub())->setId(1),
                 'force' => true
             ]
         ];
@@ -288,5 +275,22 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
     protected function getMockWithoutConstructor($className)
     {
         return $this->getMockBuilder($className)->disableOriginalConstructor()->getMock();
+    }
+
+    protected function setUpTokenStorage()
+    {
+        $this->tokenStorage = $this
+            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+
+        $account = new Account();
+        $account->setOwner(new User());
+        $account->setOrganization(new Organization());
+        $user = new AccountUser();
+        $user->setAccount($account);
+
+        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())->method('getUser')->willReturn($user);
+        $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
     }
 }

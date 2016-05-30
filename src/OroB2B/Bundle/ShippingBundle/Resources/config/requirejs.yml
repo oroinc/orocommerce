@@ -1,0 +1,8 @@
+config:
+    paths:
+        'orob2bshipping/js/app/views/shipping-origin-view': 'bundles/orob2bshipping/js/app/views/shipping-origin-view.js'
+        'orob2bshipping/js/app/views/product-shipping-options-view': 'bundles/orob2bshipping/js/app/views/product-shipping-options-view.js'
+        'orob2bshipping/js/app/views/product-shipping-freight-classes-component': 'bundles/orob2bshipping/js/app/components/product-shipping-freight-classes-component.js'
+        'orob2bshipping/js/validator/unique-product-unit-shipping-options': 'bundles/orob2bshipping/js/validator/unique-product-unit-shipping-options.js'
+    appmodules:
+        - orob2bshipping/js/app/modules/validator-constraints-module

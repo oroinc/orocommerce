@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
+use OroB2B\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
@@ -112,7 +112,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
                 && $lineItem instanceof QuantityAwareInterface
             ) {
                 $productsPriceCriteria =
-                    $this->prepareProductsPriceCriteria($lineItem, $this->getBaseCurrency($entity));
+                    $this->prepareProductsPriceCriteria($lineItem, $baseCurrency);
                 $priceList = $this->priceListTreeHandler->getPriceList($entity->getAccount(), $entity->getWebsite());
                 $price = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList);
                 if (reset($price)) {

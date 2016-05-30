@@ -13,7 +13,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
+use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
@@ -177,7 +177,6 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->roundingService
         );
         $this->assertTrue($handler->process($this->lineItem));
-        $this->assertEquals(['savedId' => 123], $handler->updateSavedId([]));
     }
 
     /**
@@ -261,8 +260,10 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('commit');
         $manager->expects($this->never())
             ->method('rollback');
-        $manager->expects($this->once())
-            ->method('persist')
+        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList */
+        $shoppingList = $this->lineItem->getShoppingList();
+        $shoppingList->expects($this->once())
+            ->method('addLineItem')
             ->with($this->lineItem);
         $manager->expects($this->once())
             ->method('flush');
@@ -284,7 +285,6 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->roundingService
         );
         $this->assertTrue($handler->process($this->lineItem));
-        $this->assertEquals([], $handler->updateSavedId([]));
     }
 
     /**
@@ -335,6 +335,8 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
     protected function getLineItem($quantity, $notes, $id, $expectedNotes)
     {
         $existingLineItem = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem');
+        $shoppingList = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $existingLineItem->expects($this->any())->method('getShoppingList')->will($this->returnValue($shoppingList));
         $existingLineItem->expects($this->any())->method('getQuantity')->will($this->returnValue($quantity));
         $existingLineItem->expects($this->any())->method('setQuantity');
         $existingLineItem->expects($this->any())->method('getNotes')->will($this->returnValue($notes));

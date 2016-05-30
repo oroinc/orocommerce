@@ -106,7 +106,6 @@ oro_system_configuration:
                     discover: orob2b.payment.system_configuration.fields.allowed_cc_types.discover
                     american_express: orob2b.payment.system_configuration.fields.allowed_cc_types.american_express
 
-
         orob2b_payment.paypal_payments_pro_partner:
             data_type: string
             type: text
@@ -114,19 +113,19 @@ oro_system_configuration:
             options:
                 label: orob2b.payment.system_configuration.fields.partner.label
 
-        orob2b_payment.paypal_payments_pro_user:
+        orob2b_payment.paypal_payments_pro_vendor:
             data_type: string
             type: text
             priority: 90
             options:
-                label: orob2b.payment.system_configuration.fields.user.label
+                label: orob2b.payment.system_configuration.fields.vendor.label
 
-        orob2b_payment.paypal_payments_pro_vendor:
+        orob2b_payment.paypal_payments_pro_user:
             data_type: string
             type: text
             priority: 80
             options:
-                label: orob2b.payment.system_configuration.fields.vendor.label
+                label: orob2b.payment.system_configuration.fields.user.label
 
         orob2b_payment.paypal_payments_pro_password:
             data_type: string
@@ -210,6 +209,21 @@ oro_system_configuration:
             options:
                 label: orob2b.payment.system_configuration.fields.validate_cvv.label
 
+        orob2b_payment.paypal_payments_pro_zero_amount_authorization:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 30
+            options:
+                label: orob2b.payment.system_configuration.fields.zero_amount_authorization.label
+                tooltip: orob2b.payment.system_configuration.fields.zero_amount_authorization.tooltip
+
+        orob2b_payment.paypal_payments_pro_authorization_for_required_amount:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 20
+            options:
+                label: orob2b.payment.system_configuration.fields.authorization_for_required_amount.label
+
         # Payflow Gateway
         orob2b_payment.payflow_gateway_enabled:
             data_type: boolean
@@ -287,19 +301,19 @@ oro_system_configuration:
             options:
                 label: orob2b.payment.system_configuration.fields.partner.label
 
-        orob2b_payment.payflow_gateway_user:
+        orob2b_payment.payflow_gateway_vendor:
             data_type: string
             type: text
             priority: 90
             options:
-                label: orob2b.payment.system_configuration.fields.user.label
+                label: orob2b.payment.system_configuration.fields.vendor.label
 
-        orob2b_payment.payflow_gateway_vendor:
+        orob2b_payment.payflow_gateway_user:
             data_type: string
             type: text
             priority: 80
             options:
-                label: orob2b.payment.system_configuration.fields.vendor.label
+                label: orob2b.payment.system_configuration.fields.user.label
 
         orob2b_payment.payflow_gateway_password:
             data_type: string
@@ -326,7 +340,6 @@ oro_system_configuration:
             priority: 50
             options:
                 label: orob2b.payment.system_configuration.fields.test_mode.label
-
 
         orob2b_payment.payflow_gateway_use_proxy:
             data_type: boolean
@@ -383,6 +396,21 @@ oro_system_configuration:
             options:
                 label: orob2b.payment.system_configuration.fields.validate_cvv.label
 
+        orob2b_payment.payflow_gateway_zero_amount_authorization:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 30
+            options:
+                label: orob2b.payment.system_configuration.fields.zero_amount_authorization.label
+                tooltip: orob2b.payment.system_configuration.fields.zero_amount_authorization.tooltip
+
+        orob2b_payment.payflow_gateway_authorization_for_required_amount:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 30
+            options:
+                label: orob2b.payment.system_configuration.fields.authorization_for_required_amount.label
+
         # Payment Term
         orob2b_payment.payment_term_enabled:
             data_type: boolean
@@ -437,8 +465,8 @@ oro_system_configuration:
                                         priority: 90
                                         children:
                                             - orob2b_payment.paypal_payments_pro_partner
-                                            - orob2b_payment.paypal_payments_pro_user
                                             - orob2b_payment.paypal_payments_pro_vendor
+                                            - orob2b_payment.paypal_payments_pro_user
                                             - orob2b_payment.paypal_payments_pro_password
                                             - orob2b_payment.paypal_payments_pro_payment_action
                                             - orob2b_payment.paypal_payments_pro_test_mode
@@ -452,6 +480,8 @@ oro_system_configuration:
                                             - orob2b_payment.paypal_payments_pro_enable_ssl_verification
                                             - orob2b_payment.paypal_payments_pro_require_cvv
                                             - orob2b_payment.paypal_payments_pro_validate_cvv
+                                            - orob2b_payment.paypal_payments_pro_zero_amount_authorization
+                                            - orob2b_payment.paypal_payments_pro_authorization_for_required_amount
                             payflow_gateway:
                                 priority: 90
                                 children:
@@ -468,8 +498,8 @@ oro_system_configuration:
                                         priority: 90
                                         children:
                                             - orob2b_payment.payflow_gateway_partner
-                                            - orob2b_payment.payflow_gateway_user
                                             - orob2b_payment.payflow_gateway_vendor
+                                            - orob2b_payment.payflow_gateway_user
                                             - orob2b_payment.payflow_gateway_password
                                             - orob2b_payment.payflow_gateway_payment_action
                                             - orob2b_payment.payflow_gateway_test_mode
@@ -483,6 +513,8 @@ oro_system_configuration:
                                             - orob2b_payment.payflow_gateway_enable_ssl_verification
                                             - orob2b_payment.payflow_gateway_require_cvv
                                             - orob2b_payment.payflow_gateway_validate_cvv
+                                            - orob2b_payment.payflow_gateway_zero_amount_authorization
+                                            - orob2b_payment.payflow_gateway_authorization_for_required_amount
                             payment_term:
                                 priority: 80
                                 children:

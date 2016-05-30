@@ -98,7 +98,7 @@ datagrid:
                     data_name: invoice.currency
                     options:
                         field_options:
-                            choices: @orob2b_pricing.provider.currency->getAvailableCurrencies
+                            choices: "@orob2b_pricing.provider.currency->getAvailableCurrencies"
                 createdAt:
                     type:      datetime
                     data_name: invoice.createdAt
@@ -111,14 +111,6 @@ datagrid:
                 route:         orob2b_invoice_view
                 type:  url
                 params: [ id ]
-            update_link:
-                route:         orob2b_invoice_update
-                type:  url
-                params: [ id ]
-            delete_link:
-                route:         orob2b_api_delete_invoice
-                type: url
-                params: [ id ]
         actions:
             view:
                 type:          navigate
@@ -127,15 +119,3 @@ datagrid:
                 icon:          eye-open
                 rowAction:     true
                 acl_resource:  orob2b_invoice_view
-            update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_invoice_update
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_invoice_delete

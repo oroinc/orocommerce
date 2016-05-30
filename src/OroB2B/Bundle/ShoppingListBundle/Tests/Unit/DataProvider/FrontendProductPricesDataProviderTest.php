@@ -7,6 +7,8 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
@@ -41,6 +43,11 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $userCurrencyProvider;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
+     */
+    protected $priceListRequestHandler;
+
     public function setUp()
     {
         $this->productPriceProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider')
@@ -55,10 +62,15 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->priceListRequestHandler = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->disableOriginalConstructor()->getMock();
+
         $this->provider = new FrontendProductPricesDataProvider(
             $this->productPriceProvider,
             $this->securityFacade,
-            $this->userCurrencyProvider
+            $this->userCurrencyProvider,
+            $this->priceListRequestHandler
         );
     }
 
@@ -76,28 +88,32 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
         array $lineItems = null
     ) {
         $expected = null;
-        if ($lineItems) {
-            $this->securityFacade->expects($this->once())
-                ->method('getLoggedUser')
-                ->willReturn($accountUser);
+        $this->securityFacade->expects($this->once())
+            ->method('getLoggedUser')
+            ->willReturn($accountUser);
 
-            if ($accountUser) {
-                $this->userCurrencyProvider->expects($this->once())
-                    ->method('getUserCurrency')
-                    ->willReturn(self::TEST_CURRENCY);
+        if ($accountUser) {
+            $this->userCurrencyProvider->expects($this->once())
+                ->method('getUserCurrency')
+                ->willReturn(self::TEST_CURRENCY);
 
-                $this->productPriceProvider->expects($this->once())
-                    ->method('getMatchedPrices')
-                    ->with([$criteria])
-                    ->willReturn([
-                        $criteria->getIdentifier() => $price
-                    ]);
+            /** @var BasePriceList $priceList */
+            $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 1]);
+            $this->priceListRequestHandler->expects($this->once())
+                ->method('getPriceListByAccount')
+                ->willReturn($priceList);
 
-                $expected = ['42' => $price];
-            }
+            $this->productPriceProvider->expects($this->once())
+                ->method('getMatchedPrices')
+                ->with([$criteria], $priceList)
+                ->willReturn([
+                    $criteria->getIdentifier() => $price
+                ]);
+
+            $expected = ['42' => ['test' => $price]];
         }
 
-        $result = $this->provider->getProductsPrices($lineItems);
+        $result = $this->provider->getProductsMatchedPrice($lineItems);
         $this->assertEquals($expected, $result);
     }
 

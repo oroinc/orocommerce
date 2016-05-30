@@ -1,8 +1,8 @@
 layout:
     actions:
-        - @setBlockTheme:
+        - '@setBlockTheme':
             themes: 'OroB2BFrontendBundle:layouts:default/page/layout.html.twig'
-        - @addTree:
+        - '@addTree':
             items:
                 wrapper:
                     blockType: container
@@ -40,15 +40,15 @@ layout:
                                     page_title: ~
                             sidebar_left: ~
                     scripts: ~
-        - @add:
+        - '@add':
             id: require_js_config
             parentId: require_js
             blockType: block
-        - @setOption:
+        - '@setOption':
             id: title
             optionName: separator
             optionValue: ' - '
-        - @setOption:
+        - '@setOption':
             id: title
             optionName: reverse
             optionValue: true

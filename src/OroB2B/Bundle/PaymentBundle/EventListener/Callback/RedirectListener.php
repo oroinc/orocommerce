@@ -11,6 +11,9 @@ use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 
 class RedirectListener
 {
+    const SUCCESS_URL_KEY = 'successUrl';
+    const FAILURE_URL_KEY = 'failureUrl';
+
     /** @var Session */
     protected $session;
 
@@ -27,11 +30,11 @@ class RedirectListener
      */
     public function onReturn(CallbackReturnEvent $event)
     {
-        $this->handleEvent($event, 'successUrl');
+        $this->handleEvent($event, self::SUCCESS_URL_KEY);
 
         $event
             ->getPaymentTransaction()
-            ->setActive(false)
+            ->setActive(true)
             ->setSuccessful(true);
     }
 
@@ -40,15 +43,17 @@ class RedirectListener
      */
     public function onError(CallbackErrorEvent $event)
     {
-        $this->handleEvent($event, 'errorUrl');
+        $this->handleEvent($event, self::FAILURE_URL_KEY);
 
         $event
             ->getPaymentTransaction()
             ->setActive(false)
             ->setSuccessful(false);
 
-        if (!$this->session->has('error')) {
-            $this->session->getFlashBag()->add('error', 'orob2b.payment.result.error');
+        $flashBag = $this->session->getFlashBag();
+
+        if (!$flashBag->has('error')) {
+            $flashBag->add('error', 'orob2b.payment.result.error');
         }
     }
 

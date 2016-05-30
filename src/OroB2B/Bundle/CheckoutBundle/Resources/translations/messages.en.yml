@@ -27,6 +27,41 @@ orob2b:
         shipping_estimate_currency.label: Shipping Estimate Currency
         payment_method.label: Payment Method
         order.label: Order
+        created_at.label: Started At
+        updated_at.label: Last Updated
+        shipping_cost.label: Shipping
+        pending_orders.label: Pending Orders
+        ordered_by.label: Ordered By
+        checkout_type.label: Checkout Type
+
+        basecheckout:
+            entity_label: Base Checkout
+            entity_plural_label: Base Checkouts
+            id.label: Id
+            owner.label: Owner
+            account.label: Global Address Book
+            account_user.label: My Address Book
+            organization.label: Organization
+            customer_notes.label: Customer Notes
+            customer_notes.frontend.label: Notes
+            po_number.label: PO Number
+            ship_until.label: Do Not Ship Later Than
+            quoted_shipping_amount.label: Quoted shipping amount
+            preferred_shipping_method.label: Preferred shipping method
+            source.label: Source
+            currency.label: Currency
+            website.label: Website
+            workflow_item.label: Workflow Item
+            workflow_step.label: Workflow Step
+            shipping_estimate_amount.label: Shipping Estimate Ammount
+            shipping_estimate_currency.label: Shipping Estimate Currency
+            payment_method.label: Payment Method
+            created_at.label: Started At
+            updated_at.label: Last Updated
+            shipping_cost.label: Shipping
+            pending_orders.label: Pending Orders
+            ordered_by.label: Ordered By
+            checkout_type.label: Checkout Type
 
         checkoutsource:
             entity_label: Checkout Source
@@ -65,7 +100,7 @@ orob2b:
 
         workflow:
             view_options.label: View Options for this Order
-            unavailable_transition.message: This action is not available, reason:
+            unavailable_transition.message: 'This action is not available, reason:'
             b2b_flow_checkout:
                 label: Checkout
 
@@ -118,4 +153,10 @@ orob2b:
             address.select.billing.label: SELECT BILLING ADDRESS
             address.select.shipping.label: SELECT SHIPPING ADDRESS
 
+        grid:
+            total.label: Total
+            subtotal.label: Subtotal
 
+        workflow.condition:
+            order_line_item_has_count.message: No products can be added to this order. Please create an RFQ to request price.
+        order.line_items.line_item_has_no_price.message: Some products have not been added to this order. Please create an RFQ to request price.

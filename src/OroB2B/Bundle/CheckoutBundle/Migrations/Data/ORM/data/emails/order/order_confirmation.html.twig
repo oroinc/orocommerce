@@ -1,0 +1,74 @@
+@name = order_confirmation_email
+@entityName = OroB2B\Bundle\OrderBundle\Entity\Order
+@subject = Your Store Name order has been received.
+@isSystem = 1
+@isEditable = 1
+
+<h1>Hello, {{ entity.accountUser|oro_format_name }}!</h1>
+
+<p>Thank you for order from {{ entity.website }}. If you have any questions about your order,
+    <a href="mailto:{{ entity.owner.email }}">please contact us</a>
+    or call us at 800-555-0199 Monday-Friday, 9am-6pm PST.</p>
+
+<h3>Please see your order details below.</h3>
+
+<h4>Billing Information</h4>
+{{ entity.billingAddress|oro_format_address }}
+
+<h4>Shipping Information</h4>
+{{ entity.shippingAddress|oro_format_address }}
+
+{% set payment_methods = get_payment_methods(entity) %}
+{% if  payment_methods|length == 1 %}
+    <h4>Payment Method:</h4>
+    {{ payment_methods[0] }}
+{% elseif payment_methods|length > 1 %}
+    <h4>Payment Methods:</h4>
+    {{ payment_methods|join(', ') }}
+{% endif %}
+
+{% if entity.shipUntil or entity.customerNotes %}
+    <h4>Additional Information</h4>
+
+    {% if entity.shipUntil %}
+        <strong>Do Not Ship Later Than: </strong>{{ entity.shipUntil|oro_format_date }}
+    {% endif %}
+
+    {% if entity.customerNotes %}
+        <strong>Notes: </strong>
+        <br>{{ entity.customerNotes }}
+    {% endif %}
+{% endif %}
+
+<table style="border: 1px solid black;margin-top: 10px">
+    <thead>
+    <tr>
+        <th><strong>Item</strong></th>
+        <th><strong>Quantity</strong></th>
+        <th><strong>Price</strong></th>
+        <th><strong>Subtotal</strong></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% set data = order_line_items(entity) %}
+    {% for item in data.lineItems %}
+        <tr>
+            <td>{{ item.product_name }}<br>SKU #: {{ item.product_sku }}</td>
+            <td>{{ item.quantity|orob2b_format_short_product_unit_value(item.unit) }}</td>
+            <td>{{ item.price|oro_format_price }}</td>
+            <td>{{ item.subtotal|oro_format_price }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<br>
+<table>
+    {% for total in data.subtotals %}
+        <tr>
+            <td>{{ total.label }}</td>
+            <td align="right">{{ total.totalPrice|oro_format_price }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<br>
+Thank you.
