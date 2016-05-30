@@ -118,8 +118,6 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testIndex()
     {
-        $account = $this->getAccountRepository()->findOneBy([]);
-
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_index'));
         $result = $this->client->getResponse();
 
@@ -128,7 +126,6 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->assertContains(self::FIRST_NAME, $result->getContent());
         $this->assertContains(self::LAST_NAME, $result->getContent());
         $this->assertContains(self::EMAIL, $result->getContent());
-        $this->assertContains($account->getName(), $result->getContent());
     }
 
     /**
