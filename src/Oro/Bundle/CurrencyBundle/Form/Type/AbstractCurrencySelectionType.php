@@ -53,7 +53,7 @@ abstract class AbstractCurrencySelectionType extends AbstractType
 
                 $currencies = $options['currencies_list'];
                 if (!count($currencies)) {
-                    $currencies = $this->configManager->get($this->getCurrencySelectorConfigKey());
+                    $currencies = $this->getCurrencies();
                 }
 
                 $currencies = array_merge($currencies, (array)$options['additional_currencies']);
@@ -139,6 +139,14 @@ abstract class AbstractCurrencySelectionType extends AbstractType
     public function getParent()
     {
         return 'choice';
+    }
+
+    /**
+     * @return array
+     */
+    protected function getCurrencies()
+    {
+        return $this->configManager->get($this->getCurrencySelectorConfigKey());
     }
 
     /**

@@ -131,11 +131,9 @@ class FrontendProductPriceDatagridListener
         foreach ($records as $record) {
             $productId = $record->getValue('id');
             if (array_key_exists($productId, $resultProductPrices)) {
-                $record->addData(
-                    [
-                        self::COLUMN_PRICES => $resultProductPrices[$productId]
-                    ]
-                );
+                $record->addData([self::COLUMN_PRICES => $resultProductPrices[$productId]]);
+            } else {
+                $record->addData([self::COLUMN_PRICES => []]);
             }
         }
     }

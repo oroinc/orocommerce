@@ -6,6 +6,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
@@ -571,4 +572,46 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
      * @return string
      */
     abstract protected function getConfigPrefix();
+
+    public function testIsApplicableWithoutContext()
+    {
+        $this->assertFalse($this->method->isApplicable(['currency' => ['USD']]));
+    }
+
+    public function testIsApplicableWithAllCountries()
+    {
+        $this->configureConfig(
+            [
+                $this->getConfigPrefix() . 'allowed_countries' => Configuration::ALLOWED_COUNTRIES_ALL,
+                $this->getConfigPrefix() . 'allowed_currencies' => ['USD']
+            ]
+        );
+
+        $this->assertTrue($this->method->isApplicable(['currency' => 'USD']));
+    }
+
+    public function testIsApplicableWithSelectedCountriesNotMatch()
+    {
+        $this->configureConfig(
+            [
+                $this->getConfigPrefix() . 'allowed_countries' => Configuration::ALLOWED_COUNTRIES_SELECTED,
+                $this->getConfigPrefix() . 'selected_countries' => ['US'],
+            ]
+        );
+
+        $this->assertFalse($this->method->isApplicable(['country' => 'UK']));
+    }
+
+    public function testIsApplicableWithSelectedCountries()
+    {
+        $this->configureConfig(
+            [
+                $this->getConfigPrefix() . 'allowed_countries' => Configuration::ALLOWED_COUNTRIES_SELECTED,
+                $this->getConfigPrefix() . 'selected_countries' => ['US'],
+                $this->getConfigPrefix() . 'selected_currencies' => ['USD'],
+            ]
+        );
+
+        $this->assertTrue($this->method->isApplicable(['country' => 'US', 'currency' => 'USD']));
+    }
 }

@@ -163,18 +163,13 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider isEnabledProvider
-     * @param bool $paymentTermPresent
      * @param bool $configValue
      * @param bool $expected
      */
-    public function testIsEnabled($paymentTermPresent, $configValue, $expected)
+    public function testIsEnabled($configValue, $expected)
     {
-        $this->paymentTermProvider->expects($this->once())
-            ->method('getCurrentPaymentTerm')
-            ->willReturn($paymentTermPresent ? new PaymentTerm() : null);
-
         $this->setConfig(
-            $paymentTermPresent ? $this->once() : $this->never(),
+            $this->once(),
             Configuration::PAYMENT_TERM_ENABLED_KEY,
             $configValue
         );
@@ -189,22 +184,10 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'paymentTermPresent' => true,
                 'configValue' => true,
                 'expected' => true,
             ],
             [
-                'paymentTermPresent' => false,
-                'configValue' => true,
-                'expected' => false,
-            ],
-            [
-                'paymentTermPresent' => true,
-                'configValue' => false,
-                'expected' => false,
-            ],
-            [
-                'paymentTermPresent' => false,
                 'configValue' => false,
                 'expected' => false,
             ],
@@ -239,5 +222,52 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             [false, PaymentTermMethod::VALIDATE],
             [true, PaymentTermMethod::PURCHASE],
         ];
+    }
+
+    public function testIsApplicable()
+    {
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->withConsecutive(
+                [$this->getConfigKey(Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY)],
+                [$this->getConfigKey(Configuration::PAYMENT_TERM_ALLOWED_CURRENCIES)]
+            )
+            ->willReturnOnConsecutiveCalls(Configuration::ALLOWED_COUNTRIES_ALL, ['USD']);
+
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getCurrentPaymentTerm')
+            ->willReturn(new PaymentTerm());
+
+        $this->assertTrue($this->method->isApplicable(['currency' => 'USD']));
+    }
+
+    public function testIsApplicableWithoutCountry()
+    {
+        $this->configManager->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(
+                [$this->getConfigKey(Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY)],
+                [$this->getConfigKey(Configuration::PAYMENT_TERM_SELECTED_COUNTRIES_KEY)]
+            )
+            ->willReturnOnConsecutiveCalls(Configuration::ALLOWED_COUNTRIES_SELECTED, []);
+
+        $this->paymentTermProvider->expects($this->never())->method('getCurrentPaymentTerm');
+
+        $this->assertFalse($this->method->isApplicable(['country' => 'US']));
+    }
+
+    public function testIsApplicableWithoutCurrentPaymentTerm()
+    {
+        $this->setConfig(
+            $this->once(),
+            Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY,
+            Configuration::ALLOWED_COUNTRIES_ALL
+        );
+
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getCurrentPaymentTerm')
+            ->willReturn(null);
+
+        $this->assertFalse($this->method->isApplicable([]));
     }
 }

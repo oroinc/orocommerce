@@ -6,6 +6,7 @@ use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 
 /**
  * @dbIsolation
@@ -40,7 +41,21 @@ class CombinedPriceListToWebsiteRepositoryTest extends AbstractCombinedPriceList
         //Remove Base Relation
         $em->remove($priceListToWebsite);
         $em->flush();
+
+        $fallback = new PriceListWebsiteFallback();
+        $fallback->setWebsite($priceListToWebsite->getWebsite());
+        $fallback->setFallback(PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY);
+        $em->persist($fallback);
+        $em->flush();
+
         $repo->deleteInvalidRelations();
+
+        $this->assertCount(1, $repo->findAll());
+
+        $fallback->setFallback(PriceListWebsiteFallback::CONFIG);
+        $em->flush();
+        $repo->deleteInvalidRelations();
+
         $this->assertCount(0, $repo->findAll());
     }
 }
