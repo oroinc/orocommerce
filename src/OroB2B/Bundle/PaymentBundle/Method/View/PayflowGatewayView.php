@@ -49,9 +49,14 @@ class PayflowGatewayView implements PaymentMethodViewInterface
 
         $formView = $this->formFactory->create(CreditCardType::NAME, null, $formOptions)->createView();
 
+        $allowedCreditCards = $this->getAllowedCreditCards();
+
         $viewOptions = [
             'formView' => $formView,
-            'allowedCreditCards' => $this->getAllowedCreditCards(),
+            'allowedCreditCards' => $allowedCreditCards,
+            'creditCardComponentOptions' => [
+                'allowedCreditCards' => $allowedCreditCards,
+            ],
         ];
 
         if (!$isZeroAmountAuthorizationEnabled) {
@@ -72,7 +77,7 @@ class PayflowGatewayView implements PaymentMethodViewInterface
 
         $viewOptions['creditCardComponentOptions'] = [
             'acct' => $this->getLast4($validateTransaction),
-            'saveForLaterUse' => !empty($transactionOptions['saveForLaterUse'])
+            'saveForLaterUse' => !empty($transactionOptions['saveForLaterUse']),
         ];
 
         return $viewOptions;

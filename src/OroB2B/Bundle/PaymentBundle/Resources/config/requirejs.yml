@@ -1,8 +1,13 @@
 config:
     paths:
         'oro/datagrid/action/payment-delete-action': 'bundles/orob2bpayment/js/datagrid/action/payment-delete-action.js'
+        'orob2bpayment/js/lib/jquery-credit-card-validator': 'bundles/orob2bpayment/js/lib/jquery.creditCardValidator.js'
         'orob2bpayment/js/app/components/payment-method-selector-component': 'bundles/orob2bpayment/js/app/components/payment-method-selector-component.js'
         'orob2bpayment/js/app/components/config-hide-fields-component': 'bundles/orob2bpayment/js/app/components/config-hide-fields-component.js'
         'orob2bpayment/js/app/components/credit-card-component': 'bundles/orob2bpayment/js/app/components/credit-card-component.js'
         'orob2bpayment/js/app/components/payment-term-component': 'bundles/orob2bpayment/js/app/components/payment-term-component.js'
         'orob2bpayment/js/app/components/authorized-credit-card-component': 'bundles/orob2bpayment/js/app/components/authorized-credit-card-component.js'
+        'orob2bpayment/js/validator/credit-card-expiration-date': 'bundles/orob2bpayment/js/validator/creditCardExpirationDate.js'
+        'orob2bpayment/js/validator/credit-card-expiration-date-not-blank': 'bundles/orob2bpayment/js/validator/creditCardExpirationDateNotBlank.js'
+        'orob2bpayment/js/validator/credit-card-number': 'bundles/orob2bpayment/js/validator/creditCardNumber.js'
+        'orob2bpayment/js/validator/credit-card-type': 'bundles/orob2bpayment/js/validator/creditCardType.js'

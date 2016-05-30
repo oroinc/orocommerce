@@ -14,6 +14,7 @@ define(function(require) {
          */
         options: {
             paymentMethod: null,
+            allowedCreditCards: [],
             selectors: {
                 month: '[data-expiration-date-month]',
                 year: '[data-expiration-date-year]',
@@ -63,9 +64,10 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.extend({}, this.options, options);
 
-            $.validator.loadMethod('orob2bpayment/js/validator/creditCardNumberLuhnCheck');
-            $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDate');
-            $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDateNotBlank');
+            $.validator.loadMethod('orob2bpayment/js/validator/credit-card-number');
+            $.validator.loadMethod('orob2bpayment/js/validator/credit-card-type');
+            $.validator.loadMethod('orob2bpayment/js/validator/credit-card-expiration-date');
+            $.validator.loadMethod('orob2bpayment/js/validator/credit-card-expiration-date-not-blank');
 
             this.$el = this.options._sourceElement;
 
@@ -229,6 +231,12 @@ define(function(require) {
                     }
                 });
 
+            // Add CC type validation rule
+            var cardNumberField = clonedForm.find(this.options.selectors.cardNumber);
+            var cardNumberValidation = cardNumberField.data('validation');
+            var allowedCreditCards = _.values(this.options.allowedCreditCards);
+            _.extend(cardNumberValidation.creditCardType, {allowedCreditCards: allowedCreditCards});
+
             var errors;
 
             if (elementSelector) {
@@ -240,17 +248,12 @@ define(function(require) {
             errors.find(validator.settings.errorElement + '.' + validator.settings.errorClass).remove();
             errors.parent().find('.error').removeClass('error');
 
-            var staticRules = $.validator.staticRules;
-            $.validator.staticRules = function() { return {}; };
-
             var isValid;
             if (elementSelector) {
                 isValid = validator.element(virtualForm.find(elementSelector));
             } else {
                 isValid = validator.form();
             }
-
-            $.validator.staticRules = staticRules;
 
             return isValid;
         },
