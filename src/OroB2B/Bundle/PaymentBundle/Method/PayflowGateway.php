@@ -2,10 +2,10 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Method;
 
-use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -280,11 +280,12 @@ class PayflowGateway implements PaymentMethodInterface
             ),
             Option\SilentPost::SILENTPOSTURL => $this->router->generate(
                 'orob2b_payment_callback_notify',
-                ['paymentMethodName' => $paymentTransaction->getPaymentMethod()],
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(), 
+                    'accessToken' => $paymentTransaction->getAccessToken()
+                ],
                 true
             ),
-            Option\Optional::USER1 => $paymentTransaction->getAccessIdentifier(),
-            Option\Optional::USER2 => $paymentTransaction->getAccessToken(),
         ];
     }
 

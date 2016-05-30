@@ -14,8 +14,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 /**

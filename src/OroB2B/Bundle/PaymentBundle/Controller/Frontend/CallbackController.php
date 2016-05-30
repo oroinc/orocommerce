@@ -59,25 +59,23 @@ class CallbackController extends Controller
 
     /**
      * @Route(
-     *     "/notify/{paymentMethodName}",
+     *     "/notify/{accessIdentifier}/{accessToken}",
      *     name="orob2b_payment_callback_notify",
-     *     requirements={"paymentMethodName"="\w+"}
+     *     requirements={"accessIdentifier"="[a-zA-Z0-9_-]+", "accessToken"="[a-zA-Z0-9_-]+"}
+     * )
+     * @ParamConverter(
+     *     "paymentTransaction",
+     *     options={"accessIdentifier" = "accessIdentifier", "accessToken" = "accessToken"}
      * )
      * @Method({"POST"})
      * @param Request $request
-     * @param string $paymentMethodName
+     * @param PaymentTransaction $paymentTransaction
      * @return Response
      */
-    public function callbackNotifyAction(Request $request, $paymentMethodName)
+    public function callbackNotifyAction(PaymentTransaction $paymentTransaction, Request $request)
     {
         $event = new CallbackNotifyEvent($request->request->all());
-
-        try {
-            $paymentMethod = $this->get('orob2b_payment.payment_method.registry')->getPaymentMethod($paymentMethodName);
-            $event->setPaymentMethod($paymentMethod);
-        } catch (\InvalidArgumentException $e) {
-            return $event->getResponse();
-        }
+        $event->setPaymentTransaction($paymentTransaction);
 
         return $this->get('orob2b_payment.event.callback_handler')->handle($event);
     }

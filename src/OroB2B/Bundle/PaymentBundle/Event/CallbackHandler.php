@@ -37,14 +37,7 @@ class CallbackHandler
      */
     public function handle(AbstractCallbackEvent $event)
     {
-        $this->eventDispatcher->dispatch($event->getRetrieveEventName(), $event);
         $paymentTransaction = $event->getPaymentTransaction();
-
-        if (!$paymentTransaction && $event->getCriteria()) {
-            $paymentTransaction = $this->paymentTransactionProvider->findOneBy($event->getCriteria());
-            $event->setPaymentTransaction($paymentTransaction);
-        }
-
         if (!$paymentTransaction) {
             return $event->getResponse();
         }

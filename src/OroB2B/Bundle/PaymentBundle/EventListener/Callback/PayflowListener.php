@@ -38,53 +38,13 @@ class PayflowListener
     /**
      * @param AbstractCallbackEvent $event
      */
-    public function onRetrieve(AbstractCallbackEvent $event)
-    {
-        $eventData = $event->getData();
-
-        $criteria = $this->getCriteria($eventData);
-
-        $event->setCriteria($criteria);
-    }
-
-    /**
-     * @param array $eventData
-     * @return array
-     */
-    protected function getCriteria(array $eventData)
-    {
-        $criteria = [];
-
-        if (array_key_exists(Option\Optional::USER1, $eventData)) {
-            $criteria['accessIdentifier'] = $eventData[Option\Optional::USER1];
-        }
-
-        if (array_key_exists(Option\Optional::USER2, $eventData)) {
-            $criteria['accessToken'] = $eventData[Option\Optional::USER2];
-        }
-
-        return $criteria;
-    }
-
-    /**
-     * @param AbstractCallbackEvent $event
-     */
     public function onNotify(AbstractCallbackEvent $event)
     {
         $eventData = $event->getData();
         $response = new Response($eventData);
 
         $paymentTransaction = $event->getPaymentTransaction();
-        if (!$paymentTransaction) {
-            return;
-        }
-
-        $paymentTransactionData = [
-            'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-            'accessToken' => $paymentTransaction->getAccessToken(),
-        ];
-
-        if ($paymentTransactionData != $this->getCriteria($eventData)) {
+        if (!$paymentTransaction || $paymentTransaction->getReference()) {
             return;
         }
 

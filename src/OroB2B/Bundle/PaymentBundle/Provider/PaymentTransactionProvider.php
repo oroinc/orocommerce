@@ -198,16 +198,4 @@ class PaymentTransactionProvider
             }
         }
     }
-
-    /**
-     * @param array $criteria
-     * @return PaymentTransaction
-     */
-    public function findOneBy(array $criteria)
-    {
-        return $this->doctrineHelper->getEntityRepository($this->paymentTransactionClass)->findOneBy(
-            $criteria,
-            ['id' => Criteria::DESC]
-        );
-    }
 }

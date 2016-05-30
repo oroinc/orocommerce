@@ -9,10 +9,8 @@ services:
         arguments:
             - '@session'
         tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.retrieve.payflow_gateway, method: onRetrieve }
             - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow_gateway, method: onError }
             - { name: kernel.event_listener, event: orob2b_payment.callback.notify.payflow_gateway, method: onNotify }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.retrieve.paypal_payments_pro, method: onRetrieve }
             - { name: kernel.event_listener, event: orob2b_payment.callback.error.paypal_payments_pro, method: onError }
             - { name: kernel.event_listener, event: orob2b_payment.callback.notify.paypal_payments_pro, method: onNotify }
 
