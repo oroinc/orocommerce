@@ -13,11 +13,12 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityWithoutCurrencyStub;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
+class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|SubtotalProviderRegistry
@@ -41,6 +42,7 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        parent::setUp();
         $this->subtotalProviderRegistry =
             $this->getMock('OroB2B\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry');
 
@@ -60,7 +62,8 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new TotalProcessorProvider(
             $this->subtotalProviderRegistry,
             $this->translator,
-            $this->roundingService
+            $this->roundingService,
+            $this->currencyManager
         );
     }
 
@@ -178,6 +181,7 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(TotalProcessorProvider::NAME, $this->provider->getName());
     }
 
+    //todo: Fix
     public function testGetTotalInDefaultCurrency()
     {
         $this->translator->expects($this->once())
@@ -185,7 +189,13 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
             ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
-        $entity = $this->prepareSubtotals(new EntityWithoutCurrencyStub());
+        $entity = new EntityWithoutCurrencyStub();
+        $this->currencyManager->expects($this->once())
+            ->method('getBaseCurrency')
+            ->with($entity)
+            ->willReturn('USD');
+
+        $entity = $this->prepareSubtotals($entity);
 
         $total = $this->provider->getTotal($entity);
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $total);

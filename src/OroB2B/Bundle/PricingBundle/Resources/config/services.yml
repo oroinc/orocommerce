@@ -532,12 +532,14 @@ services:
             - '@orob2b_pricing.subtotal_processor.subtotal_provider_registry'
             - '@translator'
             - '@orob2b_pricing.rounding.price_rounding_service'
+            - '@orob2b_pricing.user_currency_manager'
 
     orob2b_pricing.subtotal_processor.provider.subtotal_line_item:
         class: 'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         arguments:
             - '@translator'
             - '@orob2b_pricing.rounding.price_rounding_service'
+            - '@orob2b_pricing.user_currency_manager'
         tags:
             - { name: orob2b_pricing.subtotal_provider, priority: 0 }
 
@@ -550,6 +552,7 @@ services:
             - '@orob2b_pricing.provider.combined_product_price'
             - '@oro_entity.doctrine_helper'
             - '@orob2b_pricing.model.price_list_tree_handler'
+            - '@orob2b_pricing.user_currency_manager'
         calls:
             - [setProductClass, ['%orob2b_product.entity.product.class%']]
             - [setProductUnitClass, ['%orob2b_product.entity.product_unit.class%']]

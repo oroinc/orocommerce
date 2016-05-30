@@ -116,8 +116,6 @@ class AjaxLineItemController extends Controller
             $count = $shoppingListManager->removeProduct($shoppingList, $product);
 
             if ($count) {
-                $shoppingListManager->recalculateSubtotals($shoppingList);
-
                 $result = $this->getSuccessResponse(
                     $shoppingList,
                     $product,

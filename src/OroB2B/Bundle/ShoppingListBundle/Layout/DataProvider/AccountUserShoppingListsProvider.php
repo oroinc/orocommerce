@@ -14,6 +14,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 
 class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
 {
@@ -45,18 +46,26 @@ class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
     protected $shoppingListClass;
 
     /**
+     * @var LineItemNotPricedSubtotalProvider
+     */
+    protected $subtotalProvider;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param SecurityFacade $securityFacade
      * @param RequestStack $requestStack
+     * @param LineItemNotPricedSubtotalProvider $subtotalProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         SecurityFacade $securityFacade,
-        RequestStack $requestStack
+        RequestStack $requestStack,
+        LineItemNotPricedSubtotalProvider $subtotalProvider
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->securityFacade = $securityFacade;
         $this->requestStack = $requestStack;
+        $this->subtotalProvider = $subtotalProvider;
     }
 
     /**
@@ -93,6 +102,11 @@ class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
 
             /** @var ShoppingList[] $shoppingLists */
             $shoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
+            //todo: FIX TEST
+            foreach ($shoppingLists as $shoppingList) {
+                // todo: Implement caching
+                $shoppingList->setSubtotal($this->subtotalProvider->getSubtotal($shoppingList));
+            }
         }
 
         return ['shoppingLists' => $shoppingLists];

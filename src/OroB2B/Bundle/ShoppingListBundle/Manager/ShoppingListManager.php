@@ -110,7 +110,6 @@ class ShoppingListManager
             ->setOrganization($this->getAccountUser()->getOrganization())
             ->setAccount($this->getAccountUser()->getAccount())
             ->setAccountUser($this->getAccountUser())
-            ->setCurrency($this->userCurrencyManager->getUserCurrency())
             ->setWebsite($this->websiteManager->getCurrentWebsite());
 
         return $shoppingList;
@@ -211,29 +210,6 @@ class ShoppingListManager
         }
 
         return count($lineItems);
-    }
-
-    /**
-     * @param ShoppingList $shoppingList
-     * @param bool|true $flush
-     */
-    public function recalculateSubtotals(ShoppingList $shoppingList, $flush = true)
-    {
-        $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotal($shoppingList);
-        $total = $this->totalProvider->getTotal($shoppingList);
-
-        if ($subtotal) {
-            $shoppingList->setSubtotal($subtotal->getAmount());
-        }
-        if ($total) {
-            $shoppingList->setTotal($total->getAmount());
-        }
-        $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
-        $em->persist($shoppingList);
-
-        if ($flush) {
-            $em->flush();
-        }
     }
 
     /**

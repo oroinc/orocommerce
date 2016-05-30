@@ -241,8 +241,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->willReturn($token);
         $user->expects($this->once())
-            ->method('setWebsiteSettings')
-            ->with(new AccountUserSettings($website));
+            ->method('setWebsiteSettings');
         $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->once())
             ->method('flush');

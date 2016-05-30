@@ -312,7 +312,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @var ArrayCollection|AccountUserSettings[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserCurrency",
+     *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings",
      *      mappedBy="accountUser",
      *      cascade={"all"},
      *      orphanRemoval=true

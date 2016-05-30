@@ -115,7 +115,7 @@ class UserCurrencyManager
                 $userWebsiteSettings = new AccountUserSettings($website);
                 $user->setWebsiteSettings($userWebsiteSettings);
             }
-//            $userWebsiteSettings->setCurrency($currency);
+            $userWebsiteSettings->setCurrency($currency);
             $this->userManager->getStorageManager()->flush();
         } else {
             $sessionCurrencies = $this->getSessionCurrencies();

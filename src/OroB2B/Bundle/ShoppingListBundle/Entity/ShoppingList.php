@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\ShoppingListBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -15,6 +14,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
@@ -61,7 +61,6 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 class ShoppingList extends ExtendShoppingList implements
     OrganizationAwareInterface,
     LineItemsNotPricedAwareInterface,
-    CurrencyAwareInterface,
     AccountOwnerAwareInterface,
     WebsiteAwareInterface,
     CheckoutSourceEntityInterface
@@ -142,55 +141,9 @@ class ShoppingList extends ExtendShoppingList implements
     protected $current = false;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="subtotal", type="money", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "entity"={
-     *              "is_subtotal"=true
-     *          }
-     *      }
-     * )
+     * @var Subtotal
      */
     protected $subtotal;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="total", type="money", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "entity"={
-     *              "is_total"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $total;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "entity"={
-     *              "is_total_currency"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $currency;
 
     /**
      * {@inheritdoc}
@@ -357,78 +310,6 @@ class ShoppingList extends ExtendShoppingList implements
     }
 
     /**
-     * Set currency
-     *
-     * @param string $currency
-     *
-     * @return $this
-     */
-    public function setCurrency($currency)
-    {
-        $this->currency = $currency;
-
-        return $this;
-    }
-
-    /**
-     * Get currency
-     *
-     * @return string
-     */
-    public function getCurrency()
-    {
-        return $this->currency;
-    }
-
-    /**
-     * Set subtotal
-     *
-     * @param float $subtotal
-     *
-     * @return $this
-     */
-    public function setSubtotal($subtotal)
-    {
-        $this->subtotal = $subtotal;
-
-        return $this;
-    }
-
-    /**
-     * Get subtotal
-     *
-     * @return float
-     */
-    public function getSubtotal()
-    {
-        return $this->subtotal;
-    }
-
-    /**
-     * Set total
-     *
-     * @param float $total
-     *
-     * @return $this
-     */
-    public function setTotal($total)
-    {
-        $this->total = $total;
-
-        return $this;
-    }
-
-    /**
-     * Get total
-     *
-     * @return float
-     */
-    public function getTotal()
-    {
-        return $this->total;
-    }
-
-    /**
      * @return string
      */
     public function getIdentifier()
@@ -450,5 +331,21 @@ class ShoppingList extends ExtendShoppingList implements
     public function getSourceDocumentIdentifier()
     {
         return $this->label;
+    }
+
+    /**
+     * @return Subtotal
+     */
+    public function getSubtotal()
+    {
+        return $this->subtotal;
+    }
+
+    /**
+     * @param Subtotal $subtotal
+     */
+    public function setSubtotal(Subtotal $subtotal)
+    {
+        $this->subtotal = $subtotal;
     }
 }

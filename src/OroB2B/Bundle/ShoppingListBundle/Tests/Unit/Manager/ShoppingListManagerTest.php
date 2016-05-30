@@ -17,7 +17,6 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -90,7 +89,6 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\Account', $shoppingList->getAccount());
         $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $shoppingList->getAccountUser());
         $this->assertInstanceOf('Oro\Bundle\OrganizationBundle\Entity\Organization', $shoppingList->getOrganization());
-        $this->assertSame(self::CURRENCY_EUR, $shoppingList->getCurrency());
     }
 
     public function testCreateCurrent()
@@ -263,65 +261,6 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
                 'expectedFlush' => false
             ]
         ];
-    }
-
-    public function testRecalculateSubtotals()
-    {
-        $user = new AccountUser();
-        $subtotal = new Subtotal();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemNotPricedSubtotalProvider $lineItemSubtotalProvider */
-        $lineItemSubtotalProvider =
-            $this->getMockBuilder(
-                'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
-            )
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $lineItemSubtotalProvider
-            ->expects($this->once())
-            ->method('getSubtotal')
-            ->willReturn($subtotal);
-
-        $total = new Subtotal();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider $totalProcessorProvider */
-        $totalProcessorProvider =
-            $this->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
-                ->disableOriginalConstructor()
-                ->getMock();
-        $totalProcessorProvider
-            ->expects($this->once())
-            ->method('getTotal')
-            ->willReturn($total);
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManager $entityManager */
-        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $managerRegistry */
-        $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $managerRegistry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($entityManager);
-        $entityManager
-            ->expects($this->once())
-            ->method('persist');
-        $entityManager
-            ->expects($this->once())
-            ->method('flush');
-
-        $manager = new ShoppingListManager(
-            $managerRegistry,
-            $this->getTokenStorage($user),
-            $this->getTranslator(),
-            $this->getRoundingService(),
-            $totalProcessorProvider,
-            $lineItemSubtotalProvider,
-            $this->getUserCurrencyManager(),
-            $this->getWebsiteManager()
-        );
-
-        $shoppingList = new ShoppingList();
-        $manager->recalculateSubtotals($shoppingList);
     }
 
     public function testGetForCurrentUser()
