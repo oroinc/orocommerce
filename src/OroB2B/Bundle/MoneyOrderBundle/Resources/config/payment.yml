@@ -1,0 +1,10 @@
+services:
+    orob2b_money_order.payment_method.money_order:
+        class: 'OroB2B\Bundle\MoneyOrderBundle\Method\MoneyOrder'
+        arguments:
+            - '@oro_config.global'
+
+    orob2b_money_order.payment_method.view.money_order:
+        class: 'OroB2B\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView'
+        arguments:
+            - '@oro_config.global'

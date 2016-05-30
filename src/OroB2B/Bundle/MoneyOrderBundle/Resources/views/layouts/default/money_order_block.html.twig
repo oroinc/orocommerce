@@ -1,0 +1,16 @@
+{% block _payment_methods_money_order_widget %}
+    <div class="{{ class_prefix }}__form__payment-methods"
+         data-page-component-module="orob2bpayment/js/app/components/payment-term-component"
+         data-page-component-options="{{ {paymentMethod: name}|json_encode }}">
+        <table class="grid">
+            <tr>
+                <td>{{ 'orob2b.money_order.pay_to'|trans }}: </td>
+                <td>{{ view.options.pay_to }}</td>
+            </tr>
+            <tr>
+                <td>{{ 'orob2b.money_order.send_to'|trans }}: </td>
+                <td>{{ view.options.send_to|nl2br }}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
