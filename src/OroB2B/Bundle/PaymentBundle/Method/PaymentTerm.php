@@ -15,7 +15,7 @@ use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
 class PaymentTerm implements PaymentMethodInterface
 {
-    use ConfigTrait;
+    use ConfigTrait, CountryAwarePaymentMethodTrait;
 
     const TYPE = 'payment_term';
 
@@ -80,14 +80,36 @@ class PaymentTerm implements PaymentMethodInterface
     /** {@inheritdoc} */
     public function isEnabled()
     {
-        return (bool)$this->paymentTermProvider->getCurrentPaymentTerm() &&
-            $this->getConfigValue(Configuration::PAYMENT_TERM_ENABLED_KEY);
+        return $this->getConfigValue(Configuration::PAYMENT_TERM_ENABLED_KEY);
     }
 
     /** {@inheritdoc} */
     public function getType()
     {
         return self::TYPE;
+    }
+
+    /** {@inheritdoc} */
+    public function isApplicable(array $context = [])
+    {
+        return $this->isCountryApplicable($context) && (bool)$this->paymentTermProvider->getCurrentPaymentTerm();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function getAllowedCountries()
+    {
+        return $this->getConfigValue(Configuration::PAYMENT_TERM_SELECTED_COUNTRIES_KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isAllCountriesAllowed()
+    {
+        return $this->getConfigValue(Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY)
+            === Configuration::ALLOWED_COUNTRIES_ALL;
     }
 
     /** {@inheritdoc} */

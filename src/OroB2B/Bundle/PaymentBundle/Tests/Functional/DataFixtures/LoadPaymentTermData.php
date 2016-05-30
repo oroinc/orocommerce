@@ -22,7 +22,7 @@ class LoadPaymentTermData extends AbstractFixture implements DependentFixtureInt
     protected $data = [
         [
             'label' => self::TERM_LABEL_NET_10,
-            'accounts' => [],
+            'accounts' => ['account.level_1'],
             'groups' => ['account_group.group1']
         ],
         [
