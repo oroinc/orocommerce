@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\SEOBundle\Form\Extension;
 
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
-use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -42,6 +41,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                 [
                     'label' => 'orob2b.seo.meta-title.label',
                     'required' => false,
+                    'type' => 'textarea',
                 ]
             )
             ->add(
@@ -50,7 +50,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                 [
                     'label' => 'orob2b.seo.meta-description.label',
                     'required' => false,
-                    'field' => 'text',
+                    'type' => 'textarea',
                 ]
             )
             ->add(
@@ -59,7 +59,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                 [
                     'label' => 'orob2b.seo.meta-keywords.label',
                     'required' => false,
-                    'field' => 'text',
+                    'type' => 'textarea',
                 ]
             );
 

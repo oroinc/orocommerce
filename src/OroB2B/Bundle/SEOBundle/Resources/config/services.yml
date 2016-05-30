@@ -1,10 +1,7 @@
-parameters:
-    orob2b_seo.event_listener.form_view.class: 'OroB2B\Bundle\SEOBundle\EventListener\FormViewListener'
-
 services:
     #EventListeners
     orob2b_seo.event_listener.form_view:
-        class: '%orob2b_seo.event_listener.form_view.class%'
+        class: 'OroB2B\Bundle\SEOBundle\EventListener\FormViewListener'
         arguments:
             - '@request_stack'
             - '@translator'
