@@ -82,7 +82,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     /**
      * @var float
      *
-     * @ORM\Column(name="conversion_rate",type="float")
+     * @ORM\Column(name="conversion_rate",type="float",nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -96,7 +96,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     /**
      * @var bool
      *
-     * @ORM\Column(name="sell",type="boolean")
+     * @ORM\Column(name="sell",type="boolean",nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={

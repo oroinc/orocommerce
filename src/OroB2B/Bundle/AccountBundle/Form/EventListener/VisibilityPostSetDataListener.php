@@ -21,6 +21,9 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
         if (!is_object($targetEntity) || !$targetEntity->getId()) {
             return;
         }
+        if (is_object($targetEntity) && $targetEntity->getId() && $targetEntity->getPrimaryUnitPrecisionId()) {
+            $targetEntity->getPrimaryUnitPrecision();
+        }
 
         $this->setFormAllData($form);
         $this->setFormAccountGroupData($form);

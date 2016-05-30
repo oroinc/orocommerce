@@ -16,13 +16,5 @@ class OroB2BProductBundle implements Migration
     {
         $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
         $table->addColumn('primary_product_unit_id', 'integer', ['notnull' => false]);
-
-
-        $table->addForeignKeyConstraint(
-            $schema->getTable(self::PRODUCT_UNIT_PRECISION_TABLE_NAME),
-            ['primary_product_unit_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
     }
 }

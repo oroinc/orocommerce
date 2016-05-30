@@ -16,7 +16,9 @@ orob2b:
         owner.label: Owner
         organization.label: Organization
         primary_unit_precision.label: Unit of Quantity
+        primary_unit_precision_id.label: Primary Unit Precision Id
         additional_unit_precisions.label: Additional Units
+        unit_precisions.label: Unit Precisions
         image.label: Image
         names.label: Name
         descriptions.label: Description

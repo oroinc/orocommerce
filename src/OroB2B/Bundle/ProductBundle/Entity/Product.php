@@ -248,7 +248,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     /**
      * @var integer
      *
-     * @ORM\Column(name="primary_product_unit_id",type="integer")
+     * @ORM\Column(name="primary_product_unit_id", type="integer", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
