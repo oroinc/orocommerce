@@ -11,14 +11,6 @@ services:
         tags:
             - { name: form.type, alias: oro_currency_selection }
 
-    oro_currency.form.type.oro_enabled_currency_selection:
-        class: Oro\Bundle\CurrencyBundle\Form\Type\EnabledCurrencySelectionType
-        arguments:
-            - '@oro_config.manager'
-            - '@oro_locale.settings'
-        tags:
-            - { name: form.type, alias: oro_enabled_currency_selection }
-
     oro_currency.form.type.price:
         class: %oro_currency.form.type.price.class%
         arguments:

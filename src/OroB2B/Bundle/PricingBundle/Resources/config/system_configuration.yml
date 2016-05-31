@@ -80,7 +80,7 @@ oro_system_configuration:
                     - NotBlank: ~
         oro_b2b_pricing.default_currency:
             data_type: string
-            type: oro_enabled_currency_selection
+            type: orob2b_pricing_enabled_currency_selection
             options:
                 label: orob2b.pricing.system_configuration.fields.default_currency.label
                 required: true

@@ -1,10 +1,12 @@
 <?php
 
-namespace Oro\Bundle\CurrencyBundle\Form\Type;
+namespace OroB2B\Bundle\PricingBundle\Form\Type;
+
+use Oro\Bundle\CurrencyBundle\Form\Type\AbstractCurrencySelectionType;
 
 class EnabledCurrencySelectionType extends AbstractCurrencySelectionType
 {
-    const NAME = 'oro_enabled_currency_selection';
+    const NAME = 'orob2b_pricing_enabled_currency_selection';
     const CURRENCY_SELECTOR_CONFIG_KEY = 'oro_b2b_pricing.enabled_currencies';
 
       /**

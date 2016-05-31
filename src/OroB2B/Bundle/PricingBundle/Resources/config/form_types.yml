@@ -143,3 +143,12 @@ services:
         tags:
             - { name: form.type, alias: orob2b_pricing_product_price_unit_selector }
 
+    orob2b_pricing.form.type.enabled_currency_selection:
+       class: OroB2B\Bundle\PricingBundle\Form\Type\EnabledCurrencySelectionType
+       public: true
+       arguments:
+           - '@oro_config.manager'
+           - '@oro_locale.settings'
+       tags:
+           - { name: form.type, alias: orob2b_pricing_enabled_currency_selection }
+
