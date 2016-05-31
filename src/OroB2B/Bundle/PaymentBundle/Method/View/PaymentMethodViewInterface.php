@@ -21,7 +21,7 @@ interface PaymentMethodViewInterface
     public function getOrder();
 
     /**
-     * @return int
+     * @return string
      */
     public function getLabel();
 

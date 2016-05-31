@@ -6,15 +6,15 @@ layout:
             items:
                 wrapper:
                     blockType: container
+                    options:
+                        attr:
+                          id: 'container'
                 header:
                     blockType: container
                 notification:
                     blockType: block
                 main:
                     blockType: container
-                    options:
-                        attr:
-                          id: 'container'
                 content:
                     blockType: container
                 sidebar_left:

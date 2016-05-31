@@ -1,1 +1,1 @@
-{{ oro_config_value('orob2b_payment.%s_label'|format(record.getValue('paymentMethod'))) }}
+{{ get_payment_method_label(record.getValue('paymentMethod')) }}

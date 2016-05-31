@@ -53,6 +53,11 @@ abstract class AbstractCombinedPriceListBuilder
     protected $combinedPriceListRepository;
 
     /**
+     * @var CombinedPriceListRepository
+     */
+    protected $fallbackRepository;
+
+    /**
      * @var EntityRepository
      */
     protected $combinedPriceListToEntityRepository;
@@ -66,6 +71,11 @@ abstract class AbstractCombinedPriceListBuilder
      * @var string
      */
     protected $combinedPriceListToEntityClassName;
+
+    /**
+     * @var string
+     */
+    protected $fallbackClassName;
 
     /**
      * @var array
@@ -127,6 +137,17 @@ abstract class AbstractCombinedPriceListBuilder
 
         return $this;
     }
+    
+    /**
+     * @param string $fallbackClassName
+     * @return $this
+     */
+    public function setFallbackClassName($fallbackClassName)
+    {
+        $this->fallbackClassName = $fallbackClassName;
+
+        return $this;
+    }
 
     /**
      * @return EntityRepository
@@ -169,6 +190,21 @@ abstract class AbstractCombinedPriceListBuilder
 
         return $this->combinedPriceListRepository;
     }
+
+    /**
+     * @return EntityRepository
+     */
+    protected function getFallbackRepository()
+    {
+        if (!$this->fallbackRepository) {
+            $this->fallbackRepository = $this->registry
+                ->getManagerForClass($this->fallbackClassName)
+                ->getRepository($this->fallbackClassName);
+        }
+
+        return $this->fallbackRepository;
+    }
+
 
     /**
      * @return string

@@ -1,0 +1,14 @@
+layout:
+    actions:
+        - '@setOption':
+            id: payment_methods
+            optionName: vars.views
+            optionValue: {}
+
+    conditions:
+        '@and':
+            - '@not':
+                - '@payment_method_applicable':
+                    payment_method: 'payment_term'
+                    entity: { '@value': $context.checkout }
+            - '@eq': [$context.workflowName, 'b2b_flow_alternative_checkout']

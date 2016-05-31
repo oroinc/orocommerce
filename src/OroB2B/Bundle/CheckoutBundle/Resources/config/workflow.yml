@@ -387,6 +387,8 @@ workflows:
                             message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
+                        - '@has_applicable_payment_methods':
+                            entity: $checkout
                 conditions:
                     '@and':
                         - '@not_empty':
@@ -465,9 +467,31 @@ workflows:
                     - '@get_class_name':
                         object: $checkout.sourceEntity.sourceDocument
                         attribute: $.result.sourceDocumentEntityClassName
+                    - '@duplicate':
+                        target: $checkout.billingAddress
+                        attribute: $.result.billingAddress
+                        settings:
+                          - [[setNull], [propertyName, [id]]]
+                          - [[keep], [propertyName, [accountAddress]]]
+                          - [[keep], [propertyName, [accountUserAddress]]]
+                          - [[keep], [propertyName, [city]]]
+                          - [[keep], [propertyName, [country]]]
+                          - [[keep], [propertyName, [region]]]
+                          - [[keep], [propertyName, [organization]]]
+                    - '@flush_entity': $.result.billingAddress
+                    - '@duplicate':
+                        target: $.result.shippingAddress
+                        attribute: $.result.shippingAddress
+                        settings:
+                          - [[setNull], [propertyName, [id]]]
+                          - [[keep], [propertyName, [accountAddress]]]
+                          - [[keep], [propertyName, [accountUserAddress]]]
+                          - [[keep], [propertyName, [city]]]
+                          - [[keep], [propertyName, [country]]]
+                          - [[keep], [propertyName, [region]]]
+                          - [[keep], [propertyName, [organization]]]
+                    - '@flush_entity': $.result.shippingAddress
                     - '@create_entity':
-                        conditions:
-                            '@empty': $checkout.order
                         parameters:
                             attribute: $checkout.order
                             class: OroB2B\Bundle\OrderBundle\Entity\Order
@@ -480,7 +504,7 @@ workflows:
                                 accountUser: $checkout.accountUser
                                 sourceEntityClass: $.result.sourceDocumentEntityClassName
                                 sourceEntityId: $checkout.sourceEntity.sourceDocument.id
-                    - '@assign_value': [$checkout.order.billingAddress, $checkout.billingAddress]
+                    - '@assign_value': [$checkout.order.billingAddress, $.result.billingAddress]
                     - '@assign_value': [$checkout.order.shippingAddress, $.result.shippingAddress]
                     - '@assign_value': [$checkout.order.shippingCost, $checkout.shippingCost]
                     - '@assign_value': [$checkout.order.poNumber, $checkout.poNumber]
@@ -503,8 +527,6 @@ workflows:
                     - '@flush_entity': $checkout.order
 
                     - '@tree':
-                        conditions:
-                            '@not_empty': $checkout.order.id
                         actions:
                             - '@assign_url':
                                 attribute: $.result.successUrl
@@ -528,6 +550,30 @@ workflows:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
                             - '@assign_value': [$payment_in_progress, true]
+                    - '@redirect':
+                        conditions:
+                            '@and':
+                                - '@equal': ["$.result.responseData[purchaseSuccessful]", true]
+                                - '@payment_method_supports':
+                                    payment_method: $payment_method
+                                    action: 'validate'
+                        route: orob2b_checkout_frontend_checkout
+                        route_parameters:
+                            id: $checkout.id
+                            transition: finish_checkout
+
+                    - '@redirect':
+                        conditions:
+                            '@and':
+                                - '@equal': ["$.result.responseData[purchaseSuccessful]", false]
+                                - '@payment_method_supports':
+                                    payment_method: $payment_method
+                                    action: 'validate'
+                        route: orob2b_checkout_frontend_checkout
+                        route_parameters:
+                            id: $checkout.id
+                            transition: payment_error
+
                     - '@send_email_template':
                         parameters:
                             from: $checkout.order.owner.email
@@ -653,6 +699,8 @@ workflows:
                                     - '@equal': [$allow_manual_source_remove, true]
                                     - '@equal': [$remove_source, true]
                         parameters: [$checkout.sourceEntity]
+                    - '@remove_entity': $checkout.billingAddress
+                    - '@remove_entity': $checkout.shippingAddress
                     - '@remove_entity': $checkout
                     - '@redirect':
                         route: orob2b_order_frontend_success

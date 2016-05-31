@@ -17,7 +17,7 @@ use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
  */
 class PayflowGateway implements PaymentMethodInterface
 {
-    use ConfigTrait;
+    use ConfigTrait, CountryAwarePaymentMethodTrait;
 
     const TYPE = 'payflow_gateway';
 
@@ -61,7 +61,7 @@ class PayflowGateway implements PaymentMethodInterface
     public function authorize(PaymentTransaction $paymentTransaction)
     {
         $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
-        if ($sourcePaymentTransaction && !$this->getRequiredAmountEnabled()) {
+        if ($sourcePaymentTransaction && !$this->isAuthorizationForRequiredAmountEnabled()) {
             $this->useValidateTransactionData($paymentTransaction, $sourcePaymentTransaction);
 
             return;
@@ -315,6 +315,29 @@ class PayflowGateway implements PaymentMethodInterface
         return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PAYMENT_ACTION_KEY);
     }
 
+    /** {@inheritdoc} */
+    public function isApplicable(array $context = [])
+    {
+        return $this->isCountryApplicable($context);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function getAllowedCountries()
+    {
+        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_SELECTED_COUNTRIES_KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isAllCountriesAllowed()
+    {
+        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_COUNTRIES_KEY)
+            === Configuration::ALLOWED_COUNTRIES_ALL;
+    }
+
     /**
      * @return bool
      */
@@ -354,8 +377,8 @@ class PayflowGateway implements PaymentMethodInterface
     /**
      * @return bool
      */
-    protected function getRequiredAmountEnabled()
+    protected function isAuthorizationForRequiredAmountEnabled()
     {
-        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
     }
 }

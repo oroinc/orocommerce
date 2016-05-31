@@ -2,8 +2,8 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Twig;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
+use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentMethodExtension extends \Twig_Extension
@@ -13,17 +13,19 @@ class PaymentMethodExtension extends \Twig_Extension
     /** @var  PaymentTransactionProvider */
     protected $paymentTransactionProvider;
 
-    /** @var ConfigManager */
-    protected $configManager;
+    /** @var  PaymentMethodViewRegistry */
+    protected $paymentMethodViewRegistry;
 
     /**
      * @param PaymentTransactionProvider $paymentTransactionProvider
-     * @param ConfigManager $configManager
+     * @param PaymentMethodViewRegistry $paymentMethodViewRegistry
      */
-    public function __construct(PaymentTransactionProvider $paymentTransactionProvider, ConfigManager $configManager)
-    {
+    public function __construct(
+        PaymentTransactionProvider $paymentTransactionProvider,
+        PaymentMethodViewRegistry $paymentMethodViewRegistry
+    ) {
         $this->paymentTransactionProvider = $paymentTransactionProvider;
-        $this->configManager = $configManager;
+        $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
     }
 
     /**
@@ -41,6 +43,7 @@ class PaymentMethodExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('get_payment_methods', [$this, 'getPaymentMethods']),
+            new \Twig_SimpleFunction('get_payment_method_label', [$this, 'getPaymentMethodLabel']),
         ];
     }
 
@@ -53,10 +56,26 @@ class PaymentMethodExtension extends \Twig_Extension
         $paymentTransactions = $this->paymentTransactionProvider->getPaymentTransactions($entity);
         $paymentMethods = [];
         foreach ($paymentTransactions as $paymentTransaction) {
-            $paymentMethods[] = $this->configManager
-                ->get(sprintf('orob2b_payment.%s_label', $paymentTransaction->getPaymentMethod()));
+            /** @var PaymentMethodViewInterface $paymentMethodView */
+            $paymentMethods[] = $this->getPaymentMethodLabel($paymentTransaction->getPaymentMethod());
         }
 
         return $paymentMethods;
+    }
+
+    /**
+     * @param string $paymentMethod
+     * @return array
+     */
+    public function getPaymentMethodLabel($paymentMethod)
+    {
+        /** @var PaymentMethodViewInterface $paymentMethodView */
+        try {
+            $paymentMethodView = $this->paymentMethodViewRegistry->getPaymentMethodView($paymentMethod);
+
+            return $paymentMethodView->getLabel();
+        } catch (\InvalidArgumentException $e) {
+            return '';
+        }
     }
 }
