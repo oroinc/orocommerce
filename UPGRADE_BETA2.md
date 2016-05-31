@@ -14,3 +14,7 @@ ProductBundle:
 --------------
 - Added `OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider`, `OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitsType` in order to populate all available Product Units in System Configuration section
 - Added `OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider`, Modified `OroB2B\Bundle\ProductBundle\Form\Type\ProductType` in order to fill Product Units with values from System Configuration on product creation page
+
+MoneyOrderBundle:
+--------------
+- Added bundle that adds 'Check / Money Order' payment method with power of OroB2B PaymentBundle

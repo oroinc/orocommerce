@@ -62,7 +62,7 @@ class PayflowGateway implements PaymentMethodInterface
     public function authorize(PaymentTransaction $paymentTransaction)
     {
         $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
-        if ($sourcePaymentTransaction && !$this->getRequiredAmountEnabled()) {
+        if ($sourcePaymentTransaction && !$this->isAuthorizationForRequiredAmountEnabled()) {
             $this->useValidateTransactionData($paymentTransaction, $sourcePaymentTransaction);
 
             return;
@@ -380,8 +380,8 @@ class PayflowGateway implements PaymentMethodInterface
     /**
      * @return bool
      */
-    protected function getRequiredAmountEnabled()
+    protected function isAuthorizationForRequiredAmountEnabled()
     {
-        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
     }
 }

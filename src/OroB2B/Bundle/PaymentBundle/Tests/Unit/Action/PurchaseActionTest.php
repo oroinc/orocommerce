@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Action;
 
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -228,12 +230,18 @@ class PurchaseActionTest extends AbstractActionTest
     }
 
     /**
-     * @dataProvider sourcePaymentTransactionDataProvider
-     * @param array $transactionOptions
-     * @param bool $expectedActive
+     * @dataProvider sourcePaymentTransactionProvider
+     * @param PaymentTransaction $paymentTransaction
+     * @param PaymentTransaction $sourcePaymentTransaction
+     * @param array $expectedAttributes
+     * @param array $expectedSourceTransactionProperties
      */
-    public function testSourcePaymentTransaction(array $transactionOptions, $expectedActive)
-    {
+    public function testSourcePaymentTransaction(
+        PaymentTransaction $paymentTransaction,
+        PaymentTransaction $sourcePaymentTransaction,
+        $expectedAttributes = [],
+        $expectedSourceTransactionProperties = []
+    ) {
         $options = [
             'object' => new \stdClass(),
             'amount' => 100.0,
@@ -245,15 +253,9 @@ class PurchaseActionTest extends AbstractActionTest
             ],
         ];
 
-        $sourceTransaction = new PaymentTransaction();
-        $sourceTransaction
-            ->setActive(true)
-            ->setTransactionOptions($transactionOptions);
+        $context = [];
 
         $this->contextAccessor->expects($this->any())->method('getValue')->will($this->returnArgument(1));
-
-        $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setPaymentMethod(self::PAYMENT_METHOD);
 
         $this->paymentTransactionProvider
             ->expects($this->once())
@@ -262,7 +264,7 @@ class PurchaseActionTest extends AbstractActionTest
             ->willReturn($paymentTransaction);
 
         $this->paymentTransactionProvider->expects($this->once())->method('getActiveValidatePaymentTransaction')
-            ->willReturn($sourceTransaction);
+            ->willReturn($sourcePaymentTransaction);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
         $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
@@ -272,21 +274,74 @@ class PurchaseActionTest extends AbstractActionTest
         $this->paymentMethodRegistry->expects($this->atLeastOnce())->method('getPaymentMethod')
             ->with($options['paymentMethod'])->willReturn($paymentMethod);
 
-        $this->action->initialize($options);
-        $this->action->execute([]);
+        $this->contextAccessor
+            ->expects($this->once())
+            ->method('setValue')
+            ->with($context, $options['attribute'], $this->callback(function ($value) use ($expectedAttributes) {
+                foreach ($expectedAttributes as $expectedAttribute) {
+                    $this->assertContains($expectedAttribute, $value);
+                }
 
-        $this->assertSame($sourceTransaction, $paymentTransaction->getSourcePaymentTransaction());
-        $this->assertEquals($expectedActive, $sourceTransaction->isActive());
+                return true;
+            }));
+
+
+        $this->action->initialize($options);
+        $this->action->execute($context);
+
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+
+        foreach ($expectedSourceTransactionProperties as $path => $expectedValue) {
+            $actualValue = $propertyAccessor->getValue($sourcePaymentTransaction, $path);
+            $this->assertSame($expectedValue, $actualValue, $path);
+        }
     }
 
     /**
      * @return array
      */
-    public function sourcePaymentTransactionDataProvider()
+    public function sourcePaymentTransactionProvider()
     {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setPaymentMethod(self::PAYMENT_METHOD);
+
+        $successfulTransaction = clone $paymentTransaction;
+        $successfulTransaction->setSuccessful(true);
+        $unsuccessfulTransaction = clone $paymentTransaction;
+        $unsuccessfulTransaction->setSuccessful(false);
+
         return [
-            'without saveForLaterUse deactivates source transaction' => [[], false],
-            'saveForLaterUse leaves source transaction active' => [['saveForLaterUse' => true], true],
+            'without saveForLaterUse deactivates source transaction' => [
+                $paymentTransaction,
+                (new PaymentTransaction())->setActive(true),
+                [],
+                [
+                    'active' => false,
+                ],
+            ],
+            'saveForLaterUse leaves source transaction active' => [
+                $paymentTransaction,
+                (new PaymentTransaction())->setActive(true)->setTransactionOptions(['saveForLaterUse' => true]),
+                [],
+                [
+                    'active' => true,
+                ],
+            ],
+            'successful transaction with validation' => [
+                $successfulTransaction,
+                new PaymentTransaction(),
+                [
+                    'purchaseSuccessful' => true,
+                ],
+            ],
+            'unsuccessful transaction with validation' => [
+                $unsuccessfulTransaction,
+                new PaymentTransaction(),
+                [
+                    'purchaseSuccessful' => false,
+                ],
+            ],
         ];
     }
 

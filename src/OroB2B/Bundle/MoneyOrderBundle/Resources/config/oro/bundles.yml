@@ -1,0 +1,2 @@
+bundles:
+    - { name: OroB2B\Bundle\MoneyOrderBundle\OroB2BMoneyOrderBundle, priority: 40 }
