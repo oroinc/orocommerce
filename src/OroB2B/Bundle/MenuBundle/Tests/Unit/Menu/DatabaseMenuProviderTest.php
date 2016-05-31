@@ -5,12 +5,12 @@ namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Menu;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Menu\BuilderInterface;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Menu\MenuSerializer;
 use OroB2B\Bundle\WebsiteBundle\Locale\LocaleHelper;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;

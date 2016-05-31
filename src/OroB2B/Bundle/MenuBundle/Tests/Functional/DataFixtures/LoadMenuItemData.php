@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 
 class LoadMenuItemData extends AbstractFixture implements DependentFixtureInterface
