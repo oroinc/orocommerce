@@ -14,6 +14,10 @@ class OroB2BFallbackBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $table = $schema->getTable('orob2b_fallback_locale_value');
+        $table->renameIndex('idx_orob2b_fallback_fallback', 'idx_fallback');
+        $table->renameIndex('idx_orob2b_fallback_string', 'idx_string');
+
         $queries->addQuery('RENAME TABLE `orob2b_fallback_locale_value` TO `oro_fallback_locale_value`');
     }
 }
