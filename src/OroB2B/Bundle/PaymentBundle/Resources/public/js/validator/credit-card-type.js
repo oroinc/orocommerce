@@ -2,10 +2,8 @@
 define([
     'underscore',
     'orotranslation/js/translator',
-    'jquery',
-    'jquery.validate',
-    'orob2bpayment/js/lib/jquery-credit-card-validator'
-], function(_, __, $) {
+    'orob2bpayment/js/adapter/credit-card-validator-adapter'
+], function(_, __, creditCardValidator) {
     'use strict';
 
     var defaultParam = {
@@ -13,18 +11,16 @@ define([
     };
 
     /**
-     * @export oroform/js/validator/open-range
+     * @export orob2bpayment/js/validator/credit-card-type
      */
     return [
-        'creditCardType',
+        'credit-card-type',
         function(value, element, param) {
             if (!param.hasOwnProperty('allowedCreditCards')) {
                 return true;
             }
 
-            var result = $(element).validateCreditCard({accept: param['allowedCreditCards']});
-            return result.valid;
-
+            return creditCardValidator.validate(element, param);
         },
         function(param) {
             param = _.extend({}, defaultParam, param);

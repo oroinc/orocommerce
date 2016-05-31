@@ -234,8 +234,11 @@ define(function(require) {
             // Add CC type validation rule
             var cardNumberField = clonedForm.find(this.options.selectors.cardNumber);
             var cardNumberValidation = cardNumberField.data('validation');
-            var allowedCreditCards = _.values(this.options.allowedCreditCards);
-            _.extend(cardNumberValidation.creditCardType, {allowedCreditCards: allowedCreditCards});
+            var creditCardTypeValidator = cardNumberField.data('credit-card-type-validator');
+
+            _.extend(cardNumberValidation[creditCardTypeValidator],
+                {allowedCreditCards: this.options.allowedCreditCards}
+            );
 
             var errors;
 

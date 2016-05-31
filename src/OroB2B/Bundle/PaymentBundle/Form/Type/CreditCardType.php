@@ -29,15 +29,16 @@ class CreditCardType extends AbstractType
                     'mapped' => false,
                     'attr' => [
                         'data-validation' => [
-                            'creditCardNumber' => [
+                            'credit-card-number' => [
                                 'message' => 'orob2b.payment.validation.credit_card',
                                 'payload' => null,
                             ],
-                            'creditCardType' => [
+                            'credit-card-type' => [
                                 'message' => 'orob2b.payment.validation.credit_card_type',
                                 'payload' => null,
                             ]
                         ],
+                        'data-credit-card-type-validator' => 'credit-card-type',
                         'data-card-number' => true,
                         'autocomplete' => 'off',
                         'data-gateway' => true,
