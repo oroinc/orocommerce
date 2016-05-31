@@ -49,13 +49,10 @@ class PayflowGatewayView implements PaymentMethodViewInterface
 
         $formView = $this->formFactory->create(CreditCardType::NAME, null, $formOptions)->createView();
 
-        $allowedCreditCards = $this->getAllowedCreditCards();
-
         $viewOptions = [
             'formView' => $formView,
-            'allowedCreditCards' => $allowedCreditCards,
             'creditCardComponentOptions' => [
-                'allowedCreditCards' => $allowedCreditCards,
+                'allowedCreditCards' => $this->getAllowedCreditCards(),
             ],
         ];
 
@@ -75,11 +72,10 @@ class PayflowGatewayView implements PaymentMethodViewInterface
         $viewOptions['creditCardComponent'] =
             'orob2bpayment/js/app/components/authorized-credit-card-component';
 
-        $viewOptions['creditCardComponentOptions'] = [
-            'acct' => $this->getLast4($validateTransaction),
-            'saveForLaterUse' => !empty($transactionOptions['saveForLaterUse']),
-            'authorizationForRequiredAmount' => $this->isAuthorizationForRequiredAmountEnabled()
-        ];
+        $viewOptions['creditCardComponentOptions']['acct'] = $this->getLast4($validateTransaction);
+        $viewOptions['creditCardComponentOptions']['saveForLaterUse'] = !empty($transactionOptions['saveForLaterUse']);
+        $viewOptions['creditCardComponentOptions']['authorizationForRequiredAmount'] =
+            $this->isAuthorizationForRequiredAmountEnabled();
 
         return $viewOptions;
     }
