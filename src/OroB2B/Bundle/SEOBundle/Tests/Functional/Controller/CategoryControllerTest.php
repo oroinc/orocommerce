@@ -23,7 +23,7 @@ class CategoryControllerTest extends WebTestCase
             $this->getContainer()->getParameter('orob2b_catalog.entity.category.class')
         );
 
-        $category = $repository->findOneBy(['id' => 1]);
+        $category = $repository->findOneBy([]);
 
         $id = $category->getId();
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));

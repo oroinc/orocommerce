@@ -12,7 +12,14 @@
 
 {% block fallback_locale_value %}
     {% if values is not null  %}
-        {% set attr = attr|merge({content : fallback_locale_value(values, oro_locale())}) %}
+        {% set defaultFallbackValue = null %}
+        {% for fallbackValue in values %}
+            {% if null == fallbackValue.locale %}
+                {% set defaultFallbackValue = fallbackValue %}
+            {% endif %}
+        {% endfor %}
+
+        {% set attr = attr|merge({content : defaultFallbackValue}) %}
     {% endif %}
     {{ block('meta_widget') }}
 {% endblock %}

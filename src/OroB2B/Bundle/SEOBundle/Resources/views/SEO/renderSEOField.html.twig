@@ -1,0 +1,8 @@
+{% set defaultFallbackValue = null %}
+{% for fallbackValue in fallbackValues %}
+    {% if null == fallbackValue.locale %}
+        {% set defaultFallbackValue = fallbackValue %}
+    {% endif %}
+{% endfor %}
+
+{{ UI.renderHtmlProperty(label|trans, defaultFallbackValue) }}
