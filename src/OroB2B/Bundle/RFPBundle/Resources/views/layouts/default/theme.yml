@@ -2,4 +2,4 @@ data:
     assets:
         styles:
             inputs:
-                - 'bundles/orob2brfp/default/less/styles.less'
+                - 'bundles/orob2brfp/default/scss/styles.scss'
