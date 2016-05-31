@@ -83,7 +83,6 @@ class PurchaseActionTest extends AbstractActionTest
                     'orob2b_payment_callback_error',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                        'accessToken' => $paymentTransaction->getAccessToken(),
                     ],
                     true,
                 ],
@@ -91,7 +90,6 @@ class PurchaseActionTest extends AbstractActionTest
                     'orob2b_payment_callback_return',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                        'accessToken' => $paymentTransaction->getAccessToken(),
                     ],
                     true,
                 ]
@@ -131,7 +129,6 @@ class PurchaseActionTest extends AbstractActionTest
                     'errorUrl' => 'orob2b_payment_callback_error',
                     'returnUrl' => 'orob2b_payment_callback_return',
                     'testResponse' => 'testResponse',
-                    'testOption' => 'testOption',
                     'paymentMethodSupportsValidation' => false,
                 ],
             ],
@@ -172,7 +169,6 @@ class PurchaseActionTest extends AbstractActionTest
                     'paymentMethod' => self::PAYMENT_METHOD,
                     'errorUrl' => 'orob2b_payment_callback_error',
                     'returnUrl' => 'orob2b_payment_callback_return',
-                    'testOption' => 'testOption',
                     'paymentMethodSupportsValidation' => false,
                 ],
             ],
@@ -292,5 +288,40 @@ class PurchaseActionTest extends AbstractActionTest
             'without saveForLaterUse deactivates source transaction' => [[], false],
             'saveForLaterUse leaves source transaction active' => [['saveForLaterUse' => true], true],
         ];
+    }
+
+    public function testFailedExecuteDoesNotExposeContext()
+    {
+        $options = [
+            'object' => new \stdClass(),
+            'amount' => 100.0,
+            'currency' => 'USD',
+            'paymentMethod' => self::PAYMENT_METHOD,
+            'transactionOptions' => [
+                'testOption' => 'testOption',
+            ],
+        ];
+
+        $this->contextAccessor->expects($this->any())->method('getValue')->will($this->returnArgument(1));
+
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setPaymentMethod(self::PAYMENT_METHOD);
+
+        $this->paymentTransactionProvider->expects($this->once())->method('createPaymentTransaction')
+            ->willReturn($paymentTransaction);
+
+        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod->expects($this->once())->method('execute')->willThrowException(new \Exception());
+
+        $this->paymentMethodRegistry
+            ->expects($this->atLeastOnce())
+            ->method('getPaymentMethod')
+            ->willReturn($paymentMethod);
+
+        $this->logger->expects($this->once())->method('error')->with($this->isType('string'), $this->logicalAnd());
+
+        $this->action->initialize($options);
+        $this->action->execute([]);
     }
 }

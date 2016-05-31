@@ -505,19 +505,25 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
             new Response(['PNREF' => 'reference', 'RESULT' => '0'])
         );
 
-        $this->router->expects($this->exactly(2))
+        $this->router->expects($this->exactly(3))
             ->method('generate')
             ->withConsecutive(
                 [
                     'orob2b_payment_callback_return',
                     [
                         'accessIdentifier' => $transaction->getAccessIdentifier(),
-                        'accessToken' => $transaction->getAccessToken(),
                     ],
                     true,
                 ],
                 [
                     'orob2b_payment_callback_error',
+                    [
+                        'accessIdentifier' => $transaction->getAccessIdentifier(),
+                    ],
+                    true,
+                ],
+                [
+                    'orob2b_payment_callback_notify',
                     [
                         'accessIdentifier' => $transaction->getAccessIdentifier(),
                         'accessToken' => $transaction->getAccessToken(),

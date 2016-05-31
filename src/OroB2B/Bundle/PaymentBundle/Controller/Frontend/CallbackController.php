@@ -67,7 +67,7 @@ class CallbackController extends Controller
      *     "paymentTransaction",
      *     options={"accessIdentifier" = "accessIdentifier", "accessToken" = "accessToken"}
      * )
-     * @Method({"POST"})
+     * @Method("POST")
      * @param Request $request
      * @param PaymentTransaction $paymentTransaction
      * @return Response

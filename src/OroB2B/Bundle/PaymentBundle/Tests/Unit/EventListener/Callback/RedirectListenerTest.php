@@ -46,17 +46,12 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnReturn($options, $expectedResponse)
     {
         $this->paymentTransaction
-            ->setTransactionOptions($options)
-            ->setActive(true)
-            ->setSuccessful(false);
+            ->setTransactionOptions($options);
 
         $event = new CallbackReturnEvent();
         $event->setPaymentTransaction($this->paymentTransaction);
 
         $this->listener->onReturn($event);
-
-        $this->assertTrue($this->paymentTransaction->isActive());
-        $this->assertTrue($this->paymentTransaction->isSuccessful());
 
         $this->assertResponses($expectedResponse, $event->getResponse());
     }
@@ -73,7 +68,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'options' => ['someAnotherValue'],
-                'expectedResponse' => new Response()
+                'expectedResponse' => Response::create(null, Response::HTTP_FORBIDDEN)
             ],
         ];
     }
@@ -87,9 +82,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnError($errorAlreadyInFlashBag, $options, $expectedResponse)
     {
         $this->paymentTransaction
-            ->setTransactionOptions($options)
-            ->setActive(true)
-            ->setSuccessful(true);
+            ->setTransactionOptions($options);
 
         $event = new CallbackErrorEvent();
         $event->setPaymentTransaction($this->paymentTransaction);
@@ -112,9 +105,6 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onError($event);
 
-        $this->assertFalse($this->paymentTransaction->isActive());
-        $this->assertFalse($this->paymentTransaction->isSuccessful());
-
         $this->assertResponses($expectedResponse, $event->getResponse());
     }
 
@@ -132,7 +122,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
             [
                 'errorAlreadyInFlashBag' => true,
                 'options' => ['someAnotherValue'],
-                'expectedResponse' => new Response()
+                'expectedResponse' => Response::create(null, Response::HTTP_FORBIDDEN)
             ],
         ];
     }

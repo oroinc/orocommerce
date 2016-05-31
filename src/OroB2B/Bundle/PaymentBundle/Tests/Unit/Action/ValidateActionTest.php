@@ -87,7 +87,6 @@ class ValidateActionTest extends AbstractActionTest
                     'orob2b_payment_callback_error',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                        'accessToken' => $paymentTransaction->getAccessToken(),
                     ],
                     true
                 ],
@@ -95,7 +94,6 @@ class ValidateActionTest extends AbstractActionTest
                     'orob2b_payment_callback_return',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                        'accessToken' => $paymentTransaction->getAccessToken(),
                     ],
                     true
                 ]

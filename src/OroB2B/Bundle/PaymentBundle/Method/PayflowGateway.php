@@ -281,8 +281,8 @@ class PayflowGateway implements PaymentMethodInterface
             Option\SilentPost::SILENTPOSTURL => $this->router->generate(
                 'orob2b_payment_callback_notify',
                 [
-                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(), 
-                    'accessToken' => $paymentTransaction->getAccessToken()
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    'accessToken' => $paymentTransaction->getAccessToken(),
                 ],
                 true
             ),

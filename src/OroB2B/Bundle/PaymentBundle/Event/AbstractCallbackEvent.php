@@ -19,9 +19,7 @@ abstract class AbstractCallbackEvent extends AbstractTransactionEvent
     {
         $this->data = $data;
 
-        $this->response = new Response();
-
-        $this->markFailed();
+        $this->response = Response::create(null, Response::HTTP_FORBIDDEN);
     }
 
     /**
