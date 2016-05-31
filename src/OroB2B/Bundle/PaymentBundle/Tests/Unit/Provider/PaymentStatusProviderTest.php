@@ -4,6 +4,10 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Provider;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
+use OroB2B\Bundle\PaymentBundle\Method\PayPalPaymentsPro;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -20,6 +24,9 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
     /** @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $totalProcessorProvider;
 
+    /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodRegistry;
+
     protected function setUp()
     {
         $this->paymentTransactionProvider = $this
@@ -32,7 +39,13 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new PaymentStatusProvider($this->paymentTransactionProvider, $this->totalProcessorProvider);
+        $this->paymentMethodRegistry = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
+
+        $this->provider = new PaymentStatusProvider(
+            $this->paymentTransactionProvider,
+            $this->totalProcessorProvider,
+            $this->paymentMethodRegistry
+        );
     }
 
     /**
@@ -379,6 +392,112 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
                 [],
                 100,
                 PaymentStatusProvider::PENDING,
+            ],
+        ];
+    }
+
+    /**
+     * @param array $transactions
+     * @param bool $methodIsAuthorizeOnly
+     * @param float $amount
+     * @param string $expectedStatus
+     *
+     * @dataProvider statusPendingOnAuthorizeDataProvider
+     */
+    public function testStatusPendingOnAuthorize(array $transactions, $methodIsAuthorizeOnly, $amount, $expectedStatus)
+    {
+        $object = new \stdClass();
+
+        $this->paymentTransactionProvider
+            ->expects($this->once())
+            ->method('getPaymentTransactions')
+            ->with($object)
+            ->willReturn($transactions);
+
+        $total = new Subtotal();
+        $total->setAmount($amount);
+
+        $this->totalProcessorProvider
+            ->expects($this->once())
+            ->method('getTotal')
+            ->with($object)
+            ->willReturn($total);
+
+        /** @var PayflowGateway|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        $paymentMethod = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Method\PayflowGateway')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $paymentMethod->expects($this->any())->method('isAuthorizeOnly')
+            ->willReturn($methodIsAuthorizeOnly);
+
+        $this->paymentMethodRegistry->expects($this->any())->method('getPaymentMethod')
+            ->willReturn($paymentMethod);
+
+        $this->assertEquals($expectedStatus, $this->provider->getPaymentStatus(new \stdClass()));
+    }
+
+    /**
+     * @return array
+     */
+    public function statusPendingOnAuthorizeDataProvider()
+    {
+        return [
+            'pending on authorize only' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(false)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE),
+                    (new PaymentTransaction())
+                        ->setSuccessful(false)
+                        ->setAction(PaymentMethodInterface::CHARGE),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(true)
+                        ->setPaymentMethod(PayPalPaymentsPro::TYPE)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE),
+                ],
+                true,
+                100,
+                PaymentStatusProvider::PENDING,
+            ],
+            'not pending on not authorize only' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(false)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE),
+                    (new PaymentTransaction())
+                        ->setSuccessful(false)
+                        ->setAction(PaymentMethodInterface::CHARGE),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(true)
+                        ->setPaymentMethod(PayPalPaymentsPro::TYPE)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE),
+                ],
+                false,
+                100,
+                PaymentStatusProvider::AUTHORIZED,
+            ],
+            'another method' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(false)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE),
+                    (new PaymentTransaction())
+                        ->setSuccessful(false)
+                        ->setAction(PaymentMethodInterface::CHARGE),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(true)
+                        ->setPaymentMethod(PaymentTerm::TYPE)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE),
+                ],
+                true,
+                100,
+                PaymentStatusProvider::AUTHORIZED,
             ],
         ];
     }

@@ -5,7 +5,9 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
@@ -94,6 +96,53 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $transaction->setAction('wrong_action');
 
         $this->method->execute($transaction);
+    }
+
+    /**
+     * @param array $data
+     * @param bool $expected
+     *
+     * @dataProvider isAuthorizeOnlyDataProvider
+     */
+    public function testIsAuthorizeOnly($data, $expected)
+    {
+        $prefixes = OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $this->getConfigPrefix();
+        $map = [
+            [$prefixes . 'zero_amount_authorization', false, false, $data[0]],
+            [$prefixes . 'authorization_for_required_amount', false, false, $data[1]],
+            [$prefixes . 'payment_action', false, false, $data[2]]
+        ];
+
+        $this->configManager
+            ->method('get')
+            ->will($this->returnValueMap($map));
+
+        $this->assertEquals($expected, $this->method->isAuthorizeOnly());
+    }
+
+    /**
+     * @return array
+     */
+    public function isAuthorizeOnlyDataProvider()
+    {
+        return [
+            [
+                [true, false, PaymentMethodInterface::AUTHORIZE],
+                true
+            ],
+            [
+                [false, false, PaymentMethodInterface::AUTHORIZE],
+                false
+            ],
+            [
+                [true, true, PaymentMethodInterface::AUTHORIZE],
+                false
+            ],
+            [
+                [true, true, PaymentMethodInterface::CHARGE],
+                false
+            ]
+        ];
     }
 
     public function testIsEnabled()

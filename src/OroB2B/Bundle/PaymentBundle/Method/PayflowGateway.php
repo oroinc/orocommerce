@@ -341,6 +341,17 @@ class PayflowGateway implements PaymentMethodInterface
     /**
      * @return bool
      */
+    public function isAuthorizeOnly()
+    {
+        return (bool)($this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY)
+            && !$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY)
+            && (self::AUTHORIZE === $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PAYMENT_ACTION_KEY))
+        );
+    }
+
+    /**
+     * @return bool
+     */
     public function isEnabled()
     {
         return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ENABLED_KEY);
