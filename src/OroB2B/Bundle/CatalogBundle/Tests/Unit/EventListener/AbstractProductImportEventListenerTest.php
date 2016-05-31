@@ -5,9 +5,9 @@ namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 abstract class AbstractProductImportEventListenerTest extends \PHPUnit_Framework_TestCase

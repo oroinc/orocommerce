@@ -8,12 +8,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
 
 /**
@@ -246,7 +246,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
@@ -278,7 +278,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
@@ -328,7 +328,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )

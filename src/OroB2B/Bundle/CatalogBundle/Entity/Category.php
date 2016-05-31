@@ -10,8 +10,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Component\Tree\Entity\TreeTrait;
 use OroB2B\Bundle\CatalogBundle\Model\ExtendCategory;
@@ -59,7 +59,7 @@ class Category extends ExtendCategory
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
@@ -168,7 +168,7 @@ class Category extends ExtendCategory
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
@@ -195,7 +195,7 @@ class Category extends ExtendCategory
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )

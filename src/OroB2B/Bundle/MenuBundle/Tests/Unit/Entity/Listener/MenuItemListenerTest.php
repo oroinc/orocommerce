@@ -7,7 +7,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\MenuBundle\Entity\Listener\MenuItemListener;
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
