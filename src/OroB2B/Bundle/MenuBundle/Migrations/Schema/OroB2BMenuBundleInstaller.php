@@ -27,7 +27,7 @@ class OroB2BMenuBundleInstaller implements Installation, AttachmentExtensionAwar
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_0';
     }
 
     /**
