@@ -8,9 +8,6 @@ use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
-use OroB2B\Bundle\PaymentBundle\Method\PayPalPaymentsPro;
 
 class PaymentStatusProvider
 {
@@ -26,22 +23,16 @@ class PaymentStatusProvider
     /** @var TotalProcessorProvider */
     protected $totalProcessorProvider;
 
-    /** @var PaymentMethodRegistry */
-    protected $paymentMethodRegistry;
-
     /**
      * @param PaymentTransactionProvider $paymentTransactionProvider
      * @param TotalProcessorProvider $totalProcessorProvider
-     * @param PaymentMethodRegistry $paymentMethodRegistry
      */
     public function __construct(
         PaymentTransactionProvider $paymentTransactionProvider,
-        TotalProcessorProvider $totalProcessorProvider,
-        PaymentMethodRegistry $paymentMethodRegistry
+        TotalProcessorProvider $totalProcessorProvider
     ) {
         $this->paymentTransactionProvider = $paymentTransactionProvider;
         $this->totalProcessorProvider = $totalProcessorProvider;
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
     }
 
     /**
@@ -61,12 +52,7 @@ class PaymentStatusProvider
             return self::PARTIALLY;
         }
 
-        $authorizeTransactions = $this->getAuthorizeTransactions($paymentTransactions);
-        if (false === $authorizeTransactions->isEmpty()) {
-            if ($this->isAuthorizeOnly($authorizeTransactions)) {
-                return self::PENDING;
-            }
-
+        if ($this->hasAuthorizeTransactions($paymentTransactions)) {
             return self::AUTHORIZED;
         }
 
@@ -140,18 +126,24 @@ class PaymentStatusProvider
 
     /**
      * @param ArrayCollection $paymentTransactions
-     * @return ArrayCollection
+     * @return bool
      */
-    protected function getAuthorizeTransactions(ArrayCollection $paymentTransactions)
+    protected function hasAuthorizeTransactions(ArrayCollection $paymentTransactions)
     {
-        return $paymentTransactions
+        return false === $paymentTransactions
             ->filter(
                 function (PaymentTransaction $paymentTransaction) {
+                    $source = $paymentTransaction->getSourcePaymentTransaction();
+                    if ($source && $source->getReference() == $paymentTransaction->getReference()) {
+                        return false;
+                    }
+
                     return $paymentTransaction->isActive()
                     && $paymentTransaction->isSuccessful()
                     && $paymentTransaction->getAction() === PaymentMethodInterface::AUTHORIZE;
                 }
-            );
+            )
+            ->isEmpty();
     }
 
     /**
@@ -166,23 +158,5 @@ class PaymentStatusProvider
                     return !$paymentTransaction->isSuccessful() && !$paymentTransaction->isActive();
                 }
             )->count() === $paymentTransactions->count();
-    }
-
-
-    /**
-     * @param ArrayCollection $authorizeTransactions
-     * @return bool
-     */
-    protected function isAuthorizeOnly($authorizeTransactions)
-    {
-        $paymentMethodType = $authorizeTransactions->last()->getPaymentMethod();
-        if (PayflowGateway::TYPE == $paymentMethodType || PayPalPaymentsPro::TYPE == $paymentMethodType) {
-            /** @var PayflowGateway $paymentMethod */
-            $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentMethodType);
-
-            return $paymentMethod->isAuthorizeOnly();
-        }
-
-        return false;
     }
 }
