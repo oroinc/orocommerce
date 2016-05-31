@@ -154,7 +154,10 @@ class CallbackControllerTest extends WebTestCase
             'POST',
             $this->getUrl(
                 'orob2b_payment_callback_notify',
-                ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()]
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    'accessToken' => '123',
+                ]
             )
         );
 
