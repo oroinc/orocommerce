@@ -20,8 +20,8 @@ services:
             - "@oro_email.email_holder_helper"
             - "@oro_email.direct_mailer"
 
-    orob2b_rfp.mailer.request_to_quote_representatives_notifier:
-        class: 'OroB2B\Bundle\RFPBundle\Mailer\RequestToQuoteRepresentativesNotifier'
+    orob2b_rfp.mailer.request_representatives_notifier:
+        class: 'OroB2B\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier'
         public: true
         arguments:
             - "@orob2b_rfp.mailer.processor"
@@ -50,6 +50,14 @@ services:
         class: 'OroB2B\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage'
         arguments:
             - "@orob2b_product.storage.product_data_storage"
+
+    orob2b_rfp.service.request_update_handler:
+        class: 'OroB2B\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler'
+        parent: oro_form.model.update_handler
+        public: true
+        scope: request
+        calls:
+            - [setRepresentativesNotifier, ['@orob2b_rfp.mailer.request_representatives_notifier']]
 
     orob2b_rfp.storage.offers_data_storage:
         class: 'OroB2B\Bundle\RFPBundle\Storage\OffersDataStorage'

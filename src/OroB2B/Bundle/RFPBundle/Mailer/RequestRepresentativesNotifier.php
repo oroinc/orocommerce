@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\RFPBundle\Mailer;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 
-class RequestToQuoteRepresentativesNotifier
+class RequestRepresentativesNotifier
 {
     /**
      * @var Processor
