@@ -47,10 +47,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => 'open',
                             'scope' => 'app'
                         ],
-                        'default_user_for_notifications' => [
-                            'value' => '',
-                            'scope' => 'app'
-                        ],
                         'backend_product_visibility' => [
                             'value' => [
                                 Product::INVENTORY_STATUS_IN_STOCK,

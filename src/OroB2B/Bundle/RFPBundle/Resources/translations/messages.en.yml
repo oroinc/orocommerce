@@ -91,7 +91,6 @@ orob2b:
                 notifications.title: 'Notifications'
             fields:
                 requeststatus_default.title: 'Default RFQ Status'
-                default_user_for_notifications.title: 'Default User For Notifications'
                 backend_product_visibility.title: 'Can Be Added to RFQs'
                 frontend_product_visibility.title: 'Can Be Added to RFQs'
                 notification:

@@ -17,12 +17,6 @@ oro_system_configuration:
             type: orob2b_rfp_default_request_status
             options:
                 label: orob2b.rfp.system_configuration.fields.requeststatus_default.title
-        oro_b2b_rfp.default_user_for_notifications:
-            ui_only: true
-            data_type: string
-            type: oro_user_select
-            options:
-                label: orob2b.rfp.system_configuration.fields.default_user_for_notifications.title
         oro_b2b_rfp.backend_product_visibility:
             data_type: array
             type: orob2b_product_inventory_status_select
@@ -78,7 +72,6 @@ oro_system_configuration:
                                             - oro_b2b_rfp.default_request_status
                                     notifications:
                                         children:
-                                            - oro_b2b_rfp.default_user_for_notifications
                                             - oro_b2b_rfp.notify_assigned_sales_reps_of_the_account
                                             - oro_b2b_rfp.notify_owner_of_account_user_record
                                             - oro_b2b_rfp.notify_owner_of_account
