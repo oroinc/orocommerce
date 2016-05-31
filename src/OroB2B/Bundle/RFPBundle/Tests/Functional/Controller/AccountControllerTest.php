@@ -27,7 +27,8 @@ class AccountControllerTest extends WebTestCase
 
     public function testQuoteGridOnAccountViewPage()
     {
-        $repo = $this->client->getContainer()->get('oro_entity.doctrine_helper')->getEntityRepository('OroB2BRFPBundle:Request');
+        $repo = $this->client->getContainer()->get('oro_entity.doctrine_helper')
+            ->getEntityRepository('OroB2BRFPBundle:Request');
         /** @var Request $request */
         $request = $repo->findOneBy(['note' => 'rfp.request.3']);
         /** @var Account $account */

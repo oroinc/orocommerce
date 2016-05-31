@@ -38,7 +38,8 @@ class AccountUserControllerTest extends WebTestCase
                 ['id' => $accountUser->getId()]
             )
         );
-        $gridAttr = $crawler->filter('[id^=grid-account-user-view-rfq-grid]')->first()->attr('data-page-component-options');
+        $gridAttr = $crawler->filter('[id^=grid-account-user-view-rfq-grid]')
+            ->first()->attr('data-page-component-options');
         $gridJsonElements = json_decode(html_entity_decode($gridAttr), true);
         $this->assertCount(
             count(LoadRequestData::getRequestsFor('accountUser', $accountUser->getEmail())),

@@ -32,7 +32,8 @@ class AccountControllerTest extends WebTestCase
         /** @var Account $account */
         $account = $quote->getAccount();
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_view', ['id' => $account->getId()]));
-        $gridAttr = $crawler->filter('[id^=grid-account-view-quote-grid]')->first()->attr('data-page-component-options');
+        $gridAttr = $crawler->filter('[id^=grid-account-view-quote-grid]')
+            ->first()->attr('data-page-component-options');
         $this->assertContains($quote->getOwner()->getFullName(), $gridAttr);
         $this->assertContains($quote->getAccountUser()->getFullName(), $gridAttr);
         $gridJsonElements = json_decode(html_entity_decode($gridAttr), true);
