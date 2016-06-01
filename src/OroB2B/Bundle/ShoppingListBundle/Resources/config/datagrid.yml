@@ -13,8 +13,8 @@ datagrid:
                     - shopping_list.label
                     - shopping_list.notes
                     - shopping_list.subtotal
-                    - shopping_list.total
-                    - shopping_list.currency as totalsCurrency
+                    - cachedTotal.subtotalValue as total
+                    - cachedTotal.currency
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
                     - shopping_list_account.name as account
@@ -25,6 +25,8 @@ datagrid:
                     left:
                         - { join: shopping_list.account, alias: shopping_list_account }
                         - { join: shopping_list.accountUser, alias: shopping_list_acc_user }
+                    inner:
+                        - { join: %orob2b_shopping_list.entity.shopping_list_total.class%, alias: cachedTotal, conditionType: WITH, condition: "cachedTotal.shoppingList = shopping_list" }
         columns:
             id:
                 label:         orob2b.shoppinglist.id.label
