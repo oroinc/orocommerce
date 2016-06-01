@@ -86,22 +86,28 @@
 }
 
 .image-collection {
+  overflow-x: scroll;
+
   &.view table {
     width: 60%;
   }
+
   .add-list-item {
     margin-top: 8px;
     margin-left: 0;
   }
 
-  .text-center {
-    text-align: center;
+  th, td {
+    &.text-center {
+      text-align: center;
+    }
   }
 
   th {
     &.file {
       width: 320px;
     }
+
     &.remove {
       width: 65px;
     }
