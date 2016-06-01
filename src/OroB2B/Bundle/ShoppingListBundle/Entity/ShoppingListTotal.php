@@ -4,18 +4,20 @@ namespace OroB2B\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
 /**
- * @ORM\Table(name="orob2b_shopping_list_total",
+ * Entity for caching shopping list subtotals data by currency
+ * If isValid=false values should be recalculated
+ *
+ * @ORM\Table(
+ *     name="orob2b_shopping_list_total",
  *     uniqueConstraints={
- *          @ORM\UniqueConstraint(name="orob2b_shopping_list_total_unq", columns={
+ *          @ORM\UniqueConstraint(name="unique_shopping_list_currency", columns={
  *              "shopping_list_id",
  *              "currency"
  *          })
- *      })
+ *      }
+ * )
  * @ORM\Entity()
- *
  **/
 class ShoppingListTotal
 {
@@ -32,51 +34,30 @@ class ShoppingListTotal
      * @var ShoppingList
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList")
-     * @ORM\JoinColumn(name="shopping_list_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\JoinColumn(name="shopping_list_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $shoppingList;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="currency", type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\Column(name="currency", type="string", length=255, nullable=false)
      */
     protected $currency;
 
     /**
-     * @var string
+     * @var float
      *
-     * @ORM\Column(name="subtotal", type="float", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\Column(name="subtotal_value", type="money", nullable=true)
      */
-    protected $subtotal;
+    protected $subtotalValue;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="is_valid", type="boolean", options={"default"=false})
+     * @ORM\Column(name="is_valid", type="boolean")
      */
-    protected $valid = false;
+    protected $valid = true;
 
     /**
      * @return int
@@ -98,7 +79,7 @@ class ShoppingListTotal
      * @param ShoppingList $shoppingList
      * @return $this
      */
-    public function setShoppingList($shoppingList)
+    public function setShoppingList(ShoppingList $shoppingList)
     {
         $this->shoppingList = $shoppingList;
 
@@ -125,20 +106,20 @@ class ShoppingListTotal
     }
 
     /**
-     * @return string
+     * @return float
      */
-    public function getSubtotal()
+    public function getSubtotalValue()
     {
-        return $this->subtotal;
+        return $this->subtotalValue;
     }
 
     /**
-     * @param string $subtotal
+     * @param float $value
      * @return $this
      */
-    public function setSubtotal($subtotal)
+    public function setSubtotalValue($value)
     {
-        $this->subtotal = $subtotal;
+        $this->subtotalValue = $value;
 
         return $this;
     }

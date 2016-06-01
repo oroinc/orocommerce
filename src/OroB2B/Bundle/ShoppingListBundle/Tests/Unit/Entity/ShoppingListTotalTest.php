@@ -17,8 +17,8 @@ class ShoppingListTotalTest extends \PHPUnit_Framework_TestCase
             ['id', 1],
             ['shoppingList', new ShoppingList()],
             ['currency', 'some string'],
-            ['subtotal', 'some string'],
-            ['valid', 1]
+            ['subtotalValue', 500],
+            ['valid', true]
         ]);
     }
 }
