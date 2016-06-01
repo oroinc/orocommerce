@@ -3,5 +3,5 @@
 
   resize: vertical;
 
-  @extend %base-ui-element;
+  @include base-ui-element;
 }

@@ -1,3 +1,3 @@
 .oro-input {
-  @extend %base-ui-element;
+  @include base-ui-element;
 }

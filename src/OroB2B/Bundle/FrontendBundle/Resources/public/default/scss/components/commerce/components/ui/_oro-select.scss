@@ -7,6 +7,6 @@
 
   background: url('../images/arrow-down--gray.png') no-repeat right 8px center $base-white-color;
 
-  @extend %base-ui-element-style;
+  @include base-ui-element-style();
   @include appearance();
 }
