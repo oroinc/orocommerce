@@ -73,7 +73,11 @@
 
 {% block _quote_view_line_items_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% set maxChars = 80 %}
+    {% set expandTextOptions = {
+        widgetModule: 'orob2bfrontend/default/js/widgets/expand-text-widget',
+        widgetName: 'expandLongTexWidget',
+        maxLength: 80
+    }|json_encode() %}
     <!-- START ITEMS ORDERED DESKTOP -->
     <div class="account-oq-container hidden-sm hidden-xs">
         <div class="account-oq__item account-oq__item_full">
@@ -125,11 +129,11 @@
                             <tr class="borderless">
                                 <td colspan="4">
                                     <div class="account-oq__order-item-more">
-                                         <div data-oro-expand-widget>
-                                            {% if (quoteProduct.commentAccount|length > maxChars) %}
-                                                <i class="cf-play" data-oro-expand-trigger></i>
-                                            {% endif %}
-                                            {{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}: <span data-oro-expand-container max-length="{{ maxChars }}">{{ quoteProduct.commentAccount }}</span>
+                                         <div class="expand-text"
+                                              data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                                              data-page-component-options="{{ expandTextOptions }}"
+                                         >
+                                            {{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
                                         </div>
                                     </div>
                                 </td>
@@ -140,11 +144,11 @@
                             <tr class="borderless">
                                 <td colspan="4">
                                     <div class="account-oq__order-item-more">
-                                        <div data-oro-expand-widget>
-                                            {% if (quoteProduct.comment|length > maxChars) %}
-                                                <i class="cf-play" data-oro-expand-trigger></i>
-                                            {% endif %}
-                                            {{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}: <span data-oro-expand-container max-length="{{ maxChars }}">{{ quoteProduct.comment }}</span>
+                                        <div class="expand-text"
+                                             data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                                             data-page-component-options="{{ expandTextOptions }}"
+                                        >
+                                            {{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
                                         </div>
                                     </div>
                                 </td>
@@ -173,7 +177,11 @@
 
 {% block _quote_view_line_items_mobile_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% set maxChars = 100 %}
+    {% set expandTextOptions = {
+        widgetModule: 'orob2bfrontend/default/js/widgets/expand-text-widget',
+        widgetName: 'expandLongTexWidget',
+        maxLength: 100
+    }|json_encode() %}
     <!-- START ITEMS ORDERED MOBILE -->
     <div class="account-oq-container hidden-lg hidden-md">
         <div class="account-oq__item account-oq__item_full">
@@ -216,11 +224,11 @@
                                             <tr class="borderless t_paddingless">
                                                 <td colspan="2">
                                                     <div class="account-oq__order-item-more">
-                                                        <div data-oro-expand-widget>
-                                                            {% if (quoteProduct.commentAccount|length > maxChars) %}
-                                                                <i class="cf-play" data-oro-expand-trigger></i>
-                                                            {% endif %}
-                                                            {{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}: <span data-oro-expand-container max-length="{{ maxChars }}">{{ quoteProduct.commentAccount }}</span>
+                                                        <div class="expand-text"
+                                                             data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                                                             data-page-component-options="{{ expandTextOptions }}"
+                                                        >
+                                                            {{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
                                                         </div>
                                                     </div>
                                                 </td>
@@ -231,11 +239,11 @@
                                             <tr class="borderless t_paddingless">
                                                 <td colspan="2">
                                                     <div class="account-oq__order-item-more">
-                                                        <div data-oro-expand-widget>
-                                                            {% if (quoteProduct.comment|length > maxChars) %}
-                                                                <i class="cf-play" data-oro-expand-trigger></i>
-                                                            {% endif %}
-                                                            {{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}: <span data-oro-expand-container max-length="{{ maxChars }}">{{ quoteProduct.comment }}</span>
+                                                        <div class="expand-text"
+                                                             data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                                                             data-page-component-options="{{ expandTextOptions }}"
+                                                        >
+                                                            {{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
                                                         </div>
                                                     </div>
                                                 </td>

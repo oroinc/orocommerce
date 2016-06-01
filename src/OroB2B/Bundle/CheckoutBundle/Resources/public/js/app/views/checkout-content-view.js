@@ -31,11 +31,14 @@ define(function(require) {
             var cookieName = 'order-tab:state';
             var $container = this.$el;
 
-            $container.on('tab:toggle', '[data-tab-trigger]', function() {
-                var $tab = $(this).closest('[data-tab]');
-
+            $container.on('collapse:toggle', '[data-collapse-trigger]', function(event, params) {
                 mediator.trigger('scrollable-table:reload');
-                if ($tab.hasClass('active')) {
+
+                if (!_.isObject(params)) {
+                    return false;
+                }
+
+                if (params.isOpen) {
                     $.cookie(cookieName, true, {path: window.location.pathname});
                 } else {
                     $.cookie(cookieName, null, {path: window.location.pathname});

@@ -1,0 +1,49 @@
+.collapse-view {
+  &__trigger {
+    display: inline-block;
+    vertical-align: middle;
+
+    color: @base-link-color;
+
+    cursor: pointer;
+
+    &-icon {
+      transition: all 200ms linear;
+
+      &:hover {
+        color: @base-font-color;
+      }
+    }
+
+    &:focus,
+    &:hover {
+      text-decoration: none;
+    }
+
+    &.orange {
+      color: @theme-orange-color;
+    }
+  }
+
+  &__container {
+    display: none;
+  }
+
+  // Init widget
+  &.init {}
+
+  // Open widget
+  &.expanded {
+    .collapse-view {
+      &__trigger {
+        &-icon {
+          transform: rotate(90deg);
+        }
+      }
+
+      &__container {
+        display: block;
+      }
+    }
+  }
+}

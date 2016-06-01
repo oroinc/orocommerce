@@ -27,8 +27,6 @@ layout:
                         text: ~
                 scripts:
                     blockType: script
-                    options:
-                        content: 'require(["orob2bfrontend/default/js/main"])'
             tree:
                 body:
                     wrapper:
