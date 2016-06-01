@@ -8,20 +8,26 @@ use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Form\Type\CurrencyType;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
 use OroB2B\Bundle\PricingBundle\Form\Extension\SystemCurrencyFormExtension;
 
 class SystemCurrencyFormExtensionTest extends FormIntegrationTestCase
 {
     /**
-     * @var Translator|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $translator;
-
-    /**
      * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $configManager;
+
+    /**
+     * @var LocaleSettings
+     */
+    protected $localeSettings;
+
+    /**
+     * @var Translator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $translator;
 
     /**
      * {@inheritdoc}
@@ -29,6 +35,10 @@ class SystemCurrencyFormExtensionTest extends FormIntegrationTestCase
     public function setUp()
     {
         $this->translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -50,7 +60,11 @@ class SystemCurrencyFormExtensionTest extends FormIntegrationTestCase
                     'oro_currency' => new CurrencyType(),
                 ],
                 [
-                    'form' => [new SystemCurrencyFormExtension($this->configManager, $this->translator)],
+                    'form' => [new SystemCurrencyFormExtension(
+                        $this->configManager,
+                        $this->localeSettings,
+                        $this->translator
+                    )],
                 ]
             ),
         ];

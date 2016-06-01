@@ -80,13 +80,12 @@ oro_system_configuration:
                     - NotBlank: ~
         oro_b2b_pricing.default_currency:
             data_type: string
-            type: orob2b_pricing_enabled_currency_selection
+            type: orob2b_pricing_default_currency_selection
             options:
                 label: orob2b.pricing.system_configuration.fields.default_currency.label
                 required: true
                 multiple: false
                 constraints:
-                    - 'OroB2B\Bundle\PricingBundle\Validator\Constraints\DefaultCurrency': ~
                     - NotBlank: ~
 
     tree:
