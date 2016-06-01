@@ -32,7 +32,7 @@ class OroB2BShoppingListBundleInstaller implements Installation, ExtendExtension
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -43,12 +43,35 @@ class OroB2BShoppingListBundleInstaller implements Installation, ExtendExtension
         /** Tables generation **/
         $this->createOrob2BShoppingListTable($schema);
         $this->createOrob2BShoppingListLineItemTable($schema);
+        $this->createOrob2BShoppingListTotalTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BShoppingListForeignKeys($schema);
         $this->addOrob2BShoppingListLineItemForeignKeys($schema);
+        $this->addOrob2BShoppingListTotalForeignKeys($schema);
 
         $this->addShoppingListCheckoutSource($schema);
+    }
+
+    /**
+     * Create orob2b_shopping_list_total table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BShoppingListTotalTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_shopping_list_total');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('shopping_list_id', 'integer');
+        $table->addColumn('currency', 'string', ['length' => 255]);
+        $table->addColumn(
+            'subtotal_value',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn('is_valid', 'boolean');
+        $table->addUniqueIndex(['shopping_list_id', 'currency'], 'unique_shopping_list_currency');
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -104,6 +127,22 @@ class OroB2BShoppingListBundleInstaller implements Installation, ExtendExtension
         $table->addUniqueIndex(
             ['product_id', 'shopping_list_id', 'unit_code'],
             'orob2b_shopping_list_line_item_uidx'
+        );
+    }
+
+    /**
+     * Add orob2b_shopping_list_total foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BShoppingListTotalForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_shopping_list_total');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_shopping_list'),
+            ['shopping_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
         );
     }
 
