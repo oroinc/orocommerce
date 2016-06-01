@@ -44,8 +44,13 @@ class RequestControllerNotificationTest extends WebTestCase
         );
 
         $this->client->enableProfiler();
-        $this->em = $this->client->getContainer()->get('oro_entity.doctrine_helper')
+
+        $this->em = $this
+            ->client
+            ->getContainer()
+            ->get('oro_entity.doctrine_helper')
             ->getEntityManager('Oro\Bundle\UserBundle\Entity\User');
+
         $this->configManager = $this->client->getContainer()->get('oro_config.manager');
     }
 

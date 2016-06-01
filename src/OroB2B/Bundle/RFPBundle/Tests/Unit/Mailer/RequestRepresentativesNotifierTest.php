@@ -46,7 +46,10 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->request = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\Request');
 
-        $this->requestToQuoteRepresentativesNotifier = new RequestRepresentativesNotifier($this->processor, $this->configManager);
+        $this->requestToQuoteRepresentativesNotifier = new RequestRepresentativesNotifier(
+            $this->processor,
+            $this->configManager
+        );
     }
 
     public function testNotifyRepresentativesIgnoredIfNoId()

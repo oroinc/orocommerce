@@ -60,7 +60,19 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                                 Product::INVENTORY_STATUS_OUT_OF_STOCK
                             ],
                             'scope' => 'app'
-                        ]
+                        ],
+                        'notify_assigned_sales_reps_of_the_account' => [
+                            'value' => 'always',
+                            'scope' => 'app',
+                        ],
+                        'notify_owner_of_account_user_record' => [
+                            'value' => 'always',
+                            'scope' => 'app',
+                        ],
+                        'notify_owner_of_account' => [
+                            'value' => 'always',
+                            'scope' => 'app',
+                        ],
                     ]
                 ]
             ]
