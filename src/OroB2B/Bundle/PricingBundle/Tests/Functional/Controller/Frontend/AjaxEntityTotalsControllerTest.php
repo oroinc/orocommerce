@@ -32,6 +32,8 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
 
     public function testEntityTotalsActionForShoppingList()
     {
+        // todo: Fix in BB-2861
+        $this->markTestSkipped('todo: Fix in BB-2861');
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 

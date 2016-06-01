@@ -181,7 +181,6 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(TotalProcessorProvider::NAME, $this->provider->getName());
     }
 
-    //todo: Fix
     public function testGetTotalInDefaultCurrency()
     {
         $this->translator->expects($this->once())
@@ -191,8 +190,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
 
         $entity = new EntityWithoutCurrencyStub();
         $this->currencyManager->expects($this->once())
-            ->method('getBaseCurrency')
-            ->with($entity)
+            ->method('getUserCurrency')
             ->willReturn('USD');
 
         $entity = $this->prepareSubtotals($entity);

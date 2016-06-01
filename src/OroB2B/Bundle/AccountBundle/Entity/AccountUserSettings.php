@@ -12,7 +12,12 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 /**
  * @Config()
  * @ORM\Entity
- * @ORM\Table(name="orob2b_account_user_settings")
+ * @ORM\Table(
+ *    name="orob2b_account_user_settings",
+ *    uniqueConstraints={
+ *        @ORM\UniqueConstraint(name="unique_acc_user_website", columns={"account_user_id", "website_id"})
+ *    }
+ * )
  */
 class AccountUserSettings extends ExtendAccountUserSettings
 {
@@ -28,7 +33,7 @@ class AccountUserSettings extends ExtendAccountUserSettings
     /**
      * @var AccountUser
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser", inversedBy="settings")
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $accountUser;

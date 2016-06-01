@@ -102,9 +102,8 @@ class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
 
             /** @var ShoppingList[] $shoppingLists */
             $shoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
-            //todo: FIX TEST
             foreach ($shoppingLists as $shoppingList) {
-                // todo: Implement caching
+                // todo: Implement and use caching in BB-2861
                 $shoppingList->setSubtotal($this->subtotalProvider->getSubtotal($shoppingList));
             }
         }
