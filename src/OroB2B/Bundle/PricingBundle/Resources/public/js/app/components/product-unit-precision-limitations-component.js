@@ -5,7 +5,8 @@ define(function (require) {
 
     var ProductUnitPrecisionLimitationsComponent,
         _ = require('underscore'),
-        BaseComponent = require('oroui/js/app/components/base/component');
+        BaseComponent = require('oroui/js/app/components/base/component'),
+        mediator = require('oroui/js/mediator');
 
     ProductUnitPrecisionLimitationsComponent = BaseComponent.extend({
         /**
@@ -32,7 +33,8 @@ define(function (require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
-                .on('content:changed', _.bind(this.onChange, this));
+                .on('content:changed', _.bind(this.onChange, this))
+                .on('click', '.removeRow', _.bind(this.onRemoveItem, this));
 
             this.options._sourceElement.trigger('content:changed');
         },
@@ -43,15 +45,34 @@ define(function (require) {
         onChange: function () {
             var self = this,
                 units = this.getUnits();
-
             _.each(this.getSelects(), function (select) {
                 var $select = $(select);
+                $select.on('change', _.bind(self.onSelectChange, self));
                 var clearChangeRequired = self.clearOptions(units, $select);
                 var addChangeRequired = self.addOptions(units, $select);
                 if (clearChangeRequired || addChangeRequired) {
                     $select.trigger('change');
                 }
             });
+            var units_with_price = this.getUnitsWithPrices();
+            self.triggerChangeUnitsWithPricesEvent(units_with_price);
+        },
+
+        onSelectChange: function(){
+            var units_with_price = this.getUnitsWithPrices();
+            this.triggerChangeUnitsWithPricesEvent(units_with_price);
+        },
+
+        /**
+         * Handle remove item
+         *
+         * @param {jQuery.Event} e
+         */
+        onRemoveItem: function (e) {
+            var option = $(e.target).parent('.oro-multiselect-holder').find('select[name$="[unit]"] option:selected');
+            var units_with_price = this.getUnitsWithPrices();
+            delete units_with_price[option.val()];
+            this.triggerChangeUnitsWithPricesEvent(units_with_price);
         },
 
         /**
@@ -139,6 +160,30 @@ define(function (require) {
             })
             
             return units;
+        },
+
+        /**
+         * Return units from data attribute
+         *
+         * @returns {Object}
+         */
+        getUnitsWithPrices: function () {
+            var units_with_price = {};
+            _.each(this.getSelects(), function (select) {
+                var selected = $(select).find('option:selected');
+                units_with_price[selected.val()] = selected.text();
+            });
+
+            return units_with_price;
+        },
+
+        /**
+         * Trigger change event
+         *
+         * @param {Object} data
+         */
+        triggerChangeUnitsWithPricesEvent: function (data) {
+            mediator.trigger('pricing:units:with:prices:change', data);
         },
 
         dispose: function () {
