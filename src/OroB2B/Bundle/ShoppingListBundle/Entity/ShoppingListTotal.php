@@ -7,14 +7,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
- * @ORM\Table(name="orob2b_shopping_list_total")
- * @ORM\Entity()
- *      uniqueConstraints={
+ * @ORM\Table(name="orob2b_shopping_list_total",
+ *     uniqueConstraints={
  *          @ORM\UniqueConstraint(name="orob2b_shopping_list_total_unq", columns={
  *              "shopping_list_id",
  *              "currency"
  *          })
- *      }
+ *      })
+ * @ORM\Entity()
+ *
  **/
 class ShoppingListTotal
 {

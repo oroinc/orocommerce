@@ -43,12 +43,32 @@ class OroB2BShoppingListBundleInstaller implements Installation, ExtendExtension
         /** Tables generation **/
         $this->createOrob2BShoppingListTable($schema);
         $this->createOrob2BShoppingListLineItemTable($schema);
+        $this->createOrob2BShoppingListTotalTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BShoppingListForeignKeys($schema);
         $this->addOrob2BShoppingListLineItemForeignKeys($schema);
+        $this->addOrob2BShoppingListTotalForeignKeys($schema);
 
         $this->addShoppingListCheckoutSource($schema);
+    }
+
+    /**
+     * Create orob2b_shopping_list_total table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BShoppingListTotalTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_shopping_list_total');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('shopping_list_id', 'integer', ['notnull' => false]);
+        $table->addColumn('currency', 'string', ['length' => 255]);
+        $table->addColumn('subtotal', 'float', []);
+        $table->addColumn('is_valid', 'boolean', ['default' => '']);
+        $table->addUniqueIndex(['shopping_list_id', 'currency'], 'orob2b_shopping_list_total_unq');
+        $table->addIndex(['shopping_list_id'], 'idx_84d27a4b23245bf9', []);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -104,6 +124,22 @@ class OroB2BShoppingListBundleInstaller implements Installation, ExtendExtension
         $table->addUniqueIndex(
             ['product_id', 'shopping_list_id', 'unit_code'],
             'orob2b_shopping_list_line_item_uidx'
+        );
+    }
+
+    /**
+     * Add orob2b_shopping_list_total foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BShoppingListTotalForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_shopping_list_total');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_shopping_list'),
+            ['shopping_list_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 
