@@ -482,12 +482,12 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @param User $owner
+     * @param User|null $owner
      * @param bool $force
      *
      * @return $this
      */
-    public function setOwner(User $owner, $force = true)
+    public function setOwner(User $owner = null, $force = true)
     {
         $this->owner = $owner;
 

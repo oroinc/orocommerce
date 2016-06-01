@@ -672,11 +672,11 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
-     * @param User $owner
+     * @param User|null $owner
      *
      * @return AccountUser
      */
-    public function setOwner(User $owner)
+    public function setOwner(User $owner = null)
     {
         $this->owner = $owner;
 
