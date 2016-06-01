@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\EventListener;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -34,7 +35,15 @@ class ProductPrimaryUnitPrecisionListener
     /**
      * @param LifecycleEventArgs $args
      */
-    public function postPersist(LifecycleEventArgs $args)
+    /*public function postPersist(LifecycleEventArgs $args)
+    {
+        $this->updateProductUnitPrecisionRelation($args);
+    }*/
+
+    /**
+     * @param LifecycleEventArgs $args
+     */
+    public function postRemove(LifecycleEventArgs $args)
     {
         $this->updateProductUnitPrecisionRelation($args);
     }
@@ -48,9 +57,9 @@ class ProductPrimaryUnitPrecisionListener
     protected function updateProductUnitPrecisionRelation(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        if ($entity instanceof ProductUnitPrecision) {
-            $product = $entity->getProduct();
-            if (!$product) {
+        if ($entity instanceof Product) {
+            //$entity->removeUnitPrecision($entity->getPrimaryUnitPrecision());
+        /*    if (!$product) {
                 throw new \Exception('PrimaryUnitPrecision does not have Product');
             }
 
@@ -71,6 +80,12 @@ class ProductPrimaryUnitPrecisionListener
                     ]
                 ]);
                 $this->session->remove('primaryUnitPrecisionCode');
+            }*/
+        } elseif ($entity instanceof ProductUnitPrecision) {
+            $product = $entity->getProduct();
+            if ($entity->getUnit()->getCode() == $product->getPrimaryUnitPrecision()->getUnit()->getCode()) {
+                $unitOfWork = $args->getEntityManager()->getUnitOfWork();
+                $unitOfWork->propertyChanged($product, 'id', null, 47);
             }
         }
     }

@@ -14,7 +14,30 @@ class OroB2BProductBundle implements Migration
 
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->updateOroB2BProductUnitPrecisionTable($schema);
+        $this->updateOroB2BProductTable($schema);
+    }
+
+    /**
+     * Update orob2b_product_unit_precision table
+     *
+     * @param Schema $schema
+     */
+    protected function updateOroB2BProductUnitPrecisionTable(Schema $schema)
+    {
+        $table = $schema->getTable(self::PRODUCT_UNIT_PRECISION_TABLE_NAME);
+        $table->addColumn('conversion_rate', 'float', ['notnull' => false]);
+        $table->addColumn('sell', 'boolean', ['notnull' => false]);
+    }
+
+    /**
+     * Update orob2b_product table
+     *
+     * @param Schema $schema
+     */
+    protected function updateOroB2BProductTable(Schema $schema)
+    {
         $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
-        $table->addColumn('primary_product_unit_id', 'integer', ['notnull' => false]);
+        $table->addColumn('primary_unit_precision_id', 'integer', ['notnull' => false]);
     }
 }

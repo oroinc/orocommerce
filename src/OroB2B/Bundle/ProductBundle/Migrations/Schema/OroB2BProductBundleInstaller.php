@@ -115,7 +115,7 @@ class OroB2BProductBundleInstaller implements
         $table->addColumn('has_variants', 'boolean', ['default' => false]);
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('status', 'string', ['length' => 16]);
-        $table->addColumn('primary_product_unit_id', 'integer', ['notnull' => false]);
+        $table->addColumn('primary_unit_precision_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku']);
         $table->addIndex(['created_at'], 'idx_orob2b_product_created_at', []);

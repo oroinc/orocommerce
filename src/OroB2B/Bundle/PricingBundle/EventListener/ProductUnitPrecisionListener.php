@@ -33,7 +33,7 @@ class ProductUnitPrecisionListener
     {
         $entity = $event->getEntity();
 
-        if ($entity instanceof ProductUnitPrecision) {
+        if ($entity instanceof ProductUnitPrecision && $entity->getProduct()->getId()) {
             $args = [
                 'unit' => $entity->getUnit(),
                 'product' => $entity->getProduct()

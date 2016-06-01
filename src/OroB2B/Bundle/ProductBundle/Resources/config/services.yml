@@ -241,6 +241,7 @@ services:
                 - '@session'
             tags:
                 - { name: doctrine.event_listener, event: postPersist }
+                - { name: doctrine.event_listener, event: postRemove }
 
     orob2b_product.validator.unique_variant_links:
         class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator'
