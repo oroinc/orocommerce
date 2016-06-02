@@ -6,7 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -34,18 +33,11 @@ class ProductType extends AbstractType
     private $provider;
 
     /**
-     * @var  Session
-     */
-    private $session;
-
-    /**
      * @param DefaultProductUnitProvider $provider
-     * @param Session $session
      */
-    public function __construct(DefaultProductUnitProvider $provider, Session $session)
+    public function __construct(DefaultProductUnitProvider $provider)
     {
         $this->provider = $provider;
-        $this->session = $session;
     }
     
     /**
@@ -164,7 +156,6 @@ class ProductType extends AbstractType
                 ['label' => 'orob2b.product.variant_fields.label']
             );
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmitDataListener']);
     }
 
     /**
@@ -198,15 +189,6 @@ class ProductType extends AbstractType
                     ['product_class' => $this->dataClass, 'by_reference' => false]
                 );
         }
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function preSubmitDataListener(FormEvent $event)
-    {
-        $data = $event->getData();
-        $this->session->set('primaryUnitPrecisionCode', $data['primaryUnitPrecision']['unit']);
     }
 
     /**

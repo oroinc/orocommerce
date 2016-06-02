@@ -147,6 +147,10 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'shortDescriptions.en_CA.value' => '',
                     'hasVariants' => '',
                     'variantFields' => '',
+                    'primaryUnitPrecision.unit.code' => '',
+                    'primaryUnitPrecision.precision' => '',
+                    'primaryUnitPrecision.conversionRate' => '',
+                    'primaryUnitPrecision.sell' => '',
                 ],
             ],
             'en locale' => [
@@ -181,6 +185,10 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'shortDescriptions.en_CA.value' => '',
                     'hasVariants' => '',
                     'variantFields' => '',
+                    'primaryUnitPrecision.unit.code' => '',
+                    'primaryUnitPrecision.precision' => '',
+                    'primaryUnitPrecision.conversionRate' => '',
+                    'primaryUnitPrecision.sell' => '',
                 ],
             ],
             'custom locales' => [
@@ -220,6 +228,10 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'shortDescriptions.en_CA.value' => '',
                     'hasVariants' => '',
                     'variantFields' => '',
+                    'primaryUnitPrecision.unit.code' => '',
+                    'primaryUnitPrecision.precision' => '',
+                    'primaryUnitPrecision.conversionRate' => '',
+                    'primaryUnitPrecision.sell' => '',
                 ],
             ],
         ];

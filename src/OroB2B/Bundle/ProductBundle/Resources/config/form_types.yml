@@ -5,7 +5,6 @@ services:
         public: true
         arguments:
             - "@orob2b_product.provider.default_product_unit_provider"
-            - "@session"
         calls:
             - [setDataClass, ['%orob2b_product.entity.product.class%']]
         tags:

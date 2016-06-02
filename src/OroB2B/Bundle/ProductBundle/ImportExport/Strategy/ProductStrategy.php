@@ -28,11 +28,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     protected $variantLinkClass;
 
     /**
-     * @var  integer
-     */
-    protected $primaryCode;
-
-    /**
      * @param SecurityFacade $securityFacade
      */
     public function setSecurityFacade($securityFacade)
@@ -60,15 +55,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
             $data['unitPrecisions'] = $data['additionalUnitPrecisions'];
             unset($data['additionalUnitPrecisions']);
         }
-        $this->primaryCode = null;
-        if (array_key_exists('primaryUnitPrecision', $data)) {
-            $data['unitPrecisions'][] = $data['primaryUnitPrecision'];
-            if (array_key_exists('unit', $data['primaryUnitPrecision']) &&
-                array_key_exists('code', $data['primaryUnitPrecision']['unit'])) {
-                $this->primaryCode = $data['primaryUnitPrecision']['unit']['code'];
-            }
-            unset($data['primaryUnitPrecision']);
-        }
 
         $this->context->setValue('itemData', $data);
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
@@ -84,9 +70,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     protected function afterProcessEntity($entity)
     {
         $this->populateOwner($entity);
-        $this->populatePrimaryUnitPrecision($entity);
 
-        
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
         $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_AFTER, $event);
 
@@ -145,19 +129,5 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
         }
 
         return parent::findEntityByIdentityValues($entityName, $identityValues);
-    }
-
-    /**
-     * @param Product $entity
-     */
-    protected function populatePrimaryUnitPrecision(Product $entity)
-    {
-        if (!$this->primaryCode) {
-            return;
-        }
-        $primaryPrecision = $entity->getUnitPrecision($this->primaryCode);
-        if ($primaryPrecision) {
-            $entity->setPrimaryUnitPrecision($primaryPrecision);
-        }
     }
 }

@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
@@ -81,9 +79,7 @@ class ProductTypeTest extends FormIntegrationTestCase
             ->method('getDefaultProductUnitPrecision')
             ->will($this->returnValue($this->getDefaultProductUnitPrecision()));
 
-        $session = new Session(new MockArraySessionStorage());
-
-        $this->type = new ProductType($this->defaultProductUnitProvider, $session, $this->roundingService);
+        $this->type = new ProductType($this->defaultProductUnitProvider, $this->roundingService);
         $this->type->setDataClass(self::DATA_CLASS);
 
         parent::setUp();

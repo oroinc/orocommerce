@@ -228,7 +228,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     /**
      * @var ProductUnitPrecision
      *
-     * @ORM\OneToOne(targetEntity="ProductUnitPrecision")
+     * @ORM\OneToOne(targetEntity="ProductUnitPrecision", cascade={"persist"})
      * @ORM\JoinColumn(name="primary_unit_precision_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -875,6 +875,4 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         }
         return $additionalPrecisions;
     }
-
-
 }

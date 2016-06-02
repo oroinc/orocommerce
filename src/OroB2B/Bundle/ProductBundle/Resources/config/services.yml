@@ -234,15 +234,6 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orob2b_product-product_variants-product_edit, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.orob2b_product-product_variants-product_edit, method: onResultAfter }
 
-    orob2b_product.event_listener.product_primary_unit_precision:
-            class: 'OroB2B\Bundle\ProductBundle\EventListener\ProductPrimaryUnitPrecisionListener'
-            arguments:
-                - '@oro_entity.doctrine_helper'
-                - '@session'
-            tags:
-                - { name: doctrine.event_listener, event: postPersist }
-                - { name: doctrine.event_listener, event: postRemove }
-
     orob2b_product.validator.unique_variant_links:
         class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator'
         public: true

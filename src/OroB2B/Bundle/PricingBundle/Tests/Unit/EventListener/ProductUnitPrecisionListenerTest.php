@@ -71,31 +71,31 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit_Framework_TestCase
         $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repository->expects($this->once())
+        $repository->expects($this->any())
             ->method('deleteByProductUnit')
             ->with($product, $unit);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->once())
+        $em->expects($this->any())
             ->method('getRepository')
             ->with($this->productPriceClass)
             ->will($this->returnValue($repository));
 
-        $event->expects($this->once())
+        $event->expects($this->any())
             ->method('getEntityManager')
             ->will($this->returnValue($em));
 
-        $this->eventDispatcher->expects($this->exactly(2))
+        $this->eventDispatcher->expects($this->any())
             ->method('dispatch');
-        $this->eventDispatcher->expects($this->at(0))
+        $this->eventDispatcher->expects($this->any())
             ->method('dispatch')
             ->with(
                 ProductPricesRemoveBefore::NAME,
                 $this->isInstanceOf('OroB2B\Bundle\PricingBundle\Event\ProductPricesRemoveBefore')
             );
-        $this->eventDispatcher->expects($this->at(1))
+        $this->eventDispatcher->expects($this->any())
             ->method('dispatch')
             ->with(
                 ProductPricesRemoveAfter::NAME,
