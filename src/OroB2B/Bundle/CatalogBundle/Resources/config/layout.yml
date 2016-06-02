@@ -1,7 +1,6 @@
 services:
     orob2b_catalog.layout.data_provider.category_tree:
         class: OroB2B\Bundle\CatalogBundle\Layout\DataProvider\CategoryTreeProvider
-        public: true
         arguments:
             - '@orob2b_catalog.provider.category_tree_provider'
         tags:
@@ -9,7 +8,6 @@ services:
 
     orob2b_catalog.layout.block_type.category_tree:
         parent: oro_layout.block_type.abstract_configurable_container
-        public: true
         calls:
             - [setOptions, [{categories: {required: true}, max_size: {default: null}}]]
             - [setName, ['category_list']]

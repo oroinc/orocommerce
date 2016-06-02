@@ -1,7 +1,6 @@
 services:
     orob2b_shipping.form.type.shipping_origin:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginType
-        public: true
         arguments:
             - '@oro_address.form.listener.address'
         calls:
@@ -11,19 +10,16 @@ services:
 
     orob2b_shipping.form.type.shipping_origin_config:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType
-        public: true
         tags:
             - { name: form.type, alias: orob2b_shipping_origin_config }
 
     orob2b_shipping.form.type.shipping_origin_warehouse:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType
-        public: true
         tags:
             - { name: form.type, alias: orob2b_shipping_origin_warehouse }
 
     orob2b_shipping.form.extension.warehouse_shipping_origin:
         class: OroB2B\Bundle\ShippingBundle\Form\Extension\WarehouseShippingOriginExtension
-        public: true
         arguments:
             - '@orob2b_shipping.shipping_origin.provider'
             - '@doctrine'
@@ -32,7 +28,6 @@ services:
 
     orob2b_shipping.form.type.length_unit_select:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType
-        public: true
         arguments:
             - '@orob2b_shipping.provider.measure_units.length'
             - '@orob2b_shipping.formatter.length_unit_label'
@@ -43,7 +38,6 @@ services:
 
     orob2b_shipping.form.type.weight_unit_select:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType
-        public: true
         arguments:
             - '@orob2b_shipping.provider.measure_units.weight'
             - '@orob2b_shipping.formatter.weight_unit_label'
@@ -54,7 +48,6 @@ services:
 
     orob2b_shipping.form.type.freight_class_select:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\FreightClassSelectType
-        public: true
         arguments:
             - '@orob2b_shipping.provider.measure_units.freight'
             - '@orob2b_shipping.formatter.freight_class_label'
@@ -65,7 +58,6 @@ services:
 
     orob2b_shipping.form.type.weight:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\WeightType
-        public: true
         calls:
             - [setDataClass, ['%orob2b_shipping.model.weight.class%']]
         tags:
@@ -73,7 +65,6 @@ services:
 
     orob2b_shipping.form.type.dimensions:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType
-        public: true
         calls:
             - [setDataClass, ['%orob2b_shipping.model.dimensions.class%']]
         tags:
@@ -81,7 +72,6 @@ services:
 
     orob2b_shipping.form.type.dimensions_value:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsValueType
-        public: true
         calls:
             - [setDataClass, ['%orob2b_shipping.model.dimensions_value.class%']]
         tags:
@@ -89,7 +79,6 @@ services:
 
     orob2b_shipping.form.product_shipping_option:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType
-        public: true
         calls:
             - [setDataClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]
         tags:
@@ -97,7 +86,6 @@ services:
 
     orob2b_shipping.form.product_shipping_option_collection:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType
-        public: true
         calls:
             - [setDataClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]
         tags:
@@ -105,7 +93,6 @@ services:
 
     orob2b_shipping.form.extension.product_type:
         class: 'OroB2B\Bundle\ShippingBundle\Form\Extension\ProductFormExtension'
-        public: true
         arguments:
             - "@doctrine"
         tags:

@@ -7,7 +7,6 @@ services:
 
     orob2b_checkout.layout.block.type.transition_button.back:
         parent: orob2b_checkout.layout.block.type.abstract_transition_button
-        public: true
         calls:
             - [setName, ['checkout_transition_back']]
         tags:
@@ -15,7 +14,6 @@ services:
 
     orob2b_checkout.layout.block.type.transition_button.continue:
         parent: orob2b_checkout.layout.block.type.abstract_transition_button
-        public: true
         calls:
             - [setName, ['checkout_transition_continue']]
         tags:
@@ -23,7 +21,6 @@ services:
 
     orob2b_checkout.layout.block.type.transition_button.edit:
         parent: orob2b_checkout.layout.block.type.abstract_transition_button
-        public: true
         calls:
             - [setName, ['checkout_transition_step_edit']]
         tags:

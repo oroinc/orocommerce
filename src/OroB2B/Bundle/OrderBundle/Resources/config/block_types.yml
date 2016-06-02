@@ -1,7 +1,6 @@
 services:
     orob2b_order.layout.block_type.address:
         parent: oro_layout.block_type.abstract_configurable
-        public: true
         calls:
             - [setOptions, [{address: {required: true}}]]
             - [setName, ['address']]
@@ -10,7 +9,6 @@ services:
 
     orob2b_order.layout.block_type.currency:
         parent: oro_layout.block_type.abstract_configurable
-        public: true
         calls:
             -
                 - setOptions
@@ -28,7 +26,6 @@ services:
 
     orob2b_order.layout.block_type.date:
         parent: oro_layout.block_type.abstract_configurable
-        public: true
         calls:
             -
                 - setOptions
@@ -44,7 +41,6 @@ services:
 
     orob2b_order.layout.block_type.order_total:
         parent: oro_layout.block_type.abstract_configurable
-        public: true
         calls:
             - [setOptions, [{total: {required: true}, subtotals: {required: true}}]]
             - [setName, ['order_total']]
