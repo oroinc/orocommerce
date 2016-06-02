@@ -54,6 +54,10 @@ class RedirectListener
     protected function handleEvent(AbstractCallbackEvent $event, $expectedOptionsKey)
     {
         $transaction = $event->getPaymentTransaction();
+        if (!$transaction) {
+            return;
+        }
+
         $transactionOptions = $transaction->getTransactionOptions();
 
         if (!empty($transactionOptions[$expectedOptionsKey])) {

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PaymentBundle\Method;
 
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
@@ -271,12 +272,12 @@ class PayflowGateway implements PaymentMethodInterface
             Option\ReturnUrl::RETURNURL => $this->router->generate(
                 'orob2b_payment_callback_return',
                 ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
-                true
+                UrlGeneratorInterface::ABSOLUTE_URL
             ),
             Option\ErrorUrl::ERRORURL => $this->router->generate(
                 'orob2b_payment_callback_error',
                 ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
-                true
+                UrlGeneratorInterface::ABSOLUTE_URL
             ),
             Option\SilentPost::SILENTPOSTURL => $this->router->generate(
                 'orob2b_payment_callback_notify',
@@ -284,7 +285,7 @@ class PayflowGateway implements PaymentMethodInterface
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),
                 ],
-                true
+                UrlGeneratorInterface::ABSOLUTE_URL
             ),
         ];
     }

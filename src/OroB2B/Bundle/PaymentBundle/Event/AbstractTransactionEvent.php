@@ -8,11 +8,11 @@ use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
 class AbstractTransactionEvent extends Event
 {
-    /** @var PaymentTransaction */
+    /** @var PaymentTransaction|null */
     protected $paymentTransaction;
 
     /**
-     * @return PaymentTransaction
+     * @return PaymentTransaction|null
      */
     public function getPaymentTransaction()
     {
