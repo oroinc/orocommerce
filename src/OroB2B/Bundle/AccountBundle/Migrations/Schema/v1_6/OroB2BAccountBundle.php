@@ -14,7 +14,7 @@ class OroB2BAccountBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->addAccountUserCurrencyTable($schema);
+        $this->addAccountUserSettingsTable($schema);
     }
 
     /**
@@ -22,15 +22,16 @@ class OroB2BAccountBundle implements Migration
     *
     * @throws \Doctrine\DBAL\Schema\SchemaException
     */
-    protected function addAccountUserCurrencyTable(Schema $schema)
+    protected function addAccountUserSettingsTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_account_user_currency');
+        $table = $schema->createTable('orob2b_account_user_settings');
 
-        $table->addColumn('account_user_id', 'integer', ['length' => 255]);
-        $table->addColumn('website_id', 'integer', ['length' => 255]);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_user_id', 'integer');
+        $table->addColumn('website_id', 'integer');
         $table->addColumn('currency', 'string', ['length' => 3]);
 
-        $table->setPrimaryKey(['account_user_id', 'website_id']);
+        $table->setPrimaryKey(['id']);
 
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_user'),
@@ -47,5 +48,7 @@ class OroB2BAccountBundle implements Migration
             ['onDelete' => 'CASCADE'],
             'fk_website_id'
         );
+
+        $table->addUniqueIndex(['account_user_id', 'website_id'], 'unique_acc_user_website');
     }
 }

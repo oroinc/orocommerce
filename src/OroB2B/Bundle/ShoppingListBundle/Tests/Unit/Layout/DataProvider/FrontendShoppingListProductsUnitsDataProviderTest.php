@@ -8,7 +8,7 @@ use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -36,9 +36,9 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
     protected $requestHandler;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UserCurrencyProvider
+     * @var \PHPUnit_Framework_MockObject_MockObject|UserCurrencyManager
      */
-    protected $userCurrencyProvider;
+    protected $userCurrencyManager;
 
     public function setUp()
     {
@@ -51,14 +51,14 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->userCurrencyProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
+        $this->userCurrencyManager = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->provider = new FrontendShoppingListProductsUnitsDataProvider(
             $this->registry,
             $this->requestHandler,
-            $this->userCurrencyProvider
+            $this->userCurrencyManager
         );
     }
 

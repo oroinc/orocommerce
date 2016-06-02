@@ -3,9 +3,10 @@
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Provider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
+
 use OroB2B\Bundle\PaymentBundle\Provider\AddressExtractor;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class PaymentContextProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,8 +18,8 @@ class PaymentContextProviderTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentContextProvider */
     protected $paymentContextProvider;
 
-    /** @var UserCurrencyProvider */
-    protected $currencyProvider;
+    /** @var UserCurrencyManager */
+    protected $currencyManager;
 
     protected function setUp()
     {
@@ -26,11 +27,11 @@ class PaymentContextProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->currencyProvider = $this->getMockBuilder(UserCurrencyProvider::class)
+        $this->currencyManager = $this->getMockBuilder(UserCurrencyManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->paymentContextProvider = new PaymentContextProvider($this->extractor, $this->currencyProvider);
+        $this->paymentContextProvider = new PaymentContextProvider($this->extractor, $this->currencyManager);
     }
 
     protected function tearDown()

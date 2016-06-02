@@ -65,9 +65,9 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     {
         $currency = $request->get('currency');
         $result = false;
-        $userCurrencyProvider = $this->get('orob2b_pricing.provider.user_currency');
-        if (in_array($currency, $userCurrencyProvider->getAvailableCurrencies(), true)) {
-            $userCurrencyProvider->saveSelectedCurrency($currency);
+        $userCurrencyManager = $this->get('orob2b_pricing.user_currency_manager');
+        if (in_array($currency, $userCurrencyManager->getAvailableCurrencies(), true)) {
+            $userCurrencyManager->saveSelectedCurrency($currency);
             $result = true;
         }
 

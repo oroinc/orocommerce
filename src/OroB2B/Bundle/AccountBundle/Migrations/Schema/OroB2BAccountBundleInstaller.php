@@ -70,7 +70,7 @@ class OroB2BAccountBundleInstaller implements
     const ORO_USER_TABLE_NAME = 'oro_user';
     const ORO_B2B_ACCOUNT_SALES_REPRESENTATIVES_TABLE_NAME = 'orob2b_account_sales_reps';
     const ORO_B2B_ACCOUNT_USER_SALES_REPRESENTATIVES_TABLE_NAME = 'orob2b_account_user_sales_reps';
-    const ORO_B2B_ACCOUNT_USER_CURRENCY = 'orob2b_account_user_currency';
+    const ORO_B2B_ACCOUNT_USER_SETTINGS = 'orob2b_account_user_settings';
 
     /** @var ExtendExtension */
     protected $extendExtension;
@@ -156,7 +156,7 @@ class OroB2BAccountBundleInstaller implements
         $this->createOroB2BAccountUserSdbarStTable($schema);
         $this->createOroB2BAccountUserSdbarWdgTable($schema);
         $this->createOroB2BAccNavigationPagestateTable($schema);
-        $this->createOroB2BAccountUserCurrencyTable($schema);
+        $this->createOroB2BAccountUserSettingsTable($schema);
 
         $this->createOroB2BCategoryVisibilityTable($schema);
         $this->createOroB2BAccountCategoryVisibilityTable($schema);
@@ -195,7 +195,7 @@ class OroB2BAccountBundleInstaller implements
         $this->addOroB2BAccountUserSdbarStForeignKeys($schema);
         $this->addOroB2BAccountUserSdbarWdgForeignKeys($schema);
         $this->addOroB2BAccNavigationPagestateForeignKeys($schema);
-        $this->addOroB2BAccountUserCurrencyForeignKeys($schema);
+        $this->addOroB2BAccountUserSettingsForeignKeys($schema);
 
         $this->addOroB2BProductVisibilityForeignKeys($schema);
         $this->addOroB2BAccountProductVisibilityForeignKeys($schema);
@@ -730,15 +730,16 @@ class OroB2BAccountBundleInstaller implements
     /**
      * @param Schema $schema
      */
-    protected function createOroB2BAccountUserCurrencyTable(Schema $schema)
+    protected function createOroB2BAccountUserSettingsTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_USER_CURRENCY);
+        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_USER_SETTINGS);
 
-        $table->addColumn('account_user_id', 'integer', ['length' => 255]);
-        $table->addColumn('website_id', 'integer', ['length' => 255]);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_user_id', 'integer');
+        $table->addColumn('website_id', 'integer');
         $table->addColumn('currency', 'string', ['length' => 3]);
 
-        $table->setPrimaryKey(['account_user_id', 'website_id']);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -1685,9 +1686,9 @@ class OroB2BAccountBundleInstaller implements
     /**
      * @param Schema $schema
      */
-    protected function addOroB2BAccountUserCurrencyForeignKeys(Schema $schema)
+    protected function addOroB2BAccountUserSettingsForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_USER_CURRENCY);
+        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_USER_SETTINGS);
 
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_user'),
@@ -1704,5 +1705,7 @@ class OroB2BAccountBundleInstaller implements
             ['onDelete' => 'CASCADE'],
             'fk_website_id'
         );
+
+        $table->addUniqueIndex(['account_user_id', 'website_id'], 'unique_acc_user_website');
     }
 }

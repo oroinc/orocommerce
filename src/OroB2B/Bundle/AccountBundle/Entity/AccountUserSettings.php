@@ -4,31 +4,45 @@ namespace OroB2B\Bundle\AccountBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+
+use OroB2B\Bundle\AccountBundle\Model\ExtendAccountUserSettings;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * @Config()
  * @ORM\Entity
- * @ORM\Table(name="orob2b_account_user_currency")
+ * @ORM\Table(
+ *    name="orob2b_account_user_settings",
+ *    uniqueConstraints={
+ *        @ORM\UniqueConstraint(name="unique_acc_user_website", columns={"account_user_id", "website_id"})
+ *    }
+ * )
  */
-class AccountUserCurrency
+class AccountUserSettings extends ExtendAccountUserSettings
 {
+    /**
+     * @var int
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
     /**
      * @var AccountUser
      *
-     * @ORM\Id
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser", inversedBy="currencies")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser", inversedBy="settings")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $accountUser;
 
     /**
      * @var Website
      *
-     * @ORM\Id
-     *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $website;
 
@@ -38,6 +52,23 @@ class AccountUserCurrency
      * @ORM\Column(name="currency", type="string", length=3)
      */
     protected $currency;
+
+    /**
+     * @param Website $website
+     */
+    public function __construct(Website $website)
+    {
+        parent::__construct();
+        $this->website = $website;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * @return AccountUser
@@ -64,17 +95,6 @@ class AccountUserCurrency
     public function getWebsite()
     {
         return $this->website;
-    }
-
-    /**
-     * @param Website $website
-     * @return $this
-     */
-    public function setWebsite(Website $website)
-    {
-        $this->website = $website;
-
-        return $this;
     }
 
     /**

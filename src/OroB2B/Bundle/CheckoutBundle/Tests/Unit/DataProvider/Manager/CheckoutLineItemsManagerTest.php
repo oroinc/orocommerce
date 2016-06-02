@@ -11,7 +11,7 @@ use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConvert
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
 class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
@@ -29,9 +29,9 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     protected $checkoutLineItemsManager;
 
     /**
-     * @var UserCurrencyProvider
+     * @var UserCurrencyManager
      */
-    protected $currencyProvider;
+    protected $currencyManager;
 
     protected function setUp()
     {
@@ -40,11 +40,11 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->currencyProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
+        $this->currencyManager = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->currencyProvider->expects($this->any())->method('getUserCurrency')->willReturn('USD');
+        $this->currencyManager->expects($this->any())->method('getUserCurrency')->willReturn('USD');
 
         $this->checkoutLineItemsConverter->expects($this->any())
             ->method('convert')
@@ -58,7 +58,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->checkoutLineItemsManager = new CheckoutLineItemsManager(
             $this->checkoutLineItemsConverter,
-            $this->currencyProvider
+            $this->currencyManager
         );
     }
 
