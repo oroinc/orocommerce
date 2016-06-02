@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\EventListener;
+namespace OroB2B\Bundle\RFPBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -10,8 +10,9 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
-class FormViewListener
+class AccountViewListener
 {
     /**
      * @var TranslatorInterface
@@ -52,13 +53,14 @@ class FormViewListener
         $account = $this->getEntityFromRequestId('OroB2BAccountBundle:Account');
         if ($account) {
             $template = $event->getEnvironment()->render(
-                'OroB2BSaleBundle:Account:quote_view.html.twig',
+                'OroB2BRFPBundle:Account:rfp_view.html.twig',
                 ['entity' => $account]
             );
+
             $this->addRequestForQuotesBlock(
                 $event->getScrollData(),
                 $template,
-                $this->translator->trans('orob2b.sale.quote.datagrid.account.label')
+                $this->translator->trans('orob2b.rfp.datagrid.account.label')
             );
         }
     }
@@ -68,23 +70,23 @@ class FormViewListener
      */
     public function onAccountUserView(BeforeListRenderEvent $event)
     {
-        /** @var Account $account */
-        $account = $this->getEntityFromRequestId('OroB2BAccountBundle:AccountUser');
-        if ($account) {
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getEntityFromRequestId('OroB2BAccountBundle:AccountUser');
+        if ($accountUser) {
             $template = $event->getEnvironment()->render(
-                'OroB2BSaleBundle:AccountUser:quote_view.html.twig',
-                ['entity' => $account]
+                'OroB2BRFPBundle:AccountUser:rfp_view.html.twig',
+                ['entity' => $accountUser]
             );
             $this->addRequestForQuotesBlock(
                 $event->getScrollData(),
                 $template,
-                $this->translator->trans('orob2b.sale.quote.datagrid.account_user.label')
+                $this->translator->trans('orob2b.rfp.datagrid.account_user.label')
             );
         }
     }
 
     /**
-     * @param $className
+     * @param string $className
      * @return null|object
      */
     protected function getEntityFromRequestId($className)
@@ -93,14 +95,17 @@ class FormViewListener
         if (!$request) {
             return null;
         }
+
         $entityId = (int)$request->get('id');
         if (!$entityId) {
             return null;
         }
+
         $entity = $this->doctrineHelper->getEntityReference($className, $entityId);
         if (!$entity) {
             return null;
         }
+
         return $entity;
     }
 

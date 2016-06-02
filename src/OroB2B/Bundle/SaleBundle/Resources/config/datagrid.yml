@@ -109,6 +109,38 @@ datagrid:
             accountUserName:
                 label:         orob2b.sale.quote.account_user.label
                 order:         1
+        filters:
+            columns:
+                qid:
+                    type:      string
+                    data_name: quote.qid
+                accountUserName:
+                    type:      string
+                    data_name: accountUserName
+                ownerName:
+                    type:      string
+                    data_name: ownerName
+                locked:
+                    type:      boolean
+                    data_name: quote.locked
+                expired:
+                    type:      boolean
+                    data_name: quote.expired
+                validUntil:
+                    type:      datetime
+                    data_name: quote.validUntil
+                poNumber:
+                    type:      string
+                    data_name: quote.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: quote.shipUntil
+                createdAt:
+                    type:      datetime
+                    data_name: quote.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: quote.updatedAt
 
     account-user-view-quote-grid:
         extends: base-quote-grid
@@ -119,6 +151,35 @@ datagrid:
                         - quote.accountUser = :account_user_id
             bind_parameters:
                 - account_user_id
+        filters:
+            columns:
+                qid:
+                    type:      string
+                    data_name: quote.qid
+                ownerName:
+                    type:      string
+                    data_name: ownerName
+                locked:
+                    type:      boolean
+                    data_name: quote.locked
+                expired:
+                    type:      boolean
+                    data_name: quote.expired
+                validUntil:
+                    type:      datetime
+                    data_name: quote.validUntil
+                poNumber:
+                    type:      string
+                    data_name: quote.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: quote.shipUntil
+                createdAt:
+                    type:      datetime
+                    data_name: quote.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: quote.updatedAt
 
     quotes-grid:
         extends: base-quote-grid

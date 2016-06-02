@@ -132,7 +132,7 @@ services:
             - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item"
 
     orob2b_sale.event_listener.form_view:
-        class: 'OroB2B\Bundle\SaleBundle\EventListener\FormViewListener'
+        class: 'OroB2B\Bundle\SaleBundle\EventListener\AccountViewListener'
         public: true
         arguments:
             - '@translator'

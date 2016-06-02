@@ -168,7 +168,7 @@ services:
             - '@oro_entity.doctrine_helper'
 
     orob2b_rfp.event_listener.form_view:
-        class: 'OroB2B\Bundle\RFPBundle\EventListener\FormViewListener'
+        class: 'OroB2B\Bundle\RFPBundle\EventListener\AccountViewListener'
         public: true
         arguments:
             - '@translator'

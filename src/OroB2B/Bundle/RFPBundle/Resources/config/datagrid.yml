@@ -91,6 +91,34 @@ datagrid:
             columns:
                 accountUserName:
                     data_name: accountUserName
+        filters:
+            columns:
+                id:
+                    type:      number
+                    data_name: request.id
+                accountUserName:
+                    type:      string
+                    data_name: accountUserName
+                status_label:
+                    type:      entity
+                    data_name: status.id
+                    options:
+                        field_type: orob2b_rfp_request_status_with_deleted_select
+                        field_options:
+                            class: %orob2b_rfp.entity.request.status.class%
+                            property: label
+                poNumber:
+                    type:      string
+                    data_name: request.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: request.shipUntil
+                createdAt:
+                    type:      datetime
+                    data_name: request.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: request.updatedAt
 
     account-user-view-rfq-grid:
         extends: base-rfq-grid
@@ -101,6 +129,31 @@ datagrid:
                         - request.accountUser = :account_user_id
             bind_parameters:
                 - account_user_id
+        filters:
+            columns:
+                id:
+                    type:      number
+                    data_name: request.id
+                status_label:
+                    type:      entity
+                    data_name: status.id
+                    options:
+                        field_type: orob2b_rfp_request_status_with_deleted_select
+                        field_options:
+                            class: %orob2b_rfp.entity.request.status.class%
+                            property: label
+                poNumber:
+                    type:      string
+                    data_name: request.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: request.shipUntil
+                createdAt:
+                    type:      datetime
+                    data_name: request.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: request.updatedAt
 
     rfp-requests-grid:
         extends: base-rfq-grid

@@ -6,22 +6,21 @@ use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\SaleBundle\EventListener\FormViewListener;
+use OroB2B\Bundle\SaleBundle\EventListener\AccountViewListener;
 
-class FormViewListenerTest extends FormViewListenerTestCase
+class AccountViewListenerTest extends FormViewListenerTestCase
 {
     const RENDER_HTML = 'test';
 
     /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject */
     protected $requestStack;
 
-    /** * @var FormViewListener */
-    protected $formViewListener;
+    /** * @var AccountViewListener */
+    protected $accountViewListener;
 
     /** @var Request|\PHPUnit_Framework_MockObject_MockObject */
     protected $request;
@@ -52,7 +51,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('render')
             ->willReturn(self::RENDER_HTML);
 
-        $this->formViewListener = new FormViewListener($this->translator, $this->doctrineHelper, $this->requestStack);
+        $this->accountViewListener = new AccountViewListener($this->translator, $this->doctrineHelper, $this->requestStack);
     }
 
     public function testOnAccountViewGetsIgnoredIfNoRequest()
@@ -63,14 +62,14 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->event->expects($this->never())
             ->method('getEnvironment');
-        $this->formViewListener->onAccountView($this->event);
+        $this->accountViewListener->onAccountView($this->event);
     }
 
     public function testOnAccountViewGetsIgnoredIfNoRequestId()
     {
         $this->event->expects($this->never())
             ->method('getEnvironment');
-        $this->formViewListener->onAccountView($this->event);
+        $this->accountViewListener->onAccountView($this->event);
     }
 
     public function testOnAccountViewGetsIgnoredIfNoEntityFound()
@@ -84,7 +83,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->event->expects($this->never())
             ->method('getEnvironment');
-        $this->formViewListener->onAccountView($this->event);
+        $this->accountViewListener->onAccountView($this->event);
     }
 
     public function testOnAccountViewCreatesScrollBlock()
@@ -108,7 +107,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $this->event->expects($this->any())
             ->method('getScrollData')
             ->willReturn($scrollData);
-        $this->formViewListener->onAccountView($this->event);
+        $this->accountViewListener->onAccountView($this->event);
     }
 
     public function testOnAccountUserViewCreatesScrollBlock()
@@ -132,6 +131,6 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $this->event->expects($this->any())
             ->method('getScrollData')
             ->willReturn($scrollData);
-        $this->formViewListener->onAccountUserView($this->event);
+        $this->accountViewListener->onAccountUserView($this->event);
     }
 }
