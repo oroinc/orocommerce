@@ -378,7 +378,20 @@ workflows:
                         message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
                         parameters:
                             entity: $checkout
-
+                post_actions:
+                    '@tree':
+                        pre_actions:
+                            '@call_service_method':
+                                service: orob2b_payment.provider.payment_transaction
+                                method: getActiveAuthorizePaymentTransaction
+                                method_parameters: [$checkout.sourceEntity, $checkout.sourceEntity.total, $checkout.currency]
+                                attribute: $.authorizePaymentTransaction
+                        pre_conditions:
+                            '@and':
+                                - '@not_empty': [$.authorizePaymentTransaction]
+                                - '@payment_method_enabled': $.authorizePaymentTransaction.paymentMethod
+                        actions:
+                            '@assign_value': [$payment_validate, true]
             continue_to_order_review_definition:
                 pre_conditions:
                     '@and':
