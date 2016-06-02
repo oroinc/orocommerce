@@ -156,4 +156,9 @@ class CombinedPriceListQueueConsumer
 
         return $this->queueRepository;
     }
+    
+    protected function dispatchEvent()
+    {
+        
+    }
 }

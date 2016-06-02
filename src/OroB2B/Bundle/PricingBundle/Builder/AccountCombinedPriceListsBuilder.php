@@ -121,4 +121,12 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
         return $fallback === null;
     }
+
+    /**
+     * @return array
+     */
+    public function getBuiltList()
+    {
+        return $this->builtList;
+    }
 }
