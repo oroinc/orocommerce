@@ -25,7 +25,7 @@
                 <tr>
                     <th>{{ 'orob2b.product.productimage.file.label'|trans }}</th>
                     {% for imageType in imageTypes %}
-                        <th class="text-center">{{ imageType.label|trans }}</th>
+                        <th>{{ imageType.label|trans }}</th>
                     {% endfor %}
                 </tr>
             </thead>
@@ -38,7 +38,7 @@
                         </td>
 
                         {% for imageType in imageTypes %}
-                            <td class="text-center">
+                            <td>
                                 {% if productImage.hasType(imageType.name) %}
                                     <i class="icon-check"></i>
                                 {% endif %}
