@@ -38,7 +38,7 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         $invalidTotal->setValid(true);
         $invalidTotal->setCurrency('USD');
         $invalidTotal->setSubtotalValue(1);
-
+        
         $manager = $registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal');
         $manager->persist($invalidTotal);
         $manager->flush();

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
@@ -12,23 +13,6 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 class ShoppingListTotalRepository extends EntityRepository
 {
     /**
-     * @param ShoppingList $shoppingList
-     * @param string|null $currency
-     */
-    public function deleteTotals(ShoppingList $shoppingList, $currency = null)
-    {
-        $qb = $this->_em->createQueryBuilder();
-        $qb->delete($this->_entityName, 'totals')
-            ->where('totals.shoppingList =: shoppingList')
-            ->setParameter('shoppingList', $shoppingList);
-        if ($currency !== null) {
-            $qb->andWhere('totals.currency = :currency')
-                ->setParameter('currency', $currency);
-        }
-        $qb->getQuery()->execute();
-    }
-
-    /**
      * @param array $cplIds
      */
     public function invalidateByCpl(array $cplIds)
@@ -37,7 +21,7 @@ class ShoppingListTotalRepository extends EntityRepository
             return;
         }
         $qb = $this->createQueryBuilder('total');
-        $qb->select('total')
+        $qb->select('DISTINCT total.id')
             ->join(
                 'OroB2BShoppingListBundle:LineItem',
                 'lineItem',
@@ -52,26 +36,29 @@ class ShoppingListTotalRepository extends EntityRepository
             )
             ->where($qb->expr()->in('productPrice.priceList', $cplIds))
             ->andWhere('total.valid = :isValid')
-            ->setParameter(':isValid', false);
+            ->setParameter(':isValid', true);
 
         $iterator = new BufferedQueryResultIterator($qb->getQuery());
+        $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
         $ids = [];
         $qbUpdate = $this->_em->createQueryBuilder()
             ->update($this->_entityName, 'total')
-            ->set('valid', false)
-            ->where($qb->expr()->in('total.id', ':ids'));
+            ->set('total.valid', ':valid')
+            ->setParameter('valid', false);
+
         $i = 0;
-        foreach ($iterator as $id) {
-            $ids[] = $id;
+        foreach ($iterator as $total) {
+            $ids[] = $total['id'];
+            $i++;
             if ($i % 500 === 0) {
-                $qbUpdate->setParameter('ids', $ids)
+                $qbUpdate->where($qb->expr()->in('total.id', $ids))
                     ->getQuery()
                     ->execute();
                 $ids = [];
             }
         }
         if (!empty($ids)) {
-            $qbUpdate->setParameter('ids', $ids)
+            $qbUpdate->where($qb->expr()->in('total.id', $ids))
                 ->getQuery()
                 ->execute();
         }
