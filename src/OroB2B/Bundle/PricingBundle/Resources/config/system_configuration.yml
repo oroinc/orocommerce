@@ -72,6 +72,7 @@ oro_system_configuration:
         oro_b2b_pricing.enabled_currencies:
             data_type: array
             type: oro_currency_selection
+            priority: 200
             options:
                 label: orob2b.pricing.system_configuration.fields.enabled_currencies.label
                 required: true
@@ -81,6 +82,7 @@ oro_system_configuration:
         oro_b2b_pricing.default_currency:
             data_type: string
             type: orob2b_pricing_default_currency_selection
+            priority: 100
             options:
                 label: orob2b.pricing.system_configuration.fields.default_currency.label
                 required: true

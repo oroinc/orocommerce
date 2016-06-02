@@ -108,16 +108,6 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_currency }
 
-    orob2b_pricing.form.extension.default_currency_type:
-        class: 'OroB2B\Bundle\PricingBundle\Form\Extension\SyncCurrencyFormExtension'
-        public: true
-        arguments:
-            - "@oro_config.manager"
-            - '@oro_locale.settings'
-            - "@translator"
-        tags:
-            - { name: form.type_extension, alias: orob2b_pricing_default_currency_selection }
-
     orob2b_pricing.form.type.price_list_schedule:
         class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListScheduleType'
         public: true
@@ -169,5 +159,6 @@ services:
        arguments:
            - '@oro_config.manager'
            - '@oro_locale.settings'
+           - "@translator"
        tags:
            - { name: form.type, alias: orob2b_pricing_default_currency_selection }
