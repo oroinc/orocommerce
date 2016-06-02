@@ -65,7 +65,6 @@ class RequestRepresentativesNotifier
         );
     }
 
-
     /**
      * @param Request $request
      * @return bool

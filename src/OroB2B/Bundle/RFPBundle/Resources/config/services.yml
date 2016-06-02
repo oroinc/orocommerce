@@ -22,7 +22,6 @@ services:
 
     orob2b_rfp.mailer.request_representatives_notifier:
         class: 'OroB2B\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier'
-        public: true
         arguments:
             - "@orob2b_rfp.mailer.processor"
             - "@oro_config.manager"
@@ -55,7 +54,6 @@ services:
     orob2b_rfp.service.request_update_handler:
         class: 'OroB2B\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler'
         parent: oro_form.model.update_handler
-        public: true
         scope: request
         calls:
             - [setRepresentativesNotifier, ['@orob2b_rfp.mailer.request_representatives_notifier']]
