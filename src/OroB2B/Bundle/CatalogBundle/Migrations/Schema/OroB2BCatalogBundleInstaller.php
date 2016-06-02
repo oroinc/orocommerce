@@ -22,7 +22,7 @@ class OroB2BCatalogBundleInstaller implements
     const ORO_B2B_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME = 'orob2b_catalog_cat_short_desc';
     const ORO_B2B_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME = 'orob2b_catalog_cat_long_desc';
     const ORO_B2B_CATALOG_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
-    const ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME ='orob2b_fallback_locale_value';
+    const ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME ='oro_fallback_locale_value';
     const MAX_CATEGORY_IMAGE_SIZE_IN_MB = 10;
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
     const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
@@ -154,7 +154,7 @@ class OroB2BCatalogBundleInstaller implements
     {
         $table = $schema->getTable('orob2b_catalog_category_title');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_fallback_locale_value'),
+            $schema->getTable(self::ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME),
             ['localized_value_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
