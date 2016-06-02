@@ -33,6 +33,8 @@ class OroB2BProductBundleInstaller implements
     const MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB = 5;
 
     const PRODUCT_IMAGE_TABLE_NAME = 'orob2b_product_image';
+    const PRODUCT_IMAGE_TYPE_TABLE_NAME = 'orob2b_product_image_type';
+    const PRODUCT_IMAGE_TO_IMAGE_TYPE_TABLE_NAME = 'orob2b_product_image_to_type';
 
     /** @var ExtendExtension */
     protected $extendExtension;
@@ -88,6 +90,8 @@ class OroB2BProductBundleInstaller implements
         $this->createOroB2BProductVariantLinkTable($schema);
         $this->createOroB2BProductShortDescriptionTable($schema);
         $this->createOroB2BProductImageTable($schema);
+        $this->createOroB2BProductImageTypeTable($schema);
+        $this->createOrob2BProductImageToImageType($schema);
 
         $this->addOroB2BProductForeignKeys($schema);
         $this->addOroB2BProductUnitPrecisionForeignKeys($schema);
@@ -96,6 +100,7 @@ class OroB2BProductBundleInstaller implements
         $this->addOroB2BProductVariantLinkForeignKeys($schema);
         $this->addOroB2BProductShortDescriptionForeignKeys($schema);
         $this->addOroB2BProductImageForeignKeys($schema);
+        $this->addOroB2BProductImageToImageTypeForeignKeys($schema);
 
         $this->updateProductTable($schema);
         $this->addNoteAssociations($schema);
@@ -386,8 +391,30 @@ class OroB2BProductBundleInstaller implements
         $table = $schema->createTable(self::PRODUCT_IMAGE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => true]);
-        $table->addColumn('types', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function createOroB2BProductImageTypeTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::PRODUCT_IMAGE_TYPE_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('type', 'string', ['length' => 255]);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['type'], 'product_image_type__type__uidx');
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function createOroB2BProductImageToImageType(Schema $schema)
+    {
+        $table = $schema->createTable(self::PRODUCT_IMAGE_TO_IMAGE_TYPE_TABLE_NAME);
+        $table->addColumn('product_image_id', 'integer', []);
+        $table->addColumn('product_image_type_id', 'integer', []);
+        $table->setPrimaryKey(['product_image_id', 'product_image_type_id']);
     }
 
     /**
@@ -403,4 +430,25 @@ class OroB2BProductBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addOroB2BProductImageToImageTypeForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::PRODUCT_IMAGE_TO_IMAGE_TYPE_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::PRODUCT_IMAGE_TABLE_NAME),
+            ['product_image_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::PRODUCT_IMAGE_TYPE_TABLE_NAME),
+            ['product_image_type_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
 }

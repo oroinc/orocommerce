@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -17,6 +18,7 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
+use OroB2B\Bundle\ProductBundle\Entity\ProductImageType;
 
 class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -56,8 +58,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
 
         $inventoryStatuses = $this->getAllEnumValuesByCode($manager, 'prod_inventory_status');
 
-        $imageTypeProvider = $this->container->get('oro_layout.provider.image_type');
-        $allImageTypes = array_keys($imageTypeProvider->getImageTypes());
+        $allImageTypes = $this->createImageTypes($manager);
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -95,10 +96,10 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->addDescription($description)
                 ->addShortDescription($shortDescription);
 
-//            $productImage = $this->getProductImageForProductSku($manager, $locator, $row['sku'], $allImageTypes);
-//            if ($productImage) {
-//                $product->addImage($productImage);
-//            }
+            $productImage = $this->getProductImageForProductSku($manager, $locator, $row['sku'], $allImageTypes);
+            if ($productImage) {
+                $product->addImage($productImage);
+            }
 
             $manager->persist($product);
         }
@@ -154,5 +155,24 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         }
 
         return $productImage;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return ArrayCollection
+     */
+    protected function createImageTypes(ObjectManager $manager)
+    {
+        $allImageTypes = [];
+        $imageTypeProvider = $this->container->get('oro_layout.provider.image_type');
+        foreach (array_keys($imageTypeProvider->getImageTypes()) as $imageType) {
+            $imageType = new ProductImageType($imageType);
+            $manager->persist($imageType);
+            $allImageTypes[] = $imageType;
+        }
+
+        $manager->flush();
+
+        return new ArrayCollection($allImageTypes);
     }
 }

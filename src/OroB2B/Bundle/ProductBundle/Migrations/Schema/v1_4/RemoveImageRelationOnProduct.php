@@ -18,6 +18,7 @@ class RemoveImageRelationOnProduct implements
 {
     const PRODUCT_TABLE_NAME = 'orob2b_product';
     const PRODUCT_IMAGE_FIELD_NAME = 'image_id';
+    const PRODUCT_IMAGE_FK_NAME = 'fk_orob2b_product_image_id';
     const PRODUCT_IMAGE_ASSOCCIATION_NAME = 'image';
 
     /**
@@ -40,7 +41,7 @@ class RemoveImageRelationOnProduct implements
     {
         $productClass = $this->extendExtension->getEntityClassByTableName(self::PRODUCT_TABLE_NAME);
         $productTable = $schema->getTable(self::PRODUCT_TABLE_NAME);
-        $productTable->removeForeignKey('fk_orob2b_product_image_id');
+        $productTable->removeForeignKey(self::PRODUCT_IMAGE_FK_NAME);
         $productTable->dropColumn(self::PRODUCT_IMAGE_FIELD_NAME);
 
         $queries->addQuery(

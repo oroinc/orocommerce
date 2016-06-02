@@ -52,7 +52,7 @@ class ProductImage extends ExtendProductImage
      *
      * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductImageType")
      * @ORM\JoinTable(
-     *      name="orob2b_product_image_to_image_type",
+     *      name="orob2b_product_image_to_type",
      *      joinColumns={
      *          @ORM\JoinColumn(name="product_image_id", referencedColumnName="id", onDelete="CASCADE")
      *      },

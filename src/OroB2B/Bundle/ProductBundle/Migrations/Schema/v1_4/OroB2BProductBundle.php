@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ProductBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Schema\SchemaException;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -58,10 +57,14 @@ class OroB2BProductBundle implements
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->createProductImageTable($schema);
-        $this->createProductImageTypeTable($schema);
+        $this->createOroB2BProductImageTable($schema);
+        $this->createOroB2BProductImageTypeTable($schema);
         $this->createOrob2BProductImageToImageType($schema);
 
+        $this->addOroB2BProductImageForeignKeys($schema);
+        $this->addOroB2BProductImageToImageTypeForeignKeys($schema);
+
+        $this->addAttachmentAssociations($schema);
         $this->insertImageTypes($queries);
         $this->migrateImages($queries);
     }
@@ -77,13 +80,57 @@ class OroB2BProductBundle implements
     /**
      * @param Schema $schema
      */
-    protected function createOrob2BProductImageToImageType(Schema $schema)
+    protected function createOroB2BProductImageTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::PRODUCT_IMAGE_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => true]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function createOroB2BProductImageTypeTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::PRODUCT_IMAGE_TYPE_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('type', 'string', ['length' => 255]);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['type'], 'product_image_type__type__uidx');
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function createOroB2BProductImageToImageType(Schema $schema)
     {
         $table = $schema->createTable(self::PRODUCT_IMAGE_TO_IMAGE_TYPE_TABLE_NAME);
         $table->addColumn('product_image_id', 'integer', []);
         $table->addColumn('product_image_type_id', 'integer', []);
         $table->setPrimaryKey(['product_image_id', 'product_image_type_id']);
+    }
 
+    /**
+     * @param Schema $schema
+     */
+    protected function addOroB2BProductImageForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::PRODUCT_IMAGE_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::PRODUCT_TABLE_NAME),
+            ['product_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addOroB2BProductImageToImageTypeForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::PRODUCT_IMAGE_TO_IMAGE_TYPE_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(self::PRODUCT_IMAGE_TABLE_NAME),
             ['product_image_id'],
@@ -100,23 +147,9 @@ class OroB2BProductBundle implements
 
     /**
      * @param Schema $schema
-     * @throws SchemaException
      */
-    protected function createProductImageTable(Schema $schema)
+    protected function addAttachmentAssociations(Schema $schema)
     {
-        $table = $schema->createTable(self::PRODUCT_IMAGE_TABLE_NAME);
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('product_id', 'integer', ['notnull' => true]);
-        $table->addColumn('types', 'array', ['notnull' => false]);
-        $table->setPrimaryKey(['id']);
-
-        $table->addForeignKeyConstraint(
-            $schema->getTable(self::PRODUCT_TABLE_NAME),
-            ['product_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-
         $this->attachmentExtension->addImageRelation(
             $schema,
             self::PRODUCT_IMAGE_TABLE_NAME,
@@ -126,19 +159,6 @@ class OroB2BProductBundle implements
             ],
             self::MAX_PRODUCT_IMAGE_SIZE_IN_MB
         );
-    }
-
-    /**
-     * @param Schema $schema
-     * @throws SchemaException
-     */
-    protected function createProductImageTypeTable(Schema $schema)
-    {
-        $table = $schema->createTable(self::PRODUCT_IMAGE_TYPE_TABLE_NAME);
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('type', 'string', ['length' => 255]);
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['type'], 'product_image_type__type__uidx');
     }
 
     /**
@@ -159,18 +179,18 @@ class OroB2BProductBundle implements
             )
         );
 
-        $migrateImageTypesSqlMask = 'INSERT INTO %1$s (product_image_id, product_image_type_id)
-                                     SELECT p.image_id, pit.id FROM %3$s p
-                                     JOIN %4$s pit
-                                     WHERE p.%2$s IS NOT NULL';
+        $migrateImageTypesSqlMask = 'INSERT INTO %s (product_image_id, product_image_type_id)
+                                     SELECT product.image_id, image_type.id FROM %s product
+                                     CROSS JOIN %s image_type
+                                     WHERE product.%s IS NOT NULL';
 
         $queries->addPostQuery(
             sprintf(
                 $migrateImageTypesSqlMask,
                 self::PRODUCT_IMAGE_TO_IMAGE_TYPE_TABLE_NAME,
-                self::PRODUCT_IMAGE_FIELD_NAME,
                 self::PRODUCT_TABLE_NAME,
-                self::PRODUCT_IMAGE_TYPE_TABLE_NAME
+                self::PRODUCT_IMAGE_TYPE_TABLE_NAME,
+                self::PRODUCT_IMAGE_FIELD_NAME
             )
         );
     }
@@ -182,11 +202,10 @@ class OroB2BProductBundle implements
     {
         $imageTypeProvider = $this->container->get('oro_layout.provider.image_type');
 
-
         foreach ($imageTypeProvider->getImageTypes() as $imageType) {
             $queries->addPostQuery(
                 sprintf(
-                    'INSERT INTO %s (type) VALUES (\'%s\')',
+                    "INSERT INTO %s (type) VALUES ('%s')",
                     self::PRODUCT_IMAGE_TYPE_TABLE_NAME,
                     $imageType->getName()
                 )
