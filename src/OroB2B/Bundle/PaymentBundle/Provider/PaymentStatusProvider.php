@@ -106,9 +106,10 @@ class PaymentStatusProvider
      */
     protected function hasSuccessfulTransactions(ArrayCollection $paymentTransactions, Subtotal $total)
     {
-        $transactionAmount = $this->getTransactionAmounts($this->getSuccessfulTransactions($paymentTransactions));
+        $successfulTransactions = $this->getSuccessfulTransactions($paymentTransactions);
+        $transactionAmount = $this->getTransactionAmounts($successfulTransactions);
 
-        return $transactionAmount >= $total->getAmount();
+        return $successfulTransactions->count() && $transactionAmount >= $total->getAmount();
     }
 
     /**
@@ -121,7 +122,7 @@ class PaymentStatusProvider
         $successfulTransactions = $this->getSuccessfulTransactions($paymentTransactions);
         $transactionAmount = $this->getTransactionAmounts($successfulTransactions);
 
-        return $successfulTransactions->count() > 0 && $transactionAmount < $total->getAmount();
+        return $successfulTransactions->count() && $transactionAmount < $total->getAmount();
     }
 
     /**
