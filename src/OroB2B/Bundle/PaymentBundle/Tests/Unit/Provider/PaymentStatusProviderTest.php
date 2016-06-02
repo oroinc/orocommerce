@@ -212,12 +212,11 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
                 100,
                 PaymentStatusProvider::PENDING,
             ],
-            'pending if has successful 0amt authorize ' => [
+            'pending if source validation transaction clone' => [
                 [
-                    $sourceTransaction,
                     (new PaymentTransaction())
                         ->setSuccessful(true)
-                        ->setActive(false)
+                        ->setActive(true)
                         ->setReference($sourceReference)
                         ->setSourcePaymentTransaction($sourceTransaction)
                         ->setAction(PaymentMethodInterface::AUTHORIZE)
@@ -225,6 +224,19 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 100,
                 PaymentStatusProvider::PENDING,
+            ],
+            'authorized if source validation transaction but not cloned' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(true)
+                        ->setReference('own_reference')
+                        ->setSourcePaymentTransaction($sourceTransaction)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE)
+                        ->setAmount(100),
+                ],
+                100,
+                PaymentStatusProvider::AUTHORIZED,
             ],
             'declined if has unsuccessful and not active authorize' => [
                 [

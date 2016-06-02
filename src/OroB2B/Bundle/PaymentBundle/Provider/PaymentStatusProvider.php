@@ -133,8 +133,7 @@ class PaymentStatusProvider
         return false === $paymentTransactions
             ->filter(
                 function (PaymentTransaction $paymentTransaction) {
-                    $source = $paymentTransaction->getSourcePaymentTransaction();
-                    if ($source && $source->getReference() == $paymentTransaction->getReference()) {
+                    if ($paymentTransaction->isClone()) {
                         return false;
                     }
 
