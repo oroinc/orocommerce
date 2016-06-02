@@ -3,7 +3,7 @@ parameters:
     orob2b_account.entity.account_address.class: OroB2B\Bundle\AccountBundle\Entity\AccountAddress
     orob2b_account.entity.account_group.class: OroB2B\Bundle\AccountBundle\Entity\AccountGroup
     orob2b_account.entity.account_user.class: OroB2B\Bundle\AccountBundle\Entity\AccountUser
-    orob2b_account.entity.account_user_currency.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserCurrency
+    orob2b_account.entity.account_user_settings.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings
     orob2b_account.entity.account_user_address.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress
     orob2b_account.entity.account_user_role.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserRole
     orob2b_account.entity.audit.class: OroB2B\Bundle\AccountBundle\Entity\Audit
