@@ -1,28 +1,33 @@
 services:
     # Converter
     orob2b_pricing.importexport.data_converter.product_price:
+        public: false
         parent: oro_importexport.data_converter.configurable
         class: 'OroB2B\Bundle\PricingBundle\ImportExport\DataConverter\ProductPriceDataConverter'
 
     # Strategy
     orob2b_pricing.importexport.strategy.product_price.add_or_replace:
         class: 'OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy'
+        public: false
         parent: oro_importexport.strategy.configurable_add_or_replace
         calls:
             - [setTranslator, ['@translator']]
 
     orob2b_pricing.importexport.strategy.product_price.reset:
         class: 'OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceResetStrategy'
+        public: false
         parent: orob2b_pricing.importexport.strategy.product_price.add_or_replace
 
     # Template Fixture
     orob2b_pricing.importexport.template_fixture.product_price:
         class: 'OroB2B\Bundle\PricingBundle\ImportExport\TemplateFixture\PriceListFixture'
+        public: false
         tags:
             - { name: oro_importexport.template_fixture }
 
     # Import processor
     orob2b_pricing.importexport.processor.import.product_price:
+        public: false
         parent: oro_importexport.processor.import_abstract
         calls:
              - [setDataConverter, ['@orob2b_pricing.importexport.data_converter.product_price']]
@@ -32,6 +37,7 @@ services:
             - { name: oro_importexport.processor, type: import_validation, entity: '%orob2b_pricing.entity.product_price.class%', alias: orob2b_pricing_product_price.add_or_replace }
 
     orob2b_pricing.importexport.processor.import.product_price.reset:
+        public: false
         parent: oro_importexport.processor.import_abstract
         calls:
              - [setDataConverter, ['@orob2b_pricing.importexport.data_converter.product_price']]
@@ -42,6 +48,7 @@ services:
 
     # Export processor
     orob2b_pricing.importexport.processor.export.product_price:
+        public: false
         parent: oro_importexport.processor.export_abstract
         calls:
             - [setDataConverter, ['@orob2b_pricing.importexport.data_converter.product_price']]
@@ -50,11 +57,13 @@ services:
 
     # Reader
     orob2b_pricing.importexport.reader.price_list_product_prices:
+        public: false
         parent: oro_importexport.reader.entity
         class: 'OroB2B\Bundle\PricingBundle\ImportExport\Reader\PriceListProductPricesReader'
 
     # Export template
     orocrm_contact.importexport.processor.export_template.product_price:
+        public: false
         parent: oro_importexport.processor.export_abstract
         calls:
             - [setDataConverter, ['@orob2b_pricing.importexport.data_converter.product_price']]
@@ -64,4 +73,5 @@ services:
     # Writer
     orob2b_pricing.importexport.writer.product_price:
         class: 'OroB2B\Bundle\PricingBundle\ImportExport\Writer\ProductPriceWriter'
+        public: false
         parent: oro_integration.writer.persistent_batch_writer

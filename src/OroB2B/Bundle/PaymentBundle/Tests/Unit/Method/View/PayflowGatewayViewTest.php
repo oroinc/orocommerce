@@ -31,6 +31,13 @@ class PayflowGatewayViewTest extends AbstractPayflowGatewayViewTest
         return Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY;
     }
 
+    /** {@inheritdoc} */
+
+    protected function getAuthForRequiredAmountKey()
+    {
+        return Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY;
+    }
+
     public function testGetOrder()
     {
         $order = '100';
