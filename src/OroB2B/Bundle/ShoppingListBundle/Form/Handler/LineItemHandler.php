@@ -93,7 +93,6 @@ class LineItemHandler
                 );
                 $lineItem->getShoppingList()->addLineItem($lineItem);
             }
-            $this->shoppingListManager->recalculateSubtotals($lineItem->getShoppingList(), false);
             $manager->flush();
             $manager->commit();
             return true;

@@ -6,16 +6,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
-
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
-class TotalProcessorProvider
+class TotalProcessorProvider extends AbstractSubtotalProvider
 {
     const NAME = 'orob2b_pricing.subtotal_total';
     const TYPE = 'total';
-    const DEFAULT_CURRENCY = 'USD';
     const SUBTOTALS = 'subtotals';
 
     /** @var SubtotalProviderRegistry */
@@ -34,12 +33,15 @@ class TotalProcessorProvider
      * @param SubtotalProviderRegistry $subtotalProviderRegistry
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
+     * @param UserCurrencyManager $currencyManager
      */
     public function __construct(
         SubtotalProviderRegistry $subtotalProviderRegistry,
         TranslatorInterface $translator,
-        RoundingServiceInterface $rounding
+        RoundingServiceInterface $rounding,
+        UserCurrencyManager $currencyManager
     ) {
+        parent::__construct($currencyManager);
         $this->subtotalProviderRegistry = $subtotalProviderRegistry;
         $this->translator = $translator;
         $this->rounding = $rounding;
@@ -88,18 +90,19 @@ class TotalProcessorProvider
         $total->setType(self::TYPE);
         $translation = sprintf('orob2b.pricing.subtotals.%s.label', $total->getType());
         $total->setLabel($this->translator->trans($translation));
+        $baseCurrency = $this->getBaseCurrency($entity);
+        $total->setCurrency($baseCurrency);
 
         $totalAmount = 0.0;
         foreach ($this->getSubtotals($entity) as $subtotal) {
             $rowTotal = $subtotal->getAmount();
 
-            if ($this->getBaseCurrency($entity) !== $subtotal->getCurrency()) {
-                $rowTotal *= $this->getExchangeRate($subtotal->getCurrency(), $this->getBaseCurrency($entity));
+            if ($baseCurrency !== $subtotal->getCurrency()) {
+                $rowTotal *= $this->getExchangeRate($subtotal->getCurrency(), $baseCurrency);
             }
             $totalAmount = $this->calculateTotal($subtotal->getOperation(), $rowTotal, $totalAmount);
         }
         $total->setAmount($this->rounding->round($totalAmount));
-        $total->setCurrency($this->getBaseCurrency($entity));
 
         return $total;
     }
@@ -131,20 +134,6 @@ class TotalProcessorProvider
         }
 
         return $this->subtotals[$hash];
-    }
-
-    /**
-     * @param $entity
-     *
-     * @return string
-     */
-    protected function getBaseCurrency($entity)
-    {
-        if (!$entity instanceof CurrencyAwareInterface) {
-            return self::DEFAULT_CURRENCY;
-        } else {
-            return $entity->getCurrency();
-        }
     }
 
     /**

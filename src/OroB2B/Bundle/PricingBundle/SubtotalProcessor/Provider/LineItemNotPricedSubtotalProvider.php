@@ -22,6 +22,7 @@ use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
@@ -54,15 +55,19 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
      * @param RoundingServiceInterface $rounding
      * @param ProductPriceProvider $productPriceProvider
      * @param DoctrineHelper $doctrineHelper
-     * @param PriceListTreeHandler $priceListTreeHandler,
+     * @param PriceListTreeHandler $priceListTreeHandler ,
+     * @param UserCurrencyManager $currencyManager
      */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
         ProductPriceProvider $productPriceProvider,
         DoctrineHelper $doctrineHelper,
-        PriceListTreeHandler $priceListTreeHandler
+        PriceListTreeHandler $priceListTreeHandler,
+        UserCurrencyManager $currencyManager
     ) {
+        parent::__construct($currencyManager);
+
         $this->translator = $translator;
         $this->rounding = $rounding;
         $this->productPriceProvider = $productPriceProvider;

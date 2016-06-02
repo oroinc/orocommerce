@@ -5,21 +5,21 @@ namespace OroB2B\Bundle\PricingBundle\Layout\DataProvider;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
 
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class FrontendAccountUserCurrencyProvider implements DataProviderInterface
 {
     /**
-     * @var UserCurrencyProvider
+     * @var UserCurrencyManager
      */
-    protected $userCurrencyProvider;
+    protected $userCurrencyManager;
 
     /**
-     * @param UserCurrencyProvider $userCurrencyProvider
+     * @param UserCurrencyManager $userCurrencyManager
      */
-    public function __construct(UserCurrencyProvider $userCurrencyProvider)
+    public function __construct(UserCurrencyManager $userCurrencyManager)
     {
-        $this->userCurrencyProvider = $userCurrencyProvider;
+        $this->userCurrencyManager = $userCurrencyManager;
     }
 
     /**
@@ -35,6 +35,6 @@ class FrontendAccountUserCurrencyProvider implements DataProviderInterface
      */
     public function getData(ContextInterface $context)
     {
-        return $this->userCurrencyProvider->getUserCurrency();
+        return $this->userCurrencyManager->getUserCurrency();
     }
 }

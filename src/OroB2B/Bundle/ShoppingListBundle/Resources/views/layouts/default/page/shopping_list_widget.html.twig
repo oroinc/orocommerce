@@ -68,7 +68,7 @@
             <tr>
                 <td>{{ 'orob2b.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}</td>
                 <td class="text-right">
-                    {{ 'orob2b.frontend.shoppinglist.view.subtotal.label'|trans }} {{ shoppingList.subtotal|oro_format_currency({'currency': shoppingList.currency}) }}
+                    {{ 'orob2b.frontend.shoppinglist.view.subtotal.label'|trans }} {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
                 </td>
             </tr>
             </tbody>
