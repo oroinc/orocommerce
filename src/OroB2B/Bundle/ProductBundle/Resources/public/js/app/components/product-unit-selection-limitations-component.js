@@ -18,12 +18,15 @@ define(function (require) {
         options: {
             unitsAttribute: 'units',
             deleteMessage: 'orob2b.product.productunit.delete.confirmation',
+            errorTitle: 'orob2b.product.productunit.delete.error.title',
+            errorMessage: 'orob2b.product.productunit.delete.error.message',
             addButtonSelector: 'a.add-list-item',
             selectParent: '.oro-multiselect-holder',
             dataContent: '*[data-content]',
             unitSelect: 'select[name$="[unit]"]',
             hiddenUnitClass: 'hidden-unit',
             parentTableSelector: '',
+            pricesUnitsSelector: "select[name^='orob2b_product[prices]'][name$='[unit]']",
             precisions: {}
         },
 
@@ -64,8 +67,14 @@ define(function (require) {
          */
         onRemoveRow: function (e) {
             e.stopPropagation();
-
-            $(e.target).closest(this.options.dataContent).trigger('content:remove');
+            var option = $(e.target).closest(this.options.selectParent).find(this.options.unitSelect + ' option:selected');
+            var units_with_prices = this.getUnitsWithPrices();
+            var val = option.val();
+            if (units_with_prices[val] != undefined) {
+                this.showError();
+            } else {
+                $(e.target).closest(this.options.dataContent).trigger('content:remove');
+            }
         },
 
         /**
@@ -228,6 +237,26 @@ define(function (require) {
         },
 
         /**
+         * Show error
+         *
+         * @param {jQuery.Event} e
+         */
+        showError: function () {
+            if (!this.error) {
+                this.error = new DeleteConfirmation({
+                    title: __(this.options.errorTitle),
+                    content: __(this.options.errorMessage),
+                    allowOk: false
+                });
+            }
+
+            this.error
+                .off('ok')
+                .on('ok')
+                .open();
+        },
+
+        /**
          * @param {Object} data with structure {value: value, text: text}
          */
         addData: function (data) {
@@ -265,6 +294,17 @@ define(function (require) {
         
         getPrimaryData: function () {
            return $(':data(' + this.options.unitsAttribute + ')').data(this.options.unitsAttribute) || {};
+        },
+        
+        getUnitsWithPrices: function () {
+            var selects = $(this.options.pricesUnitsSelector);
+            var units_with_price = {};
+            _.each(selects, function (select) {
+                var selected = $(select).find('option:selected');
+                units_with_price[selected.val()] = selected.text();
+            });
+
+            return units_with_price;
         },
 
         /**

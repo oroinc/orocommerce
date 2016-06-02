@@ -6,12 +6,14 @@
             <table>
                 <tr>
                     <td>{{ form_widget(form.unit, { 'attr': {'style': 'width: 100px'}}) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled, { 'attr': {'style': 'width: 100px'}}) }}{% endif %}</td>
+                    <td><div class="control-label"><label>{{ 'orob2b.product.productunitprecision.precision.label'|trans }}<em>&nbsp;</em></label></div></td>
                     <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision', 'style': 'width: 40px'} }) }}</td>
                     <td>{{ form_widget(form.conversionRate) }}</td>
                     <td>{{ form_widget(form.sell) }}</td>
                 </tr>
                 <tr>
                     <td>{{ form_errors(form.unit) }}</td>
+                    <td></td>
                     <td>{{ form_errors(form.precision) }}</td>
                 </tr>
             </table>

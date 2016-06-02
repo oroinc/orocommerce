@@ -2,6 +2,8 @@ orob2b:
     product:
         productunit:
             delete.confirmation: Are you sure you want to delete this unit precision?
+            delete.error.title: Error
+            delete.error.message: You can't delete unit precisions with prices. Please change this unit in prices first.
 
         product_unit.each:
             label:
