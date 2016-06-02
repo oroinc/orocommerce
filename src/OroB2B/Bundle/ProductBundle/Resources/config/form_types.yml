@@ -30,15 +30,15 @@ services:
             - { name: form.type, alias: orob2b_product_unit_selection }
 
     orob2b_product.form.type.frontend_product_unit_selection:
-            class: 'OroB2B\Bundle\ProductBundle\Form\Type\FrontendProductUnitSelectionType'
-            public: true
-            arguments:
-                - "@orob2b_product.formatter.product_unit_label"
-                - "@translator"
-            calls:
-                - [setEntityClass, ['%orob2b_product.entity.product_unit.class%']]
-            tags:
-                - { name: form.type, alias: orob2b_frontend_product_unit_selection }
+        class: 'OroB2B\Bundle\ProductBundle\Form\Type\FrontendProductUnitSelectionType'
+        public: true
+        arguments:
+            - "@orob2b_product.formatter.product_unit_label"
+            - "@translator"
+        calls:
+            - [setEntityClass, ['%orob2b_product.entity.product_unit.class%']]
+        tags:
+            - { name: form.type, alias: orob2b_frontend_product_unit_selection }
 
     orob2b_product.form.type.quantity_type:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\QuantityType'
@@ -49,12 +49,12 @@ services:
             - { name: form.type, alias: orob2b_quantity }
 
     orob2b_product.form.type.product_primary_unit_precision:
-            class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
-            public: true
-            calls:
-                - [setDataClass, ['%orob2b_product.entity.product_unit_precision.class%']]
-            tags:
-                - { name: form.type, alias: orob2b_product_primary_unit_precision }
+        class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
+        public: true
+        calls:
+            - [setDataClass, ['%orob2b_product.entity.product_unit_precision.class%']]
+        tags:
+            - { name: form.type, alias: orob2b_product_primary_unit_precision }
 
     orob2b_product.form.type.product_unit_precision:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType'

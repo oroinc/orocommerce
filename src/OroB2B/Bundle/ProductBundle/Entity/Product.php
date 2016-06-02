@@ -53,7 +53,10 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * )
  * @ORM\HasLifecycleCallbacks()
  *
- * @SuppressWarnings(PHPMD)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Product extends ExtendProduct implements OrganizationAwareInterface, \JsonSerializable
 {

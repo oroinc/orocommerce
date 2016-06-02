@@ -121,6 +121,7 @@ class OroB2BProductBundleInstaller implements
         $table->addIndex(['created_at'], 'idx_orob2b_product_created_at', []);
         $table->addIndex(['updated_at'], 'idx_orob2b_product_updated_at', []);
         $table->addIndex(['sku'], 'idx_orob2b_product_sku', []);
+        $table->addUniqueIndex(['primary_unit_precision_id'], 'idx_orob2b_product_primary_unit_precision_id');
     }
 
     /**
@@ -195,6 +196,12 @@ class OroB2BProductBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_business_unit'),
             ['business_unit_owner_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::PRODUCT_UNIT_PRECISION_TABLE_NAME),
+            ['primary_unit_precision_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
