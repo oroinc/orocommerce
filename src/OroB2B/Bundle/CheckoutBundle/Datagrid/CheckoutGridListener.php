@@ -2,12 +2,16 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 
+use Symfony\Bridge\Doctrine\RegistryInterface;
+
 use Doctrine\Common\Cache\Cache;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 /**
  * Add total and subtotal fields to grid where root entity is checkout
@@ -32,15 +36,31 @@ class CheckoutGridListener
     protected $cache;
 
     /**
+     * @var RegistryInterface
+     */
+    protected $doctrine;
+
+    /**
+     * @var UserCurrencyManager
+     */
+    protected $currencyManager;
+
+    /**
      * @param ConfigProvider $configProvider
      * @param EntityFieldProvider $fieldProvider
+     * @param RegistryInterface $doctrine
+     * @param UserCurrencyManager $currencyManager
      */
     public function __construct(
         ConfigProvider $configProvider,
-        EntityFieldProvider $fieldProvider
+        EntityFieldProvider $fieldProvider,
+        RegistryInterface $doctrine,
+        UserCurrencyManager $currencyManager
     ) {
         $this->configProvider = $configProvider;
         $this->fieldProvider = $fieldProvider;
+        $this->doctrine = $doctrine;
+        $this->currencyManager = $currencyManager;
     }
 
     /**
@@ -50,7 +70,7 @@ class CheckoutGridListener
     {
         $this->cache = $cache;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -58,15 +78,15 @@ class CheckoutGridListener
     {
         $config = $event->getConfig();
 
-        if ($this->cache && $this->cache->contains($config->getName())) {
-            $updates = $this->cache->fetch($config->getName());
-        } else {
-            $updates = $this->getGridUpdates($config);
+//        if ($this->cache && $this->cache->contains($config->getName())) {
+//            $updates = $this->cache->fetch($config->getName());
+//        } else {
+        $updates = $this->getGridUpdates($config);
 
-            if ($this->cache) {
-                $this->cache->save($config->getName(), $updates);
-            }
+        if ($this->cache) {
+            $this->cache->save($config->getName(), $updates);
         }
+//        }
 
         if ($updates) {
             $config->offsetAddToArrayByPath('[source][query][select]', $updates['selects']);
@@ -107,6 +127,19 @@ class CheckoutGridListener
                 if (!empty($metadata['currency'])) {
                     $currencyFields[] = $totalHolderAlias . '.' . $metadata['currency'];
                 }
+                if (!empty($metadata['joinedTotals'])) {
+                    $joinConf = $metadata['joinedTotals'];
+                    $updates['joins'][] = [
+                        'join' => $totalHolderAlias . '.' . $joinConf['field'],
+                        'alias' => $joinConf['alias'],
+                        'conditionType' => 'WITH',
+                        'condition' => "{$joinConf['currency']} = '{$this->currencyManager->getUserCurrency()}'"
+                    ];
+                    $currencyFields[] = $joinConf['currency'];
+                    if (isset($joinConf['subtotal'])) {
+                        $subtotalFields[] = $joinConf['subtotal'];
+                    }
+                }
             }
 
             if ($totalFields) {
@@ -117,12 +150,6 @@ class CheckoutGridListener
                     'frontend_type' => 'html',
                     'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
                 ];
-
-                $updates['filters']['total'] = [
-                    'type' => 'number',
-                    'data_name' => 'total'
-                ];
-                $updates['sorters']['total'] = ['data_name' => 'total'];
             }
             if ($subtotalFields) {
                 $updates['selects'][] = sprintf('COALESCE(%s) as subtotal', implode(',', $subtotalFields));
@@ -186,6 +213,33 @@ class CheckoutGridListener
     {
         $metadata = [];
         $fields = $this->fieldProvider->getFields($entityName);
+
+        $ec = $this->configProvider->getConfig($entityName);
+        if ($ec->has('totals_by_currency_collection')) {
+            $joinConf = $ec->get('totals_by_currency_collection');
+            if (empty($joinConf['field'])) {
+                return [];
+            }
+
+            $em = $this->doctrine->getManagerForClass($entityName);
+            $eMetadata = $em->getClassMetadata($entityName);
+            if (!$eMetadata->hasAssociation($joinConf['field'])) {
+                return [];
+            }
+            $tEntityName = $eMetadata->getAssociationTargetClass($joinConf['field']);
+            $tMetadata = $em->getClassMetadata($tEntityName);
+
+            $alias = md5($tEntityName);
+            $metadata['joinedTotals'] = [
+                'field' => $joinConf['field'],
+                'alias' => $alias,
+                'currency' => $alias . '.' . $joinConf['currency'],
+            ];
+            if (isset($joinConf['subtotal'])) {
+                $metadata['joinedTotals']['subtotal'] = $alias . '.' . $joinConf['subtotal'];
+            }
+        }
+
         if (!$fields) {
             return $metadata;
         }

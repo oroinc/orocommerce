@@ -33,7 +33,7 @@ class ShoppingListTotal
     /**
      * @var ShoppingList
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList", inversedBy="totals")
      * @ORM\JoinColumn(name="shopping_list_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $shoppingList;

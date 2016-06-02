@@ -38,7 +38,12 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      routeView="orob2b_shopping_list_view",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-shopping-cart"
+ *              "icon"="icon-shopping-cart",
+ *              "totals_by_currency_collection"={
+ *                  "field"="totals",
+ *                  "currency"="currency",
+ *                  "subtotal"="subtotalValue"
+ *              }
  *          },
  *          "ownership"={
  *              "frontend_owner_type"="FRONTEND_USER",
@@ -141,6 +146,18 @@ class ShoppingList extends ExtendShoppingList implements
     protected $current = false;
 
     /**
+     * @var ArrayCollection|ShoppingListTotal[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal",
+     *      mappedBy="shoppingList",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     **/
+    protected $totals;
+
+    /**
      * @var Subtotal
      */
     protected $subtotal;
@@ -153,6 +170,7 @@ class ShoppingList extends ExtendShoppingList implements
         parent::__construct();
 
         $this->lineItems = new ArrayCollection();
+        $this->totals = new ArrayCollection();
     }
 
     /**
@@ -246,6 +264,43 @@ class ShoppingList extends ExtendShoppingList implements
     public function getLineItems()
     {
         return $this->lineItems;
+    }
+
+    /**
+     * @param ShoppingListTotal $item
+     *
+     * @return $this
+     */
+    public function addTotal(ShoppingListTotal $item)
+    {
+        if (!$this->totals->contains($item)) {
+            $item->setShoppingList($this);
+            $this->totals->add($item);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ShoppingListTotal $item
+     *
+     * @return $this
+     */
+    public function removeTotal(ShoppingListTotal $item)
+    {
+        if ($this->totals->contains($item)) {
+            $this->totals->removeElement($item);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|ShoppingListTotal[]
+     */
+    public function getTotals()
+    {
+        return $this->totals;
     }
 
     /**
