@@ -10,7 +10,6 @@ data:
                 - 'bundles/orob2bfrontend/default/vendors/bootstrap/css/bootstrap.min.css'
                 - 'bundles/orob2bfrontend/default/vendors/fontawesome/css/font-awesome.min.css'
                 - 'bundles/orob2bfrontend/default/css/chosen.min.css'
-                - 'bundles/orob2bfrontend/default/css/bootstrap-datepicker.min.css'
                 - 'bundles/orob2bfrontend/default/less/styles.less'
             filters: ['cssrewrite', 'cssmin']
             output: 'css/layout/default/styles.css'

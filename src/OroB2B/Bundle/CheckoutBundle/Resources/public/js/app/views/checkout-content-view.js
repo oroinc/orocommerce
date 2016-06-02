@@ -35,7 +35,7 @@ define(function(require) {
                 mediator.trigger('scrollable-table:reload');
 
                 if (!_.isObject(params)) {
-                    return false;
+                    return;
                 }
 
                 if (params.isOpen) {

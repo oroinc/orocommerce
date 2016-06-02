@@ -1,8 +1,7 @@
 .expand-text {
-  line-height: @line-height;
+  height: @font-size;
 
-  display: none;
-
+  overflow: hidden;
 
   &__trigger {
     display: inline-block;
@@ -36,7 +35,8 @@
   }
 
   &.init {
-    display: block;
+    height: auto;
+    overflow: inherit;
   }
 
   &.open {

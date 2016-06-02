@@ -56,11 +56,9 @@
     {% set workfowItem = checkout.workflowItem %}
     <div{{ block('block_attributes') }}>
         <div class="checkout-order-summary__tab collapse-view {% if app.request.cookies.has('order-tab:state') %}expanded{% endif %}"
-             data-tab
              data-page-component-module="oroui/js/app/components/jquery-widget-component"
              data-page-component-options="{{ {
                  widgetModule: 'orob2bfrontend/default/js/widgets/collapse-widget',
-                 widgetName: 'collapseWidget',
                  animationSpeed: 0
              }|json_encode() }}"
         >

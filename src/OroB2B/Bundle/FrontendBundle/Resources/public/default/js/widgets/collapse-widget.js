@@ -1,18 +1,13 @@
 define(['jquery', 'jquery-ui'], function($) {
     'use strict';
 
-    /**
-     * Condition builder widget
-     */
     $.widget('oroui.collapseWidget', {
-
         options: {
             trigger: '[data-collapse-trigger]',
-            containerCollapse: '[data-collapse-container]',
+            container: '[data-collapse-container]',
             open: false,
             openClass: 'expanded',
-            animationSpeed: 250,
-            animationClass: 'animate'
+            animationSpeed: 250
         },
 
         _create: function() {
@@ -22,10 +17,10 @@ define(['jquery', 'jquery-ui'], function($) {
 
         _init: function() {
             this.$trigger = this.$el.find(this.options.trigger);
-            this.$containerCollapse = this.$el.find(this.options.containerCollapse);
+            this.$container = this.$el.find(this.options.container);
 
             if (this.options.open) {
-                this.$containerCollapse.addClass(this.options.openClass);
+                this.$el.addClass(this.options.openClass);
             }
 
             this.$el.addClass('init');
@@ -41,30 +36,31 @@ define(['jquery', 'jquery-ui'], function($) {
 
         _toggle: function(event) {
             var self = this;
-            var $this = $(event.currentTarget);
+            var $trigger = $(event.currentTarget);
+            var $container = this.$container;
 
-            if ($this.attr('href')) {
+            if ($trigger.attr('href')) {
                 event.preventDefault();
             }
 
-            if (this.$containerCollapse.is(':animated')) {
+            if ($container.is(':animated')) {
                 return false;
             }
 
-            this.$containerCollapse
-                .slideToggle(this.options.animationSpeed, function() {
-                    var $that = $(this);
-                    var isOpen = $that.is(':visible');
-                    var params = {
-                        isOpen: isOpen,
-                        container: self.$el,
-                        containerCollapse: self.$containerCollapse,
-                        currentTrigger: $this
-                    };
+            $container.slideToggle(this.options.animationSpeed, function() {
+                var isOpen = $(this).is(':visible');
+                var params = {
+                    isOpen: isOpen,
+                    $el: self.$el,
+                    $rigger: $trigger,
+                    $container: $container
+                };
 
-                    self.$el.toggleClass(self.options.openClass, isOpen);
-                    $this.trigger('collapse:toggle', params);
-                });
+                self.$el.toggleClass(self.options.openClass, isOpen);
+                $trigger.trigger('collapse:toggle', params);
+            });
         }
     });
+
+    return 'collapseWidget';
 });

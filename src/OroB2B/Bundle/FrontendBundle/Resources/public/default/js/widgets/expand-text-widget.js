@@ -1,11 +1,7 @@
 define(['jquery', 'jquery-ui'], function($) {
     'use strict';
 
-    /**
-     * Condition builder widget
-     */
     $.widget('oroui.expandLongTexWidget', {
-
         options: {
             maxLength: 80,
             clipSymbols: ' ...',
@@ -30,22 +26,22 @@ define(['jquery', 'jquery-ui'], function($) {
 
         _init: function() {
             var text = this.$el.text().trim();
-            var $content = this._createContainer(null, this.contentClass);
-
-            if (text.length > this.options.maxLength) {
-                var shortText = text.substr(0, this.options.maxLength) + this.options.clipSymbols;
-                var $trigger = this._createContainer('span', this.triggerClass)
-                                    .append(this._createContainer('i', this.options.iconClass));
-                var $shortContent = this._createContainer('span', this.contentShoerClass, shortText);
-                var $longContent = this._createContainer('span', this.contentLongClass, text);
-
-                $content
-                    .append($trigger)
-                    .append($shortContent)
-                    .append($longContent);
-            } else {
-                $content.append(text);
+            if (text.length <= this.options.maxLength) {
+                this.$el.text(text);
+                return;
             }
+
+            var shortText = text.substr(0, this.options.maxLength) + this.options.clipSymbols;
+            var $trigger = this._createNode('span', this.triggerClass)
+                .append(this._createNode('i', this.options.iconClass));
+            var $shortContent = this._createNode('span', this.contentShoerClass, shortText);
+            var $longContent = this._createNode('span', this.contentLongClass, text);
+
+            var $content = this._createNode('div', this.contentClass);
+            $content
+                .append($trigger)
+                .append($shortContent)
+                .append($longContent);
 
             this.$el
                 .html($content)
@@ -64,22 +60,15 @@ define(['jquery', 'jquery-ui'], function($) {
 
         _onClick: function(event) {
             event.preventDefault();
-
             this.$el.toggleClass(this.options.openClass);
         },
 
-        _createContainer: function(nodeName, className, content) {
-            var node = nodeName || 'div';
-            var $node = $('<' + node + '/>');
-
-            if (className) {
-                $node.addClass(className);
-            }
-
-            if (content) {
-                $node.html(content);
-            }
-            return $node;
+        _createNode: function(tag, className, content) {
+            return $('<' + tag + '/>')
+                .addClass(className || '')
+                .html(content || '');
         }
     });
+
+    return 'expandLongTexWidget';
 });
