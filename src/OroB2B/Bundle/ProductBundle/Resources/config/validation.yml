@@ -80,9 +80,6 @@ OroB2B\Bundle\ProductBundle\Entity\ProductImage:
     constraints:
         - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImage: ~
     properties:
-        types:
-            - Type:
-                type: array
         product:
             - NotBlank: ~
 
