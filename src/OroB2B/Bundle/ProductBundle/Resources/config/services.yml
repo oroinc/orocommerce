@@ -4,6 +4,7 @@ parameters:
     orob2b_product.entity.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision
     orob2b_product.entity.product_variant_link.class: OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink
     orob2b_product.entity.product_image.class: OroB2B\Bundle\ProductBundle\Entity\ProductImage
+    orob2b_product.entity.product_image_type.class: OroB2B\Bundle\ProductBundle\Entity\ProductImageType
 
     orob2b_product.event_listener.scoped_product_select_db_query.common_class: OroB2B\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener
 

@@ -12,7 +12,7 @@ data:
             listing:
                 label: orob2b.product.productimage.type.listing.label
                 dimensions: ~
-                max_number: 2
+                max_number: 1
     assets:
         styles:
             inputs:

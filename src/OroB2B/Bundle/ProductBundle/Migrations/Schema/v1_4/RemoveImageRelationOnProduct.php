@@ -40,6 +40,7 @@ class RemoveImageRelationOnProduct implements
     {
         $productClass = $this->extendExtension->getEntityClassByTableName(self::PRODUCT_TABLE_NAME);
         $productTable = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $productTable->removeForeignKey('fk_orob2b_product_image_id');
         $productTable->dropColumn(self::PRODUCT_IMAGE_FIELD_NAME);
 
         $queries->addQuery(

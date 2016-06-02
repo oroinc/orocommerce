@@ -95,10 +95,10 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->addDescription($description)
                 ->addShortDescription($shortDescription);
 
-            $productImage = $this->getProductImageForProductSku($manager, $locator, $row['sku'], $allImageTypes);
-            if ($productImage) {
-                $product->addImage($productImage);
-            }
+//            $productImage = $this->getProductImageForProductSku($manager, $locator, $row['sku'], $allImageTypes);
+//            if ($productImage) {
+//                $product->addImage($productImage);
+//            }
 
             $manager->persist($product);
         }

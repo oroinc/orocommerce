@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -46,8 +48,18 @@ class ProductImage extends ExtendProductImage
     protected $product;
 
     /**
-     * @var array
-     * @ORM\Column(name="types", type="array", nullable=true)
+     * @var Collection|ProductImageType[]
+     *
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductImageType")
+     * @ORM\JoinTable(
+     *      name="orob2b_product_image_to_image_type",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="product_image_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="product_image_type_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -57,6 +69,11 @@ class ProductImage extends ExtendProductImage
      * )
      */
     protected $types;
+
+    public function __construct()
+    {
+        $this->types = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -91,9 +108,9 @@ class ProductImage extends ExtendProductImage
     }
 
     /**
-     * @param array|null $types
+     * @param Collection $types
      */
-    public function setTypes(array $types = null)
+    public function setTypes(Collection $types)
     {
         $this->types = $types;
     }
