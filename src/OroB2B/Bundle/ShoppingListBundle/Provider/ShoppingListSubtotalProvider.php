@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Provider;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -27,25 +26,19 @@ class ShoppingListSubtotalProvider
      */
     protected $currencyManager;
 
-    /** @var TranslatorInterface */
-    protected $translator;
-
     /**
      * @param ManagerRegistry $managerRegistry
      * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
      * @param UserCurrencyManager $currencyManager
-     * @param TranslatorInterface $translator
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider,
-        UserCurrencyManager $currencyManager,
-        TranslatorInterface $translator
+        UserCurrencyManager $currencyManager
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
         $this->currencyManager = $currencyManager;
-        $this->translator = $translator;
     }
 
     /**
@@ -86,12 +79,9 @@ class ShoppingListSubtotalProvider
      */
     protected function createSubtotal(ShoppingListTotal $shoppingListTotal)
     {
-        $subtotal = new Subtotal();
+        $subtotal = $this->lineItemNotPricedSubtotalProvider->createSubtotal();
         $subtotal->setAmount($shoppingListTotal->getSubtotalValue());
         $subtotal->setCurrency($shoppingListTotal->getCurrency());
-        $subtotal->setVisible(false);
-        $subtotal->setType(LineItemNotPricedSubtotalProvider::TYPE);
-        $subtotal->setLabel($this->translator->trans(LineItemNotPricedSubtotalProvider::NAME.'.label'));
 
         return $subtotal;
     }

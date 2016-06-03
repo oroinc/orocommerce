@@ -225,4 +225,3 @@ services:
             - '@doctrine'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
             - '@orob2b_pricing.user_currency_manager'
-            - '@translator'
