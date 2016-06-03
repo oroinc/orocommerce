@@ -57,11 +57,6 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
     /**
      * @return string
      */
-    abstract protected function getAuthForRequiredAmountKey();
-
-    /**
-     * @return string
-     */
     abstract protected function getAllowedCCTypesKey();
 
     protected function tearDown()
@@ -157,7 +152,7 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
             ->with(CreditCardType::NAME)
             ->willReturn($form);
 
-        $this->configManager->expects($this->exactly(3))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(
                 [
@@ -165,9 +160,6 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                 ],
                 [
                     $this->getConfigKey($this->getAllowedCCTypesKey()),
-                ],
-                [
-                    $this->getConfigKey($this->getAuthForRequiredAmountKey()),
                 ]
             )
             ->willReturnOnConsecutiveCalls(true, ['visa', 'mastercard'], false);
@@ -186,7 +178,6 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                 'creditCardComponentOptions' => [
                     'acct' => '1111',
                     'saveForLaterUse' => false,
-                    'authorizationForRequiredAmount' => false
                 ],
             ],
             $this->methodView->getOptions()
@@ -205,7 +196,7 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
             ->with(CreditCardType::NAME)
             ->willReturn($form);
 
-        $this->configManager->expects($this->exactly(3))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(
                 [
@@ -213,9 +204,6 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                 ],
                 [
                     $this->getConfigKey($this->getAllowedCCTypesKey()),
-                ],
-                [
-                    $this->getConfigKey($this->getAuthForRequiredAmountKey()),
                 ]
             )
             ->willReturnOnConsecutiveCalls(true, ['visa', 'mastercard'], false);
@@ -236,7 +224,6 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                 'creditCardComponentOptions' => [
                     'acct' => '1111',
                     'saveForLaterUse' => true,
-                    'authorizationForRequiredAmount' => false
                 ],
             ],
             $this->methodView->getOptions()
@@ -255,7 +242,7 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
             ->with(CreditCardType::NAME)
             ->willReturn($form);
 
-        $this->configManager->expects($this->exactly(3))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(
                 [
@@ -263,9 +250,6 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                 ],
                 [
                     $this->getConfigKey($this->getAllowedCCTypesKey()),
-                ],
-                [
-                    $this->getConfigKey($this->getAuthForRequiredAmountKey()),
                 ]
             )
             ->willReturnOnConsecutiveCalls(true, ['visa', 'mastercard'], true);
@@ -285,7 +269,6 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                 'creditCardComponentOptions' => [
                     'acct' => '1111',
                     'saveForLaterUse' => false,
-                    'authorizationForRequiredAmount' => true
                 ],
             ],
             $this->methodView->getOptions()
