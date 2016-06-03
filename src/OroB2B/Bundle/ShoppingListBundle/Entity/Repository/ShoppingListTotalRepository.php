@@ -54,18 +54,30 @@ class ShoppingListTotalRepository extends EntityRepository
         if (empty($accountIds)) {
             return;
         }
-        $qb = $this->createQueryBuilder('total');
-        $qb->select('DISTINCT total.id')
-            ->join('total.shoppingList', 'shoppingList')
-            ->where($qb->expr()->in('shoppingList.account', ':accounts'))
-            ->andWhere($qb->expr()->eq('shoppingList.website', ':website'))
-            ->andWhere($qb->expr()->eq('total.valid', ':isValid'))
-            ->setParameter('accounts', $accountIds, Type::SIMPLE_ARRAY)
-            ->setParameter('website', $website)
-            ->setParameter('isValid', true);
+        $qb = $this->getBaseInvalidateQb($website);
+        $qb->andWhere($qb->expr()->in('shoppingList.account', ':accounts'))
+            ->setParameter('accounts', $accountIds, Type::SIMPLE_ARRAY);
+
         $iterator = new BufferedQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
         $this->invalidateTotals($iterator);
+    }
+
+    /**
+     * @param Website $website
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    protected function getBaseInvalidateQb(Website $website)
+    {
+        $qb = $this->createQueryBuilder('total');
+        $qb->select('DISTINCT total.id')
+            ->join('total.shoppingList', 'shoppingList')
+            ->andWhere($qb->expr()->eq('shoppingList.website', ':website'))
+            ->andWhere($qb->expr()->eq('total.valid', ':isValid'))
+            ->setParameter('website', $website)
+            ->setParameter('isValid', true);
+
+        return $qb;
     }
 
     /**
