@@ -60,6 +60,6 @@ class OroB2BWebsiteBundle implements Migration, NoteExtensionAwareInterface
     protected function allowNullOnUrl(Schema $schema)
     {
         $table = $schema->getTable(self::WEBSITE_TABLE_NAME);
-        $table->getColumn('url')->setNotnull(false);
+//        $table->getColumn('url')->setNotnull(false);
     }
 }
