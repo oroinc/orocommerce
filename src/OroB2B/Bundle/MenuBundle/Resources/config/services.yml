@@ -65,7 +65,7 @@ services:
         class: 'OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider'
         arguments:
             - "@orob2b_menu.menu.database_builder"
-            - "@orob2b_website.locale_helper"
+            - "@oro_locale.helper.localization"
             - "@orob2b_menu.menu_serializer"
             - "@doctrine"
         calls:
@@ -100,8 +100,8 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener } #todo: add entity and event keys https://magecore.atlassian.net/browse/BB-1289
 
-    orob2b_menu.event_listener.locale_listener:
-        class: OroB2B\Bundle\MenuBundle\EventListener\LocaleListener
+    orob2b_menu.event_listener.localization_listener:
+        class: OroB2B\Bundle\MenuBundle\EventListener\LocalizationListener
         arguments:
             - "@orob2b_menu.menu_provider.link"
         tags:

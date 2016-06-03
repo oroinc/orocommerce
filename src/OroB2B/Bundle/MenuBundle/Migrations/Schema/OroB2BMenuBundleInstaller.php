@@ -119,7 +119,7 @@ class OroB2BMenuBundleInstaller implements Installation, AttachmentExtensionAwar
     {
         $table = $schema->getTable('orob2b_menu_item_title');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_fallback_locale_value'),
+            $schema->getTable('oro_fallback_localization_val'),
             ['localized_value_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]

@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableBusinessUnitAwareTrait;
 
@@ -55,12 +56,19 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
     use AuditableBusinessUnitAwareTrait;
 
     /**
-     * @var Collection|Locale[]
+     * @var Collection|Localization[]
      *
-     * @ORM\ManyToMany(targetEntity="Locale", inversedBy="websites")
-     * @ORM\JoinTable(name="orob2b_websites_locales")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\LocaleBundle\Entity\Localization")
+     * ORM\JoinTable(name="orob2b_websites_localizations")
+     * @ORM\JoinTable(
+     *      name="orob2b_websites_localizations",
+     *      joinColumns={@ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")},
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="locale_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
      */
-    protected $locales;
+    protected $localizations;
 
     /**
      * @var Collection|Website[]
@@ -129,7 +137,7 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
 
         $this->inversedWebsites = new ArrayCollection();
         $this->relatedWebsites = new ArrayCollection();
-        $this->locales = new ArrayCollection();
+        $this->localizations = new ArrayCollection();
     }
 
     /**
@@ -245,56 +253,56 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
     }
 
     /**
-     * Get website locales
+     * Get website localizations
      *
-     * @return ArrayCollection|Locale[]
+     * @return ArrayCollection|Localization[]
      */
-    public function getLocales()
+    public function getLocalizations()
     {
-        return $this->locales;
+        return $this->localizations;
     }
 
     /**
-     * Set website locales
+     * Reset website localizations
      *
-     * @param ArrayCollection|Locale[] $locales
+     * @param ArrayCollection|Localization[] $localizations
      *
      * @return Website
      */
-    public function resetLocales($locales)
+    public function resetLocalizations($localizations)
     {
-        $this->locales->clear();
+        $this->localizations->clear();
 
-        foreach ($locales as $locale) {
-            $this->addLocale($locale);
+        foreach ($localizations as $localization) {
+            $this->addLocalization($localization);
         }
 
         return $this;
     }
 
     /**
-     * @param Locale $locale
+     * @param Localization $localization
      *
      * @return Website
      */
-    public function addLocale(Locale $locale)
+    public function addLocalization(Localization $localization)
     {
-        if (!$this->locales->contains($locale)) {
-            $this->locales->add($locale);
+        if (!$this->localizations->contains($localization)) {
+            $this->localizations->add($localization);
         }
 
         return $this;
     }
 
     /**
-     * @param Locale $locale
+     * @param Localization $localization
      *
      * @return Website
      */
-    public function removeLocale(Locale $locale)
+    public function removeLocalization(Localization $localization)
     {
-        if ($this->locales->contains($locale)) {
-            $this->locales->removeElement($locale);
+        if ($this->localizations->contains($localization)) {
+            $this->localizations->removeElement($localization);
         }
 
         return $this;

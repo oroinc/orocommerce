@@ -8,12 +8,11 @@ use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Intl\Intl;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -27,47 +26,33 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
         [
             'name' => self::US,
             'url' => 'http://www.us.com',
-            'locales' => ['en_US', 'es_MX'],
+            'localizations' => ['en_US', 'es_MX'],
             'sharing' => ['Mexico', 'Canada'],
         ],
         [
             'name' => 'Australia',
             'url' => 'http://www.australia.com',
-            'locales' => ['en_AU'],
+            'localizations' => ['en_AU'],
             'sharing' => null,
         ],
         [
             'name' => 'Mexico',
             'url' => 'http://www.mexico.com',
-            'locales' => ['es_MX'],
+            'localizations' => ['es_MX'],
             'sharing' => [self::US, 'Canada'],
         ],
         [
             'name' => 'Canada',
             'url' => 'http://www.canada.com',
-            'locales' => ['fr_CA', 'en_CA'],
+            'localizations' => ['fr_CA', 'en_CA'],
             'sharing' => [self::US, 'Mexico'],
         ],
         [
             'name' => 'Europe',
             'url' => 'http://www.europe.com',
-            'locales' => ['en_GB', 'fr_FR', 'de_DE'],
+            'localizations' => ['en_GB', 'fr', 'de'],
             'sharing' => null,
         ],
-    ];
-
-    /**
-     * @var array
-     */
-    protected $locales = [
-        ['code' => 'en_US', 'parent' => null],
-        ['code' => 'en_CA', 'parent' => 'en_US'],
-        ['code' => 'en_GB', 'parent' => 'en_US'],
-        ['code' => 'en_AU', 'parent' => 'en_US'],
-        ['code' => 'es_MX', 'parent' => 'en_US'],
-        ['code' => 'fr_CA', 'parent' => 'en_CA'],
-        ['code' => 'fr_FR', 'parent' => 'fr_CA'],
-        ['code' => 'de_DE', 'parent' => 'en_US'],
     ];
 
     /**
@@ -93,43 +78,23 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
 
-        // Create locales sample with relationship between locales
-        $localesRegistry = [];
-        foreach ($this->locales as $item) {
-            $code = $item['code'];
-            $title = $this->getLocaleNameByCode($item['code']);
-
-            $locale = new Locale();
-            $locale
-                ->setCode($code)
-                ->setTitle($title);
-
-            if ($item['parent']) {
-                $parentCode = $item['parent'];
-
-                $locale->setParentLocale($localesRegistry[$parentCode]);
-            }
-            $localesRegistry[$code] = $locale;
-
-            $manager->persist($locale);
-        }
-
         $manager->flush();
 
         // Create websites
         foreach ($this->webSites as $webSite) {
             $site = new Website();
 
-            $siteLocales = [];
-            foreach ($webSite['locales'] as $localeCode) {
-                $siteLocales[] = $this->getLocaleByCode($manager, $localeCode);
+            $localizations = [];
+            foreach ($webSite['localizations'] as $code) {
+                $localizations[] = $this->getLocalization($code);
             }
 
-            $site->setOwner($businessUnit)
-                ->setOrganization($organization)
+            $site
                 ->setName($webSite['name'])
                 ->setUrl($webSite['url'])
-                ->resetLocales($siteLocales);
+                ->resetLocalizations($localizations)
+                ->setOwner($businessUnit)
+                ->setOrganization($organization);
 
             $manager->persist($site);
         }
@@ -153,28 +118,11 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
 
     /**
      * @param string $code
-     * @return string
+     * @return Localization
      */
-    protected function getLocaleNameByCode($code)
+    protected function getLocalization($code)
     {
-        return Intl::getLocaleBundle()->getLocaleName($code, $this->container->get('oro_locale.settings')->getLocale());
-    }
-
-    /**
-     * @param EntityManager $manager
-     * @param string $code
-     * @return Locale
-     */
-    protected function getLocaleByCode(EntityManager $manager, $code)
-    {
-        $locale = $manager->getRepository('OroB2BWebsiteBundle:Locale')
-            ->findOneBy(['code' => $code]);
-
-        if (!$locale) {
-            throw new \LogicException(sprintf('There is no locale with code "%s" .', $code));
-        }
-
-        return $locale;
+        return $this->getReference($code);
     }
 
     /**

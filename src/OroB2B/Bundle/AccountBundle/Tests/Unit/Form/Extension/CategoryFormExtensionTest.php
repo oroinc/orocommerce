@@ -14,10 +14,10 @@ use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
-use Oro\Bundle\LocaleBundle\Form\Type\LocaleCollectionType;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
-use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocaleCollectionTypeStub;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
 
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
@@ -78,7 +78,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     EntityIdentifierType::NAME => new EntityIdentifierTypeStub([]),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionType($registry),
                     LocalizedPropertyType::NAME => new LocalizedPropertyType(),
-                    LocaleCollectionType::NAME => new LocaleCollectionTypeStub(),
+                    LocalizationCollectionType::NAME => new LocalizationCollectionTypeStub(),
                     DataChangesetType::NAME => new DataChangesetTypeStub(),
                     EntityChangesetType::NAME => new EntityChangesetTypeStub(),
                     OroRichTextType::NAME => new OroRichTextTypeStub(),

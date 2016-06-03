@@ -1,19 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\EventListener;
+namespace OroB2B\Bundle\MenuBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Mapping as ORM;
 
-use OroB2B\Bundle\MenuBundle\EventListener\LocaleListener;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+
+use OroB2B\Bundle\MenuBundle\EventListener\LocalizationListener;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
-class LocaleListenerTest extends \PHPUnit_Framework_TestCase
+class LocalizationListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var LocaleListener
+     * @var LocalizationListener
      */
     protected $listener;
 
@@ -43,7 +43,7 @@ class LocaleListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getService')
             ->will($this->returnValue($this->menuProvider));
 
-        $this->listener = new LocaleListener($menuProviderLink);
+        $this->listener = new LocalizationListener($menuProviderLink);
 
         $this->objectManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -52,11 +52,11 @@ class LocaleListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPostPersist()
     {
-        $entity = new Locale();
+        $entity = new Localization();
         $event = $this->getEventMock($entity);
 
         $this->menuProvider->expects($this->once())
-            ->method('rebuildCacheByLocale')
+            ->method('rebuildCacheByLocalization')
             ->with($entity);
 
         $this->listener->postPersist($event);
@@ -68,14 +68,14 @@ class LocaleListenerTest extends \PHPUnit_Framework_TestCase
         $event = $this->getEventMock($entity);
 
         $this->menuProvider->expects($this->never())
-            ->method('rebuildCacheByLocale');
+            ->method('rebuildCacheByLocalization');
 
         $this->listener->postPersist($event);
     }
 
     public function testPostUpdate()
     {
-        $entity = new Locale();
+        $entity = new Localization();
         $event = $this->getEventMock($entity);
         $uow = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')
             ->disableOriginalConstructor()
@@ -83,13 +83,13 @@ class LocaleListenerTest extends \PHPUnit_Framework_TestCase
         $uow->expects($this->once())
             ->method('getEntityChangeSet')
             ->with($entity)
-            ->willReturn(['parentLocale' => 'test']);
+            ->willReturn(['parent' => 'test']);
         $this->objectManager->expects($this->once())
             ->method('getUnitOfWork')
             ->willReturn($uow);
 
         $this->menuProvider->expects($this->once())
-            ->method('rebuildCacheByLocale')
+            ->method('rebuildCacheByLocalization')
             ->with($entity);
 
         $this->listener->postUpdate($event);
@@ -101,18 +101,18 @@ class LocaleListenerTest extends \PHPUnit_Framework_TestCase
         $event = $this->getEventMock($entity);
 
         $this->menuProvider->expects($this->never())
-            ->method('rebuildCacheByLocale');
+            ->method('rebuildCacheByLocalization');
 
         $this->listener->postUpdate($event);
     }
 
     public function testPostRemove()
     {
-        $entity = new Locale();
+        $entity = new Localization();
         $event = $this->getEventMock($entity);
 
         $this->menuProvider->expects($this->once())
-            ->method('clearCacheByLocale')
+            ->method('clearCacheByLocalization')
             ->with($entity);
 
         $this->listener->postRemove($event);
@@ -124,7 +124,7 @@ class LocaleListenerTest extends \PHPUnit_Framework_TestCase
         $event = $this->getEventMock($entity);
 
         $this->menuProvider->expects($this->never())
-            ->method('clearCacheByLocale');
+            ->method('clearCacheByLocalization');
 
         $this->listener->postPersist($event);
     }

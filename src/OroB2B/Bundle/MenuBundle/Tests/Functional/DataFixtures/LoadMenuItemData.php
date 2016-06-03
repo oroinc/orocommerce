@@ -86,7 +86,7 @@ class LoadMenuItemData extends AbstractFixture implements DependentFixtureInterf
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData'
+            'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData'
         ];
     }
 
@@ -104,9 +104,9 @@ class LoadMenuItemData extends AbstractFixture implements DependentFixtureInterf
             if (isset($data['parent'])) {
                 $entity->setParent($this->getReference($data['parent']));
             }
-            foreach ($data['titles'] as $locale => $title) {
+            foreach ($data['titles'] as $localization => $title) {
                 $fallbackValue = new LocalizedFallbackValue();
-                $fallbackValue->setLocale($this->getReference($locale))
+                $fallbackValue->setLocalization($this->getReference($localization))
                     ->setString($title);
                 $entity->addTitle($fallbackValue);
             }

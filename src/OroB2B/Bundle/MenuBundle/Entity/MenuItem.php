@@ -13,7 +13,7 @@ use Oro\Bundle\LocaleBundle\Entity\FallbackTrait;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 use OroB2B\Bundle\MenuBundle\Model\ExtendMenuItem;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use OroB2B\Component\Tree\Entity\TreeTrait;
 
 /**
@@ -168,12 +168,12 @@ class MenuItem extends ExtendMenuItem
     }
 
     /**
-     * @param Locale|null $locale
+     * @param Localization|null $localization
      * @return LocalizedFallbackValue
      */
-    public function getTitle(Locale $locale = null)
+    public function getTitle(Localization $localization = null)
     {
-        return $this->getLocalizedFallbackValue($this->titles, $locale);
+        return $this->getLocalizedFallbackValue($this->titles, $localization);
     }
 
     /**

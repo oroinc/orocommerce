@@ -27,7 +27,7 @@ class OroB2BProductBundleInstaller implements
     const PRODUCT_UNIT_PRECISION_TABLE_NAME = 'orob2b_product_unit_precision';
     const PRODUCT_VARIANT_LINK_TABLE_NAME = 'orob2b_product_variant_link';
     const PRODUCT_SHORT_DESCRIPTION_TABLE_NAME = 'orob2b_product_short_desc';
-    const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_locale_value';
+    const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
 
     const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
     const MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB = 5;

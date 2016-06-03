@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\MenuBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Component\DependencyInjection\ServiceLink;
 
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
-class LocaleListener
+class LocalizationListener
 {
     /**
      * @var ServiceLink
@@ -30,10 +30,10 @@ class LocaleListener
     public function postPersist(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        if (!$this->isLocaleEntity($entity)) {
+        if (!$this->isLocalizationEntity($entity)) {
             return;
         }
-        $this->getMenuProvider()->rebuildCacheByLocale($entity);
+        $this->getMenuProvider()->rebuildCacheByLocalization($entity);
     }
 
     /**
@@ -42,13 +42,13 @@ class LocaleListener
     public function postUpdate(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        if (!$this->isLocaleEntity($entity)) {
+        if (!$this->isLocalizationEntity($entity)) {
             return;
         }
         $uow = $args->getEntityManager()->getUnitOfWork();
         $changes = $uow->getEntityChangeSet($entity);
-        if (array_key_exists('parentLocale', $changes) === true) {
-            $this->getMenuProvider()->rebuildCacheByLocale($entity);
+        if (array_key_exists('parent', $changes) === true) {
+            $this->getMenuProvider()->rebuildCacheByLocalization($entity);
         }
     }
 
@@ -58,19 +58,19 @@ class LocaleListener
     public function postRemove(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        if (!$this->isLocaleEntity($entity)) {
+        if (!$this->isLocalizationEntity($entity)) {
             return;
         }
-        $this->getMenuProvider()->clearCacheByLocale($entity);
+        $this->getMenuProvider()->clearCacheByLocalization($entity);
     }
 
     /**
      * @param object $entity
      * @return bool
      */
-    protected function isLocaleEntity($entity)
+    protected function isLocalizationEntity($entity)
     {
-        return $entity instanceof Locale;
+        return $entity instanceof Localization;
     }
 
     /**
