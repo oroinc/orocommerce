@@ -45,7 +45,9 @@ class OroB2BFallbackBundle implements Migration, RenameExtensionAwareInterface, 
     public function up(Schema $schema, QueryBag $queries)
     {
         $indexName = $this->nameGenerator->generateIndexName('orob2b_fallback_locale_value', ['locale_id']);
-        $constraintName = $this->nameGenerator->generateForeignKeyConstraintName('orob2b_fallback_locale_value', ['locale_id']);
+        $constraintName = $this->nameGenerator->generateForeignKeyConstraintName('orob2b_fallback_locale_value', [
+            'locale_id'
+        ]);
 
         $table = $schema->getTable('orob2b_fallback_locale_value');
         $table->renameIndex('idx_orob2b_fallback_fallback', 'idx_fallback');
@@ -63,6 +65,15 @@ class OroB2BFallbackBundle implements Migration, RenameExtensionAwareInterface, 
             'oro_fallback_localization_val'
         );
 
+        $indexName = $this->nameGenerator->generateIndexName('oro_fallback_localization_val', ['localization_id']);
+        $this->renameExtension->addIndex(
+            $schema,
+            $queries,
+            'oro_fallback_localization_val',
+            ['localization_id'],
+            $indexName
+        );
+
         $this->renameExtension->addForeignKeyConstraint(
             $schema,
             $queries,
@@ -70,7 +81,7 @@ class OroB2BFallbackBundle implements Migration, RenameExtensionAwareInterface, 
             'oro_localization',
             ['localization_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

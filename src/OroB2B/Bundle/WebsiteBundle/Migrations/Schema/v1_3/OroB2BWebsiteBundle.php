@@ -44,6 +44,16 @@ class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, N
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->updateLocaleTable($schema, $queries);
+        $this->updateWebsiteTable($schema, $queries);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    public function updateLocaleTable(Schema $schema, QueryBag $queries)
+    {
         $indexName = $this->nameGenerator->generateIndexName('orob2b_locale', ['parent_id'], false, true);
 
         $table = $schema->getTable('orob2b_locale');
@@ -58,12 +68,6 @@ class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, N
 
         $schema->dropTable('oro_localization');
         $this->renameExtension->renameTable($schema, $queries, 'orob2b_locale', 'oro_localization');
-        $this->renameExtension->renameTable(
-            $schema,
-            $queries,
-            'orob2b_websites_locales',
-            'orob2b_websites_localizations'
-        );
 
         $indexName = $this->nameGenerator->generateIndexName('oro_localization', ['parent_id'], false, true);
 
@@ -80,5 +84,78 @@ class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, N
         );
 
         $queries->addQuery('UPDATE `oro_localization` SET `formatting_code` = `language_code`');
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    public function updateWebsiteTable(Schema $schema, QueryBag $queries)
+    {
+        $this->dropConstraints($schema, 'orob2b_websites_locales', ['locale_id']);
+        $this->dropConstraints($schema, 'orob2b_websites_locales', ['website_id']);
+
+        $table = $schema->getTable('orob2b_websites_locales');
+        $this->renameExtension->renameColumn($schema, $queries, $table, 'locale_id', 'localization_id');
+
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            'orob2b_websites_locales',
+            'orob2b_websites_localizations'
+        );
+
+        $this->createConstraints(
+            $schema,
+            $queries,
+            'orob2b_websites_localizations',
+            'oro_localization',
+            ['localization_id']
+        );
+        $this->createConstraints(
+            $schema,
+            $queries,
+            'orob2b_websites_localizations',
+            'orob2b_website',
+            ['website_id']
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param string $tableName
+     * @param array $fields
+     */
+    protected function dropConstraints(Schema $schema, $tableName, array $fields)
+    {
+        $indexName = $this->nameGenerator->generateIndexName($tableName, $fields, false, true);
+        $constraintName = $this->nameGenerator->generateForeignKeyConstraintName($tableName, $fields, true);
+
+        $table = $schema->getTable($tableName);
+        $table->dropIndex($indexName);
+        $table->removeForeignKey($constraintName);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     * @param string $tableName
+     * @param string $foreignTable
+     * @param array $fields
+     */
+    protected function createConstraints(Schema $schema, QueryBag $queries, $tableName, $foreignTable, array $fields)
+    {
+        $indexName = $this->nameGenerator->generateIndexName($tableName, $fields, false, true);
+        $this->renameExtension->addIndex($schema, $queries, $tableName, $fields, $indexName);
+
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            $tableName,
+            $foreignTable,
+            $fields,
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 }
