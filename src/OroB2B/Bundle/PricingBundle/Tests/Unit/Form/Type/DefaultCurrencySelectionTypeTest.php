@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\Translator;
 
 use OroB2B\Bundle\PricingBundle\Form\Type\DefaultCurrencySelectionType;
@@ -29,6 +30,11 @@ class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
     protected $translator;
 
     /**
+     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $requestStack;
+
+    /**
      * {@inheritdoc}
      */
     public function setUp()
@@ -45,6 +51,8 @@ class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+
         parent::setUp();
     }
 
@@ -59,7 +67,8 @@ class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
                     'orob2b_pricing_default_currency_selection' => new DefaultCurrencySelectionType(
                         $this->configManager,
                         $this->localeSettings,
-                        $this->translator
+                        $this->translator,
+                        $this->requestStack
                     ),
                 ],
                 []
@@ -188,7 +197,8 @@ class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
         $formType = new DefaultCurrencySelectionType(
             $this->configManager,
             $this->localeSettings,
-            $this->translator
+            $this->translator,
+            $this->requestStack
         );
         $this->assertEquals(DefaultCurrencySelectionType::NAME, $formType->getName());
     }

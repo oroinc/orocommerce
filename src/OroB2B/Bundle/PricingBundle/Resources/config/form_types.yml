@@ -160,5 +160,6 @@ services:
            - '@oro_config.manager'
            - '@oro_locale.settings'
            - "@translator"
+           - "@request_stack"
        tags:
            - { name: form.type, alias: orob2b_pricing_default_currency_selection }

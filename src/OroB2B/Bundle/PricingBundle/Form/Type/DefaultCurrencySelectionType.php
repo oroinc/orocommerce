@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Intl\Intl;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -28,17 +29,25 @@ class DefaultCurrencySelectionType extends CurrencySelectionType
     protected $translator;
 
     /**
+     * @var RequestStack
+     */
+    protected $requestStack;
+
+    /**
      * @param ConfigManager $configManager
      * @param LocaleSettings $localeSettings
      * @param TranslatorInterface $translator
+     * @param RequestStack $requestStack
      */
     public function __construct(
         ConfigManager $configManager,
         LocaleSettings $localeSettings,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        RequestStack $requestStack
     ) {
         parent::__construct($configManager, $localeSettings);
         $this->translator = $translator;
+        $this->requestStack = $requestStack;
     }
     
     /**
@@ -49,6 +58,9 @@ class DefaultCurrencySelectionType extends CurrencySelectionType
         return static::NAME;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
@@ -65,8 +77,8 @@ class DefaultCurrencySelectionType extends CurrencySelectionType
         $rootForm = $form->getRoot();
 
         if ($this->isSyncApplicable($rootForm)) {
-            $defaultCurrency = $this->getDefaultCurrency($rootForm);
-            $enabledCurrencies = $this->getEnabledCurrencies($rootForm);
+            $defaultCurrency = $this->getDefaultCurrency();
+            $enabledCurrencies = $this->getEnabledCurrencies();
 
             if (!in_array($defaultCurrency, $enabledCurrencies, true)) {
                 $currencyName = Intl::getCurrencyBundle()
@@ -84,34 +96,38 @@ class DefaultCurrencySelectionType extends CurrencySelectionType
     }
 
     /**
-     * @param FormInterface $form
      * @return string
      */
-    protected function getDefaultCurrency(FormInterface $form)
+    protected function getDefaultCurrency()
     {
-        $defaultCurrencyData = $form->get(self::DEFAULT_CURRENCY_NAME)->getData();
+        $defaultCurrencyData = $this->requestStack->getCurrentRequest()->get('pricing')[self::DEFAULT_CURRENCY_NAME];
 
-        if ($defaultCurrencyData['use_parent_scope_value']) {
+        if (isset($defaultCurrencyData['use_parent_scope_value'])) {
             $defaultCurrency = LocaleConfiguration::DEFAULT_CURRENCY;
-        } else {
+        } elseif (isset($defaultCurrencyData['value'])) {
             $defaultCurrency = $defaultCurrencyData['value'];
+        } else {
+            $defaultCurrency = '';
         }
 
         return $defaultCurrency;
     }
 
     /**
-     * @param FormInterface $form
      * @return array
      */
-    protected function getEnabledCurrencies(FormInterface $form)
+    protected function getEnabledCurrencies()
     {
-        $enabledCurrenciesData = $form->get(self::ENABLED_CURRENCIES_NAME)->getData();
+        $enabledCurrenciesData = $this->requestStack
+            ->getCurrentRequest()
+            ->get('pricing')[self::ENABLED_CURRENCIES_NAME];
 
-        if ($enabledCurrenciesData['use_parent_scope_value']) {
+        if (isset($enabledCurrenciesData['use_parent_scope_value'])) {
             $enabledCurrencies = [LocaleConfiguration::DEFAULT_CURRENCY];
-        } else {
+        } elseif (isset($enabledCurrenciesData['value'])) {
             $enabledCurrencies = $enabledCurrenciesData['value'];
+        } else {
+            $enabledCurrencies = [];
         }
 
         return $enabledCurrencies;
