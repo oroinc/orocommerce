@@ -43,16 +43,10 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
     public function normalize($object, $format = null, array $context = [])
     {
         $data = parent::normalize($object, $format, $context);
-        $primaryUnitCode = null;
-        if ($object->getPrimaryUnitPrecision()) {
-            $primaryUnitCode = $object->getPrimaryUnitPrecision()->getUnit()->getCode();
-        }
 
         if (array_key_exists('unitPrecisions', $data)) {
             foreach ($data['unitPrecisions'] as $v) {
-                if ($v['unit']['code'] == $primaryUnitCode) {
-                    $data['primaryUnitPrecision'] = $v;
-                } else {
+                if ($v['unit']['code'] != $object->getPrimaryUnitPrecision()->getUnit()->getCode()) {
                     $data['additionalUnitPrecisions'][] = $v;
                 }
             }
@@ -76,22 +70,11 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
             $data['unitPrecisions'] = $data['additionalUnitPrecisions'];
             unset($data['additionalUnitPrecisions']);
         }
-        $primaryCode = null;
-        if (array_key_exists('primaryUnitPrecision', $data)) {
-            $data['unitPrecisions'][] = $data['primaryUnitPrecision'];
-            if (array_key_exists('unit', $data['primaryUnitPrecision']) &&
-                array_key_exists('code', $data['primaryUnitPrecision']['unit'])) {
-                $primaryCode = $data['primaryUnitPrecision']['unit']['code'];
-            }
-            unset($data['primaryUnitPrecision']);
-        }
-
-        /** @var Product $object */
+        
+        /**
+         * @var Product $object
+         */
         $object = parent::denormalize($data, $class, $format, $context);
-        $primaryPrecision = $object->getUnitPrecision($primaryCode);
-        if ($primaryPrecision) {
-            $object->setPrimaryUnitPrecision($primaryPrecision);
-        }
 
         if ($this->eventDispatcher) {
             $event = new ProductNormalizerEvent($object, $data, $context);

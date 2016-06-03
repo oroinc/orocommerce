@@ -115,12 +115,13 @@ class OroB2BProductBundleInstaller implements
         $table->addColumn('has_variants', 'boolean', ['default' => false]);
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('status', 'string', ['length' => 16]);
-        $table->addColumn('primary_product_unit_id', 'integer', ['notnull' => false]);
+        $table->addColumn('primary_unit_precision_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku']);
         $table->addIndex(['created_at'], 'idx_orob2b_product_created_at', []);
         $table->addIndex(['updated_at'], 'idx_orob2b_product_updated_at', []);
         $table->addIndex(['sku'], 'idx_orob2b_product_sku', []);
+        $table->addUniqueIndex(['primary_unit_precision_id'], 'idx_orob2b_product_primary_unit_precision_id');
     }
 
     /**
@@ -195,6 +196,12 @@ class OroB2BProductBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_business_unit'),
             ['business_unit_owner_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::PRODUCT_UNIT_PRECISION_TABLE_NAME),
+            ['primary_unit_precision_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );

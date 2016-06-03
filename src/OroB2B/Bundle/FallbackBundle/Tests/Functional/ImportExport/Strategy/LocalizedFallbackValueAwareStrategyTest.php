@@ -224,6 +224,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     'primaryUnitPrecision' => $this->getEntity(
                         'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
                         [
+                            'id' => 1,
                             'unit' => $this->getEntity(
                                 'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
                                 ['code' => 'kg']

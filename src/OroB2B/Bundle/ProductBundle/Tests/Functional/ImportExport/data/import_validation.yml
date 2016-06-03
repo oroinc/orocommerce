@@ -42,6 +42,3 @@ unit_code_precision:
         - 'Error in row #1. Not found entity "Product Unit"'
         - 'Error in row #2. Not found entity "Product Unit"'
         - 'Error in row #3. Not found entity "Product Unit"'
-        - 'Error in row #7. primaryUnitPrecision: This value should not be blank.'
-        - 'Error in row #8. primaryUnitPrecision: This value should not be blank.'
-        - 'Error in row #9. primaryUnitPrecision: This value should not be blank.'

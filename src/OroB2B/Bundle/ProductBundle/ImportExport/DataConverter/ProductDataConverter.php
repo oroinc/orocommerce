@@ -11,7 +11,9 @@ use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
 
 class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter
 {
-    /** @var EventDispatcherInterface */
+    /**
+     * @var EventDispatcherInterface
+     */
     protected $eventDispatcher;
 
     /**

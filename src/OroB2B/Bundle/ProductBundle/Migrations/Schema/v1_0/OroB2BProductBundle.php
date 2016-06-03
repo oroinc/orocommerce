@@ -128,8 +128,6 @@ class OroB2BProductBundle implements
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('unit_precision', 'integer', []);
-        $table->addColumn('conversion_rate', 'float', ['notnull' => false]);
-        $table->addColumn('sell', 'boolean', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['product_id', 'unit_code'], 'product_unit_precision__product_id__unit_code__uidx');
     }

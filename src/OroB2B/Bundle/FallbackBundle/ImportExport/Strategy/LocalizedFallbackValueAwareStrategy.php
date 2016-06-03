@@ -60,9 +60,6 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
             }
         }
 
-        if (is_a($entity, 'OroB2B\Bundle\ProductBundle\Entity\Product') && $entity->getPrimaryUnitPrecisionId()) {
-            $entity->getPrimaryUnitPrecision();
-        }
         return parent::afterProcessEntity($entity);
     }
 

@@ -21,11 +21,6 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
         if (!is_object($targetEntity) || !$targetEntity->getId()) {
             return;
         }
-        if (is_a($targetEntity, 'OroB2B\Bundle\ProductBundle\Entity\Product')
-            && $targetEntity->getId()
-            && $targetEntity->getPrimaryUnitPrecisionId()) {
-            $targetEntity->getPrimaryUnitPrecision();
-        }
 
         $this->setFormAllData($form);
         $this->setFormAccountGroupData($form);
