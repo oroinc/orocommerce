@@ -869,13 +869,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function getAdditionalUnitPrecisions()
     {
-        $unitPrecisions = clone($this->unitPrecisions);
-        $unitPrecisions->removeElement($this->primaryUnitPrecision);
-
-        $additionalPrecisions = new ArrayCollection();
-        foreach ($unitPrecisions as $v) {
-            $additionalPrecisions->add($v);
-        }
+        $additionalPrecisions = $this->unitPrecisions->filter(function($precision) {
+            return $precision != $this->primaryUnitPrecision;
+        });
         return $additionalPrecisions;
     }
 }
