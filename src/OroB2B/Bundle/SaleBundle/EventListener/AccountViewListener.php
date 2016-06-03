@@ -94,14 +94,17 @@ class AccountViewListener
         if (!$request) {
             return null;
         }
+
         $entityId = (int)$request->get('id');
         if (!$entityId) {
             return null;
         }
+
         $entity = $this->doctrineHelper->getEntityReference($className, $entityId);
         if (!$entity) {
             return null;
         }
+
         return $entity;
     }
 

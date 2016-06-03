@@ -167,7 +167,7 @@ services:
             - '@oro_security.security_facade'
             - '@oro_entity.doctrine_helper'
 
-    orob2b_rfp.event_listener.form_view:
+    orob2b_rfp.event_listener.account_view:
         class: 'OroB2B\Bundle\RFPBundle\EventListener\AccountViewListener'
         public: true
         arguments:
