@@ -1,5 +1,6 @@
 parameters:
     orob2b_shopping_list.entity.shopping_list.class: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
+    orob2b_shopping_list.entity.shopping_list_total.class: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal
     orob2b_shopping_list.entity.line_item.class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
 
 services:
