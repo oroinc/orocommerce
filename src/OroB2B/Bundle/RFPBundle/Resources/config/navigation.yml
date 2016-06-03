@@ -18,7 +18,10 @@ oro_menu_config:
             route:           'orob2b_rfp_request_index'
             extras:
                 position:    200
-                routes:      ['orob2b_rfp_request_index', 'orob2b_rfp_request_view']
+                routes:
+                    - 'orob2b_rfp_request_index'
+                    - 'orob2b_rfp_request_view'
+                    - 'orob2b_rfp_request_update'
                 description: 'orob2b.rfp.menu.request_list.description'
 
         request_status_list:

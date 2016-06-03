@@ -66,28 +66,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_back_transition }
 
-    # Layout Block types
-    orob2b_checkout.layout.block.type.transition_button.back:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\Block\Type\TransitionButtonType'
-        calls:
-            - [setName, ['checkout_transition_back']]
-        tags:
-            - { name: layout.block_type, alias: checkout_transition_back }
-
-    orob2b_checkout.layout.block.type.transition_button.continue:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\Block\Type\TransitionButtonType'
-        calls:
-            - [setName, ['checkout_transition_continue']]
-        tags:
-            - { name: layout.block_type, alias: checkout_transition_continue }
-
-    orob2b_checkout.layout.block.type.transition_button.edit:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\Block\Type\TransitionButtonType'
-        calls:
-            - [setName, ['checkout_transition_step_edit']]
-        tags:
-            - { name: layout.block_type, alias: checkout_transition_step_edit }
-
     orob2b_checkout.model.action.get_order_line_items:
         class: 'OroB2B\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems'
         arguments:
