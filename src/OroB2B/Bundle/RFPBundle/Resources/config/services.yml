@@ -149,3 +149,14 @@ services:
         arguments:
             - '@oro_security.security_facade'
             - '@oro_entity.doctrine_helper'
+
+    orob2b_rfp.event_listener.account_view:
+        class: 'OroB2B\Bundle\RFPBundle\EventListener\AccountViewListener'
+        public: true
+        arguments:
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
