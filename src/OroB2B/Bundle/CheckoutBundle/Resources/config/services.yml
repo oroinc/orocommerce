@@ -146,6 +146,7 @@ services:
         arguments:
             - '@oro_workflow.manager'
             - '@doctrine'
+            - '@orob2b_pricing.user_currency_manager'
 
     orob2b_checkout.event_listener.checkout_entity:
         parent: 'orob2b_checkout.event_listener.checkout_entity.abstract'
