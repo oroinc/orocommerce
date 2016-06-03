@@ -6,23 +6,11 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+
 class ProductUnitHolderTypeStub extends AbstractType
 {
     const NAME = 'orob2b_stub_product_unit_holder';
-
-    /**
-     * @var string
-     */
-    protected $formTypeName;
-
-    /**
-     * ProductUnitHolderTypeStub constructor.
-     * @param string $formTypeName
-     */
-    public function __construct($formTypeName)
-    {
-        $this->formTypeName = $formTypeName;
-    }
 
     /**
      * {@inheritdoc}
@@ -30,7 +18,7 @@ class ProductUnitHolderTypeStub extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('productUnit', $this->formTypeName, [
+            ->add('productUnit', ProductUnitSelectionType::NAME, [
                 'label' =>  'orob2b.productunit.entity_label',
             ])
         ;

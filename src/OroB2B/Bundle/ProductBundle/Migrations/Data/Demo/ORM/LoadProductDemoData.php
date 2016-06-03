@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -18,6 +16,8 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface
 {

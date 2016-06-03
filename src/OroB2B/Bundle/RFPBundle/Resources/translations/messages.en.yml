@@ -106,6 +106,8 @@ orob2b:
 
         datagrid:
             action_restore: 'Restore'
+            account.label: 'Requests for Quote'
+            account_user.label: 'Requests for Quote'
 
         controller:
             request:

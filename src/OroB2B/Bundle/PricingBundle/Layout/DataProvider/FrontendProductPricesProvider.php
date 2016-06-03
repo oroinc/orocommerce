@@ -14,13 +14,19 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
 {
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $data;
 
-    /** @var DoctrineHelper */
+    /**
+     * @var DoctrineHelper
+     */
     protected $doctrineHelper;
 
-    /** @var PriceListRequestHandler */
+    /**
+     * @var PriceListRequestHandler
+     */
     protected $priceListRequestHandler;
 
     /**
@@ -41,14 +47,18 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
      */
     public function getData(ContextInterface $context)
     {
-        /** @var Product $product */
+        /**
+         * @var Product $product
+         */
         $product = $context->data()->get('product');
         $productId = $product->getId();
 
         if (!$this->data[$productId]) {
             $priceList = $this->priceListRequestHandler->getPriceListByAccount();
 
-            /** @var ProductPriceRepository $priceRepository */
+            /**
+             * @var ProductPriceRepository $priceRepository
+             */
             $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
             $prices = $priceRepository->findByPriceListIdAndProductIds(
                 $priceList->getId(),

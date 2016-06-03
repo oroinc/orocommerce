@@ -170,13 +170,13 @@ class ProductTypeTest extends FormIntegrationTestCase
         }
 
         $form = $this->factory->create($this->type, $defaultData);
+
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
 
         /** @var Product $data */
         $data = $form->getData();
-        $data->getPrimaryUnitPrecision();
 
         $this->assertEquals($expectedData, $data);
     }

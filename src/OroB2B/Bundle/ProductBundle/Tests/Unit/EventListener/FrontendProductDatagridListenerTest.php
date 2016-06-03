@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -20,42 +21,46 @@ use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
-    
+
     /**
      * @var FrontendProductDatagridListener
      */
     protected $listener;
-    
+
     /**
      * @var DataGridThemeHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $themeHelper;
-    
+
     /**
      * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $doctrine;
-    
+
     /**
      * @var AttachmentManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $attachmentManager;
-    
+
     /**
      * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $unitFormatter;
-    
+
     public function setUp()
     {
         $this->themeHelper = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper')
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->doctrine = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
+
         $this->attachmentManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\AttachmentManager')
             ->disableOriginalConstructor()->getMock();
+
         $this->unitFormatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()->getMock();
+
         $this->listener = new FrontendProductDatagridListener(
             $this->themeHelper,
             $this->doctrine,
@@ -63,7 +68,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $this->unitFormatter
         );
     }
-    
+
     /**
      * @dataProvider onPreBuildDataProvider
      *
@@ -76,13 +81,14 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->themeHelper->expects($this->any())
             ->method('getTheme')
             ->willReturn($themeName);
+
         $config = DatagridConfiguration::createNamed($gridName, []);
         $params = new ParameterBag();
         $event = new PreBuild($config, $params);
         $this->listener->onPreBuild($event);
         $this->assertEquals($expectedConfig, $config->toArray());
     }
-    
+
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
@@ -174,7 +180,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
-    
+
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @dataProvider onResultAfterDataProvider
@@ -198,6 +204,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $ids[] = $record['id'];
             $records[] = new ResultRecord($record);
         }
+        
         /**
          * @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event
          */
@@ -207,27 +214,34 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $event->expects($this->once())
             ->method('getRecords')
             ->willReturn($records);
+        
         /**
          * @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid
          */
         $datagrid = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Datagrid')
             ->disableOriginalConstructor()->getMock();
+
         $gridName = 'grid-name';
         $datagrid->expects($this->once())
             ->method('getName')
             ->willReturn($gridName);
+
         $this->themeHelper->expects($this->any())
             ->method('getTheme')
             ->willReturn($themeName);
+
         $event->expects($this->once())
             ->method('getDatagrid')
             ->willReturn($datagrid);
+
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($em);
+
         $productRepository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
             ->disableOriginalConstructor()
             ->getMock();
@@ -235,6 +249,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
             ->disableOriginalConstructor()
             ->getMock();
+
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturnMap(
@@ -243,6 +258,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     ['OroB2BProductBundle:ProductUnit', $productUnitRepository]
                 ]
             );
+
         $products = [];
         foreach ($productWithImages as $index => $productId) {
             $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product', ['getId', 'getImage']);
@@ -254,6 +270,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ->method('getImage')
                 ->willReturn($image);
             $products[] = $product;
+
             $this->attachmentManager->expects($this->at($index))
                 ->method('getFilteredImageUrl')
                 ->with(
@@ -262,6 +279,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 )
                 ->willReturn($productId);
         }
+
         $productRepository->expects($this->once())
             ->method('getProductsWithImage')
             ->with($ids)
@@ -277,6 +295,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     return $string . 'Formatted';
                 }
             );
+
         $this->listener->onResultAfter($event);
         foreach ($expectedData as $expectedRecord) {
             $record = current($records);
@@ -286,6 +305,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             next($records);
         }
     }
+
     /**
      * @return array
      */
@@ -356,6 +376,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
+
     /**
      * @dataProvider themesWithoutImageDataProvider
      *
@@ -369,35 +390,46 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $event->expects($this->once())
             ->method('getRecords')
             ->willReturn([]);
+
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()->getMock();
+
         $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with('OroB2BProductBundle:ProductUnit')
             ->willReturn($em);
+
         $repository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
             ->disableOriginalConstructor()->getMock();
+
         $em->expects($this->once())
             ->method('getRepository')
             ->with('OroB2BProductBundle:ProductUnit')
             ->willReturn($repository);
+
         /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid */
         $datagrid = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Datagrid')
             ->disableOriginalConstructor()->getMock();
+
         $gridName = 'grid-name';
         $datagrid->expects($this->once())
             ->method('getName')
             ->willReturn($gridName);
+
         $this->themeHelper->expects($this->any())
             ->method('getTheme')
             ->willReturn($themeName);
+
         $event->expects($this->once())
             ->method('getDatagrid')
             ->willReturn($datagrid);
+
         $this->doctrine->expects($this->never())
             ->method('getEntityManagerForClass');
+
         $this->listener->onResultAfter($event);
     }
+
     /**
      * @return array
      */

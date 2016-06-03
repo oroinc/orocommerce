@@ -15,11 +15,6 @@ use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- */
 class ProductType extends AbstractType
 {
     const NAME = 'orob2b_product';
@@ -57,13 +52,7 @@ class ProductType extends AbstractType
     {
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'orob2b.product.sku.label'])
-            ->add(
-                'status',
-                ProductStatusType::NAME,
-                [
-                    'label' => 'orob2b.product.status.label'
-                ]
-            )
+            ->add('status', ProductStatusType::NAME, ['label' => 'orob2b.product.status.label'])
             ->add(
                 'inventoryStatus',
                 'oro_enum_select',
@@ -124,14 +113,7 @@ class ProductType extends AbstractType
                     ]
                 ]
             )
-            ->add(
-                'image',
-                'oro_image',
-                [
-                    'label'    => 'orob2b.product.image.label',
-                    'required' => false
-                ]
-            )
+            ->add('image', 'oro_image', ['label' => 'orob2b.product.image.label', 'required' => false])
             ->add(
                 'primaryUnitPrecision',
                 ProductPrimaryUnitPrecisionType::NAME,

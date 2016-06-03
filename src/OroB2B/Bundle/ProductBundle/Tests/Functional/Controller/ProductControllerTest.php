@@ -244,17 +244,11 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(self::STATUS, $html);
 
         $this->assertContains(
-            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
-            $html
-        );/*
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
+            $this->createPrimaryUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
             $html
         );
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION),
-            $html
-        );*/
+        $this->assertContainsAdditionalUnitPrecision(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION, $html);
+        $this->assertContainsAdditionalUnitPrecision(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION, $html);
 
         $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
@@ -328,17 +322,11 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(self::STATUS, $html);
 
         $this->assertContains(
-            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
+            $this->createPrimaryUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
             $html
         );
-        /*$this->assertContains(
-            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
-            $html
-        );
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION),
-            $html
-        );*/
+        $this->assertContainsAdditionalUnitPrecision(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION, $html);
+        $this->assertContainsAdditionalUnitPrecision(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION, $html);
 
         $product = $this->getProductDataBySku(self::UPDATED_SKU);
 
@@ -433,7 +421,7 @@ class ProductControllerTest extends WebTestCase
      * @param int $precision
      * @return string
      */
-    private function createUnitPrecisionString($name, $precision)
+    private function createPrimaryUnitPrecisionString($name, $precision)
     {
         if ($precision == 0) {
             return sprintf('%s (whole numbers)', $name);
@@ -442,6 +430,18 @@ class ProductControllerTest extends WebTestCase
         } else {
             return sprintf('%s (fractional, %d decimal digits)', $name, $precision);
         }
+    }
+
+    /**
+     * @param string $code
+     * @param int $precision
+     * @param string $html
+     * @return string
+     */
+    private function assertContainsAdditionalUnitPrecision($code, $precision, $html)
+    {
+        $this->assertContains(sprintf("<td>%s</td>", $code), $html);
+        $this->assertContains(sprintf("<td>%d</td>", $precision), $html);
     }
 
     /**

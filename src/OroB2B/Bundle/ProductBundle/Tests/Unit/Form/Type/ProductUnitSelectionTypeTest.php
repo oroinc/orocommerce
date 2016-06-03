@@ -109,6 +109,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'choices_updated' => false,
                     'required' => true,
                     'empty_label' => 'orob2b.product.productunit.removed',
+                    'sell' => null,
                 ]
             );
 
@@ -146,9 +147,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             )
         );
 
-        $formParent = $this
-            ->factory
-            ->create(new ProductUnitHolderTypeStub(ProductUnitSelectionType::NAME), $productUnitHolder);
+        $formParent = $this->factory->create(new ProductUnitHolderTypeStub(), $productUnitHolder);
         $form->setParent($formParent);
         $formConfig = $form->getConfig();
         foreach ($expectedOptions as $key => $value) {
@@ -241,12 +240,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType, null, $inputData['options']);
 
         if ($withParent) {
-            $formParent = $this
-                ->factory
-                ->create(
-                    new ProductUnitHolderTypeStub(ProductUnitSelectionType::NAME),
-                    $inputData['productUnitHolder']
-                );
+            $formParent = $this->factory->create(new ProductUnitHolderTypeStub(), $inputData['productUnitHolder']);
         } else {
             $formParent = null;
         }

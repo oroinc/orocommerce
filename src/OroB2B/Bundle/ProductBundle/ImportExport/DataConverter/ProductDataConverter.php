@@ -30,12 +30,16 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter
     protected function getBackendHeader()
     {
         $backendHeader = parent::getBackendHeader();
-        foreach ($backendHeader as &$v) {
+        
+        // According to business logic Product should have Primary and Additional unit precisions.
+        // But Product Entity has primaryUnitPrecision property and unitPrecisions property which
+        // is collection of all unit precisions. AdditionalUnitPrecisions is calculated by excluding
+        // PrimaryUnitPrecision from all UnitPrecisions. This fix was done in order to display
+        // correct column headers during Products Export.
+        foreach ($backendHeader as $k => &$v) {
             $arr = explode(":", $v);
             if ($arr[0] == "unitPrecisions" && $arr[1] == "0") {
-                $arr[0] = "primaryUnitPrecision";
-                unset($arr[1]);
-                $v = implode(":", $arr);
+                unset($backendHeader[$k]);
             } elseif ($arr[0] == "unitPrecisions") {
                 $arr[0] = "additionalUnitPrecisions";
                 $arr[1] = $arr[1] - 1;
