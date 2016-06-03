@@ -105,10 +105,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         }
 
         $subtotalAmount = 0.0;
-        $subtotal = new Subtotal();
-        $subtotal->setLabel($this->translator->trans(self::NAME . '.label'));
-        $subtotal->setVisible(false);
-        $subtotal->setType(self::TYPE);
+        $subtotal = $this->createSubtotal();
 
         $baseCurrency = $this->getBaseCurrency($entity);
         foreach ($entity->getLineItems() as $lineItem) {
@@ -191,5 +188,18 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     protected function getManagerForClass($class)
     {
         return $this->doctrineHelper->getEntityManagerForClass($class);
+    }
+
+    /**
+     * @return Subtotal
+     */
+    public function createSubtotal()
+    {
+        $subtotal = new Subtotal();
+        $subtotal->setLabel($this->translator->trans(self::NAME.'.label'));
+        $subtotal->setVisible(false);
+        $subtotal->setType(self::TYPE);
+
+        return $subtotal;
     }
 }
