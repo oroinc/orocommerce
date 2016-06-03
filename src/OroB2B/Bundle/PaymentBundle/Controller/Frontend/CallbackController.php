@@ -21,7 +21,7 @@ class CallbackController extends Controller
      * @Route(
      *     "/return/{accessIdentifier}",
      *     name="orob2b_payment_callback_return",
-     *     requirements={"accessIdentifier"="[a-zA-Z0-9_-]+"}
+     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"}
      * )
      * @ParamConverter("paymentTransaction", options={"accessIdentifier" = "accessIdentifier"})
      * @Method({"GET", "POST"})
@@ -41,7 +41,7 @@ class CallbackController extends Controller
      * @Route(
      *     "/error/{accessIdentifier}",
      *     name="orob2b_payment_callback_error",
-     *     requirements={"accessIdentifier"="[a-zA-Z0-9_-]+"}
+     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"}
      * )
      * @ParamConverter("paymentTransaction", options={"accessIdentifier" = "accessIdentifier"})
      * @Method({"GET", "POST"})
@@ -61,7 +61,7 @@ class CallbackController extends Controller
      * @Route(
      *     "/notify/{accessIdentifier}/{accessToken}",
      *     name="orob2b_payment_callback_notify",
-     *     requirements={"accessIdentifier"="[a-zA-Z0-9_-]+", "accessToken"="[a-zA-Z0-9_-]+"}
+     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+", "accessToken"="[a-zA-Z0-9\-]+"}
      * )
      * @ParamConverter(
      *     "paymentTransaction",
