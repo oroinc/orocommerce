@@ -4,7 +4,6 @@ parameters:
 services:
     orob2b_frontend.listener.frontend_route_collection:
         class: 'OroB2B\Bundle\FrontendBundle\EventListener\FrontendRouteCollectionListener'
-        public: true
         arguments:
             -
                 - oro_translation_jstranslation
@@ -15,7 +14,6 @@ services:
 
     orob2b_frontend.listener.route_collection:
         class: 'OroB2B\Bundle\FrontendBundle\EventListener\RouteCollectionListener'
-        public: true
         arguments:
             - '%web_backend_prefix%'
         tags:
@@ -25,13 +23,13 @@ services:
 
     orob2b_frontend.menu.breadcrumb_manager:
         class: 'OroB2B\Bundle\FrontendBundle\Menu\BreadcrumbManager'
+        public: false
         parent: oro_navigation.breadcrumb_manager
         tags:
             - {name: oro_breadcrumbs.provider}
 
     orob2b_frontend.listener.theme:
         class: 'OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener'
-        public: true
         arguments:
             - '@oro_theme.registry'
             - '@orob2b_frontend.request.frontend_helper'
@@ -43,12 +41,14 @@ services:
 
     orob2b_frontend.assetic.configuration:
         class: '%oro_assetic.configuration.class%'
+        public: false
         arguments:
             - '@event_dispatcher'
             - '%oro_assetic.raw_configuration%'
 
     orob2b_frontend.twig_extension.demo_frontend_theme:
         class: 'OroB2B\Bundle\FrontendBundle\Twig\DemoThemeExtension'
+        public: false
         arguments:
             - '@assetic.asset_factory'
             - '@orob2b_frontend.assetic.configuration'
@@ -58,27 +58,23 @@ services:
 
     orob2b_frontend.placeholder.theme_filter:
         class: 'OroB2B\Bundle\FrontendBundle\Placeholder\ThemeFilter'
-        public: true
         arguments:
             - '@oro_theme.registry'
 
     orob2b_frontend.placeholder.filter:
         class: 'OroB2B\Bundle\FrontendBundle\Placeholder\FrontendFilter'
-        public: true
         arguments:
             - '@orob2b_frontend.request.frontend_helper'
             - '@request_stack'
 
     orob2b_frontend.request.frontend_helper:
         class: 'OroB2B\Bundle\FrontendBundle\Request\FrontendHelper'
-        public: true
         arguments:
             - '%web_backend_prefix%'
             - '@request_stack'
 
     orob2b_frontend.activity_list.placeholder.filter:
         class: 'OroB2B\Bundle\FrontendBundle\Placeholder\ActivityListPlaceholderFilter'
-        public: true
         arguments:
             - '@oro_activity_list.placeholder.filter'
             - '@orob2b_frontend.request.frontend_helper'
@@ -88,17 +84,18 @@ services:
 
     orob2b_frontend.form.type.install_configuration.web:
         class: 'OroB2B\Bundle\FrontendBundle\Form\Type\Configuration\WebType'
+        public: false
         tags:
             - { name: form.type, alias: orob2b_frontend_install_configuration_web }
 
     orob2b_frontend.form.type.extension.configuration.web:
         class: 'OroB2B\Bundle\FrontendBundle\Form\Extension\ConfigurationTypeExtension'
+        public: false
         tags:
             - { name: form.type_extension, alias: oro_installer_configuration }
 
     orob2b_frontend.listener.datagrid.bottom_toolbar:
         class: 'OroB2B\Bundle\FrontendBundle\EventListener\DatagridBottomToolbarListener'
-        public: true
         arguments:
             - '@orob2b_frontend.request.frontend_helper'
         tags:
@@ -106,7 +103,6 @@ services:
 
     orob2b_frontend.listener.datagrid.fields:
         class: 'OroB2B\Bundle\FrontendBundle\EventListener\DatagridFieldsListener'
-        public: true
         arguments:
             - '@orob2b_frontend.request.frontend_helper'
         tags:
