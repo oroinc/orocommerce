@@ -95,8 +95,8 @@ class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareIn
     {
         $table = $schema->createTable('orob2b_websites_localizations');
         $table->addColumn('website_id', 'integer', []);
-        $table->addColumn('locale_id', 'integer', []);
-        $table->setPrimaryKey(['website_id', 'locale_id']);
+        $table->addColumn('localization_id', 'integer', []);
+        $table->setPrimaryKey(['website_id', 'localization_id']);
     }
 
     /**
@@ -153,7 +153,7 @@ class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareIn
         $table = $schema->getTable('orob2b_websites_localizations');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_localization'),
-            ['locale_id'],
+            ['localization_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
