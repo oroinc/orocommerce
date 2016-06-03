@@ -34,7 +34,7 @@ layout:
                     options:
                         form: { '@value': $data.orob2b_account_frontend_account_user_role_form }
                 account_user_role_edit_form_fields:
-                    blockType: form
+                    blockType: form_fields
                     options:
                         form: { '@value': $data.orob2b_account_frontend_account_user_role_form }
                 account_user_role_edit_form_users:
