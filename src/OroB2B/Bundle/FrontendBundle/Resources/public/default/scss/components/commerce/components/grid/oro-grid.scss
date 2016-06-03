@@ -1,10 +1,11 @@
 $oro-grid-offset: 4%;
+$oro-grid-count: 12;
 
 .oro-grid {
   &__row {
     margin-bottom: $offset-y;
 
-    @include clearfix();
+    @include clearfix;
 
     &--offset {
       &-none {
@@ -50,17 +51,9 @@ $oro-grid-offset: 4%;
     }
   }
 
-  // todo Valera
-  //@include oro-grid-columns(12);
-  //.oro-grid-columns($n, $i: 1) when ($i =< $n) {
-  //  $item: $i * 100% / $n;
-  //
-  //  &__column-#{$i} {
-  //    width: ($i * 100% / $n);
-  //
-  //    float: left;
-  //  }
-  //
-  //  @include oro-grid-columns($n, ($i + 1));
-  //}
+  @for $i from 1 through $oro-grid-count {
+    &__column-#{$i} {
+      width: (($i* 100%) / $oro-grid-count);
+    }
+  }
 }

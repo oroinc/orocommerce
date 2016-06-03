@@ -1,7 +1,5 @@
 .oro-textarea {
-  padding: 12px;
-
   resize: vertical;
 
-  @extend %base-ui-element;
+  @include base-ui-element;
 }

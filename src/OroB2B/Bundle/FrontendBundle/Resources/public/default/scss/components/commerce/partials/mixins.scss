@@ -42,10 +42,10 @@
   border-radius: 5px;
 }
 
-%base-ui-element {
+@mixin base-ui-element {
   @extend %base-ui-element-style;
-  padding: 12px;
 
+  padding: 12px;
 
 
   &:focus {

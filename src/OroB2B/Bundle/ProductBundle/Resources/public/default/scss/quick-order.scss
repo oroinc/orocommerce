@@ -1,10 +1,11 @@
-@import "./../../../orob2bfrontend/default/scss/shared/_vars.scss";
+@import "./../../../orob2bfrontend/default/scss/shared/_vars";
+
 
 /*START QUICK ORDER*/
 .quick-order {
     padding: 3rem 3rem 4rem;
-    // todo Valera
-    //background: $base-sidebar-background-color-light;
+
+    background: $base-sidebar-background-color-light;
     border-radius: .5rem;
 
     @media (max-width: 991px) {
@@ -61,16 +62,14 @@
                 }
 
                 > a {
-                    // todo Valera
-                    //background: $base-sidebar-background-color-light;
+                    background: $base-sidebar-background-color-light;
 
                     &:focus, &:active {
                         outline: 0;
                     }
 
                     @media (max-width: 767px) {
-                        // todo Valera
-                        //background: $base-background-color;
+                        background: $base-background-color;
                     }
                 }
             }
@@ -93,8 +92,7 @@
 
     .tab-content {
         @media (max-width: 767px) {
-            // todo Valera
-            //border: .1rem solid $base-border-color;
+            border: .1rem solid $base-border-color;
             border-radius: .5rem;
             border-top-left-radius: 0;
         }
@@ -104,8 +102,7 @@
                 padding: 3rem 1.2rem;
                 border-radius: .5rem;
                 border-top-left-radius: 0;
-                // todo Valera
-                //background: $base-sidebar-background-color-light;
+                background: $base-sidebar-background-color-light;
             }
 
             @media (max-width: 767px) {
@@ -140,8 +137,7 @@
 }
 
 .quick-order-table-num-row {
-    // todo Valera
-    //color: $theme-bucket-color;
+    color: $theme-bucket-color;
 }
 
 .quick-order-page-title {
@@ -165,11 +161,9 @@
         font-size: 0;
 
         &:before {
-            // todo Valera
-            //color: $base-link-color;
+            color: $base-link-color;
 
-            // todo Valera
-            //font-size: $base-font-size;
+            font-size: $base-font-size;
         }
     }
 }
@@ -288,16 +282,14 @@
     padding: 1rem 0;
     text-decoration: none;
     font-size: 1.3rem;
-    // todo Valera
-    //color: $base-font-color-lighter;
-    //background: $theme-gray-color;
+    color: $base-font-color-lighter;
+    background: $theme-gray-color;
     text-align: center;
     border-radius: .3rem;
 
     &:focus, &:active, &:hover {
         text-decoration: none;
-        // todo Valera
-        //color: $base-font-color-lighter;
+        color: $base-font-color-lighter;
     }
 
     i, span {
@@ -352,8 +344,7 @@
     position: absolute;
     top: 1.1rem;
     right: -1.5rem;
-    // todo Valera
-    //color: $theme-gray-color;
+    color: $theme-gray-color;
 
     i {
         font-size: 2rem;
@@ -452,16 +443,14 @@
         border-radius: 4px;
         padding: 0 2.9rem;
         line-height: 4.7rem;
-        // todo Valera
-        //background: $theme-middle-gray-color;
-        //color: $base-white-color;
+        background: $theme-middle-gray-color;
+        color: $base-white-color;
         margin: 0 1rem 0 0;
     }
 
     .widget-content {
         .action-button {
-            // todo Valera
-            //background-color: $theme-dark-gray-color;
+            background-color: $theme-dark-gray-color;
         }
     }
 }
