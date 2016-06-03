@@ -1,0 +1,72 @@
+/*ORO CUSTOM PAGINATION*/
+.oro-pagination {
+  white-space: nowrap;
+
+  > span {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 1.4rem;
+
+    + .oro-pagination__pager {
+      margin: 0 0 0 .5rem;
+    }
+  }
+
+  .oro-pagination__pager {
+    display: inline-block;
+    vertical-align: middle;
+    
+    + span {
+      margin-left: .5rem;
+    }
+  }
+
+  .oro-pagination__pager__prev,
+  .oro-pagination__pager__next {
+    display: inline-block;
+    color: $base-font-color;
+    text-decoration: none;
+    cursor: pointer;
+    vertical-align: middle;
+    width: 2.3rem;
+    line-height: 2.95rem;
+    font-size: 1.6rem;
+    padding: 0;
+    border: .1rem solid $base-border-color;
+    background: $base-sidebar-background-color-light;
+  
+    &.disabled {
+      color: #9c9c9c;
+      cursor: default;
+    }
+
+    i {
+      margin-right: 0;
+    }
+  }
+
+  .oro-pagination__pager__prev {
+    border-top-left-radius: .5rem;
+    border-bottom-left-radius: .5rem;
+  }
+
+  .oro-pagination__pager__next {
+    border-top-right-radius: .5rem;
+    border-bottom-right-radius: .5rem;
+  }
+
+  .oro-pagination__pager__input {
+    display: inline-block;
+    font-size: 1.4rem;
+    vertical-align: middle;
+    padding: 0;
+    text-align: center;
+    width: 3rem;
+    border: 0;
+    border-radius: 0;
+    line-height: 2.95rem;
+    border-top: .1rem solid $base-border-color;
+    border-bottom: .1rem solid $base-border-color;
+    appearance: none;
+  }
+}
