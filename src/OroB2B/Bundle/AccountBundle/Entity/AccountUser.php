@@ -722,6 +722,14 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
+     * @return bool
+     */
+    public function hasSalesRepresentatives()
+    {
+        return $this->salesRepresentatives->count() > 0;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getCreatedAt()
