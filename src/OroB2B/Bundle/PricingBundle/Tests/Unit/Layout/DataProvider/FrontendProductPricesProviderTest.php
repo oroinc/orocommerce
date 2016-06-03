@@ -15,13 +15,19 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /** @var FrontendProductPricesProvider */
+    /**
+     * @var FrontendProductPricesProvider
+     */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     */
     protected $doctrineHelper;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
+     */
     protected $priceListRequestHandler;
 
     public function setUp()

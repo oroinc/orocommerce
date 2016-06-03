@@ -23,11 +23,12 @@ class FrontendLineItemType extends AbstractType
         $builder
             ->add(
                 'unit',
-                FrontendProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::NAME,
                 [
                     'required' => true,
                     'label' => 'orob2b.product.lineitem.unit.label',
                     'product_holder' => $builder->getData(),
+                    'sell' => true,
                 ]
             )
             ->add(

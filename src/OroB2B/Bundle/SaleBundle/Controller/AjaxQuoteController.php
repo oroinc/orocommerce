@@ -43,8 +43,6 @@ class AjaxQuoteController extends Controller
         $accountPaymentTerm = null;
         if ($account) {
             $accountPaymentTerm = $this->getPaymentTermProvider()->getAccountPaymentTerm($account);
-        } else {
-            return new JsonResponse([]);
         }
         $accountGroupPaymentTerm = null;
         if ($account->getGroup()) {

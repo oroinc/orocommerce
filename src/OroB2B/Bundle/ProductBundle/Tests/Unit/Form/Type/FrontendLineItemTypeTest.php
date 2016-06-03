@@ -11,7 +11,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Model\ProductLineItem;
-use OroB2B\Bundle\ProductBundle\Form\Type\FrontendProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
@@ -48,15 +48,12 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $productUnitSelection = new ProductUnitSelectionTypeStub(
-            $this->prepareProductUnitSelectionChoices(),
-            FrontendProductUnitSelectionType::NAME
-        );
+        $productUnitSelection = new ProductUnitSelectionTypeStub($this->prepareProductUnitSelectionChoices());
 
         return [
             new PreloadedExtension(
                 [
-                    FrontendProductUnitSelectionType::NAME => $productUnitSelection,
+                    ProductUnitSelectionType::NAME => $productUnitSelection,
                     QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []

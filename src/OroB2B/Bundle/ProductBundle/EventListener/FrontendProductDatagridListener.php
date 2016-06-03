@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -11,6 +12,7 @@ use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -21,27 +23,27 @@ class FrontendProductDatagridListener
 {
     const COLUMN_PRODUCT_UNITS = 'product_units';
     const PRODUCT_IMAGE_FILTER = 'product_large';
-    
+
     /**
      * @var DataGridThemeHelper
      */
     protected $themeHelper;
-    
+
     /**
      * @var RegistryInterface
      */
     protected $registry;
-    
+
     /**
      * @var AttachmentManager
      */
     protected $attachmentManager;
-    
+
     /**
      * @var ProductUnitLabelFormatter
      */
     protected $unitFormatter;
-    
+
     /**
      * @param DataGridThemeHelper $themeHelper
      * @param RegistryInterface $registry
@@ -59,23 +61,24 @@ class FrontendProductDatagridListener
         $this->attachmentManager = $attachmentManager;
         $this->unitFormatter = $unitFormatter;
     }
-    
+
     /**
      * @param PreBuild $event
      */
     public function onPreBuild(PreBuild $event)
     {
         $config = $event->getConfig();
-     
+
         $config->offsetAddToArrayByPath(
             '[properties]',
             [self::COLUMN_PRODUCT_UNITS => ['type' => 'field', 'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY]]
         );
+
         // add theme processing
         $gridName = $config->getName();
         $this->updateConfigByView($config, $this->themeHelper->getTheme($gridName));
     }
-    
+
     /**
      * @param DatagridConfiguration $config
      * @param string $viewName
@@ -95,7 +98,7 @@ class FrontendProductDatagridListener
                 break;
         }
     }
-    
+
     /**
      * @param DatagridConfiguration $config
      * @return array
@@ -120,7 +123,7 @@ class FrontendProductDatagridListener
         ];
         $this->applyUpdatesToConfig($config, $updates);
     }
-    
+
     /**
      * @param DatagridConfiguration $config
      */
@@ -146,7 +149,7 @@ class FrontendProductDatagridListener
         ];
         $this->applyUpdatesToConfig($config, $updates);
     }
-    
+
     /**
      * @param DatagridConfiguration $config
      * @param array $updates
@@ -157,7 +160,7 @@ class FrontendProductDatagridListener
             $config->offsetAddToArrayByPath($path, $update);
         }
     }
-    
+
     /**
      * @param OrmResultAfter $event
      */
@@ -165,16 +168,18 @@ class FrontendProductDatagridListener
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
+
         $productIds = array_map(
             function (ResultRecord $record) {
                 return $record->getValue('id');
             },
             $records
         );
+
         $this->addProductUnits($productIds, $records);
         $this->addProductImages($event, $productIds, $records);
     }
-    
+
     /**
      * @param OrmResultAfter $event
      * @param array $productIds
@@ -187,6 +192,7 @@ class FrontendProductDatagridListener
         if (!in_array($this->themeHelper->getTheme($gridName), $supportedViews, true)) {
             return;
         }
+
         $products = $this->getProductRepository()->getProductsWithImage($productIds);
         $imageUrls = [];
         foreach ($products as $product) {
@@ -198,6 +204,7 @@ class FrontendProductDatagridListener
                 );
             }
         }
+
         foreach ($records as $record) {
             $productId = $record->getValue('id');
             if (array_key_exists($productId, $imageUrls)) {
@@ -205,7 +212,7 @@ class FrontendProductDatagridListener
             }
         }
     }
-    
+
     /**
      * @param array $productIds
      * @param ResultRecord[] $records
@@ -224,7 +231,7 @@ class FrontendProductDatagridListener
             $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);
         }
     }
-    
+
     /**
      * @return ProductRepository
      */
@@ -234,7 +241,7 @@ class FrontendProductDatagridListener
             ->getManagerForClass('OroB2BProductBundle:Product')
             ->getRepository('OroB2BProductBundle:Product');
     }
-    
+
     /**
      * @return ProductUnitRepository
      */

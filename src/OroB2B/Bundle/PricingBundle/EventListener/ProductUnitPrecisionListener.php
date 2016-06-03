@@ -1,8 +1,11 @@
 <?php
+
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use OroB2B\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
 use OroB2B\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -17,18 +20,19 @@ class ProductUnitPrecisionListener
      * @var string
      */
     protected $productPriceClass;
-    
+
     /**
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
-    
+
     /**
      * @param LifecycleEventArgs $event
      */
     public function postRemove(LifecycleEventArgs $event)
     {
         $entity = $event->getEntity();
+
         if ($entity instanceof ProductUnitPrecision) {
             $product = $entity->getProduct();
             $unit = $entity->getUnit();
@@ -39,6 +43,7 @@ class ProductUnitPrecisionListener
             $args = ['unit' => $product, 'product' => $unit];
             $this->eventDispatcher
                 ->dispatch(ProductPricesRemoveBefore::NAME, new ProductPricesRemoveBefore($args));
+            
             /**
              * @var ProductPriceRepository $repository
              */
@@ -48,7 +53,7 @@ class ProductUnitPrecisionListener
                 ->dispatch(ProductPricesRemoveAfter::NAME, new ProductPricesRemoveAfter($args));
         }
     }
-    
+
     /**
      * @param string $productPriceClass
      * @return ProductUnitPrecisionListener
@@ -56,9 +61,10 @@ class ProductUnitPrecisionListener
     public function setProductPriceClass($productPriceClass)
     {
         $this->productPriceClass = $productPriceClass;
+
         return $this;
     }
-    
+
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @return ProductUnitPrecisionListener
@@ -66,6 +72,7 @@ class ProductUnitPrecisionListener
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+
         return $this;
     }
 }

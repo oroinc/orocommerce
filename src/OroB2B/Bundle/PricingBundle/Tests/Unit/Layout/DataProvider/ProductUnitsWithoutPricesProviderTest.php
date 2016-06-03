@@ -52,6 +52,7 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn(array_map([$this, 'getUnitPrecision'], $unitPrecisionsWithPrices));
 
         $actual = $this->provider->getData($context);
+
         $this->assertUnitEquals($expectedData, $actual);
     }
 

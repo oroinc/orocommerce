@@ -7,7 +7,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -17,6 +16,7 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
