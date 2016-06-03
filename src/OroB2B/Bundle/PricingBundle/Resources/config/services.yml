@@ -192,6 +192,7 @@ services:
             - '@orob2b_pricing.builder.website_combined_price_list_builder'
             - '@orob2b_pricing.builder.account_group_combined_price_list_builder'
             - '@orob2b_pricing.builder.account_combined_price_list_builder'
+            - '@event_dispatcher'
 
     orob2b_pricing.builder.combined_product_price_queue_consumer:
         class: 'OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer'

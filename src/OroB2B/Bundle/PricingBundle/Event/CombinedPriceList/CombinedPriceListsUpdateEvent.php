@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Event;
+namespace OroB2B\Bundle\PricingBundle\Event\CombinedPriceList;
 
 use Symfony\Component\EventDispatcher\Event;
 

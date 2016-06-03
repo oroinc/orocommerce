@@ -11,3 +11,7 @@ services:
             - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: orob2b_pricing.combined_price_list.update, method: onPriceListUpdate }
+            - { name: kernel.event_listener, event: orob2b_pricing.account.combined_price_list.update, method: onAccountPriceListUpdate }
+            - { name: kernel.event_listener, event: orob2b_pricing.account_group.combined_price_list.update, method: onAccountGroupPriceListUpdate }
+            - { name: kernel.event_listener, event: orob2b_pricing.website.combined_price_list.update, method: onWebsitePriceListUpdate }
+            - { name: kernel.event_listener, event: orob2b_pricing.config.combined_price_list.update, method: onConfigPriceListUpdate }

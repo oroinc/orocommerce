@@ -5,10 +5,16 @@ namespace OroB2B\Bundle\PricingBundle\Builder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
+use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
+use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
+use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
+use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 
 class CombinedPriceListQueueConsumer
 {
@@ -51,24 +57,32 @@ class CombinedPriceListQueueConsumer
     protected $queueRepository;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
      * @param ManagerRegistry $registry
      * @param CombinedPriceListsBuilder $commonPriceListsBuilder
      * @param WebsiteCombinedPriceListsBuilder $websitePriceListsBuilder
      * @param AccountGroupCombinedPriceListsBuilder $accountGroupPriceListsBuilder
      * @param AccountCombinedPriceListsBuilder $accountPriceListsBuilder
+     * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
         ManagerRegistry $registry,
         CombinedPriceListsBuilder $commonPriceListsBuilder,
         WebsiteCombinedPriceListsBuilder $websitePriceListsBuilder,
         AccountGroupCombinedPriceListsBuilder $accountGroupPriceListsBuilder,
-        AccountCombinedPriceListsBuilder $accountPriceListsBuilder
+        AccountCombinedPriceListsBuilder $accountPriceListsBuilder,
+        EventDispatcherInterface $dispatcher
     ) {
         $this->registry = $registry;
         $this->commonPriceListsBuilder = $commonPriceListsBuilder;
         $this->websitePriceListsBuilder = $websitePriceListsBuilder;
         $this->accountGroupPriceListsBuilder = $accountGroupPriceListsBuilder;
         $this->accountPriceListsBuilder = $accountPriceListsBuilder;
+        $this->dispatcher = $dispatcher;
     }
 
     public function process()
@@ -93,6 +107,8 @@ class CombinedPriceListQueueConsumer
             }
         }
         $manager->flush();
+
+        $this->dispatchChangeAssociationEvents();
     }
 
     /**
@@ -156,9 +172,62 @@ class CombinedPriceListQueueConsumer
 
         return $this->queueRepository;
     }
-    
-    protected function dispatchEvent()
+
+    protected function dispatchChangeAssociationEvents()
     {
-        
+        $this->dispatchAccountScopeEvent();
+        $this->dispatchAccountGroupScopeEvent();
+        $this->dispatchWebsiteScopeEvent();
+        $this->dispatchConfigScopeEvent();
+    }
+
+    protected function dispatchAccountScopeEvent()
+    {
+        $accountBuildList = $this->accountPriceListsBuilder->getBuiltList();
+        $accountScope = isset($accountBuildList['account']) ? $accountBuildList['account']: null;
+        if ($accountScope) {
+            $data = [];
+            foreach ($accountScope as $websiteId => $accounts) {
+                $data[] = [
+                    'websiteId' => $websiteId,
+                    'accounts' => array_keys($accounts)
+                ];
+            }
+            $event = new AccountCPLUpdateEvent($data);
+            $this->dispatcher->dispatch(AccountCPLUpdateEvent::NAME, $event);
+        }
+    }
+
+    protected function dispatchAccountGroupScopeEvent()
+    {
+        $accountGroupBuildList = $this->accountGroupPriceListsBuilder->getBuiltList();
+        if ($accountGroupBuildList) {
+            $data = [];
+            foreach ($accountGroupBuildList as $websiteId => $accountGroups) {
+                $data[] = [
+                    'websiteId' => $websiteId,
+                    'accountGroups' => array_keys($accountGroups)
+                ];
+            }
+            $event = new AccountGroupCPLUpdateEvent($data);
+            $this->dispatcher->dispatch(AccountGroupCPLUpdateEvent::NAME, $event);
+        }
+    }
+
+    protected function dispatchWebsiteScopeEvent()
+    {
+        $websiteBuildList = $this->websitePriceListsBuilder->getBuiltList();
+        if ($websiteBuildList) {
+            $event = new WebsiteCPLUpdateEvent(array_keys($websiteBuildList));
+            $this->dispatcher->dispatch(WebsiteCPLUpdateEvent::NAME, $event);
+        }
+    }
+
+    protected function dispatchConfigScopeEvent()
+    {
+        if ($this->commonPriceListsBuilder->isBuilt()) {
+            $event = new ConfigCPLUpdateEvent();
+            $this->dispatcher->dispatch(ConfigCPLUpdateEvent::NAME, $event);
+        }
     }
 }

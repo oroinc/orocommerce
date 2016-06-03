@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -15,6 +17,10 @@ use OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
+use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
+use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
+use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 
 class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
 {
@@ -50,6 +56,11 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
      * @var CombinedPriceListQueueConsumer
      */
     protected $consumer;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     */
+    protected $dispatcher;
 
     /**
      * {@inheritdoc}
@@ -102,12 +113,15 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
+        $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+
         $this->consumer = new CombinedPriceListQueueConsumer(
             $this->registry,
             $this->cplBuilder,
             $this->cplWebsiteBuilder,
             $this->cplAccountGroupBuilder,
-            $this->cplAccountBuilder
+            $this->cplAccountBuilder,
+            $this->dispatcher
         );
     }
 
@@ -246,6 +260,180 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
                     'flush' => 1
                 ],
                 'repositoryData' => [],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dispatchAccountScopeEventDataProvider
+     * @param array $builtList
+     */
+    public function testDispatchAccountScopeEvent(array $builtList)
+    {
+        $this->priceListChangeTriggerRepository->expects($this->any())
+            ->method('getPriceListChangeTriggersIterator')
+            ->willReturn($this->getCollectionChangesMock([]));
+
+        $this->cplAccountBuilder->expects($this->once())
+            ->method('getBuiltList')
+            ->willReturn($builtList);
+        if (isset($builtList['account'])) {
+            $this->dispatcher->expects($this->once())
+                ->method('dispatch')
+                ->with(AccountCPLUpdateEvent::NAME);
+        } else {
+            $this->dispatcher->expects($this->never())
+                ->method('dispatch');
+        }
+
+        $this->consumer->process();
+    }
+
+    /**
+     * @return array
+     */
+    public function dispatchAccountScopeEventDataProvider()
+    {
+        return [
+            'with account scope' => [
+                'builtList' => [
+                    'account' => [
+                        1 => [
+                            1 => true,
+                            2 => true
+                        ]
+                    ]
+                ]
+            ],
+            'without account scope' => [
+                'builtList' => []
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dispatchAccountGroupScopeEventDataProvider
+     * @param array $builtList
+     */
+    public function testDispatchAccountGroupScopeEvent(array $builtList)
+    {
+        $this->priceListChangeTriggerRepository->expects($this->any())
+            ->method('getPriceListChangeTriggersIterator')
+            ->willReturn($this->getCollectionChangesMock([]));
+
+        $this->cplAccountGroupBuilder->expects($this->once())
+            ->method('getBuiltList')
+            ->willReturn($builtList);
+        if ($builtList) {
+            $this->dispatcher->expects($this->once())
+                ->method('dispatch')
+                ->with(AccountGroupCPLUpdateEvent::NAME);
+        } else {
+            $this->dispatcher->expects($this->never())
+                ->method('dispatch');
+        }
+
+        $this->consumer->process();
+    }
+
+    /**
+     * @return array
+     */
+    public function dispatchAccountGroupScopeEventDataProvider()
+    {
+        return [
+            'with account group scope' => [
+                'builtList' => [
+                    1 => [
+                        1 => true,
+                        2 => true
+                    ]
+                ]
+            ],
+            'without account group scope' => [
+                'builtList' => []
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dispatchWebsiteScopeEventDataProvider
+     * @param array $builtList
+     */
+    public function testDispatchWebsiteScopeEvent(array $builtList)
+    {
+        $this->priceListChangeTriggerRepository->expects($this->any())
+            ->method('getPriceListChangeTriggersIterator')
+            ->willReturn($this->getCollectionChangesMock([]));
+
+        $this->cplWebsiteBuilder->expects($this->once())
+            ->method('getBuiltList')
+            ->willReturn($builtList);
+
+        if ($builtList) {
+            $this->dispatcher->expects($this->once())
+                ->method('dispatch')
+                ->with(WebsiteCPLUpdateEvent::NAME);
+        } else {
+            $this->dispatcher->expects($this->never())
+                ->method('dispatch');
+        }
+
+        $this->consumer->process();
+    }
+
+    /**
+     * @return array
+     */
+    public function dispatchWebsiteScopeEventDataProvider()
+    {
+        return [
+            'with account group scope' => [
+                'builtList' => [1, 2, 3]
+            ],
+            'without account group scope' => [
+                'builtList' => []
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dispatchConfigScopeEventDataProvider
+     * @param bool $isBuilt
+     */
+    public function testDispatchConfigScopeEvent($isBuilt)
+    {
+        $this->priceListChangeTriggerRepository->expects($this->any())
+            ->method('getPriceListChangeTriggersIterator')
+            ->willReturn($this->getCollectionChangesMock([]));
+
+        $this->cplBuilder->expects($this->once())
+            ->method('isBuilt')
+            ->willReturn($isBuilt);
+
+        if ($isBuilt) {
+            $this->dispatcher->expects($this->once())
+                ->method('dispatch')
+                ->with(ConfigCPLUpdateEvent::NAME);
+        } else {
+            $this->dispatcher->expects($this->never())
+                ->method('dispatch');
+        }
+
+        $this->consumer->process();
+    }
+
+    /**
+     * @return array
+     */
+    public function dispatchConfigScopeEventDataProvider()
+    {
+        return [
+            'built' => [
+                '$isBuilt' => true
+            ],
+            'not built' => [
+                'builtList' => false
             ],
         ];
     }

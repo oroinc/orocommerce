@@ -2,15 +2,16 @@
 
 namespace OroB2B\Bundle\PricingBundle\Builder;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use OroB2B\Bundle\PricingBundle\Event\CombinedPriceListsUpdateEvent;
+use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CombinedProductPriceQueueConsumer
 {
