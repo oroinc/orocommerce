@@ -61,8 +61,7 @@ class RequestRepresentativesNotifier
     {
         return ($request->getAccount()->hasSalesRepresentatives()
             && ('always' == $this->configManager->get('oro_b2b_rfp.notify_assigned_sales_reps_of_the_account')
-                || !$request->getAccountUser()->hasSalesRepresentatives())
-        );
+                || !$request->getAccountUser()->hasSalesRepresentatives()));
     }
 
     /**
@@ -71,10 +70,8 @@ class RequestRepresentativesNotifier
      */
     protected function shouldNotifyOwnerOfAccountUser(Request $request)
     {
-        return ($request->getAccountUser()->getOwner()
-            && ('always' == $this->configManager->get('oro_b2b_rfp.notify_owner_of_account_user_record')
-                || !$request->getAccountUser()->hasSalesRepresentatives())
-        );
+        return ('always' == $this->configManager->get('oro_b2b_rfp.notify_owner_of_account_user_record')
+            || !$request->getAccountUser()->hasSalesRepresentatives());
     }
 
     /**
@@ -83,9 +80,7 @@ class RequestRepresentativesNotifier
      */
     protected function shouldNotifyOwnerOfAccount(Request $request)
     {
-        return ($request->getAccount()->getOwner()
-            && ('always' == $this->configManager->get('oro_b2b_rfp.notify_owner_of_account')
-                || !$request->getAccount()->hasSalesRepresentatives())
-        );
+        return ('always' == $this->configManager->get('oro_b2b_rfp.notify_owner_of_account')
+            || !$request->getAccount()->hasSalesRepresentatives());
     }
 }

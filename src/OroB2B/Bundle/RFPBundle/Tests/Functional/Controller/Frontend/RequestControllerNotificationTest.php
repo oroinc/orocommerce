@@ -64,7 +64,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->em->flush();
         $this->createRequest();
 
-        $this->assertEmailSent([$saleRep1, $saleRep2], 2);
+        $this->assertEmailSent([$saleRep1, $saleRep2], 4);
     }
 
     public function testCreateRequestEmailNotifySalesRepsOfAccount()
@@ -76,7 +76,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $account->addSalesRepresentative($saleRep2);
         $this->em->flush();
         $this->createRequest();
-        $this->assertEmailSent([$saleRep1, $saleRep2], 2);
+        $this->assertEmailSent([$saleRep1, $saleRep2], 4);
     }
 
     public function testCreateRequestShouldNotNotifyAccountSalesReps()
@@ -94,7 +94,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->configManager->flush();
 
         $this->createRequest();
-        $this->assertEmailSent([$saleRep2], 1);
+        $this->assertEmailSent([$saleRep2], 3);
     }
 
     public function testCreateRequestShouldNotifyAccountOwner()
@@ -102,24 +102,21 @@ class RequestControllerNotificationTest extends WebTestCase
         $owner = $this->getReference(LoadUserData::USER1);
         $account = $this->getReference(LoadUserData::ACCOUNT1);
         $account->setOwner($owner);
-        $accountUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
-        $accountUser->setOwner(null);
         $this->em->flush();
 
         $this->createRequest();
+        $owner = $this->getReference(LoadUserData::USER1);
         // should notify owner
-        $this->assertEmailSent([$owner], 1);
+        $this->assertEmailSent([$owner], 2);
     }
 
     public function testCreateRequestShouldNotNotifyAccountOwner()
     {
-        $owner = $this->getReference(LoadUserData::USER1);
         $saleRepresentative = $this->getReference(LoadUserData::USER2);
         $account = $this->getReference(LoadUserData::ACCOUNT1);
-        $account->setOwner($owner);
         $account->addSalesRepresentative($saleRepresentative);
         $accountUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
-        $accountUser->setOwner(null);
+        $accountUser->addSalesRepresentative($saleRepresentative);
         $this->em->flush();
 
         $this->configManager->set('oro_b2b_rfp.notify_owner_of_account', 'noSaleReps');
@@ -127,7 +124,7 @@ class RequestControllerNotificationTest extends WebTestCase
 
         $this->createRequest();
         // should notify only sale representative, not owner
-        $this->assertEmailSent([$saleRepresentative], 1);
+        $this->assertEmailSent([$saleRepresentative], 3);
     }
 
     public function testCreateRequestShouldNotifyAccountUserOwner()
@@ -135,14 +132,12 @@ class RequestControllerNotificationTest extends WebTestCase
         $owner = $this->getReference(LoadUserData::USER1);
         $accountUser = $this->getReference(LoadUserData::ACCOUNT1);
         $accountUser->setOwner($owner);
-        $account = $this->getReference(LoadUserData::ACCOUNT1);
-        $account->setOwner(null, false);
         $this->em->flush();
 
         $this->createRequest();
         $owner = $this->getReference(LoadUserData::USER1);
         // should notify owner
-        $this->assertEmailSent([$owner], 1);
+        $this->assertEmailSent([$owner], 2);
     }
 
     public function testCreateRequestShouldNotNotifyAccountUserOwner()
@@ -158,7 +153,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->configManager->flush();
 
         $this->createRequest();
-        $this->assertEmailSent([$saleRep], 1);
+        $this->assertEmailSent([$saleRep], 2);
     }
 
     protected function assertEmailSent(array $usersToSendTo, $numberOfMessagesExpected)

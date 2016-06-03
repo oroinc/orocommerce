@@ -164,6 +164,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             $account
                 ->setName($item['name'])
                 ->setOrganization($organization)
+                ->setOwner($defaultUser);
             ;
             $manager->persist($account);
 
@@ -252,6 +253,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             $accountUser
                 ->setEmail($item['email'])
                 ->setAccount($this->getReference($item['account']))
+                ->setOwner($defaultUser)
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
                 ->setConfirmed(true)

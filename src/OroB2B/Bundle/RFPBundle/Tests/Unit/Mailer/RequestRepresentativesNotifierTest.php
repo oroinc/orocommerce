@@ -33,6 +33,9 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     /** @var  Account|\PHPUnit_Framework_MockObject_MockObject $accountUser */
     protected $account;
 
+    /** @var  User $owner */
+    protected $owner;
+
     /** @var ArrayCollection */
     protected $salesReps;
 
@@ -69,7 +72,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
         $this->accountUser->expects($this->once())
             ->method('getSalesRepresentatives')
             ->willReturn($salesReps);
-        $this->processor->expects($this->exactly(3))
+        $this->processor->expects($this->exactly(5))
             ->method('sendRFPNotification');
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
     }
@@ -77,7 +80,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     public function testNotifyRepresentativesShouldAlwaysNotifySalesRepsOfAccount()
     {
         $this->configureNotifySalesRepsOfAccountTest();
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->willReturn('always');
         $this->accountUser->expects($this->any())
@@ -87,7 +90,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
             ->method('hasSalesRepresentatives')
             ->willReturn(true);
 
-        $this->processor->expects($this->exactly(2))
+        $this->processor->expects($this->exactly(4))
             ->method('sendRFPNotification');
 
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
@@ -96,7 +99,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     public function testNotifyRepresentativesShouldNotifySalesRepsOfAccountIfNoUserSalesReps()
     {
         $this->configureNotifySalesRepsOfAccountTest();
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->willReturn('notalways');
         $this->accountUser->expects($this->any())
@@ -109,7 +112,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
             ->method('getSalesRepresentatives')
             ->willReturn($this->salesReps);
 
-        $this->processor->expects($this->exactly(2))
+        $this->processor->expects($this->exactly(3))
             ->method('sendRFPNotification');
 
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
@@ -118,7 +121,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     public function testNotifyRepresentativesShouldNotNotifySalesRepsOfAccount()
     {
         $this->configureNotifySalesRepsOfAccountTest();
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->willReturn('notalways');
         $this->accountUser->expects($this->any())
@@ -140,23 +143,19 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     public function testNotifyRepresentativesShouldAlwaysNotifyOwnerOfAccount()
     {
         $this->configureNotifySalesRepsOfAccountTest();
-        $owner = new User();
         $this->accountUser->expects($this->any())
             ->method('getSalesRepresentatives')
             ->willReturn(new ArrayCollection());
         $this->account->expects($this->any())
             ->method('hasSalesRepresentatives')
             ->willReturn(false);
-        $this->account->expects($this->any())
-            ->method('getOwner')
-            ->willReturn($owner);
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->willReturn('always');
 
-        $this->processor->expects($this->once())
+        $this->processor->expects($this->exactly(2))
             ->method('sendRFPNotification')
-            ->with($this->request, $owner);
+            ->with($this->request, $this->owner);
 
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
     }
@@ -164,8 +163,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     public function testNotifyRepresentativesShouldNotifyOwnerOfAccountIfNoUserSalesReps()
     {
         $this->configureNotifySalesRepsOfAccountTest();
-        $owner = new User();
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->willReturn('notalways');
         $this->accountUser->expects($this->any())
@@ -174,11 +172,8 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
         $this->account->expects($this->any())
             ->method('hasSalesRepresentatives')
             ->willReturn(false);
-        $this->account->expects($this->any())
-            ->method('getOwner')
-            ->willReturn($owner);
 
-        $this->processor->expects($this->once())
+        $this->processor->expects($this->exactly(2))
             ->method('sendRFPNotification');
 
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
@@ -186,8 +181,15 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
 
     protected function configureRequestMock()
     {
+        $this->owner = new User();
         $this->accountUser = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $this->accountUser->expects($this->any())
+            ->method('getOwner')
+            ->willReturn($this->owner);
         $this->account = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $this->account->expects($this->any())
+            ->method('getOwner')
+            ->willReturn($this->owner);
         $this->request->expects($this->once())
             ->method('getId')
             ->willReturn(1);
