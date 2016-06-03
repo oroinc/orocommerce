@@ -2,19 +2,35 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
+use Doctrine\ORM\EntityRepository;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ProductBundle\Form\EventSubscriber\ProductImageTypesSubscriber;
 
 class ProductImageType extends AbstractType
 {
     const NAME = 'orob2b_product_image';
+
+    /**
+     * @var EntityRepository
+     */
+    private $productImageTypeRepository;
+
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     * @param string $productImageTypeClass
+     */
+    public function __construct(DoctrineHelper $doctrineHelper, $productImageTypeClass)
+    {
+        $this->productImageTypeRepository = $doctrineHelper->getEntityRepositoryForClass($productImageTypeClass);
+    }
 
     /**
      * {@inheritdoc}
@@ -28,9 +44,11 @@ class ProductImageType extends AbstractType
                 'allowDelete' => false,
             ]
         );
-        $builder->add('types', 'hidden');
 
-        $builder->addEventSubscriber(new ProductImageTypesSubscriber($options['image_types']));
+        $builder->addEventSubscriber(new ProductImageTypesSubscriber(
+            $this->productImageTypeRepository,
+            $options['image_types']
+        ));
     }
 
     /**
@@ -41,7 +59,7 @@ class ProductImageType extends AbstractType
         $resolver->setDefaults([
             'data_class' => 'OroB2B\Bundle\ProductBundle\Entity\ProductImage',
             'image_types' => [],
-            'error_bubbling' => false,
+            'error_bubbling' => false
         ]);
 
         $resolver

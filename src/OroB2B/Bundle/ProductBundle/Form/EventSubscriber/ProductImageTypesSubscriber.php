@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\EventSubscriber;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityRepository;
+
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -9,6 +12,7 @@ use Symfony\Component\Form\FormEvents;
 use Oro\Component\Layout\Extension\Theme\Model\ThemeImageType;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
+use OroB2B\Bundle\ProductBundle\Entity\ProductImageType;
 
 class ProductImageTypesSubscriber implements EventSubscriberInterface
 {
@@ -18,11 +22,20 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
     private $imageTypes;
 
     /**
+     * @var ProductImageType[]
+     */
+    private $productImageTypes;
+
+    private $submittedImageTypes;
+
+    /**
+     * @param EntityRepository $productImageTypeRepository
      * @param ThemeImageType[] $imageTypes
      */
-    public function __construct(array $imageTypes)
+    public function __construct(EntityRepository $productImageTypeRepository, array $imageTypes)
     {
         $this->imageTypes = $imageTypes;
+        $this->productImageTypes = $this->getIndexedProductImageTypes($productImageTypeRepository);
     }
 
     /**
@@ -32,7 +45,8 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
     {
         return [
             FormEvents::POST_SET_DATA => 'postSetData',
-            FormEvents::PRE_SUBMIT  => 'preSubmit'
+            FormEvents::PRE_SUBMIT => 'preSubmit',
+            FormEvents::SUBMIT  => 'submit',
         ];
     }
 
@@ -56,7 +70,7 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
                     'label' => $imageType->getLabel(),
                     'value' => 1,
                     'mapped' => false,
-                    'data' => $productImage ? $productImage->hasType($imageType->getName()) : false
+                    'data' => $productImage ? $productImage->hasType($imageType->getName()) : false,
                 ]
             );
         }
@@ -67,7 +81,7 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
      *
      * @param FormEvent $event
      */
-    public function preSubmit(FormEvent $event)
+    public function PreSubmit(FormEvent $event)
     {
         $data = $event->getData();
         $types = [];
@@ -75,12 +89,46 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
         foreach ($this->imageTypes as $imageType) {
             $imageTypeName = $imageType->getName();
 
-            if (isset($data[$imageTypeName])) {
-                $types[] = $imageTypeName;
+            if (isset($data[$imageTypeName]) && isset($this->productImageTypes[$imageTypeName])) {
+                $types[] = $this->productImageTypes[$imageTypeName];
+
             }
         }
 
-        $data['types'] = $types;
-        $event->setData($data);
+        $this->submittedImageTypes = new ArrayCollection($types);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function submit(FormEvent $event)
+    {
+        /** @var ProductImage $productImage */
+        $productImage = $event->getData();
+
+        foreach ($productImage->getTypes() as $imageType) {
+            $productImage->removeType($imageType);
+        }
+
+        foreach ($this->submittedImageTypes as $submittedImageType) {
+            $productImage->addType($submittedImageType);
+        }
+    }
+
+
+    /**
+     * @param EntityRepository $productImageTypeRepository
+     * @return ProductImageType[]
+     */
+    private function getIndexedProductImageTypes(EntityRepository $productImageTypeRepository)
+    {
+        $types = [];
+
+        /** @var ProductImageType $productImageType */
+        foreach ($productImageTypeRepository->findAll() as $productImageType) {
+            $types[$productImageType->getType()] = $productImageType;
+        }
+
+        return $types;
     }
 }

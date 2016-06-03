@@ -100,19 +100,31 @@ class ProductImage extends ExtendProductImage
     }
 
     /**
-     * @return array
+     * @return Collection|ProductImageType[]
      */
     public function getTypes()
     {
-        return (array) $this->types;
+        return $this->types;
     }
 
     /**
-     * @param Collection $types
+     * @param ProductImageType $productImageType
      */
-    public function setTypes(Collection $types)
+    public function addType(ProductImageType $productImageType)
     {
-        $this->types = $types;
+        if (!$this->types->contains($productImageType)) {
+            $this->types->add($productImageType);
+        }
+    }
+
+    /**
+     * @param ProductImageType $productImageType
+     */
+    public function removeType(ProductImageType $productImageType)
+    {
+        if ($this->types->contains($productImageType)) {
+            $this->types->removeElement($productImageType);
+        }
     }
 
     /**
@@ -121,7 +133,9 @@ class ProductImage extends ExtendProductImage
      */
     public function hasType($type)
     {
-        return in_array($type, $this->getTypes());
+        return !$this->types->filter(function (ProductImageType $productImageType) use ($type) {
+            return $productImageType->getType() === $type;
+        })->isEmpty();
     }
 
     /**
