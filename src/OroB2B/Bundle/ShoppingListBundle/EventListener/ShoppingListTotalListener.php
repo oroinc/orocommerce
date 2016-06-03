@@ -13,6 +13,8 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 
 class ShoppingListTotalListener
 {
+    const ACCOUNT_BATCH_SIZE = 500;
+    
     /**
      * ShoppingListTotalListener constructor.
      * @param Registry $registry
@@ -37,7 +39,12 @@ class ShoppingListTotalListener
      */
     public function onAccountPriceListUpdate(AccountCPLUpdateEvent $event)
     {
-        // Update shopping list totals by account
+        $accountsData = $event->getAccountsData();
+        $repo = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal')
+            ->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
+        foreach ($accountsData as $data) {
+            $repo->invalidateByAccounts($data['accounts'], $data['websiteId']);
+        }
     }
 
     /**
@@ -45,7 +52,27 @@ class ShoppingListTotalListener
      */
     public function onAccountGroupPriceListUpdate(AccountGroupCPLUpdateEvent $event)
     {
-        // Update shopping list totals by account group
+        $accountsData = $event->getAccountGroupsData();
+        $fallbackRepository = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListAccountFallback')
+            ->getRepository('OroB2BPricingBundle:PriceListAccountFallback');
+        $shoppingTotalsRepo = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal')
+            ->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
+        foreach ($accountsData as $data) {
+            $accounts = $fallbackRepository->getAccountIdentityByGroup($data['accountGroups'], $data['websiteId']);
+            $i = 0;
+            $ids = [];
+            foreach ($accounts as $accountData) {
+                $ids[] = $accountData['id'];
+                $i++;
+                if ($i % self::ACCOUNT_BATCH_SIZE === 0) {
+                    $shoppingTotalsRepo->invalidateByAccounts($ids, $data['websiteId']);
+                    $ids = [];
+                }
+            }
+            if (!empty($ids)) {
+                $shoppingTotalsRepo->invalidateByAccounts($ids, $data['websiteId']);
+            }
+        }
     }
 
     /**
@@ -53,7 +80,27 @@ class ShoppingListTotalListener
      */
     public function onWebsitePriceListUpdate(WebsiteCPLUpdateEvent $event)
     {
-        // Update shopping list totals by website
+        $websitesData = $event->getWebsiteIds();
+        $fallbackRepository = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListAccountGroupFallback')
+            ->getRepository('OroB2BPricingBundle:PriceListAccountGroupFallback');
+        $shoppingTotalsRepo = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal')
+            ->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
+        foreach ($websitesData as $websiteId) {
+            $accounts = $fallbackRepository->getAccountIdentityByWebsite($websiteId);
+            $i = 0;
+            $ids = [];
+            foreach ($accounts as $accountData) {
+                $ids[] = $accountData['id'];
+                $i++;
+                if ($i % self::ACCOUNT_BATCH_SIZE === 0) {
+                    $shoppingTotalsRepo->invalidateByAccounts($ids, $websiteId);
+                    $ids = [];
+                }
+            }
+            if (!empty($ids)) {
+                $shoppingTotalsRepo->invalidateByAccounts($ids, $websiteId);
+            }
+        }
     }
 
     /**
@@ -61,6 +108,29 @@ class ShoppingListTotalListener
      */
     public function onConfigPriceListUpdate(ConfigCPLUpdateEvent $event)
     {
-        // Update shopping list totals by config
+        $fallbackWebsiteRepository = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListWebsiteFallback')
+            ->getRepository('OroB2BPricingBundle:PriceListWebsiteFallback');
+        $fallbackRepository = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListAccountGroupFallback')
+            ->getRepository('OroB2BPricingBundle:PriceListAccountGroupFallback');
+        $shoppingTotalsRepo = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal')
+            ->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
+
+        $websitesData = $fallbackWebsiteRepository->getWebsiteIdByDefaultFallback();
+        foreach ($websitesData as $websiteData) {
+            $accounts = $fallbackRepository->getAccountIdentityByWebsite($websiteData['id']);
+            $i = 0;
+            $ids = [];
+            foreach ($accounts as $accountData) {
+                $ids[] = $accountData['id'];
+                $i++;
+                if ($i % self::ACCOUNT_BATCH_SIZE === 0) {
+                    $shoppingTotalsRepo->invalidateByAccounts($ids, $websiteData['id']);
+                    $ids = [];
+                }
+            }
+            if (!empty($ids)) {
+                $shoppingTotalsRepo->invalidateByAccounts($ids, $websiteData['id']);
+            }
+        }
     }
 }

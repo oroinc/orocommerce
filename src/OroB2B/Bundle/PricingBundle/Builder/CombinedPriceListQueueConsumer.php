@@ -190,7 +190,7 @@ class CombinedPriceListQueueConsumer
             foreach ($accountScope as $websiteId => $accounts) {
                 $data[] = [
                     'websiteId' => $websiteId,
-                    'accounts' => array_keys($accounts)
+                    'accounts' => array_filter(array_keys($accounts))
                 ];
             }
             $event = new AccountCPLUpdateEvent($data);
@@ -206,7 +206,7 @@ class CombinedPriceListQueueConsumer
             foreach ($accountGroupBuildList as $websiteId => $accountGroups) {
                 $data[] = [
                     'websiteId' => $websiteId,
-                    'accountGroups' => array_keys($accountGroups)
+                    'accountGroups' => array_filter(array_keys($accountGroups))
                 ];
             }
             $event = new AccountGroupCPLUpdateEvent($data);
@@ -218,7 +218,7 @@ class CombinedPriceListQueueConsumer
     {
         $websiteBuildList = $this->websitePriceListsBuilder->getBuiltList();
         if ($websiteBuildList) {
-            $event = new WebsiteCPLUpdateEvent(array_keys($websiteBuildList));
+            $event = new WebsiteCPLUpdateEvent(array_filter(array_keys($websiteBuildList)));
             $this->dispatcher->dispatch(WebsiteCPLUpdateEvent::NAME, $event);
         }
     }

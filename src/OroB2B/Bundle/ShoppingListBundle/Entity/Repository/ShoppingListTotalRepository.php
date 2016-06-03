@@ -6,9 +6,9 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class ShoppingListTotalRepository extends EntityRepository
 {
@@ -47,14 +47,14 @@ class ShoppingListTotalRepository extends EntityRepository
 
     /**
      * @param array $accountIds
-     * @param Website $website
+     * @param int $websiteId
      */
-    public function invalidateByAccounts(array $accountIds, Website $website)
+    public function invalidateByAccounts(array $accountIds, $websiteId)
     {
         if (empty($accountIds)) {
             return;
         }
-        $qb = $this->getBaseInvalidateQb($website);
+        $qb = $this->getBaseInvalidateQb($websiteId);
         $qb->andWhere($qb->expr()->in('shoppingList.account', ':accounts'))
             ->setParameter('accounts', $accountIds, Type::SIMPLE_ARRAY);
 
@@ -64,17 +64,17 @@ class ShoppingListTotalRepository extends EntityRepository
     }
 
     /**
-     * @param Website $website
-     * @return \Doctrine\ORM\QueryBuilder
+     * @param int $websiteId
+     * @return QueryBuilder
      */
-    protected function getBaseInvalidateQb(Website $website)
+    protected function getBaseInvalidateQb($websiteId)
     {
         $qb = $this->createQueryBuilder('total');
         $qb->select('DISTINCT total.id')
             ->join('total.shoppingList', 'shoppingList')
             ->andWhere($qb->expr()->eq('shoppingList.website', ':website'))
             ->andWhere($qb->expr()->eq('total.valid', ':isValid'))
-            ->setParameter('website', $website)
+            ->setParameter('website', $websiteId)
             ->setParameter('isValid', true);
 
         return $qb;
