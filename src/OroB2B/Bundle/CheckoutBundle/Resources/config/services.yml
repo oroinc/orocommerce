@@ -169,10 +169,12 @@ services:
             - '@oro_query_designer.entity_field_provider'
             - '@doctrine'
             - '@orob2b_pricing.user_currency_manager'
+            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
         calls:
             - [setCache, ['@orob2b_checkout.grid_totals_metadata.cache']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
 
     orob2b_checkout.workflow.condition.order_line_item_has_count:
         class: 'OroB2B\Bundle\CheckoutBundle\Model\Condition\OrderLineItemsHasCount'

@@ -39,10 +39,13 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-shopping-cart",
- *              "totals_by_currency_collection"={
- *                  "field"="totals",
- *                  "currency"="currency",
- *                  "subtotal"="subtotalValue"
+ *              "totals_mapping"={
+ *                  "type"="join_collection",
+ *                  "join_field"="totals",
+ *                  "relation_fields"={
+ *                       "currency"="currency",
+ *                       "subtotal"="subtotalValue"
+ *                  }
  *              }
  *          },
  *          "ownership"={
