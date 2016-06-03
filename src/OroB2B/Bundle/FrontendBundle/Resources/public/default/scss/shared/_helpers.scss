@@ -124,7 +124,7 @@
     @include generate-margin-top-helpers(($i - 1), $param, $size);
 
     .m#{$param}#{$i}-#{$size} {
-      margin-top: unit($i, rem) !important;
+      margin-top: $i + 'rem' !important;
     }
   }
 }
@@ -134,7 +134,7 @@
     @include generate-margin-bottom-helpers(($i - 1), $param, $size);
 
     .m#{$param}#{$i}-#{$size} {
-      margin-bottom: unit($i, rem) !important;
+      margin-bottom: $i + 'rem' !important;
     }
   }
 }
@@ -144,7 +144,7 @@
     @include generate-margin-right-helpers(($i - 1), $param, $size);
 
     .m#{$param}#{$i}-#{$size} {
-      margin-right: unit($i, rem) !important;
+      margin-right: $i + 'rem' !important;
     }
   }
 }
@@ -154,7 +154,7 @@
     @include generate-margin-left-helpers(($i - 1), $param, $size);
 
     .m#{$param}#{$i}-#{$size} {
-      margin-left: unit($i, rem) !important;
+      margin-left: $i + 'rem' !important;
     }
   }
 }
@@ -179,7 +179,7 @@
     @include generate-micro-margin-top-helpers(($i - 0.1), ($n - 1), $param, $size);
 
     .mm#{$param}#{$n}-#{$size} {
-      margin-top: unit($i, rem) !important;
+      margin-top: $i + 'rem' !important;
     }
   }
 }
@@ -189,7 +189,7 @@
     @include generate-micro-margin-bottom-helpers(($i - 0.1), ($n - 1), $param, $size);
 
     .mm#{$param}#{$n}-#{$size} {
-      margin-bottom: unit($i, rem) !important;
+      margin-bottom: $i + 'rem' !important;
     }
   }
 }
@@ -199,7 +199,7 @@
     @include generate-micro-margin-right-helpers(($i - 0.1), ($n - 1), $param, $size);
 
     .mm#{$param}#{$n}-#{$size} {
-      margin-right: unit($i, rem) !important;
+      margin-right: $i + 'rem' !important;
     }
   }
 }
@@ -209,7 +209,7 @@
     @include generate-micro-margin-left-helpers(($i - 0.1), ($n - 1), $param, $size);
 
     .mm#{$param}#{$n}-#{$size} {
-      margin-left: unit($i, rem) !important;
+      margin-left: $i + 'rem' !important;
     }
   }
 }
@@ -234,7 +234,7 @@
     @include generate-negative-micro-margin-top-helpers(($i - 0.1), ($n - 1), $param, $size);
 
     .nmm#{$param}#{$n}-#{$size} {
-      margin-top: unit(-$i, rem) !important;
+      margin-top: -$i + 'rem' !important;
     }
   }
 }
@@ -244,7 +244,8 @@
     @include generate-negative-micro-margin-bottom-helpers(($i - 0.1), ($n - 1), $param, $size);
 
     .nmm#{$param}#{$n}-#{$size} {
-      margin-bottom: unit(-$i, rem) !important;
+      margin-bottom: -$i + 'rem' !important;
+      color: red;
     }
   }
 }
@@ -254,7 +255,7 @@
     @include generate-negative-micro-margin-right-helpers(($i - 0.1), ($n - 1), $param, $size);
 
     .nmm#{$param}#{$n}-#{$size} {
-      margin-right: unit(-$i, rem) !important;
+      margin-right: -$i + 'rem' !important;
     }
   }
 }
@@ -264,7 +265,7 @@
     @include generate-negative-micro-margin-left-helpers(($i - 0.1), ($n - 1), $param, $size);
 
     .nmm#{$param}#{$n}-#{$size} {
-      margin-left: unit(-$i, rem) !important;
+      margin-left: -$i + 'rem'  !important;
     }
   }
 }
@@ -289,7 +290,7 @@
     @include generate-font-size-helpers($i - 1);
 
     .fs#{$i} {
-      font-size: unit($i / 10, rem) !important;
+      font-size: $i / 10 + 'rem' !important;
     }
   }
 }
