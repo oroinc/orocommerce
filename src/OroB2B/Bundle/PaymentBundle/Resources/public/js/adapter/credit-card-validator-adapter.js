@@ -16,7 +16,6 @@ define([
         validate: function(element, options) {
             options = _.extend({}, defaultOptions, options);
             var allowedCCTypes = _.values(options.allowedCreditCards);
-
             var validateOptions = {};
 
             if (allowedCCTypes.length) {
@@ -27,9 +26,7 @@ define([
                 validateOptions.accept = allowedCCTypes;
             }
 
-            var result = $(element).validateCreditCard(validateOptions);
-
-            return result.valid;
+            return $(element).validateCreditCard(validateOptions).valid;
         }
     };
 });

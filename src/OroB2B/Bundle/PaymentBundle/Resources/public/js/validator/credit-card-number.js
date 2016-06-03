@@ -17,7 +17,6 @@ define([
         'credit-card-number',
         function(value, element) {
             return creditCardValidator.validate(element);
-
         },
         function(param) {
             param = _.extend({}, defaultParam, param);
