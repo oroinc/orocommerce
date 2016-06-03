@@ -83,23 +83,23 @@ class ProductRepositoryTest extends WebTestCase
                     'product.8',
                 ],
             ],
-//            'product, 1, 1' => [
-//                'search' => 'oduct',
-//                'firstResult' => 1,
-//                'maxResult' => 1,
-//                'expected' => [
-//                    'product.2',
-//                ],
-//            ],
-//            'product, 0, 2' => [
-//                'search' => 'product',
-//                'firstResult' => 0,
-//                'maxResult' => 2,
-//                'expected' => [
-//                    'product.1',
-//                    'product.2',
-//                ],
-//            ],
+            'product, 1, 1' => [
+                'search' => 'oduct',
+                'firstResult' => 1,
+                'maxResult' => 1,
+                'expected' => [
+                    'product.2',
+                ],
+            ],
+            'product, 0, 2' => [
+                'search' => 'product',
+                'firstResult' => 0,
+                'maxResult' => 2,
+                'expected' => [
+                    'product.1',
+                    'product.2',
+                ],
+            ],
         ];
     }
 

@@ -22,23 +22,6 @@ class OroB2BFallbackBundleInstaller implements Installation
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-//        // TODO: will be removed in scope https://magecore.atlassian.net/browse/BAP-10654
-//        $this->addOroFallbackLocalizedValueForeignKeys($schema);
+        // nothing
     }
-
-//    /**
-//     * Add oro_fallback_localization_val foreign keys.
-//     *
-//     * @param Schema $schema
-//     */
-//    protected function addOroFallbackLocalizedValueForeignKeys(Schema $schema)
-//    {
-//        $table = $schema->getTable('oro_fallback_localization_val');
-//        $table->addForeignKeyConstraint(
-//            $schema->getTable('orob2b_locale'),
-//            ['locale_id'],
-//            ['id'],
-//            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-//        );
-//    }
 }
