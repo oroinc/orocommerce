@@ -43,7 +43,6 @@ datagrid:
                 type:          twig
                 frontend_type: html
                 template:      OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig
-                renderable:    false
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -66,7 +65,7 @@ datagrid:
                 account_user:
                     data_name: account_user
                 subtotal:
-                    data_name: shopping_list.subtotal
+                    data_name: subtotal
                 createdAt:
                     data_name: shopping_list.createdAt
                 updatedAt:
@@ -89,8 +88,7 @@ datagrid:
                     data_name: account_user
                 subtotal:
                     type:      number
-                    data_name: shopping_list.subtotal
-                    enabled:   false
+                    data_name: subtotal
                 createdAt:
                     type:      datetime
                     data_name: shopping_list.createdAt
