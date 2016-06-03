@@ -12,6 +12,8 @@ datagrid:
                     - shopping_list.id
                     - shopping_list.label
                     - shopping_list.notes
+                    - cachedTotal.subtotalValue as subtotal
+                    - cachedTotal.currency
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
                     - shopping_list_account.name as account
@@ -22,6 +24,9 @@ datagrid:
                     left:
                         - { join: shopping_list.account, alias: shopping_list_account }
                         - { join: shopping_list.accountUser, alias: shopping_list_acc_user }
+                        - { join: %orob2b_account.entity.account_user_settings.class%, alias: userSettings, conditionType: WITH, condition: "shopping_list_acc_user = userSettings.accountUser and userSettings.website = shopping_list.website" }
+                        - { join: %orob2b_shopping_list.entity.shopping_list_total.class%, alias: cachedTotal, conditionType: WITH, condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = COALESCE(userSettings.currency, '@oro_config.manager->get('oro_b2b_pricing.default_currency')')" }
+
         columns:
             id:
                 label:         orob2b.shoppinglist.id.label
@@ -33,6 +38,11 @@ datagrid:
                 label:         orob2b.shoppinglist.account.label
             account_user:
                 label:         orob2b.shoppinglist.account_user.label
+            subtotal:
+                label:         orob2b.shoppinglist.subtotal.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -54,6 +64,8 @@ datagrid:
                     data_name: account
                 account_user:
                     data_name: account_user
+                subtotal:
+                    data_name: subtotal
                 createdAt:
                     data_name: shopping_list.createdAt
                 updatedAt:
@@ -74,6 +86,9 @@ datagrid:
                 account_user:
                     type:      string
                     data_name: account_user
+                subtotal:
+                    type:      number
+                    data_name: subtotal
                 createdAt:
                     type:      datetime
                     data_name: shopping_list.createdAt

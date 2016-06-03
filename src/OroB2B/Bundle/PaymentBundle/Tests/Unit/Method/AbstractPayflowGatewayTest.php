@@ -291,11 +291,15 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($sourceTransaction->isActive());
     }
 
-    public function testCaptureDoChargeUsingValidationIfRequestAndResponseEmptyAfterDataReuse()
+    public function testCaptureDoChargeIfSourceAuthorizationIsValidationTransactionClone()
     {
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction
-            ->setAction(PaymentMethodInterface::VALIDATE)
+            ->setAction(PaymentMethodInterface::AUTHORIZE)
+            ->setSourcePaymentTransaction(
+                (new PaymentTransaction())->setAction(PaymentMethodInterface::VALIDATE)->setReference('VALIDATE')
+            )
+            ->setReference('VALIDATE')
             ->setSuccessful(true)
             ->setActive(true);
 
@@ -314,7 +318,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($transaction->isSuccessful());
         $this->assertFalse($transaction->isActive());
         $this->assertTrue($sourceTransaction->isSuccessful());
-        $this->assertTrue($sourceTransaction->isActive());
+        $this->assertFalse($sourceTransaction->isActive());
     }
 
     public function testCaptureWithoutSourceTransaction()

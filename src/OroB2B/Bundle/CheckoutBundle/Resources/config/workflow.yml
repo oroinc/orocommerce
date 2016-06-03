@@ -550,6 +550,30 @@ workflows:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
                             - '@assign_value': [$payment_in_progress, true]
+                    - '@redirect':
+                        conditions:
+                            '@and':
+                                - '@equal': ["$.result.responseData[purchaseSuccessful]", true]
+                                - '@payment_method_supports':
+                                    payment_method: $payment_method
+                                    action: 'validate'
+                        route: orob2b_checkout_frontend_checkout
+                        route_parameters:
+                            id: $checkout.id
+                            transition: finish_checkout
+
+                    - '@redirect':
+                        conditions:
+                            '@and':
+                                - '@equal': ["$.result.responseData[purchaseSuccessful]", false]
+                                - '@payment_method_supports':
+                                    payment_method: $payment_method
+                                    action: 'validate'
+                        route: orob2b_checkout_frontend_checkout
+                        route_parameters:
+                            id: $checkout.id
+                            transition: payment_error
+
                     - '@send_email_template':
                         parameters:
                             from: $checkout.order.owner.email

@@ -63,14 +63,6 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
     }
 
     /**
-     * @expectedException \BadMethodCallException
-     */
-    public function testGetIdentifier()
-    {
-        $this->provider->getIdentifier();
-    }
-
-    /**
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Undefined data item index: entity.
      */

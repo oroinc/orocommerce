@@ -15,7 +15,7 @@
             <ul class="orders-list mt1-md">
                 {% for shoppingList in shoppingLists %}
                     <li class="orders-list__item">
-                        <a href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}" class="orders-list__item__link {% if shoppingList.id == selectedShoppingList %} current {% endif %}">
+                        <a href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}" class="orders-list__item__link {% if shoppingList.id == selectedShoppingList.id %} current {% endif %}">
                             <span class='badge badge_sm badge_orange badge_circled-corners orders-list__item-indicator'><i class="cf-basket"></i></span>
                             <div class="orders-list__item__content">
                                 <h3 class="orders-list__item__title text-uppercase">{{ shoppingList.label }}</h3>
