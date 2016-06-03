@@ -57,7 +57,11 @@ class AccountViewListenerTest extends FormViewListenerTestCase
             ->method('render')
             ->willReturn(self::RENDER_HTML);
 
-        $this->accountViewListener = new AccountViewListener($this->translator, $this->doctrineHelper, $this->requestStack);
+        $this->accountViewListener = new AccountViewListener(
+            $this->translator,
+            $this->doctrineHelper,
+            $this->requestStack
+        );
     }
 
     public function testOnAccountViewGetsIgnoredIfNoRequest()
