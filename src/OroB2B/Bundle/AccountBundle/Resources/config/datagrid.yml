@@ -257,7 +257,7 @@ datagrid:
                     included: '#groupAppendAccounts'
                     excluded: '#groupRemoveAccounts'
 
-    account-account-user-grid-base:
+    account-account-user-grid-no-filter-base:
         entity_name: %orob2b_account.entity.account_user.class%
         acl_resource: orob2b_account_account_user_view
         options:
@@ -306,6 +306,9 @@ datagrid:
                     data_name: accountUser.enabled
                 confirmed:
                     data_name: accountUser.confirmed
+
+    account-account-user-grid-base:
+        extends: account-account-user-grid-no-filter-base
         filters:
             columns:
                 firstName:
@@ -325,7 +328,42 @@ datagrid:
                     data_name: accountUser.confirmed
 
     account-account-user-grid:
-        extends: account-account-user-grid-base
+        extends: account-account-user-grid-no-filter-base
+        source:
+            query:
+                select:
+                    - account.name as accountName
+                join:
+                    inner:
+                        - { join: accountUser.account, alias: account }
+        columns:
+            accountName:
+                label: orob2b.account.accountuser.account.label
+                order: -1
+        sorters:
+            columns:
+                accountName:
+                    data_name: accountName
+        filters:
+            columns:
+                accountName:
+                    type:      string
+                    data_name: accountName
+                firstName:
+                    type:      string
+                    data_name: accountUser.firstName
+                lastName:
+                    type:      string
+                    data_name: accountUser.lastName
+                email:
+                    type:      string
+                    data_name: accountUser.email
+                enabled:
+                    type:      boolean
+                    data_name: accountUser.enabled
+                confirmed:
+                    type:      boolean
+                    data_name: accountUser.confirmed
         actions:
             view:
                 type:          navigate
@@ -355,7 +393,42 @@ datagrid:
                 rowAction:     true
 
     account-account-user-select-grid:
-        extends:  account-account-user-grid-base
+        extends:  account-account-user-grid-no-filter-base
+        source:
+            query:
+                select:
+                    - account.name as accountName
+                join:
+                    inner:
+                        - { join: accountUser.account, alias: account }
+        columns:
+            accountName:
+                label: orob2b.account.accountuser.account.label
+                order: -1
+        sorters:
+            columns:
+                accountName:
+                    data_name: accountName
+        filters:
+            columns:
+                accountName:
+                    type:      string
+                    data_name: accountName
+                firstName:
+                    type:      string
+                    data_name: accountUser.firstName
+                lastName:
+                    type:      string
+                    data_name: accountUser.lastName
+                email:
+                    type:      string
+                    data_name: accountUser.email
+                enabled:
+                    type:      boolean
+                    data_name: accountUser.enabled
+                confirmed:
+                    type:      boolean
+                    data_name: accountUser.confirmed
 
     basic-account-account-user-roles-grid:
         options:

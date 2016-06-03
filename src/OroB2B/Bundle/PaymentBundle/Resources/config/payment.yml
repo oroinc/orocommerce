@@ -1,6 +1,7 @@
 services:
     orob2b_payment.payment_method.registry:
         class: 'OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry'
+        public: false
         calls:
             - ['addPaymentMethod', ['@orob2b_payment.payment_method.payflow_gateway']]
             - ['addPaymentMethod', ['@orob2b_payment.payment_method.paypal_payments_pro']]
@@ -8,6 +9,7 @@ services:
 
     orob2b_payment.payment_method.payflow_gateway:
         class: 'OroB2B\Bundle\PaymentBundle\Method\PayflowGateway'
+        public: false
         arguments:
             - '@orob2b_payment.paypal.payflow.gateway'
             - '@oro_config.global'
@@ -15,10 +17,12 @@ services:
 
     orob2b_payment.payment_method.paypal_payments_pro:
         class: 'OroB2B\Bundle\PaymentBundle\Method\PayPalPaymentsPro'
+        public: false
         parent: orob2b_payment.payment_method.payflow_gateway
 
     orob2b_payment.payment_method.payment_term:
         class: 'OroB2B\Bundle\PaymentBundle\Method\PaymentTerm'
+        public: false
         arguments:
             - '@orob2b_payment.provider.payment_term'
             - '@oro_config.global'
@@ -27,6 +31,7 @@ services:
 
     orob2b_payment.payment_method.view.registry:
         class: 'OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry'
+        public: false
         arguments:
             - '@orob2b_payment.payment_method.registry'
         calls:
@@ -36,6 +41,7 @@ services:
 
     orob2b_payment.payment_method.view.payflow_gateway:
         class: 'OroB2B\Bundle\PaymentBundle\Method\View\PayflowGatewayView'
+        public: false
         arguments:
             - '@form.factory'
             - '@oro_config.global'
@@ -43,10 +49,12 @@ services:
 
     orob2b_payment.payment_method.view.paypal_payments_pro:
         class: 'OroB2B\Bundle\PaymentBundle\Method\View\PayPalPaymentsProView'
+        public: false
         parent: orob2b_payment.payment_method.view.payflow_gateway
 
     orob2b_payment.payment_method.view.payment_term:
         class: 'OroB2B\Bundle\PaymentBundle\Method\View\PaymentTermView'
+        public: false
         arguments:
             - '@orob2b_payment.provider.payment_term'
             - '@translator'

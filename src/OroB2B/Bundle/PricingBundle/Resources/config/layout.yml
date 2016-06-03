@@ -1,7 +1,6 @@
 services:
     orob2b_pricing.layout.data_provider.frontend_product_prices:
         class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider'
-        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@orob2b_pricing.model.price_list_request_handler'
@@ -11,7 +10,6 @@ services:
 
     orob2b_pricing.layout.data_provider.product_units_without_prices:
         class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\ProductUnitsWithoutPricesProvider'
-        public: true
         arguments:
             - '@orob2b_pricing.layout.data_provider.frontend_product_prices'
         tags:

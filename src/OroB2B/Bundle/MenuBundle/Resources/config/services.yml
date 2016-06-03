@@ -3,13 +3,13 @@ parameters:
 
 services:
     orob2b_menu.cache:
+        public: false
         parent: oro.cache.abstract
         calls:
             - [ setNamespace, [ 'orob2b_menu' ] ]
 
     orob2b_menu.form.type.menu_item:
         class: 'OroB2B\Bundle\MenuBundle\Form\Type\MenuItemType'
-        public: true
         calls:
             - [setDataClass, ['%orob2b_menu.entity.menu_item.class%']]
         tags:
@@ -17,7 +17,6 @@ services:
 
     orob2b_menu.tree.menu_item_tree_handler:
         class: 'OroB2B\Bundle\MenuBundle\JsTree\MenuItemTreeHandler'
-        public: true
         arguments:
             - '%orob2b_menu.entity.menu_item.class%'
             - "@doctrine"
@@ -25,23 +24,23 @@ services:
 
     orob2b_menu.entity.menu_item_manager:
         class: 'OroB2B\Bundle\MenuBundle\Entity\Manager\MenuItemManager'
-        public: true
 
     orob2b_menu.menu.factory:
         class: 'Knp\Menu\MenuFactory'
-        public: true
         calls:
             - [ addExtension, [ "@orob2b_menu.menu.acl_extension" ] ]
             - [ addExtension, [ "@orob2b_menu.menu.condition.condition_extension" ] ]
 
     orob2b_menu.menu.database_builder:
         class: 'OroB2B\Bundle\MenuBundle\Menu\DatabaseBuilder'
+        public: false
         arguments:
             - "@doctrine"
             - "@orob2b_menu.menu.factory"
 
     orob2b_menu.twig.menu_item_extension:
         class: 'OroB2B\Bundle\MenuBundle\Twig\MenuItemExtension'
+        public: false
         arguments:
             - "@orob2b_menu.tree.menu_item_tree_handler"
         tags:
@@ -49,20 +48,24 @@ services:
 
     orob2b_menu.menu_array_loader:
         class: Knp\Menu\Loader\ArrayLoader
+        public: false
         arguments:
             - "@orob2b_menu.menu.factory"
 
     orob2b_menu.menu_manipulator:
         class: Knp\Menu\Util\MenuManipulator
+        public: false
 
     orob2b_menu.menu_serializer:
         class: 'OroB2B\Bundle\MenuBundle\Menu\MenuSerializer'
+        public: false
         arguments:
             - "@orob2b_menu.menu_array_loader"
             - "@orob2b_menu.menu_manipulator"
 
     orob2b_menu.menu_provider:
         class: 'OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider'
+        public: false
         arguments:
             - "@orob2b_menu.menu.database_builder"
             - "@orob2b_website.locale_helper"
@@ -73,14 +76,17 @@ services:
             - [setCache, ["@orob2b_menu.cache"]]
 
     orob2b_menu.menu_provider.link:
+        public: false
         tags:
             - { name: oro_service_link,  service: orob2b_menu.menu_provider }
 
     orob2b_menu.menu.condition.condition_extension:
         class: 'OroB2B\Bundle\MenuBundle\Menu\Condition\ConditionExtension'
+        public: false
 
     orob2b_menu.menu.condition.config_value_expression_language_provider:
         class: 'OroB2B\Bundle\MenuBundle\Menu\Condition\ConfigValueExpressionLanguageProvider'
+        public: false
         arguments:
             - "@oro_config.manager"
         tags:
@@ -88,6 +94,7 @@ services:
 
     orob2b_menu.menu.condition.logged_in_expression_language_provider:
         class: 'OroB2B\Bundle\MenuBundle\Menu\Condition\LoggedInExpressionLanguageProvider'
+        public: false
         arguments:
             - "@oro_security.security_facade"
         tags:
@@ -95,6 +102,7 @@ services:
 
     orob2b_menu.event_listener.orm.menu_item_cache_listener:
         class: OroB2B\Bundle\MenuBundle\Entity\Listener\MenuItemListener
+        public: false
         arguments:
             - "@orob2b_menu.menu_provider.link"
         tags:
@@ -102,6 +110,7 @@ services:
 
     orob2b_menu.event_listener.locale_listener:
         class: OroB2B\Bundle\MenuBundle\EventListener\LocaleListener
+        public: false
         arguments:
             - "@orob2b_menu.menu_provider.link"
         tags:
@@ -111,7 +120,6 @@ services:
 
     orob2b_menu.event_listener.menu_item_form_handler_listener:
         class: OroB2B\Bundle\MenuBundle\EventListener\MenuItemFormHandlerListener
-        public: true
         arguments:
             - "@orob2b_menu.menu_provider"
         tags:
@@ -119,6 +127,7 @@ services:
 
     orob2b_menu.menu.acl_extension:
         class: 'Oro\Bundle\NavigationBundle\Menu\AclAwareMenuFactoryExtension'
+        public: false
         arguments:
             - "@router"
             - "@oro_security.security_facade"
@@ -128,7 +137,6 @@ services:
 
     orob2b_menu.layout.block_type.menu:
         class: OroB2B\Bundle\MenuBundle\Layout\Block\Type\MenuType
-        public: true
         arguments:
             - "@orob2b_menu.menu_provider"
             - "@knp_menu.matcher"

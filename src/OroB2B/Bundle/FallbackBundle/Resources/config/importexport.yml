@@ -1,10 +1,12 @@
 services:
     orob2b_fallback.importexport.data_converter.property_path_title:
         class: 'OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter\PropertyPathTitleDataConverter'
+        public: false
         parent: oro_importexport.data_converter.configurable
 
     orob2b_fallback.importexport.data_converter.localized_fallback_value_aware:
         class: 'OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter'
+        public: false
         parent: orob2b_fallback.importexport.data_converter.property_path_title
         calls:
             - [setRegistry, ["@doctrine"]]
@@ -13,12 +15,14 @@ services:
 
     orob2b_fallback.importexport.strategy.localized_fallback_value_aware:
         class: 'OroB2B\Bundle\FallbackBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy'
+        public: false
         parent: oro_importexport.strategy.configurable_add_or_replace
         calls:
             - [setLocalizedFallbackValueClass, ['%orob2b_fallback.entity.localized_fallback_value.class%']]
 
     orob2b_fallback.importexport.normalizer.localized_fallback_value_collection_normalizer:
         class: 'OroB2B\Bundle\FallbackBundle\ImportExport\Normalizer\LocalizedFallbackValueCollectionNormalizer'
+        public: false
         arguments:
             - "@doctrine"
             - '%orob2b_fallback.entity.localized_fallback_value.class%'

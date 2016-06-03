@@ -20,7 +20,7 @@ security:
 
         # override pattern
         api_wsse_secured:
-            pattern:                        ^%web_backend_prefix%/api/(?!doc($|/.*))
+            pattern:                        ^%web_backend_prefix%/api/(?!(doc|rest|soap))($|.*)
 
         # override pattern
         login:

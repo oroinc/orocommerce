@@ -12,18 +12,19 @@ services:
 
     orob2b_checkout.data_provider.converter.checkout_line_items:
         class: 'OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter'
+        public: false
         arguments:
             - '@property_accessor'
 
     orob2b_checkout.data_provider.manager.checkout_line_items:
         class: 'OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager'
+        public: false
         arguments:
             - '@orob2b_checkout.data_provider.converter.checkout_line_items'
             - '@orob2b_pricing.user_currency_manager'
 
     orob2b_checkout.layout.data_provider.summary:
         class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\SummaryDataProvider'
-        public: true
         arguments:
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
@@ -33,7 +34,6 @@ services:
 
     orob2b_checkout.layout.data_provider.transition_form:
         class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider'
-        public: true
         arguments:
             - '@form.factory'
         calls:
@@ -43,14 +43,12 @@ services:
 
     orob2b_checkout.layout.data_provider.continue_transition:
         class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ContinueTransitionDataProvider'
-        public: true
         parent: orob2b_checkout.layout.data_provider.abstract_transition
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_continue_transition }
 
     orob2b_checkout.layout.data_provider.checkout_steps:
         class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsDataProvider'
-        public: true
         arguments:
             - '@oro_workflow.manager'
         tags:
@@ -58,47 +56,19 @@ services:
 
     orob2b_checkout.layout.data_provider.back_transitions:
         class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\BackTransitionsDataProvider'
-        public: true
         parent: orob2b_checkout.layout.data_provider.abstract_transition
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_back_transitions }
 
     orob2b_checkout.layout.data_provider.back_transition:
         class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\BackTransitionDataProvider'
-        public: true
         calls:
             - [setBackTransitionsDataProvider, ['@orob2b_checkout.layout.data_provider.back_transitions']]
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_back_transition }
 
-    # Layout Block types
-    orob2b_checkout.layout.block.type.transition_button.back:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\Block\Type\TransitionButtonType'
-        public: true
-        calls:
-            - [setName, ['checkout_transition_back']]
-        tags:
-            - { name: layout.block_type, alias: checkout_transition_back }
-
-    orob2b_checkout.layout.block.type.transition_button.continue:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\Block\Type\TransitionButtonType'
-        public: true
-        calls:
-            - [setName, ['checkout_transition_continue']]
-        tags:
-            - { name: layout.block_type, alias: checkout_transition_continue }
-
-    orob2b_checkout.layout.block.type.transition_button.edit:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\Block\Type\TransitionButtonType'
-        public: true
-        calls:
-            - [setName, ['checkout_transition_step_edit']]
-        tags:
-            - { name: layout.block_type, alias: checkout_transition_step_edit }
-
     orob2b_checkout.model.action.get_order_line_items:
         class: 'OroB2B\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems'
-        public: true
         arguments:
             - '@oro_action.context_accessor'
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
@@ -107,7 +77,6 @@ services:
 
     orob2b_checkout.model.action.start_checkout:
         class: 'OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout'
-        public: true
         calls:
             - [setCheckoutClass, ['%orob2b_checkout.entity.checkout.class%']]
             - [setCheckoutRoute, ['orob2b_checkout_frontend_checkout']]
@@ -125,7 +94,6 @@ services:
 
     orob2b_checkout.expression.acl_granted:
         class: OroB2B\Bundle\CheckoutBundle\Expression\CheckRequest
-        public: true
         arguments:
             - '@request_stack'
         tags:
@@ -133,6 +101,7 @@ services:
 
     orob2b_checkout.twig.line_items:
         class: 'OroB2B\Bundle\CheckoutBundle\Twig\LineItemsExtension'
+        public: false
         arguments:
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
@@ -150,7 +119,6 @@ services:
 
     orob2b_checkout.event_listener.checkout_entity:
         parent: 'orob2b_checkout.event_listener.checkout_entity.abstract'
-        public: true
         calls:
             - [setCheckoutClassName, ['%orob2b_checkout.entity.checkout.class%']]
         tags:
@@ -158,13 +126,13 @@ services:
             - {name: kernel.event_listener, event: orob2b_checkout.create_checkout_entity, method: onCreateCheckoutEntity}
 
     orob2b_checkout.grid_totals_metadata.cache:
+        public: false
         parent: oro.cache.abstract
         calls:
             - [ setNamespace, [ 'orob2b_checkout_grid_totals_metadata' ] ]
 
     orob2b_checkout.datagrid.checkout_grid_listener:
         class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener
-        public: true
         arguments:
             - '@oro_entity_config.provider.entity'
             - '@oro_query_designer.entity_field_provider'
@@ -175,7 +143,6 @@ services:
 
     orob2b_checkout.workflow.condition.order_line_item_has_count:
         class: 'OroB2B\Bundle\CheckoutBundle\Model\Condition\OrderLineItemsHasCount'
-        public: true
         arguments:
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
         tags:

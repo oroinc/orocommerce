@@ -1,5 +1,6 @@
 services:
     orob2b_shopping_list.event_listener.shopping_list_listener:
         class: 'OroB2B\Bundle\ShoppingListBundle\EventListener\ShoppingListListener'
+        public: false
         tags:
             - { name: doctrine.event_listener, event: postRemove }
