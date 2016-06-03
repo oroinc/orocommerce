@@ -27,7 +27,6 @@ class WarehouseControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_warehouse_index'));
         $result = $this->client->getResponse();
-        var_dump($result);
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('warehouse-grid', $crawler->html());
         $this->assertEquals('Warehouses', $crawler->filter('h1.oro-subtitle')->html());
