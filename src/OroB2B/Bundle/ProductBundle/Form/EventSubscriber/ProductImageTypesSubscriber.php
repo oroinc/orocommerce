@@ -46,7 +46,7 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
         return [
             FormEvents::POST_SET_DATA => 'postSetData',
             FormEvents::PRE_SUBMIT => 'preSubmit',
-            FormEvents::SUBMIT  => 'submit',
+            FormEvents::POST_SUBMIT  => 'postSubmit',
         ];
     }
 
@@ -101,7 +101,7 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
     /**
      * @param FormEvent $event
      */
-    public function submit(FormEvent $event)
+    public function postSubmit(FormEvent $event)
     {
         /** @var ProductImage $productImage */
         $productImage = $event->getData();
