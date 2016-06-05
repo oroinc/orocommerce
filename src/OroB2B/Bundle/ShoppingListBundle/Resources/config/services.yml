@@ -114,7 +114,7 @@ services:
             - "@oro_entity.doctrine_helper"
             - "@oro_security.security_facade"
             - "@request_stack"
-            - "@orob2b_shopping_list.provider.shopping_list_subtotal_provider"
+            - "@orob2b_shopping_list.manager.shopping_list_total"
         calls:
             - [setShoppingListClass, ['%orob2b_shopping_list.entity.shopping_list.class%']]
         tags:
@@ -209,8 +209,8 @@ services:
         arguments:
             - '@doctrine'
 
-    orob2b_shopping_list.provider.shopping_list_subtotal_provider:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Provider\ShoppingListSubtotalProvider'
+    orob2b_shopping_list.manager.shopping_list_total:
+        class: 'OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager'
         arguments:
             - '@doctrine'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'

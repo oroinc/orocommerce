@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
+
 /**
  * Entity for caching shopping list subtotals data by currency
  * If isValid=false values should be recalculated
@@ -57,7 +60,18 @@ class ShoppingListTotal
      *
      * @ORM\Column(name="is_valid", type="boolean")
      */
-    protected $valid = true;
+    protected $valid = false;
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param string $currency
+     */
+    public function __construct(ShoppingList $shoppingList, $currency)
+    {
+        $this->shoppingList = $shoppingList;
+        $this->currency = $currency;
+    }
+
 
     /**
      * @return int
@@ -76,52 +90,11 @@ class ShoppingListTotal
     }
 
     /**
-     * @param ShoppingList $shoppingList
-     * @return $this
-     */
-    public function setShoppingList(ShoppingList $shoppingList)
-    {
-        $this->shoppingList = $shoppingList;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getCurrency()
     {
         return $this->currency;
-    }
-
-    /**
-     * @param string $currency
-     * @return $this
-     */
-    public function setCurrency($currency)
-    {
-        $this->currency = $currency;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getSubtotalValue()
-    {
-        return $this->subtotalValue;
-    }
-
-    /**
-     * @param float $value
-     * @return $this
-     */
-    public function setSubtotalValue($value)
-    {
-        $this->subtotalValue = $value;
-
-        return $this;
     }
 
     /**
@@ -141,5 +114,34 @@ class ShoppingListTotal
         $this->valid = $valid;
 
         return $this;
+    }
+
+    /**
+     * @param Subtotal $subtotal
+     * @return $this
+     */
+    public function setSubtotal(Subtotal $subtotal)
+    {
+        if ($subtotal->getCurrency() !== $this->currency) {
+            throw new \InvalidArgumentException();
+        }
+
+        $this->subtotalValue = $subtotal->getAmount();
+
+        return $this;
+    }
+
+    /**
+     * @return Subtotal
+     */
+    public function getSubtotal()
+    {
+        $subtotal = new Subtotal();
+        $subtotal->setAmount($this->subtotalValue)
+            ->setCurrency($this->currency)
+            ->setType(LineItemNotPricedSubtotalProvider::TYPE)
+            ->setLabel(LineItemNotPricedSubtotalProvider::LABEL);
+
+        return $subtotal;
     }
 }

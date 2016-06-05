@@ -28,6 +28,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
 {
     const TYPE = 'subtotal';
     const NAME = 'orob2b.pricing.subtotals.not_priced_subtotal';
+    const LABEL = 'orob2b.pricing.subtotals.not_priced_subtotal.label';
 
     /** @var TranslatorInterface */
     protected $translator;
@@ -92,7 +93,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     }
 
     /**
-     * Get line items subtotal
+     * Get line items subtotal for current user currency
      *
      * @param LineItemsNotPricedAwareInterface|AccountOwnerAwareInterface|WebsiteAwareInterface $entity
      *
@@ -100,21 +101,29 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
      */
     public function getSubtotal($entity)
     {
+        return $this->getSubtotalByCurrency($entity, $this->getBaseCurrency($entity));
+    }
+
+    /**
+     * @param LineItemsNotPricedAwareInterface|AccountOwnerAwareInterface|WebsiteAwareInterface $entity
+     * @param string $currency
+     * @return Subtotal
+     */
+    public function getSubtotalByCurrency($entity, $currency)
+    {
         if (!$entity instanceof LineItemsNotPricedAwareInterface) {
             return null;
         }
 
         $subtotalAmount = 0.0;
         $subtotal = $this->createSubtotal();
-
-        $baseCurrency = $this->getBaseCurrency($entity);
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof ProductHolderInterface
                 && $lineItem instanceof ProductUnitHolderInterface
                 && $lineItem instanceof QuantityAwareInterface
             ) {
                 $productsPriceCriteria =
-                    $this->prepareProductsPriceCriteria($lineItem, $baseCurrency);
+                    $this->prepareProductsPriceCriteria($lineItem, $currency);
                 $priceList = $this->priceListTreeHandler->getPriceList($entity->getAccount(), $entity->getWebsite());
                 $price = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList);
                 if (reset($price)) {
@@ -126,7 +135,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         }
 
         $subtotal->setAmount($this->rounding->round($subtotalAmount));
-        $subtotal->setCurrency($baseCurrency);
+        $subtotal->setCurrency($currency);
 
         return $subtotal;
     }
@@ -196,7 +205,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     public function createSubtotal()
     {
         $subtotal = new Subtotal();
-        $subtotal->setLabel($this->translator->trans(self::NAME.'.label'));
+        $subtotal->setLabel($this->translator->trans(self::LABEL));
         $subtotal->setVisible(false);
         $subtotal->setType(self::TYPE);
 

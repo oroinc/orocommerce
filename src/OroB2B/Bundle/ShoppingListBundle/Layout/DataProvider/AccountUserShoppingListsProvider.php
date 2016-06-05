@@ -12,9 +12,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\ShoppingListBundle\Provider\ShoppingListSubtotalProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 
 class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
 {
@@ -46,26 +46,26 @@ class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
     protected $shoppingListClass;
 
     /**
-     * @var ShoppingListSubtotalProvider
+     * @var ShoppingListTotalManager
      */
-    protected $subtotalProvider;
+    protected $totalManager;
 
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param SecurityFacade $securityFacade
      * @param RequestStack $requestStack
-     * @param ShoppingListSubtotalProvider $subtotalProvider
+     * @param ShoppingListTotalManager $totalManager
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         SecurityFacade $securityFacade,
         RequestStack $requestStack,
-        ShoppingListSubtotalProvider $subtotalProvider
+        ShoppingListTotalManager $totalManager
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->securityFacade = $securityFacade;
         $this->requestStack = $requestStack;
-        $this->subtotalProvider = $subtotalProvider;
+        $this->totalManager = $totalManager;
     }
 
     /**
@@ -103,7 +103,7 @@ class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
             /** @var ShoppingList[] $shoppingLists */
             $shoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
             foreach ($shoppingLists as $shoppingList) {
-                $shoppingList->setSubtotal($this->subtotalProvider->getSubtotal($shoppingList));
+                $shoppingList->setSubtotal($this->totalManager->getSubtotal($shoppingList));
             }
         }
 
