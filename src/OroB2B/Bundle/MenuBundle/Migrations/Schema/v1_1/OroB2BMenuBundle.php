@@ -9,7 +9,7 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class CreateMenuItemTable implements Migration, RenameExtensionAwareInterface
+class OroB2BMenuBundle implements Migration, RenameExtensionAwareInterface
 {
     /**
      * @var RenameExtension
