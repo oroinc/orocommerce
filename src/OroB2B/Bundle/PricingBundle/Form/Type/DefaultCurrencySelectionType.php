@@ -77,8 +77,9 @@ class DefaultCurrencySelectionType extends CurrencySelectionType
         $rootForm = $form->getRoot();
 
         if ($this->isSyncApplicable($rootForm)) {
-            $defaultCurrency = $this->getDefaultCurrency();
-            $enabledCurrencies = $this->getEnabledCurrencies();
+            $pricing = $this->requestStack->getCurrentRequest()->get('pricing');
+            $defaultCurrency = $this->getDefaultCurrency($pricing[self::DEFAULT_CURRENCY_NAME]);
+            $enabledCurrencies = $this->getEnabledCurrencies($pricing[self::ENABLED_CURRENCIES_NAME]);
 
             if (!in_array($defaultCurrency, $enabledCurrencies, true)) {
                 $currencyName = Intl::getCurrencyBundle()
@@ -96,12 +97,11 @@ class DefaultCurrencySelectionType extends CurrencySelectionType
     }
 
     /**
+     * @param array $defaultCurrencyData
      * @return string
      */
-    protected function getDefaultCurrency()
+    protected function getDefaultCurrency(array $defaultCurrencyData)
     {
-        $defaultCurrencyData = $this->requestStack->getCurrentRequest()->get('pricing')[self::DEFAULT_CURRENCY_NAME];
-
         if (isset($defaultCurrencyData['use_parent_scope_value'])) {
             $defaultCurrency = LocaleConfiguration::DEFAULT_CURRENCY;
         } elseif (isset($defaultCurrencyData['value'])) {
@@ -114,14 +114,11 @@ class DefaultCurrencySelectionType extends CurrencySelectionType
     }
 
     /**
+     * @param array $enabledCurrenciesData
      * @return array
      */
-    protected function getEnabledCurrencies()
+    protected function getEnabledCurrencies(array $enabledCurrenciesData)
     {
-        $enabledCurrenciesData = $this->requestStack
-            ->getCurrentRequest()
-            ->get('pricing')[self::ENABLED_CURRENCIES_NAME];
-
         if (isset($enabledCurrenciesData['use_parent_scope_value'])) {
             $enabledCurrencies = [LocaleConfiguration::DEFAULT_CURRENCY];
         } elseif (isset($enabledCurrenciesData['value'])) {

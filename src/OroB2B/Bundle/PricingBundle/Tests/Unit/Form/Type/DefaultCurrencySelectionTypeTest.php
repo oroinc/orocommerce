@@ -8,9 +8,10 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\Translator;
 
-use OroB2B\Bundle\PricingBundle\Form\Type\DefaultCurrencySelectionType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
+use OroB2B\Bundle\PricingBundle\Form\Type\DefaultCurrencySelectionType;
 
 class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
 {
@@ -78,66 +79,52 @@ class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitFormDataProvider
+     * @param array $defaultCurrency
      * @param array $enableCurrencies
-     * @param string $defaultCurrency
-     * @param bool $isEnableCurrenciesDefault
-     * @param bool $isDefaultCurrencyDefault
+     * @param string $submittedValue
      * @param bool $isValid
      */
-    public function testSubmitForm(
-        array $enableCurrencies,
-        $defaultCurrency,
-        $isEnableCurrenciesDefault,
-        $isDefaultCurrencyDefault,
-        $isValid
-    ) {
+    public function testSubmitForm(array $defaultCurrency, array $enableCurrencies, $submittedValue, $isValid)
+    {
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_currency.allowed_currencies')
             ->willReturn(['USD', 'CAD', 'EUR']);
 
-        $form = $this->factory->create('orob2b_pricing_default_currency_selection', null, ['multiple' => true]);
+        $currentRequest = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $currentRequest->expects($this->once())
+            ->method('get')
+            ->with('pricing')
+            ->willReturn([
+                DefaultCurrencySelectionType::DEFAULT_CURRENCY_NAME => $defaultCurrency,
+                DefaultCurrencySelectionType::ENABLED_CURRENCIES_NAME => $enableCurrencies
+            ]);
+
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($currentRequest);
+
+        $form = $this->factory->create('orob2b_pricing_default_currency_selection');
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $parentForm */
         $rootForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $rootForm->expects($this->any())
+        $rootForm->expects($this->once())
             ->method('getRoot')
             ->willReturn($rootForm);
         $rootForm->expects($this->once())
             ->method('getName')
             ->willReturn('pricing');
-        $rootForm->expects($this->any())
+        $rootForm->expects($this->once())
             ->method('has')
             ->with(DefaultCurrencySelectionType::ENABLED_CURRENCIES_NAME)
             ->willReturn(true);
 
-        $defaultCurrenciesForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $defaultCurrenciesForm->expects($this->any())
-            ->method('getData')
-            ->willReturn([
-                'use_parent_scope_value' => $isDefaultCurrencyDefault,
-                'value' => $defaultCurrency
-            ]);
-
-        $enabledCurrenciesForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $enabledCurrenciesForm->expects($this->any())
-            ->method('getData')
-            ->willReturn([
-                'use_parent_scope_value' => $isEnableCurrenciesDefault,
-                'value' => $enableCurrencies
-            ]);
-
-        $rootForm->expects($this->any())
-            ->method('get')
-            ->willReturnMap([
-                [DefaultCurrencySelectionType::DEFAULT_CURRENCY_NAME, $defaultCurrenciesForm],
-                [DefaultCurrencySelectionType::ENABLED_CURRENCIES_NAME, $enabledCurrenciesForm]
-            ]);
-
-
         $form->setParent($rootForm);
 
-        $form->submit(['USD']);
+        $form->submit($submittedValue);
         $this->assertSame($isValid, $form->isValid());
     }
 
@@ -148,47 +135,66 @@ class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
     {
         return [
             'valid without default' => [
-                'enableCurrencies' => ['USD', 'CAD', 'EUR'],
-                'defaultCurrency' => 'USD',
-                'isEnableCurrenciesDefault' => false,
-                'isDefaultCurrencyDefault' => false,
+                'defaultCurrency' => [
+                    'value' => 'USD'
+                ],
+                'enableCurrencies' => [
+                    'value' => ['USD', 'CAD', 'EUR']
+                ],
+                'submittedValue' => 'USD',
                 'isValid' => true
             ],
             'invalid without default' => [
-                'enableCurrencies' => ['CAD'],
-                'defaultCurrency' => 'EUR',
-                'isEnableCurrenciesDefault' => false,
-                'isDefaultCurrencyDefault' => false,
+                'defaultCurrency' => [
+                    'value' => 'EUR'
+                ],
+                'enableCurrencies' => [
+                    'value' => ['CAD']
+                ],
+                'submittedValue' => 'EUR',
                 'isValid' => false
             ],
             'valid with defaultCurrency default' => [
-                'enableCurrencies' => ['CAD', 'USD'],
-                'defaultCurrency' => 'USD',
-                'isEnableCurrenciesDefault' => false,
-                'isDefaultCurrencyDefault' => true,
+                'defaultCurrency' => [
+                    'use_parent_scope_value' => true,
+                ],
+                'enableCurrencies' => [
+                    'value' => ['CAD', 'USD']
+                ],
+                'submittedValue' => '',
                 'isValid' => true
             ],
             'invalid with defaultCurrency default' => [
-                'enableCurrencies' => ['CAD', 'EUR'],
-                'defaultCurrency' => '',
-                'isEnableCurrenciesDefault' => false,
-                'isDefaultCurrencyDefault' => true,
+                'defaultCurrency' => [
+                    'use_parent_scope_value' => true,
+                ],
+                'enableCurrencies' => [
+                    'value' => ['CAD', 'EUR']
+                ],
+                'submittedValue' => '',
                 'isValid' => false
             ],
             'valid with enableCurrencies default' => [
-                'enableCurrencies' => [],
-                'defaultCurrency' => 'USD',
-                'isEnableCurrenciesDefault' => true,
-                'isDefaultCurrencyDefault' => false,
+                'defaultCurrency' => [
+                    'value' => 'USD'
+                ],
+                'enableCurrencies' => [
+                    'use_parent_scope_value' => true,
+                    'value' => []
+                ],
+                'submittedValue' => 'USD',
                 'isValid' => true
             ],
             'valid with default' => [
-                'enableCurrencies' => [],
-                'defaultCurrency' => 'USD',
-                'isEnableCurrenciesDefault' => true,
-                'isDefaultCurrencyDefault' => true,
+                'defaultCurrency' => [
+                    'use_parent_scope_value' => true,
+                ],
+                'enableCurrencies' => [
+                    'use_parent_scope_value' => true,
+                ],
+                'submittedValue' => '',
                 'isValid' => true
-            ],
+            ]
         ];
     }
 
