@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FallbackBundle\Migrations\Schema\v1_3;
+namespace OroB2B\Bundle\WebsiteBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -54,36 +54,15 @@ class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, N
      */
     public function updateLocaleTable(Schema $schema, QueryBag $queries)
     {
-        $indexName = $this->nameGenerator->generateIndexName('orob2b_locale', ['parent_id'], false, true);
-
-        $table = $schema->getTable('orob2b_locale');
-        $table->addColumn('formatting_code', 'string', ['length' => 64]);
-        $table->dropIndex('uniq_orob2b_locale_code');
-        $table->dropIndex('uniq_orob2b_locale_title');
-        $table->dropIndex($indexName);
-        $table->removeForeignKey('fk_orob2b_locale_parent_id');
-
-        $this->renameExtension->renameColumn($schema, $queries, $table, 'title', 'name');
-        $this->renameExtension->renameColumn($schema, $queries, $table, 'code', 'language_code');
-
-        $schema->dropTable('oro_localization');
-        $this->renameExtension->renameTable($schema, $queries, 'orob2b_locale', 'oro_localization');
-
-        $indexName = $this->nameGenerator->generateIndexName('oro_localization', ['parent_id'], false, true);
-
-        $this->renameExtension->addIndex($schema, $queries, 'oro_localization', ['parent_id'], $indexName);
-        $this->renameExtension->addUniqueIndex($schema, $queries, 'oro_localization', ['name']);
-        $this->renameExtension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_localization',
-            'oro_localization',
-            ['parent_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        $queries->addPreQuery('INSERT INTO `oro_localization` ' .
+            '(id, parent_id, name, language_code, formatting_code, created_at, updated_at) ' .
+            'SELECT id, parent_id, title, code, code, created_at, updated_at FROM `orob2b_locale`'
         );
 
-        $queries->addQuery('UPDATE `oro_localization` SET `formatting_code` = `language_code`');
+        $this->dropConstraint($schema, 'orob2b_websites_locales', ['locale_id']);
+        $this->dropConstraint($schema, 'orob2b_fallback_locale_value', ['locale_id']);
+
+        $queries->addQuery('DROP TABLE `orob2b_locale`');
     }
 
     /**
@@ -92,8 +71,7 @@ class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, N
      */
     public function updateWebsiteTable(Schema $schema, QueryBag $queries)
     {
-        $this->dropConstraints($schema, 'orob2b_websites_locales', ['locale_id']);
-        $this->dropConstraints($schema, 'orob2b_websites_locales', ['website_id']);
+        $this->dropConstraint($schema, 'orob2b_websites_locales', ['website_id']);
 
         $table = $schema->getTable('orob2b_websites_locales');
         $this->renameExtension->renameColumn($schema, $queries, $table, 'locale_id', 'localization_id');
@@ -105,14 +83,14 @@ class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, N
             'orob2b_websites_localizations'
         );
 
-        $this->createConstraints(
+        $this->createConstraint(
             $schema,
             $queries,
             'orob2b_websites_localizations',
             'oro_localization',
             ['localization_id']
         );
-        $this->createConstraints(
+        $this->createConstraint(
             $schema,
             $queries,
             'orob2b_websites_localizations',
@@ -126,7 +104,7 @@ class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, N
      * @param string $tableName
      * @param array $fields
      */
-    protected function dropConstraints(Schema $schema, $tableName, array $fields)
+    protected function dropConstraint(Schema $schema, $tableName, array $fields)
     {
         $indexName = $this->nameGenerator->generateIndexName($tableName, $fields, false, true);
         $constraintName = $this->nameGenerator->generateForeignKeyConstraintName($tableName, $fields, true);
@@ -143,11 +121,11 @@ class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, N
      * @param string $foreignTable
      * @param array $fields
      */
-    protected function createConstraints(Schema $schema, QueryBag $queries, $tableName, $foreignTable, array $fields)
+    protected function createConstraint(Schema $schema, QueryBag $queries, $tableName, $foreignTable, array $fields)
     {
         $indexName = $this->nameGenerator->generateIndexName($tableName, $fields, false, true);
-        $this->renameExtension->addIndex($schema, $queries, $tableName, $fields, $indexName);
 
+        $this->renameExtension->addIndex($schema, $queries, $tableName, $fields, $indexName);
         $this->renameExtension->addForeignKeyConstraint(
             $schema,
             $queries,

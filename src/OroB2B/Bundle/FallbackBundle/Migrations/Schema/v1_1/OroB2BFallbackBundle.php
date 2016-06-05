@@ -44,44 +44,33 @@ class OroB2BFallbackBundle implements Migration, RenameExtensionAwareInterface, 
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $indexName = $this->nameGenerator->generateIndexName('orob2b_fallback_locale_value', ['locale_id']);
-        $constraintName = $this->nameGenerator->generateForeignKeyConstraintName('orob2b_fallback_locale_value', [
-            'locale_id'
-        ]);
-
-        $table = $schema->getTable('orob2b_fallback_locale_value');
-        $table->renameIndex('idx_orob2b_fallback_fallback', 'idx_fallback');
-        $table->renameIndex('idx_orob2b_fallback_string', 'idx_string');
-        $table->dropIndex($indexName);
-        $table->removeForeignKey($constraintName);
-
-        $this->renameExtension->renameColumn($schema, $queries, $table, 'locale_id', 'localization_id');
-
-        $schema->dropTable('oro_fallback_localization_val');
-        $this->renameExtension->renameTable(
-            $schema,
-            $queries,
-            'orob2b_fallback_locale_value',
-            'oro_fallback_localization_val'
+        $queries->addPreQuery('INSERT INTO `oro_fallback_localization_val` ' .
+            '(id, localization_id, fallback, string, text) ' .
+            'SELECT id, locale_id, fallback, string, text FROM `orob2b_fallback_locale_value`'
         );
 
-        $indexName = $this->nameGenerator->generateIndexName('oro_fallback_localization_val', ['localization_id']);
-        $this->renameExtension->addIndex(
-            $schema,
-            $queries,
-            'oro_fallback_localization_val',
-            ['localization_id'],
-            $indexName
-        );
+        $this->dropConstraint($schema, 'orob2b_catalog_cat_long_desc', ['localized_value_id']);
+        $this->dropConstraint($schema, 'orob2b_catalog_cat_short_desc', ['localized_value_id']);
+        $this->dropConstraint($schema, 'orob2b_catalog_category_title', ['localized_value_id']);
 
-        $this->renameExtension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_fallback_localization_val',
-            'oro_localization',
-            ['localization_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
+        $this->dropConstraint($schema, 'orob2b_menu_item_title', ['localized_value_id']);
+
+        $this->dropConstraint($schema, 'orob2b_product_description', ['localized_value_id']);
+        $this->dropConstraint($schema, 'orob2b_product_name', ['localized_value_id']);
+        $this->dropConstraint($schema, 'orob2b_product_short_desc', ['localized_value_id']);
+
+        $queries->addQuery('DROP TABLE `orob2b_fallback_locale_value`');
+    }
+
+    /**
+     * @param Schema $schema
+     * @param string $tableName
+     * @param array $fields
+     */
+    protected function dropConstraint(Schema $schema, $tableName, array $fields)
+    {
+        $constraintName = $this->nameGenerator->generateForeignKeyConstraintName($tableName, $fields, true);
+
+        $schema->getTable($tableName)->removeForeignKey($constraintName);
     }
 }
