@@ -17,6 +17,7 @@ use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 
 use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -186,6 +187,9 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedSorters, $configuration->offsetGetByPath('[sorters][columns]'));
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testWithValidMetadata()
     {
         $this->cache->expects($this->any())
@@ -228,8 +232,13 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             ]));
 
         $configuration = $this->getGridConfiguration();
-        /** @var DatagridInterface $datagrid */
+        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $parametersBag = $this->getMockBuilder(ParameterBag::class)->disableOriginalConstructor()->getMock();
+        $parametersBag->expects($this->once())
+            ->method('set')
+            ->with(CheckoutGridListener::USER_CURRENCY_PARAMETER, 'USD');
+        $datagrid->expects($this->once())->method('getParameters')->willReturn($parametersBag);
         $event = new BuildBefore($datagrid, $configuration);
         $this->listener->onBuildBefore($event);
 
@@ -265,6 +274,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             'id' => ['data_name' => 'id'],
             'subtotal' => ['data_name' => 'subtotal']
         ];
+        $expectedBindParameters = ['user_currency'];
         $expectedJoins = [
             ['join' => 'rootAlias.source', 'alias' => '_source'],
             ['join' => '_source.relationOne', 'alias' => '_relationOne'],
@@ -273,7 +283,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                 'join' => '_relationTwo.totals',
                 'alias' => '_relationTwo_totals',
                 'conditionType' => 'WITH',
-                'condition' => '_relationTwo_totals.currency = \'USD\''
+                'condition' => '_relationTwo_totals.currency = :user_currency'
             ],
         ];
 
@@ -282,6 +292,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedFilters, $configuration->offsetGetByPath('[filters][columns]'));
         $this->assertEquals($expectedSorters, $configuration->offsetGetByPath('[sorters][columns]'));
         $this->assertEquals($expectedJoins, $configuration->offsetGetByPath('[source][query][join][left]'));
+        $this->assertEquals($expectedBindParameters, $configuration->offsetGetByPath('[source]')['bind_parameters']);
     }
 
     public function testCachedData()
@@ -307,7 +318,8 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             'joins' => [
                 ['join' => 'rootAlias.source', 'alias' => '_source'],
                 ['join' => '_source.relationOne', 'alias' => '_relationOne']
-            ]
+            ],
+            'bindParameters' => ['user_currency']
         ];
         $this->cache->expects($this->once())
             ->method('contains')
@@ -319,8 +331,13 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
         $configuration = $this->getGridConfiguration();
 
-        /** @var DatagridInterface $datagrid */
+        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $parametersBag = $this->getMockBuilder(ParameterBag::class)->disableOriginalConstructor()->getMock();
+        $parametersBag->expects($this->once())
+            ->method('set')
+            ->with(CheckoutGridListener::USER_CURRENCY_PARAMETER, 'USD');
+        $datagrid->expects($this->once())->method('getParameters')->willReturn($parametersBag);
         $event = new BuildBefore($datagrid, $configuration);
         $this->listener->onBuildBefore($event);
 
@@ -349,12 +366,14 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             ['join' => 'rootAlias.source', 'alias' => '_source'],
             ['join' => '_source.relationOne', 'alias' => '_relationOne']
         ];
+        $expectedBindParameters = ['user_currency'];
 
         $this->assertEquals($expectedSelects, $configuration->offsetGetByPath('[source][query][select]'));
         $this->assertEquals($expectedColumns, $configuration->offsetGetByPath('[columns]'));
         $this->assertEquals($expectedFilters, $configuration->offsetGetByPath('[filters][columns]'));
         $this->assertEquals($expectedSorters, $configuration->offsetGetByPath('[sorters][columns]'));
         $this->assertEquals($expectedJoins, $configuration->offsetGetByPath('[source][query][join][left]'));
+        $this->assertEquals($expectedBindParameters, $configuration->offsetGetByPath('[source]')['bind_parameters']);
     }
 
     public function testOnResultAfter()

@@ -4,8 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Layout\Block\Type;
 
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
+use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
 use Oro\Component\Layout\Block\Type\AbstractType;
 
 class CurrencySwitcherType extends AbstractType
@@ -23,7 +22,7 @@ class CurrencySwitcherType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['currencies', 'selected_currency']);
     }
