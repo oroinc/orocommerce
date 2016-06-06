@@ -19,7 +19,7 @@ OroB2B\Bundle\InvoiceBundle\Entity\Invoice:
         currency:
             - Currency: ~
         lineItems:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Count:
+            - Count:
                 min: 1
                 minMessage: 'orob2b.invoice.invoicelineitem.count'
 

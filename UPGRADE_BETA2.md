@@ -10,10 +10,22 @@ WebsiteBundle:
 --------------
 - Added translation strategy to handle translation fallbacks on frontend based on locale structure from `OroB2BWebsiteBundle`
 
+PricingBundle:
+--------------
+- Modified `OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceUnitSelectorType` in order to work with PrimaryUnitPrecision and AdditionalUnitPrecisions logic
+- Modified `product-unit-precision-limitations-component` in order to work with PrimaryUnitPrecision and AdditionalUnitPrecisions logic
+
 ProductBundle:
 --------------
 - Added `OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider`, `OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitsType` in order to populate all available Product Units in System Configuration section
 - Added `OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider`, Modified `OroB2B\Bundle\ProductBundle\Form\Type\ProductType` in order to fill Product Units with values from System Configuration on product creation page
+- Added `OroB2B\Bundle\ProductBundle\Form\Type\ProductPimaryUnitPrecisionType`, Modified `OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType` in order to fill ProductPrimaryUnitPrecision and ProductAdditionalUnitPrecisions respectively
+- Modified `OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType` with option `sell`
+- Modified `OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision` with properties: `conversionRate`, `sell`. Schema and Demo Data Migrations changed also.
+- Modified `OroB2B\Bundle\ProductBundle\Entity\Product` with property primaryUnitPrecision as one-to-one relation to `OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision`
+- Modified `OroB2B\Bundle\ProductBundle\Entity\Product` with methods in order to get, add, remove additionalUnitPrecisions collection
+- Modified ImportExport with ProductPrimaryUnitPrecision and ProductAdditionalUnitPrecisions logic
+- Added `product-primary-unit-limitations-component`, Modified `product-unit-selection-limitations-component` in order to work with PrimaryUnitPrecision and AdditionalUnitPrecisions on Product create/update page
 
 MoneyOrderBundle:
 --------------

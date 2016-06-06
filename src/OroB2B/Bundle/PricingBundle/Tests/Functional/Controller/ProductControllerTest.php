@@ -269,7 +269,7 @@ class ProductControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getPhpValues();
-        $formValues['orob2b_product']['primaryUnitPrecision'] = [
+        $formValues['orob2b_product']['additionalUnitPrecisions'][] = [
             'unit' => $this->newPrice['unit'],
             'precision' => 0
         ];

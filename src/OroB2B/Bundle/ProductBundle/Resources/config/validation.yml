@@ -14,6 +14,10 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - NotBlank: ~
         organization:
             - NotBlank: ~
+        unitPrecisions:
+            - Count:
+                min: 1
+                minMessage: 'orob2b.product.unit_precisions_items.blank'
         primaryUnitPrecision:
             - NotBlank: ~
         status:
