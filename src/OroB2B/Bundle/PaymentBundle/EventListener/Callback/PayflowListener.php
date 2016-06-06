@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\EventListener\Callback;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
@@ -15,12 +15,17 @@ class PayflowListener
     /** @var Session */
     protected $session;
 
+    /** @var PaymentMethodRegistry */
+    protected $paymentMethodRegistry;
+
     /**
      * @param Session $session
+     * @param PaymentMethodRegistry $paymentMethodRegistry
      */
-    public function __construct(Session $session)
+    public function __construct(Session $session, PaymentMethodRegistry $paymentMethodRegistry)
     {
         $this->session = $session;
+        $this->paymentMethodRegistry = $paymentMethodRegistry;
     }
 
     /**
@@ -41,24 +46,13 @@ class PayflowListener
      */
     public function onNotify(AbstractCallbackEvent $event)
     {
-        $eventData = $event->getData();
-        $response = new Response($eventData);
-
         $paymentTransaction = $event->getPaymentTransaction();
-        if (!$paymentTransaction || $paymentTransaction->getReference()) {
-            return;
-        }
 
-        $paymentTransaction
-            ->setReference($response->getReference())
-            ->setResponse(array_replace($paymentTransaction->getResponse(), $eventData))
-            ->setActive($response->isSuccessful())
-            ->setSuccessful($response->isSuccessful());
-
-        if ($paymentTransaction->getAction() === PaymentMethodInterface::CHARGE) {
-            $paymentTransaction->setActive(false);
+        try {
+            $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentTransaction->getPaymentMethod());
+            $paymentMethod->completeTransaction($paymentTransaction, $event->getData());
+            $event->markSuccessful();
+        } catch (\InvalidArgumentException $e) {
         }
-        
-        $event->markSuccessful();
     }
 }

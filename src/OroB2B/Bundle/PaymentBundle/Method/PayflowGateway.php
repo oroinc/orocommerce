@@ -12,6 +12,7 @@ use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
 use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
 /**
@@ -381,6 +382,29 @@ class PayflowGateway implements PaymentMethodInterface
             [self::AUTHORIZE, self::CAPTURE, self::CHARGE, self::PURCHASE],
             true
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function completeTransaction(PaymentTransaction $paymentTransaction, array $data)
+    {
+        $response = new Response($data);
+
+        if (!$paymentTransaction || $paymentTransaction->getReference()) {
+            return;
+        }
+
+        $paymentTransaction
+            ->setReference($response->getReference())
+            ->setResponse(array_replace($paymentTransaction->getResponse(), $eventData))
+            ->setActive($response->isSuccessful())
+            ->setSuccessful($response->isSuccessful());
+
+
+        if ($paymentTransaction->getAction() === PaymentMethodInterface::CHARGE) {
+            $paymentTransaction->setActive(false);
+        }
     }
 
     /**

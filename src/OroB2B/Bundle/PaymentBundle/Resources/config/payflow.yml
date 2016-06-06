@@ -8,6 +8,7 @@ services:
         lazy: true
         arguments:
             - '@session'
+            - '@orob2b_payment.payment_method.registry'
         tags:
             - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow_gateway, method: onError }
             - { name: kernel.event_listener, event: orob2b_payment.callback.notify.payflow_gateway, method: onNotify }
