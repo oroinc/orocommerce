@@ -181,8 +181,7 @@ class ProductRepository extends EntityRepository
         $qb->select('p, images, imageFile')
             ->join('p.images', 'images')
             ->join('images.image', 'imageFile')
-            ->where($qb->expr()->isNotNull('images.id'))
-            ->andWhere($qb->expr()->in('p', ':products'))
+            ->where($qb->expr()->in('p', ':products'))
             ->setParameter('products', $products)
             ->indexBy('p', 'p.id');
 
