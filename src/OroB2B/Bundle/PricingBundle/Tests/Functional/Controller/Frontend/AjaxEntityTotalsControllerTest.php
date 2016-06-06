@@ -42,12 +42,12 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         // set account user not default currency
         $this->getContainer()->get('oro_config.global')
             ->set(Configuration::getConfigKeyByName(Configuration::ENABLED_CURRENCIES), ['EUR', 'USD']);
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $user = $em->find(AccountUser::class, 1);
-        $website = $em->find(Website::class, 1);
+        $user = $this->getCurrentUser();
+        $website = $this->getCurrentWebsite();
         $settings = new AccountUserSettings($website);
         $settings->setCurrency('EUR');
         $user->setWebsiteSettings($settings);
+        $em = $this->getContainer()->get('doctrine')->getManager();
         $em->persist($settings);
         $em->flush();
 
@@ -71,5 +71,25 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $this->assertArrayHasKey('subtotals', $data);
         $this->assertEquals(282.43, $data['subtotals'][0]['amount']);
         $this->assertEquals('EUR', $data['subtotals'][0]['currency']);
+    }
+
+    /**
+     * @return AccountUser
+     */
+    protected function getCurrentUser()
+    {
+        return $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BAccountBundle:AccountUser')
+            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
+    }
+
+    /**
+     * @return Website
+     */
+    protected function getCurrentWebsite()
+    {
+        return $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->find(1);
     }
 }
