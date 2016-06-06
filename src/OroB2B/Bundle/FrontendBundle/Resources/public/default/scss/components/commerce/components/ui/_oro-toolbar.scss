@@ -1,5 +1,5 @@
-@oro-toolbar-content-min-width: 45px;
-@oro-toolbar-toolbar-min-width: 95px;
+$oro-toolbar-content-min-width: 45px;
+$oro-toolbar-toolbar-min-width: 95px;
 
 .oro-toolbar {
   position: relative;
@@ -15,13 +15,13 @@
   }
 
   &__content {
-    min-width: @oro-toolbar-content-min-width;
+    min-width: $oro-toolbar-content-min-width;
 
-    padding: 0 @offset-y-m;
+    padding: 0 $offset-y-m;
 
-    font-size: @font-size - 1;
-    line-height: (@font-size -1) * 2;
-    font-family: @roboto-font;
+    font-size: $font-size - 0.1;
+    line-height: ($font-size - 0.1) * 2;
+    font-family: $roboto-font;
     text-align: center;
 
     cursor: pointer;
@@ -36,13 +36,13 @@
 
     display: none;
 
-    min-width: @oro-toolbar-toolbar-min-width;
+    min-width: $oro-toolbar-toolbar-min-width;
 
     padding: 10px 15px;
 
-    font-size: @font-size;
+    font-size: $font-size;
 
-    background: @base-background-color;
+    background: $base-background-color;
     border-radius: 2px;
     box-shadow: 0 4px 5px 0 rgba(0,0,0,.4);
   }
@@ -52,7 +52,7 @@
 
     white-space: nowrap;
 
-    .list-normalize();
+    @include list-normalize;
 
 
     &-item {
@@ -69,10 +69,10 @@
 
     line-height: 2;
 
-    color: @base-font-color;
+    color: $base-font-color;
 
     &:hover {
-      color: @base-font-color;
+      color: $base-font-color;
     }
   }
 
@@ -83,7 +83,7 @@
   }
 
   &__currency {
-    margin-right: @offset-y-m / 2;
+    margin-right: $offset-y-m / 2;
   }
 
   // toolbar open
