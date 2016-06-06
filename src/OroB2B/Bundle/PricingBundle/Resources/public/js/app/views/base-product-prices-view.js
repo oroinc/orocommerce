@@ -118,7 +118,7 @@ define(function(require) {
                 this.getElement('price').addClass('hidden');
                 this.getElement('priceNotFound').removeClass('hidden');
             } else {
-                this.getElement('unit').html(price.unit);
+                this.getElement('unit').html(this.model.get('product_units')[price.unit]);
 
                 price = NumberFormatter.formatCurrency(price.price, price.currency);
                 this.getElement('priceValue').html(price);
