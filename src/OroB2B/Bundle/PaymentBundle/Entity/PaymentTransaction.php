@@ -17,6 +17,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 /**
  * @ORM\Table(
@@ -549,5 +550,21 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
         $this->organization = $organization;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isClone()
+    {
+        if (!$this->sourcePaymentTransaction) {
+            return false;
+        }
+
+        if ($this->sourcePaymentTransaction->getAction() !== PaymentMethodInterface::VALIDATE) {
+            return false;
+        }
+
+        return $this->reference === $this->sourcePaymentTransaction->getReference();
     }
 }

@@ -2,11 +2,10 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Layout\Block\Extension;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Component\Layout\Block\Type\BaseType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
+use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\OrderBundle\Layout\Block\Extension\BlockPrefixExtension;
 
@@ -28,24 +27,9 @@ class BlockPrefixExtensionTest extends \PHPUnit_Framework_TestCase
     public function testSetDefaultOptions()
     {
         $resolver = new OptionsResolver();
-        $this->extension->setDefaultOptions($resolver);
+        $this->extension->configureOptions($resolver);
 
         $options = $resolver->resolve();
-
-        $this->assertArrayHasKey('block_prefixes', $options);
-        $this->assertEquals($options['block_prefixes'], []);
-    }
-
-    /**
-     * @expectedException \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
-     * @expectedExceptionMessage "block_prefixes" with value null is expected to be of type "array"
-     */
-    public function testSetDefaultOptionsFailed()
-    {
-        $resolver = new OptionsResolver();
-        $this->extension->setDefaultOptions($resolver);
-
-        $options = $resolver->resolve(['block_prefixes' => null]);
 
         $this->assertArrayHasKey('block_prefixes', $options);
         $this->assertEquals($options['block_prefixes'], []);

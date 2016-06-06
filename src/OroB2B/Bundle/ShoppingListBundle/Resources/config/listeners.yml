@@ -1,11 +1,13 @@
 services:
     orob2b_shopping_list.event_listener.shopping_list_listener:
         class: 'OroB2B\Bundle\ShoppingListBundle\EventListener\ShoppingListListener'
+        public: false
         tags:
             - { name: doctrine.event_listener, event: postRemove }
 
     orob2b_shopping_list.event_listener.line_item_listener:
         class: 'OroB2B\Bundle\ShoppingListBundle\EventListener\LineItemListener'
+        public: false
         arguments:
             - '@orob2b_shopping_list.shopping_list.manager.link'
         tags:

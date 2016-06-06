@@ -4,7 +4,6 @@ parameters:
 services:
     orob2b_alternativecheckout.event_listener.checkout_entity:
         parent: 'orob2b_checkout.event_listener.checkout_entity.abstract'
-        public: true
         calls:
             - [setCheckoutClassName, ['%orob2b_alternativecheckout.entity.alternativecheckout.class%']]
             - [setCheckoutType, ['alternative']]
@@ -14,7 +13,6 @@ services:
 
     orob2b_alternativecheckout.workflow_expression.user_in_group:
         class: 'OroB2B\Bundle\AlternativeCheckoutBundle\Condition\AssertAccount'
-        public: true
         arguments:
             - '@oro_security.security_facade'
         tags:
@@ -22,7 +20,6 @@ services:
 
     orob2b_alternativecheckout.conditions.less_order_total_limit:
         class: 'OroB2B\Bundle\AlternativeCheckoutBundle\Condition\OrderTotalLimit'
-        public: true
         arguments:
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
@@ -31,7 +28,6 @@ services:
 
     orob2b_alternativecheckout.model.action.checkout_to_quote:
         class: 'OroB2B\Bundle\AlternativeCheckoutBundle\Model\Action\AlternativeCheckoutByQuote'
-        public: true
         arguments:
             - '@doctrine'
             - '@oro_action.context_accessor'

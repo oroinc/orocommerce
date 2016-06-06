@@ -559,6 +559,14 @@ class Account extends ExtendAccount
     }
 
     /**
+     * @return bool
+     */
+    public function hasSalesRepresentatives()
+    {
+        return $this->salesRepresentatives->count() > 0;
+    }
+
+    /**
      * @param AccountUser $accountUser
      *
      * @return bool

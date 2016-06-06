@@ -151,7 +151,7 @@ class PayflowGateway implements PaymentMethodInterface
             return ['successful' => false];
         }
 
-        if (!$sourcePaymentTransaction->getResponse() && !$sourcePaymentTransaction->getRequest()) {
+        if ($sourcePaymentTransaction->isClone()) {
             return $this->charge($paymentTransaction);
         }
 
