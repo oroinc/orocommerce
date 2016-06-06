@@ -7,9 +7,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Intl\Intl;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
 class SystemCurrencyFormExtension extends AbstractTypeExtension
 {
@@ -22,17 +24,27 @@ class SystemCurrencyFormExtension extends AbstractTypeExtension
     protected $configManager;
 
     /**
+     * @var LocaleSettings
+     */
+    protected $localeSettings;
+
+    /**
      * @var TranslatorInterface
      */
     protected $translator;
 
     /**
      * @param ConfigManager $configManager
+     * @param LocaleSettings $localeSettings
      * @param TranslatorInterface $translator
      */
-    public function __construct(ConfigManager $configManager, TranslatorInterface $translator)
-    {
+    public function __construct(
+        ConfigManager $configManager,
+        LocaleSettings $localeSettings,
+        TranslatorInterface $translator
+    ) {
         $this->configManager = $configManager;
+        $this->localeSettings = $localeSettings;
         $this->translator = $translator;
     }
 
@@ -70,11 +82,22 @@ class SystemCurrencyFormExtension extends AbstractTypeExtension
                     $this->translator->transChoice(
                         'orob2b.pricing.validators.using_as_available',
                         count($alreadyInUse),
-                        array('%curr%' => implode(', ', $alreadyInUse)),
+                        ['%curr%' => implode(', ', $this->getCurrencyNames($alreadyInUse))],
                         'validators'
                     )
                 ));
             }
         }
+    }
+
+    /**
+     * @param array $currencies
+     * @return array
+     */
+    protected function getCurrencyNames(array $currencies)
+    {
+        $currencyNames = Intl::getCurrencyBundle()->getCurrencyNames($this->localeSettings->getLocale());
+
+        return array_intersect_key($currencyNames, array_fill_keys($currencies, null));
     }
 }

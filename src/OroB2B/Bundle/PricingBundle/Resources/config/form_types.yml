@@ -91,6 +91,7 @@ services:
         public: true
         arguments:
             - "@oro_config.manager"
+            - '@oro_locale.settings'
             - "@translator"
         tags:
             - { name: form.type_extension, alias: oro_currency }
@@ -135,3 +136,13 @@ services:
        tags:
            - { name: form.type, alias: orob2b_pricing_enabled_currency_selection }
 
+    orob2b_pricing.form.type.default_currency_selection:
+       class: OroB2B\Bundle\PricingBundle\Form\Type\DefaultCurrencySelectionType
+       public: true
+       arguments:
+           - '@oro_config.manager'
+           - '@oro_locale.settings'
+           - "@translator"
+           - "@request_stack"
+       tags:
+           - { name: form.type, alias: orob2b_pricing_default_currency_selection }
