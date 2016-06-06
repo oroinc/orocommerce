@@ -91,7 +91,7 @@ define(function (require) {
                     return;
                 }
 
-                if (!units.hasOwnProperty(option.value)) {
+                if (!units.hasOwnProperty(option.value) && option.selected != true) {
                     option.remove();
 
                     updateRequired = true;
@@ -118,6 +118,15 @@ define(function (require) {
             } else {
                 emptyOption.hide();
             }
+
+            _.each($select.find('option:contains( - removed)'), function(option){
+                if (units.hasOwnProperty(option.value)) {
+                    var oldText = option.text;
+                    var newText = oldText.replace(' - removed','');
+                    option.text = newText;
+
+                }
+            });
 
             _.each(units, function (text, value) {
                 if (!$select.find("option[value='" + value + "']").length) {
