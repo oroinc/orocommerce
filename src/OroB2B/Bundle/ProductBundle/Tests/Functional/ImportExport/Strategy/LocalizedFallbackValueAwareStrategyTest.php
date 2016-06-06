@@ -263,9 +263,6 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                 function ($product) {
                     $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
 
-//                    \Doctrine\Common\Util\Debug::dump($product);
-//                    \Doctrine\Common\Util\Debug::dump($product->getNames());
-//
                     /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $product */
                     $this->assertNotNull($product->getId());
                     $this->assertNotEmpty($product->getNames()->toArray());
