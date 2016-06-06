@@ -6,6 +6,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
@@ -17,6 +19,7 @@ class ShoppingListTotalManagerTest extends \PHPUnit_Framework_TestCase
 {
     const USD = 'USD';
     const EUR = 'EUR';
+    const CAD = 'CAD';
     /**
      * @var ShoppingListTotalManager
      */
@@ -56,10 +59,15 @@ class ShoppingListTotalManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMockBuilder(ManagerRegistry::class)->disableOriginalConstructor()->getMock();
 
+        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $config */
+        $config = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
+        $config->method('get')->willReturn([self::EUR, self::USD, self::CAD]);
+
         $this->totalManager = new ShoppingListTotalManager(
             $this->registry,
             $this->subtotalProvider,
-            $this->currencyManager
+            $this->currencyManager,
+            $config
         );
     }
 
@@ -117,14 +125,16 @@ class ShoppingListTotalManagerTest extends \PHPUnit_Framework_TestCase
 
         $em = $this->getMock(ObjectManager::class);
         $em->expects($this->once())->method('getRepository')->willReturn($repository);
+        $em->expects($this->once())->method('persist');
         $em->expects($this->once())->method('flush');
         $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
 
-        $this->subtotalProvider->expects($this->exactly(2))
+        $this->subtotalProvider->expects($this->exactly(3))
             ->method('getSubtotalByCurrency')
             ->willReturnMap([
                 [$shoppingList, self::USD, (new Subtotal())->setCurrency(self::USD)->setAmount(100)],
-                [$shoppingList, self::EUR, (new Subtotal())->setCurrency(self::EUR)->setAmount(80)]
+                [$shoppingList, self::EUR, (new Subtotal())->setCurrency(self::EUR)->setAmount(80)],
+                [$shoppingList, self::CAD, (new Subtotal())->setCurrency(self::CAD)->setAmount(120)],
             ]);
 
         $this->totalManager->recalculateTotals($shoppingList, true);
