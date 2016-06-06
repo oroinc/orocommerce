@@ -13,9 +13,9 @@ class LoadPageMetaData extends AbstractFixture implements DependentFixtureInterf
 {
     use SEOMetaDataFieldsTrait;
 
-    const META_TITLES = 'metaTitles';
-    const META_DESCRIPTIONS = 'metaDescriptions';
-    const META_KEYWORDS = 'metaKeywords';
+    const META_TITLES = 'pageMetaTitles';
+    const META_DESCRIPTIONS = 'pageMetaDescriptions';
+    const META_KEYWORDS = 'pageMetaKeywords';
 
     /**
      * @var array

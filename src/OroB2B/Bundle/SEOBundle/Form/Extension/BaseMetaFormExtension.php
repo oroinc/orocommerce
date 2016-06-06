@@ -41,7 +41,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                 [
                     'label' => 'orob2b.seo.meta-title.label',
                     'required' => false,
-                    'type' => 'textarea',
+                    'type' => 'text',
                 ]
             )
             ->add(
@@ -71,6 +71,12 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
      */
     public function onPostSubmit(FormEvent $event)
     {
+        $form = $event->getForm();
+
+        if (!$form->isValid()) {
+            return;
+        }
+
         $entity = $event->getData();
         $entityManager = $this->registry->getManagerForClass('OroB2BFallbackBundle:LocalizedFallbackValue');
 

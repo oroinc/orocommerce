@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\SEOBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Extend\Entity\EX_OroB2BCatalogBundle_Category;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\SEOBundle\Form\Extension\CategoryFormExtension;
@@ -34,10 +33,23 @@ class CategoryFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with('OroB2BFallbackBundle:LocalizedFallbackValue')
             ->willReturn($this->manager);
+
         $categoryExtension = new CategoryFormExtension($this->registry);
+
         $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
+
+        $event->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form);
 
         $category = new CategoryStub();
         $category->addMetaTitles(new LocalizedFallbackValue());

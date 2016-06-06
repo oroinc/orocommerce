@@ -13,9 +13,9 @@ class LoadProductMetaData extends AbstractFixture implements DependentFixtureInt
 {
     use SEOMetaDataFieldsTrait;
 
-    const META_TITLES = 'metaTitles';
-    const META_DESCRIPTIONS = 'metaDescriptions';
-    const META_KEYWORDS = 'metaKeywords';
+    const META_TITLES = 'productMetaTitles';
+    const META_DESCRIPTIONS = 'productMetaDescriptions';
+    const META_KEYWORDS = 'productMetaKeywords';
 
     /**
      * @var array

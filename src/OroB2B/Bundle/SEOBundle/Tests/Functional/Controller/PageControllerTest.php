@@ -9,10 +9,8 @@ use OroB2B\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData;
 /**
  * @dbIsolation
  */
-class LandingPageControllerTest extends WebTestCase
+class PageControllerTest extends WebTestCase
 {
-    use SEOViewSectionTrait;
-    
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -27,7 +25,6 @@ class LandingPageControllerTest extends WebTestCase
 
         $this->checkSeoSectionExistence($crawler);
     }
-
 
     public function testEditLandingPage()
     {
@@ -67,5 +64,16 @@ class LandingPageControllerTest extends WebTestCase
         );
 
         return $repository->findOneBy(['title' => 'page.1']);
+    }
+
+    public function checkSeoSectionExistence($crawler)
+    {
+        $result = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('SEO', $crawler->filter('.nav')->html());
+        $this->assertContains('Meta title', $crawler->html());
+        $this->assertContains('Meta description', $crawler->html());
+        $this->assertContains('Meta keywords', $crawler->html());
     }
 }

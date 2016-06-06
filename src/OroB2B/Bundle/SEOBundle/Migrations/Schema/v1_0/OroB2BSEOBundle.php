@@ -30,7 +30,6 @@ class OroB2BSEOBundle implements Migration, ExtendExtensionAwareInterface
         $this->extendExtension = $extendExtension;
     }
 
-
     /**
      * Modifies the given schema to apply necessary changes of a database
      * The given query bag can be used to apply additional SQL queries before and after schema changes
@@ -46,6 +45,13 @@ class OroB2BSEOBundle implements Migration, ExtendExtensionAwareInterface
         $this->addMetaInformation($schema, self::LANDING_PAGE_TABLE_NAME);
     }
 
+    /**
+     * Method that adds 3 meta fields (metaTitles, metaDescription, metaKeywords) relations to the
+     * received table (corresponding to a an entitiy).
+     *
+     * @param Schema $schema
+     * @param string $ownerTable
+     */
     private function addMetaInformation($schema, $ownerTable)
     {
         $this->addMetaInformationField($schema, $ownerTable, 'metaTitles');
@@ -53,6 +59,16 @@ class OroB2BSEOBundle implements Migration, ExtendExtensionAwareInterface
         $this->addMetaInformationField($schema, $ownerTable, 'metaKeywords');
     }
 
+    /**
+     * Add a many-to-many relation between a given table and the table corresponding to the
+     * LocalizedFallbackValue entity, with the given relation name.
+     *
+     * @param Schema $schema
+     * @param string $ownerTable
+     * @param string $relationName
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
     private function addMetaInformationField($schema, $ownerTable, $relationName)
     {
         $targetTable = $schema->getTable($ownerTable);

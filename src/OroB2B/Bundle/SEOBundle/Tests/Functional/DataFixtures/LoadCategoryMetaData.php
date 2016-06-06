@@ -13,9 +13,9 @@ class LoadCategoryMetaData extends AbstractFixture implements DependentFixtureIn
 {
     use SEOMetaDataFieldsTrait;
 
-    const META_TITLES = 'metaTitles';
-    const META_DESCRIPTIONS = 'metaDescriptions';
-    const META_KEYWORDS = 'metaKeywords';
+    const META_TITLES = 'categoryMetaTitles';
+    const META_DESCRIPTIONS = 'categoryMetaDescriptions';
+    const META_KEYWORDS = 'categoryMetaKeywords';
 
     /**
      * @var array

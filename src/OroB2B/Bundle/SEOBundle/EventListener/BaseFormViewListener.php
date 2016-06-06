@@ -9,10 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- */
-class FormViewListener
+class BaseFormViewListener
 {
     /**
      * @var TranslatorInterface
@@ -42,48 +39,6 @@ class FormViewListener
         $this->requestStack = $requestStack;
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
-    }
-
-    /**
-     * Insert SEO information
-     *
-     * @param BeforeListRenderEvent $event
-     */
-    public function onProductView(BeforeListRenderEvent $event)
-    {
-        $this->addViewPageBlock($event, 'OroB2BProductBundle:Product');
-    }
-
-    /**
-     * @param BeforeListRenderEvent $event
-     */
-    public function onProductEdit(BeforeListRenderEvent $event)
-    {
-        $this->addEditPageBlock($event);
-    }
-
-    /**
-     * @param BeforeListRenderEvent $event
-     */
-    public function onLandingPageView(BeforeListRenderEvent $event)
-    {
-        $this->addViewPageBlock($event, 'OroB2BCMSBundle:Page');
-    }
-
-    /**
-     * @param BeforeListRenderEvent $event
-     */
-    public function onLandingPageEdit(BeforeListRenderEvent $event)
-    {
-        $this->addEditPageBlock($event);
-    }
-
-    /**
-     * @param BeforeListRenderEvent $event
-     */
-    public function onCategoryEdit(BeforeListRenderEvent $event)
-    {
-        $this->addEditPageBlock($event);
     }
 
     /**
