@@ -149,7 +149,9 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
 
             $productImage = new ProductImage();
             $productImage->setImage($image);
-            $productImage->setTypes($types);
+            foreach ($types as $type) {
+                $productImage->addType($type);
+            }
         } catch (\Exception $e) {
             //image not found
         }
@@ -173,6 +175,6 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
 
         $manager->flush();
 
-        return new ArrayCollection($allImageTypes);
+        return $allImageTypes;
     }
 }

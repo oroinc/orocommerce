@@ -35,7 +35,7 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
     public function __construct(EntityRepository $productImageTypeRepository, array $imageTypes)
     {
         $this->imageTypes = $imageTypes;
-        $this->productImageTypes = $this->getIndexedProductImageTypes($productImageTypeRepository);
+        $this->productImageTypes = $this->getProductImageTypes($productImageTypeRepository);
     }
 
     /**
@@ -81,7 +81,7 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
      *
      * @param FormEvent $event
      */
-    public function PreSubmit(FormEvent $event)
+    public function preSubmit(FormEvent $event)
     {
         $data = $event->getData();
         $types = [];
@@ -120,15 +120,8 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
      * @param EntityRepository $productImageTypeRepository
      * @return ProductImageType[]
      */
-    private function getIndexedProductImageTypes(EntityRepository $productImageTypeRepository)
+    private function getProductImageTypes(EntityRepository $productImageTypeRepository)
     {
-        $types = [];
-
-        /** @var ProductImageType $productImageType */
-        foreach ($productImageTypeRepository->findAll() as $productImageType) {
-            $types[$productImageType->getType()] = $productImageType;
-        }
-
-        return $types;
+        return $productImageTypeRepository->createQueryBuilder('t', 't.type')->getQuery()->getResult();
     }
 }
