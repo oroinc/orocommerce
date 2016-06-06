@@ -48,11 +48,21 @@ class PayflowListener
     {
         $paymentTransaction = $event->getPaymentTransaction();
 
+        if (!$paymentTransaction) {
+            return;
+        }
+
         try {
             $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentTransaction->getPaymentMethod());
-            $paymentMethod->completeTransaction($paymentTransaction, $event->getData());
-            $event->markSuccessful();
         } catch (\InvalidArgumentException $e) {
+            return;
         }
+
+        $completeTransactionResult = $paymentMethod->completeTransaction($paymentTransaction, $event->getData());
+
+        if (!$completeTransactionResult) {
+            return;
+        }
+        $event->markSuccessful();
     }
 }

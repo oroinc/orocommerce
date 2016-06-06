@@ -47,6 +47,7 @@ interface PaymentMethodInterface
     /**
      * @param PaymentTransaction $paymentTransaction
      * @param array $data
+     * @return bool
      * @throws \LogicException thrown if a method call is not expected
      */
     public function completeTransaction(PaymentTransaction $paymentTransaction, array $data);

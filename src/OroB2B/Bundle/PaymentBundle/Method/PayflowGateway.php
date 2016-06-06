@@ -391,13 +391,13 @@ class PayflowGateway implements PaymentMethodInterface
     {
         $response = new Response($data);
 
-        if (!$paymentTransaction || $paymentTransaction->getReference()) {
-            return;
+        if ($paymentTransaction->getReference()) {
+            return false;
         }
 
         $paymentTransaction
             ->setReference($response->getReference())
-            ->setResponse(array_replace($paymentTransaction->getResponse(), $eventData))
+            ->setResponse(array_replace($paymentTransaction->getResponse(), $data))
             ->setActive($response->isSuccessful())
             ->setSuccessful($response->isSuccessful());
 
@@ -405,6 +405,8 @@ class PayflowGateway implements PaymentMethodInterface
         if ($paymentTransaction->getAction() === PaymentMethodInterface::CHARGE) {
             $paymentTransaction->setActive(false);
         }
+
+        return true;
     }
 
     /**

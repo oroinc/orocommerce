@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use OroB2B\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\EventListener\Callback\PayflowListener;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
@@ -21,13 +21,20 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
     /** @var Session|\PHPUnit_Framework_MockObject_MockObject */
     protected $session;
 
+    /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodRegistry;
+
     protected function setUp()
     {
         $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new PayflowListener($this->session);
+        $this->paymentMethodRegistry = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new PayflowListener($this->session, $this->paymentMethodRegistry);
     }
 
     protected function tearDown()
@@ -35,96 +42,87 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
         unset($this->listener, $this->session);
     }
 
+    public function testOnNotifyWithCompleteTransaction()
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setPaymentMethod('payment_method');
+        $data = ['data'];
+
+        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod->expects($this->once())
+            ->method('completeTransaction')
+            ->with($paymentTransaction, $data)
+            ->willReturn(true);
+
+        $this->paymentMethodRegistry->expects($this->once())
+            ->method('getPaymentMethod')
+            ->with($paymentTransaction->getPaymentMethod())
+            ->willReturn($paymentMethod);
+
+        $event = new CallbackNotifyEvent($data);
+        $event->setPaymentTransaction($paymentTransaction);
+
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+        $this->listener->onNotify($event);
+        $this->assertEquals(Response::HTTP_OK, $event->getResponse()->getStatusCode());
+    }
+
+    public function testOnNotifyWithIncompleteTransaction()
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setPaymentMethod('payment_method');
+        $data = ['data'];
+
+        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod->expects($this->once())
+            ->method('completeTransaction')
+            ->with($paymentTransaction, $data)
+            ->willReturn(false);
+
+        $this->paymentMethodRegistry->expects($this->once())
+            ->method('getPaymentMethod')
+            ->with($paymentTransaction->getPaymentMethod())
+            ->willReturn($paymentMethod);
+
+        $event = new CallbackNotifyEvent($data);
+        $event->setPaymentTransaction($paymentTransaction);
+
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+        $this->listener->onNotify($event);
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+    }
+
     public function testOnNotifyWithoutTransaction()
     {
+        $data = ['data'];
+
+        $this->paymentMethodRegistry->expects($this->never())
+            ->method($this->anything());
+
+        $event = new CallbackNotifyEvent($data);
+
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+        $this->listener->onNotify($event);
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+    }
+
+    public function testOnNotifyPaymentMethodNotFound()
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setPaymentMethod('not_exists_payment_method');
+
+        $this->paymentMethodRegistry->expects($this->once())
+            ->method('getPaymentMethod')
+            ->with($paymentTransaction->getPaymentMethod())
+            ->willThrowException(new \InvalidArgumentException);
+
         $event = new CallbackNotifyEvent([]);
+        $event->setPaymentTransaction($paymentTransaction);
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
 
         $this->listener->onNotify($event);
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
-    }
-
-    public function testOnNotifyTransactionWithReferenceAlreadyProcessed()
-    {
-        $event = new CallbackNotifyEvent([]);
-        $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setReference('PNREF');
-        $event->setPaymentTransaction($paymentTransaction);
-
-        $this->listener->onNotify($event);
-
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
-    }
-
-    public function testOnNotify()
-    {
-        $event = new CallbackNotifyEvent(['PNREF' => 'ref']);
-        $paymentTransaction = new PaymentTransaction();
-        $this->assertEmpty($paymentTransaction->getReference());
-        $event->setPaymentTransaction($paymentTransaction);
-
-        $this->listener->onNotify($event);
-
-        $this->assertEquals(Response::HTTP_OK, $event->getResponse()->getStatusCode());
-        $this->assertEquals('ref', $paymentTransaction->getReference());
-    }
-
-    public function testOnNotifySuccessfulFromResponse()
-    {
-        $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
-        $paymentTransaction = new PaymentTransaction();
-        $this->assertFalse($paymentTransaction->isSuccessful());
-        $event->setPaymentTransaction($paymentTransaction);
-
-        $this->listener->onNotify($event);
-
-        $this->assertEquals(Response::HTTP_OK, $event->getResponse()->getStatusCode());
-        $this->assertTrue($paymentTransaction->isSuccessful());
-    }
-
-    public function testOnNotifyActiveFromResponse()
-    {
-        $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
-        $paymentTransaction = new PaymentTransaction();
-        $this->assertFalse($paymentTransaction->isActive());
-        $event->setPaymentTransaction($paymentTransaction);
-
-        $this->listener->onNotify($event);
-
-        $this->assertEquals(Response::HTTP_OK, $event->getResponse()->getStatusCode());
-        $this->assertTrue($paymentTransaction->isActive());
-    }
-
-    public function testOnNotifyAppendResponseData()
-    {
-        $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
-        $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setResponse(['existing' => 'response']);
-        $event->setPaymentTransaction($paymentTransaction);
-
-        $this->listener->onNotify($event);
-
-        $this->assertEquals(Response::HTTP_OK, $event->getResponse()->getStatusCode());
-        $this->assertEquals(
-            ['existing' => 'response', 'RESULT' => ResponseStatusMap::APPROVED],
-            $paymentTransaction->getResponse()
-        );
-    }
-
-    public function testOnNotifyWithCharge()
-    {
-        $event = new CallbackNotifyEvent(['PNREF' => 'ref']);
-        $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setActive(PaymentMethodInterface::CHARGE);
-
-        $this->assertEmpty($paymentTransaction->getReference());
-        $event->setPaymentTransaction($paymentTransaction);
-
-        $this->listener->onNotify($event);
-
-        $this->assertEquals(Response::HTTP_OK, $event->getResponse()->getStatusCode());
-        $this->assertEquals('ref', $paymentTransaction->getReference());
-        $this->assertFalse($paymentTransaction->isActive());
     }
 
     public function testOnError()
