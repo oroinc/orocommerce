@@ -8,7 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
-abstract class AbstractAccountUserActionsTest extends WebTestCase
+abstract class AbstractAccountUserActionsTestCase extends WebTestCase
 {
     const EMAIL = '';
 
