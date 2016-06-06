@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
+use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -39,19 +40,18 @@ class AjaxLineItemControllerTest extends WebTestCase
      * @param string $product
      * @param string $unit
      * @param int $quantity
-     * @param float $expectedSubtotal
-     * @param float $expectedTotal
+     * @param array $expectedSubtotals
      * @param string $shoppingListRef
      */
     public function testAddProductFromView(
         $product,
         $unit,
         $quantity,
-        $expectedSubtotal,
-        $expectedTotal,
+        array $expectedSubtotals,
         $shoppingListRef = LoadShoppingLists::SHOPPING_LIST_2
     ) {
-        $this->getContainer()->get('oro_config.global')->set('oro_locale.currency', 'EUR');
+        $this->getContainer()->get('oro_config.global')
+            ->set(Configuration::getConfigKeyByName(Configuration::ENABLED_CURRENCIES), ['EUR', 'USD']);
         /** @var Product $product */
         $product = $this->getReference($product);
         /** @var ProductUnit $unit */
@@ -91,6 +91,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             ->getManagerForClass('OroB2BShoppingListBundle:ShoppingList')
             ->find('OroB2BShoppingListBundle:ShoppingList', $result['shoppingList']['id']);
 
+        $this->assertSubtotals($expectedSubtotals, $shoppingList);
         $this->assertArrayHasKey('shoppingList', $result);
         $this->assertArrayHasKey('id', $result['shoppingList']);
         $this->assertEquals($shoppingList->getId(), $result['shoppingList']['id']);
@@ -107,22 +108,19 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'product' => LoadProductData::PRODUCT_1,
                 'unit' => 'product_unit.bottle',
                 'quantity' => 110,
-                'expectedSubtotals' => 1342,
-                'expectedTotals' => 1342,
+                'expectedSubtotals' => ['EUR' => 1342, 'USD' => 1441]
             ],
             [
                 'product' => LoadProductData::PRODUCT_2,
                 'unit' => 'product_unit.liter',
                 'quantity' => 14,
-                'expectedSubtotals' => 1573,
-                'expectedTotals' => 1573,
+                'expectedSubtotals' => ['EUR' => 1573, 'USD' => 1611.8],
             ],
             [
                 'product' => LoadProductData::PRODUCT_1,
                 'unit' => 'product_unit.bottle',
                 'quantity' => 10,
-                'expectedSubtotals' => 122,
-                'expectedTotals' => 122,
+                'expectedSubtotals' => ['EUR' => 122, 'USD' => 131],
                 'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1
             ]
         ];
@@ -152,7 +150,7 @@ class AjaxLineItemControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testAddProductFromView
+     * @depends      testAddProductFromView
      * @dataProvider removeProductFromViewProvider
      *
      * @param string $productRef
@@ -170,25 +168,14 @@ class AjaxLineItemControllerTest extends WebTestCase
         $removeCurrent = false,
         $shoppingListRef = LoadShoppingLists::SHOPPING_LIST_2
     ) {
-
-        // todo: Fix in BB-2861
-        $this->markTestSkipped('todo: Fix in BB-2861');
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference($shoppingListRef);
         $shoppingList = $this->getShoppingList($shoppingList->getId());
 
-        $subtotal = $shoppingList->getSubtotal();
-
         $this->assertCount($expectedInitCount, $shoppingList->getLineItems());
-
-        if ($expectedResult) {
-            $this->assertGreaterThan(0.0, $subtotal);
-        }
 
         /** @var Product $product */
         $product = $this->getReference($productRef);
-
-        $subtotal = $shoppingList->getSubtotal();
 
         if ($removeCurrent) {
             $this->setShoppingListCurrent($shoppingList, false);
@@ -217,10 +204,20 @@ class AjaxLineItemControllerTest extends WebTestCase
 
         if ($expectedResult) {
             $this->assertCount($expectedInitCount - 1, $shoppingList->getLineItems());
-            $this->assertNotEquals($subtotal, $shoppingList->getSubtotal());
+
+            $totals = $this->getContainer()->get('doctrine')
+                ->getRepository('OroB2BShoppingListBundle:ShoppingListTotal')
+                ->findBy(['shoppingList' => $shoppingList]);
+            $subtotalProvider = $this->getContainer()
+                ->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced');
+            foreach ($totals as $total) {
+                $expectedSubtotal = $subtotalProvider
+                    ->getSubtotalByCurrency($shoppingList, $total->getCurrency())->getAmount();
+                $actualSubtotal = $total->getSubtotal()->getAmount();
+                $this->assertEquals($expectedSubtotal, $actualSubtotal);
+            }
         } else {
             $this->assertCount($expectedInitCount, $shoppingList->getLineItems());
-            $this->assertEquals($subtotal, $shoppingList->getSubtotal());
         }
 
         if ($removeCurrent) {
@@ -411,5 +408,20 @@ class AjaxLineItemControllerTest extends WebTestCase
     protected function getShoppingListRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository('OroB2BShoppingListBundle:ShoppingList');
+    }
+
+    /**
+     * @param array $expectedSubtotals
+     * @param ShoppingList $shoppingList
+     */
+    protected function assertSubtotals(array $expectedSubtotals, ShoppingList $shoppingList)
+    {
+        foreach ($expectedSubtotals as $currency => $value) {
+            foreach ($shoppingList->getTotals() as $total) {
+                if ($total->getCurrency() === $currency) {
+                    $this->assertEquals($value, $total->getSubtotal()->getAmount());
+                }
+            }
+        }
     }
 }
