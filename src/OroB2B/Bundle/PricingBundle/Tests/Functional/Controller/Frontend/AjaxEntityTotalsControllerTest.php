@@ -7,8 +7,12 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings;
+use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
@@ -32,10 +36,21 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
 
     public function testEntityTotalsActionForShoppingList()
     {
-        // todo: Fix in BB-2861
-        $this->markTestSkipped('todo: Fix in BB-2861');
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+
+        // set account user not default currency
+        $this->getContainer()->get('oro_config.global')
+            ->set(Configuration::getConfigKeyByName(Configuration::ENABLED_CURRENCIES), ['EUR', 'USD']);
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $user = $em->find(AccountUser::class, 1);
+        $website = $em->find(Website::class, 1);
+        $settings = new AccountUserSettings($website);
+        $settings->setCurrency('EUR');
+        $user->setWebsiteSettings($settings);
+        $em->persist($settings);
+        $em->flush();
+
 
         $params = [
             'entityClassName' => ClassUtils::getClass($shoppingList),
@@ -54,7 +69,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $this->assertEquals($data['total']['currency'], 'EUR');
 
         $this->assertArrayHasKey('subtotals', $data);
-        $this->assertEquals($data['total']['amount'], 282.43);
-        $this->assertEquals($data['total']['currency'], 'EUR');
+        $this->assertEquals(282.43, $data['subtotals'][0]['amount']);
+        $this->assertEquals('EUR', $data['subtotals'][0]['currency']);
     }
 }
