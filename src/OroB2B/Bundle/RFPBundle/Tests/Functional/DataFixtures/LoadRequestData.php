@@ -36,7 +36,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     /**
      * @var array
      */
-    protected $requests = [
+    protected static $requests = [
         self::REQUEST1 => [
             'first_name' => self::FIRST_NAME,
             'last_name' => self::LAST_NAME,
@@ -146,6 +146,18 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     ];
 
     /**
+     * @param string $requestFieldName
+     * @param string $requestFieldValue
+     * @return array
+     */
+    public static function getRequestsFor($requestFieldName, $requestFieldValue)
+    {
+        return array_filter(self::$requests, function ($request) use ($requestFieldName, $requestFieldValue) {
+            return array_key_exists($requestFieldName, $request) && $request[$requestFieldName] == $requestFieldValue;
+        });
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getDependencies()
@@ -175,7 +187,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
         /** @var Organization $organization */
         $organization = $this->getUser($manager)->getOrganization();
 
-        foreach ($this->requests as $key => $rawRequest) {
+        foreach (self::$requests as $key => $rawRequest) {
             $request = new Request();
             $request
                 ->setFirstName($rawRequest['first_name'])
