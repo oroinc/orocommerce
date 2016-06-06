@@ -19,7 +19,9 @@ use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 /**
- * @ORM\Table(name="orob2b_payment_transaction")
+ * @ORM\Table(
+ *      name="orob2b_payment_transaction",
+ *      uniqueConstraints={@ORM\UniqueConstraint(name="access_idx", columns={"access_identifier", "access_token"})})
  * @ORM\Entity
  * @Config(
  *       mode="hidden",

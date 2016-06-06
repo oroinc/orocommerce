@@ -30,7 +30,7 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -126,6 +126,7 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['access_identifier', 'access_token'], 'access_idx');
         $table->addIndex(['source_payment_transaction']);
     }
 
