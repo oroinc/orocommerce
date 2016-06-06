@@ -14,7 +14,6 @@ use Oro\Bundle\EntityBundle\Exception\IncorrectEntityException;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -112,10 +111,7 @@ class CheckoutGridListener
             $config->offsetAddToArrayByPath('[filters][columns]', $updates['filters']);
             $config->offsetAddToArrayByPath('[sorters][columns]', $updates['sorters']);
             $config->offsetAddToArrayByPath('[source][query][join][left]', $updates['joins']);
-            $config->offsetAddToArrayByPath(
-                DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH,
-                $updates['bindParameters']
-            );
+            $config->offsetAddToArrayByPath('[source][bind_parameters]', $updates['bindParameters']);
 
             if (in_array(self::USER_CURRENCY_PARAMETER, $updates['bindParameters'], true)) {
                 $event->getDatagrid()
@@ -266,7 +262,7 @@ class CheckoutGridListener
                     'alias' => $relationAlias,
                     'conditionType' => 'WITH',
                     'condition' => sprintf(
-                        "%s = :user_currency",
+                        "%s = :".self::USER_CURRENCY_PARAMETER,
                         $relationAlias . '.' . $fields['currency']
                     )
                 ];
