@@ -14,6 +14,8 @@ use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
  * @dbIsolation
@@ -41,7 +43,9 @@ class OrderControllerTest extends WebTestCase
             [
                 'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
                 'OroB2B\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadAlternativeCheckouts',
-                'OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckouts'
+                'OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckouts',
+                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices'
             ]
         );
     }
@@ -66,14 +70,13 @@ class OrderControllerTest extends WebTestCase
      */
     public function testFilters($columnName, $value, $filterType, $expectedCheckouts)
     {
-        // todo: Fix in BB-2861
-        $this->markTestSkipped('todo: Fix in BB-2861');
         $checkouts = $this->getDatagridData(
             [
                 sprintf('[%s][value]', $columnName) => $value,
                 sprintf('[%s][type]', $columnName) => $filterType
             ]
         );
+
         $this->assertCount(count($expectedCheckouts), $checkouts);
 
         $expectedGroupedCheckouts = $this->getCheckoutsByReferences($expectedCheckouts);
@@ -84,14 +87,26 @@ class OrderControllerTest extends WebTestCase
             /** @var  BaseCheckout $expectedCheckout */
             foreach ($expectedCheckouts as $id => $expectedCheckout) {
                 $this->assertTrue(isset($actualGroupedCheckouts[$checkoutType][$id]));
-                if ($columnName !== 'paymentMethod') {
+                if ($columnName === 'subtotal') {
                     $sourceEntity = $expectedCheckout->getSourceEntity();
                     $propertyAccessor = $container->get('property_accessor');
-                    $currencyField = property_exists($sourceEntity, 'currency') ? 'currency' : 'totalCurrency';
-                    $formattedPrice = $container->get('oro_locale.twig.number')->formatCurrency(
-                        $propertyAccessor->getValue($sourceEntity, $columnName),
-                        ['currency' => $propertyAccessor->getValue($sourceEntity, $currencyField)]
-                    );
+
+                    if ($sourceEntity instanceof ShoppingList) {
+                        /** @var Subtotal $subtotal */
+                        $subtotal = $propertyAccessor->getValue($sourceEntity, $columnName);
+
+                        $formattedPrice = $container->get('oro_locale.twig.number')->formatCurrency(
+                            $subtotal->getAmount(),
+                            ['currency' => $subtotal->getCurrency()]
+                        );
+                    } else {
+                        $currencyField = property_exists($sourceEntity, 'currency') ? 'currency' : 'totalCurrency';
+                        $formattedPrice = $container->get('oro_locale.twig.number')->formatCurrency(
+                            $propertyAccessor->getValue($sourceEntity, $columnName),
+                            ['currency' => $propertyAccessor->getValue($sourceEntity, $currencyField)]
+                        );
+                    }
+
                     $actualCheckout = $actualGroupedCheckouts[$checkoutType][$id];
                     $this->assertEquals($formattedPrice . "\n", $actualCheckout[$columnName]);
                 }
@@ -109,13 +124,7 @@ class OrderControllerTest extends WebTestCase
                 'columnName' => 'subtotal',
                 'value' => self::SUBTOTAL_VALUE,
                 'filterType' => NumberFilterTypeInterface::TYPE_GREATER_THAN,
-                'expectedCheckouts' => ['checkout.1', 'checkout.2', 'checkout.3', 'alternative.checkout.2']
-            ],
-            'total' => [
-                'columnName' => 'subtotal',
-                'value' => self::TOTAL_VALUE,
-                'filterType' => NumberFilterTypeInterface::TYPE_LESS_THAN,
-                'expectedCheckouts' => ['alternative.checkout.1', 'alternative.checkout.2']
+                'expectedCheckouts' => ['checkout.1', 'alternative.checkout.2']
             ],
             'paymentMethodPaymentTerm' => [
                 'columnName' => 'paymentMethod',
@@ -156,8 +165,6 @@ class OrderControllerTest extends WebTestCase
 
     public function testSorters()
     {
-        // todo: Fix in BB-2861
-        $this->markTestSkipped('todo: Fix in BB-2861');
         //check checkouts with subtotal sorter
         $checkouts = $this->getDatagridData(
             [],
@@ -166,15 +173,6 @@ class OrderControllerTest extends WebTestCase
             ]
         );
         $this->checkSorting($checkouts, 'subtotal', OrmSorterExtension::DIRECTION_ASC);
-
-        //check checkouts with total sorter
-        $checkouts = $this->getDatagridData(
-            [],
-            [
-                '[total]' => OrmSorterExtension::DIRECTION_DESC,
-            ]
-        );
-        $this->checkSorting($checkouts, 'total', OrmSorterExtension::DIRECTION_DESC);
     }
 
     /**
@@ -186,8 +184,10 @@ class OrderControllerTest extends WebTestCase
     protected function checkSorting(array $checkouts, $column, $order, $stringSorting = false)
     {
         foreach ($checkouts as $checkout) {
-            $actualValue = $stringSorting ? $checkout[$column]
-                : $this->getValue($checkout['id'], $column);
+            /** @var Subtotal|string $actualValue */
+            $actualValue = $stringSorting ? $checkout[$column] : $this->getValue($checkout['id'], $column);
+            $actualValue = ($actualValue instanceof Subtotal) ? $actualValue->getAmount() : $actualValue;
+
             if (isset($lastValue)) {
                 if ($order === OrmSorterExtension::DIRECTION_DESC) {
                     $this->assertGreaterThanOrEqual($actualValue, $lastValue);
