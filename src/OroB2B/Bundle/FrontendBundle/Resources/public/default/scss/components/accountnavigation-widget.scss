@@ -1,0 +1,62 @@
+/*Account Navigation widget*/
+.account-navigation-widget {
+  margin: 0 -.5rem;
+}
+
+.account-navigation-widget__list {
+  @include list-normalize;
+}
+
+.account-navigation-widget__list__item {
+  border-top: .1rem solid $base-border-color;
+
+  &:last-child {
+    a {
+      padding-bottom: 0;
+    }
+  }
+
+  a {
+    display: block;
+    padding: 1.3rem 2rem 1.2rem;
+    line-height: 2.4rem;
+    text-transform: uppercase;
+    color: $base-font-color;
+
+    &:focus {
+      text-decoration: none;
+    }
+
+    &.account-navigation-widget__trigger-nested {
+      [class^="cf-"] {
+        position: relative;
+        bottom: .1rem;
+        transform: rotate(90deg);
+      }
+      
+      &.expanded {
+        [class^="cf-"] {
+          transform: rotate(0);
+        }
+      }
+    }
+  }
+
+  ul {
+    display: none;
+    @include list-normalize;
+    margin: 0 2rem; 
+
+    &.expanded {
+      display: block;
+    }
+
+    li {
+      &:last-child {
+        a {
+          padding: 1.6rem 2rem 1.5rem;
+        }
+      }
+    }
+  }
+}
