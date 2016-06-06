@@ -2,4 +2,4 @@ data:
     assets:
         styles:
             inputs:
-                - 'bundles/orob2bproduct/default/less/styles.less'
+                - 'bundles/orob2bproduct/default/scss/styles.scss'
