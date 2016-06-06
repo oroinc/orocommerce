@@ -2,17 +2,17 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 /**
  * Regular extension is used to change default set of units used to render and validate data
  */
-class ProductPriceUnitSelectorType extends AbstractType
+class ProductPriceUnitSelectorType extends ProductUnitSelectionType
 {
     const NAME = 'orob2b_pricing_product_price_unit_selector';
 
@@ -55,21 +55,5 @@ class ProductPriceUnitSelectorType extends AbstractType
         }
 
         return $units;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getParent()
-    {
-        return 'orob2b_product_unit_selection';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
     }
 }
