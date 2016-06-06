@@ -32,10 +32,9 @@ services:
             - "@security.token_storage"
             - "@translator"
             - "@orob2b_product.service.quantity_rounding"
-            - "@orob2b_pricing.subtotal_processor.total_processor_provider"
-            - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced"
             - '@orob2b_pricing.user_currency_manager'
             - "@orob2b_website.manager"
+            - "@orob2b_shopping_list.manager.shopping_list_total"
 
     orob2b_shopping_list.placeholder.filter:
         class: 'OroB2B\Bundle\ShoppingListBundle\Placeholder\PlaceholderFilter'
@@ -49,6 +48,7 @@ services:
             - "@doctrine"
             - "@orob2b_shopping_list.shopping_list.manager"
             - "@oro_security.security_facade"
+            - "@orob2b_shopping_list.manager.shopping_list_total"
         calls:
             - [setProductClass, ['%orob2b_product.entity.product.class%']]
             - [setShoppingListClass, ['%orob2b_shopping_list.entity.shopping_list.class%']]
@@ -114,7 +114,7 @@ services:
             - "@oro_entity.doctrine_helper"
             - "@oro_security.security_facade"
             - "@request_stack"
-            - "@orob2b_shopping_list.provider.shopping_list_subtotal_provider"
+            - "@orob2b_shopping_list.manager.shopping_list_total"
         calls:
             - [setShoppingListClass, ['%orob2b_shopping_list.entity.shopping_list.class%']]
         tags:
@@ -209,9 +209,10 @@ services:
         arguments:
             - '@doctrine'
 
-    orob2b_shopping_list.provider.shopping_list_subtotal_provider:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Provider\ShoppingListSubtotalProvider'
+    orob2b_shopping_list.manager.shopping_list_total:
+        class: 'OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager'
         arguments:
             - '@doctrine'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
             - '@orob2b_pricing.user_currency_manager'
+            - '@oro_config.global'

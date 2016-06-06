@@ -17,8 +17,6 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class ShoppingListManager
@@ -49,16 +47,6 @@ class ShoppingListManager
     protected $rounding;
 
     /**
-     * @var TotalProcessorProvider
-     */
-    protected $totalProvider;
-
-    /**
-     * @var LineItemNotPricedSubtotalProvider
-     */
-    protected $lineItemNotPricedSubtotalProvider;
-
-    /**
      * @var UserCurrencyManager
      */
     protected $userCurrencyManager;
@@ -69,33 +57,35 @@ class ShoppingListManager
     protected $websiteManager;
 
     /**
+     * @var ShoppingListTotalManager
+     */
+    protected $totalManager;
+
+    /**
      * @param ManagerRegistry $managerRegistry
      * @param TokenStorageInterface $tokenStorage
      * @param TranslatorInterface $translator
      * @param QuantityRoundingService $rounding
-     * @param TotalProcessorProvider $totalProvider
-     * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
      * @param UserCurrencyManager $userCurrencyManager
      * @param WebsiteManager $websiteManager
+     * @param ShoppingListTotalManager $totalManager
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         TokenStorageInterface $tokenStorage,
         TranslatorInterface $translator,
         QuantityRoundingService $rounding,
-        TotalProcessorProvider $totalProvider,
-        LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider,
         UserCurrencyManager $userCurrencyManager,
-        WebsiteManager $websiteManager
+        WebsiteManager $websiteManager,
+        ShoppingListTotalManager $totalManager
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
         $this->rounding = $rounding;
-        $this->totalProvider = $totalProvider;
-        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->websiteManager = $websiteManager;
+        $this->totalManager = $totalManager;
     }
 
     /**
@@ -182,6 +172,8 @@ class ShoppingListManager
             $em->persist($lineItem);
         }
 
+        $this->totalManager->recalculateTotals($shoppingList, false);
+
         if ($flush) {
             $em->flush();
         }
@@ -191,7 +183,7 @@ class ShoppingListManager
      * @param ShoppingList $shoppingList
      * @param Product $product
      * @param bool $flush
-     * @return int                       Number of removed line items
+     * @return int Number of removed line items
      */
     public function removeProduct(ShoppingList $shoppingList, Product $product, $flush = true)
     {
@@ -205,6 +197,7 @@ class ShoppingListManager
             $objectManager->remove($lineItem);
         }
 
+        $this->totalManager->recalculateTotals($shoppingList, false);
         if ($lineItems && $flush) {
             $objectManager->flush();
         }
@@ -213,6 +206,7 @@ class ShoppingListManager
     }
 
     /**
+     * TODO: BB-2861 - refactor, recalculate subtotals once
      * @param array        $lineItems
      * @param ShoppingList $shoppingList
      * @param int          $batchSize

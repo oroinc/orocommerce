@@ -63,8 +63,7 @@ class AjaxLineItemController extends Controller
             $form,
             $request,
             $this->getDoctrine(),
-            $shoppingListManager,
-            $this->get('orob2b_product.service.quantity_rounding')
+            $shoppingListManager
         );
         $isFormHandled = $handler->process($lineItem);
 

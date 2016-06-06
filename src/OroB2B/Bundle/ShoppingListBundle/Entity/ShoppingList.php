@@ -277,7 +277,6 @@ class ShoppingList extends ExtendShoppingList implements
     public function addTotal(ShoppingListTotal $item)
     {
         if (!$this->totals->contains($item)) {
-            $item->setShoppingList($this);
             $this->totals->add($item);
         }
 

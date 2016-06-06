@@ -71,8 +71,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
                 $form,
                 $request,
                 $this->getDoctrine(),
-                $this->get('orob2b_shopping_list.shopping_list.manager'),
-                $this->get('orob2b_product.service.quantity_rounding')
+                $this->get('orob2b_shopping_list.shopping_list.manager')
             );
             $isFormHandled = $handler->process($entity);
             if ($isFormHandled) {
