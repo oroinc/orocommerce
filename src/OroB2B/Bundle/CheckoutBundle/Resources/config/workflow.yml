@@ -383,15 +383,12 @@ workflows:
                     - '@call_service_method':
                         service: orob2b_payment.provider.payment_transaction
                         method: getActiveValidatePaymentTransaction
-                        method_parameters: [$checkout.sourceEntity, $checkout.sourceEntity.total, $checkout.currency]
-                        attribute: $.authorizePaymentTransaction
-                    - '@tree':
-                        pre_conditions:
-                            '@and':
-                                - '@not_empty': [$.authorizePaymentTransaction]
-                                - '@payment_method_enabled': $.authorizePaymentTransaction.paymentMethod
-                        post_actions:
-                            '@assign_value': [$payment_validate, false]
+                        method_parameters: [$payment_method]
+                        attribute: $.result.validatePaymentTransaction
+                    - '@assign_value':
+                        conditions:
+                            '@not_empty': [$.result.validatePaymentTransaction]
+                        parameters: [$payment_validate, false]
 
             continue_to_order_review_definition:
                 pre_conditions:
