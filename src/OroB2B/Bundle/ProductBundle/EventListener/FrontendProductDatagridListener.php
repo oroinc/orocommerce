@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
 use Doctrine\ORM\Query\Expr;
+
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
@@ -14,7 +14,7 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
@@ -23,6 +23,7 @@ class FrontendProductDatagridListener
 {
     const COLUMN_PRODUCT_UNITS = 'product_units';
     const PRODUCT_IMAGE_FILTER = 'product_large';
+    const PRODUCT_IMAGE_TYPE = 'listing';
 
     /**
      * @var DataGridThemeHelper
@@ -184,25 +185,21 @@ class FrontendProductDatagridListener
             return;
         }
 
-        $products = $this->getProductRepository()->getProductsWithImage($productIds);
+        $products = $this->getProductRepository()->getProductsWithImage($productIds, self::PRODUCT_IMAGE_TYPE);
 
         foreach ($records as $record) {
             $imageUrl = null;
             $productId = $record->getValue('id');
-            foreach ($products as $product) {
-                if ($product->getId() === $productId) {
-                    $listingImages = $product->getImagesByType('listing');
-
-                    if ($listingImages->count() > 0) {
-                        $imageUrl = $this->attachmentManager->getFilteredImageUrl(
-                            $listingImages->first()->getImage(),
-                            self::PRODUCT_IMAGE_FILTER
-                        );
-                    }
-                    break;
-                }
+            if (isset($products[$productId])) {
+                $product = $products[$productId];
+                /** @var ProductImage $listingImage */
+                $listingImage = $product->getImages()->first();
+                $imageUrl = $this->attachmentManager->getFilteredImageUrl(
+                    $listingImage->getImage(),
+                    self::PRODUCT_IMAGE_FILTER
+                );
+                $record->addData(['image' => $imageUrl]);
             }
-            $record->addData(['image' => $imageUrl]);
         }
     }
 
