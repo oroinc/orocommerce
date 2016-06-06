@@ -34,7 +34,6 @@ class InsertDefaultLocalizationTitleQuery extends ParametrizedMigrationQuery
             ->execute()->fetchAll(PDO::FETCH_OBJ);
 
         foreach ($localizations as $localization) {
-
             $sql = sprintf(
                 'INSERT INTO %s (`string`) VALUES (\'%s\')',
                 'oro_fallback_localization_val',
@@ -58,4 +57,3 @@ class InsertDefaultLocalizationTitleQuery extends ParametrizedMigrationQuery
         }
     }
 }
- 
