@@ -55,8 +55,6 @@ class LineItemHandler
         }
         /** @var EntityManagerInterface $manager */
         $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
-
-        // TODO: BB-2861 refactor, remove transaction
         $manager->beginTransaction();
 
         // handle case for new shopping list creation

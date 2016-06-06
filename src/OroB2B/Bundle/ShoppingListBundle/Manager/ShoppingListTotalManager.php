@@ -93,14 +93,14 @@ class ShoppingListTotalManager
         }
 
         if ($doFlush) {
-            $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal')->flush();
+            $this->getEntityManager()->flush();
         }
     }
 
     /**
      * @return \Doctrine\Common\Persistence\ObjectRepository
      */
-    public function getTotalRepository()
+    protected function getTotalRepository()
     {
         return $this->getEntityManager()->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
     }

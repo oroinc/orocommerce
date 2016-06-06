@@ -2,10 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\Block\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\BlockInterface;
+use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\PricingBundle\Layout\Block\Type\CurrencySwitcherType;
 
@@ -28,13 +27,13 @@ class CurrencySwitcherTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testSetDefaultOptions()
     {
-        /** @var OptionsResolverInterface|\PHPUnit_Framework_MockObject_MockObject $resolver **/
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver **/
+        $resolver = $this->getMock(OptionsResolver::class);
 
         $resolver->expects($this->once())
             ->method('setRequired')
             ->with(['currencies', 'selected_currency']);
-        $this->currencySwitcherType->setDefaultOptions($resolver);
+        $this->currencySwitcherType->configureOptions($resolver);
     }
 
     public function testFinishView()
