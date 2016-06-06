@@ -83,7 +83,7 @@ class LocalizationListenerTest extends \PHPUnit_Framework_TestCase
         $uow->expects($this->once())
             ->method('getEntityChangeSet')
             ->with($entity)
-            ->willReturn(['parent' => 'test']);
+            ->willReturn(['parentLocalization' => 'test']);
         $this->objectManager->expects($this->once())
             ->method('getUnitOfWork')
             ->willReturn($uow);
