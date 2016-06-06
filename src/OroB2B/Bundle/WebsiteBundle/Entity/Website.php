@@ -59,14 +59,7 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
      * @var Collection|Localization[]
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\LocaleBundle\Entity\Localization")
-     * ORM\JoinTable(name="orob2b_websites_localizations")
-     * @ORM\JoinTable(
-     *      name="orob2b_websites_localizations",
-     *      joinColumns={@ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")},
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="locale_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
+     * @ORM\JoinTable(name="orob2b_websites_localizations")
      */
     protected $localizations;
 

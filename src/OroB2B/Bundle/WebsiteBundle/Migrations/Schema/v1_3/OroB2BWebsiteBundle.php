@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FallbackBundle\Migrations\Schema\v1_3;
+namespace OroB2B\Bundle\WebsiteBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -44,17 +44,96 @@ class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, N
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $table = $schema->getTable('orob2b_locale');
-        $table->addColumn('formatting_code', 'string', ['length' => 64]);
-        $table->dropIndex('uniq_orob2b_locale_code');
+        $this->updateLocaleTable($schema, $queries);
+        $this->updateWebsiteTable($schema, $queries);
+    }
 
-        $this->renameExtension->renameColumn($schema, $queries, $table, 'title', 'name');
-        $this->renameExtension->renameColumn($schema, $queries, $table, 'code', 'language_code');
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    public function updateLocaleTable(Schema $schema, QueryBag $queries)
+    {
+        $queries->addPreQuery('INSERT INTO `oro_localization` ' .
+            '(id, parent_id, name, language_code, formatting_code, created_at, updated_at) ' .
+            'SELECT id, parent_id, title, code, code, created_at, updated_at FROM `orob2b_locale`'
+        );
 
-        $schema->dropTable('oro_localization');
-        $this->renameExtension->renameTable($schema, $queries, 'orob2b_locale', 'oro_localization');
-        $this->renameExtension->renameTable($schema, $queries, 'orob2b_websites_locales', 'orob2b_websites_localizations');
+        $this->dropConstraint($schema, 'orob2b_websites_locales', ['locale_id']);
+        $this->dropConstraint($schema, 'orob2b_fallback_locale_value', ['locale_id']);
 
-        $queries->addQuery('UPDATE `oro_localization` SET `formatting_code` = `language_code`');
+        $queries->addQuery('DROP TABLE `orob2b_locale`');
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    public function updateWebsiteTable(Schema $schema, QueryBag $queries)
+    {
+        $this->dropConstraint($schema, 'orob2b_websites_locales', ['website_id']);
+
+        $table = $schema->getTable('orob2b_websites_locales');
+        $this->renameExtension->renameColumn($schema, $queries, $table, 'locale_id', 'localization_id');
+
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            'orob2b_websites_locales',
+            'orob2b_websites_localizations'
+        );
+
+        $this->createConstraint(
+            $schema,
+            $queries,
+            'orob2b_websites_localizations',
+            'oro_localization',
+            ['localization_id']
+        );
+        $this->createConstraint(
+            $schema,
+            $queries,
+            'orob2b_websites_localizations',
+            'orob2b_website',
+            ['website_id']
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param string $tableName
+     * @param array $fields
+     */
+    protected function dropConstraint(Schema $schema, $tableName, array $fields)
+    {
+        $indexName = $this->nameGenerator->generateIndexName($tableName, $fields, false, true);
+        $constraintName = $this->nameGenerator->generateForeignKeyConstraintName($tableName, $fields, true);
+
+        $table = $schema->getTable($tableName);
+        $table->dropIndex($indexName);
+        $table->removeForeignKey($constraintName);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     * @param string $tableName
+     * @param string $foreignTable
+     * @param array $fields
+     */
+    protected function createConstraint(Schema $schema, QueryBag $queries, $tableName, $foreignTable, array $fields)
+    {
+        $indexName = $this->nameGenerator->generateIndexName($tableName, $fields, false, true);
+
+        $this->renameExtension->addIndex($schema, $queries, $tableName, $fields, $indexName);
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            $tableName,
+            $foreignTable,
+            $fields,
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 }
