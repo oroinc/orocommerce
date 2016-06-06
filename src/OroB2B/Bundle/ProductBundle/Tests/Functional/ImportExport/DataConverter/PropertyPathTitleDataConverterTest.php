@@ -60,12 +60,12 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
                 [
                     'string' => 'string value',
                     'text' => 'text value',
-                    'localization.languageCode' => 'en',
+                    'localization.name' => 'English',
                 ],
                 [
                     'string' => 'string value',
                     'text' => 'text value',
-                    'localization' => ['languageCode' => 'en'],
+                    'localization' => ['name' => 'English'],
                 ],
             ],
         ];
@@ -97,12 +97,12 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
                 [
                     'string' => 'string value',
                     'text' => 'text value',
-                    'localization' => ['languageCode' => 'en'],
+                    'localization' => ['name' => 'English'],
                 ],
                 [
                     'string' => 'string value',
                     'text' => 'text value',
-                    'localization.languageCode' => 'en',
+                    'localization.name' => 'English',
                 ],
             ],
         ];

@@ -1,4 +1,4 @@
-sku,status,inventory_status.id,unitPrecisions.1.unit.code,unitPrecisions.1.precision,names.default.fallback,names.default.value,shortDescriptions.default.fallback,shortDescriptions.default.value,shortDescriptions.en.fallback,shortDescriptions.en.value
+sku,status,inventory_status.id,unitPrecisions.1.unit.code,unitPrecisions.1.precision,names.default.fallback,names.default.value,shortDescriptions.default.fallback,shortDescriptions.default.value,shortDescriptions.English.fallback,shortDescriptions.English.value
 SKU001,enabled,in_stock,kg,3,,Name,,,,
 SKU002,enabled,in_stock,kg,3,,Name,,Short Description,,En Short Description
 SKU003,enabled,in_stock,kg,3,,Name,not_valid,,not_valid,

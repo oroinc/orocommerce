@@ -109,10 +109,10 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     public function processDataProvider()
     {
         $localizationEnUs = $this->getEntity('Oro\Bundle\LocaleBundle\Entity\Localization', [
-            'languageCode' => 'en_US'
+            'name' => 'English (United States)'
         ]);
         $localizationEnCa = $this->getEntity('Oro\Bundle\LocaleBundle\Entity\Localization', [
-            'languageCode' => 'en_CA'
+            'name' => 'English (Canada)'
         ]);
 
         return [
@@ -159,13 +159,13 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         'text' => null,
                         'fallback' => null,
                     ],
-                    'en_US' => [
+                    'English (United States)' => [
                         'reference' => 'product.1.names.en_US',
                         'string' => 'product.1 en_US Title',
                         'text' => null,
                         'fallback' => 'system',
                     ],
-                    'en_CA' => [
+                    'English (Canada)' => [
                         'reference' => null,
                         'string' => 'product.1 en_CA Title',
                         'text' => null,
@@ -176,11 +176,11 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     'sku' => 'product.1',
                     'unitPrecisions' => [],
                     'names' => [
-                        'en_US' => [
+                        'English (United States)' => [
                             'string' => 'product.1 en_US Title',
                             'fallback' => 'parent_localization',
                         ],
-                        'en_CA' => [
+                        'English (Canada)' => [
                             'string' => 'product.1 en_CA Title',
                         ],
                     ],
@@ -222,7 +222,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     public function skippedDataProvider()
     {
         $localizationEnUs = $this->getEntity('Oro\Bundle\LocaleBundle\Entity\Localization', [
-            'languageCode' => 'en_US'
+            'name' => 'English (United States)'
         ]);
 
         return [
@@ -263,6 +263,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                 function ($product) {
                     $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
 
+//                    \Doctrine\Common\Util\Debug::dump($product);
+//                    \Doctrine\Common\Util\Debug::dump($product->getNames());
+//
                     /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $product */
                     $this->assertNotNull($product->getId());
                     $this->assertNotEmpty($product->getNames()->toArray());

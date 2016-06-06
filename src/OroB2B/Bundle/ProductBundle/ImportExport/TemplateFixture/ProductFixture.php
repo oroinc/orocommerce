@@ -47,7 +47,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
         $inventoryStatus = new StubEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'in stock');
 
         $localization = new Localization();
-        $localization->setLanguageCode('en');
+        $localization->setName('English');
 
         $name = new LocalizedFallbackValue();
         $name->setString('Product Name');
