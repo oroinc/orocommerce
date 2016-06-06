@@ -23,10 +23,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 
         $container = $this->getContainer();
 
-        if (!$container->hasParameter('orob2b_product.entity.product.class')) {
-            $this->markTestSkipped('ProductBundle is missing');
-        }
-
         $this->loadFixtures(
             ['Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData']
         );
@@ -128,6 +124,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'names.en_US.value' => '',
                     'names.en_CA.fallback' => '',
                     'names.en_CA.value' => '',
+                    'names.es.fallback' => '',
+                    'names.es.value' => '',
                     'descriptions.default.fallback' => '',
                     'descriptions.default.value' => '',
                     'descriptions.en.fallback' => '',
@@ -136,6 +134,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'descriptions.en_US.value' => '',
                     'descriptions.en_CA.fallback' => '',
                     'descriptions.en_CA.value' => '',
+                    'descriptions.es.fallback' => '',
+                    'descriptions.es.value' => '',
                     'shortDescriptions.default.fallback' => '',
                     'shortDescriptions.default.value' => '',
                     'shortDescriptions.en.fallback' => '',
@@ -144,6 +144,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'shortDescriptions.en_US.value' => '',
                     'shortDescriptions.en_CA.fallback' => '',
                     'shortDescriptions.en_CA.value' => '',
+                    'shortDescriptions.es.fallback' => '',
+                    'shortDescriptions.es.value' => '',
                     'hasVariants' => '',
                     'variantFields' => '',
                 ],
@@ -162,6 +164,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'names.en_US.value' => '',
                     'names.en_CA.fallback' => '',
                     'names.en_CA.value' => '',
+                    'names.es.fallback' => '',
+                    'names.es.value' => '',
                     'descriptions.default.fallback' => '',
                     'descriptions.default.value' => '',
                     'descriptions.en.fallback' => '',
@@ -170,6 +174,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'descriptions.en_US.value' => '',
                     'descriptions.en_CA.fallback' => '',
                     'descriptions.en_CA.value' => '',
+                    'descriptions.es.fallback' => '',
+                    'descriptions.es.value' => '',
                     'shortDescriptions.default.fallback' => '',
                     'shortDescriptions.default.value' => '',
                     'shortDescriptions.en.fallback' => '',
@@ -178,6 +184,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'shortDescriptions.en_US.value' => '',
                     'shortDescriptions.en_CA.fallback' => '',
                     'shortDescriptions.en_CA.value' => '',
+                    'shortDescriptions.es.fallback' => '',
+                    'shortDescriptions.es.value' => '',
                     'hasVariants' => '',
                     'variantFields' => '',
                 ],
@@ -201,6 +209,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'names.en_US.value' => '',
                     'names.en_CA.fallback' => '',
                     'names.en_CA.value' => 'en_CA value',
+                    'names.es.fallback' => '',
+                    'names.es.value' => '',
                     'descriptions.default.fallback' => '',
                     'descriptions.default.value' => '',
                     'descriptions.en.fallback' => '',
@@ -209,6 +219,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'descriptions.en_US.value' => '',
                     'descriptions.en_CA.fallback' => '',
                     'descriptions.en_CA.value' => '',
+                    'descriptions.es.fallback' => '',
+                    'descriptions.es.value' => '',
                     'shortDescriptions.default.fallback' => '',
                     'shortDescriptions.default.value' => '',
                     'shortDescriptions.en.fallback' => '',
@@ -217,6 +229,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'shortDescriptions.en_US.value' => '',
                     'shortDescriptions.en_CA.fallback' => '',
                     'shortDescriptions.en_CA.value' => '',
+                    'shortDescriptions.es.fallback' => '',
+                    'shortDescriptions.es.value' => '',
                     'hasVariants' => '',
                     'variantFields' => '',
                 ],
