@@ -9,7 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
 
-class AbstractFallbackRepositoryTest extends WebTestCase
+abstract class AbstractFallbackRepositoryTest extends WebTestCase
 {
     /**
      * @var ManagerRegistry
