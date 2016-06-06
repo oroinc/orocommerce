@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\SEOBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadProductMetaData;
+
 /**
  * @dbIsolation
  */
@@ -34,6 +36,29 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $product->getId()]));
 
         $this->checkSeoSectionExistence($crawler);
+
+        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
+        $parameters = [
+            'input_action' => 'save_and_stay',
+            'orob2b_catalog_category' => ['_token' => $crfToken],
+        ];
+        $parameters['orob2b_product_product']['metaTitles']['values']['default'] = LoadProductMetaData::META_TITLES;
+        $parameters['orob2b_product_product']['metaDescriptions']['values']['default'] =
+            LoadProductMetaData::META_DESCRIPTIONS;
+        $parameters['orob2b_product_product']['metaKeywords']['values']['default'] = LoadProductMetaData::META_KEYWORDS;
+
+        $form = $crawler->selectButton('Save')->form();
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $parameters);
+        $result = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $html = $crawler->html();
+
+        $this->assertContains(LoadProductMetaData::META_TITLES, $html);
+        $this->assertContains(LoadProductMetaData::META_DESCRIPTIONS, $html);
+        $this->assertContains(LoadProductMetaData::META_KEYWORDS, $html);
     }
 
     protected function getProduct()
