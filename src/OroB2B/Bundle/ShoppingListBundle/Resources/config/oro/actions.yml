@@ -212,11 +212,10 @@ operations:
             - '@assign_value': [$.lineItem, $.data]
             - '@assign_value': [$.lineItem.shoppingList, $.data.shoppingList]
         actions:
-#               todo: Fix in BB-2861
-#            - '@call_service_method':
-#                service: orob2b_shopping_list.shopping_list.manager
-#                method: recalculateSubtotals
-#                method_parameters: [$.data.shoppingList]
+            - '@call_service_method':
+                service: orob2b_shopping_list.manager.shopping_list_total
+                method: recalculateTotals
+                method_parameters: [$.data.shoppingList, true]
             - '@flash_message':
                 message: orob2b.shoppinglist.lineitem.flash.updated
                 type: 'success'
@@ -258,6 +257,11 @@ operations:
             '@not_blank': $.data
         datagrids:
             - shopping-list-line-items-grid
+        actions:
+            - '@call_service_method':
+                service: orob2b_shopping_list.manager.shopping_list_total
+                method: recalculateTotals
+                method_parameters: [$.data.shoppingList, true]
 
 action_groups:
     orob2b_shoppinglist_frontend_addlineitem:
@@ -290,9 +294,3 @@ action_groups:
                 service: orob2b_shopping_list.shopping_list.manager
                 method: addLineItem
                 method_parameters: [$.line_item, $.data, true, true]
-
-#               todo: Fix in BB-2861
-#            - '@call_service_method':
-#                service: orob2b_shopping_list.shopping_list.manager
-#                method: recalculateSubtotals
-#                method_parameters: [$.data]

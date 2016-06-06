@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -46,11 +45,6 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
     protected $lineItem;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|QuantityRoundingService
-     */
-    protected $roundingService;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -70,20 +64,6 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->roundingService->expects($this->any())
-            ->method('roundQuantity')
-            ->will(
-                $this->returnCallback(
-                    function ($value, $unit, $product) {
-                        return round($value, 0, PHP_ROUND_HALF_UP);
-                    }
-                )
-            );
-
         $this->lineItem = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem');
         $shoppingList = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
 
@@ -102,8 +82,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->form,
             $this->request,
             $this->registry,
-            $this->shoppingListManager,
-            $this->roundingService
+            $this->shoppingListManager
         );
         $this->assertFalse($handler->process($this->lineItem));
     }
@@ -137,8 +116,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->form,
             $this->request,
             $this->registry,
-            $this->shoppingListManager,
-            $this->roundingService
+            $this->shoppingListManager
         );
         $this->assertFalse($handler->process($this->lineItem));
     }
@@ -173,8 +151,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->form,
             $this->request,
             $this->registry,
-            $this->shoppingListManager,
-            $this->roundingService
+            $this->shoppingListManager
         );
         $this->assertTrue($handler->process($this->lineItem));
     }
@@ -224,8 +201,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->form,
             $this->request,
             $this->registry,
-            $this->shoppingListManager,
-            $this->roundingService
+            $this->shoppingListManager
         );
         $this->assertShoppingListId('', $this->request);
         $this->assertTrue($handler->process($this->lineItem));
@@ -281,8 +257,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->form,
             $this->request,
             $this->registry,
-            $this->shoppingListManager,
-            $this->roundingService
+            $this->shoppingListManager
         );
         $this->assertTrue($handler->process($this->lineItem));
     }

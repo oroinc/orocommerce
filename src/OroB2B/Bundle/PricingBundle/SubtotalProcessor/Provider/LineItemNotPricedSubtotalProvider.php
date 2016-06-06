@@ -202,7 +202,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /**
      * @return Subtotal
      */
-    public function createSubtotal()
+    protected function createSubtotal()
     {
         $subtotal = new Subtotal();
         $subtotal->setLabel($this->translator->trans(self::LABEL));

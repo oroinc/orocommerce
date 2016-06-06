@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -28,6 +29,11 @@ class ShoppingListTotalManager
     protected $currencyManager;
 
     /**
+     * @var EntityManagerInterface
+     */
+    protected $em;
+
+    /**
      * @param ManagerRegistry $managerRegistry
      * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
      * @param UserCurrencyManager $currencyManager
@@ -43,6 +49,8 @@ class ShoppingListTotalManager
     }
 
     /**
+     * Returns Subtotal for user current currency
+     *
      * @param ShoppingList $shoppingList
      * @return Subtotal
      */
@@ -58,7 +66,10 @@ class ShoppingListTotalManager
         }
         if (!$shoppingListTotal->isValid()) {
             $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $currency);
-            $shoppingListTotal->setSubtotal($subtotal);
+            $shoppingListTotal->setSubtotal($subtotal)
+                ->setValid(true);
+            $this->getEntityManager()->persist($shoppingListTotal);
+            $this->getEntityManager()->flush();
         }
 
         return $shoppingListTotal->getSubtotal();
@@ -91,9 +102,18 @@ class ShoppingListTotalManager
      */
     public function getTotalRepository()
     {
-        $shoppingListTotalEntityManager = $this->registry
-            ->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal');
+        return $this->getEntityManager()->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
+    }
 
-        return $shoppingListTotalEntityManager->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectManager|null
+     */
+    protected function getEntityManager()
+    {
+        if (!$this->em) {
+            $this->em = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal');
+        }
+
+        return $this->em;
     }
 }
