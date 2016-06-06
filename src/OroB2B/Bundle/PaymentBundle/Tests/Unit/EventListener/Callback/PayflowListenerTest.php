@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use OroB2B\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\EventListener\Callback\PayflowListener;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
@@ -108,6 +109,22 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ['existing' => 'response', 'RESULT' => ResponseStatusMap::APPROVED],
             $paymentTransaction->getResponse()
         );
+    }
+
+    public function testOnNotifyWithCharge()
+    {
+        $event = new CallbackNotifyEvent(['PNREF' => 'ref']);
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setActive(PaymentMethodInterface::CHARGE);
+
+        $this->assertEmpty($paymentTransaction->getReference());
+        $event->setPaymentTransaction($paymentTransaction);
+
+        $this->listener->onNotify($event);
+
+        $this->assertEquals(Response::HTTP_OK, $event->getResponse()->getStatusCode());
+        $this->assertEquals('ref', $paymentTransaction->getReference());
+        $this->assertFalse($paymentTransaction->isActive());
     }
 
     public function testOnError()

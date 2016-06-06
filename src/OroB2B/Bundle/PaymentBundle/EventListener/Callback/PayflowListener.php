@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\EventListener\Callback;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
@@ -53,6 +54,10 @@ class PayflowListener
             ->setResponse(array_replace($paymentTransaction->getResponse(), $eventData))
             ->setActive($response->isSuccessful())
             ->setSuccessful($response->isSuccessful());
+
+        if ($paymentTransaction->getAction() === PaymentMethodInterface::CHARGE) {
+            $paymentTransaction->setActive(false);
+        }
         
         $event->markSuccessful();
     }
