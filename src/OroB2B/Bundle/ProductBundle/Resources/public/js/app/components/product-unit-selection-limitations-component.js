@@ -24,6 +24,7 @@ define(function (require) {
             selectParent: '.oro-multiselect-holder',
             dataContent: '*[data-content]',
             unitSelect: 'select[name$="[unit]"]',
+            conversionRateInput: 'input[name$="[conversionRate]"]',
             hiddenUnitClass: 'hidden-unit',
             parentTableSelector: '',
             pricesUnitsSelector: "select[name^='orob2b_product[prices]'][name$='[unit]']",
@@ -134,6 +135,9 @@ define(function (require) {
 
                 self.addData({value: option.val(), text: option.text()});
             });
+            _.each(self.getPrimaryData(),function(text, val){
+                self.addConversionRateLabels(val);
+            });
         },
 
         /**
@@ -150,6 +154,7 @@ define(function (require) {
             }
             if (!_.isEmpty(added)) {
                 _.each(added,function(text, val){
+                    self.addConversionRateLabels(val);
                     self.removeOptionFromAllSelects(val,text);
                 })
             }
@@ -197,6 +202,21 @@ define(function (require) {
                 if (select.data('prevValue') != value) {
                     select.append($('<option></option>').val(value).text(text));
                 }
+            });
+        },
+
+        /**
+         * Add label to all conversionRates inputs
+         *
+         * @param {String} value
+         * @param {String} text
+         */
+        addConversionRateLabels: function (value) {
+            this.options._sourceElement.find(this.options.conversionRateInput).each(function () {
+                var input = $(this);
+                var text = __('orob2b.product.product_unit.' + value + '.label.short_plural');
+                input.parent('td').find('span').remove();
+                input.parent('td').append($('<span></span>').html('<em>&nbsp;</em>'+text.toLowerCase()));
             });
         },
 

@@ -4,6 +4,7 @@ define(function (require) {
     'use strict';
 
     var ProductUnitPrecisionLimitationsComponent,
+        $ = require('jquery'),
         _ = require('underscore'),
         BaseComponent = require('oroui/js/app/components/base/component'),
         mediator = require('oroui/js/mediator');
@@ -45,6 +46,7 @@ define(function (require) {
         onChange: function () {
             var self = this,
                 units = this.getUnits();
+
             _.each(this.getSelects(), function (select) {
                 var $select = $(select);
                 $select.on('change', _.bind(self.onSelectChange, self));
@@ -119,10 +121,10 @@ define(function (require) {
                 emptyOption.hide();
             }
 
-            _.each($select.find('option:contains( - removed)'), function(option){
+            _.each($select.find('option:contains( - )'), function(option){
                 if (units.hasOwnProperty(option.value)) {
                     var oldText = option.text;
-                    var newText = oldText.replace(' - removed','');
+                    var newText = oldText.substring(0,oldText.indexOf(' - '));
                     option.text = newText;
 
                 }

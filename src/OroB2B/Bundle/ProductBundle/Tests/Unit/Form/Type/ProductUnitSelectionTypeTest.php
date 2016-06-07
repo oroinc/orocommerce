@@ -406,7 +406,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'choices' => [
-                        null => 'orob2b.product.productunit.removed:sku',
+                        'sku' => 'orob2b.product.productunit.removed:sku',
                         'code' => 'orob2b.product_unit.code.label.full',
                     ],
                 ],
