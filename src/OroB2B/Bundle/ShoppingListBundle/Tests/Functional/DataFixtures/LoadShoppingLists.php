@@ -20,6 +20,14 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     const SHOPPING_LIST_5 = 'shopping_list_5';
 
     /**
+     * @var array
+     */
+    protected $shoppingListsWithDefaultWebsite = [
+        self::SHOPPING_LIST_1,
+        self::SHOPPING_LIST_2
+    ];
+
+    /**
      * {@inheritdoc}
      */
     public function getDependencies()
@@ -70,7 +78,9 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
         $shoppingList->setCurrent($isCurrent);
-        $shoppingList->setWebsite($this->getReference(LoadWebsiteData::WEBSITE1));
+        if (!in_array($name, $this->shoppingListsWithDefaultWebsite, true)) {
+            $shoppingList->setWebsite($this->getReference(LoadWebsiteData::WEBSITE1));
+        }
         $manager->persist($shoppingList);
         $this->addReference($name, $shoppingList);
 

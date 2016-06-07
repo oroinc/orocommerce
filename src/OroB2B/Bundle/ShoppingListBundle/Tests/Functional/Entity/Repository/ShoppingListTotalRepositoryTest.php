@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -37,14 +38,13 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
     
     public function testInvalidateByCpl()
     {
-        $invalidTotal = new ShoppingListTotal();
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-        $invalidTotal->setShoppingList($shoppingList);
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
+        $invalidTotal = new ShoppingListTotal($shoppingList, 'USD');
+        $subtotal = (new Subtotal())->setCurrency('USD')->setAmount(1);
         $invalidTotal->setValid(true);
-        $invalidTotal->setCurrency('USD');
-        $invalidTotal->setSubtotalValue(1);
-        
+        $invalidTotal->setSubtotal($subtotal);
+
         $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal');
         $manager->persist($invalidTotal);
         $manager->flush();
@@ -63,7 +63,7 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         /** @var ShoppingListTotalRepository $repository */
         $repository = $manager->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
 
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
         $shoppingListTotal = $repository->findOneBy(['shoppingList' => $shoppingList->getId()]);
         $shoppingListTotal->setValid(true);
         $manager->flush();
