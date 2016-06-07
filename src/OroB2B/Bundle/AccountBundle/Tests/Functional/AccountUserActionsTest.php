@@ -8,7 +8,7 @@ use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserDat
 /**
  * @dbIsolation
  */
-class AccountUserActionsTest extends AbstractAccountUserActionsTest
+class AccountUserActionsTest extends AbstractAccountUserActionsTestCase
 {
     const EMAIL = LoadAccountUserData::EMAIL;
 

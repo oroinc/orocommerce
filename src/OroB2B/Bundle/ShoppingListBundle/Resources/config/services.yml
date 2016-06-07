@@ -167,7 +167,10 @@ services:
             - { name: oro_action.datagrid.mass_action_provider, alias: orob2b_shopping_list_add_products }
 
     orob2b_shopping_list.layout.block.type.shopping_list_selector:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\Block\Type\ShoppingListSelectorType'
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptions, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
+            - [setName, ['shopping_list_selector']]
         tags:
              - { name: layout.block_type, alias: shopping_list_selector }
 

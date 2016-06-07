@@ -171,30 +171,10 @@ services:
         arguments:
             - '@oro_entity.entity_class_name_provider'
 
-    orob2b_order.layout.block_type.currency:
-        class: 'OroB2B\Bundle\OrderBundle\Layout\Block\Type\CurrencyType'
-        tags:
-             - { name: layout.block_type, alias: currency }
-
-    orob2b_order.layout.block_type.date:
-        class: 'OroB2B\Bundle\OrderBundle\Layout\Block\Type\DateType'
-        tags:
-             - { name: layout.block_type, alias: date }
-
-    orob2b_order.layout.block_type.address:
-        class: 'OroB2B\Bundle\OrderBundle\Layout\Block\Type\AddressType'
-        tags:
-             - { name: layout.block_type, alias: address }
-
     orob2b_order.layout.block_type_extension.block_prefixes:
         class: 'OroB2B\Bundle\OrderBundle\Layout\Block\Extension\BlockPrefixExtension'
         tags:
             - { name: layout.block_type_extension, alias: block }
-
-    orob2b_order.layout.block_type.order_total:
-        class: 'OroB2B\Bundle\OrderBundle\Layout\Block\Type\OrderTotalType'
-        tags:
-             - { name: layout.block_type, alias: order_total }
 
     orob2b_order.order.listener.total_calculate_listener:
         class: 'OroB2B\Bundle\OrderBundle\EventListener\TotalCalculateListener'
