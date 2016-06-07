@@ -27,7 +27,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture
         $categoryRepository = $manager->getRepository('OroB2BCatalogBundle:Category');
         $root = $categoryRepository->getMasterCatalogRoot();
 
-        $this->addCategories($root, $this->categories);
+        $this->addCategories($root, $this->categories, $manager);
 
         $manager->flush();
     }
@@ -36,7 +36,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture
      * @param Category $root
      * @param array $categories
      */
-    protected function addCategories(Category $root, array $categories)
+    protected function addCategories(Category $root, array $categories, ObjectManager $manager)
     {
         if (!$categories) {
             return;
@@ -49,11 +49,25 @@ abstract class AbstractCategoryFixture extends AbstractFixture
             $category = new Category();
             $category->addTitle($categoryTitle);
 
+            $category->addMetaTitles($this->getSeoMetaFieldData($manager, 'defaultMetaTitle'));
+            $category->addMetaDescriptions($this->getSeoMetaFieldData($manager, 'defaultMetaDescription'));
+            $category->addMetaKeywords($this->getSeoMetaFieldData($manager, 'defaultMetaKeywords'));
+            $manager->persist($category);
+
             $this->addReference($title, $category);
 
             $root->addChildCategory($category);
 
-            $this->addCategories($category, $nestedCategories);
+            $this->addCategories($category, $nestedCategories, $manager);
         }
+    }
+
+    private function getSeoMetaFieldData(ObjectManager $manager, $seoFieldValue)
+    {
+        $seoField = new LocalizedFallbackValue();
+        $seoField->setString($seoFieldValue);
+        $manager->persist($seoField);
+
+        return $seoField;
     }
 }

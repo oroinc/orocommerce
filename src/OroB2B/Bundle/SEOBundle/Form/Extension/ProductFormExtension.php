@@ -17,4 +17,12 @@ class ProductFormExtension extends BaseMetaFormExtension
     {
         return ProductType::NAME;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtendedEntitySuffix()
+    {
+        return 'product';
+    }
 }

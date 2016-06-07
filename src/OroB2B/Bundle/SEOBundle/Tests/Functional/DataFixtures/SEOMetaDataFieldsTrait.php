@@ -11,19 +11,14 @@ trait SEOMetaDataFieldsTrait
     /**
      * {@inheritdoc}
      */
-    public function load(ObjectManager $manager)
+    public function loadLocalizedFallbackValues(ObjectManager $manager, $entity, $metadataFields = array())
     {
-        foreach (self::$metadata as $entityReference => $metadataFields) {
-            $entity = parent::getReference($entityReference);
-            foreach ($metadataFields as $fieldName => $matedataField) {
-                $localizedFallbackValue = new LocalizedFallbackValue();
-                $localizedFallbackValue->setString($matedataField);
-                $adderMethod = sprintf('add%s', ucfirst($fieldName));
-                $entity->$adderMethod($localizedFallbackValue);
-                $manager->persist($localizedFallbackValue);
-            }
+        foreach ($metadataFields as $fieldName => $matedataField) {
+            $localizedFallbackValue = new LocalizedFallbackValue();
+            $localizedFallbackValue->setString($matedataField);
+            $adderMethod = sprintf('add%s', ucfirst($fieldName));
+            $entity->$adderMethod($localizedFallbackValue);
+            $manager->persist($localizedFallbackValue);
         }
-
-        $manager->flush();
     }
 }

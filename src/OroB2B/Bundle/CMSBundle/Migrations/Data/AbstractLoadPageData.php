@@ -12,6 +12,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 use OroB2B\Bundle\CMSBundle\Entity\Page;
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 
 abstract class AbstractLoadPageData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -41,7 +42,7 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
         $organization = $this->getOrganization($manager);
 
         foreach ((array)$this->getFilePaths() as $filePath) {
-            $pages = $this->loadFromFile($filePath, $organization);
+            $pages = $this->loadFromFile($filePath, $organization, $manager);
             foreach ($pages as $page) {
                 $manager->persist($page);
             }
@@ -63,7 +64,7 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
      * @param Organization $organization
      * @return Page[]
      */
-    protected function loadFromFile($filePath, Organization $organization)
+    protected function loadFromFile($filePath, Organization $organization, ObjectManager $manager)
     {
         $rows = Yaml::parse(file_get_contents($filePath));
         $pages = [];
@@ -73,6 +74,10 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
             $page->setContent($row['content']);
             $page->setOrganization($organization);
             $page->setCurrentSlugUrl($row['slug']);
+
+            $page->addMetaTitles($this->getSeoMetaFieldData($manager, 'defaultMetaTitle'));
+            $page->addMetaDescriptions($this->getSeoMetaFieldData($manager, 'defaultMetaDescription'));
+            $page->addMetaKeywords($this->getSeoMetaFieldData($manager, 'defaultMetaKeywords'));
 
             if (array_key_exists('parent', $row) && array_key_exists($row['parent'], $this->pages)) {
                 /** @var Page $parent */
@@ -99,5 +104,14 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
     {
         $locator = $this->container->get('file_locator');
         return $locator->locate($path);
+    }
+
+    private function getSeoMetaFieldData(ObjectManager $manager, $seoFieldValue)
+    {
+        $seoField = new LocalizedFallbackValue();
+        $seoField->setString($seoFieldValue);
+        $manager->persist($seoField);
+
+        return $seoField;
     }
 }

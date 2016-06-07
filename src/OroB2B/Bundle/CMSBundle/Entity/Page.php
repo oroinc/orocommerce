@@ -183,6 +183,8 @@ class Page extends ExtendPage
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->slugs      = new ArrayCollection();
         $this->childPages = new ArrayCollection();
         $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));

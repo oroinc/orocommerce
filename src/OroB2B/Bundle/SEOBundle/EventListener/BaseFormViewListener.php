@@ -9,7 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
-class BaseFormViewListener
+abstract class BaseFormViewListener
 {
     /**
      * @var TranslatorInterface
@@ -90,4 +90,9 @@ class BaseFormViewListener
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);
     }
+
+    /**
+     * @return string
+     */
+    public abstract function getExtendedEntitySuffix();
 }

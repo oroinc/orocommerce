@@ -23,4 +23,13 @@ class ProductFormViewListener extends BaseFormViewListener
     {
         $this->addEditPageBlock($event);
     }
+
+
+    /**
+     * @return string
+     */
+    public function getExtendedEntitySuffix()
+    {
+        return 'product';
+    }
 }

@@ -96,6 +96,10 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 $product->setImage($image);
             }
 
+            $product->addMetaTitles($this->getSeoMetaFieldData($manager, 'defaultMetaTitle'));
+            $product->addMetaDescriptions($this->getSeoMetaFieldData($manager, 'defaultMetaDescription'));
+            $product->addMetaKeywords($this->getSeoMetaFieldData($manager, 'defaultMetaKeywords'));
+
             $manager->persist($product);
         }
 
@@ -145,5 +149,14 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         }
 
         return $image;
+    }
+
+    private function getSeoMetaFieldData(ObjectManager $manager, $seoFieldValue)
+    {
+        $seoField = new LocalizedFallbackValue();
+        $seoField->setString($seoFieldValue);
+        $manager->persist($seoField);
+
+        return $seoField;
     }
 }

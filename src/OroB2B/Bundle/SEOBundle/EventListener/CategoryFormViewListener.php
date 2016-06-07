@@ -13,4 +13,12 @@ class CategoryFormViewListener extends BaseFormViewListener
     {
         $this->addEditPageBlock($event);
     }
+
+    /**
+     * @return string
+     */
+    public function getExtendedEntitySuffix()
+    {
+        return 'category';
+    }
 }

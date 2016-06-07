@@ -26,7 +26,7 @@ services:
             - '@translator'
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.pageView, method: onPageView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.page-view, method: onPageView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.page-edit, method: onPageEdit }
 
     #Forms

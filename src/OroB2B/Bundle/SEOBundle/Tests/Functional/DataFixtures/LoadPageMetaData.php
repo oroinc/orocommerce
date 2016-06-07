@@ -31,6 +31,19 @@ class LoadPageMetaData extends AbstractFixture implements DependentFixtureInterf
     /**
      * {@inheritdoc}
      */
+    public function load(ObjectManager $manager)
+    {
+        foreach (self::$metadata as $entityReference => $metadataFields) {
+            $entity = $this->getReference($entityReference);
+            $this->loadLocalizedFallbackValues($manager, $entity, $metadataFields);
+        }
+
+        $manager->flush();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getDependencies()
     {
         return [

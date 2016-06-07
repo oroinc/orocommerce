@@ -21,4 +21,12 @@ class PageFormViewListener extends BaseFormViewListener
     {
         $this->addEditPageBlock($event);
     }
+
+    /**
+     * @return string
+     */
+    public function getExtendedEntitySuffix()
+    {
+        return 'cms-page';
+    }
 }
