@@ -8,9 +8,9 @@ use Oro\Component\ConfigExpression\ContextAccessorInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ShoppingListBundle\Condition\ProductsHaveAtLeastOnePrice;
@@ -54,13 +54,13 @@ class ProductsHaveAtLeastOnePriceTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($user));
 
         /**
-         * @var UserCurrencyProvider $userCurrencyProvider
+         * @var UserCurrencyManager $userCurrencyProvider
          */
-        $userCurrencyProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
+        $userCurrencyManager = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $userCurrencyProvider->method('getUserCurrency')
+        $userCurrencyManager->method('getUserCurrency')
             ->will($this->returnValue('USD'));
 
         /**
@@ -77,7 +77,7 @@ class ProductsHaveAtLeastOnePriceTest extends \PHPUnit_Framework_TestCase
         $condition = new ProductsHaveAtLeastOnePrice(
             $productPriceProvider,
             $securityFacade,
-            $userCurrencyProvider,
+            $userCurrencyManager,
             $priceListRequestHandler
         );
 
