@@ -27,17 +27,10 @@ operations:
         order: 10
         button_options:
             icon: icon-briefcase
-        preactions:
-           - '@call_service_method':
-              service: orob2b_shopping_list.data_provider.frontend_product_prices
-              method: haveProductsAnyMatchedPrice
-              method_parameters: [$.data.lineItems.values]
-              attribute: $.hasPrices
         preconditions:
             '@and':
                 - '@has_elements': $lineItems
-                - '@equal': [true, $.hasPrices]
-
+                - '@products_have_at_least_one_price': $lineItems
         actions:
             - '@assign_url':
                 attribute: $.editLink

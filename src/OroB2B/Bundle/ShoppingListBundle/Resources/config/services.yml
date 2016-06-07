@@ -211,3 +211,13 @@ services:
         public: false
         arguments:
             - '@doctrine'
+
+    orob2b_shopping_list.condition.products_have_at_least_one_price:
+        class: 'OroB2B\Bundle\ShoppingListBundle\Condition\ProductsHaveAtLeastOnePrice'
+        arguments:
+            - '@orob2b_pricing.provider.combined_product_price'
+            - '@oro_security.security_facade'
+            - '@orob2b_pricing.provider.user_currency'
+            - '@orob2b_pricing.model.price_list_request_handler'
+        tags:
+            - { name: oro_action.condition, alias: 'products_have_at_least_one_price' }
