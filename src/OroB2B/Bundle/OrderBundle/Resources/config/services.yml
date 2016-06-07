@@ -30,6 +30,7 @@ services:
         arguments:
             - '@translator'
             - '@orob2b_pricing.rounding.price_rounding_service'
+            - '@orob2b_pricing.user_currency_manager'
         tags:
             - { name: orob2b_pricing.subtotal_provider, priority: 20 }
 
@@ -41,6 +42,7 @@ services:
             - '@orob2b_pricing.rounding.price_rounding_service'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
             - '@oro_security.security_facade'
+            - '@orob2b_pricing.user_currency_manager'
         tags:
             - { name: orob2b_pricing.subtotal_provider, priority: 10 }
 

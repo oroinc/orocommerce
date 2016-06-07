@@ -10,6 +10,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
@@ -17,7 +18,7 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
     /**
      * @var array
      */
-    protected $data;
+    protected $data = [];
 
     /**
      * @var DoctrineHelper
@@ -30,15 +31,23 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
     protected $priceListRequestHandler;
 
     /**
+     * @var UserCurrencyManager
+     */
+    protected $userCurrencyManager;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param PriceListRequestHandler $priceListRequestHandler
+     * @param UserCurrencyManager $userCurrencyManager
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        PriceListRequestHandler $priceListRequestHandler
+        PriceListRequestHandler $priceListRequestHandler,
+        UserCurrencyManager $userCurrencyManager
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->priceListRequestHandler = $priceListRequestHandler;
+        $this->userCurrencyManager = $userCurrencyManager;
     }
 
     /**
@@ -53,7 +62,7 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
         $product = $context->data()->get('product');
         $productId = $product->getId();
 
-        if (!$this->data[$productId]) {
+        if (!array_key_exists($productId, $this->data)) {
             $priceList = $this->priceListRequestHandler->getPriceListByAccount();
 
             /**
@@ -64,7 +73,7 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
                 $priceList->getId(),
                 [$productId],
                 true,
-                null,
+                $this->userCurrencyManager->getUserCurrency(),
                 null,
                 [
                     'unit' => 'ASC',

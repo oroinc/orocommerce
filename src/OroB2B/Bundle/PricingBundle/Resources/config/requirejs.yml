@@ -7,6 +7,7 @@ config:
         'orob2bpricing/js/app/components/price-lists-errors-handler': 'bundles/orob2bpricing/js/app/components/price-lists-errors-handler.js'
         'orob2bpricing/js/app/components/totals-component': 'bundles/orob2bpricing/js/app/components/totals-component.js'
         'orob2bpricing/js/app/components/product-sidebar-component': 'bundles/orob2bpricing/js/app/components/product-sidebar-component.js'
+        'orob2bpricing/js/app/components/currency-switcher-component': 'bundles/orob2bpricing/js/app/components/currency-switcher-component.js'
 
         'orob2bpricing/js/app/modules/validator-constraints-module': 'bundles/orob2bpricing/js/app/modules/validator-constraints-module.js'
 
