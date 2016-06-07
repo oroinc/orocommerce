@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 

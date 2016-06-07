@@ -22,6 +22,9 @@ use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEve
 use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
 {
     /**

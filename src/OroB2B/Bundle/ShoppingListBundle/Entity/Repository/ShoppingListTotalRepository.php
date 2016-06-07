@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Entity\Repository;
 
-use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
@@ -37,7 +36,7 @@ class ShoppingListTotalRepository extends EntityRepository
             ->where($qb->expr()->in('productPrice.priceList', ':priceLists'))
             ->andWhere('total.valid = :isValid')
             ->setParameter(':isValid', true)
-            ->setParameter('priceLists', $cplIds, Type::SIMPLE_ARRAY);
+            ->setParameter('priceLists', $cplIds);
 
         $iterator = new BufferedQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
@@ -56,7 +55,7 @@ class ShoppingListTotalRepository extends EntityRepository
         }
         $qb = $this->getBaseInvalidateQb($websiteId);
         $qb->andWhere($qb->expr()->in('shoppingList.account', ':accounts'))
-            ->setParameter('accounts', $accountIds, Type::SIMPLE_ARRAY);
+            ->setParameter('accounts', $accountIds);
 
         $iterator = new BufferedQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);

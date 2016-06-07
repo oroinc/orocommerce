@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 
 class PriceListAccountFallbackRepository extends EntityRepository
@@ -26,7 +26,7 @@ class PriceListAccountFallbackRepository extends EntityRepository
         $qb = $this->getBaseQbForFallback($websiteId);
 
         $qb->andWhere($qb->expr()->in('account.group', ':groups'))
-            ->setParameter('groups', $accountGroups, Type::SIMPLE_ARRAY);
+            ->setParameter('groups', $accountGroups);
 
         $iterator = new BufferedQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);

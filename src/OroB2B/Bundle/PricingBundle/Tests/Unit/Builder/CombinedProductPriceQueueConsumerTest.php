@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -13,7 +15,6 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepos
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CombinedProductPriceQueueConsumerTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,6 +47,7 @@ class CombinedProductPriceQueueConsumerTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListRepository
      */
     protected $combinedPriceListRepo;
+
     /**
      * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
      */

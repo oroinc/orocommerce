@@ -2,24 +2,32 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\EventListener;
 
-use Oro\Bundle\EntityBundle\ORM\Registry;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListAccountFallbackRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListAccountGroupFallbackRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListWebsiteFallbackRepository;
 use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
 use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
 use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
+use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 
 class ShoppingListTotalListener
 {
     const ACCOUNT_BATCH_SIZE = 500;
-    
+
     /**
-     * ShoppingListTotalListener constructor.
-     * @param Registry $registry
+     * @var RegistryInterface
      */
-    public function __construct(Registry $registry)
+    protected $registry;
+
+    /**
+     * @param RegistryInterface $registry
+     */
+    public function __construct(RegistryInterface $registry)
     {
         $this->registry = $registry;
     }
@@ -40,10 +48,11 @@ class ShoppingListTotalListener
     public function onAccountPriceListUpdate(AccountCPLUpdateEvent $event)
     {
         $accountsData = $event->getAccountsData();
-        $repo = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal')
+        /** @var ShoppingListTotalRepository $repository */
+        $repository = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal')
             ->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
         foreach ($accountsData as $data) {
-            $repo->invalidateByAccounts($data['accounts'], $data['websiteId']);
+            $repository->invalidateByAccounts($data['accounts'], $data['websiteId']);
         }
     }
 
@@ -53,9 +62,11 @@ class ShoppingListTotalListener
     public function onAccountGroupPriceListUpdate(AccountGroupCPLUpdateEvent $event)
     {
         $accountsData = $event->getAccountGroupsData();
+        /** @var PriceListAccountFallbackRepository $fallbackRepository */
         $fallbackRepository = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListAccountFallback')
             ->getRepository('OroB2BPricingBundle:PriceListAccountFallback');
-        $shoppingTotalsRepo = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal')
+        /** @var ShoppingListTotalRepository $shoppingTotalsRepository */
+        $shoppingTotalsRepository = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal')
             ->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
         foreach ($accountsData as $data) {
             $accounts = $fallbackRepository->getAccountIdentityByGroup($data['accountGroups'], $data['websiteId']);
@@ -65,12 +76,12 @@ class ShoppingListTotalListener
                 $ids[] = $accountData['id'];
                 $i++;
                 if ($i % self::ACCOUNT_BATCH_SIZE === 0) {
-                    $shoppingTotalsRepo->invalidateByAccounts($ids, $data['websiteId']);
+                    $shoppingTotalsRepository->invalidateByAccounts($ids, $data['websiteId']);
                     $ids = [];
                 }
             }
             if (!empty($ids)) {
-                $shoppingTotalsRepo->invalidateByAccounts($ids, $data['websiteId']);
+                $shoppingTotalsRepository->invalidateByAccounts($ids, $data['websiteId']);
             }
         }
     }
@@ -80,12 +91,14 @@ class ShoppingListTotalListener
      */
     public function onWebsitePriceListUpdate(WebsiteCPLUpdateEvent $event)
     {
-        $websitesData = $event->getWebsiteIds();
+        $websiteIds = $event->getWebsiteIds();
+        /** @var PriceListAccountGroupFallbackRepository $fallbackRepository */
         $fallbackRepository = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListAccountGroupFallback')
             ->getRepository('OroB2BPricingBundle:PriceListAccountGroupFallback');
-        $shoppingTotalsRepo = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal')
+        /** @var ShoppingListTotalRepository $shoppingTotalsRepository */
+        $shoppingTotalsRepository = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal')
             ->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
-        foreach ($websitesData as $websiteId) {
+        foreach ($websiteIds as $websiteId) {
             $accounts = $fallbackRepository->getAccountIdentityByWebsite($websiteId);
             $i = 0;
             $ids = [];
@@ -93,12 +106,12 @@ class ShoppingListTotalListener
                 $ids[] = $accountData['id'];
                 $i++;
                 if ($i % self::ACCOUNT_BATCH_SIZE === 0) {
-                    $shoppingTotalsRepo->invalidateByAccounts($ids, $websiteId);
+                    $shoppingTotalsRepository->invalidateByAccounts($ids, $websiteId);
                     $ids = [];
                 }
             }
             if (!empty($ids)) {
-                $shoppingTotalsRepo->invalidateByAccounts($ids, $websiteId);
+                $shoppingTotalsRepository->invalidateByAccounts($ids, $websiteId);
             }
         }
     }
@@ -108,11 +121,14 @@ class ShoppingListTotalListener
      */
     public function onConfigPriceListUpdate(ConfigCPLUpdateEvent $event)
     {
+        /** @var PriceListWebsiteFallbackRepository $fallbackWebsiteRepository */
         $fallbackWebsiteRepository = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListWebsiteFallback')
             ->getRepository('OroB2BPricingBundle:PriceListWebsiteFallback');
+        /** @var PriceListAccountGroupFallbackRepository $fallbackRepository */
         $fallbackRepository = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListAccountGroupFallback')
             ->getRepository('OroB2BPricingBundle:PriceListAccountGroupFallback');
-        $shoppingTotalsRepo = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal')
+        /** @var ShoppingListTotalRepository $shoppingTotalsRepository */
+        $shoppingTotalsRepository = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal')
             ->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
 
         $websitesData = $fallbackWebsiteRepository->getWebsiteIdByDefaultFallback();
@@ -124,12 +140,12 @@ class ShoppingListTotalListener
                 $ids[] = $accountData['id'];
                 $i++;
                 if ($i % self::ACCOUNT_BATCH_SIZE === 0) {
-                    $shoppingTotalsRepo->invalidateByAccounts($ids, $websiteData['id']);
+                    $shoppingTotalsRepository->invalidateByAccounts($ids, $websiteData['id']);
                     $ids = [];
                 }
             }
             if (!empty($ids)) {
-                $shoppingTotalsRepo->invalidateByAccounts($ids, $websiteData['id']);
+                $shoppingTotalsRepository->invalidateByAccounts($ids, $websiteData['id']);
             }
         }
     }
