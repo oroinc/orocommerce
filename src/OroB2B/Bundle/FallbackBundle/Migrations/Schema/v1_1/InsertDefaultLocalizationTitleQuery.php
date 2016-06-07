@@ -33,20 +33,25 @@ class InsertDefaultLocalizationTitleQuery extends ParametrizedMigrationQuery
             ->orderBy('id')
             ->execute()->fetchAll(PDO::FETCH_OBJ);
 
+        $fallbackLocalizationValueId = (int)$this->connection
+            ->executeQuery('SELECT MAX(id) FROM oro_fallback_localization_val')
+            ->fetchColumn();
+
         foreach ($localizations as $localization) {
+            $fallbackLocalizationValueId++;
+            
             $sql = sprintf(
-                'INSERT INTO %s (`string`) VALUES (\'%s\')',
+                'INSERT INTO %s (id, string) VALUES (%d, \'%s\')',
                 'oro_fallback_localization_val',
+                $fallbackLocalizationValueId,
                 $localization->name
             );
 
             $this->connection->exec($sql);
             $this->logQuery($logger, $sql);
 
-            $fallbackLocalizationValueId = $this->connection->lastInsertId('oro_fallback_localization_val.id');
-
             $sql = sprintf(
-                'INSERT INTO %s (localization_id,localized_value_id) VALUES (%d,%d)',
+                'INSERT INTO %s (localization_id, localized_value_id) VALUES (%d, %d)',
                 'oro_localization_title',
                 $localization->id,
                 $fallbackLocalizationValueId

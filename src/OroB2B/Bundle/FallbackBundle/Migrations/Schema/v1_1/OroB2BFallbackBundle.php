@@ -2,41 +2,25 @@
 
 namespace OroB2B\Bundle\FallbackBundle\Migrations\Schema\v1_1;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\Comparator;
 
-use Oro\Bundle\MigrationBundle\Migration\Extension\NameGeneratorAwareInterface;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\MigrationBundle\Tools\DbIdentifierNameGenerator;
 
-class OroB2BFallbackBundle implements Migration, RenameExtensionAwareInterface, NameGeneratorAwareInterface
+class OroB2BFallbackBundle implements Migration, DatabasePlatformAwareInterface
 {
-    /**
-     * @var RenameExtension
-     */
-    protected $renameExtension;
-
-    /**
-     * @var DbIdentifierNameGenerator
-     */
-    protected $nameGenerator;
-
-    /**
-     * @inheritdoc
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
+    /** @var AbstractPlatform */
+    protected $platform;
 
     /**
      * {@inheritdoc}
      */
-    public function setNameGenerator(DbIdentifierNameGenerator $nameGenerator)
+    public function setDatabasePlatform(AbstractPlatform $platform)
     {
-        $this->nameGenerator = $nameGenerator;
+        $this->platform = $platform;
     }
 
     /**
@@ -44,35 +28,30 @@ class OroB2BFallbackBundle implements Migration, RenameExtensionAwareInterface, 
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $queries->addPreQuery('INSERT INTO `oro_fallback_localization_val` ' .
-            '(id, localization_id, fallback, string, text) ' .
-            'SELECT id, locale_id, fallback, string, text FROM `orob2b_fallback_locale_value`'
+        $queries->addQuery(
+            'INSERT INTO oro_fallback_localization_val (id, localization_id, fallback, string, text) ' .
+            'SELECT id, locale_id, fallback, string, text FROM orob2b_fallback_locale_value'
         );
 
-        $this->dropConstraint($schema, 'orob2b_catalog_cat_long_desc', ['localized_value_id']);
-        $this->dropConstraint($schema, 'orob2b_catalog_cat_short_desc', ['localized_value_id']);
-        $this->dropConstraint($schema, 'orob2b_catalog_category_title', ['localized_value_id']);
+        $preSchema = clone $schema;
+        $preSchema->dropTable('orob2b_fallback_locale_value');
 
-        $this->dropConstraint($schema, 'orob2b_menu_item_title', ['localized_value_id']);
-
-        $this->dropConstraint($schema, 'orob2b_product_description', ['localized_value_id']);
-        $this->dropConstraint($schema, 'orob2b_product_name', ['localized_value_id']);
-        $this->dropConstraint($schema, 'orob2b_product_short_desc', ['localized_value_id']);
-
-        $queries->addQuery('DROP TABLE `orob2b_fallback_locale_value`');
-
-        $queries->addPostQuery(new InsertDefaultLocalizationTitleQuery());
+        foreach ($this->getSchemaDiff($schema, $preSchema) as $query) {
+            $queries->addQuery($query);
+        }
+        
+        $queries->addQuery(new InsertDefaultLocalizationTitleQuery());
     }
 
     /**
      * @param Schema $schema
-     * @param string $tableName
-     * @param array $fields
+     * @param Schema $toSchema
+     * @return array
      */
-    protected function dropConstraint(Schema $schema, $tableName, array $fields)
+    protected function getSchemaDiff(Schema $schema, Schema $toSchema)
     {
-        $constraintName = $this->nameGenerator->generateForeignKeyConstraintName($tableName, $fields, true);
+        $comparator = new Comparator();
 
-        $schema->getTable($tableName)->removeForeignKey($constraintName);
+        return $comparator->compare($schema, $toSchema)->toSql($this->platform);
     }
 }
