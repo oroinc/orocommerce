@@ -1,5 +1,8 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% if resource_granted('orob2b_product_warehouse_inventory_update') and resource_granted('EDIT', entity) %}
+    {% set dialogTitle %}
+        {{ entity.sku }} - {{ entity.defaultName }} - {{ 'orob2b.warehouse.widgets.inventory_management'|trans }}
+    {% endset %}
     {{ UI.clientButton({
         'dataUrl': path('orob2b_warehouse_inventory_level_update', {'id': entity.id}),
         'aCss': 'no-hash btn',
@@ -12,7 +15,7 @@
                 'dialogOptions' : {
                     'stateEnabled': false,
                     'incrementalPosition': false,
-                    'title' : 'orob2b.warehouse.widgets.inventory_management'|trans,
+                    'title' : dialogTitle,
                     'allowMaximize': true,
                     'allowMinimize': true,
                     'dblclick': 'maximize',
