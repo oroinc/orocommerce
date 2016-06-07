@@ -254,17 +254,19 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicable()
     {
-        $this->setConfig(
-            $this->once(),
-            Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY,
-            Configuration::ALLOWED_COUNTRIES_ALL
-        );
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->withConsecutive(
+                [$this->getConfigKey(Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY)],
+                [$this->getConfigKey(Configuration::PAYMENT_TERM_ALLOWED_CURRENCIES)]
+            )
+            ->willReturnOnConsecutiveCalls(Configuration::ALLOWED_COUNTRIES_ALL, ['USD']);
 
         $this->paymentTermProvider->expects($this->once())
             ->method('getCurrentPaymentTerm')
             ->willReturn(new PaymentTerm());
 
-        $this->assertTrue($this->method->isApplicable([]));
+        $this->assertTrue($this->method->isApplicable(['currency' => 'USD']));
     }
 
     public function testIsApplicableWithoutCountry()

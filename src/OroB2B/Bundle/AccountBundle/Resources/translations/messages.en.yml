@@ -69,6 +69,7 @@ orob2b.account:
         birthday.label:              'Birthday'
         last_login.label:            'Last Login'
         roles.label:                 'Roles'
+        settings.label:              'Settings'
         salt.label:                  'Salt'
         created_at.label:            'Created At'
         updated_at.label:            'Updated At'
@@ -230,6 +231,14 @@ orob2b.account:
         country_iso3_code.label: Country ISO3 code
         region_name.label:       State name
         region_code.label:       State ISO code
+
+    accountusersettings:
+        entity_label:           Account User Settings
+        entity_plural_label:    Account User Settings
+        currency.label:         Currency
+        id.label:               ID
+        account_user.label:     Account User
+        website.label:          Website
 
     visibility:
         event.saved.message: Product visibility has been saved

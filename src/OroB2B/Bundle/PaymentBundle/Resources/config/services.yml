@@ -220,6 +220,7 @@ services:
         public: false
         arguments:
             - '@orob2b_payment.provider.address_extractor'
+            - '@orob2b_pricing.user_currency_manager'
 
     orob2b_payment.condition.payment_method_supports:
         class: 'OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodSupports'
