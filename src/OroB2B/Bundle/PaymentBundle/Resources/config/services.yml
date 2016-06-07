@@ -160,11 +160,6 @@ services:
     orob2b_payment.action.purchase:
         class: 'OroB2B\Bundle\PaymentBundle\Action\PurchaseAction'
         parent: orob2b_payment.action.payment_method_action.abstract
-        arguments:
-            - '@oro_action.context_accessor'
-            - '@orob2b_payment.payment_method.registry'
-            - '@orob2b_payment.provider.payment_transaction'
-            - '@router'
         tags:
             - { name: oro_workflow.action, alias: payment_purchase }
             - { name: oro_action.action, alias: payment_purchase }
@@ -172,11 +167,6 @@ services:
     orob2b_payment.action.validate:
         class: 'OroB2B\Bundle\PaymentBundle\Action\ValidateAction'
         parent: orob2b_payment.action.payment_method_action.abstract
-        arguments:
-            - '@oro_action.context_accessor'
-            - '@orob2b_payment.payment_method.registry'
-            - '@orob2b_payment.provider.payment_transaction'
-            - '@router'
         tags:
             - { name: oro_workflow.action, alias: payment_validate }
             - { name: oro_action.action, alias: payment_validate }

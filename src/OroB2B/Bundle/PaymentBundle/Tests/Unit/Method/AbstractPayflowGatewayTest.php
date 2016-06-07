@@ -451,6 +451,34 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayNotHasKey('CREATESECURETOKEN', $transaction->getRequest());
     }
 
+    public function testPurchaseWithSourceAndError()
+    {
+        $this->configureConfig(
+            [
+                $this->getConfigPrefix() . 'payment_action' => PaymentMethodInterface::AUTHORIZE,
+                $this->getConfigPrefix() . 'authorization_for_required_amount' => true,
+            ]
+        );
+
+        $sourceTransaction = new PaymentTransaction();
+
+        $transaction = new PaymentTransaction();
+        $transaction
+            ->setAction(PaymentMethodInterface::PURCHASE)
+            ->setSourcePaymentTransaction($sourceTransaction);
+
+        $this->gateway->expects($this->once())->method('request')->with('A')->willReturn(
+            new Response(['PNREF' => 'reference', 'RESULT' => '12'])
+        );
+
+        $this->method->purchase($transaction);
+
+        $this->assertFalse($transaction->isSuccessful());
+        $this->assertFalse($transaction->isActive());
+        $this->assertArrayNotHasKey('SECURETOKENID', $transaction->getRequest());
+        $this->assertArrayNotHasKey('CREATESECURETOKEN', $transaction->getRequest());
+    }
+
     public function testValidateGenerateSecureToken()
     {
         $transaction = new PaymentTransaction();
