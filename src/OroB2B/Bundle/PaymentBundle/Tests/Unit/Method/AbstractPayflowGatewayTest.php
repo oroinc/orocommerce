@@ -699,5 +699,4 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('ref', $paymentTransaction->getReference());
         $this->assertFalse($paymentTransaction->isActive());
     }
-
 }
