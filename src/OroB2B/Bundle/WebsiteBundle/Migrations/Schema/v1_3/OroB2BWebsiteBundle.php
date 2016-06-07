@@ -74,8 +74,8 @@ class OroB2BWebsiteBundle implements
     {
         $queries->addQuery(
             'INSERT INTO oro_localization ' .
-            '(id, parent_id, name, language_code, formatting_code, created_at, updated_at) ' .
-            'SELECT id, parent_id, title, code, code, created_at, updated_at FROM orob2b_locale'
+            '(parent_id, name, language_code, formatting_code, created_at, updated_at) ' .
+            'SELECT parent_id, title, code, code, created_at, updated_at FROM orob2b_locale'
         );
 
         $this->dropConstraint($schema, 'orob2b_websites_locales', ['website_id']);

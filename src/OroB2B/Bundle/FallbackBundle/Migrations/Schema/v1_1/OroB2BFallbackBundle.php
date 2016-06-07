@@ -29,8 +29,8 @@ class OroB2BFallbackBundle implements Migration, DatabasePlatformAwareInterface
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addQuery(
-            'INSERT INTO oro_fallback_localization_val (id, localization_id, fallback, string, text) ' .
-            'SELECT id, locale_id, fallback, string, text FROM orob2b_fallback_locale_value'
+            'INSERT INTO oro_fallback_localization_val (localization_id, fallback, string, text) ' .
+            'SELECT locale_id, fallback, string, text FROM orob2b_fallback_locale_value'
         );
 
         $preSchema = clone $schema;
