@@ -75,6 +75,6 @@
 
 {% block _enter_payment_information_widget %}
     {% if checkout.paymentMethod %}
-        <div>{{ oro_config_value('orob2b_payment.%s_label'|format(checkout.paymentMethod)) }}</div>
+        <div>{{ get_payment_method_label(checkout.paymentMethod) }}</div>
     {% endif %}
 {% endblock %}

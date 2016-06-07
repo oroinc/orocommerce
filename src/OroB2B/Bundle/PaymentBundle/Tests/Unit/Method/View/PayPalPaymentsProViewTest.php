@@ -31,6 +31,13 @@ class PayPalPaymentsProViewTest extends AbstractPayflowGatewayViewTest
         return Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_CC_TYPES_KEY;
     }
 
+    /** {@inheritdoc} */
+
+    protected function getAuthForRequiredAmountKey()
+    {
+        return Configuration::PAYPAL_PAYMENTS_PRO_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY;
+    }
+
     public function testGetOrder()
     {
         $order = '100';

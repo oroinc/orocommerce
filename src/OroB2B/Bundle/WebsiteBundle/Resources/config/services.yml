@@ -4,11 +4,13 @@ parameters:
 services:
     orob2b_website.manager:
         class: 'OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager'
+        public: false
         arguments:
             - "@doctrine"
 
     orob2b_website.twig.website_extension:
         class: 'OroB2B\Bundle\WebsiteBundle\Twig\OroB2BWebsiteExtension'
+        public: false
         arguments:
             - "@orob2b_website.manager"
         tags:
@@ -17,13 +19,13 @@ services:
     orob2b_website.website.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
-        public: true
         arguments:
             - '%orob2b_website.entity.website.class%'
             - "@doctrine.orm.entity_manager"
 
     orob2b_website.model.action.assign_current_website:
         class: 'OroB2B\Bundle\WebsiteBundle\Model\Action\AssignCurrentWebsite'
+        public: false
         arguments:
             - '@oro_action.context_accessor'
             - '@orob2b_website.manager'
@@ -41,6 +43,7 @@ services:
 
     orob2b_website.translation.cache_warmer.composite:
         class: 'OroB2B\Bundle\WebsiteBundle\Translation\CacheWarmer\CompositeTranslationCacheWarmer'
+        public: false
         decorates: 'translation.warmer'
         decoration_inner_name: 'translation.warmer.default'
         arguments:
