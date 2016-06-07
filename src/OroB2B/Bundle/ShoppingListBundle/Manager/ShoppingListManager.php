@@ -206,7 +206,20 @@ class ShoppingListManager
     }
 
     /**
-     * TODO: BB-2861 - refactor, recalculate subtotals once
+     * @param LineItem $lineItem
+     */
+    public function removeLineItem(LineItem $lineItem)
+    {
+        $objectManager = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+        $objectManager->remove($lineItem);
+        $shoppingList = $lineItem->getShoppingList();
+        $shoppingList->removeLineItem($lineItem);
+        $this->totalManager->recalculateTotals($lineItem->getShoppingList(), false);
+        $objectManager->flush();
+    }
+
+    /**
+     * TODO: refactor, recalculate subtotals once
      * @param array        $lineItems
      * @param ShoppingList $shoppingList
      * @param int          $batchSize
