@@ -50,7 +50,7 @@
     .cart__promo__link {
       margin: 0 30px 0 0;
 
-      font-size: 14px;
+      font-size: $base-font-size;
 
       @media (max-width: 960px) {
         font-size: 12px;
@@ -61,7 +61,7 @@
       }
 
       span {
-        font-size: 14px;
+        font-size: $base-font-size;
 
         @media (max-width: 960px) {
           font-size: 12px;
@@ -114,7 +114,7 @@
       li {
         margin: 0 0 7px;
 
-        font-size: 14px;
+        font-size: $base-font-size;
 
         &:last-child {
           margin: 0;
@@ -122,7 +122,7 @@
       }
 
       a {
-        font-size: 14px;
+        font-size: $base-font-size;
         color: $base-font-color;
       }
     }
@@ -144,16 +144,16 @@
 
   cursor: pointer;
 
+  i {
+    height: 26px;
+  }
+
   &.active {
     box-shadow: inset 1px 1px 3px 0 rgba(0,0,0,.3);
 
     .topbar__dropdown {
       display: block;
     }
-  }
-
-  i {
-    height: 26px;
   }
 }
 
@@ -171,15 +171,15 @@
 
   cursor: pointer;
 
+  i {
+    height: 26px;
+  }
+
   &.active {
     box-shadow: inset 1px 1px 3px 0 rgba(0,0,0,.3);
 
     .topbar__dropdown {
       display: block;
     }
-  }
-
-  i {
-    height: 26px;
   }
 }
