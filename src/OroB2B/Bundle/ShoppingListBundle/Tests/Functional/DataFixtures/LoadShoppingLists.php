@@ -9,6 +9,7 @@ use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadShoppingLists extends AbstractFixture implements DependentFixtureInterface
 {
@@ -24,7 +25,8 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     public function getDependencies()
     {
         return [
-            'Oro\Component\Testing\Fixtures\LoadAccountUserData'
+            LoadAccountUserData::class,
+            LoadWebsiteData::class
         ];
     }
 
@@ -68,6 +70,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
         $shoppingList->setCurrent($isCurrent);
+        $shoppingList->setWebsite($this->getReference(LoadWebsiteData::WEBSITE1));
         $manager->persist($shoppingList);
         $this->addReference($name, $shoppingList);
 

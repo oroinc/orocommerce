@@ -20,7 +20,7 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubt
  *          })
  *      }
  * )
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository")
  **/
 class ShoppingListTotal
 {

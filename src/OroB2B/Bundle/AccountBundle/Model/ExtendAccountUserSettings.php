@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Model;
 
-
 class ExtendAccountUserSettings
 {
     /**
