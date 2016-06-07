@@ -201,7 +201,7 @@ abstract class CategoryCacheTestCase extends WebTestCase
     {
         $queryBuilder->addSelect('categoryTitle.string as title')
             ->join($alias . '.category', 'category')
-            ->join('category.titles', 'categoryTitle', 'WITH', 'categoryTitle.locale IS NULL')
+            ->join('category.titles', 'categoryTitle', 'WITH', 'categoryTitle.localization IS NULL')
             ->andWhere($queryBuilder->expr()->eq(
                 $alias . '.visibility',
                 BaseVisibilityResolved::VISIBILITY_HIDDEN
