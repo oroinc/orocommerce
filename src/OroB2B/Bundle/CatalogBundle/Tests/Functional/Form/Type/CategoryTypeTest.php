@@ -128,7 +128,10 @@ class CategoryTypeTest extends WebTestCase
             $this->assertEmpty($localizedTitle->getString());
             $this->assertEquals(FallbackType::SYSTEM, $localizedTitle->getFallback());
 
-            $localizedShortDescription = $this->getValueByLocalization($category->getShortDescriptions(), $localization);
+            $localizedShortDescription = $this->getValueByLocalization(
+                $category->getShortDescriptions(),
+                $localization
+            );
             $this->assertNotEmpty($localizedShortDescription);
             $this->assertEmpty($localizedShortDescription->getText());
             $this->assertEquals(FallbackType::SYSTEM, $localizedShortDescription->getFallback());

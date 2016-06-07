@@ -342,11 +342,13 @@ class CategoryControllerTest extends WebTestCase
         $parameters['orob2b_catalog_category']['parentCategory'] = $parentCategory;
 
         foreach ($this->localizations as $localization) {
-            $parameters['orob2b_catalog_category']['titles']['values']['localizations'][$localization->getId()]['value']
+            $locId = $localization->getId();
+
+            $parameters['orob2b_catalog_category']['titles']['values']['localizations'][$locId]['value']
                 = $localization->getLanguageCode() . $newTitle;
-            $parameters['orob2b_catalog_category']['shortDescriptions']['values']['localizations'][$localization->getId()]['value']
+            $parameters['orob2b_catalog_category']['shortDescriptions']['values']['localizations'][$locId]['value']
                 = $localization->getLanguageCode() . $newShortDescription;
-            $parameters['orob2b_catalog_category']['longDescriptions']['values']['localizations'][$localization->getId()]['value']
+            $parameters['orob2b_catalog_category']['longDescriptions']['values']['localizations'][$locId]['value']
                 = $localization->getLanguageCode() . $newLongDescription;
         }
         $this->client->followRedirects(true);
@@ -495,14 +497,16 @@ class CategoryControllerTest extends WebTestCase
                 $formValues['orob2b_catalog_category[titles][values][localizations]['.$localization->getId().'][value]']
             );
 
+            $locId = $localization->getId();
+
             $this->assertEquals(
                 $localization->getLanguageCode().$shortDescription,
-                $formValues['orob2b_catalog_category[shortDescriptions][values][localizations]['.$localization->getId().'][value]']
+                $formValues['orob2b_catalog_category[shortDescriptions][values][localizations]['.$locId.'][value]']
             );
 
             $this->assertEquals(
                 $localization->getLanguageCode().$longDescription,
-                $formValues['orob2b_catalog_category[longDescriptions][values][localizations]['.$localization->getId().'][value]']
+                $formValues['orob2b_catalog_category[longDescriptions][values][localizations]['.$locId.'][value]']
             );
         }
     }
