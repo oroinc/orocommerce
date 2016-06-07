@@ -3,20 +3,29 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'jquery.validate
     'use strict';
 
     var defaultParam = {
-        message: 'orob2b.payment.validation.expiration_date',
+        message: 'orob2b.payment.validation.month',
         monthSelector: '[data-expiration-date-month]',
         yearSelector: '[data-expiration-date-year]'
     };
 
+    /**
+     * @export orob2bpayment/js/validator/credit-card-expiration-date
+     */
     return [
-        'creditCardExpirationDateNotBlank',
+        'credit-card-expiration-date',
         function(value, element, param) {
             param = _.extend({}, defaultParam, param);
             var form = $(element).parents('form');
             var year = form.find(param.yearSelector).val();
             var month = form.find(param.monthSelector).val();
+            var now = new Date();
 
-            return (year.length > 0 && month.length > 0);
+            if (year.length) {
+                if (parseInt(year, 10) === now.getFullYear() % 100) {
+                    return parseInt(month, 10) >= now.getMonth() + 1;
+                }
+            }
+            return true;
         },
         function(param) {
             param = _.extend({}, defaultParam, param);
