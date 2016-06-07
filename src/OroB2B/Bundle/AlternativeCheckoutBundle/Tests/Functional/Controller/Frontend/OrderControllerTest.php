@@ -24,7 +24,7 @@ class OrderControllerTest extends WebTestCase
 {
     const GRID_NAME = 'frontend-checkouts-grid';
     const TOTAL_VALUE = 400;
-    const SUBTOTAL_VALUE = 200;
+    const SUBTOTAL_VALUE = 20;
 
     /** @var BaseCheckout[] */
     protected $allCheckouts;
@@ -124,7 +124,7 @@ class OrderControllerTest extends WebTestCase
                 'columnName' => 'subtotal',
                 'value' => self::SUBTOTAL_VALUE,
                 'filterType' => NumberFilterTypeInterface::TYPE_GREATER_THAN,
-                'expectedCheckouts' => ['checkout.1', 'alternative.checkout.2']
+                'expectedCheckouts' => ['checkout.1', 'alternative.checkout.1', 'alternative.checkout.2']
             ],
             'paymentMethodPaymentTerm' => [
                 'columnName' => 'paymentMethod',
