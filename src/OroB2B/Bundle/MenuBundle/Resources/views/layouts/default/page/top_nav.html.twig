@@ -1,6 +1,6 @@
 {% block _top_nav_container_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " topbar hidden-sm hidden-xs"
+        class: attr.class|default('') ~ " topbar"
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="container-fluid">
@@ -28,7 +28,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         <nav class="topbar__navigation">
-            <ul class="pull-left">
+            <ul>
                 {{ block_widget(block) }}
             </ul>
         </nav>
