@@ -2,8 +2,11 @@
 
 namespace OroB2B\Bundle\WebsiteBundle\Migrations\Schema\v1_3;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\Comparator;
 
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\NameGeneratorAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -11,8 +14,15 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Tools\DbIdentifierNameGenerator;
 
-class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, NameGeneratorAwareInterface
+class OroB2BWebsiteBundle implements
+    Migration,
+    RenameExtensionAwareInterface,
+    NameGeneratorAwareInterface,
+    DatabasePlatformAwareInterface
 {
+    /** @var AbstractPlatform */
+    protected $platform;
+
     /**
      * @var RenameExtension
      */
@@ -22,6 +32,14 @@ class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, N
      * @var DbIdentifierNameGenerator
      */
     protected $nameGenerator;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDatabasePlatform(AbstractPlatform $platform)
+    {
+        $this->platform = $platform;
+    }
 
     /**
      * {@inheritdoc}
@@ -54,15 +72,18 @@ class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, N
      */
     public function updateLocaleTable(Schema $schema, QueryBag $queries)
     {
-        $queries->addPreQuery('INSERT INTO `oro_localization` ' .
+        $queries->addQuery(
+            'INSERT INTO oro_localization ' .
             '(id, parent_id, name, language_code, formatting_code, created_at, updated_at) ' .
-            'SELECT id, parent_id, title, code, code, created_at, updated_at FROM `orob2b_locale`'
+            'SELECT id, parent_id, title, code, code, created_at, updated_at FROM orob2b_locale'
         );
 
-        $this->dropConstraint($schema, 'orob2b_websites_locales', ['locale_id']);
-        $this->dropConstraint($schema, 'orob2b_fallback_locale_value', ['locale_id']);
+        $preSchema = clone $schema;
+        $preSchema->dropTable('orob2b_locale');
 
-        $queries->addQuery('DROP TABLE `orob2b_locale`');
+        foreach ($this->getSchemaDiff($schema, $preSchema) as $query) {
+            $queries->addQuery($query);
+        }
     }
 
     /**
@@ -73,7 +94,11 @@ class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, N
     {
         $this->dropConstraint($schema, 'orob2b_websites_locales', ['website_id']);
 
+        $indexName = $this->nameGenerator->generateIndexName('orob2b_websites_locales', ['locale_id'], false, true);
+
         $table = $schema->getTable('orob2b_websites_locales');
+        $table->dropIndex($indexName);
+
         $this->renameExtension->renameColumn($schema, $queries, $table, 'locale_id', 'localization_id');
 
         $this->renameExtension->renameTable(
@@ -135,5 +160,17 @@ class OroB2BWebsiteBundle implements Migration, RenameExtensionAwareInterface, N
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param Schema $toSchema
+     * @return array
+     */
+    protected function getSchemaDiff(Schema $schema, Schema $toSchema)
+    {
+        $comparator = new Comparator();
+
+        return $comparator->compare($schema, $toSchema)->toSql($this->platform);
     }
 }

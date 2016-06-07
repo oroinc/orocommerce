@@ -17,7 +17,7 @@ class OroB2BProductBundle implements Migration, RenameExtensionAwareInterface
     protected $renameExtension;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setRenameExtension(RenameExtension $renameExtension)
     {
@@ -25,7 +25,7 @@ class OroB2BProductBundle implements Migration, RenameExtensionAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
