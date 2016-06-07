@@ -29,6 +29,7 @@ class LocalizationListener
      */
     public function postPersist(LifecycleEventArgs $args)
     {
+        /** @var Localization $entity */
         $entity = $args->getEntity();
         if (!$this->isLocalizationEntity($entity)) {
             return;
@@ -41,13 +42,14 @@ class LocalizationListener
      */
     public function postUpdate(LifecycleEventArgs $args)
     {
+        /** @var Localization $entity */
         $entity = $args->getEntity();
         if (!$this->isLocalizationEntity($entity)) {
             return;
         }
         $uow = $args->getEntityManager()->getUnitOfWork();
         $changes = $uow->getEntityChangeSet($entity);
-        if (array_key_exists('parent', $changes) === true) {
+        if (array_key_exists('parentLocalization', $changes) === true) {
             $this->getMenuProvider()->rebuildCacheByLocalization($entity);
         }
     }
@@ -57,6 +59,7 @@ class LocalizationListener
      */
     public function postRemove(LifecycleEventArgs $args)
     {
+        /** @var Localization $entity */
         $entity = $args->getEntity();
         if (!$this->isLocalizationEntity($entity)) {
             return;

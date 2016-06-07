@@ -60,6 +60,8 @@ class OroB2BFallbackBundle implements Migration, RenameExtensionAwareInterface, 
         $this->dropConstraint($schema, 'orob2b_product_short_desc', ['localized_value_id']);
 
         $queries->addQuery('DROP TABLE `orob2b_fallback_locale_value`');
+
+        $queries->addPostQuery(new InsertDefaultLocalizationTitleQuery());
     }
 
     /**
