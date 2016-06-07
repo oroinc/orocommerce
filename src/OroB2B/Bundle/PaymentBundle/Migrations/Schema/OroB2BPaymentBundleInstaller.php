@@ -126,7 +126,7 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['access_identifier', 'access_token'], 'access_idx');
+        $table->addUniqueIndex(['access_identifier', 'access_token'], 'orob2b_pay_trans_access_uidx');
         $table->addIndex(['source_payment_transaction']);
     }
 

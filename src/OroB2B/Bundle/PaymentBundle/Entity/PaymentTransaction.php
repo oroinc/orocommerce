@@ -22,7 +22,10 @@ use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 /**
  * @ORM\Table(
  *      name="orob2b_payment_transaction",
- *      uniqueConstraints={@ORM\UniqueConstraint(name="access_idx", columns={"access_identifier", "access_token"})})
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="orob2b_pay_trans_access_uidx", columns={"access_identifier", "access_token"})
+ *      }
+ * )
  * @ORM\Entity
  * @Config(
  *       mode="hidden",

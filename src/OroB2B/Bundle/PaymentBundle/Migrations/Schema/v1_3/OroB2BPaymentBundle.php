@@ -23,6 +23,6 @@ class OroB2BPaymentBundle implements Migration
     protected function addIndexToPaymentTransactionTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_payment_transaction');
-        $table->addUniqueIndex(['access_identifier', 'access_token'], 'access_idx');
+        $table->addUniqueIndex(['access_identifier', 'access_token'], 'orob2b_pay_trans_access_uidx');
     }
 }
