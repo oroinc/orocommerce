@@ -9,6 +9,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Currency;
 
 class Configuration implements ConfigurationInterface
 {
@@ -36,6 +37,7 @@ class Configuration implements ConfigurationInterface
     const PAYPAL_PAYMENTS_PRO_ZERO_AMOUNT_AUTHORIZATION_KEY = 'paypal_payments_pro_zero_amount_authorization';
     const PAYPAL_PAYMENTS_PRO_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY =
         'paypal_payments_pro_authorization_for_required_amount';
+    const PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES = 'paypal_payments_pro_allowed_currencies';
 
     const PAYFLOW_GATEWAY_ENABLED_KEY = 'payflow_gateway_enabled';
     const PAYFLOW_GATEWAY_LABEL_KEY = 'payflow_gateway_label';
@@ -58,12 +60,14 @@ class Configuration implements ConfigurationInterface
     const PAYFLOW_GATEWAY_VALIDATE_CVV_KEY = 'payflow_gateway_validate_cvv';
     const PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY = 'payflow_gateway_zero_amount_authorization';
     const PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'payflow_gateway_authorization_for_required_amount';
+    const PAYFLOW_GATEWAY_ALLOWED_CURRENCIES = 'payflow_gateway_allowed_currencies';
 
     const PAYMENT_TERM_ENABLED_KEY = 'payment_term_enabled';
     const PAYMENT_TERM_LABEL_KEY = 'payment_term_label';
     const PAYMENT_TERM_SORT_ORDER_KEY = 'payment_term_sort_order';
     const PAYMENT_TERM_ALLOWED_COUNTRIES_KEY = 'payment_term_allowed_countries';
     const PAYMENT_TERM_SELECTED_COUNTRIES_KEY = 'payment_term_selected_countries';
+    const PAYMENT_TERM_ALLOWED_CURRENCIES = 'payment_term_allowed_currencies';
 
     const CARD_VISA = 'visa';
     const CARD_MASTERCARD = 'mastercard';
@@ -180,6 +184,10 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => false
                 ],
+                self::PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES => [
+                    'type' => 'array',
+                    'value' => Currency::$currencies
+                ],
 
                 // Payflow Gateway
                 self::PAYFLOW_GATEWAY_ENABLED_KEY => [
@@ -266,7 +274,10 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => false
                 ],
-
+                self::PAYFLOW_GATEWAY_ALLOWED_CURRENCIES => [
+                    'type' => 'array',
+                    'value' => Currency::$currencies
+                ],
                 // Payment Term
                 self::PAYMENT_TERM_ENABLED_KEY => [
                     'type' => 'boolean',
@@ -287,6 +298,10 @@ class Configuration implements ConfigurationInterface
                 self::PAYMENT_TERM_SELECTED_COUNTRIES_KEY => [
                     'type' => 'array',
                     'value' => []
+                ],
+                self::PAYMENT_TERM_ALLOWED_CURRENCIES => [
+                    'type' => 'array',
+                    'value' => Currency::$currencies
                 ],
             ]
         );

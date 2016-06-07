@@ -6,6 +6,8 @@ oro_system_configuration:
             title: orob2b.pricing.system_configuration.groups.price_rounding.title
         price_lists_update:
             title: orob2b.pricing.system_configuration.groups.price_lists_update.title
+        display_currencies:
+            title:  orob2b.pricing.system_configuration.groups.display_currencies.title
         pricing:
             title: orob2b.pricing.system_configuration.groups.pricing.title
             icon: 'icon-credit-card'
@@ -67,6 +69,26 @@ oro_system_configuration:
                     - 'OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero': ~
                     - Type:
                         type: float
+        oro_b2b_pricing.enabled_currencies:
+            data_type: array
+            type: oro_currency_selection
+            priority: 200
+            options:
+                label: orob2b.pricing.system_configuration.fields.enabled_currencies.label
+                required: true
+                multiple: true
+                constraints:
+                    - NotBlank: ~
+        oro_b2b_pricing.default_currency:
+            data_type: string
+            type: orob2b_pricing_default_currency_selection
+            priority: 100
+            options:
+                label: orob2b.pricing.system_configuration.fields.default_currency.label
+                required: true
+                multiple: false
+                constraints:
+                    - NotBlank: ~
 
     tree:
         system_configuration:
@@ -91,3 +113,8 @@ oro_system_configuration:
                                         children:
                                             - oro_b2b_pricing.price_lists_update_mode
                                             - oro_b2b_pricing.offset_of_processing_cpl_prices
+                                    display_currencies:
+                                        priority: 20
+                                        children:
+                                            - oro_b2b_pricing.enabled_currencies
+                                            - oro_b2b_pricing.default_currency
