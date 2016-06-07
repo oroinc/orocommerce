@@ -44,8 +44,8 @@ WebsiteBundle:
 --------------
 - Entity `OroB2B\Bundle\WebsiteBundle\Entity\Locale` moved to `Oro\Bundle\LocaleBundle\Entity\Localization`.
 - Entity Repository `OroB2B\Bundle\WebsiteBundle\Entity\Repository\LocaleRepository` moved to `Oro\Bundle\LocaleBundle\Entity\Repository\LocalizationRepository`.
-- Entity `OroB2B\Bundle\WebsiteBundle\Entity\Website` used new table `Oro\Bundle\LocaleBundle\Entity\Localization`.
-- Event ORM Listener `OroB2B\Bundle\WebsiteBundle\EventListener\ORM\LocaleListener` moved to `Oro\Bundle\LocaleBundle\EventListener\ORM\LocalizationListener`.
+- Entity `OroB2B\Bundle\WebsiteBundle\Entity\Website` now uses an entity `Oro\Bundle\LocaleBundle\Entity\Localization`.
+- Entity Event Listener `OroB2B\Bundle\WebsiteBundle\EventListener\ORM\LocaleListener` moved to `Oro\Bundle\LocaleBundle\EventListener\ORM\LocalizationListener`.
 - Helper `OroB2B\Bundle\WebsiteBundle\Locale\LocaleHelper` moved to `Oro\Bundle\LocaleBundle\Helper\LocalizationHelper`.
 - Migration `OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadLocaleData` moved to `Oro\Bundle\LocaleBundle\Migrations\Data\ORM\LoadLocalizationData`.
 - Migration `OroB2B\Bundle\WebsiteBundle\Migrations\Data\Demo\ORM\LoadLocaleData` moved to `Oro\Bundle\LocaleBundle\Migrations\Data\Demo\ORM\LoadLocalizationData`.
