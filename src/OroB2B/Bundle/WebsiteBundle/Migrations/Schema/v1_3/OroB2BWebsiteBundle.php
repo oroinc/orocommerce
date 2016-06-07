@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\WebsiteBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Comparator;
 
@@ -74,9 +75,16 @@ class OroB2BWebsiteBundle implements
     {
         $queries->addQuery(
             'INSERT INTO oro_localization ' .
-            '(parent_id, name, language_code, formatting_code, created_at, updated_at) ' .
-            'SELECT parent_id, title, code, code, created_at, updated_at FROM orob2b_locale'
+            '(id, parent_id, name, language_code, formatting_code, created_at, updated_at) ' .
+            'SELECT id, parent_id, title, code, code, created_at, updated_at FROM orob2b_locale'
         );
+        
+        if ($this->platform instanceof PostgreSqlPlatform) {
+            $queries->addQuery(
+                "SELECT setval(pg_get_serial_sequence('oro_localization', 'id'), max(id)) " .
+                "FROM oro_localization"
+            );
+        }
 
         $this->dropConstraint($schema, 'orob2b_websites_locales', ['website_id']);
         $this->dropConstraint($schema, 'orob2b_websites_locales', ['locale_id']);

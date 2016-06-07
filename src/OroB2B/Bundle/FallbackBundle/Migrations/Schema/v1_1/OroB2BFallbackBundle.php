@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\FallbackBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Comparator;
 
@@ -29,9 +30,16 @@ class OroB2BFallbackBundle implements Migration, DatabasePlatformAwareInterface
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addQuery(
-            'INSERT INTO oro_fallback_localization_val (localization_id, fallback, string, text) ' .
-            'SELECT locale_id, fallback, string, text FROM orob2b_fallback_locale_value'
+            'INSERT INTO oro_fallback_localization_val (id, localization_id, fallback, string, text) ' .
+            'SELECT id, locale_id, fallback, string, text FROM orob2b_fallback_locale_value'
         );
+
+        if ($this->platform instanceof PostgreSqlPlatform) {
+            $queries->addQuery(
+                "SELECT setval(pg_get_serial_sequence('oro_fallback_localization_val', 'id'), max(id)) " .
+                "FROM oro_fallback_localization_val"
+            );
+        }
 
         $preSchema = clone $schema;
         $preSchema->dropTable('orob2b_fallback_locale_value');
