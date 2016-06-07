@@ -1,7 +1,6 @@
 services:
     orob2b_warehouse.form.type.warehouse:
         class: 'OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseType'
-        public: true
         calls:
             - [setDataClass, ['%orob2b_warehouse.entity.warehouse.class%']]
         tags:
@@ -9,7 +8,6 @@ services:
 
     orob2b_warehouse.form.type.warehouse_inventoty_level_grid:
         class: 'OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType'
-        public: true
         arguments:
             - '@form.factory'
             - '@oro_entity.doctrine_helper'

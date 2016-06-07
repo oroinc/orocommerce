@@ -284,7 +284,7 @@ class Category extends ExtendCategory
     public function getDefaultTitle()
     {
         $titles = $this->titles->filter(function (LocalizedFallbackValue $title) {
-            return null === $title->getLocale();
+            return null === $title->getLocalization();
         });
 
         if ($titles->count() != 1) {
@@ -485,7 +485,7 @@ class Category extends ExtendCategory
     public function getDefaultShortDescription()
     {
         $shortDescription = $this->shortDescriptions->filter(function (LocalizedFallbackValue $shortDescription) {
-            return null === $shortDescription->getLocale();
+            return null === $shortDescription->getLocalization();
         });
 
         if ($shortDescription->count() !== 1) {
@@ -537,7 +537,7 @@ class Category extends ExtendCategory
     public function getDefaultLongDescription()
     {
         $longDescription = $this->longDescriptions->filter(function (LocalizedFallbackValue $longDescription) {
-            return null === $longDescription->getLocale();
+            return null === $longDescription->getLocalization();
         });
 
         if ($longDescription->count() != 1) {

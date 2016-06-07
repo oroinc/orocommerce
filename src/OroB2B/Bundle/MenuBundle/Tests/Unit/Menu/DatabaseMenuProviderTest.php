@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Menu;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -12,15 +14,13 @@ use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Menu\BuilderInterface;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 use OroB2B\Bundle\MenuBundle\Menu\MenuSerializer;
-use OroB2B\Bundle\WebsiteBundle\Locale\LocaleHelper;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const LOCALE_ENTITY_CLASS = 'OroB2B\Bundle\WebsiteBundle\Entity\Locale';
+    const LOCALE_ENTITY_CLASS = 'Oro\Bundle\LocaleBundle\Entity\Localization';
     const MENU_ITEM_ENTITY_CLASS = 'TestBundle:MenuItem';
 
     const LOCALE_ID_EN = 1;
@@ -39,14 +39,14 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
     protected $builder;
 
     /**
-     * @var Locale
+     * @var Localization
      */
-    protected $currentLocale;
+    protected $currentLocalization;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|LocaleHelper
+     * @var \PHPUnit_Framework_MockObject_MockObject|LocalizationHelper
      */
-    protected $localeHelper;
+    protected $localizationHelper;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|MenuSerializer
@@ -67,13 +67,13 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->builder = $this->getMock('OroB2B\Bundle\MenuBundle\Menu\BuilderInterface');
 
-        $this->currentLocale = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
-        $this->localeHelper = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Locale\LocaleHelper')
+        $this->currentLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
+        $this->localizationHelper = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Helper\LocalizationHelper')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->localeHelper->expects($this->any())
-            ->method('getCurrentLocale')
-            ->willReturn($this->currentLocale);
+        $this->localizationHelper->expects($this->any())
+            ->method('getCurrentLocalization')
+            ->willReturn($this->currentLocalization);
 
         $this->serializer = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\Menu\MenuSerializer')
             ->disableOriginalConstructor()
@@ -85,7 +85,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->provider = new DatabaseMenuProvider(
             $this->builder,
-            $this->localeHelper,
+            $this->localizationHelper,
             $this->serializer,
             $this->registry
         );
@@ -103,7 +103,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider->setCache($this->cache);
 
         $alias = 'test_menu';
-        $options = ['extras' => [MenuItem::LOCALE_OPTION => $this->currentLocale]];
+        $options = ['extras' => [MenuItem::LOCALE_OPTION => $this->currentLocalization]];
         $menu = $this->getMock('Knp\Menu\ItemInterface');
         $serializedMenu = ['menuItem1.1', 'menuItem2.1'];
 
@@ -235,7 +235,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testRebuildCacheByAliasWithoutCache()
     {
-        $this->localeHelper->expects($this->never())
+        $this->localizationHelper->expects($this->never())
             ->method('getAll');
         $this->provider->rebuildCacheByAlias('test_menu');
     }
@@ -249,22 +249,22 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $menuKz = $this->getMock('Knp\Menu\ItemInterface');
         $serializedMenuEn = ['menuItem1en', 'menuItem2kz'];
         $serializedMenuKz = ['menuItem1kz', 'menuItem2kz'];
-        $enLocale = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
-        $kzLocale = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_KZ]);
-        $this->localeHelper->expects($this->once())
+        $enLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
+        $kzLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_KZ]);
+        $this->localizationHelper->expects($this->once())
             ->method('getAll')
             ->willReturn(
                 [
-                    $enLocale,
-                    $kzLocale,
+                    $enLocalization,
+                    $kzLocalization,
                 ]
             );
         $this->builder->expects($this->exactly(2))
             ->method('build')
             ->willReturnMap(
                 [
-                    [$alias, ['extras' => [MenuItem::LOCALE_OPTION => $enLocale]], $menuEn],
-                    [$alias, ['extras' => [MenuItem::LOCALE_OPTION => $kzLocale]], $menuKz]
+                    [$alias, ['extras' => [MenuItem::LOCALE_OPTION => $enLocalization]], $menuEn],
+                    [$alias, ['extras' => [MenuItem::LOCALE_OPTION => $kzLocalization]], $menuKz]
                 ]
             );
         $this->serializer->expects($this->exactly(2))
@@ -315,13 +315,13 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
 
         $menuEn = $this->getMock('Knp\Menu\ItemInterface');
         $serializedMenuEn = ['menuItem1en', 'menuItem2kz'];
-        $enLocale = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
-        $this->localeHelper->expects($this->once())
+        $enLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
+        $this->localizationHelper->expects($this->once())
             ->method('getAll')
-            ->willReturn([$enLocale]);
+            ->willReturn([$enLocalization]);
         $this->builder->expects($this->once())
             ->method('build')
-            ->with($alias, ['extras' => [MenuItem::LOCALE_OPTION => $enLocale]])
+            ->with($alias, ['extras' => [MenuItem::LOCALE_OPTION => $enLocalization]])
             ->willReturn($menuEn);
         $this->serializer->expects($this->once())
             ->method('serialize')
@@ -344,7 +344,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testClearCacheByAliasWithoutCache()
     {
-        $this->localeHelper->expects($this->never())
+        $this->localizationHelper->expects($this->never())
             ->method('getAll');
         $this->provider->clearCacheByAlias('test_menu');
     }
@@ -354,14 +354,14 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider->setCache($this->cache);
 
         $alias = 'test_menu';
-        $enLocale = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
-        $kzLocale = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_KZ]);
-        $this->localeHelper->expects($this->once())
+        $enLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
+        $kzLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_KZ]);
+        $this->localizationHelper->expects($this->once())
             ->method('getAll')
             ->willReturn(
                 [
-                    $enLocale,
-                    $kzLocale,
+                    $enLocalization,
+                    $kzLocalization,
                 ]
             );
         $this->cache->expects($this->exactly(2))
@@ -373,17 +373,17 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider->clearCacheByAlias($alias);
     }
 
-    public function testRebuildCacheByLocaleWithoutCache()
+    public function testRebuildCacheByLocalizationWithoutCache()
     {
         $this->registry->expects($this->never())
             ->method('getManagerForClass');
-        $this->provider->rebuildCacheByLocale($this->currentLocale);
+        $this->provider->rebuildCacheByLocalization($this->currentLocalization);
     }
 
-    public function testRebuildCacheByLocale()
+    public function testRebuildCacheByLocalization()
     {
         $this->provider->setCache($this->cache);
-        $locale = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_KZ]);
+        $localization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_KZ]);
         $menu1root = $this->createRootMenuItem('menu1');
         $menu2root = $this->createRootMenuItem('menu2');
         $menu1 = $this->getMock('Knp\Menu\ItemInterface');
@@ -418,8 +418,8 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
             ->method('build')
             ->willReturnMap(
                 [
-                    ['menu1', ['extras' => [MenuItem::LOCALE_OPTION => $locale]], $menu1],
-                    ['menu2', ['extras' => [MenuItem::LOCALE_OPTION => $locale]], $menu2]
+                    ['menu1', ['extras' => [MenuItem::LOCALE_OPTION => $localization]], $menu1],
+                    ['menu2', ['extras' => [MenuItem::LOCALE_OPTION => $localization]], $menu2]
                 ]
             );
         $this->serializer->expects($this->exactly(2))
@@ -437,20 +437,20 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
                 ['menu2:2', $serializedMenu2]
             );
 
-        $this->provider->rebuildCacheByLocale($locale);
+        $this->provider->rebuildCacheByLocalization($localization);
     }
 
-    public function testClearCacheByLocaleWithoutCache()
+    public function testClearCacheByLocalizationWithoutCache()
     {
         $this->registry->expects($this->never())
             ->method('getManagerForClass');
-        $this->provider->clearCacheByLocale($this->currentLocale);
+        $this->provider->clearCacheByLocalization($this->currentLocalization);
     }
 
-    public function testClearCacheByLocale()
+    public function testClearCacheByLocalization()
     {
         $this->provider->setCache($this->cache);
-        $locale = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_KZ]);
+        $localization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_KZ]);
         $menu1root = $this->createRootMenuItem('menu1');
         $menu2root = $this->createRootMenuItem('menu2');
 
@@ -484,7 +484,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
                 ['menu2:2']
             );
 
-        $this->provider->clearCacheByLocale($locale);
+        $this->provider->clearCacheByLocalization($localization);
     }
 
     /**

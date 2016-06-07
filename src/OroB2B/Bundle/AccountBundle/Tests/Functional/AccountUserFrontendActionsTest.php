@@ -9,7 +9,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 /**
  * @dbIsolation
  */
-class AccountUserFrontendActionsTest extends AbstractAccountUserActionsTest
+class AccountUserFrontendActionsTest extends AbstractAccountUserActionsTestCase
 {
     const EMAIL = 'account.user2@test.com';
 

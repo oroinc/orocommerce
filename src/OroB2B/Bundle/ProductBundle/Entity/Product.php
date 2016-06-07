@@ -678,7 +678,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     public function getDefaultName()
     {
         $names = $this->names->filter(function (LocalizedFallbackValue $name) {
-            return null === $name->getLocale();
+            return null === $name->getLocalization();
         });
 
         if ($names->count() > 1) {
@@ -733,7 +733,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     public function getDefaultDescription()
     {
         $descriptions = $this->descriptions->filter(function (LocalizedFallbackValue $description) {
-            return null === $description->getLocale();
+            return null === $description->getLocalization();
         });
 
         if ($descriptions->count() > 1) {
@@ -822,7 +822,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     public function getDefaultShortDescription()
     {
         $shortDescriptions = $this->shortDescriptions->filter(function (LocalizedFallbackValue $shortDescription) {
-            return null === $shortDescription->getLocale();
+            return null === $shortDescription->getLocalization();
         });
 
         if ($shortDescriptions->count() > 1) {
