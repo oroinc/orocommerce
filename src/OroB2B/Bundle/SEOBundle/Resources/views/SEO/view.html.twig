@@ -1,5 +1,5 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-{{ include('OroB2BSEOBundle:SEO:renderSEOField.html.twig', { 'fallbackValues': entity.metaTitles, 'label': 'orob2b.seo.meta-title.label' })  }}
-{{ include('OroB2BSEOBundle:SEO:renderSEOField.html.twig', { 'fallbackValues': entity.metaDescriptions, 'label': 'orob2b.seo.meta-description.label' })  }}
-{{ include('OroB2BSEOBundle:SEO:renderSEOField.html.twig', { 'fallbackValues': entity.metaKeywords, 'label': 'orob2b.seo.meta-keywords.label' })  }}
+{{ UI.renderHtmlProperty(('orob2b.seo.meta-title.label.' ~ metaFieldLabelSuffix) | trans, entity.defaultMetaTitles) }}
+{{ UI.renderHtmlProperty(('orob2b.seo.meta-description.label.' ~ metaFieldLabelSuffix) | trans, entity.defaultMetaDescriptions) }}
+{{ UI.renderHtmlProperty(('orob2b.seo.meta-keywords.label.' ~ metaFieldLabelSuffix) | trans, entity.defaultMetaKeywords) }}

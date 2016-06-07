@@ -61,7 +61,10 @@ abstract class BaseFormViewListener
             return;
         }
 
-        $template = $event->getEnvironment()->render('OroB2BSEOBundle:SEO:view.html.twig', ['entity' => $object]);
+        $template = $event->getEnvironment()->render('OroB2BSEOBundle:SEO:view.html.twig', [
+            'entity' => $object,
+            'metaFieldLabelSuffix' => $this->getExtendedEntitySuffix()
+        ]);
 
         $this->addSEOBlock($event->getScrollData(), $template);
     }

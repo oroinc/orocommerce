@@ -9,7 +9,7 @@ layout:
             options:
                 name: 'title'
                 vars:
-                    values: { '@value': $data.category.meta_titles }
+                    values: { '@value': $data.category.defaultMetaTitles }
         - @add:
             id: meta_description
             parentId: head
@@ -17,7 +17,7 @@ layout:
             options:
                 name: 'description'
                 vars:
-                    values: { '@value': $data.category.meta_descriptions }
+                    values: { '@value': $data.category.defaultMetaDescriptions }
         - @add:
             id: meta_keywords
             parentId: head
@@ -25,4 +25,4 @@ layout:
             options:
                 name: 'keywords'
                 vars:
-                    values: { '@value': $data.category.meta_keywords }
+                    values: { '@value': $data.category.defaultMetaKeywords }

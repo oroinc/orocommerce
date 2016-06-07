@@ -12,14 +12,7 @@
 
 {% block fallback_locale_value %}
     {% if values is not null  %}
-        {% set defaultFallbackValue = null %}
-        {% for fallbackValue in values %}
-            {% if null == fallbackValue.locale %}
-                {% set defaultFallbackValue = fallbackValue %}
-            {% endif %}
-        {% endfor %}
-
-        {% set attr = attr|merge({content : defaultFallbackValue}) %}
+        {% set attr = attr|merge({content : values}) %}
     {% endif %}
     {{ block('meta_widget') }}
 {% endblock %}
