@@ -10,10 +10,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\LocaleBundle\Entity\FallbackTrait;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 use OroB2B\Bundle\MenuBundle\Model\ExtendMenuItem;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use OroB2B\Component\Tree\Entity\TreeTrait;
 
 /**

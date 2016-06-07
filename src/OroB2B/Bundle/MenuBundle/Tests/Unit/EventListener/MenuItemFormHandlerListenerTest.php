@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\EventListener;
+namespace OroB2B\Bundle\MenuBundle\Tests\Unit\EventListener;
 
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\EventListener\MenuItemFormHandlerListener;

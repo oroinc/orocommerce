@@ -106,12 +106,9 @@ class ProductRepository extends EntityRepository
         $productsQueryBuilder = $this
             ->createQueryBuilder('p');
 
-        $productsQueryBuilder->innerJoin(
-                'p.names',
-                'pn',
-                'WITH',
-                $productsQueryBuilder->expr()->isNull('pn.localization')
-            )->where(
+        $productsQueryBuilder
+            ->innerJoin('p.names', 'pn', Expr\Join::WITH, $productsQueryBuilder->expr()->isNull('pn.localization'))
+            ->where(
                 $productsQueryBuilder->expr()->orX(
                     $productsQueryBuilder->expr()->like('LOWER(p.sku)', ':search'),
                     $productsQueryBuilder->expr()->like('LOWER(pn.string)', ':search')

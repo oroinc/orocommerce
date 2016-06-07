@@ -47,7 +47,7 @@ class CategoryTypeTest extends WebTestCase
 
     public function testSubmit()
     {
-        $doctrine = $localizationRepository = $this->getContainer()->get('doctrine');
+        $doctrine = $this->getContainer()->get('doctrine');
         $localizationRepository = $doctrine->getRepository('OroLocaleBundle:Localization');
         $categoryRepository = $doctrine->getRepository('OroB2BCatalogBundle:Category');
         $productRepository = $doctrine->getRepository('OroB2BProductBundle:Product');
