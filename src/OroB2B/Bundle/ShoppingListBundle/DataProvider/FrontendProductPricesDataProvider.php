@@ -121,27 +121,4 @@ class FrontendProductPricesDataProvider
 
         return $productsPricesCriteria;
     }
-
-    /**
-     * Returns true if any price is found
-     *
-     * @param array $lineItems
-     * @return bool
-     */
-    public function haveProductsAnyMatchedPrice(array $lineItems)
-    {
-        $prices = $this->getProductsMatchedPrice($lineItems);
-
-        $found = false;
-
-        foreach ($prices as $unitPrices) {
-            foreach ($unitPrices as $price) {
-                if ($price !== null) {
-                    $found = true;
-                }
-            }
-        }
-
-        return $found;
-    }
 }
