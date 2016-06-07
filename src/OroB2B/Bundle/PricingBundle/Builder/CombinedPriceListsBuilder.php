@@ -53,7 +53,7 @@ class CombinedPriceListsBuilder
     /**
      * @var array
      */
-    protected $isBuilt = false;
+    protected $built = false;
 
     /**
      * @param ConfigManager $configManager
@@ -95,11 +95,11 @@ class CombinedPriceListsBuilder
      */
     public function build($force = false)
     {
-        if (!$this->isBuilt) {
+        if (!$this->isBuilt()) {
             $this->updatePriceListsOnCurrentLevel($force);
             $this->websiteCombinedPriceListBuilder->build(null, $force);
             $this->garbageCollector->cleanCombinedPriceLists();
-            $this->isBuilt = true;
+            $this->built = true;
         }
     }
 
@@ -147,8 +147,13 @@ class CombinedPriceListsBuilder
      */
     public function resetCache()
     {
-        $this->isBuilt = false;
+        $this->built = false;
 
         return $this;
+    }
+    
+    public function isBuilt()
+    {
+        return $this->built;
     }
 }

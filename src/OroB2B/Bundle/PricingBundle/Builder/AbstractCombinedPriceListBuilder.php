@@ -80,7 +80,7 @@ abstract class AbstractCombinedPriceListBuilder
     /**
      * @var array
      */
-    protected $builtList;
+    protected $builtList = [];
 
     /**
      * @var CombinedPriceListScheduleResolver
@@ -253,5 +253,13 @@ abstract class AbstractCombinedPriceListBuilder
         if ($force || !$activeCpl->isPricesCalculated()) {
             $this->priceResolver->combinePrices($activeCpl);
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getBuiltList()
+    {
+        return $this->builtList;
     }
 }

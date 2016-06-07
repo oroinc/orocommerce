@@ -8,7 +8,7 @@ use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\Action\Model\ContextAccessor;
 
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 /**
  * Assign user selected currency to selected attribute. Applicable only for frontend
@@ -29,19 +29,19 @@ class AssignUserCurrencyAction extends AbstractAction
     protected $attribute;
 
     /**
-     * @var UserCurrencyProvider
+     * @var UserCurrencyManager
      */
-    protected $currencyProvider;
+    protected $currencyManager;
 
     /**
      * @param ContextAccessor $contextAccessor
-     * @param UserCurrencyProvider $currencyProvider
+     * @param UserCurrencyManager $currencyManager
      */
-    public function __construct(ContextAccessor $contextAccessor, UserCurrencyProvider $currencyProvider)
+    public function __construct(ContextAccessor $contextAccessor, UserCurrencyManager $currencyManager)
     {
         parent::__construct($contextAccessor);
 
-        $this->currencyProvider = $currencyProvider;
+        $this->currencyManager = $currencyManager;
     }
 
     /**
@@ -49,7 +49,7 @@ class AssignUserCurrencyAction extends AbstractAction
      */
     protected function executeAction($context)
     {
-        $this->contextAccessor->setValue($context, $this->attribute, $this->currencyProvider->getUserCurrency());
+        $this->contextAccessor->setValue($context, $this->attribute, $this->currencyManager->getUserCurrency());
     }
 
     /**

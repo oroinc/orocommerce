@@ -135,6 +135,7 @@ orob2b.pricing:
             price_rounding.title: Pricing Rounding
             pricing.title: Pricing
             price_lists_update.title: 'Price List Calculations'
+            display_currencies.title: 'Display Currencies'
         fields:
             price_lists.title: Price Lists
             precision.label: Pricing Precision
@@ -158,6 +159,8 @@ orob2b.pricing:
             offset_of_processing_cpl_prices:
                 label: "Offset of processing CPL prices"
                 tooltip: 'Time before CPL prices calculation starts before activation.'
+            enabled_currencies.label: 'Enabled Currencies'
+            default_currency.label: 'Default Currency'
 
     lineitem:
         subtotal.label: 'Line items subtotal'
