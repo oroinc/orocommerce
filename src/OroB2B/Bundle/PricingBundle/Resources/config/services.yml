@@ -20,6 +20,7 @@ parameters:
     orob2b_pricing.entity.product_price_change_trigger.class: OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger
     orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
     orob2b_pricing.entity.minimal_product_price.class: OroB2B\Bundle\PricingBundle\Entity\MinimalProductPrice
+    orob2b_pricing.entity.price_attribute.class: OroB2B\Bundle\PricingBundle\Entity\PriceAttribute
 
 services:
     orob2b_pricing.acl.voter.product_list:

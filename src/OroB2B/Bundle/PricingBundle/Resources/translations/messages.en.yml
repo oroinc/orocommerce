@@ -24,6 +24,11 @@ orob2b.pricing:
         contain_schedule.label: Contain Schedules
         owner.label: 'Owner'
         organization.label: 'Organization'
+    price_attribute:
+        entity_label: Price Attibute
+        entity_plural_label: Price Attibutes
+        entity_description: Represents Price Attibutes information
+        currencies.label: Currencies
 
         form:
             pricelist_required: Please select a price list first...
@@ -119,6 +124,7 @@ orob2b.pricing:
     controller:
         price_list.saved.message: Price List has been saved
         product_price.saved.message: Product Price has been saved
+        price_attribute.saved.message: Product Attribute has been saved
 
     form:
         choose_price_list: Choose a Price List...

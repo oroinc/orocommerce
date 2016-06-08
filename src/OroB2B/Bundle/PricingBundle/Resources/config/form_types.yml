@@ -9,6 +9,13 @@ services:
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list }
 
+    orob2b_pricing.form.type.price_attribute:
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceAttributeType'
+        calls:
+            - [setDataClass, ['%orob2b_pricing.entity.price_attribute.class%']]
+        tags:
+            - { name: form.type, alias: orob2b_pricing_price_attribute }
+
     orob2b_pricing.form.type.price_list_select:
         class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType'
         tags:

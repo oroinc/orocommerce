@@ -3,6 +3,11 @@ orob2b_pricing:
     type:         annotation
     prefix:       /pricelist
 
+orob2b_price_attribute:
+    resource:     "@OroB2BPricingBundle/Controller/PriceAttributeController.php"
+    type:         annotation
+    prefix:       /priceattribute
+
 orob2b_pricing_ajax:
     resource:     "@OroB2BPricingBundle/Controller/AjaxPriceListController.php"
     type:         annotation
