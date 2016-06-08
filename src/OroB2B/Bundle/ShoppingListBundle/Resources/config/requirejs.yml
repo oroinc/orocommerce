@@ -9,3 +9,4 @@ config:
         'oro/shopping-list-create-widget': 'bundles/orob2bshoppinglist/js/app/widget/shopping-list-create-widget.js'
         'orob2bshoppinglist/js/shopping-list-item-errors-handler': 'bundles/orob2bshoppinglist/js/shopping-list-item-errors-handler.js'
         'orob2bshoppinglist/js/app/components/shoppinglist-view-component': 'bundles/orob2bshoppinglist/js/app/components/shoppinglist-view-component.js'
+        'orob2bshoppinglist/js/app/views/shoppinglist-sidebar-view': 'bundles/orob2bshoppinglist/js/app/views/shoppinglist-sidebar-view.js'
