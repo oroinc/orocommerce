@@ -22,9 +22,8 @@ class ProductAttributeFormExtensionTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->productAttributeFormExtension = new ProductAttributeFormExtension();
+        parent::setUp();
     }
 
     public function testGetExtendedType()
