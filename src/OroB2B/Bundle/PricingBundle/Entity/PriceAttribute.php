@@ -24,7 +24,7 @@ class PriceAttribute extends BasePriceList
     protected $prices;
 
     /**
-     * @var PriceListCurrency[]|Collection
+     * @var PriceAttributeCurrency[]|Collection
      *
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributeCurrency",

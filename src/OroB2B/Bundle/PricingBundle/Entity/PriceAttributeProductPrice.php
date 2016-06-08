@@ -19,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
 class PriceAttributeProductPrice extends BaseProductPrice
 {
     /**
-     * @var PriceList
+     * @var PriceAttribute
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttribute", inversedBy="prices")
      * @ORM\JoinColumn(name="price_attribute_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
