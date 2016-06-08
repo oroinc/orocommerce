@@ -399,7 +399,7 @@ class ImportExportTest extends WebTestCase
         $this->assertEquals(3, $product->getUnitPrecisions()->first()->getPrecision());
 
         $this->assertCount(2, $product->getNames());
-        $this->assertEquals('parent_locale', $product->getNames()->first()->getFallback());
+        $this->assertEquals('parent_localization', $product->getNames()->first()->getFallback());
         $this->assertEquals('Name', $product->getNames()->first()->getString());
         $this->assertEquals('system', $product->getNames()->last()->getFallback());
         $this->assertEquals('En Name', $product->getNames()->last()->getString());

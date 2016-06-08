@@ -7,10 +7,10 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -24,9 +24,9 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
      * @var array
      */
     protected $webSites = [
-        ['name' => self::WEBSITE1, 'url' => 'http://www.us.com', 'locales' => ['en_US']],
-        ['name' => self::WEBSITE2, 'url' => 'http://www.canada.com', 'locales' => ['en_CA']],
-        ['name' => self::WEBSITE3, 'url' => 'http://www.canada-new.com', 'locales' => ['en_CA']],
+        ['name' => self::WEBSITE1, 'url' => 'http://www.us.com', 'localizations' => ['en_US']],
+        ['name' => self::WEBSITE2, 'url' => 'http://www.canada.com', 'localizations' => ['en_CA']],
+        ['name' => self::WEBSITE3, 'url' => 'http://www.canada-new.com', 'localizations' => ['en_CA']],
     ];
 
     /**
@@ -34,7 +34,7 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
      */
     public function getDependencies()
     {
-        return [__NAMESPACE__ . '\LoadLocaleData'];
+        return ['Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData'];
     }
 
     /**
@@ -53,16 +53,16 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
         foreach ($this->webSites as $webSite) {
             $site = new Website();
 
-            $siteLocales = [];
-            foreach ($webSite['locales'] as $localeCode) {
-                $siteLocales[] = $this->getLocaleByCode($manager, $localeCode);
+            $siteLocalizations = [];
+            foreach ($webSite['localizations'] as $localizationCode) {
+                $siteLocalizations[] = $this->getLocalization($localizationCode);
             }
 
             $site->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->setName($webSite['name'])
                 ->setUrl($webSite['url'])
-                ->resetLocales($siteLocales);
+                ->resetLocalizations($siteLocalizations);
 
             $this->setReference($site->getName(), $site);
 
@@ -76,16 +76,10 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
     /**
      * @param EntityManager $manager
      * @param string $code
-     * @return Locale
+     * @return Localization
      */
-    protected function getLocaleByCode(EntityManager $manager, $code)
+    protected function getLocalization($code)
     {
-        $locale = $manager->getRepository('OroB2BWebsiteBundle:Locale')->findOneBy(['code' => $code]);
-
-        if (!$locale) {
-            throw new \LogicException(sprintf('There is no locale with code "%s" .', $code));
-        }
-
-        return $locale;
+        return $this->getReference($code);
     }
 }

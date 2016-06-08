@@ -4,11 +4,11 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional;
 
 use Symfony\Component\DomCrawler\Form;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -59,7 +59,7 @@ class ProductWithPricesTest extends WebTestCase
 
         $this->client->followRedirects(true);
 
-        $locales = $this->getLocales();
+        $localizations = $this->getLocalizations();
 
         $formData = [
             '_token' => $form['orob2b_product[_token]']->getValue(),
@@ -92,8 +92,8 @@ class ProductWithPricesTest extends WebTestCase
         ];
 
         $formData['names']['values']['default'] = self::DEFAULT_NAME;
-        foreach ($locales as $locale) {
-            $formData['names']['values']['locales'][$locale->getId()]['fallback'] = FallbackType::SYSTEM;
+        foreach ($localizations as $localization) {
+            $formData['names']['values']['localizations'][$localization->getId()]['fallback'] = FallbackType::SYSTEM;
         }
 
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
@@ -222,12 +222,12 @@ class ProductWithPricesTest extends WebTestCase
     }
 
     /**
-     * @return Locale[]
+     * @return Localization[]
      */
-    protected function getLocales()
+    protected function getLocalizations()
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BWebsiteBundle:Locale')
-            ->getRepository('OroB2BWebsiteBundle:Locale')
+        return $this->getContainer()->get('doctrine')->getManagerForClass('OroLocaleBundle:Localization')
+            ->getRepository('OroLocaleBundle:Localization')
             ->findAll();
     }
 

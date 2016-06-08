@@ -4,13 +4,14 @@ namespace OroB2B\Bundle\ProductBundle\ImportExport\TemplateFixture;
 
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
-
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
 class ProductFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
@@ -46,14 +47,14 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
     {
         $inventoryStatus = new StubEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'in stock');
 
-        $locale = new Locale();
-        $locale->setCode('en');
+        $localization = new Localization();
+        $localization->setName('English');
 
         $name = new LocalizedFallbackValue();
         $name->setString('Product Name');
 
         $localizedName = new LocalizedFallbackValue();
-        $localizedName->setLocale($locale)
+        $localizedName->setLocalization($localization)
             ->setString('US Product Name')
             ->setFallback('system');
 
@@ -61,7 +62,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
         $description->setText('Product Description');
 
         $localizedDescription = new LocalizedFallbackValue();
-        $localizedDescription->setLocale($locale)
+        $localizedDescription->setLocalization($localization)
             ->setText('US Product Description')
             ->setFallback('system');
 
@@ -69,7 +70,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
         $shortDescription->setText('Product Short Description');
 
         $localizedShortDescription = new LocalizedFallbackValue();
-        $localizedShortDescription->setLocale($locale)
+        $localizedShortDescription->setLocalization($localization)
             ->setText('US Product Short Description')
             ->setFallback('system');
 

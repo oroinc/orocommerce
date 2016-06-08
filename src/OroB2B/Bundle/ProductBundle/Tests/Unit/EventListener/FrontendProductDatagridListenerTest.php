@@ -130,7 +130,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                         'join' => 'product.shortDescriptions',
                                         'alias' => 'productShortDescriptions',
                                         'conditionType' => 'WITH',
-                                        'condition' => 'productShortDescriptions.locale IS NULL'
+                                        'condition' => 'productShortDescriptions.localization IS NULL'
                                     ]
                                 ]
                             ]

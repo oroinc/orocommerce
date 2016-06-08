@@ -7,13 +7,13 @@ product1:
         precision: 0
     names:
         - { reference: product.1.names.default, string: product.1.names.default }
-        - { reference: product.1.names.en_US, string: product.1.names.en_US, fallback: system, locale: en_US }
+        - { reference: product.1.names.en_US, string: product.1.names.en_US, fallback: system, localization: en_US }
     descriptions:
         - { reference: product.1.descriptions.default, string: product.1.descriptions.default }
-        - { reference: product.1.descriptions.en_US, string: product.1.descriptions.en_US, fallback: system, locale: en_US }
+        - { reference: product.1.descriptions.en_US, string: product.1.descriptions.en_US, fallback: system, localization: en_US }
     shortDescriptions:
         - { reference: product.1.shortDescriptions.default, string: product.1.shortDescriptions.default }
-        - { reference: product.1.shortDescriptions.en_US, string: product.1.shortDescriptions.en_US, fallback: system, locale: en_US }
+        - { reference: product.1.shortDescriptions.en_US, string: product.1.shortDescriptions.en_US, fallback: system, localization: en_US }
 product2:
     productCode: product.2
     inventoryStatus: in_stock
