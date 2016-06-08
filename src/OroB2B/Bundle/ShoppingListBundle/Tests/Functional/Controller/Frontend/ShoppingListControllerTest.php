@@ -61,9 +61,13 @@ class ShoppingListControllerTest extends WebTestCase
      * @dataProvider testViewSelectedShoppingListDataProvider
      * @param string $shoppingList
      * @param string $expectedLineItemPrice
+     * @param boolean $expectedCreateOrderButtonVisible
      */
-    public function testViewSelectedShoppingListWithLineItemPrice($shoppingList, $expectedLineItemPrice)
-    {
+    public function testViewSelectedShoppingListWithLineItemPrice(
+        $shoppingList,
+        $expectedLineItemPrice,
+        $expectedCreateOrderButtonVisible
+    ) {
         // assert selected shopping list
         /** @var ShoppingList $shoppingList1 */
         $shoppingList1 = $this->getReference($shoppingList);
@@ -75,7 +79,13 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertContains($shoppingList1->getLabel(), $crawler->html());
         // operations only for ShoppingList with LineItems
         $this->assertContains('Request Quote', $crawler->html());
-        $this->assertContains('Create Order', $crawler->html());
+
+        if ($expectedCreateOrderButtonVisible) {
+            $this->assertContains('Create Order', $crawler->html());
+        } else {
+            $this->assertNotContains('Create Order', $crawler->html());
+        }
+
         $this->assertLineItemPriceEquals($expectedLineItemPrice, $crawler);
     }
 
@@ -87,21 +97,28 @@ class ShoppingListControllerTest extends WebTestCase
         return [
             'price defined' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                'expectedLineItemPrice' => '$13.10'
+                'expectedLineItemPrice' => '$13.10',
+                'expectedCreateOrderButtonVisible' => true
             ],
             'no price for selected quantity' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_3,
-                'expectedLineItemPrice' => 'N/A'
+                'expectedLineItemPrice' => 'N/A',
+                'expectedCreateOrderButtonVisible' => false
             ],
             'zero price' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
-                'expectedLineItemPrice' => '$0.00'
+                'expectedLineItemPrice' => '$0.00',
+                'expectedCreateOrderButtonVisible' => true
             ],
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
                 'expectedLineItemPrice' => [
                     'N/A',
                     '$0.00',
+                ],
+                'expectedCreateOrderButtonVisible' => [
+                    false,
+                    true
                 ]
             ],
         ];
