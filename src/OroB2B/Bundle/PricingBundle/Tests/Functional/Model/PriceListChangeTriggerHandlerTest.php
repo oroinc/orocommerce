@@ -15,6 +15,7 @@ use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
 use OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\Model\Stub\CombinedPriceListQueueListenerStub;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -151,14 +152,21 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
 
     public function testHandleAccountGroupRemove()
     {
-        $this->markTestSkipped('Must be fixed in scope of BB-3398');
+        /** @var PriceListChangeTriggerRepository $triggerRepository */
+        $triggerRepository = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger')
+            ->getRepository('OroB2BPricingBundle:PriceListChangeTrigger');
+        $existingTriggers = $triggerRepository->findAll();
 
         $this->handler->handleAccountGroupRemove($this->account->getGroup());
-        /** @var PriceListChangeTrigger[] $triggers */
-        $triggers = $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:PriceListChangeTrigger')
-            ->findAll();
-        $this->assertCount(1, $triggers);
-        $this->assertNotNull(current($triggers)->getAccount());
+
+        // get list of added triggers
+        $addedTriggers = array_filter($triggerRepository->findAll(), function ($trigger) use ($existingTriggers) {
+            return !in_array($trigger, $existingTriggers);
+        });
+
+        $this->assertCount(1, $addedTriggers);
+        $this->assertNotNull(current($addedTriggers)->getAccount());
         $this->assertRealTimeCPLQueueListenerDispatched();
     }
 
