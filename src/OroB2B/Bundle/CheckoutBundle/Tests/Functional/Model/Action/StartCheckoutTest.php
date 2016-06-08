@@ -138,7 +138,7 @@ class StartCheckoutTest extends WebTestCase
                 StartCheckout::SOURCE_ENTITY_KEY => $shoppingList,
                 StartCheckout::CHECKOUT_DATA_KEY => [
                     'poNumber' => 'PO#123',
-                    'currency' => 'EUR'
+                    'currency' => 'USD'
                 ],
                 StartCheckout::SETTINGS_KEY => [
                     'allow_manual_source_remove' => true,

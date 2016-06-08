@@ -55,7 +55,7 @@ class PayPalPaymentsPro extends PayflowGateway
     /**
      * @return bool
      */
-    protected function getRequiredAmountEnabled()
+    protected function isAuthorizationForRequiredAmountEnabled()
     {
         return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
     }
@@ -75,5 +75,13 @@ class PayPalPaymentsPro extends PayflowGateway
     protected function isZeroAmountAuthorizationEnabled()
     {
         return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ZERO_AMOUNT_AUTHORIZATION_KEY);
+    }
+
+    /**
+     * {@internal}
+     */
+    protected function getAllowedCurrencies()
+    {
+        return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES);
     }
 }

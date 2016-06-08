@@ -38,7 +38,7 @@ class MenuItemRepository extends NestedTreeRepository
         return $subQueryBuilder->select('menu.id')
             ->join('menu.titles', 't')
             ->where($subQueryBuilder->expr()->eq('t.string', ':title'))
-            ->andWhere($subQueryBuilder->expr()->isNull('t.locale'))
+            ->andWhere($subQueryBuilder->expr()->isNull('t.localization'))
             ->setParameter('title', $title);
     }
 
@@ -75,7 +75,7 @@ class MenuItemRepository extends NestedTreeRepository
         $qb = $this->createQueryBuilder('m');
 
         $qb->select('m')
-            ->innerJoin('m.titles', 'mt', Join::WITH, $qb->expr()->isNull('mt.locale'))
+            ->innerJoin('m.titles', 'mt', Join::WITH, $qb->expr()->isNull('mt.localization'))
             ->where($qb->expr()->isNull('m.parent'));
 
         return $qb;

@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class MenuItemTest extends \PHPUnit_Framework_TestCase
 {
@@ -121,7 +121,7 @@ class MenuItemTest extends \PHPUnit_Framework_TestCase
         $localized = (new LocalizedFallbackValue())->setString('some string');
 
         if (!$default) {
-            $localized->setLocale(new Locale());
+            $localized->setLocalization(new Localization());
         }
 
         return $localized;

@@ -1,8 +1,0 @@
-services:
-    public_service:
-        class: 'stdClass'
-        public: true
-
-    private_service:
-        class: 'stdClass'
-        public: false

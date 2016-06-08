@@ -12,8 +12,8 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator;
 use OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;

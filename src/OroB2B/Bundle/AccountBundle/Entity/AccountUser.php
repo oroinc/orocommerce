@@ -13,6 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Model\FullNameInterface;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 use Oro\Bundle\UserBundle\Entity\User;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity
@@ -307,10 +308,23 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      */
     protected $updatedAt;
 
+    /**
+     * @var ArrayCollection|AccountUserSettings[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings",
+     *      mappedBy="accountUser",
+     *      cascade={"all"},
+     *      orphanRemoval=true
+     * )
+     */
+    protected $settings;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
         $this->salesRepresentatives = new ArrayCollection();
+        $this->settings = new ArrayCollection();
         parent::__construct();
     }
 
@@ -722,6 +736,14 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
+     * @return bool
+     */
+    public function hasSalesRepresentatives()
+    {
+        return $this->salesRepresentatives->count() > 0;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getCreatedAt()
@@ -755,6 +777,38 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     public function setUpdatedAt(\DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @param Website $website
+     * @return null|AccountUserSettings
+     */
+    public function getWebsiteSettings(Website $website)
+    {
+        foreach ($this->settings as $setting) {
+            if ($setting->getWebsite() === $website) {
+                return $setting;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param AccountUserSettings $websiteSettings
+     * @return $this
+     */
+    public function setWebsiteSettings(AccountUserSettings $websiteSettings)
+    {
+        $existing = $this->getWebsiteSettings($websiteSettings->getWebsite());
+        if ($existing) {
+            $this->settings->removeElement($existing);
+        }
+
+        $websiteSettings->setAccountUser($this);
+        $this->settings->add($websiteSettings);
 
         return $this;
     }

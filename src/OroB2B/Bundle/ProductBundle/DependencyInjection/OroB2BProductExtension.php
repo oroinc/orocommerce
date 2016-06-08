@@ -5,8 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\DependencyInjection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-
-use OroB2B\Bundle\FrontendBundle\DependencyInjection\Loader\PrivateYamlFileLoader;
+use Symfony\Component\DependencyInjection\Loader;
 
 class OroB2BProductExtension extends Extension
 {
@@ -18,7 +17,7 @@ class OroB2BProductExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new PrivateYamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('form_types.yml');
         $loader->load('importexport.yml');

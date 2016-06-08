@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  *          })
  *      }
  * )
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListWebsiteFallbackRepository")
  */
 class PriceListWebsiteFallback extends PriceListFallback
 {

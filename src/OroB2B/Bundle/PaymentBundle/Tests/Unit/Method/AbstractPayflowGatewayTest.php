@@ -291,11 +291,15 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($sourceTransaction->isActive());
     }
 
-    public function testCaptureDoChargeUsingValidationIfRequestAndResponseEmptyAfterDataReuse()
+    public function testCaptureDoChargeIfSourceAuthorizationIsValidationTransactionClone()
     {
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction
-            ->setAction(PaymentMethodInterface::VALIDATE)
+            ->setAction(PaymentMethodInterface::AUTHORIZE)
+            ->setSourcePaymentTransaction(
+                (new PaymentTransaction())->setAction(PaymentMethodInterface::VALIDATE)->setReference('VALIDATE')
+            )
+            ->setReference('VALIDATE')
             ->setSuccessful(true)
             ->setActive(true);
 
@@ -314,7 +318,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($transaction->isSuccessful());
         $this->assertFalse($transaction->isActive());
         $this->assertTrue($sourceTransaction->isSuccessful());
-        $this->assertTrue($sourceTransaction->isActive());
+        $this->assertFalse($sourceTransaction->isActive());
     }
 
     public function testCaptureWithoutSourceTransaction()
@@ -575,16 +579,19 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicableWithoutContext()
     {
-        $this->assertFalse($this->method->isApplicable([]));
+        $this->assertFalse($this->method->isApplicable(['currency' => ['USD']]));
     }
 
     public function testIsApplicableWithAllCountries()
     {
         $this->configureConfig(
-            [$this->getConfigPrefix() . 'allowed_countries' => Configuration::ALLOWED_COUNTRIES_ALL]
+            [
+                $this->getConfigPrefix() . 'allowed_countries' => Configuration::ALLOWED_COUNTRIES_ALL,
+                $this->getConfigPrefix() . 'allowed_currencies' => ['USD']
+            ]
         );
 
-        $this->assertTrue($this->method->isApplicable([]));
+        $this->assertTrue($this->method->isApplicable(['currency' => 'USD']));
     }
 
     public function testIsApplicableWithSelectedCountriesNotMatch()
@@ -605,9 +612,10 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
             [
                 $this->getConfigPrefix() . 'allowed_countries' => Configuration::ALLOWED_COUNTRIES_SELECTED,
                 $this->getConfigPrefix() . 'selected_countries' => ['US'],
+                $this->getConfigPrefix() . 'selected_currencies' => ['USD'],
             ]
         );
 
-        $this->assertTrue($this->method->isApplicable(['country' => 'US']));
+        $this->assertTrue($this->method->isApplicable(['country' => 'US', 'currency' => 'USD']));
     }
 }

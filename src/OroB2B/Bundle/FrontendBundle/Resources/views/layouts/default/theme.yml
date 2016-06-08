@@ -12,6 +12,6 @@ data:
                 - 'bundles/orob2bfrontend/default/css/slick/slick.css'
                 - 'bundles/orob2bfrontend/default/css/slick/slick-theme.css'
                 - 'bundles/orob2bfrontend/default/css/bootstrap-datepicker.min.css'
-                - 'bundles/orob2bfrontend/default/less/styles.less'
+                - 'bundles/orob2bfrontend/default/scss/styles.scss'
             filters: ['cssrewrite', 'cssmin']
             output: 'css/layout/default/styles.css'

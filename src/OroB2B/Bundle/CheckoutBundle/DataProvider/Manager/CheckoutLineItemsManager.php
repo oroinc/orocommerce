@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
 class CheckoutLineItemsManager
@@ -23,11 +24,20 @@ class CheckoutLineItemsManager
     protected $checkoutLineItemsConverter;
 
     /**
-     * @param CheckoutLineItemsConverter $checkoutLineItemsConverter
+     * @var UserCurrencyManager
      */
-    public function __construct(CheckoutLineItemsConverter $checkoutLineItemsConverter)
-    {
+    protected $userCurrencyManager;
+
+    /**
+     * @param CheckoutLineItemsConverter $checkoutLineItemsConverter
+     * @param UserCurrencyManager $UserCurrencyManager
+     */
+    public function __construct(
+        CheckoutLineItemsConverter $checkoutLineItemsConverter,
+        UserCurrencyManager $UserCurrencyManager
+    ) {
         $this->checkoutLineItemsConverter = $checkoutLineItemsConverter;
+        $this->userCurrencyManager = $UserCurrencyManager;
     }
 
     /**
@@ -46,13 +56,16 @@ class CheckoutLineItemsManager
     public function getData(CheckoutInterface $checkout, $disablePriceFilter = false)
     {
         $entity = $checkout->getSourceEntity();
-
+        $currency = $this->userCurrencyManager->getUserCurrency();
         foreach ($this->providers as $provider) {
             if ($provider->isEntitySupported($entity)) {
                 $lineItems = $this->checkoutLineItemsConverter->convert($provider->getData($entity));
                 if (!$disablePriceFilter) {
-                    $lineItems = $lineItems->filter(function (OrderLineItem $lineItem) {
-                        return $lineItem->getPrice();
+                    $lineItems = $lineItems->filter(function (OrderLineItem $lineItem) use ($currency) {
+                        if ($lineItem->getPrice() && $lineItem->getPrice()->getCurrency() === $currency) {
+                            return $lineItem->getPrice();
+                        }
+                        return null;
                     });
                 }
                 return $lineItems;

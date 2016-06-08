@@ -22,11 +22,13 @@ use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'subtotal';
     const NAME = 'orob2b.pricing.subtotals.not_priced_subtotal';
+    const LABEL = 'orob2b.pricing.subtotals.not_priced_subtotal.label';
 
     /** @var TranslatorInterface */
     protected $translator;
@@ -54,15 +56,19 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
      * @param RoundingServiceInterface $rounding
      * @param ProductPriceProvider $productPriceProvider
      * @param DoctrineHelper $doctrineHelper
-     * @param PriceListTreeHandler $priceListTreeHandler,
+     * @param PriceListTreeHandler $priceListTreeHandler ,
+     * @param UserCurrencyManager $currencyManager
      */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
         ProductPriceProvider $productPriceProvider,
         DoctrineHelper $doctrineHelper,
-        PriceListTreeHandler $priceListTreeHandler
+        PriceListTreeHandler $priceListTreeHandler,
+        UserCurrencyManager $currencyManager
     ) {
+        parent::__construct($currencyManager);
+
         $this->translator = $translator;
         $this->rounding = $rounding;
         $this->productPriceProvider = $productPriceProvider;
@@ -87,7 +93,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     }
 
     /**
-     * Get line items subtotal
+     * Get line items subtotal for current user currency
      *
      * @param LineItemsNotPricedAwareInterface|AccountOwnerAwareInterface|WebsiteAwareInterface $entity
      *
@@ -95,24 +101,29 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
      */
     public function getSubtotal($entity)
     {
+        return $this->getSubtotalByCurrency($entity, $this->getBaseCurrency($entity));
+    }
+
+    /**
+     * @param LineItemsNotPricedAwareInterface|AccountOwnerAwareInterface|WebsiteAwareInterface $entity
+     * @param string $currency
+     * @return Subtotal
+     */
+    public function getSubtotalByCurrency($entity, $currency)
+    {
         if (!$entity instanceof LineItemsNotPricedAwareInterface) {
             return null;
         }
 
         $subtotalAmount = 0.0;
-        $subtotal = new Subtotal();
-        $subtotal->setLabel($this->translator->trans(self::NAME . '.label'));
-        $subtotal->setVisible(false);
-        $subtotal->setType(self::TYPE);
-
-        $baseCurrency = $this->getBaseCurrency($entity);
+        $subtotal = $this->createSubtotal();
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof ProductHolderInterface
                 && $lineItem instanceof ProductUnitHolderInterface
                 && $lineItem instanceof QuantityAwareInterface
             ) {
                 $productsPriceCriteria =
-                    $this->prepareProductsPriceCriteria($lineItem, $baseCurrency);
+                    $this->prepareProductsPriceCriteria($lineItem, $currency);
                 $priceList = $this->priceListTreeHandler->getPriceList($entity->getAccount(), $entity->getWebsite());
                 $price = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList);
                 if (reset($price)) {
@@ -124,7 +135,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         }
 
         $subtotal->setAmount($this->rounding->round($subtotalAmount));
-        $subtotal->setCurrency($baseCurrency);
+        $subtotal->setCurrency($currency);
 
         return $subtotal;
     }
@@ -186,5 +197,18 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     protected function getManagerForClass($class)
     {
         return $this->doctrineHelper->getEntityManagerForClass($class);
+    }
+
+    /**
+     * @return Subtotal
+     */
+    protected function createSubtotal()
+    {
+        $subtotal = new Subtotal();
+        $subtotal->setLabel($this->translator->trans(self::LABEL));
+        $subtotal->setVisible(false);
+        $subtotal->setType(self::TYPE);
+
+        return $subtotal;
     }
 }

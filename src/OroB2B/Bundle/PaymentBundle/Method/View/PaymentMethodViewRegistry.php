@@ -61,4 +61,19 @@ class PaymentMethodViewRegistry
 
         return $orderedPaymentMethodViews;
     }
+
+    /**
+     * @param string $paymentMethod
+     * @return PaymentMethodViewInterface
+     */
+    public function getPaymentMethodView($paymentMethod)
+    {
+        if (!isset($this->paymentMethodViews[$paymentMethod])) {
+            throw new \InvalidArgumentException(
+                sprintf('There is no payment method view for "%s"', $paymentMethod)
+            );
+        }
+
+        return $this->paymentMethodViews[$paymentMethod];
+    }
 }
