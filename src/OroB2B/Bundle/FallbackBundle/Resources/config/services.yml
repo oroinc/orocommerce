@@ -1,6 +1,3 @@
-parameters:
-    orob2b_fallback.entity_generator.extension.class: OroB2B\Bundle\FallbackBundle\Tools\GeneratorExtensions\DefaultFallbackGeneratorExtension
-
 services:
     orob2b_fallback.form.type.website_collection:
         class: 'OroB2B\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType'
@@ -15,8 +12,3 @@ services:
         class: 'OroB2B\Bundle\FallbackBundle\Form\Type\WebsitePropertyType'
         tags:
             - { name: form.type, alias: orob2b_fallback_website_property }
-
-    orob2b_fallback.entity_generator.extension:
-        class: %orob2b_fallback.entity_generator.extension.class%
-        tags:
-            - { name: oro_entity_extend.entity_generator_extension, priority: 255 }

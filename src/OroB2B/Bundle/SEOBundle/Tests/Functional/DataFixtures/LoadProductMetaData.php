@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 class LoadProductMetaData extends AbstractFixture implements DependentFixtureInterface

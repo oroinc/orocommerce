@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\SEOBundle\Form\Extension;
 
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
-use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;

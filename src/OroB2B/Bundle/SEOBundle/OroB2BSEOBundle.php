@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\SEOBundle;
 
-use OroB2B\Bundle\FallbackBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

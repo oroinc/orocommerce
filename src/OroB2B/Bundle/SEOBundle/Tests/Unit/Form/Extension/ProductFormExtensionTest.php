@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\SEOBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\SEOBundle\Form\Extension\ProductFormExtension;
 use OroB2B\Bundle\SEOBundle\Tests\Unit\Entity\Stub\ProductStub;
 

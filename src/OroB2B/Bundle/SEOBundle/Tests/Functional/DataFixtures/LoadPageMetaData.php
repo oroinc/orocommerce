@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 class LoadPageMetaData extends AbstractFixture implements DependentFixtureInterface
 {
