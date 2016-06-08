@@ -13,7 +13,7 @@
 
 {% block _top_nav_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " col-md-7 col-sm-7 text-right"
+        class: attr.class|default('') ~ " col-md-7 col-sm-7"
     }) %}
     <div {{ block('block_attributes') }}>
         <nav class="topbar__navigation">
@@ -24,7 +24,7 @@
 
 {% block _top_nav_controls_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " col-md-5 col-sm-5 text-left"
+        class: attr.class|default('') ~ " col-md-5 col-sm-5"
     }) %}
     <div {{ block('block_attributes') }}>
         <nav class="topbar__navigation">
