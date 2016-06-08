@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\ProductTypeStub;
