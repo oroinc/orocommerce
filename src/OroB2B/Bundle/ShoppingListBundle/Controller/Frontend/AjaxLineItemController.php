@@ -63,8 +63,7 @@ class AjaxLineItemController extends Controller
             $form,
             $request,
             $this->getDoctrine(),
-            $shoppingListManager,
-            $this->get('orob2b_product.service.quantity_rounding')
+            $shoppingListManager
         );
         $isFormHandled = $handler->process($lineItem);
 
@@ -116,8 +115,6 @@ class AjaxLineItemController extends Controller
             $count = $shoppingListManager->removeProduct($shoppingList, $product);
 
             if ($count) {
-                $shoppingListManager->recalculateSubtotals($shoppingList);
-
                 $result = $this->getSuccessResponse(
                     $shoppingList,
                     $product,

@@ -91,9 +91,21 @@ orob2b:
                 notifications.title: 'Notifications'
             fields:
                 requeststatus_default.title: 'Default RFQ Status'
-                default_user_for_notifications.title: 'Default User For Notifications'
                 backend_product_visibility.title: 'Can Be Added to RFQs'
                 frontend_product_visibility.title: 'Can Be Added to RFQs'
+                notification:
+                    sales_reps:
+                        label: 'Notify assigned sales representatives of the account'
+                        always_notify_sale_reps_of_account: 'Always'
+                        if_no_sales_reps_assigned: 'If user has no sales reps assigned'
+                    account_user_record:
+                        label: 'Notify the owner of the account user record'
+                        always_notify_owner: 'Always'
+                        if_no_sales_reps_assigned: 'If user has no sales reps assigned'
+                    account:
+                        label: 'Notify the owner of the account'
+                        always_notify_owner: 'Always'
+                        if_no_sales_reps_assigned: 'If account has no sales reps assigned'
 
         message:
             request_status_saved: 'Request Status saved'
@@ -106,6 +118,8 @@ orob2b:
 
         datagrid:
             action_restore: 'Restore'
+            account.label: 'Requests for Quote'
+            account_user.label: 'Requests for Quote'
 
         controller:
             request:

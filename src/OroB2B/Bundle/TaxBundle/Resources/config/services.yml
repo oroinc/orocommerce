@@ -455,7 +455,10 @@ services:
             - { name: layout.data_provider, alias: tax }
 
     orob2b_tax.layout.type.tax:
-        class: 'OroB2B\Bundle\TaxBundle\Layout\Block\Type\TaxType'
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptions, [{result: {required: true}}]]
+            - [setName, ['tax']]
         tags:
              - { name: layout.block_type, alias: tax }
 

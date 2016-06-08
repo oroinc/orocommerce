@@ -16,6 +16,7 @@ oro_system_configuration:
                 tooltip: oro.currency.form.tooltip.allowed_currencies
                 required: true
                 multiple: true
+                restrict: true
                 constraints:
                     - NotBlank: ~
 
