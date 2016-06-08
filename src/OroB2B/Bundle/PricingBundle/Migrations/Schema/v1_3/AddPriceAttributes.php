@@ -30,7 +30,7 @@ class AddPriceAttributes implements Migration
      */
     protected function createOroB2BPriceAttributeTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_price_attribute');
+        $table = $schema->createTable('orob2b_price_attribute_pl');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
@@ -78,7 +78,7 @@ class AddPriceAttributes implements Migration
     {
         $table = $schema->getTable('orob2b_product_attr_currency');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_attribute'),
+            $schema->getTable('orob2b_price_attribute_pl'),
             ['price_attribute_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -92,7 +92,7 @@ class AddPriceAttributes implements Migration
     {
         $table = $schema->getTable('orob2b_price_attribute_price');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_attribute'),
+            $schema->getTable('orob2b_price_attribute_pl'),
             ['price_attribute_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
