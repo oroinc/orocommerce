@@ -908,6 +908,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function setPrimaryUnitPrecision($primaryUnitPrecision)
     {
+        $primaryUnitPrecision->setConversionRate(1.0)->setSell(true);
         $this->primaryUnitPrecision = $primaryUnitPrecision;
         if ($primaryUnitPrecision) {
             $this->addUnitPrecision($primaryUnitPrecision);

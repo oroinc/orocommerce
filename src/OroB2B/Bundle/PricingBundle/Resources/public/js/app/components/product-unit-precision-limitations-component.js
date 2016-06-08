@@ -7,6 +7,7 @@ define(function (require) {
         $ = require('jquery'),
         _ = require('underscore'),
         BaseComponent = require('oroui/js/app/components/base/component'),
+        __ = require('orotranslation/js/translator'),
         mediator = require('oroui/js/mediator');
 
     ProductUnitPrecisionLimitationsComponent = BaseComponent.extend({
@@ -15,7 +16,8 @@ define(function (require) {
          */
         options: {
             selectSelector: "select[name^='orob2b_product[prices]'][name$='[unit]']",
-            unitsAttribute: 'units'
+            unitsAttribute: 'units',
+            unitRemovedSuffix: __('orob2b.product.productunit.removed.suffix')
         },
 
         /**
@@ -87,14 +89,19 @@ define(function (require) {
          */
         clearOptions: function (units, $select) {
             var updateRequired = false;
+            var self = this;
 
             _.each($select.find('option'), function (option) {
                 if (!option.value) {
                     return;
                 }
 
-                if (!units.hasOwnProperty(option.value) && option.selected != true) {
-                    option.remove();
+                if (!units.hasOwnProperty(option.value)) {
+                    if ( option.selected != true) {
+                        option.remove();
+                    } else if (option.text.indexOf(' - ') < 0) {
+                        $(option).text($(option).text() + ' - ' + self.options.unitRemovedSuffix);
+                    }
 
                     updateRequired = true;
                 }

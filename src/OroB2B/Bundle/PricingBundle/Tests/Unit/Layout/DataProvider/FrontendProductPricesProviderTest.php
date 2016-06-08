@@ -9,11 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-<<<<<<< HEAD
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-=======
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
->>>>>>> master
 
 class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -72,9 +68,9 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetData()
     {
+        $prices = [1 => 'test', 2 => 'test2'];
         $priceListId = 23;
         $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => $priceListId]);
-
         $productId = 24;
         $product =  $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Product')
                           ->disableOriginalConstructor()
