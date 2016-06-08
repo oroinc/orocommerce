@@ -1,7 +1,5 @@
 /* Topbar component */
 .topbar {
-  max-height: 26px;
-
   background: $base-topbar-background-color;
   font-size: 12px;
 
@@ -11,13 +9,13 @@
 
   &__navigation {
     ul {
-      @include list-normalize;
+      @include list-normalize();
 
       li {
-        float: left;
+        display: inline-block;
         margin-right: 40px;
 
-        line-height: 2.6;
+        line-height: 26px;
 
         &:last-child {
           margin-right: 0;
@@ -44,27 +42,22 @@
   }
 
   &__controls {
-    font-size: 0;
-    line-height: 2.6;
-
     .cart__promo__link {
-      margin: 0 30px 0 0;
-
       font-size: $base-font-size;
 
-      @media (max-width: 960px) {
-        font-size: 12px;
-      }
+      &:hover {
+        text-decoration: none;
 
-      @media (max-width: 880px) {
-        margin: 0;
+        cursor: default;
       }
 
       span {
         font-size: $base-font-size;
 
-        @media (max-width: 960px) {
-          font-size: 12px;
+        &:hover {
+          text-decoration: underline;
+
+          cursor: pointer;
         }
       }
 
@@ -72,6 +65,7 @@
         @media (max-width: 880px) {
           &:before {
             content: "\A";
+
             white-space: pre;
           }
         }
@@ -100,7 +94,7 @@
     }
 
     &__list {
-      @include list-normalize;
+      @include list-normalize();
 
       min-width: 130px;
       padding: 10px 15px;

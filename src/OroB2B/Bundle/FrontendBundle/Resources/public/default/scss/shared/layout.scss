@@ -79,15 +79,10 @@
 }
 
 .cart__promo__link {
-  color: $base-font-color !important;
+  color: $base-font-color;
 
   &:hover {
     color: $base-font-color;
-    text-decoration: none !important;
-
-    span {
-      text-decoration: underline;
-    }
   }
 
   span {
@@ -2163,59 +2158,6 @@
 
   @media (max-width: 767px) {
     padding: 4rem .5rem 0;
-  }
-}
-
-.footer-nav {
-
-  &.footer-nav_1-3 {
-    width: 33.3333%;
-    padding: 0 0 0 13%;
-    float: left;
-
-    @media (max-width: 767px) {
-      width: 100%;
-      padding: 0;
-    }
-  }
-
-  @media (max-width: 991px) {
-    &.footer-nav_follow {
-      padding-left: 13%;
-      margin-bottom: 5rem;
-    }
-  }
-
-  @media (max-width: 767px) {
-    &.footer-nav_follow {
-      padding-left: 0;
-      margin-bottom: 3rem;
-    }
-  }
-}
-
-.footer-nav__title {
-  font-size: 1.6rem;
-  line-height: 1.6rem;
-  text-transform: uppercase;
-  white-space: nowrap;
-  margin: 0 0 1.5rem;
-}
-
-.footer-nav__list {
-  @include list-normalize;
-  margin: 0 0 5rem;
-
-  li {
-    margin: 1.5rem 0 0;
-
-    a {
-      color: $base-font-color;
-    }
-  }
-
-  @media (max-width: 767px) {
-    margin: 0 0 4rem; 
   }
 }
 
