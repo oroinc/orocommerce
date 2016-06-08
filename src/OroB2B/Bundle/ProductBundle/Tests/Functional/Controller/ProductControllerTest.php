@@ -209,7 +209,6 @@ class ProductControllerTest extends WebTestCase
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_STATUS, $html);
-        $this->assertProductPrecision($id, self::FIRST_UNIT_CODE, self::FIRST_UNIT_PRECISION);
         $this->assertProductPrecision($id, self::SECOND_UNIT_CODE, self::SECOND_UNIT_PRECISION);
         $this->assertProductPrecision($id, self::THIRD_UNIT_CODE, self::THIRD_UNIT_PRECISION);
     }
