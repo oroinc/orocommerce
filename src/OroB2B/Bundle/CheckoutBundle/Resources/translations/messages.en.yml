@@ -30,7 +30,7 @@ orob2b:
         created_at.label: Started At
         updated_at.label: Last Updated
         shipping_cost.label: Shipping
-        pending_orders.label: Pending Orders
+        pending_orders.label: Open Orders
         ordered_by.label: Ordered By
         checkout_type.label: Checkout Type
 
@@ -59,7 +59,7 @@ orob2b:
             created_at.label: Started At
             updated_at.label: Last Updated
             shipping_cost.label: Shipping
-            pending_orders.label: Pending Orders
+            pending_orders.label: Open Orders
             ordered_by.label: Ordered By
             checkout_type.label: Checkout Type
 
