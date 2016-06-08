@@ -209,14 +209,6 @@ services:
         arguments:
             - '@doctrine'
 
-    orob2b_shopping_list.manager.shopping_list_total:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager'
-        arguments:
-            - '@doctrine'
-            - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
-            - '@orob2b_pricing.user_currency_manager'
-            - '@oro_config.global'
-
     orob2b_shopping_list.condition.products_have_at_least_one_price:
         class: 'OroB2B\Bundle\ShoppingListBundle\Condition\ProductsHaveAtLeastOnePrice'
         arguments:
