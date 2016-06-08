@@ -21,8 +21,8 @@ class CategoryFormExtension extends BaseMetaFormExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedEntitySuffix()
+    public function getMetaFieldLabelPrefix()
     {
-        return 'category';
+        return 'orob2b.catalog.category';
     }
 }

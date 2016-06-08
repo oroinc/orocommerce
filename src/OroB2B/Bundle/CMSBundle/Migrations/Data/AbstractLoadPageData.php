@@ -75,10 +75,6 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
             $page->setOrganization($organization);
             $page->setCurrentSlugUrl($row['slug']);
 
-            $page->addMetaTitles($this->getSeoMetaFieldData($manager, 'defaultMetaTitle'));
-            $page->addMetaDescriptions($this->getSeoMetaFieldData($manager, 'defaultMetaDescription'));
-            $page->addMetaKeywords($this->getSeoMetaFieldData($manager, 'defaultMetaKeywords'));
-
             if (array_key_exists('parent', $row) && array_key_exists($row['parent'], $this->pages)) {
                 /** @var Page $parent */
                 $parent = $this->pages[$row['parent']];
@@ -104,14 +100,5 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
     {
         $locator = $this->container->get('file_locator');
         return $locator->locate($path);
-    }
-
-    private function getSeoMetaFieldData(ObjectManager $manager, $seoFieldValue)
-    {
-        $seoField = new LocalizedFallbackValue();
-        $seoField->setString($seoFieldValue);
-        $manager->persist($seoField);
-
-        return $seoField;
     }
 }

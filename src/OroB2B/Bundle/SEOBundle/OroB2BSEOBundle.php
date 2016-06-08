@@ -15,16 +15,18 @@ class OroB2BSEOBundle extends Bundle
     {
         parent::build($container);
 
-        $options = [
-            'metaTitles', 'metaDescriptions', 'metaKeywords'
+        $fields = [
+            'metaTitle' => 'metaTitles',
+            'metaDescription' => 'metaDescriptions',
+            'metaKeywords' => 'metaKeywords'
         ];
 
         $classes = [
-            'OroB2B\Bundle\ProductBundle\Entity\Product',
-            'OroB2B\Bundle\CatalogBundle\Entity\Category',
-            'OroB2B\Bundle\CMSBundle\Entity\Page'
+            'OroB2B\Bundle\ProductBundle\Entity\Product' => $fields,
+            'OroB2B\Bundle\CatalogBundle\Entity\Category' => $fields,
+            'OroB2B\Bundle\CMSBundle\Entity\Page' => $fields
         ];
 
-        $container->addCompilerPass(new DefaultFallbackExtensionPass($options, $classes));
+        $container->addCompilerPass(new DefaultFallbackExtensionPass($classes));
     }
 }

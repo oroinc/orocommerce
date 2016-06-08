@@ -123,9 +123,9 @@ class ProductControllerTest extends WebTestCase
             'Category 2' => [
                 'category' => LoadCategoryData::SECOND_LEVEL1,
                 'metaTags' => [
-                    ['name' => 'title', 'content' => ''],
-                    ['name' => 'description', 'content' => ''],
-                    ['name' => 'keywords', 'content' => ''],
+                    ['name' => 'title', 'content' => 'defaultMetaTitle'],
+                    ['name' => 'description', 'content' => 'defaultMetaDescription'],
+                    ['name' => 'keywords', 'content' => 'defaultMetaKeywords'],
                 ],
             ],
         ];

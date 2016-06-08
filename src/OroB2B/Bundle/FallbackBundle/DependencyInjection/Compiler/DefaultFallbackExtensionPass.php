@@ -9,12 +9,13 @@ class DefaultFallbackExtensionPass implements CompilerPassInterface
 {
     const GENERATOR_EXTENSION_NAME = 'orob2b_fallback.entity_generator.extension';
 
-    protected $options;
+    /**
+     * @var array Array of classes and fields
+     */
     protected $classes;
 
-    public function __construct(array $options = [], array $classes = [])
+    public function __construct(array $classes = [])
     {
-        $this->options = $options;
         $this->classes = $classes;
     }
 
@@ -27,12 +28,12 @@ class DefaultFallbackExtensionPass implements CompilerPassInterface
     {
         $generator = $container->getDefinition(self::GENERATOR_EXTENSION_NAME);
 
-        if(!$this->classes || !$this->options) {
+        if(!$this->classes) {
             return;
         }
 
-        foreach ($this->classes as $class) {
-            $generator->addMethodCall('addMethodExtension', [$class, $this->options]);
+        foreach ($this->classes as $class => $fields) {
+            $generator->addMethodCall('addMethodExtension', [$class, $fields]);
         }
     }
 }

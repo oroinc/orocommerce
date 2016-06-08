@@ -63,7 +63,7 @@ abstract class BaseFormViewListener
 
         $template = $event->getEnvironment()->render('OroB2BSEOBundle:SEO:view.html.twig', [
             'entity' => $object,
-            'metaFieldLabelSuffix' => $this->getExtendedEntitySuffix()
+            'labelPrefix' => $this->getMetaFieldLabelPrefix()
         ]);
 
         $this->addSEOBlock($event->getScrollData(), $template);
@@ -97,5 +97,5 @@ abstract class BaseFormViewListener
     /**
      * @return string
      */
-    public abstract function getExtendedEntitySuffix();
+    abstract public function getMetaFieldLabelPrefix();
 }

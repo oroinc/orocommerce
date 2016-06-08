@@ -17,8 +17,8 @@ class CategoryFormViewListener extends BaseFormViewListener
     /**
      * @return string
      */
-    public function getExtendedEntitySuffix()
+    public function getMetaFieldLabelPrefix()
     {
-        return 'category';
+        return 'orob2b.catalog.category';
     }
 }

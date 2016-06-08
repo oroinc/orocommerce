@@ -21,8 +21,8 @@ class ProductFormExtension extends BaseMetaFormExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedEntitySuffix()
+    public function getMetaFieldLabelPrefix()
     {
-        return 'product';
+        return 'orob2b.product';
     }
 }

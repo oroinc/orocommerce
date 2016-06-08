@@ -1,5 +1,5 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-{{ UI.renderHtmlProperty(('orob2b.seo.meta-title.label.' ~ metaFieldLabelSuffix) | trans, entity.defaultMetaTitles) }}
-{{ UI.renderHtmlProperty(('orob2b.seo.meta-description.label.' ~ metaFieldLabelSuffix) | trans, entity.defaultMetaDescriptions) }}
-{{ UI.renderHtmlProperty(('orob2b.seo.meta-keywords.label.' ~ metaFieldLabelSuffix) | trans, entity.defaultMetaKeywords) }}
+{{ UI.renderHtmlProperty((labelPrefix ~ '.meta-title.label') | trans, entity.defaultMetaTitle) }}
+{{ UI.renderHtmlProperty((labelPrefix ~ '.meta-description.label') | trans, entity.defaultMetaDescription) }}
+{{ UI.renderHtmlProperty((labelPrefix ~ '.meta-keywords.label') | trans, entity.defaultMetaKeywords) }}

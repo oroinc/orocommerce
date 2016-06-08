@@ -33,7 +33,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
      * Return the name of the extend entity which will be used for determining field labels
      * @return string
      */
-    public abstract function getExtendedEntitySuffix();
+    abstract public function getMetaFieldLabelPrefix();
 
     /**
      * {@inheritdoc}
@@ -45,7 +45,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                 'metaTitles',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'orob2b.seo.meta-title.label.' . $this->getExtendedEntitySuffix(),
+                    'label' => $this->getMetaFieldLabelPrefix() . '.meta-title.label',
                     'required' => false,
                     'type' => 'text',
                 ]
@@ -54,7 +54,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                 'metaDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'orob2b.seo.meta-description.label.' . $this->getExtendedEntitySuffix(),
+                    'label' => $this->getMetaFieldLabelPrefix() . '.meta-description.label',
                     'required' => false,
                     'type' => 'textarea',
                 ]
@@ -63,7 +63,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                 'metaKeywords',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'orob2b.seo.meta-keywords.label.' . $this->getExtendedEntitySuffix(),
+                    'label' => $this->getMetaFieldLabelPrefix() . '.meta-keywords.label',
                     'required' => false,
                     'type' => 'textarea',
                 ]

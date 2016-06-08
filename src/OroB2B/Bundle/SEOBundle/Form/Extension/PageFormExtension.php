@@ -21,8 +21,8 @@ class PageFormExtension extends BaseMetaFormExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedEntitySuffix()
+    public function getMetaFieldLabelPrefix()
     {
-        return 'cms-page';
+        return 'orob2b.cms.page';
     }
 }

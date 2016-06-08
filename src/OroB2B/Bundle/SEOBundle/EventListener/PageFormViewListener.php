@@ -25,8 +25,8 @@ class PageFormViewListener extends BaseFormViewListener
     /**
      * @return string
      */
-    public function getExtendedEntitySuffix()
+    public function getMetaFieldLabelPrefix()
     {
-        return 'cms-page';
+        return 'orob2b.cms.page';
     }
 }

@@ -28,8 +28,8 @@ class ProductFormViewListener extends BaseFormViewListener
     /**
      * @return string
      */
-    public function getExtendedEntitySuffix()
+    public function getMetaFieldLabelPrefix()
     {
-        return 'product';
+        return 'orob2b.product';
     }
 }

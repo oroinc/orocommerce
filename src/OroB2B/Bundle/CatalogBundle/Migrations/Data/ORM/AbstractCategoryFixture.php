@@ -49,9 +49,6 @@ abstract class AbstractCategoryFixture extends AbstractFixture
             $category = new Category();
             $category->addTitle($categoryTitle);
 
-            $category->addMetaTitles($this->getSeoMetaFieldData($manager, 'defaultMetaTitle'));
-            $category->addMetaDescriptions($this->getSeoMetaFieldData($manager, 'defaultMetaDescription'));
-            $category->addMetaKeywords($this->getSeoMetaFieldData($manager, 'defaultMetaKeywords'));
             $manager->persist($category);
 
             $this->addReference($title, $category);
@@ -60,14 +57,5 @@ abstract class AbstractCategoryFixture extends AbstractFixture
 
             $this->addCategories($category, $nestedCategories, $manager);
         }
-    }
-
-    private function getSeoMetaFieldData(ObjectManager $manager, $seoFieldValue)
-    {
-        $seoField = new LocalizedFallbackValue();
-        $seoField->setString($seoFieldValue);
-        $manager->persist($seoField);
-
-        return $seoField;
     }
 }

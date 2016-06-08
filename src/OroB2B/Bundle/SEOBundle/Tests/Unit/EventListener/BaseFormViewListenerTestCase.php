@@ -45,7 +45,7 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
 
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BSEOBundle:SEO:view.html.twig', ['entity' => $entityObject, 'metaFieldLabelSuffix' => $this->listener->getExtendedEntitySuffix()])
+            ->with('OroB2BSEOBundle:SEO:view.html.twig', ['entity' => $entityObject, 'labelPrefix' => $this->listener->getMetaFieldLabelPrefix()])
             ->willReturn('');
 
         return $env;
