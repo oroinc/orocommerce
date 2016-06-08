@@ -1,5 +1,6 @@
 @import 'orob2bfrontend/default/scss/shared/_vars.scss';
 @import 'orob2bfrontend/default/scss/shared/_mixins.scss';
 
-@import './components/topbar';
-@import './components/footer-nav';
+@import './components/top_nav';
+@import './components/quick_access';
+@import './components/footer_menu';
