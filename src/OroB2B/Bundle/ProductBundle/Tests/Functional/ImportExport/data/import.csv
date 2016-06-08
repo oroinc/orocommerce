@@ -1,2 +1,2 @@
-sku,status,inventory_status.id,unitPrecisions.1.unit.code,unitPrecisions.1.precision,names.default.fallback,names.default.value,names.en.fallback,names.en.value,names.not_existing.fallback,names.not_existing.value
-SKU099,enabled,in_stock,kg,3,parent_locale,Name,system,En Name,,Non existing locale name
+sku,status,inventory_status.id,unitPrecisions.1.unit.code,unitPrecisions.1.precision,names.default.fallback,names.default.value,names.English.fallback,names.English.value,names.not_existing.fallback,names.not_existing.value
+SKU099,enabled,in_stock,kg,3,parent_localization,Name,system,En Name,,Non existing localization name

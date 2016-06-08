@@ -9,14 +9,14 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Doctrine\Common\Collections\Collection;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
@@ -47,13 +47,13 @@ class CategoryTypeTest extends WebTestCase
 
     public function testSubmit()
     {
-        $doctrine = $localeRepository = $this->getContainer()->get('doctrine');
-        $localeRepository = $doctrine->getRepository('OroB2BWebsiteBundle:Locale');
+        $doctrine = $this->getContainer()->get('doctrine');
+        $localizationRepository = $doctrine->getRepository('OroLocaleBundle:Localization');
         $categoryRepository = $doctrine->getRepository('OroB2BCatalogBundle:Category');
         $productRepository = $doctrine->getRepository('OroB2BProductBundle:Product');
 
-        /** @var Locale[] $locales */
-        $locales = $localeRepository->findAll();
+        /** @var Localization[] $localizations */
+        $localizations = $localizationRepository->findAll();
         /** @var Category $parentCategory */
         $parentCategory = $categoryRepository->findOneBy([]);
         /** @var Product[] $appendedProducts */
@@ -65,6 +65,7 @@ class CategoryTypeTest extends WebTestCase
         $defaultShortDescription = 'Default Short Description';
         $defaultLongDescription = 'Default Long Description';
 
+        /* @var $fileLocator FileLocator */
         $fileLocator = $this->getContainer()->get('file_locator');
 
         $smallImageName = self::SMALL_IMAGE_NAME;
@@ -92,17 +93,17 @@ class CategoryTypeTest extends WebTestCase
             '_token' => $this->tokenManager->getToken('category')->getValue(),
         ];
 
-        foreach ($locales as $locale) {
-            $localeId = $locale->getId();
-            $submitData['titles']['values']['locales'][$localeId] = [
+        foreach ($localizations as $localization) {
+            $localizationId = $localization->getId();
+            $submitData['titles']['values']['localizations'][$localizationId] = [
                 'use_fallback' => true,
                 'fallback' => FallbackType::SYSTEM
             ];
-            $submitData['shortDescriptions']['values']['locales'][$localeId] = [
+            $submitData['shortDescriptions']['values']['localizations'][$localizationId] = [
                 'use_fallback' => true,
                 'fallback' => FallbackType::SYSTEM
             ];
-            $submitData['longDescriptions']['values']['locales'][$localeId] = [
+            $submitData['longDescriptions']['values']['localizations'][$localizationId] = [
                 'use_fallback' => true,
                 'fallback' => FallbackType::SYSTEM
             ];
@@ -121,18 +122,21 @@ class CategoryTypeTest extends WebTestCase
         $this->assertEquals($defaultShortDescription, $category->getDefaultShortDescription()->getText());
         $this->assertEquals($defaultLongDescription, $category->getDefaultLongDescription()->getText());
 
-        foreach ($locales as $locale) {
-            $localizedTitle = $this->getValueByLocale($category->getTitles(), $locale);
+        foreach ($localizations as $localization) {
+            $localizedTitle = $this->getValueByLocalization($category->getTitles(), $localization);
             $this->assertNotEmpty($localizedTitle);
             $this->assertEmpty($localizedTitle->getString());
             $this->assertEquals(FallbackType::SYSTEM, $localizedTitle->getFallback());
 
-            $localizedShortDescription = $this->getValueByLocale($category->getShortDescriptions(), $locale);
+            $localizedShortDescription = $this->getValueByLocalization(
+                $category->getShortDescriptions(),
+                $localization
+            );
             $this->assertNotEmpty($localizedShortDescription);
             $this->assertEmpty($localizedShortDescription->getText());
             $this->assertEquals(FallbackType::SYSTEM, $localizedShortDescription->getFallback());
 
-            $localizedLongDescription = $this->getValueByLocale($category->getLongDescriptions(), $locale);
+            $localizedLongDescription = $this->getValueByLocalization($category->getLongDescriptions(), $localization);
             $this->assertNotEmpty($localizedLongDescription);
             $this->assertEmpty($localizedLongDescription->getText());
             $this->assertEquals(FallbackType::SYSTEM, $localizedLongDescription->getFallback());
@@ -157,14 +161,14 @@ class CategoryTypeTest extends WebTestCase
 
     /**
      * @param Collection|LocalizedFallbackValue[] $values
-     * @param Locale $locale
+     * @param Localization $localization
      * @return LocalizedFallbackValue|null
      */
-    protected function getValueByLocale($values, Locale $locale)
+    protected function getValueByLocalization($values, Localization $localization)
     {
-        $localeId = $locale->getId();
+        $localizationId = $localization->getId();
         foreach ($values as $value) {
-            if ($value->getLocale()->getId() == $localeId) {
+            if ($value->getLocalization()->getId() == $localizationId) {
                 return $value;
             }
         }

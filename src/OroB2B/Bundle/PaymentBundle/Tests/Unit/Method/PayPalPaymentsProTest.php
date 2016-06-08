@@ -28,6 +28,7 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
                 Configuration::PAYPAL_PAYMENTS_PRO_PASSWORD_KEY => 'test_password',
                 Configuration::PAYPAL_PAYMENTS_PRO_PARTNER_KEY => 'test_partner',
                 Configuration::PAYPAL_PAYMENTS_PRO_TEST_MODE_KEY => true,
+                Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES => ['USD'],
             ],
             $configs
         );

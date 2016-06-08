@@ -10,7 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class FrontendProductPricesDataProvider
@@ -26,9 +26,9 @@ class FrontendProductPricesDataProvider
     protected $securityFacade;
 
     /**
-     * @var UserCurrencyProvider
+     * @var UserCurrencyManager
      */
-    protected $userCurrencyProvider;
+    protected $userCurrencyManager;
 
     /**
      * @var PriceListRequestHandler
@@ -38,18 +38,18 @@ class FrontendProductPricesDataProvider
     /**
      * @param ProductPriceProvider $productPriceProvider
      * @param SecurityFacade $securityFacade
-     * @param UserCurrencyProvider $userCurrencyProvider
+     * @param UserCurrencyManager $userCurrencyManager
      * @param PriceListRequestHandler $priceListRequestHandler
      */
     public function __construct(
         ProductPriceProvider $productPriceProvider,
         SecurityFacade $securityFacade,
-        UserCurrencyProvider $userCurrencyProvider,
+        UserCurrencyManager $userCurrencyManager,
         PriceListRequestHandler $priceListRequestHandler
     ) {
         $this->productPriceProvider = $productPriceProvider;
         $this->securityFacade = $securityFacade;
-        $this->userCurrencyProvider = $userCurrencyProvider;
+        $this->userCurrencyManager = $userCurrencyManager;
         $this->priceListRequestHandler = $priceListRequestHandler;
     }
 
@@ -99,7 +99,7 @@ class FrontendProductPricesDataProvider
             array_map(function (LineItem $lineItem) {
                 return $lineItem->getProduct()->getId();
             }, $lineItems),
-            $this->userCurrencyProvider->getUserCurrency()
+            $this->userCurrencyManager->getUserCurrency()
         );
     }
 
@@ -115,7 +115,7 @@ class FrontendProductPricesDataProvider
                 $lineItem->getProduct(),
                 $lineItem->getProductUnit(),
                 $lineItem->getQuantity(),
-                $this->userCurrencyProvider->getUserCurrency()
+                $this->userCurrencyManager->getUserCurrency()
             );
         }
 

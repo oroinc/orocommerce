@@ -89,7 +89,7 @@ class CategoryRepository extends NestedTreeRepository
 
         return $qb
             ->select('partial category.{id}')
-            ->innerJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.locale'))
+            ->innerJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.localization'))
             ->andWhere('title.string = :title')
             ->setParameter('title', $title)
             ->setMaxResults(1)
@@ -124,7 +124,7 @@ class CategoryRepository extends NestedTreeRepository
 
         if ($includeTitles) {
             $qb->addSelect('title.string');
-            $qb->leftJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.locale'));
+            $qb->leftJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.localization'));
         }
 
         return $qb

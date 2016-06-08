@@ -2,16 +2,16 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -207,7 +207,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
         $localizedName = new LocalizedFallbackValue();
         $localizedName->setString('localized')
-            ->setLocale(new Locale());
+            ->setLocalization(new Localization());
 
         $category = new Product();
         $category->addName($defaultName)
@@ -243,7 +243,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
         $localizedDescription = new LocalizedFallbackValue();
         $localizedDescription->setString('localized')
-            ->setLocale(new Locale());
+            ->setLocalization(new Localization());
 
         $product = new Product();
         $product->addDescription($defaultDescription)
@@ -258,7 +258,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $defaultShortDescription->setString('default short');
 
         $localizedShortDescription = new LocalizedFallbackValue();
-        $localizedShortDescription->setString('localized')->setLocale(new Locale());
+        $localizedShortDescription->setString('localized')->setLocalization(new Localization());
 
         $product = new Product();
         $product->addShortDescription($defaultShortDescription)->addShortDescription($localizedShortDescription);

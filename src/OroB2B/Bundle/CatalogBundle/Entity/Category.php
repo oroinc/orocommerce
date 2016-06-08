@@ -10,8 +10,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Component\Tree\Entity\TreeTrait;
 use OroB2B\Bundle\CatalogBundle\Model\ExtendCategory;
@@ -59,7 +59,7 @@ class Category extends ExtendCategory
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
@@ -168,7 +168,7 @@ class Category extends ExtendCategory
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
@@ -195,7 +195,7 @@ class Category extends ExtendCategory
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
@@ -284,7 +284,7 @@ class Category extends ExtendCategory
     public function getDefaultTitle()
     {
         $titles = $this->titles->filter(function (LocalizedFallbackValue $title) {
-            return null === $title->getLocale();
+            return null === $title->getLocalization();
         });
 
         if ($titles->count() != 1) {
@@ -485,7 +485,7 @@ class Category extends ExtendCategory
     public function getDefaultShortDescription()
     {
         $shortDescription = $this->shortDescriptions->filter(function (LocalizedFallbackValue $shortDescription) {
-            return null === $shortDescription->getLocale();
+            return null === $shortDescription->getLocalization();
         });
 
         if ($shortDescription->count() !== 1) {
@@ -537,7 +537,7 @@ class Category extends ExtendCategory
     public function getDefaultLongDescription()
     {
         $longDescription = $this->longDescriptions->filter(function (LocalizedFallbackValue $longDescription) {
-            return null === $longDescription->getLocale();
+            return null === $longDescription->getLocalization();
         });
 
         if ($longDescription->count() != 1) {
