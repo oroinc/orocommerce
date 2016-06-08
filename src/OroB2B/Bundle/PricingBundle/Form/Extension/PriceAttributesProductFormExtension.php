@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 
-class ProductAttributeFormExtension extends AbstractTypeExtension
+class PriceAttributesProductFormExtension extends AbstractTypeExtension
 {
     /**
      * {@inheritdoc}
@@ -16,11 +16,12 @@ class ProductAttributeFormExtension extends AbstractTypeExtension
     {
         return ProductType::NAME;
     }
+
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        // TODO: implement in BB-3269
+        // TODO: BB-3334
     }
 }

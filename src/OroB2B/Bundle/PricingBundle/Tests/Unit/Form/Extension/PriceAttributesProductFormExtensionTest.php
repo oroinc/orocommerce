@@ -2,18 +2,19 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
-use OroB2B\Bundle\PricingBundle\Form\Extension\ProductAttributeFormExtension;
+use OroB2B\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\ProductTypeStub;
 
-class ProductAttributeFormExtensionTest extends FormIntegrationTestCase
+class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
 {
     /**
-     * @var ProductAttributeFormExtension
+     * @var PriceAttributesProductFormExtension
      */
     protected $productAttributeFormExtension;
 
@@ -22,7 +23,7 @@ class ProductAttributeFormExtensionTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->productAttributeFormExtension = new ProductAttributeFormExtension();
+        $this->productAttributeFormExtension = new PriceAttributesProductFormExtension();
         parent::setUp();
     }
 
@@ -55,7 +56,7 @@ class ProductAttributeFormExtensionTest extends FormIntegrationTestCase
 
     public function testSubmit()
     {
-        $form = $this->factory->create(ProductType::NAME, [], []);
+        $form = $this->factory->create(ProductType::NAME, new Product(), []);
 
         $form->submit([]);
         $this->assertTrue($form->isValid());
