@@ -8,7 +8,7 @@
         },
         'data-dropdown-trigger': true
     }|merge(attr|merge({
-        class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg shopping-lists-frontend-widget"
+        class: attr.class|default('') ~ " top-nav__item top-nav__item--nested shopping-lists-frontend-widget"
     })) %}
 
     <li {{ block('block_attributes') }}>
