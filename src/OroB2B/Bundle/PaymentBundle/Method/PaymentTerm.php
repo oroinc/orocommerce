@@ -124,14 +124,6 @@ class PaymentTerm implements PaymentMethodInterface
     /**
      * {@inheritdoc}
      */
-    public function completeTransaction(PaymentTransaction $paymentTransaction, array $data)
-    {
-        throw new \LogicException('Unexpected method call');
-    }
-
-    /**
-     * @return array
-     */
     protected function getAllowedCurrencies()
     {
         return $this->getConfigValue(Configuration::PAYMENT_TERM_ALLOWED_CURRENCIES);

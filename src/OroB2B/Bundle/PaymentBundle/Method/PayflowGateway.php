@@ -22,6 +22,8 @@ class PayflowGateway implements PaymentMethodInterface
 {
     use ConfigTrait, CountryAwarePaymentMethodTrait, CurrencyAwarePaymentMethodTrait;
 
+    const COMPLETE = 'complete';
+
     const TYPE = 'payflow_gateway';
 
     const ZERO_AMOUNT = 0;
@@ -379,25 +381,20 @@ class PayflowGateway implements PaymentMethodInterface
 
         return in_array(
             $actionName,
-            [self::AUTHORIZE, self::CAPTURE, self::CHARGE, self::PURCHASE],
+            [self::AUTHORIZE, self::CAPTURE, self::CHARGE, self::PURCHASE, self::COMPLETE],
             true
         );
     }
 
     /**
-     * {@inheritdoc}
+     * @param PaymentTransaction $paymentTransaction
      */
-    public function completeTransaction(PaymentTransaction $paymentTransaction, array $data)
+    public function complete(PaymentTransaction $paymentTransaction)
     {
-        $response = new Response($data);
-
-        if ($paymentTransaction->getReference()) {
-            return false;
-        }
+        $response = new Response($paymentTransaction->getResponse());
 
         $paymentTransaction
             ->setReference($response->getReference())
-            ->setResponse(array_replace($paymentTransaction->getResponse(), $data))
             ->setActive($response->isSuccessful())
             ->setSuccessful($response->isSuccessful());
 
@@ -405,8 +402,6 @@ class PayflowGateway implements PaymentMethodInterface
         if ($paymentTransaction->getAction() === PaymentMethodInterface::CHARGE) {
             $paymentTransaction->setActive(false);
         }
-
-        return true;
     }
 
     /**
@@ -418,7 +413,7 @@ class PayflowGateway implements PaymentMethodInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     protected function getAllowedCurrencies()
     {

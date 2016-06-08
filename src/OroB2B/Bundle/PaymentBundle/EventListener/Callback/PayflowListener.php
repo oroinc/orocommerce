@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\EventListener\Callback;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
+use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
@@ -48,21 +49,25 @@ class PayflowListener
     {
         $paymentTransaction = $event->getPaymentTransaction();
 
-        if (!$paymentTransaction) {
+        if (!$paymentTransaction || $paymentTransaction->getReference()) {
             return;
         }
+
+        $data = $event->getData();
+        $originAction = $paymentTransaction->getAction();
+
+        $paymentTransaction
+            ->setAction(PayflowGateway::COMPLETE)
+            ->setResponse(array_replace($paymentTransaction->getResponse(), $data));
 
         try {
-            $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentTransaction->getPaymentMethod());
+            $this->paymentMethodRegistry
+                ->getPaymentMethod($paymentTransaction->getPaymentMethod())
+                ->execute($paymentTransaction);
+            $event->markSuccessful();
         } catch (\InvalidArgumentException $e) {
-            return;
         }
 
-        $completeTransactionResult = $paymentMethod->completeTransaction($paymentTransaction, $event->getData());
-
-        if (!$completeTransactionResult) {
-            return;
-        }
-        $event->markSuccessful();
+        $paymentTransaction->setAction($originAction);
     }
 }

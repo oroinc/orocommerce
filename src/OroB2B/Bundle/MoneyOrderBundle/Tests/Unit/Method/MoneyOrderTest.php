@@ -167,12 +167,4 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($this->method->isApplicable(['country' => 'US']));
     }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testCompleteTransaction()
-    {
-        $this->method->completeTransaction(new PaymentTransaction(), []);
-    }
 }

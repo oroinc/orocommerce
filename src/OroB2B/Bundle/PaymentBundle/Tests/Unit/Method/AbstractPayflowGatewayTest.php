@@ -127,6 +127,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
             [true, PaymentMethodInterface::CAPTURE],
             [true, PaymentMethodInterface::CHARGE],
             [true, PaymentMethodInterface::PURCHASE],
+            [true, PayflowGateway::COMPLETE],
         ];
     }
 
@@ -673,61 +674,44 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->method->isApplicable(['country' => 'US', 'currency' => 'USD']));
     }
 
-    public function testCompleteTransactionWithReferenceAlreadyProcessed()
+    public function testComplete()
     {
         $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setReference('PNREF');
-
-        $this->assertFalse($this->method->completeTransaction($paymentTransaction, []));
-    }
-
-    public function testOnNotify()
-    {
-        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setResponse(['PNREF' => 'ref']);
 
         $this->assertEmpty($paymentTransaction->getReference());
-        $this->method->completeTransaction($paymentTransaction, ['PNREF' => 'ref']);
+        $this->method->complete($paymentTransaction);
         $this->assertEquals('ref', $paymentTransaction->getReference());
     }
 
-    public function testOnNotifySuccessfulFromResponse()
+    public function testCompleteSuccessfulFromResponse()
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setResponse(['RESULT' => ResponseStatusMap::APPROVED]);
 
         $this->assertFalse($paymentTransaction->isSuccessful());
-        $this->method->completeTransaction($paymentTransaction, ['RESULT' => ResponseStatusMap::APPROVED]);
+        $this->method->complete($paymentTransaction);
         $this->assertTrue($paymentTransaction->isSuccessful());
     }
 
-    public function testOnNotifyActiveFromResponse()
+    public function testCompleteActiveFromResponse()
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setResponse(['RESULT' => ResponseStatusMap::APPROVED]);
 
         $this->assertFalse($paymentTransaction->isActive());
-        $this->method->completeTransaction($paymentTransaction, ['RESULT' => ResponseStatusMap::APPROVED]);
+        $this->method->complete($paymentTransaction);
         $this->assertTrue($paymentTransaction->isActive());
     }
 
-    public function testOnNotifyAppendResponseData()
+    public function testCompleteWithCharge()
     {
         $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setResponse(['existing' => 'response']);
-
-        $this->method->completeTransaction($paymentTransaction, ['RESULT' => ResponseStatusMap::APPROVED]);
-
-        $this->assertEquals(
-            ['existing' => 'response', 'RESULT' => ResponseStatusMap::APPROVED],
-            $paymentTransaction->getResponse()
-        );
-    }
-
-    public function testOnNotifyWithCharge()
-    {
-        $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setActive(PaymentMethodInterface::CHARGE);
+        $paymentTransaction->setResponse(['RESULT' => ResponseStatusMap::APPROVED, 'PNREF' => 'ref']);
+        $paymentTransaction->setAction(PaymentMethodInterface::CHARGE);
 
         $this->assertEmpty($paymentTransaction->getReference());
-        $this->method->completeTransaction($paymentTransaction, ['PNREF' => 'ref']);
+        $this->method->complete($paymentTransaction);
         $this->assertEquals('ref', $paymentTransaction->getReference());
         $this->assertFalse($paymentTransaction->isActive());
     }

@@ -100,12 +100,4 @@ class MoneyOrder implements PaymentMethodInterface
     {
         return $actionName === self::PURCHASE;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function completeTransaction(PaymentTransaction $paymentTransaction, array $data)
-    {
-        throw new \LogicException('Unexpected method call');
-    }
 }

@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use OroB2B\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
+use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\EventListener\Callback\PayflowListener;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
@@ -42,64 +43,66 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
         unset($this->listener, $this->session);
     }
 
-    public function testOnNotifyWithCompleteTransaction()
+    public function testOnNotify()
     {
         $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setPaymentMethod('payment_method');
-        $data = ['data'];
+        $paymentTransaction
+            ->setAction('action')
+            ->setPaymentMethod('payment_method')
+            ->setResponse(['existing' => 'response']);
 
         $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
-            ->method('completeTransaction')
-            ->with($paymentTransaction, $data)
-            ->willReturn(true);
+            ->method('execute')
+            ->willReturnCallback(function (PaymentTransaction $executePaymentTransaction) use ($paymentTransaction) {
+                $this->assertSame($paymentTransaction, $executePaymentTransaction);
+                $this->assertEquals(PayflowGateway::COMPLETE, $executePaymentTransaction->getAction());
+            });
 
         $this->paymentMethodRegistry->expects($this->once())
             ->method('getPaymentMethod')
             ->with($paymentTransaction->getPaymentMethod())
             ->willReturn($paymentMethod);
 
-        $event = new CallbackNotifyEvent($data);
+        $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
         $this->listener->onNotify($event);
+        $this->assertEquals('action', $paymentTransaction->getAction());
         $this->assertEquals(Response::HTTP_OK, $event->getResponse()->getStatusCode());
+        $this->assertEquals(
+            ['RESULT' => ResponseStatusMap::APPROVED, 'existing' => 'response'],
+            $paymentTransaction->getResponse()
+        );
     }
 
-    public function testOnNotifyWithIncompleteTransaction()
+    public function testOnNotifyTransactionWithReference()
     {
         $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setPaymentMethod('payment_method');
-        $data = ['data'];
+        $paymentTransaction
+            ->setPaymentMethod('payment_method')
+            ->setAction('action')
+            ->setReference('reference');
 
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
-        $paymentMethod->expects($this->once())
-            ->method('completeTransaction')
-            ->with($paymentTransaction, $data)
-            ->willReturn(false);
+        $this->paymentMethodRegistry->expects($this->never())
+            ->method($this->anything());
 
-        $this->paymentMethodRegistry->expects($this->once())
-            ->method('getPaymentMethod')
-            ->with($paymentTransaction->getPaymentMethod())
-            ->willReturn($paymentMethod);
-
-        $event = new CallbackNotifyEvent($data);
+        $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
         $this->listener->onNotify($event);
+        $this->assertEquals('action', $paymentTransaction->getAction());
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
     }
 
     public function testOnNotifyWithoutTransaction()
     {
-        $data = ['data'];
-
         $this->paymentMethodRegistry->expects($this->never())
             ->method($this->anything());
 
-        $event = new CallbackNotifyEvent($data);
+        $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
         $this->listener->onNotify($event);
@@ -109,6 +112,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnNotifyPaymentMethodNotFound()
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setAction('action');
         $paymentTransaction->setPaymentMethod('not_exists_payment_method');
 
         $this->paymentMethodRegistry->expects($this->once())
@@ -122,6 +126,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onNotify($event);
 
+        $this->assertEquals('action', $paymentTransaction->getAction());
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
     }
 
