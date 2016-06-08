@@ -131,3 +131,96 @@ datagrid:
                 selector: '#warehouse-inventory-level-quantities'
             requireJSModules:
                 - orob2bwarehouse/js/datagrid/builder/level-quantity-builder
+
+    warehouse-inventory-grid:
+        acl_resource: orob2b_product_warehouse_inventory_view
+        source:
+            type: orm
+            query:
+                select:
+                    - inventory.id
+                    - product.sku as sku
+                    - productNames.string as productName
+                    - inventoryStatus.name as inventoryStatusName
+                    - warehouse.name as warehouseName
+                    - inventory.quantity as quantity
+                    - precisionUnit.code as unit
+                from:
+                    - { table: %orob2b_warehouse.entity.warehouse_inventory_level.class%, alias: inventory}
+                join:
+                    left:
+                        - { join: inventory.warehouse, alias: warehouse }
+                        - { join: inventory.product, alias: product}
+                        - { join: product.inventory_status, alias: inventoryStatus}
+                        - { join: inventory.productUnitPrecision, alias: productPrecision}
+                        - { join: productPrecision.unit, alias: precisionUnit}
+                    inner:
+                        -
+                            join: product.names
+                            alias: productNames
+                            conditionType: WITH
+                            condition: productNames.locale IS NULL
+        properties:
+            id: ~
+            delete_link:
+                type: url
+                route: orob2b_api_delete_warehouse_inventory_level
+                params: [ id ]
+        columns:
+            sku:
+                label:           orob2b.product.sku.label
+            productName:
+                label:           orob2b.product.names.label
+            inventoryStatusName:
+                label:           orob2b.warehouse.warehouseinventorylevel.status.label
+                editable:        true
+            warehouseName:
+                label:           orob2b.warehouse.entity_label
+            quantity:
+                label:           orob2b.warehouse.warehouseinventorylevel.quantity.label
+                frontend_type:   number
+                editable:        true
+            unit:
+                label:           orob2b.product.productunit.code.label
+        sorters:
+            columns:
+                sku:
+                    data_name:       sku
+                productName:
+                    data_name:       productName
+                inventoryStatusName:
+                    data_name:       inventoryStatusName
+                warehouseName:
+                    data_name:       warehouseName
+                quantity:
+                    data_name:       quantity
+                unit:
+                    data_name:       unit
+        filters:
+            columns:
+                sku:
+                    data_name:       sku
+                    type:            string
+                productName:
+                    data_name:       productName
+                    type:            string
+                inventoryStatusName:
+                    data_name:       inventoryStatusName
+                    type:            string
+                warehouseName:
+                    data_name:       warehouseName
+                    type:            string
+                quantity:
+                    data_name:       quantity
+                    type:            number
+                unit:
+                    data_name:       unit
+                    type:            string
+        actions:
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_warehouse_inventory_level_delete
+                mass_action:   true
