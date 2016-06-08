@@ -30,7 +30,7 @@ class AddPriceAttributes implements Migration
      */
     protected function createOroB2BPriceAttributeTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_price_attribute');
+        $table = $schema->createTable('orob2b_price_attribute_pl');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
@@ -45,7 +45,7 @@ class AddPriceAttributes implements Migration
     {
         $table = $schema->createTable('orob2b_product_attr_currency');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('price_attribute_id', 'integer', []);
+        $table->addColumn('price_attribute_pl_id', 'integer', []);
         $table->addColumn('currency', 'string', ['length' => 3]);
         $table->setPrimaryKey(['id']);
     }
@@ -57,7 +57,7 @@ class AddPriceAttributes implements Migration
     {
         $table = $schema->createTable('orob2b_price_attribute_price');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('price_attribute_id', 'integer', []);
+        $table->addColumn('price_attribute_pl_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('product_sku', 'string', ['length' => 255]);
@@ -65,7 +65,7 @@ class AddPriceAttributes implements Migration
         $table->addColumn('value', 'money', []);
         $table->addColumn('currency', 'string', ['length' => 3]);
         $table->addUniqueIndex(
-            ['product_id', 'price_attribute_id', 'quantity', 'unit_code', 'currency'],
+            ['product_id', 'price_attribute_pl_id', 'quantity', 'unit_code', 'currency'],
             'orob2b_pricing_price_attribute_uidx'
         );
         $table->setPrimaryKey(['id']);
@@ -78,8 +78,8 @@ class AddPriceAttributes implements Migration
     {
         $table = $schema->getTable('orob2b_product_attr_currency');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_attribute'),
-            ['price_attribute_id'],
+            $schema->getTable('orob2b_price_attribute_pl'),
+            ['price_attribute_pl_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
@@ -92,8 +92,8 @@ class AddPriceAttributes implements Migration
     {
         $table = $schema->getTable('orob2b_price_attribute_price');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_attribute'),
-            ['price_attribute_id'],
+            $schema->getTable('orob2b_price_attribute_pl'),
+            ['price_attribute_pl_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
