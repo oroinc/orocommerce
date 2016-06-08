@@ -11,6 +11,7 @@ use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
@@ -45,9 +46,9 @@ class ProductsHaveAtLeastOnePrice extends AbstractCondition implements ContextAc
     protected $securityFacade;
 
     /**
-     * @var UserCurrencyProvider
+     * @var UserCurrencyManager
      */
-    protected $userCurrencyProvider;
+    protected $userCurrencyManager;
 
     /**
      * @var PriceListRequestHandler
@@ -57,18 +58,18 @@ class ProductsHaveAtLeastOnePrice extends AbstractCondition implements ContextAc
     /**
      * @param ProductPriceProvider $productPriceProvider
      * @param SecurityFacade $securityFacade
-     * @param UserCurrencyProvider $userCurrencyProvider
+     * @param UserCurrencyManager $userCurrencyManager
      * @param PriceListRequestHandler $priceListRequestHandler
      */
     public function __construct(
         ProductPriceProvider $productPriceProvider,
         SecurityFacade $securityFacade,
-        UserCurrencyProvider $userCurrencyProvider,
+        UserCurrencyManager $userCurrencyManager,
         PriceListRequestHandler $priceListRequestHandler
     ) {
         $this->productPriceProvider = $productPriceProvider;
         $this->securityFacade = $securityFacade;
-        $this->userCurrencyProvider = $userCurrencyProvider;
+        $this->userCurrencyManager = $userCurrencyManager;
         $this->priceListRequestHandler = $priceListRequestHandler;
     }
 
@@ -143,7 +144,7 @@ class ProductsHaveAtLeastOnePrice extends AbstractCondition implements ContextAc
                 $lineItem->getProduct(),
                 $lineItem->getProductUnit(),
                 $lineItem->getQuantity(),
-                $this->userCurrencyProvider->getUserCurrency()
+                $this->userCurrencyManager->getUserCurrency()
             );
         }
 
