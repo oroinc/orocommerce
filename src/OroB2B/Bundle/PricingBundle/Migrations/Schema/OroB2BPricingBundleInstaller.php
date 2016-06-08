@@ -483,7 +483,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     {
         $table = $schema->createTable('orob2b_product_attr_currency');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('price_attribute_id', 'integer', []);
+        $table->addColumn('price_attribute_pl_id', 'integer', []);
         $table->addColumn('currency', 'string', ['length' => 3]);
         $table->setPrimaryKey(['id']);
     }
@@ -495,7 +495,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     {
         $table = $schema->createTable('orob2b_price_attribute_price');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('price_attribute_id', 'integer', []);
+        $table->addColumn('price_attribute_pl_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('product_sku', 'string', ['length' => 255]);
@@ -503,7 +503,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('value', 'money', []);
         $table->addColumn('currency', 'string', ['length' => 3]);
         $table->addUniqueIndex(
-            ['product_id', 'price_attribute_id', 'quantity', 'unit_code', 'currency'],
+            ['product_id', 'price_attribute_pl_id', 'quantity', 'unit_code', 'currency'],
             'orob2b_pricing_price_attribute_uidx'
         );
         $table->setPrimaryKey(['id']);
@@ -978,7 +978,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table = $schema->getTable('orob2b_product_attr_currency');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_attribute_pl'),
-            ['price_attribute_id'],
+            ['price_attribute_pl_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
@@ -992,7 +992,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table = $schema->getTable('orob2b_price_attribute_price');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_attribute_pl'),
-            ['price_attribute_id'],
+            ['price_attribute_pl_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );

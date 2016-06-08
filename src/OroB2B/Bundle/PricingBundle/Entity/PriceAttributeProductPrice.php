@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="orob2b_pricing_price_attribute_uidx",
- *              columns={"product_id", "price_attribute_id", "quantity", "unit_code", "currency"}
+ *              columns={"product_id", "price_attribute_pl_id", "quantity", "unit_code", "currency"}
  *          )
  *      }
  * )
@@ -22,7 +22,7 @@ class PriceAttributeProductPrice extends BaseProductPrice
      * @var PriceAttributePriceList
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList", inversedBy="prices")
-     * @ORM\JoinColumn(name="price_attribute_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="price_attribute_pl_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      **/
     protected $priceList;
 }

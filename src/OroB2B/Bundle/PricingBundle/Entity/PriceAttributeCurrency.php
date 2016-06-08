@@ -18,7 +18,7 @@ class PriceAttributeCurrency extends BasePriceListCurrency
      *      inversedBy="currencies",
      *      cascade={"persist"}
      * )
-     * @ORM\JoinColumn(name="price_attribute_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="price_attribute_pl_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $priceList;
 }
