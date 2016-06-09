@@ -216,7 +216,7 @@ define(function (require) {
                 var input = $(this);
                 var text = __('orob2b.product.product_unit.' + value + '.label.short_plural');
                 input.parent('td').find('span').remove();
-                input.parent('td').append($('<span></span>').html('<em>&nbsp;</em>'+text.toLowerCase()));
+                input.parent('td').append($('<span></span>').html('<em>&nbsp;</em>'+text.toLowerCase()).addClass('conversion-rate-label'));
             });
         },
 

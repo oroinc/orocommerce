@@ -2,8 +2,8 @@ orob2b:
     product:
         productunit:
             delete.confirmation: Are you sure you want to delete this unit precision?
-            delete.error.title: Error
-            delete.error.message: You can't delete unit precisions with prices. Please change this unit in prices first.
+            delete.error.title: Unit of quantity cannot be deleted
+            delete.error.message: 'Selected unit is currently used to define the product price.<br>Please review and modify the prices first.'
 
             removed:
                 suffix: removed

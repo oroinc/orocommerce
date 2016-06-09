@@ -112,6 +112,7 @@ define(function (require) {
                     var oldText = option.text;
                     var newText = oldText.substring(0,oldText.indexOf(' - '));
                     $(option).text(newText);
+                    $select.closest('.oro-multiselect-holder').find('.validation-failed').hide();
                     updateRequired = true;
                 }
             });
