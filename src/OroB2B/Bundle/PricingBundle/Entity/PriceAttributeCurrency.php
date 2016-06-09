@@ -11,14 +11,14 @@ use Doctrine\ORM\Mapping as ORM;
 class PriceAttributeCurrency extends BasePriceListCurrency
 {
     /**
-     * @var PriceAttribute
+     * @var PriceAttributePriceList
      *
      * @ORM\ManyToOne(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttribute",
+     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList",
      *      inversedBy="currencies",
      *      cascade={"persist"}
      * )
-     * @ORM\JoinColumn(name="price_attribute_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="price_attribute_pl_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
-    protected $priceAttribute;
+    protected $priceList;
 }

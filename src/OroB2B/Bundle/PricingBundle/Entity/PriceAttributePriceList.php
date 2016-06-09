@@ -6,10 +6,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="orob2b_price_attribute")
+ * @ORM\Table(name="orob2b_price_attribute_pl")
  * @ORM\Entity()
  */
-class PriceAttribute extends BasePriceList
+class PriceAttributePriceList extends BasePriceList
 {
     /**
      * @var Collection|PriceAttributeProductPrice[]
