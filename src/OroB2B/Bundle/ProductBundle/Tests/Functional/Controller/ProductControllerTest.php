@@ -61,7 +61,7 @@ class ProductControllerTest extends WebTestCase
     /**
      * @var array
      */
-    private static $expectedProductImageMatrixHeaders = ['File', 'Main', 'Additional', 'Listing'];
+    private static $expectedProductImageMatrixHeaders = ['File', 'Main', 'Listing', 'Additional'];
 
     /**
      * {@inheritdoc}
@@ -103,8 +103,8 @@ class ProductControllerTest extends WebTestCase
 
         $formValues['orob2b_product']['images'][] = [
             'main' => 1,
-            'additional' => 1,
-            'listing' => 1
+            'listing' => 1,
+            'additional' => 1
         ];
 
         $filesData['orob2b_product']['images'][] = [
@@ -271,8 +271,8 @@ class ProductControllerTest extends WebTestCase
 
         $expectedProductImageMatrix = [
             self::$expectedProductImageMatrixHeaders,
-            [self::FIRST_IMAGE_FILENAME, 1, 0, 1],
-            [self::SECOND_IMAGE_FILENAME, 0, 1, 0]
+            [self::FIRST_IMAGE_FILENAME, 1, 1, 0],
+            [self::SECOND_IMAGE_FILENAME, 0, 0, 1]
         ];
 
         $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
@@ -322,8 +322,8 @@ class ProductControllerTest extends WebTestCase
 
         $expectedProductImageMatrix = [
             self::$expectedProductImageMatrixHeaders,
-            [self::FIRST_IMAGE_FILENAME, 1, 0, 1],
-            [self::SECOND_IMAGE_FILENAME, 0, 1, 0]
+            [self::FIRST_IMAGE_FILENAME, 1, 1, 0],
+            [self::SECOND_IMAGE_FILENAME, 0, 0, 1]
         ];
 
         $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));

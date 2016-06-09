@@ -94,7 +94,6 @@ class OroB2BProductBundle implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_image_id', 'integer');
         $table->addColumn('type', 'string', ['length' => 255]);
-//        $table->setPrimaryKey(['product_image_id', 'type']);
         $table->setPrimaryKey(['id']);
     }
 
@@ -112,6 +111,9 @@ class OroB2BProductBundle implements
         );
     }
 
+    /**
+     * @param Schema $schema
+     */
     protected function addOroB2BProductImageTypeForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::PRODUCT_IMAGE_TYPE_TABLE_NAME);
@@ -159,7 +161,7 @@ class OroB2BProductBundle implements
 
         $migrateImageTypesSqlMask = 'INSERT INTO %s (product_image_id, type)
                                      SELECT product.image_id, types.type FROM %s product
-                                     JOIN (%s) types
+                                     CROSS JOIN (%s) types
                                      WHERE product.%s IS NOT NULL';
 
         $queries->addPostQuery(

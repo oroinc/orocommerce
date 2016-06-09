@@ -359,7 +359,12 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     /**
      * @var Collection|ProductImage[]
      *
-     * @ORM\OneToMany(targetEntity="ProductImage", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(
+     *     targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductImage",
+     *     mappedBy="product",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true
+     * )
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

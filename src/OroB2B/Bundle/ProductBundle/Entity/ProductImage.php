@@ -35,7 +35,7 @@ class ProductImage extends ExtendProductImage
 
     /**
      * @var Product
-     * @ORM\ManyToOne(targetEntity="Product", inversedBy="images")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product", inversedBy="images")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
@@ -53,7 +53,8 @@ class ProductImage extends ExtendProductImage
      * @ORM\OneToMany(
      *     targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductImageType",
      *     mappedBy="productImage",
-     *     cascade={"all"},
+     *     indexBy="type",
+     *     cascade={"ALL"},
      *     orphanRemoval=true
      * )
      * @ConfigField(
@@ -108,8 +109,10 @@ class ProductImage extends ExtendProductImage
      */
     public function addType(ProductImageType $productImageType)
     {
-        $this->types->add($productImageType);
-        $productImageType->setProductImage($this);
+        if (!$this->types->containsKey($productImageType->getType())) {
+            $this->types->set($productImageType->getType(), $productImageType);
+            $productImageType->setProductImage($this);
+        }
     }
 
     /**
@@ -117,7 +120,9 @@ class ProductImage extends ExtendProductImage
      */
     public function removeType(ProductImageType $productImageType)
     {
-        $this->types->removeElement($productImageType);
+        if ($this->types->containsKey($productImageType->getType())) {
+            $this->types->remove($productImageType->getType());
+        }
     }
 
     /**
@@ -126,9 +131,7 @@ class ProductImage extends ExtendProductImage
      */
     public function hasType($type)
     {
-        return !$this->types->filter(function (ProductImageType $productImageType) use ($type) {
-            return $productImageType->getType() === $type;
-        })->isEmpty();
+        return $this->types->containsKey($type);
     }
 
     /**
@@ -137,5 +140,17 @@ class ProductImage extends ExtendProductImage
     public function __toString()
     {
         return $this->getImage() ? $this->getImage()->getFilename() : sprintf('ProductImage #%d', $this->getId());
+    }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->id = null;
+            foreach ($this->types as $type) {
+                $typeCopy = clone $type;
+                $typeCopy->setProductImage($this);
+                $this->types[$typeCopy->getType()] = $typeCopy;
+            }
+        }
     }
 }

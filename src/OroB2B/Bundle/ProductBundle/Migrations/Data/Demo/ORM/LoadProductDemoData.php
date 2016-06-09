@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
@@ -58,7 +57,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
 
         $inventoryStatuses = $this->getAllEnumValuesByCode($manager, 'prod_inventory_status');
 
-        $allImageTypes = $this->createImageTypes($manager);
+        $allImageTypes = $this->getImageTypes();
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -150,7 +149,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $productImage = new ProductImage();
             $productImage->setImage($image);
             foreach ($types as $type) {
-                $productImage->addType($type);
+                $productImage->addType(new ProductImageType($type));
             }
         } catch (\Exception $e) {
             //image not found
@@ -160,21 +159,12 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
     }
 
     /**
-     * @param ObjectManager $manager
-     * @return ArrayCollection
+     * @return array
      */
-    protected function createImageTypes(ObjectManager $manager)
+    protected function getImageTypes()
     {
-        $allImageTypes = [];
         $imageTypeProvider = $this->container->get('oro_layout.provider.image_type');
-        foreach (array_keys($imageTypeProvider->getImageTypes()) as $imageType) {
-            $imageType = new ProductImageType($imageType);
-            $manager->persist($imageType);
-            $allImageTypes[] = $imageType;
-        }
 
-        $manager->flush();
-
-        return $allImageTypes;
+        return array_keys($imageTypeProvider->getImageTypes());
     }
 }
