@@ -1,0 +1,40 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%name%": entity.name }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+    'entity': entity,
+    'indexPath': path('orob2b_pricing_price_attribute_price_list_index'),
+    'indexLabel': 'orob2b.pricing.price_attribute_price_list.plural_label'|trans,
+    'entityTitle': entity.name|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+
+{% block content_data %}
+    {% set pricingInformationWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'title': 'orob2b.pricing.widgets.price_attribute_information'|trans,
+            'url': path('orob2b_pricing_price_attribute_price_list_info', {id: entity.id})
+        }) }}
+    {% endset %}
+
+    {% set generalSectionBlocks = [{'data' : [pricingInformationWidget]}] %}
+
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.pricing.sections.general'|trans,
+            'class': 'active',
+            'subblocks': generalSectionBlocks
+        }
+    ] %}
+    {% set id = 'price-attribute-price-list-view' %}
+
+    {% set data = {'dataBlocks': dataBlocks} %}
+    {{ parent() }}
+{% endblock content_data %}

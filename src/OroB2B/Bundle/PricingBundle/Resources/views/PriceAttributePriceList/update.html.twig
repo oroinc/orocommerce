@@ -2,16 +2,16 @@
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 {% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
 
-{% oro_title_set({params : {"%name%": entity.name|default('N/A'|trans), '%entityName%': 'orob2b.pricing.price_attribute.entity_label'|trans} }) %}
+{% oro_title_set({params : {"%name%": entity.name|default('N/A'|trans), '%entityName%': 'orob2b.pricing.price_attribute_price_list.entity_label'|trans} }) %}
 
-{% set formAction = entity.id ? path('orob2b_pricing_price_attribute_update', { 'id': entity.id }) : path('orob2b_pricing_price_attribute_create')  %}
+{% set formAction = entity.id ? path('orob2b_pricing_price_attribute_price_list_update', { 'id': entity.id }) : path('orob2b_pricing_price_attribute_price_list_create')  %}
 
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('orob2b_pricing_price_attribute_index')) }}
+    {{ UI.cancelButton(path('orob2b_pricing_price_attribute_price_list_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_pricing_price_attribute_update') %}
+    {% if entity.id or resource_granted('orob2b_pricing_price_attribute_price_list_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -21,13 +21,13 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_pricing_price_attribute_index'),
-            'indexLabel': 'orob2b.pricing.price_attribute.entity_plural_label'|trans,
+            'indexPath':   path('orob2b_pricing_price_attribute_price_list_index'),
+            'indexLabel': 'orob2b.pricing.price_attribute_price_list.plural_label'|trans,
             'entityTitle': entity.name|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
-        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.pricing.price_attribute.entity_label'|trans}) %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.pricing.price_attribute_price_list.label'|trans}) %}
         {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}

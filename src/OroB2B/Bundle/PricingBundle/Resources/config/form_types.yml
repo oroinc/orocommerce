@@ -9,12 +9,12 @@ services:
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list }
 
-    orob2b_pricing.form.type.price_attribute:
-        class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceAttributeType'
+    orob2b_pricing.form.type.price_attribute_price_list:
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType'
         calls:
-            - [setDataClass, ['%orob2b_pricing.entity.price_attribute.class%']]
+            - [setDataClass, ['%orob2b_pricing.entity.price_attribute_price_list.class%']]
         tags:
-            - { name: form.type, alias: orob2b_pricing_price_attribute }
+            - { name: form.type, alias: orob2b_pricing_price_attribute_price_list }
 
     orob2b_pricing.form.type.price_list_select:
         class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType'

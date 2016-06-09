@@ -4,14 +4,13 @@ namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
-class PriceAttributeType extends AbstractType
+class PriceAttributePriceListType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_price_attribute';
+    const NAME = 'orob2b_pricing_price_attribute_price_list';
 
     /**
      * @var string
@@ -40,17 +39,9 @@ class PriceAttributeType extends AbstractType
                 [
                     'multiple' => true,
                     'required' => true,
-                    'label' => 'orob2b.pricing.price_attribute.currencies.label',
+                    'label' => 'orob2b.pricing.price_attribute_price_list.currencies.label',
                 ]
             );
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function postSubmit(FormEvent $event)
-    {
-
     }
 
     /**
