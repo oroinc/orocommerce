@@ -4,6 +4,10 @@
   max-height: 49px;
   border-bottom: 1px solid $theme-lighter-gray-color;
 
+  @media (max-width: $screen-sm) {
+    display: none;
+  }
+
   .container-fluid {
     position: relative;
   }
@@ -73,7 +77,7 @@
 
       &:hover {
         .top-nav__link {
-          background: $base-footer-background-color;
+          background: $theme-lightest-gray-color;
         }
       }
     }
@@ -82,37 +86,26 @@
       position: relative;
 
       display: inline-block;
+      vertical-align: middle;
       min-height: 48px;
-      padding-left: 33px;
-      padding-right: 33px;
+      padding-left: 22px;
+      padding-right: 24px;
 
-      background: $base-footer-background-color;
+      background: $theme-lightest-gray-color;
       font-size: $base-font-size;
 
       @media (max-width: 1069px) {
-        padding-left: 22px;
-        padding-right: 10px;
+        padding-left: 13px;
+        padding-right: 15px;
       }
 
       @media (max-width: $screen-md) {
-        padding-left: 20px;
+        padding-left: 10px;
         padding-right: 10px;
       }
 
       + .top-nav__item--nested {
-        padding-left: 24px;
-        padding-right: 24px;
-        border-left: 1px solid $base-background-color;
-
-        @media (max-width: 1069px) {
-          padding-left: 15px;
-          padding-right: 15px;
-        }
-
-        @media (max-width: $screen-md) {
-          padding-left: 10px;
-          padding-right: 10px;
-        }
+        border-left: 1px solid $base-white-color;
       }
 
       .order-widget_dropdown-mode {
@@ -136,15 +129,17 @@
     padding: 14px 0;
 
     color: $base-font-color-lighter;
+    line-height: 1.5;
     text-transform: uppercase;
     text-align: center;
 
-    > i {
-      margin: 0;
-    }
-
     @media (max-width: 1069px) {
       font-size: 13px;
+      line-height: 1.7;
+    }
+
+    > i {
+      margin: 0;
     }
 
     &:hover {
@@ -153,6 +148,7 @@
     }
   }
 
+  // *** All code below has not implemented yet!!!
   &__sublist-container {
     position: absolute;
     top: 48px;
@@ -172,7 +168,7 @@
     padding: 15px 40px 3px 0;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.2);
 
-    background: $base-background-color;
+    background: $base-white-color;
 
     @media (max-width: 1024px) {
       padding: 15px 30px 30px 0;
@@ -214,12 +210,11 @@
       }
 
       &:after {
-        position: absolute;
+        @include after();
+
         top: 40px;
         right: 0;
 
-        content: "";
-        display: block;
         height: calc(100% - 38px);
         width: 1px;
 
@@ -259,13 +254,13 @@
 
           li {
             margin: 10px 0 0;
+          }
 
-            a {
+          a {
+            color: $base-font-color-lighter;
+
+            &:hover {
               color: $base-font-color-lighter;
-
-              &:hover {
-                color: $base-font-color-lighter;
-              }
             }
           }
         }

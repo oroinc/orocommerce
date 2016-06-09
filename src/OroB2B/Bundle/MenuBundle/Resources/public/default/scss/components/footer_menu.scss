@@ -1,16 +1,4 @@
 .footer-nav {
-  &.footer-nav_follow {
-    @media (max-width: $screen-md) {
-      padding-left: 13%;
-      margin-bottom: 50px;
-    }
-
-    @media (max-width: $screen-sm) {
-      padding-left: 0;
-      margin-bottom: 30px;
-    }
-  }
-
   &__title {
     margin: 0 0 15px;
 
@@ -54,5 +42,18 @@
       width: 100%;
       padding: 0;
     }
+  }
+}
+
+// *** The following code has not implemented yet
+.footer-nav_follow {
+  @media (max-width: $screen-md) {
+    padding-left: 13%;
+    margin-bottom: 50px;
+  }
+
+  @media (max-width: $screen-sm) {
+    padding-left: 0;
+    margin-bottom: 30px;
   }
 }
