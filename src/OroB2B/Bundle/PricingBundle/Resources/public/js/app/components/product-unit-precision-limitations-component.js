@@ -36,8 +36,7 @@ define(function (require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
-                .on('content:changed', _.bind(this.onChange, this))
-                .on('click', '.removeRow', _.bind(this.onRemoveItem, this));
+                .on('content:changed', _.bind(this.onChange, this));
 
             this.options._sourceElement.trigger('content:changed');
         },
@@ -51,32 +50,12 @@ define(function (require) {
 
             _.each(this.getSelects(), function (select) {
                 var $select = $(select);
-                $select.on('change', _.bind(self.onSelectChange, self));
                 var clearChangeRequired = self.clearOptions(units, $select);
                 var addChangeRequired = self.addOptions(units, $select);
                 if (clearChangeRequired || addChangeRequired) {
                     $select.trigger('change');
                 }
             });
-            var units_with_price = this.getUnitsWithPrices();
-            self.triggerChangeUnitsWithPricesEvent(units_with_price);
-        },
-
-        onSelectChange: function(){
-            var units_with_price = this.getUnitsWithPrices();
-            this.triggerChangeUnitsWithPricesEvent(units_with_price);
-        },
-
-        /**
-         * Handle remove item
-         *
-         * @param {jQuery.Event} e
-         */
-        onRemoveItem: function (e) {
-            var option = $(e.target).parent('.oro-multiselect-holder').find('select[name$="[unit]"] option:selected');
-            var units_with_price = this.getUnitsWithPrices();
-            delete units_with_price[option.val()];
-            this.triggerChangeUnitsWithPricesEvent(units_with_price);
         },
 
         /**
@@ -132,8 +111,8 @@ define(function (require) {
                 if (units.hasOwnProperty(option.value)) {
                     var oldText = option.text;
                     var newText = oldText.substring(0,oldText.indexOf(' - '));
-                    option.text = newText;
-
+                    $(option).text(newText);
+                    updateRequired = true;
                 }
             });
 
@@ -193,15 +172,6 @@ define(function (require) {
             });
 
             return units_with_price;
-        },
-
-        /**
-         * Trigger change event
-         *
-         * @param {Object} data
-         */
-        triggerChangeUnitsWithPricesEvent: function (data) {
-            mediator.trigger('pricing:units:with:prices:change', data);
         },
 
         dispose: function () {
