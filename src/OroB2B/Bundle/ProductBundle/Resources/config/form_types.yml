@@ -135,15 +135,6 @@ services:
         tags:
             - { name: form.type, alias: 'orob2b_product_quick_add_import_from_file' }
 
-    orob2b_product.form.type.product_image:
-        class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductImageType'
-        arguments:
-            - "@oro_entity.doctrine_helper"
-            - "%orob2b_product.entity.product_image_type.class%"
-        public: true
-        tags:
-            - { name: form.type, alias: 'orob2b_product_image' }
-
     orob2b_product.form.type.product_image_collection:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductImageCollectionType'
         public: true

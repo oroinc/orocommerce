@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\EventSubscriber;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityRepository;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -22,20 +19,11 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
     private $imageTypes;
 
     /**
-     * @var ProductImageType[]
-     */
-    private $productImageTypes;
-
-    private $submittedImageTypes;
-
-    /**
-     * @param EntityRepository $productImageTypeRepository
      * @param ThemeImageType[] $imageTypes
      */
-    public function __construct(EntityRepository $productImageTypeRepository, array $imageTypes)
+    public function __construct(array $imageTypes)
     {
         $this->imageTypes = $imageTypes;
-        $this->productImageTypes = $this->getProductImageTypes($productImageTypeRepository);
     }
 
     /**
@@ -45,8 +33,7 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
     {
         return [
             FormEvents::POST_SET_DATA => 'postSetData',
-            FormEvents::PRE_SUBMIT => 'preSubmit',
-            FormEvents::POST_SUBMIT  => 'postSubmit',
+            FormEvents::PRE_SUBMIT => 'preSubmit'
         ];
     }
 
@@ -89,39 +76,12 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
         foreach ($this->imageTypes as $imageType) {
             $imageTypeName = $imageType->getName();
 
-            if (isset($data[$imageTypeName]) && isset($this->productImageTypes[$imageTypeName])) {
-                $types[] = $this->productImageTypes[$imageTypeName];
-
+            if (isset($data[$imageTypeName])) {
+                $types[] = new ProductImageType($imageTypeName);
             }
         }
 
-        $this->submittedImageTypes = new ArrayCollection($types);
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function postSubmit(FormEvent $event)
-    {
-        /** @var ProductImage $productImage */
-        $productImage = $event->getData();
-
-        foreach ($productImage->getTypes() as $imageType) {
-            $productImage->removeType($imageType);
-        }
-
-        foreach ($this->submittedImageTypes as $submittedImageType) {
-            $productImage->addType($submittedImageType);
-        }
-    }
-
-
-    /**
-     * @param EntityRepository $productImageTypeRepository
-     * @return ProductImageType[]
-     */
-    private function getProductImageTypes(EntityRepository $productImageTypeRepository)
-    {
-        return $productImageTypeRepository->createQueryBuilder('t', 't.type')->getQuery()->getResult();
+        $data['types'] = $types;
+        $event->setData($data);
     }
 }

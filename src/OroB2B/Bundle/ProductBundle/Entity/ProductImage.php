@@ -50,15 +50,11 @@ class ProductImage extends ExtendProductImage
     /**
      * @var Collection|ProductImageType[]
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductImageType")
-     * @ORM\JoinTable(
-     *      name="orob2b_product_image_to_type",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="product_image_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="product_image_type_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
+     * @ORM\OneToMany(
+     *     targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductImageType",
+     *     mappedBy="productImage",
+     *     cascade={"all"},
+     *     orphanRemoval=true
      * )
      * @ConfigField(
      *      defaultValues={
@@ -112,9 +108,8 @@ class ProductImage extends ExtendProductImage
      */
     public function addType(ProductImageType $productImageType)
     {
-        if (!$this->types->contains($productImageType)) {
-            $this->types->add($productImageType);
-        }
+        $this->types->add($productImageType);
+        $productImageType->setProductImage($this);
     }
 
     /**
@@ -122,9 +117,7 @@ class ProductImage extends ExtendProductImage
      */
     public function removeType(ProductImageType $productImageType)
     {
-        if ($this->types->contains($productImageType)) {
-            $this->types->removeElement($productImageType);
-        }
+        $this->types->removeElement($productImageType);
     }
 
     /**

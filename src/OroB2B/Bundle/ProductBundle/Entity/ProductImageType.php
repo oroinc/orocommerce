@@ -29,6 +29,19 @@ class ProductImageType
      */
     protected $id;
 
+    /**
+     * @var Product
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductImage", inversedBy="types")
+     * @ORM\JoinColumn(name="product_image_id", referencedColumnName="id", nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $productImage;
 
     /**
      * @var string
@@ -65,5 +78,16 @@ class ProductImageType
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @param ProductImage $productImage
+     * @return $this
+     */
+    public function setProductImage(ProductImage $productImage)
+    {
+        $this->productImage = $productImage;
+
+        return $this;
     }
 }
