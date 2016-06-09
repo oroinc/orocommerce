@@ -446,7 +446,7 @@
                             {% set itemsCount = shoppingList.lineItems.count %}
                             {% if itemsCount %}
                                 <div class="orders-list__item__desc">
-                                    <span class="mr1-md"><strong>{{ shoppingList.lineItems.count }}</strong> {{ 'orob2b.shoppinglist.items.label'|transchoice(itemsCount) }}</span>
+                                    <span class="mr1-md {% if shoppingList.id == selectedShoppingList.id %}current-title{% endif %}"><strong>{{ shoppingList.lineItems.count }}</strong> {{ 'orob2b.shoppinglist.items.label'|transchoice(itemsCount) }}</span>
                                 </div>
                             {% endif %}
                         </div>

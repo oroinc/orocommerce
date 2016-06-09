@@ -14,12 +14,11 @@ define(function(require) {
         initialize: function(options) {
             this.$el = options._sourceElement;
             // listen to incoming title updates and re-render the whole shopping list
-            mediator.on('inlineEditor:shopping-list-title:update',
-                _.bind(this.updateCurrentTitle, this));
+            mediator.on('inlineEditor:shopping-list-title:update', this.updateCurrentTitle, this);
         },
 
         updateCurrentTitle: function(updateData) {
-            this.$el.find('.current h3').text(updateData.label);
+            this.$el.find('.current-title').text(updateData.label);
         }
     });
 
