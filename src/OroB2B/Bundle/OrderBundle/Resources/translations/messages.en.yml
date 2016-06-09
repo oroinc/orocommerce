@@ -192,9 +192,12 @@ orob2b:
     frontend:
         order:
             entity_plural_label: Orders
+            order_history: Order History
             create.label: 'Create Order'
             form:
                 group_label:
                     account: Global Address Book
                     account_user: My Address Book
             past_orders.label: Past Orders
+            grid:
+                checkout_link: Check Out

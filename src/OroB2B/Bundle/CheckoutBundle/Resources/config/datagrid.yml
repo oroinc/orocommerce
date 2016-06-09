@@ -102,8 +102,8 @@ datagrid:
         actions:
             view:
                 type: navigate
-                label: oro.grid.action.view
+                label: orob2b.frontend.order.grid.checkout_link
                 link: view_link
-                icon: eye-open
+                icon: shopping-cart
                 acl_resource: orob2b_checkout_frontend_checkout
                 rowAction: true

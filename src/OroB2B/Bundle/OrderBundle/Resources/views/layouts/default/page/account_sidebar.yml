@@ -6,6 +6,6 @@ layout:
             blockType: link
             options:
                 route_name: orob2b_order_frontend_index
-                text: orob2b.frontend.order.entity_plural_label
+                text: orob2b.frontend.order.order_history
     conditions:
         '@acl': orob2b_order_frontend_view
