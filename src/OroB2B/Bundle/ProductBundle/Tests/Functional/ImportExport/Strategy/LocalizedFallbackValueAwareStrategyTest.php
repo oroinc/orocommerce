@@ -141,15 +141,15 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
                                 'string' => 'product.1 en_US Title',
-                                'fallback' => 'parent_locale',
-                                'locale' => $localizationEnUs,
+                                'fallback' => 'parent_localization',
+                                'localization' => $localizationEnUs,
                             ]
                         ],
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
                                 'string' => 'product.1 en_CA Title',
-                                'locale' => $localizationEnCa
+                                'localization' => $localizationEnCa
                             ]
                         ],
                     ],
@@ -258,7 +258,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         ],
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                            'testProperties' => ['string' => 'product.4 en_US Title', 'locale' => $localizationEnUs]
+                            'testProperties' => ['string' => 'product.4 en_US Title', 'localization' => $localizationEnUs]
                         ],
                     ]
                 ],

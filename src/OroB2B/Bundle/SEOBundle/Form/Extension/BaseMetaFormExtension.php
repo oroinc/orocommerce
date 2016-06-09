@@ -45,7 +45,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                 'metaTitles',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => $this->getMetaFieldLabelPrefix() . '.meta-title.label',
+                    'label' => $this->getMetaFieldLabelPrefix() . '.meta_titles.label',
                     'required' => false,
                     'type' => 'text',
                 ]
@@ -54,7 +54,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                 'metaDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => $this->getMetaFieldLabelPrefix() . '.meta-description.label',
+                    'label' => $this->getMetaFieldLabelPrefix() . '.meta_descriptions.label',
                     'required' => false,
                     'type' => 'textarea',
                 ]
@@ -63,7 +63,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                 'metaKeywords',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => $this->getMetaFieldLabelPrefix() . '.meta-keywords.label',
+                    'label' => $this->getMetaFieldLabelPrefix() . '.meta_keywords.label',
                     'required' => false,
                     'type' => 'textarea',
                 ]

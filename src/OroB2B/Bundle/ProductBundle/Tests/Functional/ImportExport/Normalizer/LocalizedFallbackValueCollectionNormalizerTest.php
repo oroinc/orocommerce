@@ -238,7 +238,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
                     'English (Canada)' => [
                         'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                         'testProperties' => [
-                            'fallback' => 'parent_locale',
+                            'fallback' => 'parent_localization',
                             'text' => 'value',
                             'localization' => [
                                 'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization',
