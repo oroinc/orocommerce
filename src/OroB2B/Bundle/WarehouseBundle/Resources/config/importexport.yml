@@ -1,4 +1,14 @@
 services:
+    orob2b_warehouse.importexport.inventory_status_converter:
+        parent: oro_importexport.data_converter.configurable
+
+    orob2b_warehouse.importexport.processor.export_detailed_inventory_levels:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+             - [setDataConverter, ["@orob2b_warehouse.importexport.inventory_status_converter"]]
+        tags:
+            - { name: oro_importexport.processor, type: export, entity: %orob2b_warehouse.entity.warehouse.class%, alias: orob2b_warehouse_detailed_inventory_levels }
+
     # Strategy
     orob2b_warehouse.importexport.strategy.warehouse_inventory_level.add_or_replace:
         parent: oro_importexport.strategy.configurable_add_or_replace

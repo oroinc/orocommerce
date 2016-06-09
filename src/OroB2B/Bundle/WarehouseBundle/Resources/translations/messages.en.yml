@@ -42,3 +42,8 @@ orob2b:
 
         inventory:
             entity_plural_label: Inventories
+
+        export:
+            inventory_status:
+                export_inventory_status_only: "Inventory statuses only"
+                orob2b_warehouse_detailed_inventory_levels: "Detailed inventory levels"

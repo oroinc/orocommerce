@@ -32,6 +32,7 @@ class WarehouseInventoryLevelController extends Controller
     {
         return [
             'entity_class' => $this->container->getParameter('orob2b_warehouse.entity.warehouse.class'),
+            'gridName' => 'issues-grid'
         ];
     }
 

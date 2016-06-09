@@ -71,3 +71,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_product.normalizer.normalizer, method: onNormalize }
             - { name: kernel.event_listener, event: orob2b_product.normalizer.denormalizer, method: onDenormalize }
+
+    orob2b_product.importexport.inventory_status_converter:
+        parent: oro_importexport.data_converter.configurable
+
+    orob2b_product.importexport.processor.export_inventory_status_only:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+             - [setDataConverter, ["@orob2b_product.importexport.inventory_status_converter"]]
+        tags:
+            - { name: oro_importexport.processor, type: export, entity: %orob2b_warehouse.entity.warehouse.class%, alias: export_inventory_status_only }
