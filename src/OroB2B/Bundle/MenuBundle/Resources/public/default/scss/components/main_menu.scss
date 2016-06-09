@@ -36,7 +36,7 @@
           display: block;
         }
 
-        .order-widget_dropdown-mode {
+        .order-widget--dropdown-mode {
           display: block;
         }
 
@@ -108,7 +108,7 @@
         border-left: 1px solid $base-white-color;
       }
 
-      .order-widget_dropdown-mode {
+      .order-widget--dropdown-mode {
         top: 48px;
 
         display: none;
