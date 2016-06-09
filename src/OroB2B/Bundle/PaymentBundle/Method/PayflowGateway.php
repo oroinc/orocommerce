@@ -49,15 +49,13 @@ class PayflowGateway implements PaymentMethodInterface
     /** {@inheritdoc} */
     public function execute($action, PaymentTransaction $paymentTransaction)
     {
-        $actionName = $paymentTransaction->getAction();
-
-        if (!$this->supports($actionName)) {
-            throw new \InvalidArgumentException(sprintf('Unsupported action "%s"', $actionName));
+        if (!$this->supports($action)) {
+            throw new \InvalidArgumentException(sprintf('Unsupported action "%s"', $action));
         }
 
         $this->gateway->setTestMode($this->isTestMode());
 
-        return $this->{$actionName}($paymentTransaction) ?: [];
+        return $this->{$action}($paymentTransaction) ?: [];
     }
 
     /**
