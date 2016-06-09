@@ -9,14 +9,23 @@ define(function(require) {
 
     ShoppingListSidebarView = BaseView.extend({
 
-        currentTitle : '',
+        id: null,
 
+        /**
+         *
+         * @param options
+         */
         initialize: function(options) {
             this.$el = options._sourceElement;
+            this.id = options.id;
             // listen to incoming title updates and re-render the whole shopping list
-            mediator.on('inlineEditor:shopping-list-title:update', this.updateCurrentTitle, this);
+            mediator.on('inlineEditor:' + this.id + ':update', this.updateCurrentTitle, this);
         },
 
+        /**
+         *
+         * @param updateData
+         */
         updateCurrentTitle: function(updateData) {
             this.$el.find('.current-title').text(updateData.label);
         }

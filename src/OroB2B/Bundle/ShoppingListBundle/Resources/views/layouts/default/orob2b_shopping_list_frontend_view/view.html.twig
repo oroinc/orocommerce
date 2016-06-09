@@ -429,7 +429,8 @@
                 'data-page-component-options': {
                     view: 'oroui/js/app/views/layout-subtree-view',
                     rootId : block.vars.id,
-                    reloadEvents: ['shopping-list:updated']
+                    reloadEvents: ['shopping-list:updated'],
+                    id: 'shopping-list-title'
                 },
                 'data-dropdown-trigger': true
             }|merge(attr|merge({
@@ -442,11 +443,11 @@
                     <a href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}" class="orders-list__item__link {% if shoppingList.id == selectedShoppingList.id %} current {% endif %}">
                         <span class='badge badge_sm badge_orange badge_circled-corners orders-list__item-indicator'><i class="cf-basket"></i></span>
                         <div class="orders-list__item__content">
-                            <h3 class="orders-list__item__title text-uppercase">{{ shoppingList.label }}</h3>
+                            <h3 class="orders-list__item__title text-uppercase {% if shoppingList.id == selectedShoppingList.id %}current-title{% endif %}">{{ shoppingList.label }}</h3>
                             {% set itemsCount = shoppingList.lineItems.count %}
                             {% if itemsCount %}
                                 <div class="orders-list__item__desc">
-                                    <span class="mr1-md {% if shoppingList.id == selectedShoppingList.id %}current-title{% endif %}"><strong>{{ shoppingList.lineItems.count }}</strong> {{ 'orob2b.shoppinglist.items.label'|transchoice(itemsCount) }}</span>
+                                    <span class="mr1-md"><strong>{{ shoppingList.lineItems.count }}</strong> {{ 'orob2b.shoppinglist.items.label'|transchoice(itemsCount) }}</span>
                                 </div>
                             {% endif %}
                         </div>
