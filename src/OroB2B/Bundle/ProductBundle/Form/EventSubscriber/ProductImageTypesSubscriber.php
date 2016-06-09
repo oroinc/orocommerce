@@ -9,7 +9,6 @@ use Symfony\Component\Form\FormEvents;
 use Oro\Component\Layout\Extension\Theme\Model\ThemeImageType;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
-use OroB2B\Bundle\ProductBundle\Entity\ProductImageType;
 
 class ProductImageTypesSubscriber implements EventSubscriberInterface
 {
@@ -77,7 +76,7 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
             $imageTypeName = $imageType->getName();
 
             if (isset($data[$imageTypeName])) {
-                $types[] = new ProductImageType($imageTypeName);
+                $types[] = $imageTypeName;
             }
         }
 

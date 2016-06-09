@@ -97,31 +97,32 @@ class ProductImage extends ExtendProductImage
     }
 
     /**
-     * @return Collection|ProductImageType[]
+     * @return array
      */
     public function getTypes()
     {
-        return $this->types;
+        return $this->types->getKeys();
     }
 
     /**
-     * @param ProductImageType $productImageType
+     * @param string $type
      */
-    public function addType(ProductImageType $productImageType)
+    public function addType($type)
     {
-        if (!$this->types->containsKey($productImageType->getType())) {
-            $this->types->set($productImageType->getType(), $productImageType);
+        if (!$this->types->containsKey($type)) {
+            $productImageType = new ProductImageType($type);
             $productImageType->setProductImage($this);
+            $this->types->set($type, $productImageType);
         }
     }
 
     /**
-     * @param ProductImageType $productImageType
+     * @param string $type
      */
-    public function removeType(ProductImageType $productImageType)
+    public function removeType($type)
     {
-        if ($this->types->containsKey($productImageType->getType())) {
-            $this->types->remove($productImageType->getType());
+        if ($this->types->containsKey($type)) {
+            $this->types->remove($type);
         }
     }
 
@@ -146,10 +147,10 @@ class ProductImage extends ExtendProductImage
     {
         if ($this->id) {
             $this->id = null;
-            foreach ($this->types as $type) {
-                $typeCopy = clone $type;
-                $typeCopy->setProductImage($this);
-                $this->types[$typeCopy->getType()] = $typeCopy;
+            $types = $this->getTypes();
+            $this->types = new ArrayCollection();
+            foreach ($types as $type) {
+                $this->addType($type);
             }
         }
     }

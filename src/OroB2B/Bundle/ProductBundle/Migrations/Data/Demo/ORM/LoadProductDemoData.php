@@ -17,7 +17,6 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
-use OroB2B\Bundle\ProductBundle\Entity\ProductImageType;
 
 class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -149,7 +148,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $productImage = new ProductImage();
             $productImage->setImage($image);
             foreach ($types as $type) {
-                $productImage->addType(new ProductImageType($type));
+                $productImage->addType($type);
             }
         } catch (\Exception $e) {
             //image not found
