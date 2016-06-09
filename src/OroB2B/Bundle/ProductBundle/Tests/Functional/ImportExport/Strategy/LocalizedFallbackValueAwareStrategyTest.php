@@ -258,7 +258,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         ],
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                            'testProperties' => ['string' => 'product.4 en_US Title', 'localization' => $localizationEnUs]
+                            'testProperties' => [
+                                'string' => 'product.4 en_US Title',
+                                'localization' => $localizationEnUs],
                         ],
                     ]
                 ],
