@@ -1,3 +1,11 @@
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
+{% include 'OroB2BPricingBundle:Product:price_attribute_prices.html.twig'
+    with {
+        'priceAttributePrices': priceAttributePrices,
+        'productAttributes': productAttributes,
+        'productUnits': productUnits
+    }
+%}
+
 {{ dataGrid.renderGrid('product-prices-grid', {product_id: entity.id}) }}

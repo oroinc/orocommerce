@@ -1,4 +1,8 @@
 orob2b.pricing:
+    priceAttribute:
+        unit.label: Unit
+        withoutPrice: N/A
+
     pricelist:
         entity_label: Price List
         entity_plural_label: Price Lists

@@ -20,6 +20,8 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -159,7 +161,12 @@ class FormViewListener
 
         $template = $event->getEnvironment()->render(
             'OroB2BPricingBundle:Product:prices_view.html.twig',
-            ['entity' => $product]
+            [
+                'entity' => $product,
+                'productUnits' => $product->getAvailableUnitCodes(),
+                'productAttributes' => $this->getProductAttributes(),
+                'priceAttributePrices' => $this->getPriceAttributePrices($product)
+            ]
         );
         $this->addProductPricesBlock($event->getScrollData(), $template);
     }
@@ -177,11 +184,51 @@ class FormViewListener
     }
 
     /**
+     * @return array
+     */
+    protected function getProductAttributes()
+    {
+        /** @var PriceAttributePriceList[] $productPriceAttributes */
+        $a = $this->getPriceAttributePriceListRepository();
+        return $a->findAll();
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    protected function getPriceAttributePrices(Product $product)
+    {
+        /** @var PriceAttributeProductPrice[] $priceAttributePrices */
+        $priceAttributePrices = $this->getPriceAttributePriceListPricesRepository()->findBy(['product' => $product]);
+
+        $result = [];
+        foreach ($priceAttributePrices as $priceAttributePrice) {
+            $priceAttributeName = $priceAttributePrice->getPriceList()->getName();
+            $currency = $priceAttributePrice->getPrice()->getCurrency();
+            $unit = $priceAttributePrice->getProductUnit()->getCode();
+            $amount = $priceAttributePrice->getPrice()->getValue();
+
+            $result[$priceAttributeName][$unit][$currency] = $amount;
+        }
+
+        return $result;
+    }
+
+    /**
      * @return PriceListRepository
      */
-    protected function getPriceListRepository()
+    protected function getPriceAttributePriceListRepository()
     {
-        return $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:PriceList');
+        return $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:PriceAttributePriceList');
+    }
+    
+    /**
+     * @return PriceListRepository
+     */
+    protected function getPriceAttributePriceListPricesRepository()
+    {
+        return $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:PriceAttributeProductPrice');
     }
 
     /**
