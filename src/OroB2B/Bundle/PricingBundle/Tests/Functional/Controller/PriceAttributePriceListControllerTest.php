@@ -49,9 +49,6 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $this->assertContains($priceAttributePriceList->getName(), $crawler->html());
     }
     
-    /**
-     * @return int
-     */
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_pricing_price_attribute_price_list_create'));
@@ -79,42 +76,33 @@ class PriceAttributePriceListControllerTest extends WebTestCase
             ->getRepository('OroB2BPricingBundle:PriceAttributePriceList')
             ->findOneBy(['name' => self::PRICE_ATTRIBUTE_PRICE_LIST_NAME]);
         $this->assertNotEmpty($priceAttributePriceList);
-
-        return $priceAttributePriceList->getId();
     }
 
-    /**
-     * @param $id int
-     * @return int
-     *
-     * @depends testCreate
-     */
-    public function testView($id)
+    public function testView()
     {
+        /** @var PriceAttributePriceList $priceAttributePriceList */
+        $priceAttributePriceList = $this->getReference('price_attribute_price_list_4');
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_pricing_price_attribute_price_list_view', ['id' => $id])
+            $this->getUrl('orob2b_pricing_price_attribute_price_list_view', ['id' => $priceAttributePriceList->getId()])
         );
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains(self::PRICE_ATTRIBUTE_PRICE_LIST_NAME, $crawler->html());
-
-        return $id;
+        $this->assertContains($priceAttributePriceList->getName(), $crawler->html());
     }
 
-    /**
-     * @param int $id
-     * @return int
-     *
-     * @depends testView
-     */
-    public function testUpdate($id)
+    public function testUpdate()
     {
+        /** @var PriceAttributePriceList $priceAttributePriceList */
+        $priceAttributePriceList = $this->getReference('price_attribute_price_list_3');
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_pricing_price_attribute_price_list_update', ['id' => $id])
+            $this->getUrl(
+                'orob2b_pricing_price_attribute_price_list_update',
+                ['id' => $priceAttributePriceList->getId()]
+            )
         );
 
         $form = $crawler->selectButton('Save and Close')->form(
@@ -132,20 +120,18 @@ class PriceAttributePriceListControllerTest extends WebTestCase
 
         $this->assertContains(self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT, $crawler->html());
         $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName(self::CURRENCY), $crawler->html());
-
-        return $id;
     }
-    
-    /**
-     * @param int $id
-     *
-     * @depends testUpdate
-     */
-    public function testInfo($id)
+
+    public function testInfo()
     {
+        /** @var PriceAttributePriceList $priceAttributePriceList */
+        $priceAttributePriceList = $this->getReference('price_attribute_price_list_3');
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_pricing_price_attribute_price_list_info', ['id' => $id]),
+            $this->getUrl(
+                'orob2b_pricing_price_attribute_price_list_info',
+                ['id' => $priceAttributePriceList->getId()]
+            ),
             ['_widgetContainer' => 'widget']
         );
 
