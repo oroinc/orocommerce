@@ -24,12 +24,6 @@ orob2b.pricing:
         contain_schedule.label: Contain Schedules
         owner.label: 'Owner'
         organization.label: 'Organization'
-    priceattributepricelist:
-        entity_label: Price Attribute
-        entity_plural_label: Price Attributes
-        name.label: Price Attribute
-        currencies.label: Currencies
-        id.label: Id
         form:
             pricelist_required: Please select a price list first...
         status:
@@ -44,6 +38,11 @@ orob2b.pricing:
         duplicate:
             label: Duplicate Price List
             message: Price List was Duplicated successfull
+    priceattributepricelist:
+        entity_label: Price Attribute
+        entity_plural_label: Price Attributes
+        name.label: Price Attribute
+        currencies.label: Currencies
 
     quantity.label: Quantity
     fallback:

@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Controller;
 
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -12,6 +11,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 
 class PriceAttributePriceListController extends Controller
@@ -26,8 +26,7 @@ class PriceAttributePriceListController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container
-                ->getParameter('orob2b_pricing.entity.price_attribute_price_list.class')
+            'entity_class' => $this->container->getParameter('orob2b_pricing.entity.price_attribute_price_list.class')
         ];
     }
 
@@ -115,13 +114,13 @@ class PriceAttributePriceListController extends Controller
      * @Route("/info/{id}", name="orob2b_pricing_price_attribute_price_list_info", requirements={"id"="\d+"})
      * @Template("OroB2BPricingBundle:PriceAttributePriceList/widget:info.html.twig")
      * @AclAncestor("orob2b_pricing_price_attribute_price_list_view")
-     * @param PriceAttributePriceList $priceList
+     * @param PriceAttributePriceList $priceAttribute
      * @return array
      */
-    public function infoAction(PriceAttributePriceList $priceList)
+    public function infoAction(PriceAttributePriceList $priceAttribute)
     {
         return [
-            'entity' => $priceList
+            'entity' => $priceAttribute
         ];
     }
 }

@@ -5,14 +5,14 @@ oro_menu_config:
             route:           'orob2b_pricing_price_list_index'
             extras:
                 position:    500
-                routes:      ['/^orob2b_pricing/']
+                routes:      ['/^orob2b_pricing_price_list/']
                 description: 'orob2b.pricing.menu.price_lists_list.description'
 
         pricing_price_attribute_price_lists_list:
             label:           'orob2b.pricing.priceattributepricelist.entity_plural_label'
             route:           'orob2b_pricing_price_attribute_price_list_index'
             extras:
-                routes:      ['/^orob2b_pricing/']
+                routes:      ['/^orob2b_pricing_price_attribute_price_list/']
                 description: 'orob2b.pricing.menu.price_attribute_price_lists_list.description'
 
         shortcut_pricing_price_attribute_price_list:
@@ -55,7 +55,7 @@ oro_titles:
     orob2b_pricing_price_list_update: '%%name%% - Edit'
     orob2b_pricing_price_list_create: oro.ui.create_entity
 
-    orob2b_pricing_price_attribute_price_list_index:  orob2b.pricing.priceattributepricelist.entity_plural_label
+    orob2b_pricing_price_attribute_price_list_index:  ~
     orob2b_pricing_price_attribute_price_list_view:   '%%name%%'
     orob2b_pricing_price_attribute_price_list_update: '%%name%% - Edit'
     orob2b_pricing_price_attribute_price_list_create: oro.ui.create_entity
