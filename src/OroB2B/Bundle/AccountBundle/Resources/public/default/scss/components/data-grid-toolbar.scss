@@ -1,0 +1,844 @@
+.grid__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: stretch;
+  margin: 10px 0;
+
+  &--extended {
+    + .cart-list_mobile {
+      margin-top: -5px;
+    }
+
+    .grid__tool {
+      flex-grow: 0;
+
+      &:first-child {
+        position: relative;
+
+        flex-grow: 1;
+
+        @media (max-width: 1280px) {
+          flex-basis: 300px;
+        }
+      }
+
+      &:last-child {
+        @media (max-width: $screen-sm) {
+          flex-basis: auto;
+        }
+      }
+
+      // *** Current 3 classes have not implemented yet!!!
+      &.oro-oq__filter__item_ppi {
+        text-align: right;
+        margin-right: 5px;
+      }
+
+      &.oro-oq__filter__item_sort-select {
+        flex-basis: 170px;
+
+        @media (max-width: $screen-md) {
+          flex-basis: auto;
+        }
+      }
+
+      + .oro-oq__filter__item_group-btn {
+        margin-left: 10px;
+      }
+    }
+  }
+
+  &--simplistic {
+
+    // *** Current class has not implemented yet!!!
+    &.after-table {
+      margin: 0;
+      padding-top: 10px;
+      border-top: 1px solid $theme-lighter-gray-color;
+      border-bottom: 1px solid $theme-lighter-gray-color;
+
+      + .order-checkout-widget {
+        margin-top: 0;
+        border-top: 0;
+
+        @media (max-width: $screen-md) {
+          margin-top: 0;
+
+          .order-checkout-widget__container-wrapper {
+            margin-top: 0;
+          }
+        }
+      }
+    }
+
+    .grid__tool {
+      flex-grow: 1;
+
+      &:first-child {
+        flex-grow: 3 !important;
+
+        @media (max-width: 1250px) {
+          flex-basis: 100%;
+          margin: 0 0 10px;
+        }
+      }
+    }
+  }
+}
+
+.grid__tool {
+  font-size: 0;
+
+  &:first-child {
+    position: relative;
+
+    flex-basis: 320px;
+  }
+
+  &:last-child {
+    flex-grow: 0;
+  }
+
+  &--specific-action {
+    margin-left: 5px;
+
+    @media (max-width: $screen-md) {
+      flex-basis: auto !important;
+    }
+  }
+}
+
+.action-select  {
+  @include input();
+  position: relative;
+
+  padding: .6rem .9rem .6rem !important;
+
+  border: .1rem solid $base-border-color;
+  background: $base-white-color;
+
+  appearance: none;
+
+  &[disabled] {
+    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(230,230,230,1) 100%);
+  }
+}
+
+.action-selectbox_custom {
+  text-align: left !important;
+}
+
+.action-selectbox_custom_in-pager {
+  display: inline-block;
+  vertical-align: middle;
+
+  + span {
+    display: inline-block;
+  }
+}
+
+
+
+// *** The code bellow has not implemented yet!!!
+
+/*Start table columns editing popup*/
+.oro-oq__filter__edit-columns-container-wrapper {
+  position: relative;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: calc(100% - 2rem);
+    height: .1rem;
+    background: $base-border-color;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: calc(100% - 2rem);
+    height: .1rem;
+    background: $base-border-color;
+  }
+}
+
+.oro-oq__filter__edit-columns-container {
+  position: relative;
+  height: 30.2rem;
+  border-right:0;
+}
+
+.oro-oq__filter__edit-columns__list {
+  @include list-normalize;
+  border-right: .1rem solid $base-border-color;
+  border-left: .1rem solid $base-border-color;
+}
+
+.oro-oq__filter__edit-columns__item {
+  position: relative;
+  border: 0;
+  border-top: .1rem solid $base-border-color;
+  padding: 0 1.5rem 0 2.5rem;
+  line-height: 4.2rem;
+
+  @media (max-width: 991px) {
+    padding: 0 1rem;
+  }
+
+  &:first-child {
+    border-top: 0;
+  }
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  label {
+    display: block;
+  }
+}
+
+.oq-drag-handle {
+  position: absolute;
+  top: .5rem;
+  left: .5rem;
+  width: .8rem;
+  height: 3.3rem;
+  cursor: move;
+
+  @media (max-width: 991px) {
+    display: none;
+  }
+
+  span {
+    display: block;
+    width: .8rem;
+    height: .7rem;
+    margin-top: .1rem;
+
+    &:before {
+      content: "";
+      display: block;
+      width: .8rem;
+      height: .3rem;
+      background: linear-gradient(to right, rgba(236,236,236,1) 0%, rgba(236,236,236,1) 33%, rgba(236,236,236,0) 34%, rgba(236,236,236,0) 65%, rgba(236,236,236,1) 66%, rgba(236,236,236,1) 100%);
+    }
+
+    &:after {
+      content: "";
+      display: block;
+      margin-top: .1rem;
+      width: .8rem;
+      height: .3rem;
+      background: linear-gradient(to right, rgba(236,236,236,1) 0%, rgba(236,236,236,1) 33%, rgba(236,236,236,0) 34%, rgba(236,236,236,0) 65%, rgba(236,236,236,1) 66%, rgba(236,236,236,1) 100%);
+    }
+  }
+}
+
+.oq-triangle {
+  position: absolute;
+  bottom: .5rem;
+  right: .5rem;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 8px 8px;
+  border-color: transparent transparent #f0f0f0 transparent;
+
+  @media (max-width: 991px) {
+    display: none;
+  }
+}
+
+/*End table columns editing popup*/
+
+.oro-oq__filter__form {
+  font-size: 1.4rem;
+
+  .filter-widget__clear-link {
+    font-size: 1.3rem;
+
+    &:hover {
+      text-decoration: none;
+
+      span {
+        text-decoration: underline;
+      }
+    }
+
+    span {
+      vertical-align: middle;
+      text-decoration: none;
+    }
+  }
+}
+
+.oro-oq__filter__form__row {
+  margin: 0 -1rem 1.5rem;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
+  &:before, &:after {
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+  }
+}
+
+.oro-oq__filter__form__col-1-2 {
+  padding: 0 1rem;
+  width: 50%;
+  float: left;
+}
+
+.oro-oq__filter__form__full {
+  width: 100%;
+  padding: 0 1rem;
+}
+
+.oro-oq__filter__form__daterange {
+  display: flex;
+  align-items: center;
+
+  @media (max-width: 767px) {
+    flex-wrap: wrap;
+  }
+
+  .form-input {
+    @media (max-width: $screen-sm) {
+      flex-grow: 0;
+      flex-basis: calc(50% - 2rem);
+    }
+
+    &.form-input_datepicker {
+      @media (max-width: $screen-sm) {
+        flex-basis: 100%;
+      }
+    }
+  }
+}
+
+.oro-oq__filter__form__daterange__divider {
+  margin: 0 1rem;
+
+  @media (max-width: $screen-sm) {
+    display: inline-block;
+    flex-basis: 100%;
+    margin: .5rem 0;
+  }
+}
+
+.oro-oq__filter__label {
+  display: block;
+  font-weight: 400;
+  margin: 0 0 .5rem;
+}
+
+.oro-oq__filter__form__checkboxes-list {
+  @include list-normalize();
+  margin: 1rem 0 0;
+  font-size: 0;
+
+  li {
+    display: inline-block;
+    margin: 0 4rem 1rem 0;
+
+    .checkbox_custom {
+      span {
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+.oro-oq__filter__search__input {
+  display: inline-block;
+  min-width: 26rem;
+  vertical-align: middle;
+  margin-right: .4rem;
+  box-shadow: inset .1rem .1rem .3rem 0 rgba(0,0,0,.1);
+  @include input();
+
+  &:focus {
+    border-color: #4597ca;
+    outline: 0;
+    box-shadow: inset 0 .1rem .1rem rgba(0,0,0,.075), 0 0 .8rem rgba(102,175,233,.6);
+  }
+
+  @media (max-width: 991px) {
+    margin: 0;
+    width: 100%;
+  }
+}
+
+.oro-oq__filter__item {
+  font-size: 0;
+
+  &.oro-oq__filter__item_sorting-settings {
+    flex-grow: 0;
+    flex-basis: 3rem;
+    text-align: center;
+  }
+
+  &:last-child {
+    text-align: right;
+
+    @media (max-width: 767px) {
+      flex-basis: auto;
+    }
+  }
+
+  &.open {
+    .oro-oq__filter-trigger {
+      background: rgba(198,198,198,1);
+      background: linear-gradient(to bottom, rgba(198,198,198,1) 0%, rgba(255,255,255,1) 100%);
+      box-shadow: inset 0 .2rem .4rem 0 rgba(0,0,0,.2);
+    }
+  }
+}
+
+.oro-oq__filter__applied-container,
+.oro-oq__filter__select-container {
+  margin: 1rem 0 0;
+  background: $base-topbar-background-color;
+  padding: .7rem 1.1rem .2rem;
+  position: relative;
+
+  @media (max-width: 991px) {
+    border-radius: .2rem;
+    margin-top: .5rem;
+  }
+
+  + .oro-grid-table {
+    &.oro-grid-table__orders {
+      margin-top: 0;
+    }
+  }
+
+  .filter-widget__clear-link {
+    top: .9rem !important;
+    right: 1rem !important;
+  }
+}
+
+.oro-oq__filter__select-container {
+  background: $base-sidebar-background-color-light;
+  margin: 1rem 0 0;
+
+  + .oro-oq__filter__applied-container {
+    margin-top: 0;
+  }
+}
+
+.oro-oq__filter__applied__badge-list {
+  @include list-normalize;
+  padding-right: 12rem;
+
+  &:before, &:after {
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+  }
+
+  @media (max-width: 991px) {
+    padding-right: 0;
+  }
+
+  > li {
+    float: left;
+    margin: 0 .5rem .5rem 0;
+    @include ellipsis;
+
+    @media (max-width: 991px) {
+      font-size: 1.3rem;
+    }
+
+    .filter-widget__clear-link {
+      line-height: 3.6rem;
+    }
+  }
+}
+
+.oro-oq__filter__select-list {
+  @include list-normalize;
+
+  &.oro-oq__filter__select-list_quote-filter {
+
+    > li {
+      width: 22.4rem;
+
+      @media (max-width: 991px) {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+
+        .oq-pseudo-selectbox-container {
+          position: static;
+          width: 22.4rem;
+        }
+
+        .oro-oq__filter__popup {
+          left: -2rem;
+          width: calc(100% + 2rem);
+          max-width: 34rem;
+          min-width: 0;
+        }
+
+        .product__select {
+          @media (max-width: 991px) {
+            font-size: 1.4rem;
+            max-width: 22.5rem;
+          }
+        }
+      }
+    }
+  }
+
+  &:before, &:after {
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+  }
+
+  > li {
+    float: left;
+    width: 18rem;
+    margin: 0 1.5rem .5rem 0;
+
+    @media (max-width: 991px) {
+      float: none;
+      width: 100%;
+      max-width: 25rem;
+      margin: 0 0 .5rem;
+    }
+  }
+}
+
+.oro-oq__filter__applied__badge-list__item {
+  font-size: 1.3rem;
+  color: #fff;
+  padding: .2rem .7rem .1rem 1rem;
+  border-radius: .2rem;
+  background: $theme-light-gray-color;
+  cursor: pointer;
+
+  @media (max-width: 991px) {
+    border-radius: .5rem;
+    height: 2.6rem;
+    font-size: 1.4rem;
+    line-height: 2.6rem;
+    padding: 0 1rem;
+  }
+
+  i, [class^="cf-"] {
+    font-size: 1.5rem;
+    line-height: 1.4rem;
+    margin-left: .5rem;
+    vertical-align: middle;
+  }
+}
+
+.oq-group-btn {
+  line-height: 1.3;
+  padding: .8rem 1.5rem !important;
+
+  i, span {
+    vertical-align: middle;
+  }
+
+  i {
+    margin-right: .5rem;
+  }
+}
+
+.oro-oq__sorting-settings-container {
+  display: inline-block;
+  position: relative;
+
+  &.open {
+
+    .oro-oq__sorting-settings,
+    .oro-oq__filter-trigger {
+      background: rgb(198,198,198,1);
+      background: linear-gradient(to bottom, rgba(198,198,198,1) 0%, rgba(255,255,255,1) 100%);
+      box-shadow: inset 0 .2rem .4rem 0 rgba(0,0,0,.2);
+    }
+
+    .oro-oq__filter__popup {
+      display: block;
+    }
+  }
+}
+
+.oro-oq__filter-trigger,
+.oro-oq__sorting-settings {
+  display: inline-block;
+  font-size: 1.4rem;
+  color: $base-font-color-lighter;
+  vertical-align: middle;
+  padding: .6rem 0 .5rem;
+  width: 4rem;
+  max-height: 3.2rem;
+  border: .1rem solid #d6d6d6;
+  border-radius: .5rem;
+  text-align: center;
+  box-shadow: none;
+  background: rgba(255,255,255,1);
+  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(230,230,230,1) 100%);
+
+  &.active {
+    background: rgba(198,198,198,1);
+    background: linear-gradient(to bottom, rgba(198,198,198,1) 0%, rgba(255,255,255,1) 100%);
+    box-shadow: inset 0 .2rem .4rem 0 rgba(0,0,0,.2);
+  }
+}
+
+.oro-oq__sorting-settings {
+  margin-left: .5rem;
+}
+
+.oro-oq__filter__popup {
+  display: none;
+  min-width: 65.5rem;
+  border-radius: .5rem;
+  z-index: 3;
+  padding: 2rem;
+  position: absolute;
+  top: 3.1rem;
+  left: 0;
+  margin: 0;
+  border: 0;
+  background: $base-background-color;
+  box-shadow: .1rem .1rem .5rem 0 rgba(0,0,0,.3);
+
+  &.oro-oq__filter__popup_date,
+  &.oro-oq__filter__popup_total {
+    top: 3.6rem;
+    min-width: 34rem;
+  }
+
+  &.oro-oq__filter__popup_status {
+    top: 3.6rem;
+    min-width: 27rem;
+    padding-bottom: 1rem;
+
+    .oro-oq__filter__form__checkboxes-list {
+
+      li {
+        display: block;
+        float: left;
+        width: 50%;
+        margin: 0 0 1rem;
+
+        label {
+          display: block;
+        }
+
+        &:nth-child {
+          padding-left: 3rem;
+        }
+      }
+    }
+  }
+
+  &.oro-oq__filter__popup_settings {
+    left: auto;
+    right: 0;
+    min-width: 24rem;
+
+    @media (max-width: 991px) {
+      right: 50%;
+      margin-right: -12rem;
+    }
+  }
+
+  .btn_close {
+    color: $base-link-color;
+    opacity: 1;
+    line-height: 1.8rem;
+
+    [class^="cf-"] {
+      font-size: 2rem;
+    }
+  }
+}
+
+.oro-oq__filter__popup__title {
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  margin: 0 0 1.5rem;
+}
+
+.after-quote-table {
+  padding-bottom: 1rem;
+  border-bottom: .1rem solid $base-border-color;
+}
+
+.after-oro-grid-table {
+  .oro-oq__filter__item {
+    &:first-child {
+      flex-basis: auto !important;
+      flex-grow: 1;
+    }
+  }
+}
+
+.after-table {
+  padding-bottom: 1rem;
+
+  @media (max-width: 991px) {
+    border-bottom: .1rem solid $base-border-color;
+  }
+
+  .oro-oq__filter__item {
+
+    &:first-child {
+      flex-basis: 32rem;
+      flex-grow: 0;
+
+      @media (max-width: 1250px) {
+        display: none;
+      }
+    }
+
+    &:last-child {
+      flex-basis: auto;
+    }
+
+    &.oro-oq__filter__item_sort-select {
+      flex-basis: 17rem;
+    }
+  }
+
+  + .order-checkout-widget {
+    padding-top: 1.5rem;
+    margin-top: 0;
+    border-top: .1rem solid $base-border-color;
+
+    .order-builder-clear-btn {
+      top: 1.5rem;
+    }
+  }
+}
+
+.oro-oq__filter-controls_by-sides {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: stretch;
+  justify-content: space-between;
+
+  @media (max-width: 991px) {
+    flex-wrap: nowrap;
+
+    .oro-oq__filter__item {
+      margin-left: 1rem;
+
+      &:first-child {
+        display: flex;
+        margin-left: 0;
+        flex-basis: calc(100% - 110px);
+
+        .oro-oq__filter-trigger {
+          margin-left: .5rem;
+        }
+
+        .oro-oq__sorting-settings {
+          margin-right: 1rem;
+        }
+      }
+
+      &:last-child {
+        flex-basis: 10rem !important;
+      }
+
+      .oro-oq__filter__search__input {
+        min-width: 0;
+      }
+
+      select {
+        max-height: 3.2rem;
+        width: 100%;
+      }
+    }
+  }
+
+  .oro-oq__filter__item {
+
+    &:first-child {
+      flex-grow: 1;
+    }
+
+    &:last-child {
+      text-align: left;
+      flex-grow: 0;
+      flex-basis: 15rem;
+    }
+  }
+}
+
+.oro-oq__filter-controls_my-orders {
+  align-content: stretch;
+  justify-content: space-between;
+
+  @media (max-width: 991px) {
+    align-items: center;
+    flex-wrap: nowrap;
+
+    .oro-oq__filter__item {
+
+      &.oro-oq__filter__item_filter-search {
+        order: 3;
+        margin: 0 0 1rem;
+        flex-basis: 100%;
+      }
+
+      &:first-child {
+        display: flex;
+        flex-basis: calc(100% - 110px) !important;
+
+        .oro-oq__filter-trigger {
+          margin-left: .5rem;
+        }
+
+        .oro-oq__sorting-settings {
+          margin-right: 1rem;
+        }
+      }
+
+      &.oro-oq__filter__item_pager {
+        order: 3;
+      }
+
+      &.oro-oq__filter__item_per-page {
+        order: 4;
+        text-align: right;
+      }
+
+      &:last-child {
+        order: 2;
+        margin: 0 0 1rem 1rem;
+        flex-basis: 10rem !important;
+      }
+
+      .oro-oq__filter__search__input {
+        min-width: 0;
+      }
+
+      select {
+        max-height: 3.2rem;
+        width: 100%;
+      }
+    }
+  }
+}
