@@ -133,15 +133,18 @@ datagrid:
                 - orob2bwarehouse/js/datagrid/builder/level-quantity-builder
 
     warehouse-inventory-grid:
+        extended_entity_name: %orob2b_warehouse.entity.warehouse_inventory_level.class%
         acl_resource: orob2b_product_warehouse_inventory_view
         source:
             type: orm
             query:
                 select:
                     - inventory.id
+                    - product.id as productId
                     - product.sku as sku
                     - productNames.string as productName
-                    - inventoryStatus.name as inventoryStatusName
+                    - productInventoryStatus.name as inventoryStatusName
+                    - productInventoryStatus.id as inventoryStatusId
                     - warehouse.name as warehouseName
                     - inventory.quantity as quantity
                     - precisionUnit.code as unit
@@ -151,7 +154,7 @@ datagrid:
                     left:
                         - { join: inventory.warehouse, alias: warehouse }
                         - { join: inventory.product, alias: product}
-                        - { join: product.inventory_status, alias: inventoryStatus}
+                        - { join: product.inventory_status, alias: productInventoryStatus}
                         - { join: inventory.productUnitPrecision, alias: productPrecision}
                         - { join: productPrecision.unit, alias: precisionUnit}
                     inner:
@@ -162,24 +165,41 @@ datagrid:
                             condition: productNames.locale IS NULL
         properties:
             id: ~
+            productId: ~
             delete_link:
                 type: url
                 route: orob2b_api_delete_warehouse_inventory_level
                 params: [ id ]
+        inline_editing:
+            enable: true
+        save_api_accessor:
+            default_route_parameters:
+                className: OroB2B_Bundle_WarehouseBundle_Entity_WarehouseInventoryLevel
         columns:
             sku:
                 label:           orob2b.product.sku.label
             productName:
                 label:           orob2b.product.names.label
-            inventoryStatusName:
-                label:           orob2b.warehouse.warehouseinventorylevel.status.label
-                editable:        true
+            inventory_status:
+                label:         orob2b.product.inventory_status.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                inline_editing:
+                    enable: true
+                    editor:
+                        view: oroform/js/app/views/editor/select-editor-view
+                    save_api_accessor:
+                        default_route_parameters:
+                            className: OroB2B_Bundle_ProductBundle_Entity_Product
+                        route_parameters_rename_map:
+                            productId: id
+                choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
             warehouseName:
                 label:           orob2b.warehouse.entity_label
             quantity:
                 label:           orob2b.warehouse.warehouseinventorylevel.quantity.label
-                frontend_type:   number
-                editable:        true
+                frontend_type:   decimal
             unit:
                 label:           orob2b.product.productunit.code.label
         sorters:
@@ -188,7 +208,7 @@ datagrid:
                     data_name:       sku
                 productName:
                     data_name:       productName
-                inventoryStatusName:
+                inventory_status:
                     data_name:       inventoryStatusName
                 warehouseName:
                     data_name:       warehouseName
@@ -204,9 +224,10 @@ datagrid:
                 productName:
                     data_name:       productName
                     type:            string
-                inventoryStatusName:
-                    data_name:       inventoryStatusName
-                    type:            string
+                inventory_status:
+                    type:      enum
+                    data_name: inventoryStatusId
+                    enum_code: prod_inventory_status
                 warehouseName:
                     data_name:       warehouseName
                     type:            string
