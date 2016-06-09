@@ -1,14 +1,14 @@
 {% extends 'OroUIBundle:actions:index.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% set gridName = 'pricing-price-attribute-price-list-grid' %}
-{% set pageTitle = 'orob2b.pricing.price_attribute_price_list.label'|trans %}
+{% set pageTitle = 'orob2b.pricing.priceattributepricelist.entity_label'|trans %}
 
 {% block navButtons %}
     {% if resource_granted('orob2b_pricing_price_list_create') %}
         <div class="btn-group">
             {{ UI.addButton({
                 'path': path('orob2b_pricing_price_attribute_price_list_create'),
-                'entity_label': 'orob2b.pricing.price_attribute_price_list.label'|trans
+                'entity_label': 'orob2b.pricing.priceattributepricelist.entity_label'|trans
             }) }}
         </div>
     {% endif %}

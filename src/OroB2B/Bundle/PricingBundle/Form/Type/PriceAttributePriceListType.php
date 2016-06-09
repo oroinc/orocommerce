@@ -39,7 +39,7 @@ class PriceAttributePriceListType extends AbstractType
                 [
                     'multiple' => true,
                     'required' => true,
-                    'label' => 'orob2b.pricing.price_attribute_price_list.currencies.label',
+                    'label' => 'orob2b.pricing.priceattributepricelist.currencies.label',
                 ]
             );
     }

@@ -24,12 +24,12 @@ orob2b.pricing:
         contain_schedule.label: Contain Schedules
         owner.label: 'Owner'
         organization.label: 'Organization'
-    price_attribute_price_list:
-        plural_label: Price Attributes
+    priceattributepricelist:
+        entity_label: Price Attribute
+        entity_plural_label: Price Attributes
         label: Price Attribute
         name.label: Price Attribute
         currencies.label: Currencies
-
 
         form:
             pricelist_required: Please select a price list first...

@@ -621,9 +621,9 @@ datagrid:
 
         columns:
             name:
-                label:         orob2b.pricing.pricelist.name.label
+                label:         orob2b.pricing.priceattributepricelist.name.label
             currencies:
-                label:         orob2b.pricing.price_attribute_price_list.currencies.label
+                label:         orob2b.pricing.priceattributepricelist.currencies.label
                 type:          twig
                 frontend_type: html
                 template:      OroB2BPricingBundle:PriceAttributePriceList:Datagrid/currencies.html.twig
