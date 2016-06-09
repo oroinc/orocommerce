@@ -45,14 +45,14 @@ $base-sidebar-background-color: #f0f0f0;
 $base-sidebar-background-color-light: #f7f7f7;
 $base-footer-background-color: $theme-lightest-gray-color;
 $base-tab-background-color: #dedede;
-$base-cart-group-head-color: #e6e6e6;
+$base-cart-group-head-color: $theme-lighter-gray-color;
 
 /*Sales panel colors*/
 $base-sales-panel-top-background-color: #e0e0e0;
 $base-sales-panel-bottom-background-color: #f7f7f7;
 
 //Theme borders colors
-$base-border-color: #e6e6e6;
+$base-border-color: $theme-lighter-gray-color;
 $base-active-border-color: #a2d4f3;
 $alt-border-color: #e1e1e1;
 $table-alt-border-color: #d1d1d1;
