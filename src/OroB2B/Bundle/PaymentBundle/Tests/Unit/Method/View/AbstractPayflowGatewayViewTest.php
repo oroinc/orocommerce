@@ -98,7 +98,9 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
         $this->assertEquals(
             [
                 'formView' => $formView,
-                'allowedCreditCards' => ['visa', 'mastercard'],
+                'creditCardComponentOptions' => [
+                    'allowedCreditCards' => ['visa', 'mastercard'],
+                ]
             ],
             $this->methodView->getOptions()
         );
@@ -134,7 +136,9 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
         $this->assertEquals(
             [
                 'formView' => $formView,
-                'allowedCreditCards' => ['visa', 'mastercard'],
+                'creditCardComponentOptions' => [
+                    'allowedCreditCards' => ['visa', 'mastercard'],
+                ]
             ],
             $this->methodView->getOptions()
         );
@@ -173,11 +177,11 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
         $this->assertEquals(
             [
                 'formView' => $formView,
-                'allowedCreditCards' => ['visa', 'mastercard'],
                 'creditCardComponent' => 'orob2bpayment/js/app/components/authorized-credit-card-component',
                 'creditCardComponentOptions' => [
                     'acct' => '1111',
                     'saveForLaterUse' => false,
+                    'allowedCreditCards' => ['visa', 'mastercard'],
                 ],
             ],
             $this->methodView->getOptions()
@@ -219,11 +223,11 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
         $this->assertEquals(
             [
                 'formView' => $formView,
-                'allowedCreditCards' => ['visa', 'mastercard'],
                 'creditCardComponent' => 'orob2bpayment/js/app/components/authorized-credit-card-component',
                 'creditCardComponentOptions' => [
                     'acct' => '1111',
                     'saveForLaterUse' => true,
+                    'allowedCreditCards' => ['visa', 'mastercard'],
                 ],
             ],
             $this->methodView->getOptions()
@@ -264,11 +268,11 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
         $this->assertEquals(
             [
                 'formView' => $formView,
-                'allowedCreditCards' => ['visa', 'mastercard'],
                 'creditCardComponent' => 'orob2bpayment/js/app/components/authorized-credit-card-component',
                 'creditCardComponentOptions' => [
                     'acct' => '1111',
                     'saveForLaterUse' => false,
+                    'allowedCreditCards' => ['visa', 'mastercard'],
                 ],
             ],
             $this->methodView->getOptions()

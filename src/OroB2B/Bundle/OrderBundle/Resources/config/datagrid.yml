@@ -449,7 +449,7 @@ datagrid:
                             join: product.names
                             alias: productNames
                             conditionType: WITH
-                            condition: productNames.locale IS NULL
+                            condition: productNames.localization IS NULL
                 where:
                     and:
                         - order_item.order = :order_id

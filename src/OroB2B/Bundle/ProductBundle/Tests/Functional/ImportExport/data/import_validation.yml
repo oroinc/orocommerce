@@ -2,16 +2,16 @@ descriptions:
     fileName: descriptions.csv
     contextErrors:
         - "Error in row #3. descriptions[default].fallback: The value you selected is not a valid choice."
-        - "Error in row #3. descriptions[en].fallback: The value you selected is not a valid choice."
+        - "Error in row #3. descriptions[English].fallback: The value you selected is not a valid choice."
         - "Error in row #4. descriptions[default].fallback: The value you selected is not a valid choice."
-        - "Error in row #4. descriptions[en].fallback: The value you selected is not a valid choice."
+        - "Error in row #4. descriptions[English].fallback: The value you selected is not a valid choice."
 shortDescriptions:
     fileName: short_descriptions.csv
     contextErrors:
         - "Error in row #3. shortDescriptions[default].fallback: The value you selected is not a valid choice."
-        - "Error in row #3. shortDescriptions[en].fallback: The value you selected is not a valid choice."
+        - "Error in row #3. shortDescriptions[English].fallback: The value you selected is not a valid choice."
         - "Error in row #4. shortDescriptions[default].fallback: The value you selected is not a valid choice."
-        - "Error in row #4. shortDescriptions[en].fallback: The value you selected is not a valid choice."
+        - "Error in row #4. shortDescriptions[English].fallback: The value you selected is not a valid choice."
 empty:
     fileName: empty.csv
     contextErrors:
@@ -34,9 +34,9 @@ names:
     fileName: names.csv
     contextErrors:
         - "Error in row #3. names[default].fallback: The value you selected is not a valid choice."
-        - "Error in row #3. names[en].fallback: The value you selected is not a valid choice."
+        - "Error in row #3. names[English].fallback: The value you selected is not a valid choice."
         - "Error in row #4. names[default].fallback: The value you selected is not a valid choice."
-        - "Error in row #4. names[en].fallback: The value you selected is not a valid choice."
+        - "Error in row #4. names[English].fallback: The value you selected is not a valid choice."
 unit_code_precision:
     fileName: unit_code_precision.csv
     contextErrors:

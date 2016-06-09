@@ -8,7 +8,7 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -25,23 +25,23 @@ class FrontendShoppingListProductsUnitsDataProvider extends AbstractServerRender
     protected $requestHandler;
 
     /**
-     * @var UserCurrencyProvider
+     * @var UserCurrencyManager
      */
-    protected $userCurrencyProvider;
+    protected $userCurrencyManager;
 
     /**
      * @param Registry $registry
      * @param PriceListRequestHandler $requestHandler
-     * @param UserCurrencyProvider $userCurrencyProvider
+     * @param UserCurrencyManager $userCurrencyManager
      */
     public function __construct(
         Registry $registry,
         PriceListRequestHandler $requestHandler,
-        UserCurrencyProvider $userCurrencyProvider
+        UserCurrencyManager $userCurrencyManager
     ) {
         $this->registry = $registry;
         $this->requestHandler = $requestHandler;
-        $this->userCurrencyProvider = $userCurrencyProvider;
+        $this->userCurrencyManager = $userCurrencyManager;
     }
 
     /**

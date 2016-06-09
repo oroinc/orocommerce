@@ -36,14 +36,14 @@ class DatabaseBuilderTest extends WebTestCase
     /**
      * @dataProvider buildDataProvider
      * @param string $alias
-     * @param string $locale
+     * @param string $localization
      * @param array $expectedData
      */
-    public function testBuild($alias, $locale, array $expectedData)
+    public function testBuild($alias, $localization, array $expectedData)
     {
         $options = [];
-        if ($locale) {
-            $options['extras'][MenuItem::LOCALE_OPTION] = $this->getReference($locale);
+        if ($localization) {
+            $options['extras'][MenuItem::LOCALE_OPTION] = $this->getReference($localization);
         }
         $menuItem = $this->builder->build($alias, $options);
         $actualData = (new MenuManipulator())->toArray($menuItem);
@@ -58,7 +58,7 @@ class DatabaseBuilderTest extends WebTestCase
         return [
             [
                 'alias' => 'menu_item.1',
-                'locale' => null,
+                'localization' => null,
                 'expectedData' => [
                     'name' => 'menu_item.1',
                     'label' => 'menu_item.1',
@@ -77,7 +77,7 @@ class DatabaseBuilderTest extends WebTestCase
             ],
             [
                 'alias' => 'menu_item.1',
-                'locale' => 'en_CA',
+                'localization' => 'en_CA',
                 'expectedData' => [
                     'name' => 'menu_item.1',
                     'label' => 'menu_item.1',
