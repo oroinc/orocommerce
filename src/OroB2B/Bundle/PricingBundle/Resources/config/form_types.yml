@@ -93,6 +93,11 @@ services:
         tags:
             - { name: form.type_extension, alias: orob2b_product }
 
+    orob2b_pricing.form.extension.product_type.price_attributes:
+        class: OroB2B\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension
+        tags:
+            - { name: form.type_extension, alias: orob2b_product }
+
     orob2b_pricing.form.extension.currency_type:
         class: 'OroB2B\Bundle\PricingBundle\Form\Extension\SystemCurrencyFormExtension'
         public: true
