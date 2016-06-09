@@ -5,12 +5,12 @@ namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
  * @dbIsolation
@@ -31,9 +31,9 @@ class CategoryControllerTest extends WebTestCase
     const SMALL_IMAGE_NAME = 'small_image.png';
 
     /**
-     * @var Locale[]
+     * @var Localization[]
      */
-    protected $locales;
+    protected $localizations;
 
     /**
      * @var Category
@@ -44,12 +44,12 @@ class CategoryControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData',
+            'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData',
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
         ]);
-        $this->locales = $this->getContainer()
+        $this->localizations = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BWebsiteBundle:Locale')
+            ->getRepository('OroLocaleBundle:Localization')
             ->findAll();
         $this->masterCatalog = $this->getContainer()
             ->get('doctrine')
@@ -341,13 +341,15 @@ class CategoryControllerTest extends WebTestCase
         $parentCategory = $crawler->filter('[name = "orob2b_catalog_category[parentCategory]"]')->attr('value');
         $parameters['orob2b_catalog_category']['parentCategory'] = $parentCategory;
 
-        foreach ($this->locales as $locale) {
-            $parameters['orob2b_catalog_category']['titles']['values']['locales'][$locale->getId()]['value']
-                = $locale->getCode() . $newTitle;
-            $parameters['orob2b_catalog_category']['shortDescriptions']['values']['locales'][$locale->getId()]['value']
-                = $locale->getCode() . $newShortDescription;
-            $parameters['orob2b_catalog_category']['longDescriptions']['values']['locales'][$locale->getId()]['value']
-                = $locale->getCode() . $newLongDescription;
+        foreach ($this->localizations as $localization) {
+            $locId = $localization->getId();
+
+            $parameters['orob2b_catalog_category']['titles']['values']['localizations'][$locId]['value']
+                = $localization->getLanguageCode() . $newTitle;
+            $parameters['orob2b_catalog_category']['shortDescriptions']['values']['localizations'][$locId]['value']
+                = $localization->getLanguageCode() . $newShortDescription;
+            $parameters['orob2b_catalog_category']['longDescriptions']['values']['localizations'][$locId]['value']
+                = $localization->getLanguageCode() . $newLongDescription;
         }
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $parameters);
@@ -489,20 +491,22 @@ class CategoryControllerTest extends WebTestCase
      */
     protected function assertLocalizedValues($formValues, $title, $shortDescription, $longDescription)
     {
-        foreach ($this->locales as $locale) {
+        foreach ($this->localizations as $localization) {
             $this->assertEquals(
-                $locale->getCode().$title,
-                $formValues['orob2b_catalog_category[titles][values][locales]['.$locale->getId().'][value]']
+                $localization->getLanguageCode().$title,
+                $formValues['orob2b_catalog_category[titles][values][localizations]['.$localization->getId().'][value]']
+            );
+
+            $locId = $localization->getId();
+
+            $this->assertEquals(
+                $localization->getLanguageCode().$shortDescription,
+                $formValues['orob2b_catalog_category[shortDescriptions][values][localizations]['.$locId.'][value]']
             );
 
             $this->assertEquals(
-                $locale->getCode().$shortDescription,
-                $formValues['orob2b_catalog_category[shortDescriptions][values][locales]['.$locale->getId().'][value]']
-            );
-
-            $this->assertEquals(
-                $locale->getCode().$longDescription,
-                $formValues['orob2b_catalog_category[longDescriptions][values][locales]['.$locale->getId().'][value]']
+                $localization->getLanguageCode().$longDescription,
+                $formValues['orob2b_catalog_category[longDescriptions][values][localizations]['.$locId.'][value]']
             );
         }
     }

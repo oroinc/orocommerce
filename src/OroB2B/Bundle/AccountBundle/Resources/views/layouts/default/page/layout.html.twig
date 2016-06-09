@@ -1,6 +1,6 @@
 {% block _account_sidebar_widget %}
     <div class="account-sidebar">
-        <h3 class="account-navigation-title">My Account</h3>
+        <h3 class="account-navigation-title">{{ 'orob2b.account.frontend.menu.account_user_profile.label'|trans }}</h3>
         <ul class="account-navigation-list">
             {% set requestUrl = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
             {% set found = false %}

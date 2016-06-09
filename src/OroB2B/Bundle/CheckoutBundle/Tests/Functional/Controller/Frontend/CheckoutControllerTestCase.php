@@ -21,6 +21,7 @@ abstract class CheckoutControllerTestCase extends WebTestCase
     const FIRST_NAME = 'Jackie';
     const LAST_NAME = 'Chuck';
     const STREET = 'Fake Street';
+    const CITY = 'Fake City';
     const POSTAL_CODE = '123456';
     const COUNTRY = 'UA';
     const REGION = 'UA-65';
@@ -148,6 +149,7 @@ abstract class CheckoutControllerTestCase extends WebTestCase
             'firstName' => CheckoutControllerTestCase::FIRST_NAME,
             'lastName' => CheckoutControllerTestCase::LAST_NAME,
             'street' => CheckoutControllerTestCase::STREET,
+            'city' => CheckoutControllerTestCase::CITY,
             'postalCode' => CheckoutControllerTestCase::POSTAL_CODE,
             'country' => CheckoutControllerTestCase::COUNTRY,
             'region' => CheckoutControllerTestCase::REGION,

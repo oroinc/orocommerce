@@ -7,8 +7,10 @@ use Knp\Menu\FactoryInterface;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
+use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
 
 class DatabaseBuilder implements BuilderInterface
 {
@@ -53,12 +55,12 @@ class DatabaseBuilder implements BuilderInterface
 
     /**
      * @param array $options
-     * @return Locale|null
+     * @return Localization|null
      */
-    protected function getLocale(array $options)
+    protected function getLocalization(array $options)
     {
         if (array_key_exists('extras', $options) && array_key_exists(MenuItem::LOCALE_OPTION, $options['extras'])
-            && $options['extras'][MenuItem::LOCALE_OPTION] instanceof Locale
+            && $options['extras'][MenuItem::LOCALE_OPTION] instanceof Localization
         ) {
             return $options['extras'][MenuItem::LOCALE_OPTION];
         }
@@ -85,14 +87,14 @@ class DatabaseBuilder implements BuilderInterface
      */
     protected function menuItemEntityToArray(MenuItem $item, array $options)
     {
-        $locale = $this->getLocale($options);
+        $localization = $this->getLocalization($options);
         $getData = function ($key) use ($item) {
             $data = $item->getData();
             return isset($data[$key]) ? $data[$key] : [];
         };
         return array_merge($options, [
             'uri' => $item->getUri(),
-            'label' => $item->getTitle($locale)->getString(),
+            'label' => $item->getTitle($localization)->getString(),
             'attributes' => $getData('attributes'),
             'linkAttributes' => $getData('linkAttributes'),
             'childrenAttributes' => $getData('childrenAttributes'),
@@ -104,7 +106,7 @@ class DatabaseBuilder implements BuilderInterface
     }
 
     /**
-     * @return \OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository
+     * @return MenuItemRepository
      */
     protected function getRepository()
     {
