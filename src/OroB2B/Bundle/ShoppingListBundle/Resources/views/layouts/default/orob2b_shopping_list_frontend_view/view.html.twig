@@ -22,14 +22,17 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-        module: 'oroform/js/app/components/inline-editable-view-component',
+        module: 'orob2bshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component',
         options: {
             frontend_type: 'title',
             value: shoppingList.label,
             fieldName: 'label',
             insertEditorMethod: 'after',
-            id: 'shopping-list-title',
+            eventChannelId: 'shopping-list-title',
             metadata: {
+                broadcast_parameters: {
+                    id: shoppingList.id
+                },
                 inline_editing: {
                     enable: resource_granted('orob2b_shopping_list_frontend_update'),
                     save_api_accessor: {
@@ -430,7 +433,7 @@
                     view: 'oroui/js/app/views/layout-subtree-view',
                     rootId : block.vars.id,
                     reloadEvents: ['shopping-list:updated'],
-                    id: 'shopping-list-title'
+                    eventChannelId: 'shopping-list-title'
                 },
                 'data-dropdown-trigger': true
             }|merge(attr|merge({

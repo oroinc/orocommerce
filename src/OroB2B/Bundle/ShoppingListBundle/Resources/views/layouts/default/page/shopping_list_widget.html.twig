@@ -1,10 +1,11 @@
 {% block _main_menu_shopping_lists_wrapper_widget %}
     {% set attr = {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-module': 'orob2bshoppinglist/js/app/components/shoppinglist-widget-view-component',
         'data-page-component-options': {
             view: 'oroui/js/app/views/layout-subtree-view',
             rootId : block.vars.id,
-            reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete']
+            reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete'],
+            eventChannelId: 'shopping-list-title'
         },
         'data-dropdown-trigger': true
     }|merge(attr|merge({
@@ -61,7 +62,7 @@
 
     <div {{ block('block_attributes') }}>
         <div class="order-widget__order-name text-uppercase">
-            <span>{{ shoppingList.label }}</span>
+            <span class="order-widget__order-name-span-{{ shoppingList.id }}">{{ shoppingList.label }}</span>
         </div>
         <table class="order-widget__table">
             <tbody>

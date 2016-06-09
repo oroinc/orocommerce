@@ -9,7 +9,7 @@ define(function(require) {
 
     ShoppingListSidebarView = BaseView.extend({
 
-        id: null,
+        eventChannelId: null,
 
         /**
          *
@@ -17,9 +17,9 @@ define(function(require) {
          */
         initialize: function(options) {
             this.$el = options._sourceElement;
-            this.id = options.id;
+            this.eventChannelId = options.eventChannelId;
             // listen to incoming title updates and re-render the whole shopping list
-            mediator.on('inlineEditor:' + this.id + ':update', this.updateCurrentTitle, this);
+            mediator.on('inlineEditor:' + this.eventChannelId + ':update', this.updateCurrentTitle, this);
         },
 
         /**

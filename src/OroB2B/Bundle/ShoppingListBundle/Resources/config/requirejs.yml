@@ -10,3 +10,5 @@ config:
         'orob2bshoppinglist/js/shopping-list-item-errors-handler': 'bundles/orob2bshoppinglist/js/shopping-list-item-errors-handler.js'
         'orob2bshoppinglist/js/app/components/shoppinglist-view-component': 'bundles/orob2bshoppinglist/js/app/components/shoppinglist-view-component.js'
         'orob2bshoppinglist/js/app/views/shoppinglist-sidebar-view': 'bundles/orob2bshoppinglist/js/app/views/shoppinglist-sidebar-view.js'
+        'orob2bshoppinglist/js/app/components/shoppinglist-widget-view-component': 'bundles/orob2bshoppinglist/js/app/components/shoppinglist-widget-view-component.js'
+        'orob2bshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component': 'bundles/orob2bshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component.js'
