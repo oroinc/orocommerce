@@ -31,7 +31,7 @@ class CategoryFormExtensionTest extends \PHPUnit_Framework_TestCase
         $this->registry
             ->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2BFallbackBundle:LocalizedFallbackValue')
+            ->with('OroLocaleBundle:LocalizedFallbackValue')
             ->willReturn($this->manager);
 
         $categoryExtension = new CategoryFormExtension($this->registry);

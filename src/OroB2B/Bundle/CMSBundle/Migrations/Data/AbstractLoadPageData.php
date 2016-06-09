@@ -42,7 +42,7 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
         $organization = $this->getOrganization($manager);
 
         foreach ((array)$this->getFilePaths() as $filePath) {
-            $pages = $this->loadFromFile($filePath, $organization, $manager);
+            $pages = $this->loadFromFile($filePath, $organization);
             foreach ($pages as $page) {
                 $manager->persist($page);
             }
@@ -64,7 +64,7 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
      * @param Organization $organization
      * @return Page[]
      */
-    protected function loadFromFile($filePath, Organization $organization, ObjectManager $manager)
+    protected function loadFromFile($filePath, Organization $organization)
     {
         $rows = Yaml::parse(file_get_contents($filePath));
         $pages = [];

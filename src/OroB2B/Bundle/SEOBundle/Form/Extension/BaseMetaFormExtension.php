@@ -84,7 +84,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
         }
 
         $entity = $event->getData();
-        $entityManager = $this->registry->getManagerForClass('OroB2BFallbackBundle:LocalizedFallbackValue');
+        $entityManager = $this->registry->getManagerForClass('OroLocaleBundle:LocalizedFallbackValue');
 
         $this->persistMetaFields($entityManager, $entity->getMetaTitles());
         $this->persistMetaFields($entityManager, $entity->getMetaDescriptions());
