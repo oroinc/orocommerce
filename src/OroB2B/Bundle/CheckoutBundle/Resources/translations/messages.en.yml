@@ -33,6 +33,7 @@ orob2b:
         pending_orders.label: Pending Orders
         ordered_by.label: Ordered By
         checkout_type.label: Checkout Type
+        line_items_count.label: Items
 
         basecheckout:
             entity_label: Base Checkout

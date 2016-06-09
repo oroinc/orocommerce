@@ -145,6 +145,13 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
 
+    orob2b_checkout.datagrid.checkout_line_items_count:
+        class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutLineItemsCountListener
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
+
     orob2b_checkout.workflow.condition.order_line_item_has_count:
         class: 'OroB2B\Bundle\CheckoutBundle\Model\Condition\OrderLineItemsHasCount'
         arguments:

@@ -52,6 +52,8 @@ datagrid:
             customerNotes:
                 label: orob2b.checkout.customer_notes.label
                 renderable: false
+            itemsCount:
+                label: orob2b.checkout.line_items_count.label
         sorters:
             columns:
                 createdAt:
