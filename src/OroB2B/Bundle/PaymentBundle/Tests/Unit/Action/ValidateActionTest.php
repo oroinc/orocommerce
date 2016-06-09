@@ -40,11 +40,13 @@ class ValidateActionTest extends AbstractActionTest
 
         /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setPaymentMethod($options['paymentMethod']);
+        $paymentTransaction
+            ->setAction(PaymentMethodInterface::VALIDATE)
+            ->setPaymentMethod($options['paymentMethod']);
 
         $paymentMethod->expects($this->once())
             ->method('execute')
-            ->with($paymentTransaction)
+            ->with($paymentTransaction->getAction(), $paymentTransaction)
             ->will($responseValue);
 
         $this->paymentTransactionProvider

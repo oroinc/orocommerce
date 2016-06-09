@@ -47,7 +47,7 @@ class PayflowGateway implements PaymentMethodInterface
     }
 
     /** {@inheritdoc} */
-    public function execute(PaymentTransaction $paymentTransaction)
+    public function execute($action, PaymentTransaction $paymentTransaction)
     {
         $actionName = $paymentTransaction->getAction();
 
@@ -195,7 +195,7 @@ class PayflowGateway implements PaymentMethodInterface
             ->setRequest($options)
             ->setAction($this->getPurchaseAction());
 
-        $response = $this->execute($paymentTransaction);
+        $response = $this->execute($paymentTransaction->getAction(), $paymentTransaction);
 
         if (!$sourcePaymentTransaction) {
             return $this->secureTokenResponse($paymentTransaction);

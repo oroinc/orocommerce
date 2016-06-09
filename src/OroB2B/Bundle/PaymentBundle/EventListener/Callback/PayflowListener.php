@@ -54,20 +54,16 @@ class PayflowListener
         }
 
         $data = $event->getData();
-        $originAction = $paymentTransaction->getAction();
 
         $paymentTransaction
-            ->setAction(PayflowGateway::COMPLETE)
             ->setResponse(array_replace($paymentTransaction->getResponse(), $data));
 
         try {
             $this->paymentMethodRegistry
                 ->getPaymentMethod($paymentTransaction->getPaymentMethod())
-                ->execute($paymentTransaction);
+                ->execute(PayflowGateway::COMPLETE, $paymentTransaction);
             $event->markSuccessful();
         } catch (\InvalidArgumentException $e) {
         }
-
-        $paymentTransaction->setAction($originAction);
     }
 }

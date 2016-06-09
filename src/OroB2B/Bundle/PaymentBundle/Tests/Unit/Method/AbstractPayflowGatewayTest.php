@@ -81,7 +81,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
                 'message' => null,
                 'successful' => true,
             ],
-            $this->method->execute($transaction)
+            $this->method->execute($transaction->getAction(), $transaction)
         );
 
         $this->assertTrue($transaction->isSuccessful());
@@ -97,7 +97,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $transaction = new PaymentTransaction();
         $transaction->setAction('wrong_action');
 
-        $this->method->execute($transaction);
+        $this->method->execute($transaction->getAction(), $transaction);
     }
 
     public function testIsEnabled()

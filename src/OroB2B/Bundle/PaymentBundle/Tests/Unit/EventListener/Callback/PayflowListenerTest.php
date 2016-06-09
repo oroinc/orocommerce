@@ -54,10 +54,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
         $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
-            ->willReturnCallback(function (PaymentTransaction $executePaymentTransaction) use ($paymentTransaction) {
-                $this->assertSame($paymentTransaction, $executePaymentTransaction);
-                $this->assertEquals(PayflowGateway::COMPLETE, $executePaymentTransaction->getAction());
-            });
+            ->with('complete', $paymentTransaction);
 
         $this->paymentMethodRegistry->expects($this->once())
             ->method('getPaymentMethod')

@@ -179,7 +179,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
         try {
             return $this->paymentMethodRegistry
                 ->getPaymentMethod($paymentTransaction->getPaymentMethod())
-                ->execute($paymentTransaction);
+                ->execute($paymentTransaction->getAction(), $paymentTransaction);
         } catch (\Exception $e) {
             if ($this->logger) {
                 // do not expose sensitive data in context

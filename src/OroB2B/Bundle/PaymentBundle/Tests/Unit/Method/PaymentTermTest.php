@@ -92,7 +92,10 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->paymentTermProvider->expects($this->never())
             ->method('getCurrentPaymentTerm');
 
-        $this->assertEquals([], $this->method->execute($this->paymentTransaction));
+        $this->assertEquals(
+            [],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
         $this->assertFalse($this->paymentTransaction->isSuccessful());
     }
 
@@ -119,7 +122,10 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->propertyAccessor->expects($this->never())
             ->method('setValue');
 
-        $this->assertEquals([], $this->method->execute($this->paymentTransaction));
+        $this->assertEquals(
+            [],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
         $this->assertFalse($this->paymentTransaction->isSuccessful());
     }
 
@@ -163,7 +169,10 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->with($entity)
             ->willReturn($entityManager);
 
-        $this->assertEquals([], $this->method->execute($this->paymentTransaction));
+        $this->assertEquals(
+            [],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
         $this->assertTrue($this->paymentTransaction->isSuccessful());
     }
 
@@ -185,7 +194,10 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->method('setValue')
             ->willThrowException(new NoSuchPropertyException());
 
-        $this->assertEquals([], $this->method->execute($this->paymentTransaction));
+        $this->assertEquals(
+            [],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
         $this->assertFalse($this->paymentTransaction->isSuccessful());
     }
 
