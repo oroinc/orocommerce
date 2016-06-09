@@ -54,40 +54,20 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
     {
         $this->assertEquals(PriceAttributePriceListType::NAME, $this->priceAttributePriceListType->getName());
     }
-    
-    /**
-     * @dataProvider submitDataProvider
-     *
-     * @param mixed $defaultData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
-     */
-    public function testSubmit($defaultData, $submittedData, $expectedData)
+
+
+    public function testSubmitWithoutDefaultData()
     {
-        if ($defaultData) {
-            $existingPriceAttributePriceList = new PriceAttributePriceList();
-            $class = new \ReflectionClass($existingPriceAttributePriceList);
-            $prop = $class->getProperty('id');
-            $prop->setAccessible(true);
+        $submittedData = [
+            'name' => 'Test Price Attribute',
+            'currencies' => [],
+        ];
+        $expectedData = $submittedData;
 
-            $prop->setValue($existingPriceAttributePriceList, 42);
-            $existingPriceAttributePriceList->setName($defaultData['name']);
+        $form = $this->factory->create($this->priceAttributePriceListType, null, []);
 
-            foreach ($defaultData['currencies'] as $currency) {
-                $existingPriceAttributePriceList->addCurrencyByCode($currency);
-            }
-
-            $defaultData = $existingPriceAttributePriceList;
-        }
-
-        $form = $this->factory->create($this->priceAttributePriceListType, $defaultData, []);
-
-        $this->assertEquals($defaultData, $form->getData());
-        if (isset($existingPriceAttributePriceList)) {
-            $this->assertEquals($existingPriceAttributePriceList, $form->getViewData());
-        } else {
-            $this->assertNull($form->getViewData());
-        }
+        $this->assertNull($form->getData());
+        $this->assertNull($form->getViewData());
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -98,37 +78,42 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData['currencies'], array_values($result->getCurrencies()));
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function testSubmitWithDefaultData()
     {
-        return [
-            'new price list' => [
-                'defaultData' => null,
-                'submittedData' => [
-                    'name' => 'Test Price Attribute',
-                    'currencies' => [],
-                ],
-                'expectedData' => [
-                    'name' => 'Test Price Attribute',
-                    'currencies' => [],
-                ],
-            ],
-            'update price list' => [
-                'defaultData' => [
-                    'name' => 'Test Price Attribute',
-                    'currencies' => ['USD', 'UAH'],
-                ],
-                'submittedData' => [
-                    'name' => 'Test Price Attribute 01',
-                    'currencies' => ['EUR', 'USD'],
-                ],
-                'expectedData' => [
-                    'name' => 'Test Price Attribute 01',
-                    'currencies' => ['EUR', 'USD'],
-                ],
-            ],
+        $submittedData = [
+            'name' => 'Test Price Attribute 01',
+            'currencies' => ['EUR', 'USD'],
         ];
+
+        $expectedData = $submittedData;
+        $defaultData = [
+            'name' => 'Test Price Attribute',
+            'currencies' => ['USD', 'UAH'],
+        ];
+        $existingPriceAttributePriceList = new PriceAttributePriceList();
+        $class = new \ReflectionClass($existingPriceAttributePriceList);
+        $prop = $class->getProperty('id');
+        $prop->setAccessible(true);
+
+        $prop->setValue($existingPriceAttributePriceList, 42);
+        $existingPriceAttributePriceList->setName($defaultData['name']);
+
+        foreach ($defaultData['currencies'] as $currency) {
+            $existingPriceAttributePriceList->addCurrencyByCode($currency);
+        }
+
+        $defaultData = $existingPriceAttributePriceList;
+        $form = $this->factory->create($this->priceAttributePriceListType, $defaultData, []);
+
+        $this->assertEquals($defaultData, $form->getData());
+        $this->assertEquals($existingPriceAttributePriceList, $form->getViewData());
+
+        $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
+
+        /** @var PriceAttributePriceList $result */
+        $result = $form->getData();
+        $this->assertEquals($expectedData['name'], $result->getName());
+        $this->assertEquals($expectedData['currencies'], array_values($result->getCurrencies()));
     }
 }

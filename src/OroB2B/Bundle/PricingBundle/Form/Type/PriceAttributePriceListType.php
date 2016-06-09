@@ -8,6 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+
 class PriceAttributePriceListType extends AbstractType
 {
     const NAME = 'orob2b_pricing_price_attribute_price_list';
@@ -31,6 +33,9 @@ class PriceAttributePriceListType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var PriceAttributePriceList $priceAttributePriceList */
+        $priceAttributePriceList = $builder->getData();
+
         $builder
             ->add('name', 'text', ['required' => true, 'label' => 'orob2b.pricing.pricelist.name.label'])
             ->add(
@@ -40,6 +45,8 @@ class PriceAttributePriceListType extends AbstractType
                     'multiple' => true,
                     'required' => true,
                     'label' => 'orob2b.pricing.priceattributepricelist.currencies.label',
+                    'additional_currencies' => $priceAttributePriceList ?
+                        $priceAttributePriceList->getCurrencies() : [],
                 ]
             );
     }
