@@ -82,6 +82,10 @@ orob2b.pricing:
         save.success: Product Price has been added
         applicable_from: 'Price is applicable starting from %amount%'
 
+    priceattributeprice:
+        entity_label: Product Attribute Price
+        entity_plural_label: Product Attributes Prices
+
     price_type:
         bundled: 'bundle'
         unit: 'per unit'
