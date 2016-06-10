@@ -166,7 +166,7 @@ define(function (require) {
          * @param {jQuery.Event} e
          */
         onRemoveItem: function (e) {
-            var option = $(e.target).find('select option:selected');
+            var option = $(e.target).find('select:enabled option:selected');
 
             if (option) {
                 this.removeData({value: option.val(), text: option.text()});
@@ -198,7 +198,7 @@ define(function (require) {
         addOptionToAllSelects: function (value, text) {
             this.options._sourceElement.find(this.options.unitSelect).each(function () {
                 var select = $(this);
-                
+
                 if (select.data('prevValue') != value) {
                     select.append($('<option></option>').val(value).text(text));
                 }

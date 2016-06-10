@@ -59,6 +59,8 @@ define(function (require) {
 
             if (option.val() != undefined) {
                 storedData[option.val()] = option.text();
+                var value = this.options.precisions[option.val()];
+                select.closest('tr').find('input[class="precision"]').val(value);
             } else {
                 storedData = changes['removed'];
             }

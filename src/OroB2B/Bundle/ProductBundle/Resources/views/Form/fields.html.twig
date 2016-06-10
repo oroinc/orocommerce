@@ -1,6 +1,11 @@
 {% block orob2b_product_primary_unit_precision_widget %}
+    {% set precisions = {} %}
+
+    {% for choice in form.unit.vars.choices %}
+        {% set precisions = precisions|merge({ (choice.data.code) : choice.data.defaultPrecision}) %}
+    {% endfor %}
     <div data-page-component-module="orob2bproduct/js/app/components/product-primary-unit-limitations-component"
-         data-page-component-options="{{ {'precisions': 'precisions'}|json_encode }}">
+         data-page-component-options="{{ { 'precisions': precisions }|json_encode }}">
 
         <div class="float-holder">
             <table>
