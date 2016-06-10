@@ -41,7 +41,7 @@ class ProductImageTypesSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testPostSetData()
     {
         $productImage = new ProductImage();
-        $productImage->setTypes([self::TYPE_MAIN]);
+        $productImage->addType(self::TYPE_MAIN);
 
         $form = $this->prophesize('Symfony\Component\Form\FormInterface');
         $form->getData()->willReturn($productImage);

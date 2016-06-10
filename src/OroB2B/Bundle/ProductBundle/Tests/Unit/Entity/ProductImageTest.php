@@ -26,20 +26,24 @@ class ProductImageTest extends \PHPUnit_Framework_TestCase
         $properties = [
             ['id', '123'],
             ['product', new Product()],
-            ['types', ['main'], false]
         ];
 
         $this->assertPropertyAccessors($this->productImage, $properties);
     }
 
-    public function testGetTypes()
+    public function testTypesMutators()
     {
         $this->assertEquals([], $this->productImage->getTypes());
+
+        $this->productImage->addType('main');
+        $this->productImage->addType('listing');
+
+        $this->assertEquals(['main', 'listing'], $this->productImage->getTypes());
     }
 
     public function testHasType()
     {
-        $this->productImage->setTypes(['main']);
+        $this->productImage->addType('main');
 
         $this->assertTrue($this->productImage->hasType('main'));
         $this->assertFalse($this->productImage->hasType('someType'));

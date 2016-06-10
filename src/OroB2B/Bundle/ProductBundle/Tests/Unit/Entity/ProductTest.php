@@ -378,10 +378,11 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $product->getImagesByType('main'));
 
         $image1 = new ProductImage();
-        $image1->setTypes(['main', 'additional']);
+        $image1->addType('main');
+        $image1->addType('additional');
 
         $image2 = new ProductImage();
-        $image2->setTypes(['main']);
+        $image2->addType('main');
 
         $product->addImage($image1);
         $product->addImage($image2);

@@ -98,10 +98,10 @@ class ProductImageCollectionTypeTest extends FormIntegrationTestCase
         $file = new File(__DIR__ . '/files/black.jpg');
 
         $productImage = new ProductImage();
-        $productImage->setTypes(['main']);
+        $productImage->addType('main');
 
         $defaultProductImage = new StubProductImage();
-        $defaultProductImage->setTypes(['test']);
+        $defaultProductImage->addType('test');
 
         return [
             'without submitted data' => [

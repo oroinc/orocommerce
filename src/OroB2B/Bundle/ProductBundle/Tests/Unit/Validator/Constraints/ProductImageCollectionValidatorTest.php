@@ -46,6 +46,7 @@ class ProductImageCollectionValidatorTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->translator = $this->prophesize('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator->trans('Main')->willReturn('Main');
 
         $this->imageTypeProvider = $this->prophesize('Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider');
         $this->imageTypeProvider->getImageTypes()->willReturn(new ArrayCollection([
@@ -67,8 +68,7 @@ class ProductImageCollectionValidatorTest extends \PHPUnit_Framework_TestCase
     public function testValidateValidCollection()
     {
         $collection = new ArrayCollection([
-            $this->prepareProductImage(['main' => true]),
-            $this->prepareProductImage(['main' => false])
+            $this->prepareProductImage(['main']),
         ]);
 
         $this->context->buildViolation(Argument::cetera())->shouldNotBeCalled();
@@ -79,8 +79,8 @@ class ProductImageCollectionValidatorTest extends \PHPUnit_Framework_TestCase
     public function testValidateInvalidCollection()
     {
         $collection = new ArrayCollection([
-            $this->prepareProductImage(['main' => true]),
-            $this->prepareProductImage(['main' => true])
+            $this->prepareProductImage(['main']),
+            $this->prepareProductImage(['main'])
         ]);
 
         $builder = $this->prophesize('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
@@ -88,7 +88,7 @@ class ProductImageCollectionValidatorTest extends \PHPUnit_Framework_TestCase
         $this->context->buildViolation(
             $this->constraint->message,
             [
-                '%type%' => 'main',
+                '%type%' => 'Main',
                 '%maxNumber%' => 1
             ]
         )->willReturn($builder->reveal());
@@ -103,7 +103,9 @@ class ProductImageCollectionValidatorTest extends \PHPUnit_Framework_TestCase
     private function prepareProductImage($types)
     {
         $productImage = new ProductImage();
-        $productImage->setTypes($types);
+        foreach ($types as $type) {
+            $productImage->addType($type);
+        }
 
         return $productImage;
     }

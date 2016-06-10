@@ -82,7 +82,7 @@ class ProductImageTypeTest extends FormIntegrationTestCase
         ];
 
         $defaultProductImage = new StubProductImage();
-        $defaultProductImage->setTypes(['test']);
+        $defaultProductImage->addType('test');
 
         return [
             'without default data' => [
