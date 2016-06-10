@@ -9,6 +9,13 @@ services:
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list }
 
+    orob2b_pricing.form.type.price_attribute_price_list:
+        class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType'
+        calls:
+            - [setDataClass, ['%orob2b_pricing.entity.price_attribute_price_list.class%']]
+        tags:
+            - { name: form.type, alias: orob2b_pricing_price_attribute_price_list }
+
     orob2b_pricing.form.type.price_list_select:
         class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType'
         tags:
@@ -83,6 +90,11 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Form\Extension\ProductFormExtension'
         arguments:
             - "@doctrine"
+        tags:
+            - { name: form.type_extension, alias: orob2b_product }
+
+    orob2b_pricing.form.extension.product_type.price_attributes:
+        class: OroB2B\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension
         tags:
             - { name: form.type_extension, alias: orob2b_product }
 
