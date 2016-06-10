@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use Doctrine\ORM\EntityRepository;
+
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -17,7 +19,6 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
@@ -214,7 +215,7 @@ class FormViewListener
     }
 
     /**
-     * @return PriceListRepository
+     * @return EntityRepository
      */
     protected function getPriceAttributePriceListRepository()
     {
@@ -222,7 +223,7 @@ class FormViewListener
     }
     
     /**
-     * @return PriceListRepository
+     * @return EntityRepository
      */
     protected function getPriceAttributePriceListPricesRepository()
     {
