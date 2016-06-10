@@ -217,7 +217,7 @@
 .action-selectbox_custom_in-pager {
   .chosen-container {
     background: $base-white-color;
-    
+
     &.chosen-container-single {
       .chosen-single {
         padding: .5rem .6rem .5rem 1rem;
@@ -237,29 +237,6 @@
       padding: .5rem 1rem;
       text-align: left !important;
       white-space: nowrap;
-    }
-  }
-}
-
-.oro-oq__filter__select-container,
-.oro-oq__filter__item_sort-select {
-
-  .chosen-container {
-    &.chosen-container-single {
-      .chosen-single {
-        border: .1rem solid $alt-border-color;
-
-        span {
-          text-transform: none;
-        }
-      }
-    }
-
-    .chosen-results {
-      li {
-        text-transform: none;
-        @include ellipsis;
-      }
     }
   }
 }

@@ -706,6 +706,10 @@
           }
 
           .ui-datevariables-div {
+            ul {
+              padding: 0;
+            }
+
             .icon-info-sign {
               vertical-align: middle;
               margin-left: .5rem;
@@ -817,6 +821,7 @@
 
                 select {
                   display: inline-block;
+                  height: auto;
                   padding: .8rem .9rem;
                   font-size: 1.4rem;
                   line-height: 1.9rem;
@@ -1100,12 +1105,13 @@
     background: #ebebeb;
     position: relative;
     padding: 0 13rem .5rem 1rem;
-    margin: 0 -1rem 0 -1rem;
+    margin: 0 -.6rem;
     line-height: 2rem;
 
     .reset-filter-button {
       top: .5rem;
       right: .5rem;
+      
       &:before {
         font-family: 'FontAwesome';
         content: "\f00d";
