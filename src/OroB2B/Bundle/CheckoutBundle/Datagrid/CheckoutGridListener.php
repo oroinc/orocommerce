@@ -26,8 +26,8 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
  */
 class CheckoutGridListener
 {
-    const TYPE_JOIN_COLLECTION = "join_collection";
-    const TYPE_ENTITY_FIELDS = "entity_fields";
+    const TYPE_JOIN_COLLECTION = 'join_collection';
+    const TYPE_ENTITY_FIELDS = 'entity_fields';
     const USER_CURRENCY_PARAMETER = 'user_currency';
     /**
      * @var ConfigProvider
@@ -262,7 +262,7 @@ class CheckoutGridListener
                     'alias' => $relationAlias,
                     'conditionType' => 'WITH',
                     'condition' => sprintf(
-                        "%s = :".self::USER_CURRENCY_PARAMETER,
+                        '%s = :'.self::USER_CURRENCY_PARAMETER,
                         $relationAlias . '.' . $fields['currency']
                     )
                 ];

@@ -16,7 +16,7 @@ class PriceAttributePriceList extends BasePriceList
      *
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice",
-     *      mappedBy="priceAttribute",
+     *      mappedBy="priceList",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
@@ -28,7 +28,7 @@ class PriceAttributePriceList extends BasePriceList
      *
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributeCurrency",
-     *      mappedBy="priceAttribute",
+     *      mappedBy="priceList",
      *      cascade={"all"},
      *      orphanRemoval=true
      * )

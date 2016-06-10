@@ -2,11 +2,14 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
+
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\ProductTypeStub;
@@ -20,11 +23,17 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
     protected $productAttributeFormExtension;
 
     /**
+     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->productAttributeFormExtension = new PriceAttributesProductFormExtension();
+        $this->registry = $this->getMock(RegistryInterface::class);
+        $this->productAttributeFormExtension = new PriceAttributesProductFormExtension($this->registry);
 
         parent::setUp();
     }
@@ -58,6 +67,13 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
 
     public function testSubmit()
     {
+        $em = $this->getMock(ObjectManager::class);
+
+        $repository = $this->getMock(ObjectRepository::class);
+        $repository->expects($this->once())->method('findBy')->willReturn([]);
+        $em->expects($this->once())->method('getRepository')->willReturn($repository);
+        $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
+
         $form = $this->factory->create(ProductType::NAME, new Product(), []);
 
         $form->submit([]);

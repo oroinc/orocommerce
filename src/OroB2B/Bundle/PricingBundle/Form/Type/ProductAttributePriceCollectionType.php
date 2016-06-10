@@ -2,15 +2,17 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
-
-use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductAttributePriceCollectionType extends FormType
 {
-    const NAME = 'orob2b_pricing_price_list_collection';
+    const NAME = 'orob2b_pricing_product_attribute_price_collection';
 
     /**
      * @param FormBuilderInterface $builder
@@ -18,7 +20,27 @@ class ProductAttributePriceCollectionType extends FormType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-//        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+//        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        /** @var PriceAttributeProductPrice $price */
+        $price = current($form->getData());
+        $currencies = [];
+        $units = [];
+
+        if ($price) {
+            $basePriceList = $price->getPriceList();
+            $currencies = $basePriceList->getCurrencies();
+            $units = $price->getProduct()->getAvailableUnitCodes();
+        }
+
+        $view->vars['currencies'] = $currencies;
+        $view->vars['units'] = $units;
     }
 
     /**
@@ -28,32 +50,17 @@ class ProductAttributePriceCollectionType extends FormType
     {
         $resolver->setDefaults(
             [
-                'website' => null,
-                'type' => PriceListSelectWithPriorityType::NAME,
-                'mapped' => false,
-                'label' => false,
-                'handle_primary' => false,
-//                'constraints' => [new UniquePriceList()],
-                'required' => false,
-                'render_as_widget' => false,
+                'type' => ProductAttributePriceType::NAME,
             ]
         );
     }
-
-//    /**
-//     * {@inheritdoc}
-//     */
-//    public function finishView(FormView $view, FormInterface $form, array $options)
-//    {
-//        $view->vars['render_as_widget'] = $options['render_as_widget'];
-//    }
 
     /**
      * {@inheritdoc}
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return 'collection';
     }
 
     /**

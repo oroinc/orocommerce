@@ -253,14 +253,25 @@ class FormViewListenerTest extends FormViewListenerTestCase
     public function testOnProductEdit()
     {
         $formView = new FormView();
-        $templateHtml = 'template_html';
+        $templateHtml = 'prices_update_html';
+        $productPriceAttributesPricesUpdateHtml = 'product_price_attributes_prices_update_html';
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
-        $environment->expects($this->once())
+        $environment->expects($this->exactly(2))
             ->method('render')
-            ->with('OroB2BPricingBundle:Product:prices_update.html.twig', ['form' => $formView])
-            ->willReturn($templateHtml);
+            ->willReturnMap([
+                [
+                    'OroB2BPricingBundle:Product:product_price_attributes_prices_update.html.twig',
+                    ['form' => $formView],
+                    $productPriceAttributesPricesUpdateHtml
+                ],
+                [
+                    'OroB2BPricingBundle:Product:prices_update.html.twig',
+                    ['form' => $formView],
+                    $templateHtml
+                ]
+            ]);
 
         $event = $this->createEvent($environment, $formView);
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
@@ -271,7 +282,22 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $listener->onProductEdit($event);
         $scrollData = $event->getScrollData()->getData();
 
-        $this->assertScrollDataPriceBlock($scrollData, $templateHtml);
+        $expectedBlocks = [
+            [
+                'title' => 'orob2b.pricing.priceattributeprice.entity_plural_label.trans',
+                'useSubBlockDivider' => true,
+                'subblocks' => [['data' => ['product_price_attributes_prices_update_html']]],
+            ],
+            [
+                'title' => 'orob2b.pricing.productprice.entity_plural_label.trans',
+                'useSubBlockDivider' => true,
+                'subblocks' => [['data' => ['prices_update_html']]],
+            ],
+        ];
+
+        foreach ($expectedBlocks as $block) {
+            $this->assertContains($block, $scrollData[ScrollData::DATA_BLOCKS]);
+        }
     }
 
     /**
