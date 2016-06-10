@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\PricingBundle\Form\Type;
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -13,15 +12,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ProductAttributePriceCollectionType extends FormType
 {
     const NAME = 'orob2b_pricing_product_attribute_price_collection';
-
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-//        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData']);
-    }
 
     /**
      * {@inheritdoc}
