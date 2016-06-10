@@ -80,7 +80,6 @@ class FormViewListener
                 'OroB2BPaymentBundle:Account:payment_term_view.html.twig',
                 ['paymentTermData' => $paymentTermData]
             );
-
         } else {
             $accountGroupPaymentTerm = null;
 

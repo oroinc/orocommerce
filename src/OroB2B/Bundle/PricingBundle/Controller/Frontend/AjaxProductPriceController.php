@@ -54,4 +54,23 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
             $this->getParameter('orob2b_pricing.entity.combined_product_price.class')
         );
     }
+
+    /**
+     * @Route("/set-current-currency", name="orob2b_pricing_frontend_set_current_currency")
+     * @Method({"POST"})
+     *
+     * {@inheritdoc}
+     */
+    public function setCurrentCurrencyAction(Request $request)
+    {
+        $currency = $request->get('currency');
+        $result = false;
+        $userCurrencyManager = $this->get('orob2b_pricing.user_currency_manager');
+        if (in_array($currency, $userCurrencyManager->getAvailableCurrencies(), true)) {
+            $userCurrencyManager->saveSelectedCurrency($currency);
+            $result = true;
+        }
+
+        return new JsonResponse(['success' => $result]);
+    }
 }

@@ -1,13 +1,18 @@
 services:
     orob2b_shopping_list.event_listener.shopping_list_listener:
         class: 'OroB2B\Bundle\ShoppingListBundle\EventListener\ShoppingListListener'
+        public: false
         tags:
             - { name: doctrine.event_listener, event: postRemove }
 
-    orob2b_shopping_list.event_listener.line_item_listener:
-        class: 'OroB2B\Bundle\ShoppingListBundle\EventListener\LineItemListener'
+    orob2b_shopping_list.event_listener.shopping_list_total_listener:
+        class: 'OroB2B\Bundle\ShoppingListBundle\EventListener\ShoppingListTotalListener'
+        public: true
         arguments:
-            - '@orob2b_shopping_list.shopping_list.manager.link'
+            - '@doctrine'
         tags:
-            - { name: doctrine.event_listener, event: onFlush }
-            - { name: doctrine.event_listener, event: postFlush }
+            - { name: kernel.event_listener, event: orob2b_pricing.combined_price_list.update, method: onPriceListUpdate }
+            - { name: kernel.event_listener, event: orob2b_pricing.account.combined_price_list.update, method: onAccountPriceListUpdate }
+            - { name: kernel.event_listener, event: orob2b_pricing.account_group.combined_price_list.update, method: onAccountGroupPriceListUpdate }
+            - { name: kernel.event_listener, event: orob2b_pricing.website.combined_price_list.update, method: onWebsitePriceListUpdate }
+            - { name: kernel.event_listener, event: orob2b_pricing.config.combined_price_list.update, method: onConfigPriceListUpdate }

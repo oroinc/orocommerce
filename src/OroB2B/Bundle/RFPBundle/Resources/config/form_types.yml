@@ -1,7 +1,6 @@
 services:
     orob2b_rfp.form.type.default_request_status:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\DefaulRequestStatusType'
-        public: true
         arguments:
             - "@doctrine"
         calls:
@@ -11,7 +10,6 @@ services:
 
     orob2b_rfp.form.type.request_status_with_deleted_select:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusWithDeletedSelectType'
-        public: true
         calls:
             - [setEntityClass, ['%orob2b_rfp.entity.request.status.class%']]
         tags:
@@ -20,7 +18,6 @@ services:
     # Request form types
     orob2b_rfp.form.type.request:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\RequestType'
-        public: true
         calls:
             - [setDataClass, ['%orob2b_rfp.entity.request.class%']]
         tags:
@@ -28,7 +25,6 @@ services:
 
     orob2b_rfp.form.type.request_status_select:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType'
-        public: true
         calls:
             - [setEntityClass, ['%orob2b_rfp.entity.request.status.class%']]
         tags:
@@ -36,7 +32,6 @@ services:
 
     orob2b_rfp.form.type.user_select:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\UserSelectType'
-        public: true
         arguments:
             - "@doctrine"
         tags:
@@ -44,13 +39,11 @@ services:
 
     orob2b_rfp.form.type.request_status_translation:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType'
-        public: true
         tags:
             - { name: form.type, alias: orob2b_rfp_request_status_translation }
 
     orob2b_rfp.form.type.request_status:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusType'
-        public: true
         arguments:
             - "@oro_config.user"
             - "@oro_locale.settings"
@@ -61,7 +54,6 @@ services:
 
     orob2b_rfp.form.type.request_product:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType'
-        public: true
         arguments:
             - "@orob2b_product.formatter.product_unit_label"
         calls:
@@ -71,7 +63,6 @@ services:
 
     orob2b_rfp.form.type.request_product_item:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType'
-        public: true
         calls:
             - [setDataClass, ['%orob2b_rfp.entity.request_product_item.class%']]
         tags:
@@ -79,25 +70,21 @@ services:
 
     orob2b_rfp.form.type.request_product_collection:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\RequestProductCollectionType'
-        public: true
         tags:
             - { name: form.type, alias: orob2b_rfp_request_product_collection }
 
     orob2b_rfp.form.type.request_product_item_collection:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType'
-        public: true
         tags:
             - { name: form.type, alias: orob2b_rfp_request_product_item_collection }
 
     orob2b_rfp.form.type.frontend_request_product_item_collection:
             class: 'OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType'
-            public: true
             tags:
                 - { name: form.type, alias: orob2b_rfp_frontend_request_product_item_collection }
 
     orob2b_rfp.form.type.frontend_request:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType'
-        public: true
         arguments:
             - "@oro_config.manager"
             - "@doctrine"
@@ -109,7 +96,6 @@ services:
 
     orob2b_rfp.form.type.frontend_request_product:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType'
-        public: true
         calls:
             - [setDataClass, ['%orob2b_rfp.entity.request_product.class%']]
         tags:
@@ -117,13 +103,11 @@ services:
 
     orob2b_rfp.form.type.frontend_request_product_collection:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType'
-        public: true
         tags:
             - { name: form.type, alias: orob2b_rfp_frontend_request_product_collection }
 
     orob2b_rfp.form.type.extension.frontend_request_data_storage:
         class: 'OroB2B\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension'
-        public: true
         parent: orob2b_product.form.type.extension.product_data_storage.abstract
         calls:
             - [setDataClass, ['%orob2b_rfp.entity.request.class%']]
@@ -133,7 +117,6 @@ services:
 
     orob2b_rfp.form.type.extension.order_line_item_data_storage:
         class: 'OroB2B\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension'
-        public: true
         arguments:
             - "@request_stack"
             - "@orob2b_rfp.storage.offers_data_storage"
@@ -143,7 +126,6 @@ services:
 
     orob2b_rfp.form.type.extension.order_data_storage:
         class: 'OroB2B\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension'
-        public: true
         arguments:
             - '@request_stack'
             - '@orob2b_pricing.provider.combined_product_price'
@@ -155,6 +137,5 @@ services:
 
     orob2b_rfp.form.type.request_offers:
         class: 'OroB2B\Bundle\RFPBundle\Form\Type\OffersType'
-        public: true
         tags:
             - { name: form.type, alias: orob2b_rfp_request_offers }

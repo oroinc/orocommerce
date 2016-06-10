@@ -33,7 +33,8 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProduct:
         quoteProductRequests:
             - Valid: ~
         quoteProductOffers:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Count:
+            - Count:
+                min: 1
                 minMessage: 'orob2b.sale.quoteproduct.quote_product_items.blank'
             - Valid: ~
 

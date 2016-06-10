@@ -6,13 +6,12 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
-use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -142,8 +141,8 @@ class ProductControllerTest extends WebTestCase
     {
         $product = $this->getProductDataBySku(self::TEST_SKU);
         $id = $product->getId();
-        $locale = $this->getLocale();
-        $localizedName = $this->getLocalizedName($product, $locale);
+        $localization = $this->getLocalization();
+        $localizedName = $this->getLocalizedName($product, $localization);
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
@@ -166,23 +165,23 @@ class ProductControllerTest extends WebTestCase
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()],
+                    'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'descriptions' => [
                     'values' => [
                         'default' => self::DEFAULT_DESCRIPTION,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()],
+                    'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'shortDescriptions' => [
                     'values' => [
                         'default' => self::DEFAULT_SHORT_DESCRIPTION,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]]
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()],
+                    'ids' => [$localization->getId() => $localizedName->getId()]
                 ],
                 'images' => [
                     0 => [
@@ -191,7 +190,7 @@ class ProductControllerTest extends WebTestCase
                     ],
                     1 => [
                         'additional' => 1
-                    ],
+                    ]
                 ]
             ],
         ];
@@ -342,8 +341,8 @@ class ProductControllerTest extends WebTestCase
     {
         $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
         $id = $product->getId();
-        $locale = $this->getLocale();
-        $localizedName = $this->getLocalizedName($product, $locale);
+        $localization = $this->getLocalization();
+        $localizedName = $this->getLocalizedName($product, $localization);
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
@@ -362,23 +361,23 @@ class ProductControllerTest extends WebTestCase
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()],
+                    'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'descriptions' => [
                     'values' => [
                         'default' => self::DEFAULT_DESCRIPTION,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()],
+                    'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'shortDescriptions' => [
                     'values' => [
                         'default' => self::DEFAULT_SHORT_DESCRIPTION,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()],
+                    'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'images' => []//remove all images
             ],
@@ -519,32 +518,32 @@ class ProductControllerTest extends WebTestCase
     }
 
     /**
-     * @return Locale
+     * @return Localization
      */
-    protected function getLocale()
+    protected function getLocalization()
     {
-        $locale = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BWebsiteBundle:Locale')
-            ->getRepository('OroB2BWebsiteBundle:Locale')
+        $localization = $this->getContainer()->get('doctrine')->getManagerForClass('OroLocaleBundle:Localization')
+            ->getRepository('OroLocaleBundle:Localization')
             ->findOneBy([]);
 
-        if (!$locale) {
-            throw new \LogicException('At least one locale must be defined');
+        if (!$localization) {
+            throw new \LogicException('At least one localization must be defined');
         }
 
-        return $locale;
+        return $localization;
     }
 
     /**
      * @param Product $product
-     * @param Locale $locale
+     * @param Localization $localization
      * @return LocalizedFallbackValue
      */
-    protected function getLocalizedName(Product $product, Locale $locale)
+    protected function getLocalizedName(Product $product, Localization $localization)
     {
         $localizedName = null;
         foreach ($product->getNames() as $name) {
-            $nameLocale = $name->getLocale();
-            if ($nameLocale && $nameLocale->getId() === $locale->getId()) {
+            $nameLocalization = $name->getLocalization();
+            if ($nameLocalization && $nameLocalization->getId() === $localization->getId()) {
                 $localizedName = $name;
                 break;
             }
@@ -571,7 +570,7 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertEquals($expectedPrecision, $productUnitPrecision->getPrecision());
     }
-    
+
     /**
      * checking if default product unit field is added and filled
      *

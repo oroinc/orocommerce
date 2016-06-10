@@ -2,18 +2,18 @@
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 {% import 'OroAddressBundle::macros.html.twig' as address %}
 
-{% set locales = website.locales.toArray() %}
+{% set localizations = website.localizations.toArray() %}
 
-{% set localeCodes = [] %}
-{% for locale in locales %}
-    {% set localeCodes = localeCodes|merge([locale.code]) %}
+{% set codes = [] %}
+{% for localization in localizations %}
+    {% set codes = codes|merge([localization.languageCode]) %}
 {% endfor %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.website.name.label'|trans, website.name) }}
-            {{ UI.renderProperty('orob2b.website.locales.label'|trans, localeCodes|join(', ') ) }}
+            {{ UI.renderProperty('orob2b.website.localizations.label'|trans, codes|join(', ') ) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(website) }}

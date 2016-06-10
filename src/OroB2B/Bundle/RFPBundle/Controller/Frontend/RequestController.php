@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -18,6 +17,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use OroB2B\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class RequestController extends Controller
@@ -125,8 +125,8 @@ class RequestController extends Controller
      */
     protected function update(RFPRequest $rfpRequest)
     {
-        /* @var $handler UpdateHandler */
-        $handler = $this->get('oro_form.model.update_handler');
+        /* @var $handler RequestUpdateHandler */
+        $handler = $this->get('orob2b_rfp.service.request_update_handler');
 
         // set default status after edit
         if ($rfpRequest->getId()) {

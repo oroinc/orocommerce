@@ -1,0 +1,27 @@
+services:
+    orob2b_checkout.layout.block.type.abstract_transition_button:
+        abstract: true
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{transitionData: {required: true}, checkout: {required: true}}]]
+
+    orob2b_checkout.layout.block.type.transition_button.back:
+        parent: orob2b_checkout.layout.block.type.abstract_transition_button
+        calls:
+            - [setName, ['checkout_transition_back']]
+        tags:
+            - { name: layout.block_type, alias: checkout_transition_back }
+
+    orob2b_checkout.layout.block.type.transition_button.continue:
+        parent: orob2b_checkout.layout.block.type.abstract_transition_button
+        calls:
+            - [setName, ['checkout_transition_continue']]
+        tags:
+            - { name: layout.block_type, alias: checkout_transition_continue }
+
+    orob2b_checkout.layout.block.type.transition_button.edit:
+        parent: orob2b_checkout.layout.block.type.abstract_transition_button
+        calls:
+            - [setName, ['checkout_transition_step_edit']]
+        tags:
+            - { name: layout.block_type, alias: checkout_transition_step_edit }

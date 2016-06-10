@@ -1,0 +1,284 @@
+.credit-card-icon {
+  display: inline-block;
+  vertical-align: middle;
+
+  &.credit-card-icon_mastercard {
+    width: 3.9rem;
+    height: 2.5rem;
+    background: url('../images/payments/mastercard.png') no-repeat;
+  }
+
+  &.credit-card-icon_visa {
+    width: 4.1rem;
+    height: 2.5rem;
+    background: url('../images/payments/visa.png') no-repeat;
+  }
+
+  &.credit-card-icon_american_express {
+    width: 4rem;
+    height: 2.5rem;
+    background: url('../images/payments/american_express.png') no-repeat;
+  }
+
+  &.credit-card-icon_discover {
+    width: 4rem;
+    height: 2.5rem;
+    background: url('../images/payments/discover.png') no-repeat;
+  }
+}
+
+.oro-icon-dollar {
+  font-style: normal;
+  font-weight: 700;
+  font-family: 'Roboto', 'Helvetica', Arial, sans-serif;
+}
+
+.icon-bars:before {
+  content: "\f03a";
+}
+
+[class^="cf-"], [class*=" cf-"] {
+  display: inline-block;
+  vertical-align: middle;
+
+  margin-right: .3rem;
+
+  font-family: 'custom-font-icon';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+
+  word-wrap: normal;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+.cf {
+  &--medium {
+    font-size: $base-font-size;
+  }
+
+  &--large {
+    font-size: $default-font-size-large;
+  }
+
+  &--gray {
+    color: $base-font-color-lighter;
+  }
+
+  &--hidden {
+    visibility: hidden;
+  }
+
+  &--base-line {
+    vertical-align: baseline;
+  }
+}
+
+/* Custom font icons */
+
+.cf-search:before {
+  content: "\1f50d";
+}
+.cf-menu:before {
+  content: "\2630";
+}
+.cf-plus-circled:before {
+  content: "\2795";
+}
+.cf-eye:before {
+  content: "\e70a";
+}
+.cf-reply:before {
+  content: "\e712";
+}
+.cf-export:before {
+  content: "\e715";
+}
+.cf-pencil:before {
+  content: "\270e";
+}
+.cf-comment:before {
+  content: "\e718";
+}
+.cf-trash:before {
+  content: "\e729";
+}
+.cf-folder:before {
+  content: "\1f4c1";
+}
+.cf-share:before {
+  content: "\e73c";
+}
+.cf-basket:before {
+  content: "\e73d";
+}
+.cf-calendar:before {
+  content: "\1f4c5";
+}
+.cf-left-circled:before {
+  content: "\e759";
+}
+.cf-left-open:before {
+  content: "\e75d";
+}
+.cf-right-open:before {
+  content: "\e75e";
+}
+.cf-down-open-mini:before {
+  content: "\e760";
+}
+.cf-left-open-mini:before {
+  content: "\e761";
+}
+.cf-right-open-mini:before {
+  content: "\e762";
+}
+.cf-cw:before {
+  content: "\27f3";
+}
+.cf-play:before {
+  content: "\25b6";
+}
+.cf-list:before {
+  content: "\e005";
+}
+.cf-dot-3:before {
+  content: "\e78d";
+}
+.cf-clipboard:before {
+  content: "\1f4cb";
+}
+.cf-attention:before {
+  content: "\e900";
+}
+.cf-right-bold:before {
+  content: "\e901";
+}
+.cf-download:before {
+  content: "\e902";
+}
+.cf-check:before {
+  content: "\e903";
+}
+.cf-flash:before {
+  content: "\e904";
+}
+.cf-help-circled:before {
+  content: "\e905";
+}
+.cf-info-circled:before {
+  content: "\e906";
+}
+.cf-newspaper:before {
+  content: "\e907";
+}
+.cf-tag:before {
+  content: "\e908";
+}
+.cf-print:before {
+  content: "\e909";
+}
+.cf-shuffle:before {
+  content: "\e90a";
+}
+.cf-tools:before {
+  content: "\e90b";
+}
+.cf-add_circle:before {
+  content: "\e147";
+}
+.cf-arrow_drop_down:before {
+  content: "\e5c5";
+}
+.cf-assignment:before {
+  content: "\e85d";
+}
+.cf-check_box:before {
+  content: "\e834";
+}
+.cf-check_box_outline_blank:before {
+  content: "\e835";
+}
+.cf-clear:before {
+  content: "\e5cd";
+}
+.cf-description:before {
+  content: "\e873";
+}
+.cf-error:before {
+  content: "\e000";
+}
+.cf-info:before {
+  content: "\e88e";
+}
+.cf-insert_drive_file:before {
+  content: "\e24d";
+}
+.cf-keyboard_arrow_down:before {
+  content: "\e313";
+}
+.cf-keyboard_arrow_left:before {
+  content: "\e314";
+}
+.cf-keyboard_arrow_right:before {
+  content: "\e315";
+}
+.cf-keyboard_arrow_up:before {
+  content: "\e316";
+}
+.cf-local_mall:before {
+  content: "\e54c";
+}
+.cf-local_offer:before {
+  content: "\e54e";
+}
+.cf-mode_edit:before {
+  content: "\e254";
+}
+.cf-chevron_left:before {
+  content: "\e408";
+}
+.cf-chevron_right:before {
+  content: "\e409";
+}
+.cf-launch:before {
+  content: "\e89e";
+}
+.cf-open_with:before {
+  content: "\e89f";
+}
+.cf-radio_button_checked:before {
+  content: "\e837";
+}
+.cf-radio_button_unchecked:before {
+  content: "\e836";
+}
+.cf-history:before {
+  content: "\e8b3";
+}
+.cf-view_headline:before {
+  content: "\e8ee";
+}
+.cf-view_list:before {
+  content: "\e8ef";
+}
+.cf-apps:before {
+  content: "\e8f0";
+}
+.cf-report_problem:before {
+  content: "\e002";
+}
+
+/* Custom font icons  END */

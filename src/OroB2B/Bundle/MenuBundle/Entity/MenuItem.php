@@ -9,11 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\LocaleBundle\Entity\FallbackTrait;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
-use OroB2B\Bundle\FallbackBundle\Entity\FallbackTrait;
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\MenuBundle\Model\ExtendMenuItem;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Component\Tree\Entity\TreeTrait;
 
 /**
@@ -50,7 +50,7 @@ class MenuItem extends ExtendMenuItem
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
@@ -168,12 +168,12 @@ class MenuItem extends ExtendMenuItem
     }
 
     /**
-     * @param Locale|null $locale
+     * @param Localization|null $localization
      * @return LocalizedFallbackValue
      */
-    public function getTitle(Locale $locale = null)
+    public function getTitle(Localization $localization = null)
     {
-        return $this->getLocalizedFallbackValue($this->titles, $locale);
+        return $this->getLocalizedFallbackValue($this->titles, $localization);
     }
 
     /**

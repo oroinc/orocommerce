@@ -1,25 +1,29 @@
 services:
     orob2b_product.importexport.data_converter.product:
         class: 'OroB2B\Bundle\ProductBundle\ImportExport\DataConverter\ProductDataConverter'
-        parent: orob2b_fallback.importexport.data_converter.localized_fallback_value_aware
+        public: false
+        parent: oro_locale.importexport.data_converter.localized_fallback_value_aware
         calls:
             - [setEntityName, ['%orob2b_product.entity.product.class%']]
             - [setEventDispatcher, ['@event_dispatcher']]
 
     orob2b_product.importexport.data_converter.product_template:
+        public: false
         parent: orob2b_product.importexport.data_converter.product
         calls:
             - [setRelationCalculator, ['@oro_importexport.data_converter.template_fixture.relation_calculator']]
 
     orob2b_product.importexport.strategy.product:
         class: 'OroB2B\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy'
-        parent: orob2b_fallback.importexport.strategy.localized_fallback_value_aware
+        public: false
+        parent: oro_locale.importexport.strategy.localized_fallback_value_aware
         calls:
             - [setSecurityFacade, ['@oro_security.security_facade']]
             - [setVariantLinkClass, ['%orob2b_product.entity.product_variant_link.class%']]
 
     orob2b_product.importexport.normalizer.product:
         class: 'OroB2B\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer'
+        public: false
         parent: oro_importexport.serializer.configurable_entity_normalizer
         calls:
             - [setProductClass, ['%orob2b_product.entity.product.class%']]
@@ -30,11 +34,13 @@ services:
     # Template Fixture
     orob2b_product.importexport.template_fixture.product:
         class: 'OroB2B\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture'
+        public: false
         tags:
             - { name: oro_importexport.template_fixture }
 
     # Import processor
     orob2b_product.importexport.processor.import.product:
+        public: false
         parent: oro_importexport.processor.import_abstract
         calls:
             - [setDataConverter, ['@orob2b_product.importexport.data_converter.product']]
@@ -45,6 +51,7 @@ services:
 
     # Export processor
     orob2b_product.importexport.processor.export.product:
+        public: false
         parent: oro_importexport.processor.export_abstract
         calls:
             - [setDataConverter, ['@orob2b_product.importexport.data_converter.product']]
@@ -52,6 +59,7 @@ services:
             - { name: oro_importexport.processor, type: export, entity: '%orob2b_product.entity.product.class%', alias: orob2b_product_product }
 
     orob2b_product.importexport.processor.export_template.product:
+        public: false
         parent: oro_importexport.processor.export_abstract
         calls:
             - [setDataConverter, ['@orob2b_product.importexport.data_converter.product_template']]
@@ -60,7 +68,6 @@ services:
 
     orob2b_product.event_listener.product_normalizer:
         class: 'OroB2B\Bundle\ProductBundle\EventListener\ProductNormalizerEventListener'
-        public: true
         tags:
             - { name: kernel.event_listener, event: orob2b_product.normalizer.normalizer, method: onNormalize }
             - { name: kernel.event_listener, event: orob2b_product.normalizer.denormalizer, method: onDenormalize }

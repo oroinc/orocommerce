@@ -192,6 +192,40 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     }
 
     /**
+     * @dataProvider setCurrentCurrencyDataProvider
+     * @param string $currency
+     * @param string $expectedResult
+     */
+    public function testSetCurrentCurrencyAction($currency, $expectedResult)
+    {
+        $params = ['currency' => $currency];
+        $this->client->request('POST', $this->getUrl('orob2b_pricing_frontend_set_current_currency'), $params);
+        $result = $this->client->getResponse();
+
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+        $this->assertSame($expectedResult, $data);
+    }
+
+    /**
+     * @return array
+     */
+    public function setCurrentCurrencyDataProvider()
+    {
+        return [
+            [
+                'currency' => 'USD',
+                'expectedResult' => ['success' => true] ,
+            ],
+            [
+                'currency' => 'USD2',
+                'expectedResult' => ['success' => false] ,
+            ],
+        ];
+    }
+
+    /**
      * @return array
      */
     public function filterDataProvider()

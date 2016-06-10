@@ -130,7 +130,7 @@ class FrontendProductDatagridListener
                     'join' => 'product.shortDescriptions',
                     'alias' => 'productShortDescriptions',
                     'conditionType' => 'WITH',
-                    'condition' => 'productShortDescriptions.locale IS NULL'
+                    'condition' => 'productShortDescriptions.localization IS NULL'
                 ]
             ],
             '[columns]' => [

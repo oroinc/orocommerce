@@ -7,3 +7,4 @@ orob2b:
             expiration_date: "Invalid Expiration date."
             month: "Please, choose correct month."
             credit_card: "Invalid card number."
+            credit_card_type: "Credit card type not accepted."
