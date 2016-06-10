@@ -19,8 +19,8 @@ define(function(require) {
             this.$el = options._sourceElement;
             this.eventChannelId = options.eventChannelId;
             ShoppingListWidgetViewComponent.__super__.initialize.apply(this, arguments);
-            mediator.on('inlineEditor:' + this.eventChannelId + ':shopping-list-id', this.getShoppingListId, this);
-            mediator.on('inlineEditor:' + this.eventChannelId + ':update', this.updateTitle, this);
+            mediator.on('shopping-list-event:' + this.eventChannelId + ':shopping-list-id', this.getShoppingListId, this);
+            mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateTitle, this);
         },
 
         /**

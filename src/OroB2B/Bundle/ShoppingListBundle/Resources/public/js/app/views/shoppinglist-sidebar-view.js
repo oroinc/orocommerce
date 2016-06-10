@@ -19,7 +19,7 @@ define(function(require) {
             this.$el = options._sourceElement;
             this.eventChannelId = options.eventChannelId;
             // listen to incoming title updates and re-render the whole shopping list
-            mediator.on('inlineEditor:' + this.eventChannelId + ':update', this.updateCurrentTitle, this);
+            mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateCurrentTitle, this);
         },
 
         /**
