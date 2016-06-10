@@ -184,13 +184,11 @@ class FormViewListener
     }
 
     /**
-     * @return array
+     * @return array|PriceAttributePriceList[]
      */
     protected function getProductAttributes()
     {
-        /** @var PriceAttributePriceList[] $productPriceAttributes */
-        $a = $this->getPriceAttributePriceListRepository();
-        return $a->findAll();
+        return $this->getPriceAttributePriceListRepository()->findAll();
     }
 
     /**
@@ -206,7 +204,7 @@ class FormViewListener
         foreach ($priceAttributePrices as $priceAttributePrice) {
             $priceAttributeName = $priceAttributePrice->getPriceList()->getName();
             $currency = $priceAttributePrice->getPrice()->getCurrency();
-            $unit = $priceAttributePrice->getProductUnit()->getCode();
+            $unit = $priceAttributePrice->getProductUnitCode();
             $amount = $priceAttributePrice->getPrice()->getValue();
 
             $result[$priceAttributeName][$unit][$currency] = $amount;
