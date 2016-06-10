@@ -46,7 +46,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            this.$input = this.$el.find('input.select2');
+            this.$input = this.$el.find('[data-name="field__payment-term"]');
             this.selectionTemplate = _.template(this.options.selectionTemplate);
 
             this.configureInput();
@@ -109,7 +109,7 @@ define(function(require) {
                 paymentTerm = this.$input.val();
             }
 
-            this.$input.select2('val', paymentTerm);
+            this.$input.inputWidget('val', paymentTerm);
         },
 
         /**

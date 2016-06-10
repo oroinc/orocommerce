@@ -17,9 +17,6 @@
 .invoice-line-item-type .fields-row input[type="text"] {
     width: 400px;
 }
-.invoice-line-item-type .fields-row .select2-container {
-    width: 400px;
-}
 
 .invoice-line-item-quantity .fields-row input[type="text"],
 .invoice-line-item-price .fields-row input[type="text"],
