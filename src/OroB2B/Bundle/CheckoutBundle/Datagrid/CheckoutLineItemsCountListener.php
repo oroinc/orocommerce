@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutItemsCounters\CheckoutItemsCounterInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -17,6 +17,11 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 class CheckoutLineItemsCountListener
 {
     /**
+     * @var CheckoutItemsCounterInterface[]
+     */
+    private $counters = [];
+    
+    /**
      * @var RegistryInterface
      */
     protected $doctrine;
@@ -28,6 +33,14 @@ class CheckoutLineItemsCountListener
         RegistryInterface $doctrine
     ) {
         $this->doctrine = $doctrine;
+    }
+
+    /**
+     * @param CheckoutItemsCounterInterface $counter
+     */
+    public function addCounter(CheckoutItemsCounterInterface $counter)
+    {
+        $this->counters[] = $counter;
     }
 
     /**
@@ -47,66 +60,14 @@ class CheckoutLineItemsCountListener
             $ids[] = $record->getValue('id');
         }
 
-        $shoppingListsItemsCounts = $this->countShoppingListItems($em, $ids);
-
-        $quoteProductCounts = $this->countQuoteProducts($em, $ids);
-
-        foreach ($records as $record) {
-            $totalItems = 0;
-
-            foreach ($shoppingListsItemsCounts as $shoppingListsItemsCount) {
-                if ($shoppingListsItemsCount['id'] == $record->getValue('id')) {
-                    $totalItems = $shoppingListsItemsCount[1];
+        foreach ($this->counters as $counter) {
+            foreach ($counter->countItems($em, $ids) as $id => $count) {
+                foreach ($records as $record) {
+                    if ($id == $record->getValue('id')) {
+                        $record->addData(['itemsCount' => $count]);
+                    }
                 }
             }
-
-            foreach ($quoteProductCounts as $quoteProductCount) {
-                if ($quoteProductCount['id'] == $record->getValue('id')) {
-                    $totalItems = $quoteProductCount[1];
-                }
-            }
-
-            $record->addData(['itemsCount' => $totalItems]);
         }
-    }
-
-    /**
-     * @param EntityManagerInterface $em
-     * @param array $ids
-     * @return array
-     */
-    private function countShoppingListItems(EntityManagerInterface $em, array $ids)
-    {
-         return $em->createQueryBuilder()
-            ->select('c.id', 'count(l.id)')
-            ->from('OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout', 'c')
-            ->join('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource', 's', 'WITH', 'c.source = s')
-            ->join('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', 'sl', 'WITH', 's.shoppingList = sl')
-            ->join('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', 'l', 'WITH', 'l.shoppingList = sl')
-            ->groupBy('c.id')
-            ->where('c.id in (:ids)')
-            ->setParameter('ids', $ids)
-            ->getQuery()
-            ->getScalarResult();
-    }
-
-    /**
-     * @param EntityManagerInterface $em
-     * @param array $ids
-     * @return array
-     */
-    private function countQuoteProducts(EntityManagerInterface $em, array $ids)
-    {
-        return $em->createQueryBuilder()
-            ->select('c.id', 'count(qp.id)')
-            ->from('OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout', 'c')
-            ->join('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource', 's', 'WITH', 'c.source = s')
-            ->join('OroB2B\Bundle\SaleBundle\Entity\QuoteDemand', 'qd', 'WITH', 's.quoteDemand = qd')
-            ->join('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct', 'qp', 'WITH', 'qp.quote = qd.quote')
-            ->groupBy('c.id')
-            ->where('c.id in (:ids)')
-            ->setParameter('ids', $ids)
-            ->getQuery()
-            ->getScalarResult();
     }
 }
