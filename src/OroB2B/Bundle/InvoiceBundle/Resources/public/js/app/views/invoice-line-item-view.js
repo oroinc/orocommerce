@@ -1,4 +1,4 @@
-define(function (require) {
+define(function(require) {
     //'use strict';
 
     var LineItemView;
@@ -29,7 +29,7 @@ define(function (require) {
                 'UNIT': 10
             },
             selectors: {
-                productSelector: '.invoice-line-item-type-product input.select2',
+                productSelector: '.invoice-line-item-type-product [data-name="field__product"]',
                 quantitySelector: '.invoice-line-item-quantity input',
                 unitSelector: '.invoice-line-item-quantity select',
                 productSku: '.invoice-line-item-sku .invoice-line-item-type-product',
@@ -46,7 +46,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.$el.on('click', '.removeLineItem', $.proxy(this._removeRow, this));
             mediator.on('update:currency', this._updateCurrency, this);
@@ -57,11 +57,11 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        handleLayoutInit: function () {
+        handleLayoutInit: function() {
             this.$fields = this.$el.find(':input[name]');
 
             this.fieldsByName = {};
-            this.$fields.each(_.bind(function (i, field) {
+            this.$fields.each(_.bind(function(i, field) {
                 this.fieldsByName[this._formFieldName(field)] = $(field);
             }, this));
 
@@ -74,7 +74,7 @@ define(function (require) {
             mediator.trigger('invoice-line-item:created', this.$el);
         },
 
-        initSubtotalListener: function () {
+        initSubtotalListener: function() {
             TotalsListener.listen([
                 this.fieldsByName.product,
                 this.fieldsByName.quantity,
@@ -84,7 +84,7 @@ define(function (require) {
             ]);
         },
 
-        initUnitLoader: function (options) {
+        initUnitLoader: function(options) {
             var defaultOptions = {
                 _sourceElement: this.$el,
                 productSelector: this.options.selectors.productSelector,
@@ -98,7 +98,7 @@ define(function (require) {
             this.subview('productUnitComponent', new ProductUnitComponent(_.extend({}, defaultOptions, options || {})));
         },
 
-        initPrices: function () {
+        initPrices: function() {
             this.subview('productPricesComponents', new ProductPricesComponent({
                 _sourceElement: this.$el,
                 $product: this.fieldsByName.product,
@@ -111,28 +111,28 @@ define(function (require) {
             }));
         },
 
-        initTypeSwitcher: function () {
+        initTypeSwitcher: function() {
             var $product = this.$el.find('div' + this.options.selectors.productType);
             var $freeForm = this.$el.find('div' + this.options.selectors.freeFormType);
 
-            var showFreeFormType = function () {
+            var showFreeFormType = function() {
                 $product.hide();
                 $freeForm.show();
             };
 
-            var showProductType = function () {
+            var showProductType = function() {
                 $freeForm.hide();
                 $product.show();
             };
 
-            $freeForm.find('a' + this.options.selectors.productType).click(_.bind(function () {
+            $freeForm.find('a' + this.options.selectors.productType).click(_.bind(function() {
                 showProductType();
                 $freeForm.find(':input').val('').change();
             }, this));
 
-            $product.find('a' + this.options.selectors.freeFormType).click(_.bind(function () {
+            $product.find('a' + this.options.selectors.freeFormType).click(_.bind(function() {
                 showFreeFormType();
-                this.fieldsByName.product.select2('val', '').change();
+                this.fieldsByName.product.inputWidget('val', '').change();
             }, this));
 
             if (this.fieldsByName.freeFormProduct.val() !== '') {
@@ -142,18 +142,18 @@ define(function (require) {
             }
         },
 
-        initProduct: function () {
+        initProduct: function() {
             if (this.fieldsByName.product) {
-                this.fieldsByName.product.change(_.bind(function () {
+                this.fieldsByName.product.change(_.bind(function() {
                     this._resetData();
 
-                    var data = this.fieldsByName.product.select2('data') || {};
+                    var data = this.fieldsByName.product.inputWidget('data') || {};
                     this.$el.find(this.options.selectors.productSku).html(data.sku || null);
                 }, this));
             }
         },
 
-        initItemTotal: function () {
+        initItemTotal: function() {
             this._setTotalPrice();
 
             this.fieldsByName.priceValue
@@ -168,7 +168,7 @@ define(function (require) {
          * @param {Object} field
          * @returns {String}
          */
-        _formFieldName: function (field) {
+        _formFieldName: function(field) {
             var name = '';
             var nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
             var namePart;
@@ -187,19 +187,19 @@ define(function (require) {
             return name;
         },
 
-        _resetData: function () {
+        _resetData: function() {
             if (this.fieldsByName.hasOwnProperty('quantity')) {
                 this.fieldsByName.quantity.val(1);
             }
         },
 
-        _updateCurrency: function (val) {
+        _updateCurrency: function(val) {
             this.options.currency = val;
             this.fieldsByName.priceCurrency.val(val);
             this.fieldsByName.priceCurrency.trigger('change');
         },
 
-        _setTotalPrice: function () {
+        _setTotalPrice: function() {
             var totalPrice;
             if (!this.fieldsByName.priceValue) {
                 return;
@@ -214,7 +214,7 @@ define(function (require) {
                 .text(NumberFormatter.formatCurrency(totalPrice, this.options.currency));
         },
 
-        _removeRow: function () {
+        _removeRow: function() {
             this.$el.trigger('content:remove');
             this.remove();
         },
@@ -222,7 +222,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        dispose: function () {
+        dispose: function() {
             if (this.disposed) {
                 return;
             }
