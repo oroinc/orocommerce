@@ -50,6 +50,7 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
         ]);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPreSetData']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
     }
 
     /**
@@ -57,6 +58,7 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
      */
     public function onPreSetData(FormEvent $event)
     {
+        // todo: BB-3336 Implement saved price attribute prices loading
         $product = $event->getData();
 
         $om = $this->registry->getManagerForClass(Product::class);
@@ -68,5 +70,13 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
             $data[$price->getPriceList()->getName()][] = $price;
         }
         $event->getForm()->get(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)->setData($data);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function onPostSubmit(FormEvent $event)
+    {
+        // TODO: BB-3337 Implement price attribute prices persistence
     }
 }

@@ -169,12 +169,6 @@ class FormViewListener
      */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
-        $priceAttributePricesTemplate = $event->getEnvironment()->render(
-            'OroB2BPricingBundle:Product:product_price_attributes_prices_update.html.twig',
-            ['form' => $event->getFormView()]
-        );
-        $this->addProductPriceAttributePricesBlock($event->getScrollData(), $priceAttributePricesTemplate);
-
         $template = $event->getEnvironment()->render(
             'OroB2BPricingBundle:Product:prices_update.html.twig',
             ['form' => $event->getFormView()]
@@ -197,18 +191,6 @@ class FormViewListener
     protected function addProductPricesBlock(ScrollData $scrollData, $html)
     {
         $blockLabel = $this->translator->trans('orob2b.pricing.productprice.entity_plural_label');
-        $blockId = $scrollData->addBlock($blockLabel);
-        $subBlockId = $scrollData->addSubBlock($blockId);
-        $scrollData->addSubBlockData($blockId, $subBlockId, $html);
-    }
-
-    /**
-     * @param ScrollData $scrollData
-     * @param string $html
-     */
-    protected function addProductPriceAttributePricesBlock(ScrollData $scrollData, $html)
-    {
-        $blockLabel = $this->translator->trans('orob2b.pricing.priceattributeprice.entity_plural_label');
         $blockId = $scrollData->addBlock($blockLabel);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);
