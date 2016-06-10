@@ -1839,6 +1839,11 @@ $gutter: 105px;
       flex-basis: 55%;
       margin: 0 0 1rem;
     }
+
+    .action-selectbox_custom_in-pager {
+      width: 100%;
+      max-width: 16.5rem;
+    }
   }
 
   &:nth-child(2) {
@@ -4584,85 +4589,6 @@ $gutter: 105px;
 }
 
 /*END CHECKOUT PAGE*/
-
-/*START CMS*/
-.cms-page {
-
-  h1 {
-    font-size: 3.2rem;
-    line-height: 3.6rem;
-    margin: 0 0 2rem;
-  }
-
-  h2 {
-    font-size: 2.2rem;
-    line-height: 2.6rem;
-    margin: 0 0 2rem;
-  }
-
-  h3 {
-    font-size: 1.6rem;
-    line-height: 2rem;
-    margin: 0 0 2rem;
-  }
-
-  p {
-    margin: 0 0 1.5rem;
-  }
-
-  blockquote {
-    font-size: 1.4rem;
-    font-style: italic;
-    font-weight: 400;
-    margin: 0 0 1.5rem 3rem;
-
-    &:before,
-    &:after {
-      content: '"';
-    }
-  }
-
-  ul {
-    margin: 0 0 1.5rem 4.5rem;
-    padding: 0;
-  }
-
-  ol {
-    margin: 0 0 1.5rem 4.5rem;
-    padding: 0;
-  }
-}
-
-.cms__img-holder {
-
-  &.cms__img-holder_right {
-    float: right;
-    margin: .5rem 0 2rem 2rem;
-
-    @media (max-width: 767px) {
-      display: inline-block;
-      float: none;
-      margin: 0 0 2rem;
-    }
-  }
-
-  &.cms__img-holder_left {
-    float: left;
-    margin: .5rem 2rem 2rem 0;
-
-    @media (max-width: 767px) {
-      display: inline-block;
-      float: none;
-      margin: 0 0 2rem;
-    }
-  }
-}
-
-.cms__img-caption {
-  font-size: 1.3rem;
-  text-align: center;
-}
-/*END CMS*/
 
 /*START QUOTE*/
 .quote-page {
