@@ -15,6 +15,6 @@ services:
             - { name: form.type, alias: orob2b_warehouse_inventory_level_grid }
 
     orob2b_warehouse.form.type.extension.warehouse_inventory_status_export:
-        class: OroB2B\Bundle\WarehouseBundle\Form\Type\InventoryStatusExportType
+        class: OroB2B\Bundle\WarehouseBundle\Form\Type\InventoryLevelExportType
         tags:
             - { name: form.type_extension, alias: oro_importexport_export }

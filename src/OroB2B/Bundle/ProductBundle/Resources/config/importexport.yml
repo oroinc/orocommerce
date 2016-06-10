@@ -74,10 +74,16 @@ services:
 
     orob2b_product.importexport.inventory_status_converter:
         parent: oro_importexport.data_converter.configurable
+        class: OroB2B\Bundle\ProductBundle\ImportExport\DataConverter\InventoryStatusDataConverter
 
     orob2b_product.importexport.processor.export_inventory_status_only:
         parent: oro_importexport.processor.export_abstract
         calls:
              - [setDataConverter, ["@orob2b_product.importexport.inventory_status_converter"]]
         tags:
-            - { name: oro_importexport.processor, type: export, entity: %orob2b_warehouse.entity.warehouse.class%, alias: export_inventory_status_only }
+            - { name: oro_importexport.processor, type: export, entity: %orob2b_product.entity.product.class%, alias: export_inventory_status_only }
+
+    orob2b_product.importexport.normalizer.inventory_status:
+        class: OroB2B\Bundle\ProductBundle\ImportExport\Normalizer\InventoryStatusNormalizer
+        tags:
+            - { name: oro_importexport.normalizer }

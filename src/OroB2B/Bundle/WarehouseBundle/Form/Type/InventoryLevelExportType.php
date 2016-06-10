@@ -10,9 +10,15 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\ImportExportBundle\Form\Type\ExportType;
 
-class InventoryStatusExportType extends AbstractTypeExtension
+class InventoryLevelExportType extends AbstractTypeExtension
 {
     const NAME = 'orob2b_inventory_status_export_type';
+
+    /** @var string[] */
+    protected static $processorAliases = [
+        'export_inventory_status_only',
+        'orob2b_warehouse_detailed_inventory_levels'
+    ];
 
     /**
      * {@inheritdoc}
@@ -35,8 +41,7 @@ class InventoryStatusExportType extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $processorAliasChoices = $builder->get('processorAlias')->getOption('choices');
-        $processorAliases = array_keys($processorAliasChoices);
+        $processorAliases = self::$processorAliases;
         $defaultChoice = reset($processorAliases);
         $builder->remove('processorAlias');
 
