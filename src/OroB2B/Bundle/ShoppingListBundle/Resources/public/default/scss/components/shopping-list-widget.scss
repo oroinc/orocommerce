@@ -333,3 +333,13 @@
     right: 1rem;
   }
 }
+
+.checkbox_custom-wrapper {
+  background: $base-sidebar-background-color-light;
+  padding: .6rem 1rem .3rem;
+  border-radius: .3rem;
+
+  + .checkbox_custom-wrapper {
+    margin-top: .3rem;
+  }
+}
