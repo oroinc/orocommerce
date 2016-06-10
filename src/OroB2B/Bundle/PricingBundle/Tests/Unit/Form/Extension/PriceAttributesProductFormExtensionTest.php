@@ -20,7 +20,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
     /**
      * @var PriceAttributesProductFormExtension
      */
-    protected $productAttributeFormExtension;
+    protected $priceAttributeFormExtension;
 
     /**
      * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -33,15 +33,9 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->registry = $this->getMock(RegistryInterface::class);
-        $this->productAttributeFormExtension = new PriceAttributesProductFormExtension($this->registry);
+        $this->priceAttributeFormExtension = new PriceAttributesProductFormExtension($this->registry);
 
         parent::setUp();
-    }
-
-    public function testGetExtendedType()
-    {
-        $this->productAttributeFormExtension->getExtendedType();
-        $this->assertSame(ProductType::NAME, $this->productAttributeFormExtension->getExtendedType());
     }
 
     /**
@@ -56,13 +50,19 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
                 ],
                 [
                     ProductType::NAME => [
-                        $this->productAttributeFormExtension
+                        $this->priceAttributeFormExtension
                     ]
                 ]
             )
         ];
 
         return $extensions;
+    }
+
+    public function testGetExtendedType()
+    {
+        $this->priceAttributeFormExtension->getExtendedType();
+        $this->assertSame(ProductType::NAME, $this->priceAttributeFormExtension->getExtendedType());
     }
 
     public function testSubmit()
