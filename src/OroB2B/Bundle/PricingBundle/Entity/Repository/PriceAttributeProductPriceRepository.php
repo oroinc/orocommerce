@@ -13,17 +13,13 @@ class PriceAttributeProductPriceRepository extends EntityRepository
      *
      * @param integer[] $priceAttributePriceListIds
      * @param array $productIds
-     * @param string|null $currency
-     * @param string|null $productUnitCode
      * @param array $orderBy
      *
      * @return ProductPrice[]
      */
-    public function findByPriceAttributeProductPriceIdsIdsAndProductIds(
+    public function findByPriceAttributeProductPriceIdsAndProductIds(
         $priceAttributePriceListIds,
         array $productIds,
-        $currency = null,
-        $productUnitCode = null,
         array $orderBy = ['unit' => 'ASC', 'quantity' => 'ASC']
     ) {
         if (!$productIds) {
@@ -38,18 +34,6 @@ class PriceAttributeProductPriceRepository extends EntityRepository
             )
             ->setParameter('priceListIds', $priceAttributePriceListIds)
             ->setParameter('productIds', $productIds);
-
-        if ($currency) {
-            $qb
-                ->andWhere($qb->expr()->eq('price.currency', ':currency'))
-                ->setParameter('currency', $currency);
-        }
-
-        if ($productUnitCode) {
-            $qb
-                ->andWhere($qb->expr()->eq('IDENTITY(price.unit)', ':productUnitCode'))
-                ->setParameter('productUnitCode', $productUnitCode);
-        }
 
         foreach ($orderBy as $fieldName => $orderDirection) {
             $qb->addOrderBy('price.' . $fieldName, $orderDirection);

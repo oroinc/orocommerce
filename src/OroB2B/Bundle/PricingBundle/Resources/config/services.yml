@@ -285,7 +285,6 @@ services:
     orob2b_pricing.event_listener.price_attribute_product_price_datagrid:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\PriceAttributeProductPriceDatagridListener'
         arguments:
-            - '@translator'
             - '@orob2b_pricing.model.price_list_request_handler'
             - '@oro_entity.doctrine_helper'
         tags:
