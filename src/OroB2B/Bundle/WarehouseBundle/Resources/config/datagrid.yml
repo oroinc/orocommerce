@@ -245,3 +245,6 @@ datagrid:
                 icon:          trash
                 acl_resource:  orob2b_warehouse_inventory_level_delete
                 mass_action:   true
+        options:
+            requireJSModules:
+                - orob2bwarehouse/js/datagrid/builder/warehouse-inventory-status-builder
