@@ -80,6 +80,34 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     protected $precision;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="conversion_rate",type="float",nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=30
+     *          }
+     *      }
+     * )
+     */
+    protected $conversionRate;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="sell",type="boolean",nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=40
+     *          }
+     *      }
+     * )
+     */
+    protected $sell;
+
+    /**
      * @return int
      */
     public function getId()
@@ -154,6 +182,44 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     public function getPrecision()
     {
         return $this->precision;
+    }
+
+    /**
+     * @param float $conversionRate
+     * @return ProductUnitPrecision
+     */
+    public function setConversionRate($conversionRate)
+    {
+        $this->conversionRate = $conversionRate;
+        
+        return $this;
+    }
+    
+    /**
+     * @return float
+     */
+    public function getConversionRate()
+    {
+        return $this->conversionRate;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSell()
+    {
+        return $this->sell;
+    }
+
+    /**
+     * @param boolean $sell
+     * @return ProductUnitPrecision
+     */
+    public function setSell($sell)
+    {
+        $this->sell = $sell;
+        
+        return $this;
     }
 
     /**

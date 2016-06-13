@@ -17,6 +17,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -36,7 +37,10 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
      */
     public function getDependencies()
     {
-        return ['Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData'];
+        return [
+            'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits'
+        ];
     }
 
     /**
@@ -63,13 +67,22 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         $data = Yaml::parse(file_get_contents($filePath));
 
         foreach ($data as $item) {
+            $unit = $this->getReference('product_unit.milliliter');
+
+            $unitPrecision = new ProductUnitPrecision();
+            $unitPrecision->setUnit($unit)
+                ->setPrecision((int)$item['primaryUnitPrecision']['precision'])
+                ->setConversionRate(1)
+                ->setSell(true);
+
             $product = new Product();
             $product
                 ->setSku($item['productCode'])
                 ->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->setInventoryStatus($inventoryStatuses[$item['inventoryStatus']])
-                ->setStatus($item['status']);
+                ->setStatus($item['status'])
+                ->setPrimaryUnitPrecision($unitPrecision);
 
             if (!empty($item['names'])) {
                 foreach ($item['names'] as $name) {

@@ -26,6 +26,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTy
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 {
@@ -108,6 +109,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'choices_updated' => false,
                     'required' => true,
                     'empty_label' => 'orob2b.product.productunit.removed',
+                    'sell' => null,
                 ]
             );
 
@@ -404,7 +406,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'choices' => [
-                        null => 'orob2b.product.productunit.removed:sku',
+                        'sku' => 'orob2b.product.productunit.removed:sku',
                         'code' => 'orob2b.product_unit.code.label.full',
                     ],
                 ],

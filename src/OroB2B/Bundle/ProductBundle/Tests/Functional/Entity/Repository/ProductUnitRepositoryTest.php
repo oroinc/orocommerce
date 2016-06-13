@@ -97,9 +97,9 @@ class ProductUnitRepositoryTest extends WebTestCase
                     'product.3',
                 ],
                 'expectedData' => [
-                    'product.1' => ['bottle', 'liter'],
-                    'product.2' => ['bottle', 'box', 'liter'],
-                    'product.3' => ['liter']
+                    'product.1' => ['bottle', 'liter', 'milliliter'],
+                    'product.2' => ['bottle', 'box', 'liter', 'milliliter'],
+                    'product.3' => ['liter', 'milliliter']
                 ],
             ],
         ];
@@ -146,12 +146,12 @@ class ProductUnitRepositoryTest extends WebTestCase
                     'product.3',
                 ],
                 'codes' => [
-                    'liter',
-                    'box',
+                    'bottle',
+                    'milliliter',
                 ],
                 'expectedData' => [
-                    'liter',
-                    'box',
+                    'bottle',
+                    'milliliter',
                 ],
             ],
             [
@@ -208,8 +208,8 @@ class ProductUnitRepositoryTest extends WebTestCase
     public function productUnitsDataProvider()
     {
         return [
-            ['product.1', ['product_unit.bottle', 'product_unit.liter']],
-            ['product.2', ['product_unit.bottle', 'product_unit.box', 'product_unit.liter']]
+            ['product.1', ['product_unit.bottle', 'product_unit.liter', 'product_unit.milliliter']],
+            ['product.2', ['product_unit.bottle', 'product_unit.box', 'product_unit.liter', 'product_unit.milliliter']]
         ];
     }
 
@@ -228,6 +228,7 @@ class ProductUnitRepositoryTest extends WebTestCase
                     'item',
                     'kg',
                     'liter',
+                    'milliliter',
                     'piece',
                     'set',
                 ],

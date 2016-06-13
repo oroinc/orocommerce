@@ -116,11 +116,17 @@ class ProductUnitSelectionType extends AbstractProductAwareType
      */
     protected function getProductUnits(FormInterface $form, Product $product = null)
     {
+        $options = $form->getConfig()->getOptions();
+        $sell = $options['sell'];
         $choices = [];
 
         if ($product) {
             foreach ($product->getUnitPrecisions() as $unitPrecision) {
-                $choices[] = $unitPrecision->getUnit();
+                if ($sell === null) {
+                    $choices[] = $unitPrecision->getUnit();
+                } elseif ($sell === $unitPrecision->isSell()) {
+                    $choices[] = $unitPrecision->getUnit();
+                }
             }
         }
 
@@ -150,6 +156,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
                 'choices_updated' => false,
                 'required' => true,
                 'empty_label' => 'orob2b.product.productunit.removed',
+                'sell' => null,
             ]
         );
     }
@@ -186,11 +193,12 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $productUnit = $productUnitHolder->getProductUnit();
 
         if ($this->isProductUnitRemoved($productUnitHolder, $product, $choices, $productUnit)) {
-            $emptyValueTitle = $this->translator->trans(
+            $removedValue = $this->translator->trans($productUnitHolder->getProductUnitCode());
+            $removedValueTitle = $this->translator->trans(
                 $options['empty_label'],
                 ['{title}' => $productUnitHolder->getProductUnitCode()]
             );
-            $view->vars['choices'][] = new ChoiceView(null, null, $emptyValueTitle, ['selected' => true]);
+            $view->vars['choices'][] = new ChoiceView(null, $removedValue, $removedValueTitle, ['selected' => true]);
         }
 
         $this->setChoicesViews($view, $choices, $options);

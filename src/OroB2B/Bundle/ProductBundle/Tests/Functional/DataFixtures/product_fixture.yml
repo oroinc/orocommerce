@@ -2,6 +2,9 @@ product1:
     productCode: product.1
     inventoryStatus: in_stock
     status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
     names:
         - { reference: product.1.names.default, string: product.1.names.default }
         - { reference: product.1.names.en_US, string: product.1.names.en_US, fallback: system, localization: en_US }
@@ -15,6 +18,9 @@ product2:
     productCode: product.2
     inventoryStatus: in_stock
     status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
     names:
         - { reference: product.2.names.default, string: product.2.names.default }
     descriptions:
@@ -25,6 +31,9 @@ product3:
     productCode: product.3
     inventoryStatus: out_of_stock
     status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
     names:
         - { reference: product.3.names.default, string: product.3.names.default }
     descriptions:
@@ -35,6 +44,9 @@ product4:
     productCode: product.4
     inventoryStatus: discontinued
     status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
     names:
         - { reference: product.4.names.default, string: product.4.names.default }
     descriptions:
@@ -45,6 +57,9 @@ product5:
     productCode: product.5
     inventoryStatus: in_stock
     status: disabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
     names:
         - { reference: product.5.names.default, string: product.5.names.default }
     descriptions:
@@ -55,6 +70,9 @@ product6:
     productCode: product.6
     inventoryStatus: in_stock
     status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
     names:
         - { reference: product.6.names.default, string: product.6.names.default }
     descriptions:
@@ -65,6 +83,9 @@ product7:
     productCode: product.7
     inventoryStatus: in_stock
     status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
     names:
         - { reference: product.7.names.default, string: product.7.names.default }
     descriptions:
@@ -75,6 +96,9 @@ product8:
     productCode: product.8
     inventoryStatus: in_stock
     status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
     names:
         - { reference: product.8.names.default, string: product.8.names.default }
     descriptions:

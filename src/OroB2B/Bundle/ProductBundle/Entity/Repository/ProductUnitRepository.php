@@ -57,7 +57,8 @@ class ProductUnitRepository extends EntityRepository
             $qb->expr()->eq('productUnitPrecision.unit', 'unit')
         )
             ->addOrderBy('unit.code')
-            ->where($qb->expr()->in('productUnitPrecision.product', ':products'))
+            ->andWhere('productUnitPrecision.sell = true')
+            ->andWhere($qb->expr()->in('productUnitPrecision.product', ':products'))
             ->setParameter('products', $products);
         return $qb;
     }
@@ -107,7 +108,7 @@ class ProductUnitRepository extends EntityRepository
                 $qb->expr()->eq('productUnitPrecision.unit', 'unit')
             )
             ->addOrderBy('unit.code')
-            ->where($qb->expr()->eq('productUnitPrecision.product', ':product'))
+            ->andWhere($qb->expr()->eq('productUnitPrecision.product', ':product'))
             ->setParameter('product', $product);
 
         return $qb;
