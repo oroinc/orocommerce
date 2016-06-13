@@ -10,9 +10,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\ImportExportBundle\Form\Type\ExportType;
 
-class InventoryLevelExportType extends AbstractTypeExtension
+class InventoryLevelExportTypeExtension extends AbstractTypeExtension
 {
-    const NAME = 'orob2b_inventory_status_export_type';
+    const NAME = 'oro_importexport_export_type_extension';
 
     /** @var string[] */
     protected static $processorAliases = [

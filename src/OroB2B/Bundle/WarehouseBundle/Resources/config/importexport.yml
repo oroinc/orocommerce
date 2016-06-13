@@ -32,3 +32,12 @@ services:
         tags:
             - { name: oro_importexport.processor, type: import, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.add_or_replace }
             - { name: oro_importexport.processor, type: import_validation, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.add_or_replace }
+
+    # Export template
+    orob2b_warehouse.importexport.processor.export_template.inventory_level:
+        public: false
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, ['@orob2b_warehouse.importexport.inventory_status_converter']]
+        tags:
+            - { name: oro_importexport.processor, type: export_template, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse_inventory_level_export_template }

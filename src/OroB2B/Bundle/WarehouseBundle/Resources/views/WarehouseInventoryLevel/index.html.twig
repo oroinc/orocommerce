@@ -8,6 +8,8 @@
         entity_class: entity_class,
         exportProcessor: 'orob2b_warehouse.detailed_inventory_levels',
         importProcessor: 'orob2b_warehouse.add_or_replace',
+        exportTemplateProcessor: 'orob2b_warehouse_inventory_level_export_template',
+        exportTemplatePopupConfig: true,
         exportPopupConfig: {
             exportLabel: 'orob2b.warehouse.export.popup.title'|trans
         },
