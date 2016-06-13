@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 interface CheckoutSourceDefinerInterface
 {
     /**
-     * Look for sources and return array of CheckoutSourceDefinition DTO classes
+     * Look for sources and return array of CheckoutSourceDefinition DTO class instances
      *
      * @param EntityManagerInterface $em
      * @param array $ids

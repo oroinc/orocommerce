@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class CheckoutSourceFieldCompilerPass implements CompilerPassInterface
 {
     const GRID_CHECKOUT_LISTENER = 'orob2b_checkout.datagrid.checkout_source_field_listener';
-    const GRID_CHECKOUT_ITEMS_COUNTER_TAG = 'checkout.source_field_definer';
+    const GRID_CHECKOUT_SOURCE_TAG = 'checkout.source_field_definer';
 
     /**
      * {@inheritDoc}
@@ -21,7 +21,7 @@ class CheckoutSourceFieldCompilerPass implements CompilerPassInterface
         }
 
         $definition = $container->getDefinition(self::GRID_CHECKOUT_LISTENER);
-        $taggedServices = $container->findTaggedServiceIds(self::GRID_CHECKOUT_ITEMS_COUNTER_TAG);
+        $taggedServices = $container->findTaggedServiceIds(self::GRID_CHECKOUT_SOURCE_TAG);
 
         foreach ($taggedServices as $id => $tags) {
             $definition->addMethodCall(
