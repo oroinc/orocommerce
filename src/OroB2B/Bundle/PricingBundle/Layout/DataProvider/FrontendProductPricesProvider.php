@@ -56,18 +56,14 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
      */
     public function getData(ContextInterface $context)
     {
-        /**
-         * @var Product $product
-         */
+        /* @var Product $product */
         $product = $context->data()->get('product');
         $productId = $product->getId();
 
         if (!array_key_exists($productId, $this->data)) {
             $priceList = $this->priceListRequestHandler->getPriceListByAccount();
 
-            /**
-             * @var ProductPriceRepository $priceRepository
-             */
+            /* @var ProductPriceRepository $priceRepository */
             $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
             $prices = $priceRepository->findByPriceListIdAndProductIds(
                 $priceList->getId(),
