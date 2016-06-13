@@ -148,9 +148,8 @@ class PriceAttributeProductPriceDatagridListener
         $priceAttributeId
     ) {
         $columnName = $this->buildColumnName($currency, $priceAttributeId);
-        $filter = ['type' => 'product-price', 'data_name' => $currency];
-
-
+        $filter = ['type' => 'price-attribute-product-price', 'data_name' => $currency];
+        
         $config->offsetAddToArrayByPath('[filters][columns]', [$columnName => $filter]);
     }
 

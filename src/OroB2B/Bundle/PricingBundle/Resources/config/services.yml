@@ -22,6 +22,7 @@ parameters:
     orob2b_pricing.entity.minimal_product_price.class: OroB2B\Bundle\PricingBundle\Entity\MinimalProductPrice
     orob2b_pricing.entity.price_attribute_price_list.class: OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList
     orob2b_pricing.entity.price_attribute_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceAttributeCurrency
+    orob2b_pricing.entity.price_attribute_product_price.class: OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice
 
 services:
     orob2b_pricing.acl.voter.product_list:
@@ -393,13 +394,24 @@ services:
             - { name: oro_workflow.action, alias: assign_user_currency }
             - { name: oro_action.action, alias: assign_user_currency }
 
-    orob2b_pricing.filter.product_price:
+    orob2b_pricing.filter.abstract_product_price:
+        abstract: true
         class: 'OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter'
         arguments:
             - '@form.factory'
             - '@oro_filter.filter_utility'
             - '@orob2b_product.formatter.product_unit_label'
             - '@orob2b_pricing.model.price_list_request_handler'
+
+    orob2b_pricing.filter.price_attribute_product_price:
+        parent: orob2b_pricing.filter.abstract_product_price
+        calls:
+            - [setProductPriceClass, ['%orob2b_pricing.entity.price_attribute_product_price.class%']]
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: price-attribute-product-price }
+
+    orob2b_pricing.filter.product_price:
+        parent: orob2b_pricing.filter.abstract_product_price
         calls:
             - [setProductPriceClass, ['%orob2b_pricing.entity.product_price.class%']]
         tags:
