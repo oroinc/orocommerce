@@ -225,9 +225,9 @@ datagrid:
                     data_name:       productName
                     type:            string
                 inventory_status:
-                    type:      enum
-                    data_name: inventoryStatusId
-                    enum_code: prod_inventory_status
+                    type:            enum
+                    data_name:       inventoryStatusId
+                    enum_code:       prod_inventory_status
                 warehouseName:
                     data_name:       warehouseName
                     type:            string

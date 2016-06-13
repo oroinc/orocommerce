@@ -36,6 +36,8 @@ define(['jquery', 'underscore'], function ($, _) {
                 return column.name === self.options.statusColumnName;
             });
 
+            self.datagrid.collection.on('reset', _.bind(self._reloadInventoryStatus, this));
+
             this._reloadInventoryStatus();
         },
 
@@ -82,11 +84,11 @@ define(['jquery', 'underscore'], function ($, _) {
          */
         init: function(deferred, options) {
             options.gridPromise.done(function(grid) {
-                var validation = new InventoryStatus({
+                var update = new InventoryStatus({
                     'grid': grid,
                     'options': options
                 });
-                deferred.resolve(validation);
+                deferred.resolve(update);
             }).fail(function() {
                 deferred.reject();
             });

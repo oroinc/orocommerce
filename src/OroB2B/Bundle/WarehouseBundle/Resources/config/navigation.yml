@@ -34,3 +34,5 @@ oro_titles:
     orob2b_warehouse_view:   '%%name%%'
     orob2b_warehouse_update: '%%name%% - Edit'
     orob2b_warehouse_create: 'Create Warehouse'
+
+    orob2b_warehouse_inventory_level_index: ~
