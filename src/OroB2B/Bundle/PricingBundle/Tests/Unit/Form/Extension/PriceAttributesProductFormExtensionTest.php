@@ -22,6 +22,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductAttributePriceType;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\RoundingServiceStub;
 
 class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
 {
@@ -52,7 +53,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
                 [
                     ProductType::NAME => new ProductTypeStub(),
                     ProductAttributePriceCollectionType::NAME => new ProductAttributePriceCollectionType(),
-                    ProductAttributePriceType::NAME => new ProductAttributePriceType()
+                    ProductAttributePriceType::NAME => new ProductAttributePriceType(new RoundingServiceStub())
                 ],
                 [
                     ProductType::NAME => [
@@ -166,5 +167,110 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
 
         $actual = $form->get(PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES)->getData();
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testPostSubmitNewPricesPersisted()
+    {
+        $em = $this->getMock(ObjectManager::class);
+
+        $product = new Product();
+        $unit = (new ProductUnit())->setCode('item');
+        $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
+
+        $priceAttribute = $this->getEntity(PriceAttributePriceList::class, ['id' => 1])
+            ->setName('Price Attribute 1')
+            ->addCurrencyByCode('USD')
+            ->addCurrencyByCode('EUR');
+
+        $priceRepository = $this->getMock(ObjectRepository::class);
+        $priceUSD = $this->getEntity(PriceAttributeProductPrice::class, ['id' => 1])
+            ->setUnit($unit)
+            ->setPrice(Price::create('100', 'USD'))
+            ->setQuantity(1)
+            ->setPriceList($priceAttribute)
+            ->setProduct($product);
+        $priceRepository->expects($this->once())->method('findBy')->willReturn([$priceUSD]);
+
+        $attributeRepository = $this->getMock(ObjectRepository::class);
+        $attributeRepository->expects($this->once())
+            ->method('findAll')
+            ->willReturn([$priceAttribute]);
+
+        $em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
+            ['OroB2BPricingBundle:PriceAttributePriceList', $attributeRepository],
+            ['OroB2BPricingBundle:PriceAttributeProductPrice', $priceRepository],
+        ]);
+        $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
+
+        $form = $this->factory->create(ProductType::NAME, $product, []);
+
+        // Expect that persist method for new price instance was called on post submit
+        $em->expects($this->once())->method('persist')->with(
+            (new PriceAttributeProductPrice())
+                ->setUnit($unit)
+                ->setPrice(Price::create('700', 'EUR'))
+                ->setQuantity(1)
+                ->setPriceList($priceAttribute)
+                ->setProduct($product)
+        );
+
+        $form->submit([
+            PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES => [
+                1 => [
+                    [ProductAttributePriceType::PRICE => '500'],
+                    [ProductAttributePriceType::PRICE => '700'],
+                ]
+            ]
+        ]);
+    }
+
+    public function testPostSubmitPricesWithoutValueRemoved()
+    {
+        $em = $this->getMock(ObjectManager::class);
+
+        $product = new Product();
+        $unit = (new ProductUnit())->setCode('item');
+        $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
+
+        $priceAttribute = $this->getEntity(PriceAttributePriceList::class, ['id' => 1])
+            ->setName('Price Attribute 1')
+            ->addCurrencyByCode('EUR')
+            ->addCurrencyByCode('USD');
+
+        $priceRepository = $this->getMock(ObjectRepository::class);
+        $priceUSD = $this->getEntity(PriceAttributeProductPrice::class, ['id' => 1])
+            ->setUnit($unit)
+            ->setPrice(Price::create('100', 'USD'))
+            ->setQuantity(1)
+            ->setPriceList($priceAttribute)
+            ->setProduct($product);
+        $priceRepository->expects($this->once())->method('findBy')->willReturn([$priceUSD]);
+
+        $attributeRepository = $this->getMock(ObjectRepository::class);
+        $attributeRepository->expects($this->once())
+            ->method('findAll')
+            ->willReturn([$priceAttribute]);
+
+        $em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
+            ['OroB2BPricingBundle:PriceAttributePriceList', $attributeRepository],
+            ['OroB2BPricingBundle:PriceAttributeProductPrice', $priceRepository],
+        ]);
+        $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
+
+        $form = $this->factory->create(ProductType::NAME, $product, []);
+
+        // Expect that remove method for nullable price instance was called on post submit
+        $em->expects($this->once())->method('remove')->with($priceUSD);
+        // For new objects method persist was never called
+        $em->expects($this->never())->method('persist');
+
+        $form->submit([
+            PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES => [
+                1 => [
+                    [ProductAttributePriceType::PRICE => ''],
+                    [ProductAttributePriceType::PRICE => ''],
+                ]
+            ]
+        ]);
     }
 }

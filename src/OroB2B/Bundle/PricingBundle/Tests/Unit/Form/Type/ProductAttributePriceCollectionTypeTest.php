@@ -14,6 +14,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\RoundingServiceStub;
 
 class ProductAttributePriceCollectionTypeTest extends FormIntegrationTestCase
 {
@@ -26,7 +27,7 @@ class ProductAttributePriceCollectionTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ProductAttributePriceCollectionType::NAME => new ProductAttributePriceCollectionType(),
-                    ProductAttributePriceType::NAME => new ProductAttributePriceType()
+                    ProductAttributePriceType::NAME => new ProductAttributePriceType(new RoundingServiceStub())
                 ],
                 []
             )
@@ -56,7 +57,8 @@ class ProductAttributePriceCollectionTypeTest extends FormIntegrationTestCase
     {
         $attributePriceList = new PriceAttributePriceList();
         $attributePriceList->addCurrencyByCode('USD')
-            ->addCurrencyByCode('EUR');
+            ->addCurrencyByCode('EUR')
+            ->setName('MAP');
 
         $product = new Product();
         $product->addUnitPrecision((new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('item')));
@@ -76,5 +78,6 @@ class ProductAttributePriceCollectionTypeTest extends FormIntegrationTestCase
 
         $this->assertSame(['EUR', 'USD'], $view->vars['currencies']);
         $this->assertSame(['item'], $view->vars['units']);
+        $this->assertSame($attributePriceList->getName(), $view->vars['label']);
     }
 }

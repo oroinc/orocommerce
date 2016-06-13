@@ -188,9 +188,9 @@
                 <table class="grid table-hover table table-bordered">
                     <thead>
                     <tr>
-                        <th></th>
+                        <th><span>{{ 'orob2b.pricing.priceAttribute.unit.label'|trans }}</span></th>
                         {% for currency in form.vars.currencies %}
-                            <th><span>{{ currency }}</span></th>
+                        <th><span>{{ currency }}</span></th>
                         {% endfor %}
                     </tr>
                     </thead>
@@ -198,9 +198,16 @@
                     {% if form.children|length %}
                         {% for unit in form.vars.units %}
                             <tr>
-                                <td>{{ unit|trans }}</td>
-                                {% for child in form.children %}
-                                    <td>{{ form_widget(child.price) }}</td>
+                                <td><span>{{ unit|trans }}</span></td>
+                                {% set childrenByCurrency = [] %}
+                                {% for child in form.children if child.vars.value.unit.code == unit %}
+                                    {% set childrenByCurrency = childrenByCurrency|merge({(child.vars.value.price.currency): child}) %}
+                                {% endfor %}
+                                {% for currency in form.vars.currencies %}
+                                    <td>
+                                        {{ form_widget(attribute(childrenByCurrency, currency).price, { 'attr': {'class': 'price-value'} }) }}
+                                        {{ form_errors(attribute(childrenByCurrency, currency).price) }}
+                                    </td>
                                 {% endfor %}
                             </tr>
                         {% endfor %}

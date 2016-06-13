@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class ProductAttributePriceType extends AbstractType implements DataMapperInterface
 {
@@ -19,12 +20,29 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
     const PRICE = 'price';
 
     /**
+     * @var RoundingServiceInterface
+     */
+    protected $roundingService;
+
+    /**
+     * @param RoundingServiceInterface $roundingService
+     */
+    public function __construct(RoundingServiceInterface $roundingService)
+    {
+        $this->roundingService = $roundingService;
+    }
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add(self::PRICE, 'text', [])
+        $builder->add(self::PRICE, 'number', [
+            'scale' => $this->roundingService->getPrecision(),
+            'rounding_mode' => $this->roundingService->getRoundType(),
+            'attr' => ['data-scale' => $this->roundingService->getPrecision()]
+        ])
             ->setDataMapper($this);
     }
 

@@ -170,5 +170,7 @@ services:
     orob2b_pricing.form.type.product_attribute_price:
        class: OroB2B\Bundle\PricingBundle\Form\Type\ProductAttributePriceType
        public: true
+       arguments:
+           - "@orob2b_pricing.rounding.price_rounding_service"
        tags:
            - { name: form.type, alias: orob2b_pricing_product_attribute_price }

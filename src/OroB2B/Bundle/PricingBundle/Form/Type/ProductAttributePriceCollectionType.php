@@ -20,17 +20,19 @@ class ProductAttributePriceCollectionType extends FormType
     {
         /** @var PriceAttributeProductPrice $price */
         $price = current($form->getData());
+        $priceAttribute = null;
         $currencies = [];
         $units = [];
 
         if ($price) {
-            $basePriceList = $price->getPriceList();
-            $currencies = $basePriceList->getCurrencies();
+            $priceAttribute = $price->getPriceList();
+            $currencies = $priceAttribute->getCurrencies();
             $units = $price->getProduct()->getAvailableUnitCodes();
         }
 
         $view->vars['currencies'] = $currencies;
         $view->vars['units'] = $units;
+        $view->vars['label'] = $priceAttribute->getName();
     }
 
     /**

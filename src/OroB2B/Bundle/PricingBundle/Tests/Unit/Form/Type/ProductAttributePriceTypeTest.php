@@ -9,6 +9,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductAttributePriceType;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\RoundingServiceStub;
 
 class ProductAttributePriceTypeTest extends FormIntegrationTestCase
 {
@@ -20,7 +21,7 @@ class ProductAttributePriceTypeTest extends FormIntegrationTestCase
         $extensions = [
             new PreloadedExtension(
                 [
-                    ProductAttributePriceType::NAME => new ProductAttributePriceType()
+                    ProductAttributePriceType::NAME => new ProductAttributePriceType(new RoundingServiceStub())
                 ],
                 []
             )
