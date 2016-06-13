@@ -149,7 +149,7 @@ class PriceAttributeProductPriceDatagridListener
     ) {
         $columnName = $this->buildColumnName($currency, $priceAttributeId);
         $filter = ['type' => 'price-attribute-product-price', 'data_name' => $currency];
-        
+
         $config->offsetAddToArrayByPath('[filters][columns]', [$columnName => $filter]);
     }
 
@@ -254,7 +254,18 @@ class PriceAttributeProductPriceDatagridListener
 
         return $this->priceList;
     }
+    
+    /**
+     * @param array $attributesWithCurrencies
+     * @return $this
+     */
+    public function setAttributesWithCurrencies(array $attributesWithCurrencies)
+    {
+        $this->attributesWithCurrencies = $attributesWithCurrencies;
 
+        return $this;
+    }
+    
     /**
      * @param PriceAttributeProductPrice[] $prices
      * @return array

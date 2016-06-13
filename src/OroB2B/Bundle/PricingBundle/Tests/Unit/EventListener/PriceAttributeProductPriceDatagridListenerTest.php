@@ -5,14 +5,20 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\EventListener\PriceAttributeProductPriceDatagridListener;
-
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\EventListener\PriceAttributeProductPriceDatagridListener;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,13 +44,22 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
         )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->priceAttributeProductPriceDatagridListener = new PriceAttributeProductPriceDatagridListener(
             $this->priceListRequestHandler,
             $this->doctrineHelper
         );
+    }
+
+    public function testOnBuildBeforeWithoutCurrency()
+    {
+        /* @var BuildBefore|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(BuildBefore::class)->disableOriginalConstructor()->getMock();
+        $this->setRequestHandlerExpectations([]);
+        $this->doctrineHelper->expects($this->never())->method('getEntityRepository');
+        $this->priceAttributeProductPriceDatagridListener->onBuildBefore($event);
     }
 
     public function testOnBuildBefore()
@@ -56,15 +71,10 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
 
         $datagrid = new Datagrid('grid', $config, $paramsBag);
 
-        /** @var BuildBefore|\PHPUnit_Framework_MockObject_MockObject $event * */
+        /* @var BuildBefore $event */
         $event = new BuildBefore($datagrid, $config);
         $currencies = ['USD', 'EUR'];
-        $priceList = new PriceList();
-        $this->priceListRequestHandler->expects($this->once())->method('getPriceList')->willReturn($priceList);
-        $this->priceListRequestHandler->expects($this->once())
-            ->method('getPriceListSelectedCurrencies')
-            ->with($priceList)
-            ->willReturn($currencies);
+        $this->setRequestHandlerExpectations($currencies);
 
         $repo = $this->getMockBuilder(PriceAttributePriceListRepository::class)
             ->disableOriginalConstructor()
@@ -75,6 +85,7 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
         $this->doctrineHelper->expects($this->once())->method('getEntityRepository')
             ->with('OroB2BPricingBundle:PriceAttributePriceList')
             ->willReturn($repo);
+
         $this->priceAttributeProductPriceDatagridListener->onBuildBefore($event);
         $this->assertEquals(
             [
@@ -127,23 +138,96 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
             [
                 'columns' => [
                     'price_attribute_price_column_usd_1' => [
-                        'type' => 'product-price',
+                        'type' => 'price-attribute-product-price',
                         'data_name' => "USD",
                     ],
                 ],
             ],
             $config->offsetGet('filters')
         );
-        
+    }
+
+    public function testOnResultAfterWithoutCurrency()
+    {
+        /* @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
+        $this->setRequestHandlerExpectations([]);
+        $this->doctrineHelper->expects($this->never())->method('getEntityRepository');
+        $this->priceAttributeProductPriceDatagridListener->onResultAfter($event);
     }
 
     public function testOnResultAfter()
     {
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event * */
-        $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\OrmResultAfter')
+        $parameterBagParams = [];
+        $datagridParams = [];
+        $paramsBag = new ParameterBag($parameterBagParams);
+        $config = DatagridConfiguration::create($datagridParams);
+        $datagrid = new Datagrid('grid', $config, $paramsBag);
+        /** @var OrmResultAfter $event * */
+        $event = new OrmResultAfter($datagrid, [new ResultRecord(['id' => 1])]);
+        $priceAttributeProductPrice = new PriceAttributeProductPrice();
+        $product = new Product();
+        $this->setProperty($product, 'id', 1);
+        $price = new Price();
+        $price->setCurrency('USD');
+        $price->setValue('42');
+        $priceAttributeProductPrice->setPrice($price);
+        $this->setProperty($priceAttributeProductPrice, 'id', 1);
+        $priceAttributeProductPrice->setProduct($product);
+        $priceAttribute = new PriceAttributePriceList();
+        $this->setProperty($priceAttribute, 'id', 1);
+        $priceAttributeProductPrice->setPriceList($priceAttribute);
+        $currencies = ['USD', 'EUR'];
+        $this->setRequestHandlerExpectations($currencies);
+        $priceRepository = $this->getMockBuilder(PriceAttributeProductPriceRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-
+        $priceRepository->expects($this->once())
+            ->method('findByPriceAttributeProductPriceIdsAndProductIds')
+            ->with([1], [1])
+            ->willReturn([$priceAttributeProductPrice]);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with('OroB2BPricingBundle:PriceAttributeProductPrice')
+            ->willReturn($priceRepository);
+        $this->priceAttributeProductPriceDatagridListener
+            ->setAttributesWithCurrencies([['id' => 1, 'name' => 'priceAttribute1', 'currency' => 'USD']]);
         $this->priceAttributeProductPriceDatagridListener->onResultAfter($event);
+        $prices = $event->getRecords()[0]->getValue('price_attribute_price_column_usd_1');
+        /** @var PriceAttributeProductPrice $price */
+        $price = $prices[0];
+        $this->assertEquals(1, $price->getProduct()->getId());
+        $this->assertEquals(42, $price->getPrice()->getValue());
+        $this->assertEquals('USD', $price->getPrice()->getCurrency());
+    }
+
+    /**
+     * @param array $currencies
+     */
+    protected function setRequestHandlerExpectations($currencies)
+    {
+        $priceList = new PriceList();
+        $this->priceListRequestHandler->expects($this->once())
+            ->method('getPriceList')->willReturn($priceList);
+        $this->priceListRequestHandler->expects($this->once())
+            ->method('getPriceListSelectedCurrencies')
+            ->with($priceList)
+            ->willReturn($currencies);
+    }
+
+    /**
+     * @param object $object
+     * @param string $property
+     * @param mixed $value
+     *
+     * @return object
+     */
+    protected function setProperty($object, $property, $value)
+    {
+        $reflection = new \ReflectionProperty(get_class($object), $property);
+        $reflection->setAccessible(true);
+        $reflection->setValue($object, $value);
+
+        return $this;
     }
 }
