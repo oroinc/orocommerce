@@ -1,0 +1,110 @@
+.product__review {
+  margin: 0 0 30px;
+
+  &__create-mode {
+    .btn {
+      min-width: 160px;
+
+      @media (max-width: 408px) {
+        display: block;
+        width: 100%;
+      }
+
+
+      &:first-child {
+        margin-right: 10px;
+
+        @media (max-width: 408px) {
+          margin: 0 0 15px;
+        }
+      }
+    }
+
+    &__list {
+      @include list-normalize();
+
+      margin: 15px 0 20px;
+
+      li {
+        margin: 0 0 5px;
+
+        > span {
+          display: inline-block;
+          min-width: 60px;
+        }
+      }
+    }
+  }
+}
+
+.reviews-list {
+  @include list-normalize();
+
+  margin: 0 0 20px;
+
+  &__item {
+    margin: 15px 0 0;
+    padding: 0 0 15px;
+    border-bottom: 1px solid $theme-lighter-gray-color;
+
+    &__title {
+      position: relative;
+
+      margin: 0 0 15px;
+
+      font-size: 16px;
+      line-height: 1;
+      font-weight: 700;
+
+      span {
+        font-size: 13px;
+        margin-left: 10px;
+      }
+
+      + p {
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    &__rating {
+      margin: 0 0 15px;
+    }
+  }
+}
+
+.review-rating__item {
+  display: inline-block;
+  margin: 0 40px 10px 0;
+
+  white-space: nowrap;
+
+  &__text {
+    margin: 0 5px 0 0;
+  }
+
+  &__date {
+    font-size: 13px;
+  }
+}
+
+.delete-note-btn,
+.delete-row-btn {
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+
+  color: $theme-bucket-color;
+  background: transparent;
+
+  cursor: pointer;
+
+  &.delete-note-btn_abs {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+.delete-row-btn {
+  font-size: 20px;
+}
