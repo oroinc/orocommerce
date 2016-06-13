@@ -16,7 +16,6 @@ class PriceAttributePriceListControllerTest extends WebTestCase
 {
     const PRICE_ATTRIBUTE_PRICE_LIST_NAME = 'MSRP';
     const PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT = 'MAP';
-    const CURRENCY = 'USD';
 
     protected function setUp()
     {
@@ -48,7 +47,7 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $priceAttributePriceList = $this->getReference($priceAttributePriceListReference);
         $this->assertContains($priceAttributePriceList->getName(), $crawler->html());
     }
-    
+
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_pricing_price_attribute_price_list_create'));
@@ -108,7 +107,7 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form(
             [
                 'orob2b_pricing_price_attribute_price_list[name]' => self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT,
-                'orob2b_pricing_price_attribute_price_list[currencies]' => self::CURRENCY,
+                'orob2b_pricing_price_attribute_price_list[currencies]' => 'CAD',
             ]
         );
 
@@ -119,7 +118,7 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertContains(self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT, $crawler->html());
-        $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName(self::CURRENCY), $crawler->html());
+        $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName('CAD'), $crawler->html());
     }
 
     public function testInfo()
@@ -138,6 +137,6 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT, $crawler->html());
-        $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName(self::CURRENCY), $crawler->html());
+        $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName('CAD'), $crawler->html());
     }
 }
