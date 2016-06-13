@@ -96,4 +96,3 @@ services:
             - [setDataConverter, ['@orob2b_product.importexport.inventory_status_converter']]
         tags:
             - { name: oro_importexport.processor, type: export_template, entity: '%orob2b_product.entity.product.class%', alias: orob2b_product.inventory_status_only_export_template }
-
