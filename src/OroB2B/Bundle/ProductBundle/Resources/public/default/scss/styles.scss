@@ -1,3 +1,5 @@
 @import 'orob2bfrontend/default/scss/shared/_vars.scss';
+@import 'orob2bfrontend/default/scss/shared/_mixins.scss';
 
-@import 'quick-order.scss';
+@import 'components/quick-order';
+@import 'components/grid';
