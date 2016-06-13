@@ -1,0 +1,9 @@
+{% set source = record.getValue('source') %}
+
+{% if source is not null %}
+    {% if source.linkable %}
+        <a href="{{ path(source.route, source.routeParams) }}">{{ source.label }}</a>
+    {% else %}
+        {{ source.label }}
+    {% endif %}
+{% endif %}
