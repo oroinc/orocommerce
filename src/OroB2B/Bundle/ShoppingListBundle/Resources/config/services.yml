@@ -174,7 +174,7 @@ services:
     orob2b_shopping_list.layout.block.type.shopping_lists_sidebar_list:
         parent: oro_layout.block_type.abstract_configurable
         calls:
-            - [setOptions, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
+            - [setOptionsConfig, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
             - [setName, ['shopping_lists_sidebar_list']]
         tags:
              - { name: layout.block_type, alias: shopping_lists_sidebar_list }
