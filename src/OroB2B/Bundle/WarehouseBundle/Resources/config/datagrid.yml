@@ -168,7 +168,7 @@ datagrid:
             productId: ~
             delete_link:
                 type: url
-                route: orob2b_api_delete_warehouse_inventory_level
+                route: orob2b_api_warehouse_delete_warehouse_inventory_level
                 params: [ id ]
         inline_editing:
             enable: true

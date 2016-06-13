@@ -15,7 +15,7 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
  * @RouteResource("warehouse_inventory_level")
- * @NamePrefix("orob2b_api_")
+ * @NamePrefix("orob2b_api_warehouse_")
  */
 class WarehouseInventoryLevelController extends RestController implements ClassResourceInterface
 {
