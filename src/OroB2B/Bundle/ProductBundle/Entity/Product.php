@@ -636,6 +636,22 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     }
 
     /**
+     * Get available units
+     *
+     * @return ProductUnit[]
+     */
+    public function getAvailableUnits()
+    {
+        $result = [];
+
+        foreach ($this->unitPrecisions as $unitPrecision) {
+            $result[] = $unitPrecision->getUnit();
+        }
+
+        return $result;
+    }
+
+    /**
      * @return Collection|LocalizedFallbackValue[]
      */
     public function getNames()
