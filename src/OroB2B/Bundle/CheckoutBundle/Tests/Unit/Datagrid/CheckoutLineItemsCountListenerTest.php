@@ -12,7 +12,7 @@ class CheckoutLineItemsCountListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $em = $this->getMockBuildeR('Doctrine\ORM\EntityManagerInterface')
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManagerInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
