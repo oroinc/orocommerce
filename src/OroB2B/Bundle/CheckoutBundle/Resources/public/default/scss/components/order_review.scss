@@ -164,3 +164,16 @@
     padding: 10px 0 10px;
   }
 }
+
+.form-input_datepicker_icon {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+
+  font-size: 22px;
+  color: $theme-datepicker-head-color;
+
+  &.date-applied {
+    color: $theme-orange-color;
+  }
+}

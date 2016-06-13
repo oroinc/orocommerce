@@ -9,3 +9,15 @@
     }
   }
 }
+
+.nested-list__trigger {
+  .messages-widget__arrow {
+    transform: rotate(-90deg);
+  }
+
+  &--expanded {
+    .messages-widget__arrow {
+      transform: rotate(0deg);
+    }
+  }
+}
