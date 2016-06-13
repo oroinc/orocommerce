@@ -59,11 +59,13 @@ class ShoppingListCheckoutSourceDefiner implements CheckoutSourceDefinerInterfac
     }
 
     /**
-     * @param $source
+     * @param $quote
      * @return bool
      */
-    private function hasCurrentUserRightToView($source)
+    private function hasCurrentUserRightToView($quote)
     {
-        return $this->securityFacade->isGranted('ACCOUNT_VIEW', $source);
+        $isGranted = $this->securityFacade->isGranted('ACCOUNT_VIEW', $quote);
+
+        return $isGranted === true || $isGranted === "true"; // isGranted may return "true" as string
     }
 }

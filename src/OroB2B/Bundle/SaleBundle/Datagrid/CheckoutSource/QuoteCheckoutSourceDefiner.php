@@ -72,6 +72,8 @@ class QuoteCheckoutSourceDefiner implements CheckoutSourceDefinerInterface
      */
     private function hasCurrentUserRightToView($quote)
     {
-        return $this->securityFacade->isGranted('ACCOUNT_VIEW', $quote);
+        $isGranted = $this->securityFacade->isGranted('ACCOUNT_VIEW', $quote);
+
+        return $isGranted === true || $isGranted === "true"; // isGranted may return "true" as string
     }
 }
