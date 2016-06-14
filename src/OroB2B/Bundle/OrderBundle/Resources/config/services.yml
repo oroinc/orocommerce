@@ -163,7 +163,9 @@ services:
         class: 'OroB2B\Bundle\OrderBundle\Twig\OrderExtension'
         public: false
         arguments:
+            - '@doctrine'
             - '@orob2b_order.formatter.source_document'
+            - '@orob2b_payment.provider.payment_status'
         tags:
             - { name: twig.extension }
 
@@ -214,3 +216,10 @@ services:
             - '@orob2b_payment.provider.payment_status'
         tags:
             - { name: layout.data_provider, alias: orob2b_order_frontend_payment_status_provider }
+
+    orob2b_order.layout.provider.order_payment_method:
+        class: 'OroB2B\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentMethodProvider'
+        arguments:
+            - '@orob2b_payment.provider.payment_transaction'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_order_frontend_payment_method_provider }
