@@ -31,19 +31,6 @@
           }
         }
       }
-
-      .chosen-container {
-        .chosen-drop {
-          display: none;
-          position: absolute;
-        }
-
-        &.chosen-with-drop {
-          .chosen-drop {
-            display: block;
-          }
-        }
-      }
     }
 
     .line_item_form_fields__form__row {

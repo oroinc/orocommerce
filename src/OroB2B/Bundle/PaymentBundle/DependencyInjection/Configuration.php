@@ -9,6 +9,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Currency;
 
 class Configuration implements ConfigurationInterface
 {
@@ -16,6 +17,7 @@ class Configuration implements ConfigurationInterface
 
     const PAYPAL_PAYMENTS_PRO_ENABLED_KEY = 'paypal_payments_pro_enabled';
     const PAYPAL_PAYMENTS_PRO_LABEL_KEY = 'paypal_payments_pro_label';
+    const PAYPAL_PAYMENTS_PRO_SHORT_LABEL_KEY = 'paypal_payments_pro_short_label';
     const PAYPAL_PAYMENTS_PRO_SORT_ORDER_KEY = 'paypal_payments_pro_sort_order';
     const PAYPAL_PAYMENTS_PRO_ALLOWED_COUNTRIES_KEY = 'paypal_payments_pro_allowed_countries';
     const PAYPAL_PAYMENTS_PRO_SELECTED_COUNTRIES_KEY = 'paypal_payments_pro_selected_countries';
@@ -36,9 +38,11 @@ class Configuration implements ConfigurationInterface
     const PAYPAL_PAYMENTS_PRO_ZERO_AMOUNT_AUTHORIZATION_KEY = 'paypal_payments_pro_zero_amount_authorization';
     const PAYPAL_PAYMENTS_PRO_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY =
         'paypal_payments_pro_authorization_for_required_amount';
+    const PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES = 'paypal_payments_pro_allowed_currencies';
 
     const PAYFLOW_GATEWAY_ENABLED_KEY = 'payflow_gateway_enabled';
     const PAYFLOW_GATEWAY_LABEL_KEY = 'payflow_gateway_label';
+    const PAYFLOW_GATEWAY_SHORT_LABEL_KEY = 'payflow_gateway_short_label';
     const PAYFLOW_GATEWAY_SORT_ORDER_KEY = 'payflow_gateway_sort_order';
     const PAYFLOW_GATEWAY_ALLOWED_COUNTRIES_KEY = 'payflow_gateway_allowed_countries';
     const PAYFLOW_GATEWAY_SELECTED_COUNTRIES_KEY = 'payflow_gateway_selected_countries';
@@ -58,12 +62,15 @@ class Configuration implements ConfigurationInterface
     const PAYFLOW_GATEWAY_VALIDATE_CVV_KEY = 'payflow_gateway_validate_cvv';
     const PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY = 'payflow_gateway_zero_amount_authorization';
     const PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'payflow_gateway_authorization_for_required_amount';
+    const PAYFLOW_GATEWAY_ALLOWED_CURRENCIES = 'payflow_gateway_allowed_currencies';
 
     const PAYMENT_TERM_ENABLED_KEY = 'payment_term_enabled';
     const PAYMENT_TERM_LABEL_KEY = 'payment_term_label';
+    const PAYMENT_TERM_SHORT_LABEL_KEY = 'payment_term_short_label';
     const PAYMENT_TERM_SORT_ORDER_KEY = 'payment_term_sort_order';
     const PAYMENT_TERM_ALLOWED_COUNTRIES_KEY = 'payment_term_allowed_countries';
     const PAYMENT_TERM_SELECTED_COUNTRIES_KEY = 'payment_term_selected_countries';
+    const PAYMENT_TERM_ALLOWED_CURRENCIES = 'payment_term_allowed_currencies';
 
     const CARD_VISA = 'visa';
     const CARD_MASTERCARD = 'mastercard';
@@ -74,6 +81,8 @@ class Configuration implements ConfigurationInterface
     const ALLOWED_COUNTRIES_SELECTED = 'selected';
 
     const CREDIT_CARD_LABEL = 'Credit Card';
+    const PAYPAL_PAYMENTS_PRO_LABEL = 'PayPal Payments Pro';
+    const PAYFLOW_GATEWAY_LABEL = 'Payflow Gateway';
     const PAYMENT_TERM_LABEL = 'Payment Terms';
 
     /**
@@ -101,6 +110,10 @@ class Configuration implements ConfigurationInterface
                     'value' => false
                 ],
                 self::PAYPAL_PAYMENTS_PRO_LABEL_KEY => [
+                    'type' => 'text',
+                    'value' => self::PAYPAL_PAYMENTS_PRO_LABEL
+                ],
+                self::PAYPAL_PAYMENTS_PRO_SHORT_LABEL_KEY => [
                     'type' => 'text',
                     'value' => self::CREDIT_CARD_LABEL
                 ],
@@ -180,6 +193,10 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => false
                 ],
+                self::PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES => [
+                    'type' => 'array',
+                    'value' => Currency::$currencies
+                ],
 
                 // Payflow Gateway
                 self::PAYFLOW_GATEWAY_ENABLED_KEY => [
@@ -187,6 +204,10 @@ class Configuration implements ConfigurationInterface
                     'value' => false
                 ],
                 self::PAYFLOW_GATEWAY_LABEL_KEY => [
+                    'type' => 'text',
+                    'value' => self::PAYFLOW_GATEWAY_LABEL
+                ],
+                self::PAYFLOW_GATEWAY_SHORT_LABEL_KEY => [
                     'type' => 'text',
                     'value' => self::CREDIT_CARD_LABEL
                 ],
@@ -266,13 +287,20 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => false
                 ],
-
+                self::PAYFLOW_GATEWAY_ALLOWED_CURRENCIES => [
+                    'type' => 'array',
+                    'value' => Currency::$currencies
+                ],
                 // Payment Term
                 self::PAYMENT_TERM_ENABLED_KEY => [
                     'type' => 'boolean',
                     'value' => true
                 ],
                 self::PAYMENT_TERM_LABEL_KEY => [
+                    'type' => 'text',
+                    'value' => self::PAYMENT_TERM_LABEL
+                ],
+                self::PAYMENT_TERM_SHORT_LABEL_KEY => [
                     'type' => 'text',
                     'value' => self::PAYMENT_TERM_LABEL
                 ],
@@ -287,6 +315,10 @@ class Configuration implements ConfigurationInterface
                 self::PAYMENT_TERM_SELECTED_COUNTRIES_KEY => [
                     'type' => 'array',
                     'value' => []
+                ],
+                self::PAYMENT_TERM_ALLOWED_CURRENCIES => [
+                    'type' => 'array',
+                    'value' => Currency::$currencies
                 ],
             ]
         );

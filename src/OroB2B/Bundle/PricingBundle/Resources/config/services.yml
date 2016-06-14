@@ -59,10 +59,14 @@ services:
             - '@doctrine'
             - '%orob2b_pricing.entity.product_price.class%'
 
-    orob2b_pricing.provider.user_currency:
-        class: 'OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider'
+    orob2b_pricing.user_currency_manager:
+        class: 'OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager'
         arguments:
             - '@session'
+            - '@security.token_storage'
+            - '@oro_config.global'
+            - '@orob2b_website.manager'
+            - '@orob2b_account_user.manager'
 
     orob2b_pricing.provider.abstract_product_price:
         class: 'OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider'
@@ -184,6 +188,7 @@ services:
             - '@orob2b_pricing.builder.website_combined_price_list_builder'
             - '@orob2b_pricing.builder.account_group_combined_price_list_builder'
             - '@orob2b_pricing.builder.account_combined_price_list_builder'
+            - '@event_dispatcher'
 
     orob2b_pricing.builder.combined_product_price_queue_consumer:
         class: 'OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer'
@@ -193,6 +198,7 @@ services:
         arguments:
             - '@doctrine'
             - '@orob2b_pricing.resolver.combined_product_price_resolver'
+            - '@event_dispatcher'
 
     orob2b_pricing.builder.combined_price_list_activation_plan_builder:
         class: 'OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder'
@@ -307,7 +313,7 @@ services:
             - '@oro_locale.formatter.number'
             - '@orob2b_product.formatter.product_unit_label'
             - '@orob2b_product.formatter.product_unit_value'
-            - '@orob2b_pricing.provider.user_currency'
+            - '@orob2b_pricing.user_currency_manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
@@ -326,6 +332,14 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrencyValidator'
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_price_list_product_prices_currency_validator }
+
+    orob2b_pricing.validator.default_currency:
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\DefaultCurrencyValidator'
+        public: true
+        arguments:
+            - "@oro_config.global"
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing_default_currency_validator }
 
     orob2b_pricing.validator.dates_chain:
         class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\DatesChainValidator'
@@ -363,7 +377,7 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Model\AssignUserCurrencyAction'
         arguments:
             - '@oro_action.context_accessor'
-            - '@orob2b_pricing.provider.user_currency'
+            - '@orob2b_pricing.user_currency_manager'
         tags:
             - { name: oro_workflow.action, alias: assign_user_currency }
             - { name: oro_action.action, alias: assign_user_currency }
@@ -507,6 +521,7 @@ services:
             - '@orob2b_pricing.subtotal_processor.subtotal_provider_registry'
             - '@translator'
             - '@orob2b_pricing.rounding.price_rounding_service'
+            - '@orob2b_pricing.user_currency_manager'
 
     orob2b_pricing.subtotal_processor.provider.subtotal_line_item:
         class: 'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
@@ -514,6 +529,7 @@ services:
         arguments:
             - '@translator'
             - '@orob2b_pricing.rounding.price_rounding_service'
+            - '@orob2b_pricing.user_currency_manager'
         tags:
             - { name: orob2b_pricing.subtotal_provider, priority: 0 }
 
@@ -525,6 +541,7 @@ services:
             - '@orob2b_pricing.provider.combined_product_price'
             - '@oro_entity.doctrine_helper'
             - '@orob2b_pricing.model.price_list_tree_handler'
+            - '@orob2b_pricing.user_currency_manager'
         calls:
             - [setProductClass, ['%orob2b_product.entity.product.class%']]
             - [setProductUnitClass, ['%orob2b_product.entity.product_unit.class%']]

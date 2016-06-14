@@ -63,6 +63,14 @@ class MoneyOrderView implements PaymentMethodViewInterface
     /**
      * {@inheritdoc}
      */
+    public function getShortLabel()
+    {
+        return $this->getConfigValue(Configuration::MONEY_ORDER_SHORT_LABEL_KEY);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getPaymentMethodType()
     {
         return MoneyOrder::TYPE;

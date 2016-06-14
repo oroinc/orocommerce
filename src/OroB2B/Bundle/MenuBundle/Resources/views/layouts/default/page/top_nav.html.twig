@@ -12,15 +12,20 @@
 {% endblock %}
 
 {% block _top_nav_widget %}
+    <nav class="topbar__navigation">
+        {{ block_widget(block) }}
+    </nav>
+{% endblock %}
+
+{% block _top_nav_menu_container_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " col-md-7 col-sm-7 text-right"
+    class: attr.class|default('') ~ " col-md-7 col-sm-7 text-right"
     }) %}
     <div {{ block('block_attributes') }}>
-        <nav class="topbar__navigation">
-            {{ block_widget(block) }}
-        </nav>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
+
 
 {% block _top_nav_controls_widget %}
     {% set attr = attr|merge({
@@ -32,15 +37,5 @@
                 {{ block_widget(block) }}
             </ul>
         </nav>
-        {#<div class="topbar__controls">
-            <span class="currency">
-              <span>$</span>
-              <i class="icon-down-open-mini"></i>
-            </span>
-            <span class="language">
-              <span>Eng</span>
-              <i class="icon-down-open-mini"></i>
-            </span>
-        </div>#}
     </div>
 {% endblock %}

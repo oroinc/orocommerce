@@ -4,8 +4,11 @@ define(function (require) {
     'use strict';
 
     var ProductUnitPrecisionLimitationsComponent,
+        $ = require('jquery'),
         _ = require('underscore'),
-        BaseComponent = require('oroui/js/app/components/base/component');
+        BaseComponent = require('oroui/js/app/components/base/component'),
+        __ = require('orotranslation/js/translator'),
+        mediator = require('oroui/js/mediator');
 
     ProductUnitPrecisionLimitationsComponent = BaseComponent.extend({
         /**
@@ -13,7 +16,8 @@ define(function (require) {
          */
         options: {
             selectSelector: "select[name^='orob2b_product[prices]'][name$='[unit]']",
-            unitsAttribute: 'units'
+            unitsAttribute: 'units',
+            unitRemovedSuffix: __('orob2b.product.productunit.removed.suffix')
         },
 
         /**
@@ -21,7 +25,8 @@ define(function (require) {
          */
         listen: {
             'product:precision:remove mediator': 'onChange',
-            'product:precision:add mediator': 'onChange'
+            'product:precision:add mediator': 'onChange',
+            'product:primary:precision:change mediator': 'onChange'
         },
 
         /**
@@ -63,6 +68,7 @@ define(function (require) {
          */
         clearOptions: function (units, $select) {
             var updateRequired = false;
+            var self = this;
 
             _.each($select.find('option'), function (option) {
                 if (!option.value) {
@@ -70,7 +76,11 @@ define(function (require) {
                 }
 
                 if (!units.hasOwnProperty(option.value)) {
-                    option.remove();
+                    if ( option.selected != true) {
+                        option.remove();
+                    } else if (option.text.indexOf(' - ') < 0) {
+                        $(option).text($(option).text() + ' - ' + self.options.unitRemovedSuffix);
+                    }
 
                     updateRequired = true;
                 }
@@ -96,6 +106,16 @@ define(function (require) {
             } else {
                 emptyOption.hide();
             }
+
+            _.each($select.find('option:contains( - )'), function(option){
+                if (units.hasOwnProperty(option.value)) {
+                    var oldText = option.text;
+                    var newText = oldText.substring(0,oldText.indexOf(' - '));
+                    $(option).text(newText);
+                    $select.closest('.oro-multiselect-holder').find('.validation-failed').hide();
+                    updateRequired = true;
+                }
+            });
 
             _.each(units, function (text, value) {
                 if (!$select.find("option[value='" + value + "']").length) {
@@ -128,7 +148,31 @@ define(function (require) {
          * @returns {Object}
          */
         getUnits: function () {
-            return $(':data(' + this.options.unitsAttribute + ')').data(this.options.unitsAttribute) || {};
+            var units = {};
+            var attribute = this.options.unitsAttribute;
+            _.each($(':data(' + attribute + ')'), function(container){
+                var unit = $(container).data(attribute) || {};
+                _.each(unit, function(val, key){
+                    units[key] = val;
+                });
+            })
+            
+            return units;
+        },
+
+        /**
+         * Return units from data attribute
+         *
+         * @returns {Object}
+         */
+        getUnitsWithPrices: function () {
+            var units_with_price = {};
+            _.each(this.getSelects(), function (select) {
+                var selected = $(select).find('option:selected');
+                units_with_price[selected.val()] = selected.text();
+            });
+
+            return units_with_price;
         },
 
         dispose: function () {

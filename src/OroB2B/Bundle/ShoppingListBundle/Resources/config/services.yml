@@ -1,5 +1,6 @@
 parameters:
     orob2b_shopping_list.entity.shopping_list.class: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
+    orob2b_shopping_list.entity.shopping_list_total.class: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal
     orob2b_shopping_list.entity.line_item.class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
 
 services:
@@ -31,15 +32,9 @@ services:
             - "@security.token_storage"
             - "@translator"
             - "@orob2b_product.service.quantity_rounding"
-            - "@orob2b_pricing.subtotal_processor.total_processor_provider"
-            - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced"
-            - "@oro_locale.settings"
+            - '@orob2b_pricing.user_currency_manager'
             - "@orob2b_website.manager"
-
-    orob2b_shopping_list.shopping_list.manager.link:
-        public: false
-        tags:
-            - { name: oro_service_link,  service:  orob2b_shopping_list.shopping_list.manager }
+            - "@orob2b_shopping_list.manager.shopping_list_total"
 
     orob2b_shopping_list.placeholder.filter:
         class: 'OroB2B\Bundle\ShoppingListBundle\Placeholder\PlaceholderFilter'
@@ -53,6 +48,7 @@ services:
             - "@doctrine"
             - "@orob2b_shopping_list.shopping_list.manager"
             - "@oro_security.security_facade"
+            - "@orob2b_shopping_list.manager.shopping_list_total"
         calls:
             - [setProductClass, ['%orob2b_product.entity.product.class%']]
             - [setShoppingListClass, ['%orob2b_shopping_list.entity.shopping_list.class%']]
@@ -118,6 +114,7 @@ services:
             - "@oro_entity.doctrine_helper"
             - "@oro_security.security_facade"
             - "@request_stack"
+            - "@orob2b_shopping_list.manager.shopping_list_total"
         calls:
             - [setShoppingListClass, ['%orob2b_shopping_list.entity.shopping_list.class%']]
         tags:
@@ -146,7 +143,7 @@ services:
         arguments:
             - '@orob2b_pricing.provider.combined_product_price'
             - '@oro_security.security_facade'
-            - '@orob2b_pricing.provider.user_currency'
+            - '@orob2b_pricing.user_currency_manager'
             - '@orob2b_pricing.model.price_list_request_handler'
 
     orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_units:
@@ -154,7 +151,7 @@ services:
         arguments:
             - "@doctrine"
             - "@orob2b_pricing.model.price_list_request_handler"
-            - "@orob2b_pricing.provider.user_currency"
+            - '@orob2b_pricing.user_currency_manager'
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_products_units }
 
@@ -169,7 +166,7 @@ services:
     orob2b_shopping_list.layout.block.type.shopping_list_selector:
         parent: oro_layout.block_type.abstract_configurable
         calls:
-            - [setOptions, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
+            - [setOptionsConfig, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
             - [setName, ['shopping_list_selector']]
         tags:
              - { name: layout.block_type, alias: shopping_list_selector }
@@ -211,3 +208,11 @@ services:
         public: false
         arguments:
             - '@doctrine'
+
+    orob2b_shopping_list.manager.shopping_list_total:
+        class: 'OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager'
+        arguments:
+            - '@doctrine'
+            - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+            - '@orob2b_pricing.user_currency_manager'
+            - '@oro_config.global'

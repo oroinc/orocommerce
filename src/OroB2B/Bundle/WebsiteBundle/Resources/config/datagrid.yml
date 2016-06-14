@@ -16,11 +16,11 @@ datagrid:
                 renderable:    false
             name:
                 label:         orob2b.website.name.label
-            locales:
-                label:         orob2b.website.locales.label
+            localizations:
+                label:         orob2b.website.localizations.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BWebsiteBundle:Website:Property/locales.html.twig
+                template:      OroB2BWebsiteBundle:Website:Property/localizations.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
