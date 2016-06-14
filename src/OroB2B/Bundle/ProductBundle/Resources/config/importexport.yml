@@ -2,7 +2,7 @@ services:
     orob2b_product.importexport.data_converter.product:
         class: 'OroB2B\Bundle\ProductBundle\ImportExport\DataConverter\ProductDataConverter'
         public: false
-        parent: orob2b_fallback.importexport.data_converter.localized_fallback_value_aware
+        parent: oro_locale.importexport.data_converter.localized_fallback_value_aware
         calls:
             - [setEntityName, ['%orob2b_product.entity.product.class%']]
             - [setEventDispatcher, ['@event_dispatcher']]
@@ -16,7 +16,7 @@ services:
     orob2b_product.importexport.strategy.product:
         class: 'OroB2B\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy'
         public: false
-        parent: orob2b_fallback.importexport.strategy.localized_fallback_value_aware
+        parent: oro_locale.importexport.strategy.localized_fallback_value_aware
         calls:
             - [setSecurityFacade, ['@oro_security.security_facade']]
             - [setVariantLinkClass, ['%orob2b_product.entity.product_variant_link.class%']]

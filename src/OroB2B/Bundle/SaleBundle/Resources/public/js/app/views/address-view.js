@@ -132,11 +132,7 @@ define(function(require) {
                 this.$fields.each(function() {
                     var $field = $(this);
 
-                    if ($field.data('select2')) {
-                        $field.select2('readonly', true);
-                    } else {
-                        $field.attr('readonly', true);
-                    }
+                    $field.prop('readonly', true).inputWidget('refresh');
                 });
 
                 var address = this.$address.data('addresses')[this.$address.val()] || null;
@@ -159,12 +155,8 @@ define(function(require) {
             } else {
                 this.$fields.each(function() {
                     var $field = $(this);
-                    if ($field.data('select2')) {
-                        $field.select2('readonly', false);
-                    } else {
-                        $field.attr('readonly', false);
-                    }
 
+                    $field.prop('readonly', false).inputWidget('refresh');
                 });
             }
         },
@@ -200,16 +192,14 @@ define(function(require) {
             this.$fields.each(function() {
                 var $field = $(this);
                 $field.val('');
+                $field.prop('readonly', true).inputWidget('refresh');
                 if ($field.data('select2')) {
-                    $field.select2('readonly', true);
                     $field.data('selected-data', '').change();
-                } else {
-                    $field.attr('readonly', true);
                 }
             });
             $oldAddress.parent().trigger('content:remove');
-            $oldAddress.select2('destroy')
-                .replaceWith(this.$address);
+            $oldAddress.inputWidget('dispose');
+            $oldAddress.replaceWith(this.$address);
 
             this.initLayout().done(_.bind(this.loadingEnd, this));
         },

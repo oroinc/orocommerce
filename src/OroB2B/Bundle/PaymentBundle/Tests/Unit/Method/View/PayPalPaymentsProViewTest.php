@@ -56,4 +56,10 @@ class PayPalPaymentsProViewTest extends AbstractPayflowGatewayViewTest
         $this->setConfig($this->once(), Configuration::PAYPAL_PAYMENTS_PRO_LABEL_KEY, 'testValue');
         $this->assertEquals('testValue', $this->methodView->getLabel());
     }
+
+    public function testGetShortLabel()
+    {
+        $this->setConfig($this->once(), Configuration::PAYPAL_PAYMENTS_PRO_SHORT_LABEL_KEY, 'testValue');
+        $this->assertEquals('testValue', $this->methodView->getShortLabel());
+    }
 }

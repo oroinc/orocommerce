@@ -22,7 +22,7 @@ class ParentAccountSelectType extends AbstractType
             [
                 'autocomplete_alias' => 'orob2b_account_parent',
                 'configs' => [
-                    'component' => 'autocomplete-account-parent',
+                    'component' => 'autocomplete-entity-parent',
                     'placeholder' => 'orob2b.account.form.choose_parent'
                 ]
             ]
@@ -39,7 +39,7 @@ class ParentAccountSelectType extends AbstractType
         if ($parentData instanceof Account) {
             $accountId = $parentData->getId();
         }
-        $view->vars['configs']['accountId'] = $accountId;
+        $view->vars['configs']['entityId'] = $accountId;
     }
 
     /**

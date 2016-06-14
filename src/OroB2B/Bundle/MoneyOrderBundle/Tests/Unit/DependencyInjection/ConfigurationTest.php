@@ -55,6 +55,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => Configuration::MONEY_ORDER_LABEL,
                             'scope' => 'app'
                         ],
+                        Configuration::MONEY_ORDER_SHORT_LABEL_KEY              => [
+                            'value' => Configuration::MONEY_ORDER_LABEL,
+                            'scope' => 'app'
+                        ],
                         Configuration::MONEY_ORDER_SORT_ORDER_KEY         => [
                             'value' => Configuration::MONEY_ORDER_SORT_ORDER,
                             'scope' => 'app'

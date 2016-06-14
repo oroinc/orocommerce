@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
+
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
@@ -129,7 +130,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                         'join' => 'product.shortDescriptions',
                                         'alias' => 'productShortDescriptions',
                                         'conditionType' => 'WITH',
-                                        'condition' => 'productShortDescriptions.locale IS NULL'
+                                        'condition' => 'productShortDescriptions.localization IS NULL'
                                     ]
                                 ]
                             ]
@@ -203,15 +204,20 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $ids[] = $record['id'];
             $records[] = new ResultRecord($record);
         }
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        
+        /**
+         * @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event
+         */
         $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\OrmResultAfter')
             ->disableOriginalConstructor()
             ->getMock();
         $event->expects($this->once())
             ->method('getRecords')
             ->willReturn($records);
-
-        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        
+        /**
+         * @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid
+         */
         $datagrid = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Datagrid')
             ->disableOriginalConstructor()->getMock();
 

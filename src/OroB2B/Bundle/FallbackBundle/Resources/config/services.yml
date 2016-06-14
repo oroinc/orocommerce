@@ -1,33 +1,4 @@
-parameters:
-    orob2b_fallback.entity.localized_fallback_value.class: OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue
-
 services:
-    orob2b_fallback.form.type.fallback_property:
-        class: 'OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType'
-        arguments:
-            - "@translator"
-        tags:
-            - { name: form.type, alias: orob2b_fallback_property }
-
-    orob2b_fallback.form.type.fallback_value:
-        class: 'OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType'
-        tags:
-            - { name: form.type, alias: orob2b_fallback_value }
-
-    orob2b_fallback.form.type.locale_collection:
-        class: 'OroB2B\Bundle\FallbackBundle\Form\Type\LocaleCollectionType'
-        arguments:
-            - "@doctrine"
-        calls:
-            - [setLocaleClass, ['%orob2b_website.entity.locale.class%']]
-        tags:
-            - { name: form.type, alias: orob2b_fallback_locale_collection }
-
-    orob2b_fallback.form.type.localized_property:
-        class: 'OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedPropertyType'
-        tags:
-            - { name: form.type, alias: orob2b_fallback_localized_property }
-
     orob2b_fallback.form.type.website_collection:
         class: 'OroB2B\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType'
         arguments:
@@ -41,10 +12,3 @@ services:
         class: 'OroB2B\Bundle\FallbackBundle\Form\Type\WebsitePropertyType'
         tags:
             - { name: form.type, alias: orob2b_fallback_website_property }
-
-    orob2b_fallback.form.type.localzed_value_colection:
-        class: 'OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType'
-        arguments:
-            - "@doctrine"
-        tags:
-            - { name: form.type, alias: orob2b_fallback_localized_value_collection }
