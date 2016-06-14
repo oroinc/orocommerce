@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\EventSubscriber;
 
 use Prophecy\Prophecy\ObjectProphecy;
 
-use Oro\Component\Layout\Extension\Theme\Model\ThemeImageType;
+use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 use OroB2B\Bundle\ProductBundle\Form\EventSubscriber\ProductImageTypesSubscriber;

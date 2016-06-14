@@ -55,7 +55,8 @@ class ProductImage extends ExtendProductImage
      *     mappedBy="productImage",
      *     indexBy="type",
      *     cascade={"ALL"},
-     *     orphanRemoval=true
+     *     orphanRemoval=true,
+     *     fetch="EAGER"
      * )
      * @ConfigField(
      *      defaultValues={

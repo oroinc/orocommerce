@@ -134,6 +134,15 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->assertFalse($list->isCurrent());
     }
 
+    public function testFindWithRelatedObjectsById()
+    {
+        $repository = $this->getRepository();
+        /** @var ShoppingList $shoppingListReference */
+        $expectedList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        $actualList = $repository->findWithRelatedObjectsById($expectedList->getId());
+        $this->assertSame($expectedList, $actualList);
+    }
+
     /**
      * @return AccountUser
      */

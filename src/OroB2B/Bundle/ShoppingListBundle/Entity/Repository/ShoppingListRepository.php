@@ -154,4 +154,24 @@ class ShoppingListRepository extends EntityRepository
             ->setMaxResults(1)
             ->getQuery()->getOneOrNullResult();
     }
+
+    /**
+     * @param int $id
+     * @return ShoppingList
+     */
+    public function findWithRelatedObjectsById($id)
+    {
+        return $this->createQueryBuilder('list')
+            ->select('list', 'items', 'product', 'images', 'imageTypes', 'imageFile', 'unitPrecisions')
+            ->leftJoin('list.lineItems', 'items')
+            ->leftJoin('items.product', 'product')
+            ->leftJoin('product.images', 'images')
+            ->leftJoin('images.types', 'imageTypes')
+            ->leftJoin('images.image', 'imageFile')
+            ->leftJoin('product.unitPrecisions', 'unitPrecisions')
+            ->where('list.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

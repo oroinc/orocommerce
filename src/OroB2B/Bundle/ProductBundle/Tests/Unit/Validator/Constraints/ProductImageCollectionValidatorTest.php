@@ -9,8 +9,8 @@ use Prophecy\Argument;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Component\Layout\Extension\Theme\Model\ThemeImageType;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection;

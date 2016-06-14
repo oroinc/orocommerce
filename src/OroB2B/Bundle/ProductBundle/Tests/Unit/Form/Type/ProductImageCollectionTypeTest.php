@@ -8,8 +8,8 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Component\Layout\Extension\Theme\Model\ThemeImageType;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductImageType;

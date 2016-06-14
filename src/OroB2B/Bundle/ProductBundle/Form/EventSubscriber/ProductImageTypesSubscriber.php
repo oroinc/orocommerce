@@ -6,7 +6,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use Oro\Component\Layout\Extension\Theme\Model\ThemeImageType;
+use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 

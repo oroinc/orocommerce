@@ -43,19 +43,24 @@ class ShoppingListController extends Controller
      */
     public function viewAction(ShoppingList $shoppingList = null)
     {
+        /** @var ShoppingListRepository $repo */
+        $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
+
         if (!$shoppingList) {
             $user = $this->getUser();
             if ($user instanceof AccountUser) {
-                /** @var ShoppingListRepository $repo */
-                $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
                 $shoppingList = $repo->findAvailableForAccountUser($user);
             }
         }
 
+        $shoppingList = $shoppingList
+            ? $repo->findWithRelatedObjectsById($shoppingList->getId())
+            : null;
+
         $totalWithSubtotalsAsArray = $shoppingList
             ? $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList)
             : [];
-
+        
         return [
             'title' => $shoppingList ? $shoppingList->getLabel() : null,
             'data' => [
