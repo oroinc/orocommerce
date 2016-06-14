@@ -16,22 +16,31 @@ services:
             - { name: oro_importexport.normalizer }
 
     # Strategy
-    orob2b_warehouse.importexport.strategy.warehouse_inventory_level.add_or_replace:
+    orob2b_warehouse.importexport.strategy.warehouse_inventory_level:
         parent: oro_importexport.strategy.configurable_add_or_replace
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy'
 
     #Converter
     orob2b_warehouse.importexport.data_converter.warehouse_inventory_level:
-        parent: oro_importexport.data_converter.configurable
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Converter\WarehouseInventoryLevelConverter'
+
+    #Denormalizer
+    orob2b_warehouse.importexport.denormalizer.warehouse_inventory_level:
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelDenormalizer'
+        tags:
+            - { name: oro_importexport.normalizer }
+        arguments:
+            - "@doctrine.orm.entity_manager"
 
     # Import processor
-    orob2b_warehouse.importexport.processor.import.add_or_replace:
+    orob2b_warehouse.importexport.processor.import.warehouse_inventory_level:
         parent: oro_importexport.processor.import_abstract
         calls:
             - [setDataConverter, ['@orob2b_warehouse.importexport.data_converter.warehouse_inventory_level']]
-            - [setStrategy, ['@orob2b_warehouse.importexport.strategy.warehouse_inventory_level.add_or_replace']]
+            - [setStrategy, ['@orob2b_warehouse.importexport.strategy.warehouse_inventory_level']]
         tags:
-            - { name: oro_importexport.processor, type: import, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.add_or_replace }
-            - { name: oro_importexport.processor, type: import_validation, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.add_or_replace }
+            - { name: oro_importexport.processor, type: import, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.warehouse_inventory_level }
+            - { name: oro_importexport.processor, type: import_validation, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.warehouse_inventory_level }
 
     # Export template
     orob2b_warehouse.importexport.processor.export_template.inventory_level:
