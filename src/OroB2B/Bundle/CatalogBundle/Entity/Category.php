@@ -218,6 +218,8 @@ class Category extends ExtendCategory
      */
     protected $longDescriptions;
 
+    protected $unitPrecision;
+
     /**
      * Constructor
      */
@@ -545,5 +547,10 @@ class Category extends ExtendCategory
         }
 
         return $longDescription->first();
+    }
+
+    public function getUnitPrecision()
+    {
+        return $this->unitPrecision;
     }
 }

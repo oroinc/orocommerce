@@ -7,6 +7,13 @@ services:
         tags:
             - { name: form.type, alias: orob2b_catalog_category }
 
+    orob2b_catalog.form.type.category_unit_precision:
+            class: 'OroB2B\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType'
+            calls:
+                - [setDataClass, ['%orob2b_catalog.entity.category.class%']]
+            tags:
+                - { name: form.type, alias: orob2b_catalog_category_unit_precision }
+
     orob2b_catalog.form.type.category_tree:
         class: 'OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType'
         calls:

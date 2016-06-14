@@ -19,3 +19,21 @@
     {{ form_widget(form) }}
     {{ form_errors(form) }}
 {% endblock %}
+
+{% block orob2b_catalog_category_unit_precision_widget %}
+    <div class="control-group">
+        <div class="control-label wrap"><label>{{ 'orob2b.catalog.category.unit.label'|trans }}<em>&nbsp;</em></label></div>
+        <div class="controls">
+            <table class="category-precision-holder" data-page-component-module="orob2bcatalog/js/app/components/category-unit-limitations-component">
+                <tr>
+                    <td>{{ form_widget(form.unit, { 'attr': {'class': 'unit'}}) }}</td>
+                    <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form_errors(form.unit) }}</td>
+                    <td>{{ form_errors(form.precision) }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock %}
