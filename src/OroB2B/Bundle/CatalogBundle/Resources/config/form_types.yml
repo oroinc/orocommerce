@@ -20,3 +20,9 @@ services:
             - "@doctrine"
         tags:
             - { name: form.type_extension, alias: orob2b_product }
+
+    orob2b_catalog.form.extension.product_step_one_type:
+        class: 'OroB2B\Bundle\CatalogBundle\Form\Extension\ProductStepOneFormExtension'
+        public: true
+        tags:
+            - { name: form.type_extension, alias: orob2b_product_step_one }

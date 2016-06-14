@@ -17,6 +17,7 @@ class Configuration implements ConfigurationInterface
 
     const PAYPAL_PAYMENTS_PRO_ENABLED_KEY = 'paypal_payments_pro_enabled';
     const PAYPAL_PAYMENTS_PRO_LABEL_KEY = 'paypal_payments_pro_label';
+    const PAYPAL_PAYMENTS_PRO_SHORT_LABEL_KEY = 'paypal_payments_pro_short_label';
     const PAYPAL_PAYMENTS_PRO_SORT_ORDER_KEY = 'paypal_payments_pro_sort_order';
     const PAYPAL_PAYMENTS_PRO_ALLOWED_COUNTRIES_KEY = 'paypal_payments_pro_allowed_countries';
     const PAYPAL_PAYMENTS_PRO_SELECTED_COUNTRIES_KEY = 'paypal_payments_pro_selected_countries';
@@ -41,6 +42,7 @@ class Configuration implements ConfigurationInterface
 
     const PAYFLOW_GATEWAY_ENABLED_KEY = 'payflow_gateway_enabled';
     const PAYFLOW_GATEWAY_LABEL_KEY = 'payflow_gateway_label';
+    const PAYFLOW_GATEWAY_SHORT_LABEL_KEY = 'payflow_gateway_short_label';
     const PAYFLOW_GATEWAY_SORT_ORDER_KEY = 'payflow_gateway_sort_order';
     const PAYFLOW_GATEWAY_ALLOWED_COUNTRIES_KEY = 'payflow_gateway_allowed_countries';
     const PAYFLOW_GATEWAY_SELECTED_COUNTRIES_KEY = 'payflow_gateway_selected_countries';
@@ -64,6 +66,7 @@ class Configuration implements ConfigurationInterface
 
     const PAYMENT_TERM_ENABLED_KEY = 'payment_term_enabled';
     const PAYMENT_TERM_LABEL_KEY = 'payment_term_label';
+    const PAYMENT_TERM_SHORT_LABEL_KEY = 'payment_term_short_label';
     const PAYMENT_TERM_SORT_ORDER_KEY = 'payment_term_sort_order';
     const PAYMENT_TERM_ALLOWED_COUNTRIES_KEY = 'payment_term_allowed_countries';
     const PAYMENT_TERM_SELECTED_COUNTRIES_KEY = 'payment_term_selected_countries';
@@ -78,6 +81,8 @@ class Configuration implements ConfigurationInterface
     const ALLOWED_COUNTRIES_SELECTED = 'selected';
 
     const CREDIT_CARD_LABEL = 'Credit Card';
+    const PAYPAL_PAYMENTS_PRO_LABEL = 'PayPal Payments Pro';
+    const PAYFLOW_GATEWAY_LABEL = 'Payflow Gateway';
     const PAYMENT_TERM_LABEL = 'Payment Terms';
 
     /**
@@ -105,6 +110,10 @@ class Configuration implements ConfigurationInterface
                     'value' => false
                 ],
                 self::PAYPAL_PAYMENTS_PRO_LABEL_KEY => [
+                    'type' => 'text',
+                    'value' => self::PAYPAL_PAYMENTS_PRO_LABEL
+                ],
+                self::PAYPAL_PAYMENTS_PRO_SHORT_LABEL_KEY => [
                     'type' => 'text',
                     'value' => self::CREDIT_CARD_LABEL
                 ],
@@ -196,6 +205,10 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYFLOW_GATEWAY_LABEL_KEY => [
                     'type' => 'text',
+                    'value' => self::PAYFLOW_GATEWAY_LABEL
+                ],
+                self::PAYFLOW_GATEWAY_SHORT_LABEL_KEY => [
+                    'type' => 'text',
                     'value' => self::CREDIT_CARD_LABEL
                 ],
                 self::PAYFLOW_GATEWAY_SORT_ORDER_KEY => [
@@ -284,6 +297,10 @@ class Configuration implements ConfigurationInterface
                     'value' => true
                 ],
                 self::PAYMENT_TERM_LABEL_KEY => [
+                    'type' => 'text',
+                    'value' => self::PAYMENT_TERM_LABEL
+                ],
+                self::PAYMENT_TERM_SHORT_LABEL_KEY => [
                     'type' => 'text',
                     'value' => self::PAYMENT_TERM_LABEL
                 ],

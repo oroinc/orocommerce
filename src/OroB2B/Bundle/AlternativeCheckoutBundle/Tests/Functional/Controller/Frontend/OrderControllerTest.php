@@ -125,19 +125,7 @@ class OrderControllerTest extends WebTestCase
                 'value' => self::SUBTOTAL_VALUE,
                 'filterType' => NumberFilterTypeInterface::TYPE_GREATER_THAN,
                 'expectedCheckouts' => ['checkout.1', 'alternative.checkout.1', 'alternative.checkout.2']
-            ],
-            'paymentMethodPaymentTerm' => [
-                'columnName' => 'paymentMethod',
-                'value' => PaymentTerm::TYPE,
-                'filterType' => TextFilterType::TYPE_CONTAINS,
-                'expectedCheckouts' => ['checkout.2', 'alternative.checkout.2']
-            ],
-            'paymentMethodPayflowGateway' => [
-                'columnName' => 'paymentMethod',
-                'value' => PayflowGateway::TYPE,
-                'filterType' => TextFilterType::TYPE_CONTAINS,
-                'expectedCheckouts' => ['checkout.1', 'alternative.checkout.1']
-            ],
+            ]
         ];
     }
 

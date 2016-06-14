@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -57,7 +55,7 @@ define(function(require) {
                 },
                 function() {
                     this.accountField
-                        .select2('val', this.accountField.data(this.options.previousValueDataAttribute));
+                        .inputWidget('val', this.accountField.data(this.options.previousValueDataAttribute));
                     this.accountField.data(this.options.previousValueDataAttribute, this.options.originalValue);
                 }
             );

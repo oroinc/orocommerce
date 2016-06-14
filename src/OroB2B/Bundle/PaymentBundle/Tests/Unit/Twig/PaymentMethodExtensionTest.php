@@ -107,13 +107,24 @@ class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getPaymentMethodView')
             ->with($paymentMethodNotExistsConstant)
             ->willThrowException(new \InvalidArgumentException());
+        $this->paymentMethodViewRegistry
+            ->expects($this->at(2))
+            ->method('getPaymentMethodView')
+            ->with($paymentMethodConstant)
+            ->willReturn($this->paymentMethodView);
 
         $this->paymentMethodView
             ->expects($this->once())
             ->method('getLabel')
             ->willReturn($label);
 
+        $this->paymentMethodView
+            ->expects($this->once(1))
+            ->method('getShortLabel')
+            ->willReturn($label);
+
         $this->assertEquals($this->extension->getPaymentMethodLabel($paymentMethodConstant), $label);
         $this->assertEquals($this->extension->getPaymentMethodLabel($paymentMethodNotExistsConstant), '');
+        $this->assertEquals($this->extension->getPaymentMethodLabel($paymentMethodConstant, false), $label);
     }
 }

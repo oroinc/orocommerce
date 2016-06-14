@@ -57,7 +57,7 @@ class LoadProductUnitPrecisionDemoData extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+        $filePath = $locator->locate('@OroB2BProductBundle/Migrations/Data/Demo/ORM/data/add_product_precisions.csv');
         if (is_array($filePath)) {
             $filePath = current($filePath);
         }
@@ -75,7 +75,9 @@ class LoadProductUnitPrecisionDemoData extends AbstractFixture implements
             $productUnitPrecision
                 ->setProduct($product)
                 ->setUnit($productUnit)
-                ->setPrecision((int)$row['precision']);
+                ->setPrecision((int)$row['precision'])
+                ->setConversionRate((float)$row['conversion_rate'])
+                ->setSell((bool)$row['sell']);
 
             $manager->persist($productUnitPrecision);
         }
