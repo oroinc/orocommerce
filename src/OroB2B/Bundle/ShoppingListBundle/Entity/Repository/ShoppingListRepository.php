@@ -157,7 +157,7 @@ class ShoppingListRepository extends EntityRepository
 
     /**
      * @param int $id
-     * @return ShoppingList
+     * @return ShoppingList|null
      */
     public function findWithRelatedObjectsById($id)
     {

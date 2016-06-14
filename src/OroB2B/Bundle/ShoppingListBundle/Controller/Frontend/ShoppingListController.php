@@ -60,7 +60,7 @@ class ShoppingListController extends Controller
         $totalWithSubtotalsAsArray = $shoppingList
             ? $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList)
             : [];
-        
+
         return [
             'title' => $shoppingList ? $shoppingList->getLabel() : null,
             'data' => [
