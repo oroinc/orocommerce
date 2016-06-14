@@ -146,11 +146,11 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 
         $product = (new StubProduct())
             ->setSku(self::PRODUCT_SKU)
-            ->addUnitPrecision($this->prepareUnitPrecision(
+            ->setPrimaryUnitPrecision($this->prepareUnitPrecision(
                 self::UNIT_PRECISION_CODE_1,
                 self::UNIT_PRECISION_DEFAULT_PRECISION_1
             ))
-            ->addUnitPrecision($this->prepareUnitPrecision(
+            ->addAdditionalUnitPrecision($this->prepareUnitPrecision(
                 self::UNIT_PRECISION_CODE_2,
                 self::UNIT_PRECISION_DEFAULT_PRECISION_2
             ))
@@ -225,7 +225,11 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
     public function testDuplicateFailed()
     {
         $product = (new StubProduct())
-            ->setSku(self::PRODUCT_SKU);
+            ->setSku(self::PRODUCT_SKU)
+            ->setPrimaryUnitPrecision($this->prepareUnitPrecision(
+                self::UNIT_PRECISION_CODE_1,
+                self::UNIT_PRECISION_DEFAULT_PRECISION_1
+            ));
 
         $this->skuIncrementor->expects($this->once())
             ->method('increment')

@@ -9,6 +9,12 @@ services:
         tags:
             - { name: form.type, alias: orob2b_product }
 
+    orob2b_product.form.type.product_step_one:
+        class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductStepOneType'
+        public: true
+        tags:
+            - { name: form.type, alias: orob2b_product_step_one }
+
     orob2b_product.form.type.product_row:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType'
         tags:
@@ -36,6 +42,14 @@ services:
             - '%orob2b_product.entity.product.class%'
         tags:
             - { name: form.type, alias: orob2b_quantity }
+
+    orob2b_product.form.type.product_primary_unit_precision:
+        class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
+        public: true
+        calls:
+            - [setDataClass, ['%orob2b_product.entity.product_unit_precision.class%']]
+        tags:
+            - { name: form.type, alias: orob2b_product_primary_unit_precision }
 
     orob2b_product.form.type.product_unit_precision:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType'

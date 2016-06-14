@@ -11,7 +11,9 @@ use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
 
 class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter
 {
-    /** @var EventDispatcherInterface */
+    /**
+     * @var EventDispatcherInterface
+     */
     protected $eventDispatcher;
 
     /**
@@ -28,6 +30,23 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter
     protected function getBackendHeader()
     {
         $backendHeader = parent::getBackendHeader();
+        
+        // According to business logic Product should have Primary and Additional unit precisions.
+        // But Product Entity has primaryUnitPrecision property and unitPrecisions property which
+        // is collection of all unit precisions. AdditionalUnitPrecisions is calculated by excluding
+        // PrimaryUnitPrecision from all UnitPrecisions. This fix was done in order to display
+        // correct column headers during Products Export.
+        foreach ($backendHeader as $k => &$v) {
+            $arr = explode(":", $v);
+            if ($arr[0] == "unitPrecisions" && $arr[1] == "0") {
+                unset($backendHeader[$k]);
+            } elseif ($arr[0] == "unitPrecisions") {
+                $arr[0] = "additionalUnitPrecisions";
+                $arr[1] = $arr[1] - 1;
+                $v = implode(":", $arr);
+            }
+        }
+        unset($v);
 
         if ($this->eventDispatcher) {
             $event = new ProductDataConverterEvent($backendHeader);

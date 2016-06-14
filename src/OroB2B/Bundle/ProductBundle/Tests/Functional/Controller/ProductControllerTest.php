@@ -48,6 +48,9 @@ class ProductControllerTest extends WebTestCase
     const DEFAULT_DESCRIPTION = 'default description';
     const DEFAULT_SHORT_DESCRIPTION = 'default short description';
 
+    const CATEGORY_ID = 1;
+    const CATEGORY_NAME = 'Master Catalog';
+
     const FIRST_IMAGE_FILENAME = 'image1.gif';
     const SECOND_IMAGE_FILENAME = 'image2.gif';
 
@@ -81,10 +84,25 @@ class ProductControllerTest extends WebTestCase
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_create'));
+        $this->assertEquals(1, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_NAME."')]")->count());
+        $form = $crawler->selectButton('Continue')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['input_action'] = 'orob2b_product_create';
+        $formValues['orob2b_product_step_one']['category'] = self::CATEGORY_ID;
 
-        /** @var Form $form */
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request(
+            'POST',
+            $this->getUrl('orob2b_product_create'),
+            $formValues
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertEquals(0, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_NAME."')]")->count());
+        $this->assertContains("Category:".self::CATEGORY_NAME, $crawler->html());
+
         $form = $crawler->selectButton('Save and Close')->form();
-
         $this->assertDefaultProductUnit($form);
 
         $formValues = $form->getPhpValues();
@@ -95,9 +113,11 @@ class ProductControllerTest extends WebTestCase
         $formValues['orob2b_product']['names']['values']['default'] = self::DEFAULT_NAME;
         $formValues['orob2b_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
         $formValues['orob2b_product']['shortDescriptions']['values']['default'] = self::DEFAULT_SHORT_DESCRIPTION;
-        $formValues['orob2b_product']['unitPrecisions'][] = [
+        $formValues['orob2b_product']['additionalUnitPrecisions'][] = [
             'unit' => self::FIRST_UNIT_CODE,
             'precision' => self::FIRST_UNIT_PRECISION,
+            'conversionRate' => 10,
+            'sell' => true,
         ];
 
         $formValues['orob2b_product']['images'][] = [
@@ -145,7 +165,7 @@ class ProductControllerTest extends WebTestCase
         $localizedName = $this->getLocalizedName($product, $localization);
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
-
+        $this->assertEquals(1, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_NAME."')]")->count());
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
@@ -157,8 +177,10 @@ class ProductControllerTest extends WebTestCase
                 'owner' => $this->getBusinessUnitId(),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'status' => Product::STATUS_ENABLED,
-                'unitPrecisions' => [
-                    ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
+                'primaryUnitPrecision' => [
+                    'unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION
+                ],
+                'additionalUnitPrecisions' => [
                     ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
                     ['unit' => self::THIRD_UNIT_CODE, 'precision' => self::THIRD_UNIT_PRECISION]
                 ],
@@ -179,9 +201,9 @@ class ProductControllerTest extends WebTestCase
                 'shortDescriptions' => [
                     'values' => [
                         'default' => self::DEFAULT_SHORT_DESCRIPTION,
-                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]]
+                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$localization->getId() => $localizedName->getId()]
+                    'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'images' => [
                     0 => [
@@ -215,32 +237,32 @@ class ProductControllerTest extends WebTestCase
         // Check product unit precisions
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
-        $actualUnitPrecisions = [
+        $actualAdditionalUnitPrecisions = [
             [
-                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][0][unit]"] :selected')->html(),
-                'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][0][precision]"]')
+                'unit' => $crawler
+                    ->filter('select[name="orob2b_product[additionalUnitPrecisions][0][unit]"] :selected')
+                    ->html(),
+                'precision' => $crawler
+                    ->filter('input[name="orob2b_product[additionalUnitPrecisions][0][precision]"]')
                     ->extract('value')[0],
             ],
             [
-                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][1][unit]"] :selected')->html(),
-                'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][1][precision]"]')
-                    ->extract('value')[0],
-            ],
-            [
-                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][2][unit]"] :selected')->html(),
-                'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][2][precision]"]')
+                'unit' => $crawler
+                    ->filter('select[name="orob2b_product[additionalUnitPrecisions][1][unit]"] :selected')
+                    ->html(),
+                'precision' => $crawler
+                    ->filter('input[name="orob2b_product[additionalUnitPrecisions][1][precision]"]')
                     ->extract('value')[0],
             ]
         ];
-        $expectedUnitPrecisions = [
-            ['unit' => self::FIRST_UNIT_FULL_NAME, 'precision' => self::FIRST_UNIT_PRECISION],
+        $expectedAdditionalUnitPrecisions = [
             ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION],
             ['unit' => self::THIRD_UNIT_FULL_NAME, 'precision' => self::THIRD_UNIT_PRECISION],
         ];
 
         $this->assertEquals(
-            $this->sortUnitPrecisions($expectedUnitPrecisions),
-            $this->sortUnitPrecisions($actualUnitPrecisions)
+            $this->sortUnitPrecisions($expectedAdditionalUnitPrecisions),
+            $this->sortUnitPrecisions($actualAdditionalUnitPrecisions)
         );
 
         return $id;
@@ -264,7 +286,6 @@ class ProductControllerTest extends WebTestCase
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_STATUS, $html);
-        $this->assertProductPrecision($id, self::FIRST_UNIT_CODE, self::FIRST_UNIT_PRECISION);
         $this->assertProductPrecision($id, self::SECOND_UNIT_CODE, self::SECOND_UNIT_PRECISION);
         $this->assertProductPrecision($id, self::THIRD_UNIT_CODE, self::THIRD_UNIT_PRECISION);
 
@@ -307,17 +328,11 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(self::STATUS, $html);
 
         $this->assertContains(
-            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
+            $this->createPrimaryUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
             $html
         );
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
-            $html
-        );
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION),
-            $html
-        );
+        $this->assertContainsAdditionalUnitPrecision(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION, $html);
+        $this->assertContainsAdditionalUnitPrecision(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION, $html);
 
         $expectedProductImageMatrix = [
             self::$expectedProductImageMatrixHeaders,
@@ -357,7 +372,8 @@ class ProductControllerTest extends WebTestCase
                 'owner' => $this->getBusinessUnitId(),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'status' => Product::STATUS_ENABLED,
-                'unitPrecisions' => $form->getPhpValues()['orob2b_product']['unitPrecisions'],
+                'primaryUnitPrecision' => $form->getPhpValues()['orob2b_product']['primaryUnitPrecision'],
+                'additionalUnitPrecisions' => $form->getPhpValues()['orob2b_product']['additionalUnitPrecisions'],
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
@@ -399,17 +415,11 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(self::STATUS, $html);
 
         $this->assertContains(
-            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
+            $this->createPrimaryUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
             $html
         );
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
-            $html
-        );
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION),
-            $html
-        );
+        $this->assertContainsAdditionalUnitPrecision(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION, $html);
+        $this->assertContainsAdditionalUnitPrecision(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION, $html);
 
         $this->assertEmpty($this->parseProductImages($crawler));
 
@@ -430,8 +440,8 @@ class ProductControllerTest extends WebTestCase
                 'oro_action_operation_execute',
                 [
                     'operationName' => 'DELETE',
-                    'entityId' => $id,
-                    'entityClass' => $this->getContainer()->getParameter('orob2b_product.entity.product.class'),
+                    'entityId'      => $id,
+                    'entityClass'   => $this->getContainer()->getParameter('orob2b_product.entity.product.class'),
                 ]
             ),
             [],
@@ -441,9 +451,9 @@ class ProductControllerTest extends WebTestCase
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertEquals(
             [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
+                'success'     => true,
+                'message'     => '',
+                'messages'    => [],
                 'redirectUrl' => $this->getUrl('orob2b_product_index')
             ],
             json_decode($this->client->getResponse()->getContent(), true)
@@ -506,7 +516,7 @@ class ProductControllerTest extends WebTestCase
      * @param int $precision
      * @return string
      */
-    private function createUnitPrecisionString($name, $precision)
+    private function createPrimaryUnitPrecisionString($name, $precision)
     {
         if ($precision == 0) {
             return sprintf('%s (whole numbers)', $name);
@@ -515,6 +525,18 @@ class ProductControllerTest extends WebTestCase
         } else {
             return sprintf('%s (fractional, %d decimal digits)', $name, $precision);
         }
+    }
+
+    /**
+     * @param string $code
+     * @param int $precision
+     * @param string $html
+     * @return string
+     */
+    private function assertContainsAdditionalUnitPrecision($code, $precision, $html)
+    {
+        $this->assertContains(sprintf("<td>%s</td>", $code), $html);
+        $this->assertContains(sprintf("<td>%d</td>", $precision), $html);
     }
 
     /**
@@ -586,11 +608,11 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertEquals(
             $expectedDefaultProductUnit,
-            $formValues['orob2b_product[unitPrecisions][0][unit]']
+            $formValues['orob2b_product[primaryUnitPrecision][unit]']
         );
         $this->assertEquals(
             $expectedDefaultProductUnitPrecision,
-            $formValues['orob2b_product[unitPrecisions][0][precision]']
+            $formValues['orob2b_product[primaryUnitPrecision][precision]']
         );
     }
 

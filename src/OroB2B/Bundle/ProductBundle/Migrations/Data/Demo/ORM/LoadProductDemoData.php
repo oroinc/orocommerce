@@ -17,6 +17,8 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -26,6 +28,11 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var array
+     */
+    protected $productUnis = [];
 
     /**
      * {@inheritdoc}
@@ -93,6 +100,18 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->addName($name)
                 ->addDescription($description)
                 ->addShortDescription($shortDescription);
+
+            $productUnit = $this->getProductUnit($manager, $row['unit']);
+
+            $productUnitPrecision = new ProductUnitPrecision();
+            $productUnitPrecision
+                ->setProduct($product)
+                ->setUnit($productUnit)
+                ->setPrecision((int)$row['precision'])
+                ->setConversionRate(1)
+                ->setSell(true);
+            
+            $product->setPrimaryUnitPrecision($productUnitPrecision);
 
             $productImage = $this->getProductImageForProductSku($manager, $locator, $row['sku'], $allImageTypes);
             if ($productImage) {
@@ -165,5 +184,19 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $imageTypeProvider = $this->container->get('oro_layout.provider.image_type');
 
         return array_keys($imageTypeProvider->getImageTypes());
+    }
+
+    /**
+     * @param EntityManager $manager
+     * @param string $code
+     * @return ProductUnit|null
+     */
+    protected function getProductUnit(EntityManager $manager, $code)
+    {
+        if (!array_key_exists($code, $this->productUnis)) {
+            $this->productUnis[$code] = $manager->getRepository('OroB2BProductBundle:ProductUnit')->find($code);
+        }
+
+        return $this->productUnis[$code];
     }
 }

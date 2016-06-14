@@ -210,6 +210,7 @@ class FrontendProductDatagridListener
     protected function addProductUnits($productIds, $records)
     {
         $productUnits = $this->getProductUnitRepository()->getProductsUnits($productIds);
+
         foreach ($records as $record) {
             $units = [];
             $productId = $record->getValue('id');

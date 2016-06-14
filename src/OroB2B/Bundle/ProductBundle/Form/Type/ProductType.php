@@ -30,7 +30,7 @@ class ProductType extends AbstractType
     private $provider;
 
     /**
-     * @var DefaultProductUnitProvider
+     * @param DefaultProductUnitProvider $provider
      */
     public function __construct(DefaultProductUnitProvider $provider)
     {
@@ -52,13 +52,7 @@ class ProductType extends AbstractType
     {
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'orob2b.product.sku.label'])
-            ->add(
-                'status',
-                ProductStatusType::NAME,
-                [
-                    'label' => 'orob2b.product.status.label'
-                ]
-            )
+            ->add('status', ProductStatusType::NAME, ['label' => 'orob2b.product.status.label'])
             ->add(
                 'inventoryStatus',
                 'oro_enum_select',
@@ -120,13 +114,23 @@ class ProductType extends AbstractType
                 ]
             )
             ->add(
-                'unitPrecisions',
-                ProductUnitPrecisionCollectionType::NAME,
+                'primaryUnitPrecision',
+                ProductPrimaryUnitPrecisionType::NAME,
                 [
-                    'label'          => 'orob2b.product.unit_precisions.label',
+                    'label'          => 'orob2b.product.primary_unit_precision.label',
                     'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
                     'error_bubbling' => false,
                     'required'       => true,
+                ]
+            )
+            ->add(
+                'additionalUnitPrecisions',
+                ProductUnitPrecisionCollectionType::NAME,
+                [
+                    'label'          => 'orob2b.product.additional_unit_precisions.label',
+                    'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
+                    'error_bubbling' => false,
+                    'required'       => false,
                 ]
             )
             ->add(
@@ -150,8 +154,18 @@ class ProductType extends AbstractType
         $form = $event->getForm();
 
         if ($product->getId() == null) {
-            $unitPrecision = $this->provider->getDefaultProductUnitPrecision();
-            $product->addUnitPrecision($unitPrecision);
+            $form->remove('primaryUnitPrecision');
+            $form->add(
+                'primaryUnitPrecision',
+                ProductPrimaryUnitPrecisionType::NAME,
+                [
+                    'label'          => 'orob2b.product.primary_unit_precision.label',
+                    'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
+                    'error_bubbling' => false,
+                    'required'       => true,
+                    'data'           => $this->provider->getDefaultProductUnitPrecision()
+                ]
+            );
         }
         if ($product instanceof Product && $product->getHasVariants()) {
             $form

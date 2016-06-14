@@ -33,7 +33,8 @@ class SaleRequest extends AbstractRequest
             ->addOption(new Option\Verbosity())
             ->addOption(new Option\TransparentRedirect())
             ->addOption(new Option\SecureTokenIdentifier())
-            ->addOption(new Option\CreateSecureToken());
+            ->addOption(new Option\CreateSecureToken())
+            ->addOption(new Option\SilentPost());
 
         return $this;
     }

@@ -101,6 +101,11 @@ services:
             - [setTranslator, ['@translator']]
             - [setRouter, ['@router']]
 
+    orob2b_product.service.product_create_step_one_handler:
+        class: 'OroB2B\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler'
+        public: true
+        scope: request
+
     orob2b_product.storage.product_data_bag:
         class: '%session.attribute_bag.class%'
         public: false
