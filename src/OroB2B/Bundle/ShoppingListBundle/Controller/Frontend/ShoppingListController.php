@@ -22,6 +22,8 @@ use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 class ShoppingListController extends Controller
 {
     /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @Route("/{id}", name="orob2b_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
      * @ParamConverter(
      *     "shoppingList",

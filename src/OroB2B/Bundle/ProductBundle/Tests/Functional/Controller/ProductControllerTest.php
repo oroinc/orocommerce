@@ -154,6 +154,8 @@ class ProductControllerTest extends WebTestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * @depends testCreate
      * @return int
      */
