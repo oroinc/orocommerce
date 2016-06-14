@@ -136,6 +136,7 @@ orob2b:
         ui:
             duplicate: Duplicate
             save_and_duplicate: Save And Duplicate
+            continue: Continue
 
         frontend:
             index:
