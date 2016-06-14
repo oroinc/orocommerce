@@ -19,12 +19,12 @@ Selectors name  write in lower case and logical parts share a dash (**-**).
 
 ##### Acceptable
 ```
-    product-gallery-widget
+product-gallery-widget
 ```
 
 ##### Unacceptable
 ```
-    productgallerywidget, productGalleryWidget, product_gallery_widget
+productgallerywidget, productGalleryWidget, product_gallery_widget
 ```
 
 ### Selector Naming
@@ -37,8 +37,10 @@ Block identifier should match the corresponding layout block type identifier. Bl
 namespace or bundle identifier if similar blocks are provided by multiple bundles to eliminate confusion, e.g.
 
 ##### Examples:
-    product-info, shopping-cart, currency-switcher
-    order-group-totals and quote-group-totals, or even crm-quote-group-totals and commerce-quote-group-totals
+```
+product-info, shopping-cart, currency-switcher
+order-group-totals and quote-group-totals, or even crm-quote-group-totals and commerce-quote-group-totals
+```
 
 #### Element-name
 
@@ -82,11 +84,11 @@ This gives the following advantages:
 ### Simple names
 
 ```HTML
-    <div class="product">
-        <p class="product__name">Product name</p>
-        <div class="product__prices">...</div>
-        <div class="product__ifo">...</div>
-    </div>
+<div class="product">
+    <p class="product__name">Product name</p>
+    <div class="product__prices">...</div>
+    <div class="product__ifo">...</div>
+</div>
 ```
 
 The order of the attributes:
@@ -143,18 +145,18 @@ The order of the attributes:
 
 ##### Acceptable
 ```scss
-    .element {
-        // Use base color
-        color: $color;
+.element {
+    // Use base color
+    color: $color;
 
-    }
+}
 ```
 
 ##### Unacceptable
 ```scss
-     .element {
-        color: $color; /* Use base color */
-     }
+ .element {
+    color: $color; /* Use base color */
+ }
  ```
 
 #### Format
@@ -163,14 +165,14 @@ Add space before opening brace and line break after. And line break before closi
 
 ##### Acceptable
 ```scss
-    .element {
-        color: $color;
-    }
+.element {
+    color: $color;
+}
 ```
 
 ##### Unacceptable
 ```scss
-     .element{color: $color;}
+ .element{color: $color;}
  ```
 
 #### Selector delimiters
@@ -179,17 +181,17 @@ Add line break after each selector delimiter. Delimeter shouldn't have spaces be
 
 ##### Acceptable
 ```scss
-    .element1,
-    .element2 {
-         color: $color;
-    }
+.element1,
+.element2 {
+     color: $color;
+}
 ```
 
 ##### Unacceptable
 ```scss
-    .element1, .element2 {
-        color: $color;
-    }
+.element1, .element2 {
+    color: $color;
+}
 ```
 
 ## Type selectors
@@ -199,20 +201,20 @@ Avoiding unnecessary ancestor selectors is useful for performance reasons.
 
 ##### Acceptable
 ```scss
-    .element {
-        ...
-    }
+.element {
+    ...
+}
 ```
 
 ##### Unacceptable
 ```scss
-    div.element {
-        ...
-    }
+div.element {
+    ...
+}
 
-    div.#element {
-        ...
-    }
+div.#element {
+    ...
+}
 ```
 
 #### Combinator indents
@@ -221,16 +223,16 @@ Use spaces before and after combinators.
 
 ##### Acceptable
 ```scss
-    .element1 + .element2 {
-         color: $color;
-    }
+.element1 + .element2 {
+     color: $color;
+}
 ```
 
 ##### Unacceptable
 ```scss
-    .element1+.element2 {
-        color: $color;
-    }
+.element1+.element2 {
+    color: $color;
+}
 ```
 
 ### Properties line break
@@ -239,18 +241,18 @@ Use line break for each property declaration.
 
 ##### Acceptable
 ```scss
-    .element {
-         position: absolute;
-         top: 0;
-         left: 0;
-    }
+.element {
+     position: absolute;
+     top: 0;
+     left: 0;
+}
 ```
 
 ##### Unacceptable
 ```scss
-    .element {
-        position: absolute; top: 0; left: 0;
-    }
+.element {
+    position: absolute; top: 0; left: 0;
+}
 ```
 
 ### Properties colon indents
@@ -259,24 +261,24 @@ Use no space before property colon, and space after.
 
 ##### Acceptable
 ```scss
-    .element {
-        color: $color;
-    }
+.element {
+    color: $color;
+}
 ```
 
 ##### Unacceptable
 ```scss
-    .element1 {
-        color : $color;
-    }
+.element1 {
+    color : $color;
+}
 
-    .element2 {
-        color:$color;
-    }
+.element2 {
+    color:$color;
+}
 
-    .element3 {
-        color :$color;
-    }
+.element3 {
+    color :$color;
+}
 ```
 
 ### End of the selector
@@ -285,23 +287,23 @@ Each selector should be finished with new line
 
 ##### Acceptable
 ```scss
-    .element1 {
-        color: $color;
-    }
+.element1 {
+    color: $color;
+}
 
-    .element2 {
-        color: $color;
-    }
+.element2 {
+    color: $color;
+}
 ```
 
 ##### Unacceptable
 ```scss
-    .element1 {
-        color: $color;
-    }
-    .element2 {
-        color: $color;
-    }
+.element1 {
+    color: $color;
+}
+.element2 {
+    color: $color;
+}
 ```
 
 ### Shorthand
@@ -309,18 +311,18 @@ Each selector should be finished with new line
 If you use more than 2 parameters (three indents, for example), write short:
 
 ```scss
-    .element {
-        margin: 10px 0 5px;
-    }
+.element {
+    margin: 10px 0 5px;
+}
 ```
 
 If less, then:
 
 ```scss
-    .element {
-        margin-top: 10px;
-        margin-right: 2px;
-    }
+.element {
+    margin-top: 10px;
+    margin-right: 2px;
+}
 ```
 
 ### Floating values
@@ -329,16 +331,16 @@ For fractional numbers do not add zero.
 
 ##### Acceptable
 ```scss
-    .element {
-        opacity: .5;
-    }
+.element {
+    opacity: .5;
+}
 ```
 
 ##### Unacceptable
 ```scss
-    .element {
-        opacity: 0.5;
-    }
+.element {
+    opacity: 0.5;
+}
 ```
 
 ### Zero and units
@@ -347,16 +349,16 @@ Omit the units for zero value.
 
 ##### Acceptable
 ```scss
-    .element {
-        margin: 0;
-    }
+.element {
+    margin: 0;
+}
 ```
 
 ##### Unacceptable
 ```scss
-    .element {
-        margin: 0px;
-    }
+.element {
+    margin: 0px;
+}
 ```
 
 ### Border
@@ -365,16 +367,16 @@ Use 0 instead of none to specify that a style has no border.
 
 ##### Acceptable
 ```scss
-    .element {
-        border: 0;
-    }
+.element {
+    border: 0;
+}
 ```
 
 ##### Unacceptable
 ```scss
-    .element {
-       border: none;
-    }
+.element {
+   border: none;
+}
 ```
 
 ### Nesting
@@ -393,36 +395,36 @@ Exception are **pseudo elements** and **states**.
 
 ##### Acceptable
 ```scss
-    .block {
+.block {
 
-        &__element {
-
-            &--modifier {
-                ...
-            }
-        }
+    &__element {
 
         &--modifier {
             ...
         }
     }
+
+    &--modifier {
+        ...
+    }
+}
 ```
 
 ##### Unacceptable
 ```scss
-    .block {
+.block {
     ...
 
-        .block__element {
-            ...
+    .block__element {
+        ...
 
-            &.block__element--modifier {
-                // STOP!
-            }
+        &.block__element--modifier {
+            // STOP!
         }
-
-        &.block--modifier {}
     }
+
+    &.block--modifier {}
+}
 ```
 
 ### Group properties
@@ -441,56 +443,56 @@ After each group leaves behind an empty string.
 
 ##### Acceptable
 ```scss
-    // variables
-    $element-color: #000;
-    $element-font: 12px;
-    $element-line-height: 1.2;
+// variables
+$element-color: #000;
+$element-font: 12px;
+$element-line-height: 1.2;
 
-    .element {
-        // positioning
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: 10;
+.element {
+    // positioning
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
 
-        // block model
-        width: 100px;
-        height: 100px;
-        margin: 10px;
-        padding: 10px 20px;
+    // block model
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+    padding: 10px 20px;
 
-        // typography
-        font-size: $element-font;
-        line-height: $element-line-height;
-        text-align: center;
+    // typography
+    font-size: $element-font;
+    line-height: $element-line-height;
+    text-align: center;
 
-        // visualization
-        border: 10px solid #333;
-        background: red;
-        color: $element-color;
+    // visualization
+    border: 10px solid #333;
+    background: red;
+    color: $element-color;
 
-        // other
-        cursor: pointer;
-        opacity: .2;
+    // other
+    cursor: pointer;
+    opacity: .2;
 
-        // mixins
-        // grouping @includes at the end makes it easier to read the entire selector.
-        @include clearfix();
-    }
+    // mixins
+    // grouping @includes at the end makes it easier to read the entire selector.
+    @include clearfix();
+}
 ```
 
 ##### Unacceptable
 
 ```scss
-    .element {
-        text-align: center;
-        margin: 0;
-        $color: #000;
-        @include clearfix;
-        color: $color;
-        right: 0;
-        position: absolute;
-    }
+.element {
+    text-align: center;
+    margin: 0;
+    $color: #000;
+    @include clearfix;
+    color: $color;
+    right: 0;
+    position: absolute;
+}
 ```
 
 ### Use @extend directive
@@ -499,23 +501,23 @@ After each group leaves behind an empty string.
 
 ##### Examples:
 ```scss
-    .modal {
-        @extend %dialog;
+.modal {
+    @extend %dialog;
 
-        // Other modal styles
+    // Other modal styles
 
-        &__close {
-            @extend %dialog__close;
+    &__close {
+        @extend %dialog__close;
 
-            // other button styles
-        }
-
-        &__header {
-            @extend %background-gradient;
-
-            // other header styles
-        }
+        // other button styles
     }
+
+    &__header {
+        @extend %background-gradient;
+
+        // other header styles
+    }
+}
 ```
 ### Logical sense
 
@@ -525,40 +527,40 @@ Use the logical number of modifiers for the element.
 
 "Quiet classes"
 ```scss
-    %modifier {}
-    %another-modifier {}
-    %yet-another-modifier {}
+%modifier {}
+%another-modifier {}
+%yet-another-modifier {}
 
-    .block {
-        &__element {
-            &--modifier {
-                @extend %modifier;
-                @extend %another-modifier;
-                @extend %yet-another-modifier;
-            }
+.block {
+    &__element {
+        &--modifier {
+            @extend %modifier;
+            @extend %another-modifier;
+            @extend %yet-another-modifier;
         }
     }
+}
 ```
 
 ```html
-    <div class="block">
-        <div class="
-            block__element
-            block__element--modifier">
-        </div>
+<div class="block">
+    <div class="
+        block__element
+        block__element--modifier">
     </div>
+</div>
 ```
 
 ##### Unacceptable
 ```html
-    <div class="block">
-        <div class="
-            block__element
-            block__element--modifier
-            block__element--another-modifier
-            block__element--yet-another-modifier">
-        </div>
+<div class="block">
+    <div class="
+        block__element
+        block__element--modifier
+        block__element--another-modifier
+        block__element--yet-another-modifier">
     </div>
+</div>
 ```
 
 
