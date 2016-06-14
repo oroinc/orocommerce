@@ -461,6 +461,7 @@ orob2b.account:
             role.entity_plural_label: Account User Roles
             entity_plural_label: Account Users
             profile.label: Account Information
+            address.label: Address Book
             full_name.label: Name
             email.label: Email Address
             status.label: Status

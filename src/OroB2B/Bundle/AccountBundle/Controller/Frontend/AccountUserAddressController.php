@@ -14,12 +14,26 @@ use Symfony\Component\Routing\Annotation\Route;
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 
 class AccountUserAddressController extends Controller
 {
+    /**
+     * @Route("/", name="orob2b_account_frontend_account_user_address_index")
+     * @Layout(vars={"entity_class"})
+     * @AclAncestor("orob2b_account_frontend_account_user_address_view")
+     *
+     * @return array
+     */
+    public function indexAction()
+    {
+        return [
+            'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user_address.class')
+        ];
+    }
     /**
      * @Route(
      *     "/{entityId}/address-create",
