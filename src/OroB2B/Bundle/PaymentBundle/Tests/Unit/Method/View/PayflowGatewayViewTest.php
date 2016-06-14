@@ -31,13 +31,6 @@ class PayflowGatewayViewTest extends AbstractPayflowGatewayViewTest
         return Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY;
     }
 
-    /** {@inheritdoc} */
-
-    protected function getAuthForRequiredAmountKey()
-    {
-        return Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY;
-    }
-
     public function testGetOrder()
     {
         $order = '100';
@@ -55,5 +48,11 @@ class PayflowGatewayViewTest extends AbstractPayflowGatewayViewTest
     {
         $this->setConfig($this->once(), Configuration::PAYFLOW_GATEWAY_LABEL_KEY, 'testValue');
         $this->assertEquals('testValue', $this->methodView->getLabel());
+    }
+
+    public function testGetShortLabel()
+    {
+        $this->setConfig($this->once(), Configuration::PAYFLOW_GATEWAY_SHORT_LABEL_KEY, 'testValue');
+        $this->assertEquals('testValue', $this->methodView->getShortLabel());
     }
 }

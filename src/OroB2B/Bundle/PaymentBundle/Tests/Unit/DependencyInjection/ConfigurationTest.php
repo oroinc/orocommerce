@@ -57,6 +57,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'scope' => 'app'
                         ],
                         'paypal_payments_pro_label' => [
+                            'value' => Configuration::PAYPAL_PAYMENTS_PRO_LABEL,
+                            'scope' => 'app'
+                        ],
+                        'paypal_payments_pro_short_label' => [
                             'value' => Configuration::CREDIT_CARD_LABEL,
                             'scope' => 'app'
                         ],
@@ -145,6 +149,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'scope' => 'app'
                         ],
                         'payflow_gateway_label' => [
+                            'value' => Configuration::PAYFLOW_GATEWAY_LABEL,
+                            'scope' => 'app'
+                        ],
+                        'payflow_gateway_short_label' => [
                             'value' => Configuration::CREDIT_CARD_LABEL,
                             'scope' => 'app'
                         ],
@@ -232,6 +240,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'scope' => 'app'
                         ],
                         'payment_term_label' => [
+                            'value' => Configuration::PAYMENT_TERM_LABEL,
+                            'scope' => 'app'
+                        ],
+                        'payment_term_short_label' => [
                             'value' => Configuration::PAYMENT_TERM_LABEL,
                             'scope' => 'app'
                         ],

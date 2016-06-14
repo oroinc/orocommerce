@@ -163,7 +163,6 @@ class ProductType extends AbstractType
                     'data'           => $this->provider->getDefaultProductUnitPrecision()
                 ]
             );
-
         }
         if ($product instanceof Product && $product->getHasVariants()) {
             $form
