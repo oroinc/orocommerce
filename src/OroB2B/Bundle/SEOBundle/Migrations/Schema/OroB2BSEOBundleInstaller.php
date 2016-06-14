@@ -20,9 +20,7 @@ class OroB2BSEOBundleInstaller implements Installation, ExtendExtensionAwareInte
     protected $extendExtension;
 
     /**
-     * Sets the ExtendExtension
-     *
-     * @param ExtendExtension $extendExtension
+     * @inheritdoc
      */
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
@@ -38,12 +36,7 @@ class OroB2BSEOBundleInstaller implements Installation, ExtendExtensionAwareInte
     }
 
     /**
-     * Modifies the given schema to apply necessary changes of a database
-     * The given query bag can be used to apply additional SQL queries before and after schema changes
-     *
-     * @param Schema $schema
-     * @param QueryBag $queries
-     * @return void
+     * @inheritdoc
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -96,7 +89,7 @@ class OroB2BSEOBundleInstaller implements Installation, ExtendExtensionAwareInte
             $targetDetailedColumnNames,
             $targetGridColumnNames,
             [
-                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM, 'without_default' => true],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],
             ]

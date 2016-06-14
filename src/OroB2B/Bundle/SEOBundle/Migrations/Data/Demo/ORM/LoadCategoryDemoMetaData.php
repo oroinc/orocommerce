@@ -11,9 +11,7 @@ class LoadCategoryDemoMetaData extends AbstractFixture implements DependentFixtu
     use LoadDemoMetaDataTrait;
 
     /**
-     * Load data fixtures with the passed EntityManager
-     *
-     * @param ObjectManager $manager
+     * @inheritdoc
      */
     public function load(ObjectManager $manager)
     {
@@ -25,10 +23,7 @@ class LoadCategoryDemoMetaData extends AbstractFixture implements DependentFixtu
     }
 
     /**
-     * This method must return an array of fixtures classes
-     * on which the implementing class depends on
-     *
-     * @return array
+     * @inheritdoc
      */
     public function getDependencies()
     {
