@@ -140,7 +140,7 @@ The order of the attributes:
 
 #### Comments
 
-1. Prefer line comments (// in Sass-land) to block comments.
+1. Prefer line comments **//** to block comments.
 2. Prefer comments on their own line. Avoid end-of-line comments.
 
 ##### Acceptable
@@ -504,7 +504,7 @@ $element-line-height: 1.2;
 .modal {
     @extend %dialog;
 
-    // Other modal styles
+    // other modal styles
 
     &__close {
         @extend %dialog__close;
@@ -580,7 +580,7 @@ $list-offset: 10px;
 
         font-size: 14px;
 
-         @extend %transition;
+        @extend %transition;
 
         // compound class
         &-title {
@@ -592,7 +592,7 @@ $list-offset: 10px;
         }
 
         &--first {
-          padding-left: 0;
+            padding-left: 0;
         }
 
         &:hover {
