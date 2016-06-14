@@ -8,9 +8,8 @@ define(function(require) {
 
     RadioInputWidget = AbstractInputWidget.extend({
         widgetFunction: function() {
-            this.findContainer();
             this.$el.on('change', _.bind(this._handleChange, this));
-            this.getContainer().on('keydown keypress', _.bind(this._handleEnterPress, this));
+            this.container().on('keydown keypress', _.bind(this._handleEnterPress, this));
         },
 
         _handleEnterPress: function (event) {
@@ -29,12 +28,12 @@ define(function(require) {
                     .closest('label').removeClass('checked');
 
                 this.$el.prop('checked', 'checked');
-                this.getContainer().addClass('checked');
+                this.container().addClass('checked');
             }
         },
 
         findContainer: function() {
-            this.$container = this.$el.closest('label');
+            return this.$el.closest('label');
         }
     });
 

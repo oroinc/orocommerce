@@ -118,7 +118,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             [
                 [
                     'sku' => 'product.1',
-                    'unitPrecisions' => [
+                    'primaryUnitPrecision' => [
                         [
                             'testEntity' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
                             'testProperties' => [
@@ -176,7 +176,6 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                 ],
                 [
                     'sku' => 'product.1',
-                    'unitPrecisions' => [],
                     'names' => [
                         'English (United States)' => [
                             'string' => 'product.1 en_US Title',
@@ -233,8 +232,17 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             'new product, no fallback from another entity' => [
                 [
                     'sku' => 'new_sku',
-                    'unitPrecisions' => [
-                        ['testEntity' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision']
+                    'primaryUnitPrecision' => [
+                        [
+                            'testEntity' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                            'testProperties' => [
+                                'unit' => $this->getEntity(
+                                    'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                                    ['code' => 'kg']
+                                ),
+                                'precision' => 3,
+                            ]
+                        ]
                     ],
                 ],
                 function ($product) {
@@ -248,8 +256,17 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             'existing product with, id not mapped for new fallback' => [
                 [
                     'sku' => 'product.4',
-                    'unitPrecisions' => [
-                        ['testEntity' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision']
+                    'primaryUnitPrecision' => [
+                        [
+                            'testEntity' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                            'testProperties' => [
+                                'unit' => $this->getEntity(
+                                    'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                                    ['code' => 'each']
+                                ),
+                                'precision' => 0,
+                            ]
+                        ]
                     ],
                     'names' => [
                         [

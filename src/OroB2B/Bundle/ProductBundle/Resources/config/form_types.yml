@@ -37,6 +37,14 @@ services:
         tags:
             - { name: form.type, alias: orob2b_quantity }
 
+    orob2b_product.form.type.product_primary_unit_precision:
+        class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
+        public: true
+        calls:
+            - [setDataClass, ['%orob2b_product.entity.product_unit_precision.class%']]
+        tags:
+            - { name: form.type, alias: orob2b_product_primary_unit_precision }
+
     orob2b_product.form.type.product_unit_precision:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType'
         calls:

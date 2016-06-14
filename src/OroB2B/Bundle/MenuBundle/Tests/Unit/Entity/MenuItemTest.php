@@ -126,4 +126,20 @@ class MenuItemTest extends \PHPUnit_Framework_TestCase
 
         return $localized;
     }
+
+    public function testConditionGetterAndSetter()
+    {
+        $this->assertNull($this->entity->getCondition());
+
+        $this->assertSame($this->entity, $this->entity->setCondition('logged_in()'));
+        $this->assertEquals('logged_in()', $this->entity->getCondition());
+
+        $this->assertSame($this->entity, $this->entity->setCondition(null));
+        $this->assertNull($this->entity->getCondition());
+        $this->assertArrayNotHasKey('condition', $this->entity->getExtras());
+
+        $this->assertSame($this->entity, $this->entity->setCondition(null));
+        $this->assertNull($this->entity->getCondition());
+        $this->assertArrayNotHasKey('condition', $this->entity->getExtras());
+    }
 }

@@ -179,6 +179,10 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'metaTitles.English (United States).value' => '',
                     'metaTitles.Spanish.fallback' => '',
                     'metaTitles.Spanish.value' => '',
+                    'primaryUnitPrecision.unit.code' => '',
+                    'primaryUnitPrecision.precision' => '',
+                    'primaryUnitPrecision.conversionRate' => '',
+                    'primaryUnitPrecision.sell' => '',
                 ],
             ],
             'en localization' => [
@@ -249,6 +253,10 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'metaTitles.English (United States).value' => '',
                     'metaTitles.Spanish.fallback' => '',
                     'metaTitles.Spanish.value' => '',
+                    'primaryUnitPrecision.unit.code' => '',
+                    'primaryUnitPrecision.precision' => '',
+                    'primaryUnitPrecision.conversionRate' => '',
+                    'primaryUnitPrecision.sell' => '',
                 ],
             ],
             'custom localization' => [
@@ -324,6 +332,10 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'metaTitles.English (United States).value' => '',
                     'metaTitles.Spanish.fallback' => '',
                     'metaTitles.Spanish.value' => '',
+                    'primaryUnitPrecision.unit.code' => '',
+                    'primaryUnitPrecision.precision' => '',
+                    'primaryUnitPrecision.conversionRate' => '',
+                    'primaryUnitPrecision.sell' => '',
                 ],
             ],
         ];

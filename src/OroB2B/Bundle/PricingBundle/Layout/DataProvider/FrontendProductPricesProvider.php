@@ -56,17 +56,16 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
      */
     public function getData(ContextInterface $context)
     {
-        /** @var Product $product */
+        /* @var Product $product */
         $product = $context->data()->get('product');
         $productId = $product->getId();
 
         if (!array_key_exists($productId, $this->data)) {
             $priceList = $this->priceListRequestHandler->getPriceListByAccount();
 
-            /** @var ProductPriceRepository $priceRepository */
+            /* @var ProductPriceRepository $priceRepository */
             $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
-
-            $this->data[$productId] = $priceRepository->findByPriceListIdAndProductIds(
+            $prices = $priceRepository->findByPriceListIdAndProductIds(
                 $priceList->getId(),
                 [$productId],
                 true,
@@ -78,6 +77,24 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
                     'quantity' => 'ASC',
                 ]
             );
+            if (count($prices)) {
+                $unitPrecisions = current($prices)->getProduct()->getUnitPrecisions();
+
+                $unitsToSell = [];
+                foreach ($unitPrecisions as $unitPrecision) {
+                    if ($unitPrecision->isSell()) {
+                        $unitsToSell[] = $unitPrecision->getUnit();
+                    }
+                }
+
+                foreach ($prices as $key => $combinedProductPrice) {
+                    if (!in_array($combinedProductPrice->getUnit(), $unitsToSell)) {
+                        unset($prices[$key]);
+                    }
+                }
+            }
+
+            $this->data[$productId] = $prices;
         }
 
         return $this->data[$productId];

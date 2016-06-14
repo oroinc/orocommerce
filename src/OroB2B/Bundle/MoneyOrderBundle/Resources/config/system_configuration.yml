@@ -17,7 +17,18 @@ oro_system_configuration:
             type: text
             priority: 90
             options:
-                label: orob2b.money_order.system_configuration.fields.label.label
+                label: orob2b.payment.system_configuration.fields.label.label
+                tooltip: orob2b.payment.system_configuration.fields.label.tooltip
+                constraints:
+                    - NotBlank: ~
+
+        orob2b_money_order.money_order_short_label:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: orob2b.payment.system_configuration.fields.short_label.label
+                tooltip: orob2b.payment.system_configuration.fields.short_label.tooltip
                 constraints:
                     - NotBlank: ~
 
@@ -95,6 +106,7 @@ oro_system_configuration:
                                         children:
                                             - orob2b_money_order.money_order_enabled
                                             - orob2b_money_order.money_order_label
+                                            - orob2b_money_order.money_order_short_label
                                             - orob2b_money_order.money_order_sort_order
                                             - orob2b_money_order.money_order_allowed_countries
                                             - orob2b_money_order.money_order_selected_countries

@@ -56,4 +56,10 @@ class PayflowGatewayViewTest extends AbstractPayflowGatewayViewTest
         $this->setConfig($this->once(), Configuration::PAYFLOW_GATEWAY_LABEL_KEY, 'testValue');
         $this->assertEquals('testValue', $this->methodView->getLabel());
     }
+
+    public function testGetShortLabel()
+    {
+        $this->setConfig($this->once(), Configuration::PAYFLOW_GATEWAY_SHORT_LABEL_KEY, 'testValue');
+        $this->assertEquals('testValue', $this->methodView->getShortLabel());
+    }
 }

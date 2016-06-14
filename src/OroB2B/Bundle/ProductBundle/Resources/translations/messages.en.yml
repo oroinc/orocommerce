@@ -15,7 +15,10 @@ orob2b:
         status.label: Status
         owner.label: Owner
         organization.label: Organization
-        unit_precisions.label: Units of Quantity
+        primary_unit_precision.label: Unit of Quantity
+        primary_unit_precision_id.label: Primary Unit Precision Id
+        additional_unit_precisions.label: Additional Units
+        unit_precisions.label: Unit Precisions
         image.label: Image
         names.label: Name
         descriptions.label: Description
@@ -53,9 +56,16 @@ orob2b:
             product.label: Product
             unit.label: Unit
             precision.label: Precision
+            conversion_rate.label: Conversion Rate
+            sell.label: Sell
+            sell_yes.label: Yes
+            sell_not.label: No
+
             representation: "{0} {{ label }} (whole numbers)|{1} {{ label }} (fractional, %count% decimal digit)|]1,Inf[ {{ label }} (fractional, %count% decimal digits)"
+            conversion: ", %count% of {{ label }}"
             zero_representation: ""
             unit_precision_required: Please select a unit precision first...
+            of: '# of'
 
         productvariantlink:
             entity_label: Product Variant Link
