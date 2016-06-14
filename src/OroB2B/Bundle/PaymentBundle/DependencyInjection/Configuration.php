@@ -7,9 +7,9 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration as LocaleConfiguration;
 
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Currency;
 
 class Configuration implements ConfigurationInterface
 {
@@ -195,7 +195,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES => [
                     'type' => 'array',
-                    'value' => Currency::$currencies
+                    'value' => [LocaleConfiguration::DEFAULT_CURRENCY]
                 ],
 
                 // Payflow Gateway
@@ -289,7 +289,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYFLOW_GATEWAY_ALLOWED_CURRENCIES => [
                     'type' => 'array',
-                    'value' => Currency::$currencies
+                    'value' => [LocaleConfiguration::DEFAULT_CURRENCY]
                 ],
                 // Payment Term
                 self::PAYMENT_TERM_ENABLED_KEY => [
@@ -318,7 +318,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYMENT_TERM_ALLOWED_CURRENCIES => [
                     'type' => 'array',
-                    'value' => Currency::$currencies
+                    'value' => [LocaleConfiguration::DEFAULT_CURRENCY]
                 ],
             ]
         );
