@@ -62,7 +62,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onReturn($event);
 
-        $this->assertNotInstanceOf($event->getResponse(), 'Symfony\Component\HttpFoundation\RedirectResponse');
+        $this->assertNotInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $event->getResponse());
     }
 
     /**
