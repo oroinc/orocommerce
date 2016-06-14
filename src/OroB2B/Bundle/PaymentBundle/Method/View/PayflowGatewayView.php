@@ -117,6 +117,12 @@ class PayflowGatewayView implements PaymentMethodViewInterface
         return (string)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_LABEL_KEY);
     }
 
+    /** {@inheritdoc} */
+    public function getShortLabel()
+    {
+        return (string)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_SHORT_LABEL_KEY);
+    }
+
     /**
      * @return array
      */

@@ -81,9 +81,6 @@ datagrid:
                 accountUserName:
                     type: string
                     data_name: accountUserName
-                paymentMethod:
-                    type: string
-                    data_name: checkout.paymentMethod
                 poNumber:
                     type: string
                     data_name: checkout.poNumber
