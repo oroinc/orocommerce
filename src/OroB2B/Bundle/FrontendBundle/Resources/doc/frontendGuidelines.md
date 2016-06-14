@@ -24,9 +24,7 @@ Selectors name  write in lower case and logical parts share a dash (**-**).
 
 ##### Unacceptable
 ```
-    productgallerywidget
-    productGalleryWidget
-    product_gallery_widget
+    productgallerywidget, productGalleryWidget, product_gallery_widget
 ```
 
 ### Selector Naming
@@ -135,8 +133,8 @@ The order of the attributes:
 4. Continuation indent: 4 spaces
 5. The attributes in use **' '** not **" "**.
 6. Use: **{}, :, ;**.
-7. Put a space before the opening brace { in rule declarations.
-8. Put closing braces } of rule declarations on a new line.
+7. Put a space before the opening brace **{** in rule declarations.
+8. Put closing braces **}** of rule declarations on a new line.
 
 #### Comments
 
@@ -389,6 +387,7 @@ When selectors become this long, you're likely writing CSS that is:
 * not reusable;
 
 Be careful with selectors nesting. In general try to use **2 nested levels** as max.
+
 Exception are **pseudo elements** and **states**.
 
 
@@ -475,7 +474,7 @@ After each group leaves behind an empty string.
         opacity: .2;
 
         // mixins
-        // Grouping @includes at the end makes it easier to read the entire selector.
+        // grouping @includes at the end makes it easier to read the entire selector.
         @include clearfix();
     }
 ```
