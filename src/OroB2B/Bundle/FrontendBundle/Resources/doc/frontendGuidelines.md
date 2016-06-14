@@ -172,7 +172,7 @@ Add space before opening brace and line break after. And line break before closi
 
 ##### Unacceptable
 ```scss
- .element{color: $color;}
+.element{color: $color;}
  ```
 
 #### Selector delimiters
