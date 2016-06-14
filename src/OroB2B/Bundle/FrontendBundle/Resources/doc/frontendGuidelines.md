@@ -5,9 +5,10 @@ It is much easier to understand a large codebase when all the code in it is in a
 
 Our guide is divided into the following sections:
 
-* [Naming conventions](#namming-conventions)
+* [Naming conventions](#naming-conventions)
 * [HTML coding standards](#html-coding-standards)
 * [CSS coding standards](#css-coding-standards)
+* [Best practices](#best-practices)
 
 ## Naming conventions
 
@@ -16,12 +17,17 @@ This will help make code development and debugging easier and also solve some of
 Written like this, the name of the selector is clearly divided into logical parts.
 Selectors name  write in lower case and logical parts share a dash (**-**).
 
-#### Examples:
+##### Acceptable
+```
+    product-gallery-widget
+```
 
 ##### Unacceptable
+```
     productgallerywidget
-##### Acceptable
-    product-gallery-widget
+    productGalleryWidget
+    product_gallery_widget
+```
 
 ### Selector Naming
 
@@ -54,15 +60,16 @@ Modifiers are optional.
 
 The full name of a modifier is created using the scheme:
 
-* For Boolean modifiers - owner-name--mod-name
-* For key-value type modifiers - owner-name_mod-name--mod-val
+* for Boolean modifiers - owner-name--mod-name;
+* for key-value type modifiers - owner-name_mod-name--mod-val;
 
 This gives the following advantages:
 
-* The logic of naming allows you to immediately understand what exactly is a concrete class
-* Decreases the likelihood of conflict between classes
-* Each element is in the namespace
-* Components are easily transferred from project to project
+* the logic of naming allows you to immediately understand what exactly is a concrete class;
+* decreases the likelihood of conflict between classes;
+* each element is in the namespace;
+* components are easily transferred from project to project;
+
 
 ## HTML coding standards
 
@@ -86,12 +93,13 @@ This gives the following advantages:
 
 The order of the attributes:
 
-1. **id**
-2. **class**
-3. **src, href**
-4. **name, for, type**
-5. **title, alt**
-6. **data-**
+1. **id**.
+2. **class**.
+3. **src, href**.
+4. **name, for, type**.
+5. **title, alt**.
+6. **data-**.
+
 
 ## CSS coding standards
 
@@ -121,20 +129,40 @@ The order of the attributes:
 
 ### SASS Code Standards
 
-1. Indentation only spaces.
-2. Indent size: 4 spaces
-3. Continuation indent: 4 spaces
-4. The attributes in use **' '** not **" "**.
-5. Use: **{}, :, ;**.
+1. Use the **.scss** syntax.
+2. Indentation only spaces.
+3. Indent size: 4 spaces
+4. Continuation indent: 4 spaces
+5. The attributes in use **' '** not **" "**.
+6. Use: **{}, :, ;**.
+7. Put a space before the opening brace { in rule declarations.
+8. Put closing braces } of rule declarations on a new line.
+
+#### Comments
+
+1. Prefer line comments (// in Sass-land) to block comments.
+2. Prefer comments on their own line. Avoid end-of-line comments.
+
+##### Acceptable
+```scss
+    .element {
+        // Use base color
+        color: $color;
+
+    }
+```
+
+##### Unacceptable
+```scss
+     .element {
+        color: $color; /* Use base color */
+     }
+ ```
 
 #### Format
 
 Add space before opening brace and line break after. And line break before closing brace.
 
-##### Unacceptable
-```scss
-     .element{color: $color;}
- ```
 ##### Acceptable
 ```scss
     .element {
@@ -142,16 +170,15 @@ Add space before opening brace and line break after. And line break before closi
     }
 ```
 
+##### Unacceptable
+```scss
+     .element{color: $color;}
+ ```
+
 #### Selector delimiters
 
 Add line break after each selector delimiter. Delimeter shouldn't have spaces before and after.
 
-##### Unacceptable
-```scss
-    .element1, .element2 {
-        color: $color;
-    }
-```
 ##### Acceptable
 ```scss
     .element1,
@@ -160,24 +187,32 @@ Add line break after each selector delimiter. Delimeter shouldn't have spaces be
     }
 ```
 
+##### Unacceptable
+```scss
+    .element1, .element2 {
+        color: $color;
+    }
+```
+
 ## Type selectors
 
 Unless necessary (for example with helper classes), do not use element names in conjunction with IDs or classes.
 Avoiding unnecessary ancestor selectors is useful for performance reasons.
 
-##### Unacceptable
+##### Acceptable
 ```scss
-    div.element1 {
-        ...
-    }
-
-    div.#element1 {
+    .element {
         ...
     }
 ```
-##### Acceptable
+
+##### Unacceptable
 ```scss
-    .element1 {
+    div.element {
+        ...
+    }
+
+    div.#element {
         ...
     }
 ```
@@ -186,12 +221,6 @@ Avoiding unnecessary ancestor selectors is useful for performance reasons.
 
 Use spaces before and after combinators.
 
-##### Unacceptable
-```scss
-    .element1+.element2 {
-        color: $color;
-    }
-```
 ##### Acceptable
 ```scss
     .element1 + .element2 {
@@ -199,28 +228,43 @@ Use spaces before and after combinators.
     }
 ```
 
+##### Unacceptable
+```scss
+    .element1+.element2 {
+        color: $color;
+    }
+```
+
 ### Properties line break
 
 Use line break for each property declaration.
 
-##### Unacceptable
-```scss
-    .element {
-        positions: absolute; top: 0; left: 0;
-    }
-```
 ##### Acceptable
 ```scss
     .element {
-         positions: absolute;
+         position: absolute;
          top: 0;
          left: 0;
     }
 ```
 
+##### Unacceptable
+```scss
+    .element {
+        position: absolute; top: 0; left: 0;
+    }
+```
+
 ### Properties colon indents
 
-UUse no space before property colon, and space after.
+Use no space before property colon, and space after.
+
+##### Acceptable
+```scss
+    .element {
+        color: $color;
+    }
+```
 
 ##### Unacceptable
 ```scss
@@ -236,35 +280,29 @@ UUse no space before property colon, and space after.
         color :$color;
     }
 ```
-##### Acceptable
-```scss
-    .element {
-         color: $color;
-    }
-```
 
 ### End of the selector
 
 Each selector should be finished with new line
 
-##### Unacceptable
-```scss
-    .element1 {
-        color : $color;
-    }
-
-    .element2 {
-        color:$color;
-    }
-```
 ##### Acceptable
 ```scss
     .element1 {
-        color : $color;
+        color: $color;
     }
 
     .element2 {
-        color:$color;
+        color: $color;
+    }
+```
+
+##### Unacceptable
+```scss
+    .element1 {
+        color: $color;
+    }
+    .element2 {
+        color: $color;
     }
 ```
 
@@ -291,17 +329,17 @@ If less, then:
 
 For fractional numbers do not add zero.
 
+##### Acceptable
+```scss
+    .element {
+        opacity: .5;
+    }
+```
 
 ##### Unacceptable
 ```scss
-    .element2 {
+    .element {
         opacity: 0.5;
-    }
-```
-##### Acceptable
-```scss
-    .element1 {
-        opacity: .5;
     }
 ```
 
@@ -309,40 +347,51 @@ For fractional numbers do not add zero.
 
 Omit the units for zero value.
 
+##### Acceptable
+```scss
+    .element {
+        margin: 0;
+    }
+```
+
 ##### Unacceptable
 ```scss
-    .element2 {
+    .element {
         margin: 0px;
     }
 ```
+
+### Border
+
+Use 0 instead of none to specify that a style has no border.
+
 ##### Acceptable
 ```scss
-    .element1 {
-        margin: 0;
+    .element {
+        border: 0;
+    }
+```
+
+##### Unacceptable
+```scss
+    .element {
+       border: none;
     }
 ```
 
 ### Nesting
 
-Be careful with selectors nesting. In general try to use 2 nested levels as max.
-Exception are pseudo elements and states
 
-##### Unacceptable
-```scss
-    .block {
-    ...
+When selectors become this long, you're likely writing CSS that is:
 
-        .block__element {
-            ...
+* strongly coupled to the HTML;
+* overly specific;
+* not reusable;
 
-            &.block__element--modifier {
-                ...
-            }
-        }
+Be careful with selectors nesting. In general try to use **2 nested levels** as max.
+Exception are **pseudo elements** and **states**.
 
-        &.block--modifier {}
-    }
-```
+
 ##### Acceptable
 ```scss
     .block {
@@ -360,33 +409,36 @@ Exception are pseudo elements and states
     }
 ```
 
+##### Unacceptable
+```scss
+    .block {
+    ...
+
+        .block__element {
+            ...
+
+            &.block__element--modifier {
+                // STOP!
+            }
+        }
+
+        &.block--modifier {}
+    }
+```
+
 ### Group properties
 
 Are grouped in the following order:
 
 1. variables,
-2. mixins,
-3. positioning,
-4. block model,
-5. typography,
-6. visualization,
-7. other (animation, opacity).
+2. positioning,
+3. block model,
+4. typography,
+5. visualization,
+6. other (animation, opacity).
+7. mixins,
 
 After each group leaves behind an empty string.
-
-##### Unacceptable
-
-```scss
-    .element {
-        text-align: center;
-        magrin: 0;
-        $color: #000;
-        @include clearfix;
-        color: $color;
-        right: 0;
-        position: absolute;
-    }
-```
 
 ##### Acceptable
 ```scss
@@ -396,9 +448,6 @@ After each group leaves behind an empty string.
     $element-line-height: 1.2;
 
     .element {
-        // mixins
-        @include clearfix;
-
         // positioning
         position: absolute;
         top: 0;
@@ -424,48 +473,55 @@ After each group leaves behind an empty string.
         // other
         cursor: pointer;
         opacity: .2;
+
+        // mixins
+        // Grouping @includes at the end makes it easier to read the entire selector.
+        @include clearfix();
     }
 ```
 
-### Use @extend
+##### Unacceptable
 
-**use @extend-only selector that is a single class**
+```scss
+    .element {
+        text-align: center;
+        margin: 0;
+        $color: #000;
+        @include clearfix;
+        color: $color;
+        right: 0;
+        position: absolute;
+    }
+```
 
-#### Examples:
+### Use @extend directive
+
+**use @extend only selector that is a single class**.
+
+##### Examples:
 ```scss
     .modal {
         @extend %dialog;
 
         // Other modal styles
+
+        &__close {
+            @extend %dialog__close;
+
+            // other button styles
         }
 
-    &__close {
-        @extend %dialog__close;
+        &__header {
+            @extend %background-gradient;
 
-        // button other styles
+            // other header styles
         }
-
-    &__header {
-        @extend %background-gradient;
-
-        // header other styles
-        }
+    }
 ```
 ### Logical sense
 
 Use the logical number of modifiers for the element.
 
-##### Unacceptable
-```html
-    <div class="block">
-        <div class="
-            block__element
-            block__element--modifier
-            block__element--another-modifier
-            block__element--yet-another-modifier">
-        </div>
-    </div>
-```
 ##### Acceptable
 
 "Quiet classes"
@@ -494,7 +550,20 @@ Use the logical number of modifiers for the element.
     </div>
 ```
 
-### best practices
+##### Unacceptable
+```html
+    <div class="block">
+        <div class="
+            block__element
+            block__element--modifier
+            block__element--another-modifier
+            block__element--yet-another-modifier">
+        </div>
+    </div>
+```
+
+
+## Best practices
 
 ```scss
 $list-font-title: 'Tahoma';
@@ -504,13 +573,13 @@ $list-offset: 10px;
     @include clearfix;
 
     &__item {
-        @extend %transition;
-
         float: left;
         width: 25%;
         padding-left: $list-offset * 2;
 
         font-size: 14px;
+
+         @extend %transition;
 
         // compound class
         &-title {
