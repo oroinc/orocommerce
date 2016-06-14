@@ -467,6 +467,10 @@ orob2b.account:
             status.label: Status
             status_active.label: Active
             status_inactive.label: Inactive
+        account_user_address_book:
+            account_addresses:      'Company Addresses'
+            account_user_addresses: 'My Addresses'
+            create.label:           'Add Company Address'
         title:
             account_user_role.create: Create Account User Role
             account_user_role.edit: Edit Account User Role
@@ -487,6 +491,7 @@ orob2b.account:
             account_user.user_profile: 'User profile'
             account_user.my_profile: 'My profile'
             account_user.address_book: 'Address book'
+
         account_user_link.text: '< Back to Account User List'
         action:
             back.label: "< Back"
