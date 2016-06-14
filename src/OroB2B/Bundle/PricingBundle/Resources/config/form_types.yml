@@ -127,22 +127,3 @@ services:
         tags:
             - { name: form.type, alias: orob2b_pricing_product_price_unit_selector }
 
-    orob2b_pricing.form.type.enabled_currency_selection:
-       class: OroB2B\Bundle\PricingBundle\Form\Type\EnabledCurrencySelectionType
-       public: true
-       arguments:
-           - '@oro_config.manager'
-           - '@oro_locale.settings'
-       tags:
-           - { name: form.type, alias: orob2b_pricing_enabled_currency_selection }
-
-    orob2b_pricing.form.type.default_currency_selection:
-       class: OroB2B\Bundle\PricingBundle\Form\Type\DefaultCurrencySelectionType
-       public: true
-       arguments:
-           - '@oro_config.manager'
-           - '@oro_locale.settings'
-           - "@translator"
-           - "@request_stack"
-       tags:
-           - { name: form.type, alias: orob2b_pricing_default_currency_selection }

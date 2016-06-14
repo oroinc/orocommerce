@@ -95,4 +95,10 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
         $this->setConfig($this->once(), Configuration::PAYMENT_TERM_LABEL_KEY, 'testValue');
         $this->assertEquals('testValue', $this->methodView->getLabel());
     }
+
+    public function testGetShortLabel()
+    {
+        $this->setConfig($this->once(), Configuration::PAYMENT_TERM_SHORT_LABEL_KEY, 'testValue');
+        $this->assertEquals('testValue', $this->methodView->getShortLabel());
+    }
 }

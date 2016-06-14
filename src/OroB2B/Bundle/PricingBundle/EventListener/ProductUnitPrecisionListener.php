@@ -34,19 +34,19 @@ class ProductUnitPrecisionListener
         $entity = $event->getEntity();
 
         if ($entity instanceof ProductUnitPrecision) {
-            $args = [
-                'unit' => $entity->getUnit(),
-                'product' => $entity->getProduct()
-            ];
-
+            $product = $entity->getProduct();
+            $unit = $entity->getUnit();
+            // prices are already removed using cascade delete operation
+            if (!$product->getId()) {
+                return;
+            }
+            $args = ['unit' => $product, 'product' => $unit];
             $this->eventDispatcher
                 ->dispatch(ProductPricesRemoveBefore::NAME, new ProductPricesRemoveBefore($args));
-
+            
             /** @var ProductPriceRepository $repository */
-            $repository = $event->getEntityManager()
-                ->getRepository($this->productPriceClass);
-            $repository->deleteByProductUnit($entity->getProduct(), $entity->getUnit());
-
+            $repository = $event->getEntityManager()->getRepository($this->productPriceClass);
+            $repository->deleteByProductUnit($product, $unit);
             $this->eventDispatcher
                 ->dispatch(ProductPricesRemoveAfter::NAME, new ProductPricesRemoveAfter($args));
         }
