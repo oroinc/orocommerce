@@ -22,7 +22,7 @@ class ShoppingListTestPage extends AbstractPage
      * @var
      */
     private $inlineEditInput =
-        "//*[@data-bound-component='orob2bshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component']//input";
+        "//*[@id='title-inline-editable']//input";
 
     /**
      * @var string

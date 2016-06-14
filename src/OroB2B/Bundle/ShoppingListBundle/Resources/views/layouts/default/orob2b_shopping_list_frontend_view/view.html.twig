@@ -20,7 +20,7 @@
 
 {% block _shopping_list_title_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-
+    {% set attr = attr|merge({id: "title-inline-editable"}) %}
     <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
         module: 'orob2bshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component',
         options: {
