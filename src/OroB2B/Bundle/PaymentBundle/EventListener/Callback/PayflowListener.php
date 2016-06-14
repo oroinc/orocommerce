@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PaymentBundle\EventListener\Callback;
 
+use Psr\Log\LoggerAwareTrait;
+
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
@@ -13,6 +15,8 @@ use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
 
 class PayflowListener
 {
+    use LoggerAwareTrait;
+    
     /** @var Session */
     protected $session;
 
@@ -64,6 +68,10 @@ class PayflowListener
                 ->execute(PayflowGateway::COMPLETE, $paymentTransaction);
             $event->markSuccessful();
         } catch (\InvalidArgumentException $e) {
+            if ($this->logger) {
+                // do not expose sensitive data in context
+                $this->logger->error($e->getMessage(), []);
+            }
         }
     }
 }

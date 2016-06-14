@@ -56,6 +56,15 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertResponses($expectedResponse, $event->getResponse());
     }
 
+    public function testOnReturnWithoutTransaction()
+    {
+        $event = new CallbackReturnEvent();
+
+        $this->listener->onReturn($event);
+
+        $this->assertNotInstanceOf($event->getResponse(), 'Symfony\Component\HttpFoundation\RedirectResponse');
+    }
+
     /**
      * @return array
      */

@@ -396,7 +396,6 @@ class PayflowGateway implements PaymentMethodInterface
             ->setActive($response->isSuccessful())
             ->setSuccessful($response->isSuccessful());
 
-
         if ($paymentTransaction->getAction() === PaymentMethodInterface::CHARGE) {
             $paymentTransaction->setActive(false);
         }

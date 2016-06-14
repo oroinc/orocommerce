@@ -9,6 +9,8 @@ services:
         arguments:
             - '@session'
             - '@orob2b_payment.payment_method.registry'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow_gateway, method: onError }
             - { name: kernel.event_listener, event: orob2b_payment.callback.notify.payflow_gateway, method: onNotify }

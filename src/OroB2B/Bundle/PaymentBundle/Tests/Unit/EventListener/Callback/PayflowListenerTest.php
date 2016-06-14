@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\EventListener\Callback;
 
+use Psr\Log\LoggerInterface;
+
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use OroB2B\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\EventListener\Callback\PayflowListener;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
@@ -25,6 +26,9 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentMethodRegistry;
 
+    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
+    protected $logger;
+
     protected function setUp()
     {
         $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
@@ -35,7 +39,10 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->logger = $this->getMock('Psr\Log\LoggerInterface');
+
         $this->listener = new PayflowListener($this->session, $this->paymentMethodRegistry);
+        $this->listener->setLogger($this->logger);
     }
 
     protected function tearDown()
@@ -72,6 +79,38 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ['RESULT' => ResponseStatusMap::APPROVED, 'existing' => 'response'],
             $paymentTransaction->getResponse()
         );
+    }
+
+    public function testOnNotifyExecuteFailed()
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setAction('action')
+            ->setPaymentMethod('payment_method')
+            ->setResponse(['existing' => 'response']);
+
+        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod->expects($this->once())
+            ->method('execute')
+            ->willThrowException(new \InvalidArgumentException());
+
+        $this->paymentMethodRegistry->expects($this->once())
+            ->method('getPaymentMethod')
+            ->with($paymentTransaction->getPaymentMethod())
+            ->willReturn($paymentMethod);
+
+        $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
+        $event->setPaymentTransaction($paymentTransaction);
+
+        $this->logger->expects($this->once())->method('error')->with(
+            $this->isType('string'),
+            $this->logicalAnd(
+                $this->isType('array'),
+                $this->isEmpty()
+            )
+        );
+
+        $this->listener->onNotify($event);
     }
 
     public function testOnNotifyTransactionWithReference()
