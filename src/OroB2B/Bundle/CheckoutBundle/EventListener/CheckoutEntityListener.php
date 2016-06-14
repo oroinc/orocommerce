@@ -219,6 +219,11 @@ class CheckoutEntityListener
      */
     protected function getWorkflowName()
     {
+        //todo fix in scope of issue BAP-10825
+        throw new \RuntimeException(
+            'TODO. Implement. getApplicableWorkflowByEntityClass was removed'
+        );
+
         return $this->workflowManager->getApplicableWorkflowByEntityClass($this->getCheckoutClassName());
     }
 
