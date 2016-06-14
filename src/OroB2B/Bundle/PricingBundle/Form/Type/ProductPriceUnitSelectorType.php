@@ -32,15 +32,24 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
             return parent::getProductUnits($form, $product);
         }
         $productForm = $collectionForm->getParent();
-        if (!$productForm || !$productForm->has('unitPrecisions')) {
+        if (!$productForm ||
+            !$productForm->has('primaryUnitPrecision') ||
+            !$productForm->has('additionalUnitPrecisions')) {
             return parent::getProductUnits($form, $product);
         }
 
-        /** @var ProductUnitPrecision[] $unitPrecisions */
-        $unitPrecisions = $productForm->get('unitPrecisions')->getData();
+        /**
+         * @var ProductUnitPrecision $primaryUnitPrecision
+         * @var ProductUnitPrecision[] $additionalUnitPrecisions
+         */
+        $primaryUnitPrecision = $productForm->get('primaryUnitPrecision')->getData();
+        $additionalUnitPrecisions = $productForm->get('additionalUnitPrecisions')->getData();
         $units = [];
-        if ($unitPrecisions) {
-            foreach ($unitPrecisions as $precision) {
+        if ($primaryUnitPrecision) {
+            $units[] = $primaryUnitPrecision->getUnit();
+        }
+        if ($additionalUnitPrecisions) {
+            foreach ($additionalUnitPrecisions as $precision) {
                 $units[] = $precision->getUnit();
             }
         }

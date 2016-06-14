@@ -12,21 +12,42 @@
                 'orob2b.product.image.label'|trans,
                 oro_image_view(product, product.image, null, 'image')
             ) }}
+            {% set primaryUnitPrecisionElement %}
+                {{ 'orob2b.product.productunitprecision.representation'|transchoice(
+                product.primaryUnitPrecision.precision,
+                {
+                    '{{ label }}': ('orob2b.product_unit.'~ product.primaryUnitPrecision.unit.code ~'.label.full')|trans
+                }
+                ) }}
+            {% endset %}
+            {{ UI.renderHtmlProperty('orob2b.product.primary_unit_precision.label'|trans, primaryUnitPrecisionElement )}}
 
-            {% if product.unitPrecisions.count %}
-                {% set productUnitPrecisions = [] %}
-                {% for unitPrecision in product.unitPrecisions %}
-                    {% set unitPrecisionElement %}
-                        {{ 'orob2b.product.productunitprecision.representation'|transchoice(
-                            unitPrecision.precision,
-                            {
-                                '{{ label }}': ('orob2b.product_unit.'~ unitPrecision.unit.code ~'.label.full')|trans
-                            }
-                        ) }}
-                    {% endset %}
-                    {% set productUnitPrecisions = productUnitPrecisions|merge([unitPrecisionElement]) %}
+            {% set productUnitPrecisions = [] %}
+
+            {% if product.additionalUnitPrecisions.count %}
+                {% set titles = ['orob2b.product.productunitprecision.unit.label'|trans,
+                'orob2b.product.productunitprecision.precision.label'|trans,
+                'orob2b.product.productunitprecision.of'|trans ~ ' ' ~('orob2b.product_unit.'~ product.primaryUnitPrecision.unit.code ~'.label.full')|trans,
+                'orob2b.product.productunitprecision.sell.label'|trans]
+                %}
+                {% set rows = [] %}
+                {% for unitPrecision in product.additionalUnitPrecisions %}
+                    {% set sell = unitPrecision.sell ?
+                        'orob2b.product.productunitprecision.sell_yes.label'|trans
+                        :
+                        'orob2b.product.productunitprecision.sell_not.label'|trans
+                    %}
+                    {% set row = [('orob2b.product_unit.'~ unitPrecision.unit.code ~'.label.full')|trans,
+                                    unitPrecision.precision,
+                                    unitPrecision.conversionRate,
+                                    sell]
+                    %}
+                    {% set rows = rows|merge([row]) %}
                 {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.product.unit_precisions.label'|trans, UI.renderList(productUnitPrecisions)) }}
+                {{ UI.renderHtmlProperty(
+                    'orob2b.product.additional_unit_precisions.label'|trans,
+                     UI.renderTable(titles,rows,"grid table-hover table table-bordered unit-table"))
+                 }}
             {% endif %}
         </div>
         <div class="responsive-block">

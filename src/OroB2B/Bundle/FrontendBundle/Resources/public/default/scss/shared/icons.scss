@@ -33,6 +33,10 @@
   font-family: 'Roboto', 'Helvetica', Arial, sans-serif;
 }
 
+.icon-bars:before {
+  content: "\f03a";
+}
+
 [class^="cf-"], [class*=" cf-"] {
   display: inline-block;
   vertical-align: middle;

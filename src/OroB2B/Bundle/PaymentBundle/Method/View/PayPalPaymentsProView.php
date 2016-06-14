@@ -26,6 +26,12 @@ class PayPalPaymentsProView extends PayflowGatewayView
     }
 
     /** {@inheritdoc} */
+    public function getShortLabel()
+    {
+        return (string)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_SHORT_LABEL_KEY);
+    }
+
+    /** {@inheritdoc} */
     public function getAllowedCreditCards()
     {
         return (array)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_CC_TYPES_KEY);

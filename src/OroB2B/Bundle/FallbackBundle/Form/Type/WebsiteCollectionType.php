@@ -11,8 +11,11 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
+use Oro\Bundle\LocaleBundle\Form\Type\FallbackValueType;
+use Oro\Bundle\LocaleBundle\Model\FallbackType;
+
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 
 class WebsiteCollectionType extends AbstractType
 {

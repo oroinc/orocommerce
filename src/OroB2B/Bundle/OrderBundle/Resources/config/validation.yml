@@ -73,6 +73,9 @@ OroB2B\Bundle\OrderBundle\Entity\OrderAddress:
         street:
             - NotBlank:
                 groups: [ Frontend ]
+        city:
+            - NotBlank:
+                groups: [ Frontend ]
         postalCode:
             - NotBlank:
                 groups: [ Frontend ]

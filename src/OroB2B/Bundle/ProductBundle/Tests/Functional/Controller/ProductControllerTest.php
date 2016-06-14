@@ -4,13 +4,12 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
-use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -77,9 +76,11 @@ class ProductControllerTest extends WebTestCase
         $formValues['orob2b_product']['names']['values']['default'] = self::DEFAULT_NAME;
         $formValues['orob2b_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
         $formValues['orob2b_product']['shortDescriptions']['values']['default'] = self::DEFAULT_SHORT_DESCRIPTION;
-        $formValues['orob2b_product']['unitPrecisions'][] = [
+        $formValues['orob2b_product']['additionalUnitPrecisions'][] = [
             'unit' => self::FIRST_UNIT_CODE,
             'precision' => self::FIRST_UNIT_PRECISION,
+            'conversionRate' => 10,
+            'sell' => true,
         ];
 
         $this->client->followRedirects(true);
@@ -104,8 +105,8 @@ class ProductControllerTest extends WebTestCase
     {
         $product = $this->getProductDataBySku(self::TEST_SKU);
         $id = $product->getId();
-        $locale = $this->getLocale();
-        $localizedName = $this->getLocalizedName($product, $locale);
+        $localization = $this->getLocalization();
+        $localizedName = $this->getLocalizedName($product, $localization);
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
@@ -120,31 +121,33 @@ class ProductControllerTest extends WebTestCase
                 'owner' => $this->getBusinessUnitId(),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'status' => Product::STATUS_ENABLED,
-                'unitPrecisions' => [
-                    ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
+                'primaryUnitPrecision' => [
+                    'unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION
+                ],
+                'additionalUnitPrecisions' => [
                     ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
                     ['unit' => self::THIRD_UNIT_CODE, 'precision' => self::THIRD_UNIT_PRECISION]
                 ],
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()],
+                    'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'descriptions' => [
                     'values' => [
                         'default' => self::DEFAULT_DESCRIPTION,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()],
+                    'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'shortDescriptions' => [
                     'values' => [
                         'default' => self::DEFAULT_SHORT_DESCRIPTION,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()],
+                    'ids' => [$localization->getId() => $localizedName->getId()],
                 ]
             ],
         ];
@@ -157,32 +160,32 @@ class ProductControllerTest extends WebTestCase
         // Check product unit precisions
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
-        $actualUnitPrecisions = [
+        $actualAdditionalUnitPrecisions = [
             [
-                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][0][unit]"] :selected')->html(),
-                'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][0][precision]"]')
+                'unit' => $crawler
+                    ->filter('select[name="orob2b_product[additionalUnitPrecisions][0][unit]"] :selected')
+                    ->html(),
+                'precision' => $crawler
+                    ->filter('input[name="orob2b_product[additionalUnitPrecisions][0][precision]"]')
                     ->extract('value')[0],
             ],
             [
-                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][1][unit]"] :selected')->html(),
-                'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][1][precision]"]')
-                    ->extract('value')[0],
-            ],
-            [
-                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][2][unit]"] :selected')->html(),
-                'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][2][precision]"]')
+                'unit' => $crawler
+                    ->filter('select[name="orob2b_product[additionalUnitPrecisions][1][unit]"] :selected')
+                    ->html(),
+                'precision' => $crawler
+                    ->filter('input[name="orob2b_product[additionalUnitPrecisions][1][precision]"]')
                     ->extract('value')[0],
             ]
         ];
-        $expectedUnitPrecisions = [
-            ['unit' => self::FIRST_UNIT_FULL_NAME, 'precision' => self::FIRST_UNIT_PRECISION],
+        $expectedAdditionalUnitPrecisions = [
             ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION],
             ['unit' => self::THIRD_UNIT_FULL_NAME, 'precision' => self::THIRD_UNIT_PRECISION],
         ];
 
         $this->assertEquals(
-            $this->sortUnitPrecisions($expectedUnitPrecisions),
-            $this->sortUnitPrecisions($actualUnitPrecisions)
+            $this->sortUnitPrecisions($expectedAdditionalUnitPrecisions),
+            $this->sortUnitPrecisions($actualAdditionalUnitPrecisions)
         );
 
         return $id;
@@ -206,7 +209,6 @@ class ProductControllerTest extends WebTestCase
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_STATUS, $html);
-        $this->assertProductPrecision($id, self::FIRST_UNIT_CODE, self::FIRST_UNIT_PRECISION);
         $this->assertProductPrecision($id, self::SECOND_UNIT_CODE, self::SECOND_UNIT_PRECISION);
         $this->assertProductPrecision($id, self::THIRD_UNIT_CODE, self::THIRD_UNIT_PRECISION);
     }
@@ -241,17 +243,11 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(self::STATUS, $html);
 
         $this->assertContains(
-            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
+            $this->createPrimaryUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
             $html
         );
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
-            $html
-        );
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION),
-            $html
-        );
+        $this->assertContainsAdditionalUnitPrecision(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION, $html);
+        $this->assertContainsAdditionalUnitPrecision(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION, $html);
 
         $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
@@ -267,8 +263,8 @@ class ProductControllerTest extends WebTestCase
     {
         $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
         $id = $product->getId();
-        $locale = $this->getLocale();
-        $localizedName = $this->getLocalizedName($product, $locale);
+        $localization = $this->getLocalization();
+        $localizedName = $this->getLocalizedName($product, $localization);
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
@@ -283,27 +279,28 @@ class ProductControllerTest extends WebTestCase
                 'owner' => $this->getBusinessUnitId(),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'status' => Product::STATUS_ENABLED,
-                'unitPrecisions' => $form->getPhpValues()['orob2b_product']['unitPrecisions'],
+                'primaryUnitPrecision' => $form->getPhpValues()['orob2b_product']['primaryUnitPrecision'],
+                'additionalUnitPrecisions' => $form->getPhpValues()['orob2b_product']['additionalUnitPrecisions'],
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()],
+                    'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'descriptions' => [
                     'values' => [
                         'default' => self::DEFAULT_DESCRIPTION,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()],
+                    'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'shortDescriptions' => [
                     'values' => [
                         'default' => self::DEFAULT_SHORT_DESCRIPTION,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()],
+                    'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
             ],
         ];
@@ -324,17 +321,11 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(self::STATUS, $html);
 
         $this->assertContains(
-            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
+            $this->createPrimaryUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
             $html
         );
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
-            $html
-        );
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION),
-            $html
-        );
+        $this->assertContainsAdditionalUnitPrecision(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION, $html);
+        $this->assertContainsAdditionalUnitPrecision(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION, $html);
 
         $product = $this->getProductDataBySku(self::UPDATED_SKU);
 
@@ -429,7 +420,7 @@ class ProductControllerTest extends WebTestCase
      * @param int $precision
      * @return string
      */
-    private function createUnitPrecisionString($name, $precision)
+    private function createPrimaryUnitPrecisionString($name, $precision)
     {
         if ($precision == 0) {
             return sprintf('%s (whole numbers)', $name);
@@ -441,32 +432,44 @@ class ProductControllerTest extends WebTestCase
     }
 
     /**
-     * @return Locale
+     * @param string $code
+     * @param int $precision
+     * @param string $html
+     * @return string
      */
-    protected function getLocale()
+    private function assertContainsAdditionalUnitPrecision($code, $precision, $html)
     {
-        $locale = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BWebsiteBundle:Locale')
-            ->getRepository('OroB2BWebsiteBundle:Locale')
+        $this->assertContains(sprintf("<td>%s</td>", $code), $html);
+        $this->assertContains(sprintf("<td>%d</td>", $precision), $html);
+    }
+
+    /**
+     * @return Localization
+     */
+    protected function getLocalization()
+    {
+        $localization = $this->getContainer()->get('doctrine')->getManagerForClass('OroLocaleBundle:Localization')
+            ->getRepository('OroLocaleBundle:Localization')
             ->findOneBy([]);
 
-        if (!$locale) {
-            throw new \LogicException('At least one locale must be defined');
+        if (!$localization) {
+            throw new \LogicException('At least one localization must be defined');
         }
 
-        return $locale;
+        return $localization;
     }
 
     /**
      * @param Product $product
-     * @param Locale $locale
+     * @param Localization $localization
      * @return LocalizedFallbackValue
      */
-    protected function getLocalizedName(Product $product, Locale $locale)
+    protected function getLocalizedName(Product $product, Localization $localization)
     {
         $localizedName = null;
         foreach ($product->getNames() as $name) {
-            $nameLocale = $name->getLocale();
-            if ($nameLocale && $nameLocale->getId() === $locale->getId()) {
+            $nameLocalization = $name->getLocalization();
+            if ($nameLocalization && $nameLocalization->getId() === $localization->getId()) {
                 $localizedName = $name;
                 break;
             }
@@ -493,7 +496,7 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertEquals($expectedPrecision, $productUnitPrecision->getPrecision());
     }
-    
+
     /**
      * checking if default product unit field is added and filled
      *
@@ -509,11 +512,11 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertEquals(
             $expectedDefaultProductUnit,
-            $formValues['orob2b_product[unitPrecisions][0][unit]']
+            $formValues['orob2b_product[primaryUnitPrecision][unit]']
         );
         $this->assertEquals(
             $expectedDefaultProductUnitPrecision,
-            $formValues['orob2b_product[unitPrecisions][0][precision]']
+            $formValues['orob2b_product[primaryUnitPrecision][precision]']
         );
     }
 }

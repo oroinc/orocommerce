@@ -3,7 +3,7 @@ services:
         abstract: true
         parent: oro_layout.block_type.abstract_configurable
         calls:
-            - [setOptions, [{transitionData: {required: true}, checkout: {required: true}}]]
+            - [setOptionsConfig, [{transitionData: {required: true}, checkout: {required: true}}]]
 
     orob2b_checkout.layout.block.type.transition_button.back:
         parent: orob2b_checkout.layout.block.type.abstract_transition_button
