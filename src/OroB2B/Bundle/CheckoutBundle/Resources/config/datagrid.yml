@@ -26,34 +26,43 @@ datagrid:
             createdAt:
                 label: orob2b.checkout.created_at.label
                 frontend_type: datetime
+                order: 3
             updatedAt:
                 label: orob2b.checkout.updated_at.label
                 frontend_type: datetime
+                order: 4
             accountUserName:
                 label: orob2b.checkout.ordered_by.label
+                order: 0
             paymentMethod:
                 label: orob2b.checkout.payment_method.label
                 type: twig
                 frontend_type: html
                 template: OroB2BCheckoutBundle:Checkout:Datagrid/paymentMethod.html.twig
+                order: 5
             poNumber:
                 label: orob2b.checkout.po_number.label
                 renderable: false
+                order: 6
             shipUntil:
                 label: orob2b.checkout.ship_until.label
                 frontend_type: date
                 renderable: false
+                order: 7
             shippingCost:
                 label: orob2b.checkout.shipping_cost.label
                 type: twig
                 frontend_type: html
                 template: OroB2BCheckoutBundle:Checkout:Datagrid/shippingCost.html.twig
                 renderable: false
+                order: 8
             customerNotes:
                 label: orob2b.checkout.customer_notes.label
                 renderable: false
+                order: 10
             itemsCount:
                 label: orob2b.checkout.line_items_count.label
+                order: 1
         sorters:
             columns:
                 createdAt:
