@@ -53,3 +53,6 @@ orob2b:
                 orob2b_warehouse.detailed_inventory_levels: "Detailed inventory levels"
                 orob2b_product.inventory_status_only_export_template: "Inventory statuses only"
                 orob2b_warehouse.inventory_level_export_template: "Detailed inventory levels"
+        import:
+            error:
+                inventory_status: Multiple products found having different Inventory Status

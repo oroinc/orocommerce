@@ -13,9 +13,10 @@ use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class WarehouseInventoryLevelDenormalizer implements DenormalizerInterface
 {
-    /* @var ObjectManager */
+    /** @var ObjectManager $entityManager */
     protected $entityManager;
 
+    /** @var integer $warehouseCount */
     protected $warehouseCount;
 
     /**
@@ -45,8 +46,7 @@ class WarehouseInventoryLevelDenormalizer implements DenormalizerInterface
 
         $productUnitPrecision->setProduct($product);
 
-        if (isset($data['Inventory Status'])) {
-            //TODO: set inventory status ->  If there are multiple rows with the same product - the provided values should match (or value is provided once for a product, and is empty in other rows).
+        if (array_key_exists('Inventory Status', $data)) {
             $product->setInventoryStatus($data['Inventory Status']);
         }
 
@@ -58,7 +58,7 @@ class WarehouseInventoryLevelDenormalizer implements DenormalizerInterface
         //TODO: if count(warehouse) = 0 => error
         if ($this->isWarehouseRequired($data)) {
             if (!(array_key_exists('Warehouse', $data) && isset($data['Warehouse']))) {
-                return; // error?
+                return null;
             }
 
             $warehouse = new Warehouse();
@@ -66,11 +66,8 @@ class WarehouseInventoryLevelDenormalizer implements DenormalizerInterface
             $inventoryLevel->setWarehouse($warehouse);
         }
 
-        //TODO: Unit - is required if there are multiple rows in the import file with the same SKU and Warehouse combination. Otherwise the value is optional,
-        // and the quantity is considered to be in the primary unit of the product. Accept both singular and plural forms of long unit name.
-        // => treated in strategy ?
         if ($this->isUnitRequired() && !(array_key_exists('Unit', $data) && isset($data['Unit']))) {
-            return; // error?
+            return null;
         }
 
         $productUnit = new ProductUnit();
