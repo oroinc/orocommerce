@@ -222,8 +222,8 @@ class Category extends ExtendCategory
     /**
      * @var CategoryUnitPrecision
      *
-     * @ORM\OneToOne(targetEntity="CategoryUnitPrecision")
-     * @ORM\JoinColumn(name="unit_precision_id", referencedColumnName="id")
+     * @ORM\OneToOne(targetEntity="CategoryUnitPrecision", cascade={"persist"})
+     * @ORM\JoinColumn(name="unit_precision_id", referencedColumnName="id", onDelete="SET NULL")
      *
      */
     protected $unitPrecision;
