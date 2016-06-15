@@ -103,6 +103,7 @@ class OroB2BCatalogBundleInstaller implements
         $table->addColumn('unit_precision_id', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['unit_precision_id']);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['unit_precision_id']);
         $this->noteExtension->addNoteAssociation($schema, 'orob2b_catalog_category');
     }
 
