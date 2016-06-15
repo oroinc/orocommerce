@@ -63,6 +63,12 @@ datagrid:
             itemsCount:
                 label: orob2b.checkout.line_items_count.label
                 order: 1
+            startedFrom:
+                label: orob2b.checkout.started_from.label
+                type: twig
+                frontend_type: html
+                template: OroB2BCheckoutBundle:Checkout:Datagrid/checkoutSource.html.twig
+                order: 2
         sorters:
             columns:
                 createdAt:
