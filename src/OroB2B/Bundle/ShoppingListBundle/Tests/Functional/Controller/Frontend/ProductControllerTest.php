@@ -33,7 +33,7 @@ class ProductControllerTest extends WebTestCase
     public function testProductAddToShoppingListForm()
     {
         /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $product = $this->getReference(LoadProductData::PRODUCT_2);
 
         $crawler = $this->client->request(
             'GET',

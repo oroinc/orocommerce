@@ -116,8 +116,13 @@ class ProductDuplicator
      */
     protected function cloneChildObjects(Product $product, Product $productCopy)
     {
-        foreach ($product->getUnitPrecisions() as $unitPrecision) {
-            $productCopy->addUnitPrecision(clone $unitPrecision);
+        $primaryPrecision = $product->getPrimaryUnitPrecision();
+        if ($primaryPrecision) {
+            $productCopy->setPrimaryUnitPrecision(clone $primaryPrecision);
+        }
+
+        foreach ($product->getAdditionalUnitPrecisions() as $unitPrecision) {
+            $productCopy->addAdditionalUnitPrecision(clone $unitPrecision);
         }
 
         foreach ($product->getNames() as $name) {

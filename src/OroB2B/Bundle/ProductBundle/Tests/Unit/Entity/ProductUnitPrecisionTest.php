@@ -18,8 +18,9 @@ class ProductUnitPrecisionTest extends EntityTestCase
             ['product', new Product()],
             ['unit', new ProductUnit()],
             ['precision', 3],
+            ['conversionRate', 2.5],
+            ['sell', true]
         ];
-
         $this->assertPropertyAccessors(new ProductUnitPrecision(), $properties);
     }
 }
