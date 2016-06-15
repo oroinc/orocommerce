@@ -68,8 +68,7 @@ layout:
                         type: button
                         action: reset
                         text: Cancel
-                        vars:
-                            style: gray
+                        style: gray
             tree:
                 widget_content:
                     quick_add_import_validation:

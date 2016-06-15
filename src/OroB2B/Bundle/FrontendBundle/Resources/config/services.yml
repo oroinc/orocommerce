@@ -108,3 +108,8 @@ services:
         tags:
             # Must be executed after all listeners to disable custom fields
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore, priority: -255 }
+
+    orob2b_frontend.block_type_extension.button_style:
+        class: 'OroB2B\Bundle\FrontendBundle\Layout\Block\Extension\ButtonStyleExtension'
+        tags:
+            - { name: layout.block_type_extension, alias: block }

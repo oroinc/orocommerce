@@ -47,8 +47,7 @@ layout:
                     options:
                         action: submit
                         text: orob2b.account.frontend.address.buttons.save
-                        vars:
-                            style: auto
+                        style: auto
                         attr:
                             'class': role-submit
                 account_user_address_edit_form_actions_cancel:

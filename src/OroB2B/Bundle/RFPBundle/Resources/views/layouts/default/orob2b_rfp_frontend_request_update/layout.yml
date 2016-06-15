@@ -66,15 +66,13 @@ layout:
                         path: { '@value': $data.backToUrl }
                         text: orob2b.frontend.rfp.request.create_form.back.label
                         icon: cf-left-open-mini
-                        vars:
-                            style: gray
+                        style: gray
                 rfp_form_actions_create:
                     blockType: button
                     options:
                         action: submit
                         text: orob2b.frontend.rfp.request.create_form.submit.label
-                        vars:
-                            style: auto
+                        style: auto
                         attr:
                             class: btn_xlg
             tree:

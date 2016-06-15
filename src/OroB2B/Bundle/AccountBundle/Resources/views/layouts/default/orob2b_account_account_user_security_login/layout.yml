@@ -64,8 +64,7 @@ layout:
                         type: input
                         action: submit
                         text: orob2b.account.accountuser.profile.login
-                        vars:
-                            style: auto
+                        style: auto
                 login_form_forgot:
                     blockType: link
                     options:

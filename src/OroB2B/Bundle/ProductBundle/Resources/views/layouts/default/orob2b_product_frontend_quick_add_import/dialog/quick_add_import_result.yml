@@ -68,8 +68,7 @@ layout:
                         type: button
                         action: button
                         text: Back
-                        vars:
-                            style: gray
+                        style: gray
                         attr:
                             'data-url': { '@value': $data.backToUrl }
             tree:

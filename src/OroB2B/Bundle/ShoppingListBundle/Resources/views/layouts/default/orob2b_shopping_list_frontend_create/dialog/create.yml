@@ -40,23 +40,20 @@ layout:
                     options:
                         action: reset
                         text: orob2b.shoppinglist.create_new_form.cancel_label
-                        vars:
-                            style: gray
+                        style: gray
                 form_actions_create:
                     blockType: button
                     options:
                         action: submit
                         text: orob2b.shoppinglist.create_new_form.create.label
-                        vars:
-                            style: auto
+                        style: auto
                         visible: { '@eq': [$data.createOnly, true] }
                 form_actions_create_and_add:
                     blockType: button
                     options:
                         action: submit
                         text: orob2b.shoppinglist.create_new_form.create_and_add.label
-                        vars:
-                            style: auto
+                        style: auto
                         visible: { '@neq': [$data.createOnly, true] }
             tree:
                 widget_content:

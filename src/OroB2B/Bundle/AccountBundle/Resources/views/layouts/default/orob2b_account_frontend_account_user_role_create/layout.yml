@@ -57,8 +57,7 @@ layout:
                     options:
                         action: submit
                         text: orob2b.account.action.account_user_role.create_label
-                        vars:
-                            style: auto
+                        style: auto
                         attr:
                             'class': role-submit
                 account_user_role_edit_form_actions_cancel_top:
@@ -75,8 +74,7 @@ layout:
                     options:
                         action: submit
                         text: orob2b.account.action.account_user_role.create_label
-                        vars:
-                            style: auto
+                        style: auto
                         attr:
                             'class': role-submit
                 account_user_role_edit_form_actions_cancel_bottom:

@@ -36,8 +36,7 @@ layout:
                 type: input
                 action: reset
                 text: Cancel
-                vars:
-                    style: grey
+                style: gray
         - '@add':
             id: quick_add_import_form_submit
             parentId: widget_actions
@@ -46,8 +45,7 @@ layout:
                 type: input
                 action: submit
                 text: Upload
-                vars:
-                    style: orange
+                style: orange
         - '@move':
             id: widget_actions
             parentId: widget_content
