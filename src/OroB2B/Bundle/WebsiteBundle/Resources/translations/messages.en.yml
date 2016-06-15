@@ -8,21 +8,12 @@ orob2b:
         url.label: URL
         owner.label: Owner
         organization.label: Organization
-        locales.label: Locales
+        localizations.label: Localizations
         inversed_websites.label: Inversed websites
         related_websites.label: Related websites
 
         controller:
             website.saved.message: Website has been saved
-        locale:
-            entity_label: Locale
-            entity_plural_label: Locales
-            entity_description: Represents locale information
-            id.label: Id
-            code.label: Code
-            child_locales.label: Child locales
-            parent_locale.label: Parent locale
-            websites.label: Website
 
         menu:
             websites_list.description: List of websites

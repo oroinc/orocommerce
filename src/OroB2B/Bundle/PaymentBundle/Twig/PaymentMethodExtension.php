@@ -57,7 +57,7 @@ class PaymentMethodExtension extends \Twig_Extension
         $paymentMethods = [];
         foreach ($paymentTransactions as $paymentTransaction) {
             /** @var PaymentMethodViewInterface $paymentMethodView */
-            $paymentMethods[] = $this->getPaymentMethodLabel($paymentTransaction->getPaymentMethod());
+            $paymentMethods[] = $this->getPaymentMethodLabel($paymentTransaction->getPaymentMethod(), false);
         }
 
         return $paymentMethods;
@@ -65,15 +65,16 @@ class PaymentMethodExtension extends \Twig_Extension
 
     /**
      * @param string $paymentMethod
+     * @param bool $shortLabel
      * @return array
      */
-    public function getPaymentMethodLabel($paymentMethod)
+    public function getPaymentMethodLabel($paymentMethod, $shortLabel = true)
     {
         /** @var PaymentMethodViewInterface $paymentMethodView */
         try {
             $paymentMethodView = $this->paymentMethodViewRegistry->getPaymentMethodView($paymentMethod);
 
-            return $paymentMethodView->getLabel();
+            return $shortLabel? $paymentMethodView->getShortLabel() : $paymentMethodView->getLabel();
         } catch (\InvalidArgumentException $e) {
             return '';
         }

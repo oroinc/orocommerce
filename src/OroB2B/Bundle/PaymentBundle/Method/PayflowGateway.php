@@ -3,13 +3,16 @@
 namespace OroB2B\Bundle\PaymentBundle\Method;
 
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
 use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
 /**
@@ -17,7 +20,9 @@ use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
  */
 class PayflowGateway implements PaymentMethodInterface
 {
-    use ConfigTrait, CountryAwarePaymentMethodTrait;
+    use ConfigTrait, CountryAwarePaymentMethodTrait, CurrencyAwarePaymentMethodTrait;
+
+    const COMPLETE = 'complete';
 
     const TYPE = 'payflow_gateway';
 
@@ -42,17 +47,15 @@ class PayflowGateway implements PaymentMethodInterface
     }
 
     /** {@inheritdoc} */
-    public function execute(PaymentTransaction $paymentTransaction)
+    public function execute($action, PaymentTransaction $paymentTransaction)
     {
-        $actionName = $paymentTransaction->getAction();
-
-        if (!$this->supports($actionName)) {
-            throw new \InvalidArgumentException(sprintf('Unsupported action "%s"', $actionName));
+        if (!$this->supports($action)) {
+            throw new \InvalidArgumentException(sprintf('Unsupported action "%s"', $action));
         }
 
         $this->gateway->setTestMode($this->isTestMode());
 
-        return $this->{$actionName}($paymentTransaction) ?: [];
+        return $this->{$action}($paymentTransaction) ?: [];
     }
 
     /**
@@ -111,11 +114,16 @@ class PayflowGateway implements PaymentMethodInterface
 
         $paymentTransaction
             ->setSuccessful($response->isSuccessful())
-            ->setActive(!$response->isSuccessful())
+            ->setActive($response->isSuccessful())
             ->setReference($response->getReference())
             ->setResponse($response->getData());
 
         $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
+
+        if ($sourcePaymentTransaction) {
+            $paymentTransaction->setActive(false);
+        }
+
         if ($sourcePaymentTransaction && $sourcePaymentTransaction->getAction() !== self::VALIDATE) {
             $sourcePaymentTransaction->setActive(!$paymentTransaction->isSuccessful());
         }
@@ -185,7 +193,7 @@ class PayflowGateway implements PaymentMethodInterface
             ->setRequest($options)
             ->setAction($this->getPurchaseAction());
 
-        $response = $this->execute($paymentTransaction);
+        $response = $this->execute($paymentTransaction->getAction(), $paymentTransaction);
 
         if (!$sourcePaymentTransaction) {
             return $this->secureTokenResponse($paymentTransaction);
@@ -264,24 +272,26 @@ class PayflowGateway implements PaymentMethodInterface
     protected function getSecureTokenOptions(PaymentTransaction $paymentTransaction)
     {
         return [
-            Option\SecureTokenIdentifier::SECURETOKENID => Option\SecureTokenIdentifier::generate(),
+            Option\SecureTokenIdentifier::SECURETOKENID => UUIDGenerator::v4(),
             Option\CreateSecureToken::CREATESECURETOKEN => true,
             Option\TransparentRedirect::SILENTTRAN => true,
             Option\ReturnUrl::RETURNURL => $this->router->generate(
                 'orob2b_payment_callback_return',
-                [
-                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                    'accessToken' => $paymentTransaction->getAccessToken(),
-                ],
-                true
+                ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
+                UrlGeneratorInterface::ABSOLUTE_URL
             ),
             Option\ErrorUrl::ERRORURL => $this->router->generate(
                 'orob2b_payment_callback_error',
+                ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            ),
+            Option\SilentPost::SILENTPOSTURL => $this->router->generate(
+                'orob2b_payment_callback_notify',
                 [
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),
                 ],
-                true
+                UrlGeneratorInterface::ABSOLUTE_URL
             ),
         ];
     }
@@ -318,7 +328,7 @@ class PayflowGateway implements PaymentMethodInterface
     /** {@inheritdoc} */
     public function isApplicable(array $context = [])
     {
-        return $this->isCountryApplicable($context);
+        return $this->isCountryApplicable($context) && $this->isCurrencyApplicable($context);
     }
 
     /**
@@ -369,9 +379,26 @@ class PayflowGateway implements PaymentMethodInterface
 
         return in_array(
             $actionName,
-            [self::AUTHORIZE, self::CAPTURE, self::CHARGE, self::PURCHASE],
+            [self::AUTHORIZE, self::CAPTURE, self::CHARGE, self::PURCHASE, self::COMPLETE],
             true
         );
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     */
+    public function complete(PaymentTransaction $paymentTransaction)
+    {
+        $response = new Response($paymentTransaction->getResponse());
+
+        $paymentTransaction
+            ->setReference($response->getReference())
+            ->setActive($response->isSuccessful())
+            ->setSuccessful($response->isSuccessful());
+
+        if ($paymentTransaction->getAction() === PaymentMethodInterface::CHARGE) {
+            $paymentTransaction->setActive(false);
+        }
     }
 
     /**
@@ -380,5 +407,13 @@ class PayflowGateway implements PaymentMethodInterface
     protected function isAuthorizationForRequiredAmountEnabled()
     {
         return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getAllowedCurrencies()
+    {
+        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CURRENCIES);
     }
 }

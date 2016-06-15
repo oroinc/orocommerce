@@ -9,6 +9,7 @@ use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadShoppingLists extends AbstractFixture implements DependentFixtureInterface
 {
@@ -19,12 +20,21 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     const SHOPPING_LIST_5 = 'shopping_list_5';
 
     /**
+     * @var array
+     */
+    protected $shoppingListsWithDefaultWebsite = [
+        self::SHOPPING_LIST_1,
+        self::SHOPPING_LIST_2
+    ];
+
+    /**
      * {@inheritdoc}
      */
     public function getDependencies()
     {
         return [
-            'Oro\Component\Testing\Fixtures\LoadAccountUserData'
+            LoadAccountUserData::class,
+            LoadWebsiteData::class
         ];
     }
 
@@ -35,14 +45,12 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     {
         $accountUser = $this->getAccountUser($manager);
         $lists = $this->getData();
-        foreach ($lists as $listLabel => $data) {
+        foreach ($lists as $listLabel) {
             $isCurrent = $listLabel === self::SHOPPING_LIST_2;
             $this->createShoppingList(
                 $manager,
                 $accountUser,
                 $listLabel,
-                $data['total'],
-                $data['subtotal'],
                 $isCurrent
             );
         }
@@ -54,8 +62,6 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
      * @param ObjectManager $manager
      * @param AccountUser $accountUser
      * @param string $name
-     * @param float $total
-     * @param float $subtotal
      * @param bool $isCurrent
      * @return ShoppingList
      */
@@ -63,8 +69,6 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         ObjectManager $manager,
         AccountUser $accountUser,
         $name,
-        $total,
-        $subtotal,
         $isCurrent = false
     ) {
         $shoppingList = new ShoppingList();
@@ -74,9 +78,9 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
         $shoppingList->setCurrent($isCurrent);
-        $shoppingList->setCurrency('EUR');
-        $shoppingList->setTotal($total);
-        $shoppingList->setSubtotal($subtotal);
+        if (!in_array($name, $this->shoppingListsWithDefaultWebsite, true)) {
+            $shoppingList->setWebsite($this->getReference(LoadWebsiteData::WEBSITE1));
+        }
         $manager->persist($shoppingList);
         $this->addReference($name, $shoppingList);
 
@@ -107,11 +111,11 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     protected function getData()
     {
         return [
-            self::SHOPPING_LIST_1 => ['total' => 2312, 'subtotal' => 91222],
-            self::SHOPPING_LIST_2 => ['total' => 321, 'subtotal' => 5555],
-            self::SHOPPING_LIST_3 => ['total' => 83, 'subtotal' => 422],
-            self::SHOPPING_LIST_4 => ['total' => 32, 'subtotal' => 2464],
-            self::SHOPPING_LIST_5 => ['total' => 466, 'subtotal' => 45354]
+            self::SHOPPING_LIST_1,
+            self::SHOPPING_LIST_2,
+            self::SHOPPING_LIST_3,
+            self::SHOPPING_LIST_4,
+            self::SHOPPING_LIST_5
         ];
     }
 }

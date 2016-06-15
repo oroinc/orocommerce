@@ -18,12 +18,24 @@ define(function (require) {
         options: {
             unitsAttribute: 'units',
             deleteMessage: 'orob2b.product.productunit.delete.confirmation',
+            errorTitle: 'orob2b.product.productunit.delete.error.title',
+            errorMessage: 'orob2b.product.productunit.delete.error.message',
             addButtonSelector: 'a.add-list-item',
             selectParent: '.oro-multiselect-holder',
             dataContent: '*[data-content]',
             unitSelect: 'select[name$="[unit]"]',
+            conversionRateInput: 'input[name$="[conversionRate]"]',
             hiddenUnitClass: 'hidden-unit',
+            parentTableSelector: '',
+            pricesUnitsSelector: "select[name^='orob2b_product[prices]'][name$='[unit]']",
             precisions: {}
+        },
+
+        /**
+         * @property {Object}
+         */
+        listen: {
+            'product:primary:precision:change mediator': 'onPrimaryPrecisionChange'
         },
 
         /**
@@ -35,7 +47,7 @@ define(function (require) {
             this.options._sourceElement
                 .on('content:changed', _.bind(this.onChange, this))
                 .on('content:remove', _.bind(this.askConfirmation, this))
-                .on('click', '.removeRow', _.bind(this.onRemoveRow, this));
+                .on('click', '.removeLineItem', _.bind(this.onRemoveRow, this));
 
             this.options._sourceElement.trigger('content:changed');
         },
@@ -56,8 +68,14 @@ define(function (require) {
          */
         onRemoveRow: function (e) {
             e.stopPropagation();
-
-            $(e.target).closest(this.options.dataContent).trigger('content:remove');
+            var option = $(e.target).closest(this.options.selectParent).find(this.options.unitSelect + ' option:selected');
+            var units_with_prices = this.getUnitsWithPrices();
+            var val = option.val();
+            if (units_with_prices[val] != undefined) {
+                this.showError();
+            } else {
+                $(e.target).closest(this.options.dataContent).trigger('content:remove');
+            }
         },
 
         /**
@@ -67,10 +85,24 @@ define(function (require) {
             var selects = this.options._sourceElement.find(this.options.unitSelect),
                 self = this;
 
+            self.toggleTableVisibility();
+            
             selects.each(function (index) {
                 var select = $(this);
 
                 selects.each(function (_index) {
+
+                    var primary = null;
+                    _.each(self.getPrimaryData(), function(text,val){
+                        primary = val;
+                    });
+
+                    var primaryOption = $(this).find("option[value='" + primary + "']");
+
+                    if (primaryOption) {
+                        primaryOption.remove();
+                    }
+                    
                     if (index == _index) {
                         return;
                     }
@@ -92,7 +124,7 @@ define(function (require) {
                     var value = self.options.precisions[option.val()];
 
                     if (value != undefined) {
-                        select.parents(self.options.selectParent).find('input').val(value);
+                        select.parents(self.options.selectParent).find('input[class="precision"]').val(value);
                     }
                 }
 
@@ -103,6 +135,29 @@ define(function (require) {
 
                 self.addData({value: option.val(), text: option.text()});
             });
+            _.each(self.getPrimaryData(),function(text, val){
+                self.addConversionRateLabels(val);
+            });
+        },
+
+        /**
+         *  Handle changes in primary precision
+         */
+        onPrimaryPrecisionChange: function (e) {
+            var removed = e.removed;
+            var added = e.added;
+            var self = this;
+            if (!_.isEmpty(removed)) {
+                _.each(removed,function(text, val){
+                    self.addOptionToAllSelects(val,text);
+                })
+            }
+            if (!_.isEmpty(added)) {
+                _.each(added,function(text, val){
+                    self.addConversionRateLabels(val);
+                    self.removeOptionFromAllSelects(val,text);
+                })
+            }
         },
 
         /**
@@ -111,7 +166,7 @@ define(function (require) {
          * @param {jQuery.Event} e
          */
         onRemoveItem: function (e) {
-            var option = $(e.target).find('select option:selected');
+            var option = $(e.target).find('select:enabled option:selected');
 
             if (option) {
                 this.removeData({value: option.val(), text: option.text()});
@@ -119,6 +174,7 @@ define(function (require) {
                 this.getAddButton().show();
                 $(e.target).remove();
             }
+            this.toggleTableVisibility();
         },
 
         /**
@@ -150,6 +206,37 @@ define(function (require) {
         },
 
         /**
+         * Add label to all conversionRates inputs
+         *
+         * @param {String} value
+         * @param {String} text
+         */
+        addConversionRateLabels: function (value) {
+            this.options._sourceElement.find(this.options.conversionRateInput).each(function () {
+                var input = $(this);
+                var text = __('orob2b.product.product_unit.' + value + '.label.short_plural');
+                input.parent('td').find('span').remove();
+                input.parent('td').append($('<span></span>').html('<em>&nbsp;</em>'+text.toLowerCase()).addClass('conversion-rate-label'));
+            });
+        },
+
+        /**
+         * Remove options from all selects
+         *
+         * @param {String} value
+         * @param {String} text
+         */
+        removeOptionFromAllSelects: function (value, text) {
+            this.options._sourceElement.find(this.options.unitSelect).each(function () {
+                var select = $(this);
+                var option = select.find('option[value="'+value+'"]');
+                if (option != undefined) {
+                    option.remove();
+                }
+            });
+        },
+
+        /**
          * Ask delete confirmation
          *
          * @param {jQuery.Event} e
@@ -170,11 +257,32 @@ define(function (require) {
         },
 
         /**
+         * Show error
+         *
+         * @param {jQuery.Event} e
+         */
+        showError: function () {
+            if (!this.error) {
+                this.error = new DeleteConfirmation({
+                    title: __(this.options.errorTitle),
+                    content: __(this.options.errorMessage),
+                    allowOk: false
+                });
+            }
+
+            this.error
+                .off('ok')
+                .on('ok')
+                .open();
+        },
+
+        /**
          * @param {Object} data with structure {value: value, text: text}
          */
         addData: function (data) {
             var storedData = this.getData();
-            if (storedData.hasOwnProperty(data.value)) {
+            var primaryData = this.getPrimaryData();
+            if (storedData.hasOwnProperty(data.value) || primaryData.hasOwnProperty(data.value)) {
                 return;
             }
 
@@ -203,6 +311,21 @@ define(function (require) {
         getData: function () {
             return this.options._sourceElement.data(this.options.unitsAttribute) || {}
         },
+        
+        getPrimaryData: function () {
+           return $(':data(' + this.options.unitsAttribute + ')').data(this.options.unitsAttribute) || {};
+        },
+        
+        getUnitsWithPrices: function () {
+            var selects = $(this.options.pricesUnitsSelector);
+            var units_with_price = {};
+            _.each(selects, function (select) {
+                var selected = $(select).find('option:selected');
+                units_with_price[selected.val()] = selected.text();
+            });
+
+            return units_with_price;
+        },
 
         /**
          * Save data to data attribute
@@ -211,6 +334,20 @@ define(function (require) {
          */
         saveData: function (data) {
             this.options._sourceElement.data(this.options.unitsAttribute, data);
+        },
+
+        /**
+         * Toggle Table visibility
+         */
+        toggleTableVisibility: function(){
+            var selects = this.options._sourceElement.find(this.options.unitSelect);
+            var table = this.options._sourceElement.find('table');
+
+            if (selects.length < 1) {
+                table.hide();
+            } else {
+                table.show();
+            }
         },
 
         /**

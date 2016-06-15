@@ -21,7 +21,7 @@ class PayPalPaymentsPro extends PayflowGateway
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     protected function isTestMode()
     {
@@ -29,7 +29,7 @@ class PayPalPaymentsPro extends PayflowGateway
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEnabled()
     {
@@ -37,7 +37,7 @@ class PayPalPaymentsPro extends PayflowGateway
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     protected function getPurchaseAction()
     {
@@ -45,7 +45,7 @@ class PayPalPaymentsPro extends PayflowGateway
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     protected function getAllowedCountries()
     {
@@ -53,7 +53,7 @@ class PayPalPaymentsPro extends PayflowGateway
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     protected function isAuthorizationForRequiredAmountEnabled()
     {
@@ -61,7 +61,7 @@ class PayPalPaymentsPro extends PayflowGateway
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     protected function isAllCountriesAllowed()
     {
@@ -70,10 +70,18 @@ class PayPalPaymentsPro extends PayflowGateway
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     protected function isZeroAmountAuthorizationEnabled()
     {
         return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ZERO_AMOUNT_AUTHORIZATION_KEY);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getAllowedCurrencies()
+    {
+        return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES);
     }
 }

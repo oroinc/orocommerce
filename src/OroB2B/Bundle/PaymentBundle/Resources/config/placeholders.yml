@@ -1,9 +1,13 @@
 placeholders:
     view_general_section_after:
         items:
+            payment_method: ~
             payment_info: ~
 
 items:
+    payment_method:
+        template: OroB2BPaymentBundle:PaymentTransaction:method.html.twig
+        data: '@orob2b_payment.provider.payment_transaction->getPaymentTransaction($entity$)'
     payment_info:
         template: OroB2BPaymentBundle:PaymentTransaction:status.html.twig
         data: '@orob2b_payment.provider.payment_status->getPaymentStatus($entity$)'

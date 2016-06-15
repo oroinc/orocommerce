@@ -73,7 +73,9 @@
                 </div>
             </div>
         </div>
-        <div class="oro-grid__row">
+        <div class="oro-grid__row"
+             data-page-component-module="orob2baccount/js/app/components/account-address-component"
+             data-page-component-options="{{ {'disableDefaultWithoutType' : true}|json_encode }}">
             <div class="oro-grid__column-half">
                 <p class="oro-title">{{ "orob2b.account.frontend.address.form.label.address_types"|trans }}:</p>
                 {{ form_widget(form.types) }}

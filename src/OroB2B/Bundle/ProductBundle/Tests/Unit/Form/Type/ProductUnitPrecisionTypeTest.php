@@ -169,11 +169,15 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
                 ],
                 'submittedData' => [
                     'unit' => 'kg',
-                    'precision' => 5
+                    'precision' => 5,
+                    'conversionRate' => 2,
+                    'sell' => true,
                 ],
                 'expectedData'  => (new ProductUnitPrecision())
                     ->setUnit((new ProductUnit())->setCode('kg'))
                     ->setPrecision(5)
+                    ->setConversionRate(2)
+                    ->setSell(true)
             ]
         ];
     }

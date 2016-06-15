@@ -18,6 +18,8 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - Count:
                 min: 1
                 minMessage: 'orob2b.product.unit_precisions_items.blank'
+        primaryUnitPrecision:
+            - NotBlank: ~
         status:
             - NotBlank: ~
             - Choice: { callback: getStatuses }
@@ -72,6 +74,8 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
                 min: 0
                 max: 10
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+        conversionRate:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
 
 OroB2B\Bundle\ProductBundle\Model\ProductRow:
     properties:
