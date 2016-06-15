@@ -152,6 +152,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
 
+    orob2b_checkout.datagrid.checkout_grid_column_filter:
+        class: 'OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridColumnFilter'
+        arguments:
+            - '@orob2b_account.security.account_user_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
+
     orob2b_checkout.workflow.condition.order_line_item_has_count:
         class: 'OroB2B\Bundle\CheckoutBundle\Model\Condition\OrderLineItemsHasCount'
         arguments:
