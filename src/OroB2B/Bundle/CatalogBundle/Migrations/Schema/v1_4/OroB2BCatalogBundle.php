@@ -24,6 +24,7 @@ class OroB2BCatalogBundle implements Migration
         $this->createOroB2BCategoryUnitPrecisionTable($schema);
         $this->updateOroB2BCategoryTable($schema);
         $this->addOroB2BCategoryUnitPrecisionForeignKeys($schema);
+        $this->addOroB2BCategoryForeignKeys($schema);
     }
 
     /**
@@ -37,7 +38,7 @@ class OroB2BCatalogBundle implements Migration
         $table->addColumn('unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('unit_precision', 'integer', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['unit_code'], 'IDX_D4D5D6E4FBD3D1C2');
+        $table->addIndex(['unit_code'], 'IDX_D4D5D6E4FBD3D1C2');
     }
 
     /**
@@ -57,14 +58,6 @@ class OroB2BCatalogBundle implements Migration
      */
     protected function addOroB2BCategoryUnitPrecisionForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME);
-        $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME),
-            ['unit_precision_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-        
         $table = $schema->getTable(self::ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(self::ORO_B2B_PRODUCT_UNIT_TABLE_NAME),
@@ -73,5 +66,19 @@ class OroB2BCatalogBundle implements Migration
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
-}
 
+    /**
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BCategoryForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME),
+            ['unit_precision_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+}

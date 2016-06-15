@@ -42,6 +42,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
  * @ORM\HasLifecycleCallbacks()
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class Category extends ExtendCategory
 {
@@ -579,4 +580,3 @@ class Category extends ExtendCategory
         return $this;
     }
 }
-

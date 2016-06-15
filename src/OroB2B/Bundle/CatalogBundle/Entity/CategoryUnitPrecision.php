@@ -132,4 +132,3 @@ class CategoryUnitPrecision
         return $this->getUnit()->getCode() . ' ' . $this->getPrecision();
     }
 }
-

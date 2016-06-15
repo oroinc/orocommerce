@@ -146,7 +146,7 @@ class OroB2BCatalogBundleInstaller implements
         $table->addColumn('unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('unit_precision', 'integer', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['unit_code'], 'IDX_D4D5D6E4FBD3D1C2');
+        $table->addIndex(['unit_code'], 'IDX_D4D5D6E4FBD3D1C2');
     }
 
     /**
@@ -162,6 +162,12 @@ class OroB2BCatalogBundleInstaller implements
             ['parent_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME),
+            ['unit_precision_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 
@@ -288,14 +294,6 @@ class OroB2BCatalogBundleInstaller implements
      */
     protected function addOroB2BCategoryUnitPrecisionForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME);
-        $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME),
-            ['unit_precision_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-
         $table = $schema->getTable(self::ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(self::ORO_B2B_PRODUCT_UNIT_TABLE_NAME),
