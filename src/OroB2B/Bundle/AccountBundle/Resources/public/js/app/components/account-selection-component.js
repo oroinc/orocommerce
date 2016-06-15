@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -70,8 +68,8 @@ define(function(require) {
          * Handle Account change
          */
         onAccountChanged: function() {
-            this.$accountUserSelect.select2('val', '');
-            this.$accountUserMultiSelect.select2('val', '');
+            this.$accountUserSelect.inputWidget('val', '');
+            this.$accountUserMultiSelect.inputWidget('val', '');
 
             this.updateAccountUserSelectData({'account_id': this.$accountSelect.val()});
             this.triggerChangeAccountUserEvent();
@@ -100,7 +98,7 @@ define(function(require) {
                     self.loadingMask.show();
                 },
                 success: function(response) {
-                    self.$accountSelect.select2('val', response.accountId || '');
+                    self.$accountSelect.inputWidget('val', response.accountId || '');
 
                     self.updateAccountUserSelectData({'account_id': response.accountId});
                     self.triggerChangeAccountUserEvent();

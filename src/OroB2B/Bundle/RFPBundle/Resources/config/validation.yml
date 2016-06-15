@@ -39,7 +39,8 @@ OroB2B\Bundle\RFPBundle\Entity\RequestProduct:
             - NotBlank:
                 groups: [ Import ]
         requestProductItems:
-            - OroB2B\Bundle\RFPBundle\Validator\Constraints\Count:
+            - Count:
+                min: 1
                 minMessage: 'orob2b.rfp.requestproduct.request_product_items.blank'
             - Valid: ~
 

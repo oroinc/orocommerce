@@ -8,8 +8,7 @@ define(function(require) {
 
     CheckboxInputWidget = AbstractInputWidget.extend({
         widgetFunction: function() {
-            this.findContainer();
-            this.getContainer().on('keydown keypress', _.bind(this._handleEnterPress, this));
+            this.container().on('keydown keypress', _.bind(this._handleEnterPress, this));
             this.$el.on('change', _.bind(this._handleChange, this));
         },
 
@@ -44,7 +43,7 @@ define(function(require) {
         },
 
         findContainer: function() {
-            this.$container = this.$el.closest('label');
+            return this.$el.closest('label');
         }
     });
 

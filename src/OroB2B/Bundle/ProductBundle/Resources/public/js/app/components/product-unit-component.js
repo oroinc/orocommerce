@@ -17,7 +17,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            productSelector: '.product-product input.select2',
+            productSelector: '.product-product [data-name="field__product"]',
             quantitySelector: '.product-quantity input',
             unitSelector: '.product-unit select',
             routeName: 'orob2b_product_unit_product_units',
@@ -181,13 +181,9 @@ define(function(require) {
                 self.unitSelector.val('');
             }
 
-            var $unitSelectorContainer = this.unitSelector.inputWidget('getContainer');
+            var $unitSelectorContainer = this.unitSelector.inputWidget('container');
             if ($unitSelectorContainer) {
-                if (disabled) {
-                    $unitSelectorContainer.addClass('disabled');
-                } else {
-                    $unitSelectorContainer.removeClass('disabled');
-                }
+                $unitSelectorContainer.toggleClass('disabled', disabled);
             }
 
             this.unitSelector

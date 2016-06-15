@@ -263,7 +263,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected function getRequiredFields($type)
     {
-        $requiredFields = ['firstName', 'lastName', 'street', 'postalCode', 'country', 'state'];
+        $requiredFields = ['firstName', 'lastName', 'street', 'postalCode', 'country', 'state', 'city'];
         $resultRequiredFields = [];
         foreach ($requiredFields as $requiredField) {
             $requiredFields[] = sprintf('%s[%s][%s]', self::ORO_WORKFLOW_TRANSITION, $type, $requiredField);

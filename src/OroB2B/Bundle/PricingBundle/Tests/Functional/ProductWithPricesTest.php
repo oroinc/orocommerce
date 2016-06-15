@@ -4,11 +4,11 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional;
 
 use Symfony\Component\DomCrawler\Form;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -38,6 +38,8 @@ class ProductWithPricesTest extends WebTestCase
 
     const DEFAULT_NAME = 'default name';
 
+    const CATEGORY_ID = 1;
+
     /**
      * {@inheritDoc}
      */
@@ -50,6 +52,13 @@ class ProductWithPricesTest extends WebTestCase
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_create'));
+        $form = $crawler->selectButton('Continue')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['input_action'] = 'orob2b_product_create';
+        $formValues['orob2b_product_step_one']['category'] = self::CATEGORY_ID;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request('POST', $this->getUrl('orob2b_product_create'), $formValues);
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
@@ -59,18 +68,19 @@ class ProductWithPricesTest extends WebTestCase
 
         $this->client->followRedirects(true);
 
-        $locales = $this->getLocales();
+        $localizations = $this->getLocalizations();
 
         $formData = [
             '_token' => $form['orob2b_product[_token]']->getValue(),
             'owner'  => $this->getBusinessUnitId(),
             'sku'    => self::TEST_SKU,
             'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
-            'unitPrecisions' => [
-                [
-                    'unit'      => self::FIRST_UNIT_CODE,
-                    'precision' => self::FIRST_UNIT_PRECISION
-                ],
+            'primaryUnitPrecision' => [
+                'unit'      => self::FIRST_UNIT_CODE,
+                'precision' => self::FIRST_UNIT_PRECISION
+            ],
+            'additionalUnitPrecisions' => [
+
                 [
                     'unit'      => self::SECOND_UNIT_CODE,
                     'precision' => self::SECOND_UNIT_PRECISION
@@ -91,8 +101,8 @@ class ProductWithPricesTest extends WebTestCase
         ];
 
         $formData['names']['values']['default'] = self::DEFAULT_NAME;
-        foreach ($locales as $locale) {
-            $formData['names']['values']['locales'][$locale->getId()]['fallback'] = FallbackType::SYSTEM;
+        foreach ($localizations as $localization) {
+            $formData['names']['values']['localizations'][$localization->getId()]['fallback'] = FallbackType::SYSTEM;
         }
 
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
@@ -216,17 +226,17 @@ class ProductWithPricesTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
-        $this->assertContains('orob2b_product[unitPrecisions][0]', $crawler->html());
+        $this->assertContains('orob2b_product[additionalUnitPrecisions][0]', $crawler->html());
         $this->assertNotContains('orob2b_product[prices][0]', $crawler->html());
     }
 
     /**
-     * @return Locale[]
+     * @return Localization[]
      */
-    protected function getLocales()
+    protected function getLocalizations()
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BWebsiteBundle:Locale')
-            ->getRepository('OroB2BWebsiteBundle:Locale')
+        return $this->getContainer()->get('doctrine')->getManagerForClass('OroLocaleBundle:Localization')
+            ->getRepository('OroLocaleBundle:Localization')
             ->findAll();
     }
 

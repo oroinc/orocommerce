@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -14,6 +15,8 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductStepOneType;
+use OroB2B\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
 
 class ProductController extends Controller
 {
@@ -89,18 +92,35 @@ class ProductController extends Controller
      * Create product form
      *
      * @Route("/create", name="orob2b_product_create")
-     * @Template("OroB2BProductBundle:Product:update.html.twig")
+     * @Template("OroB2BProductBundle:Product:createStepOne.html.twig")
      * @Acl(
      *      id="orob2b_product_create",
      *      type="entity",
      *      class="OroB2BProductBundle:Product",
      *      permission="CREATE"
      * )
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
-        return $this->update(new Product());
+        return $this->createStepOne($request);
+    }
+
+    /**
+     * Create product form step two
+     *
+     * @Route("/create/step-two", name="orob2b_product_create_step_two")
+     * @Template("OroB2BProductBundle:Product:createStepTwo.html.twig")
+     *
+     * @AclAncestor("orob2b_product_create")
+     *
+     * @param Request $request
+     * @return array|RedirectResponse
+     */
+    public function createStepTwoAction(Request $request)
+    {
+        return $this->createStepTwo($request, new Product());
     }
 
     /**
@@ -128,6 +148,67 @@ class ProductController extends Controller
      */
     protected function update(Product $product)
     {
+        return $this->get('orob2b_product.service.product_update_handler')->handleUpdate(
+            $product,
+            $this->createForm(ProductType::NAME, $product),
+            function (Product $product) {
+                return [
+                    'route' => 'orob2b_product_update',
+                    'parameters' => ['id' => $product->getId()]
+                ];
+            },
+            function (Product $product) {
+                return [
+                    'route' => 'orob2b_product_view',
+                    'parameters' => ['id' => $product->getId()]
+                ];
+            },
+            $this->get('translator')->trans('orob2b.product.controller.product.saved.message')
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @return array|RedirectResponse
+     */
+    protected function createStepOne(Request $request)
+    {
+        $form = $this->createForm(ProductStepOneType::NAME);
+        $handler = new ProductCreateStepOneHandler($form, $request);
+
+        if ($handler->process()) {
+            return $this->forward('OroB2BProductBundle:Product:createStepTwo');
+        }
+
+        return ['form' => $form->createView()];
+    }
+
+    /**
+     * @param Request $request
+     * @param Product $product
+     * @return array|RedirectResponse
+     */
+    protected function createStepTwo($request, Product $product)
+    {
+        if ($request->get('input_action') == 'orob2b_product_create') {
+            $form = $this->createForm(ProductStepOneType::NAME);
+            $form->handleRequest($request);
+            $formData = $form->all();
+
+            if (!empty($formData)) {
+                $form = $this->createForm(ProductType::NAME, $product);
+                foreach ($formData as $key => $item) {
+                    $data = $item->getData();
+                    $form->get($key)->setData($data);
+                }
+            }
+
+            return [
+                'form' => $form->createView(),
+                'entity' => $product
+            ];
+        }
+
         return $this->get('orob2b_product.service.product_update_handler')->handleUpdate(
             $product,
             $this->createForm(ProductType::NAME, $product),

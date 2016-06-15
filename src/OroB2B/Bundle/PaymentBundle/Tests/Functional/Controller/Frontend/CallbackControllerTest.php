@@ -15,6 +15,8 @@ class CallbackControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+
+        $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
     }
 
     public function testWithoutTransactionNoErrors()
@@ -29,10 +31,8 @@ class CallbackControllerTest extends WebTestCase
         }
     }
 
-    public function testCallbacks()
+    public function testReturnAndErrorCallbacksDontChangeActiveAndSuccessful()
     {
-        $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
-
         /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_AUTHORIZE_TRANSACTION);
 
@@ -62,6 +62,47 @@ class CallbackControllerTest extends WebTestCase
             $method,
             $this->getUrl(
                 $route,
+                ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()]
+            ),
+            $expectedData
+        );
+
+        $objectManager = $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BPaymentBundle:PaymentTransaction');
+
+        /** @var PaymentTransaction $paymentTransaction */
+        $paymentTransaction = $objectManager->find($paymentTransaction->getId());
+
+        $this->assertFalse($paymentTransaction->isActive());
+        $this->assertFalse($paymentTransaction->isSuccessful());
+        $this->assertEquals(
+            [
+                'SECURETOKEN' => 'SECURETOKEN',
+                'SECURETOKENID' => 'SECURETOKENID',
+            ],
+            $paymentTransaction->getResponse()
+        );
+    }
+
+    public function testNotifyChangeState()
+    {
+        $parameters = [
+            'PNREF' => 'REFERENCE',
+            'RESULT' => '0',
+            'SECURETOKEN' => 'SECURETOKEN',
+            'SECURETOKENID' => 'SECURETOKENID',
+        ];
+
+        /** @var PaymentTransaction $paymentTransaction */
+        $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_AUTHORIZE_TRANSACTION);
+        $this->assertFalse($paymentTransaction->isActive());
+        $this->assertFalse($paymentTransaction->isSuccessful());
+
+        $expectedData = $parameters + $paymentTransaction->getRequest();
+        $this->client->request(
+            'POST',
+            $this->getUrl(
+                'orob2b_payment_callback_notify',
                 [
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),
@@ -73,10 +114,53 @@ class CallbackControllerTest extends WebTestCase
         $objectManager = $this->getContainer()->get('doctrine')
             ->getRepository('OroB2BPaymentBundle:PaymentTransaction');
 
+        /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = $objectManager->find($paymentTransaction->getId());
 
-        $this->assertEquals(true, $paymentTransaction->isActive());
-        $this->assertEquals('Transaction Reference ' . $method . $route, $paymentTransaction->getReference());
+        $this->assertTrue($paymentTransaction->isActive());
+        $this->assertTrue($paymentTransaction->isSuccessful());
         $this->assertEquals($expectedData, $paymentTransaction->getResponse());
+    }
+
+    public function testNotifyGetIsInvalid()
+    {
+        /** @var PaymentTransaction $paymentTransaction */
+        $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_AUTHORIZE_TRANSACTION);
+        $this->assertFalse($paymentTransaction->isActive());
+        $this->assertFalse($paymentTransaction->isSuccessful());
+
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_payment_callback_notify',
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    'accessToken' => $paymentTransaction->getAccessToken(),
+                ]
+            )
+        );
+
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 405);
+    }
+
+    public function testNotifyTokenRequired()
+    {
+        /** @var PaymentTransaction $paymentTransaction */
+        $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_AUTHORIZE_TRANSACTION);
+        $this->assertFalse($paymentTransaction->isActive());
+        $this->assertFalse($paymentTransaction->isSuccessful());
+
+        $this->client->request(
+            'POST',
+            $this->getUrl(
+                'orob2b_payment_callback_notify',
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    'accessToken' => '123',
+                ]
+            )
+        );
+
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 404);
     }
 }
