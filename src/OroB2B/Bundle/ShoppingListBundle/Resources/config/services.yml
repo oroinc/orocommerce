@@ -223,7 +223,7 @@ services:
             - { name: checkout.items_counter }
 
     orob2b_shopping_list.datagrid.checkout_source.shopping_list.definer:
-        class: OroB2B\Bundle\ShoppingListBundle\Datagrid\CheckoutSource\ShoppingListCheckoutSourceDefiner
+        class: OroB2B\Bundle\ShoppingListBundle\Datagrid\CheckoutSource\ShoppingListCheckoutSourceDefinitionResolver
         arguments:
             - "@oro_security.security_facade"
             - '@translator'

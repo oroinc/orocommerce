@@ -24,15 +24,15 @@ class CheckoutSourceFieldListenerTest extends \PHPUnit_Framework_TestCase
         $checkoutSourceFieldListener = new CheckoutSourceFieldListener($doctrine);
 
         for ($i=0; $i<3; $i++) {
-            $definer = $this->getMock(
-                'OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutSource\CheckoutSourceDefinerInterface'
+            $definitionResolver = $this->getMock(
+                'OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutSource\CheckoutSourceDefinitionResolverInterface'
             );
 
-            $definer->expects($this->once())
+            $definitionResolver->expects($this->once())
                 ->method('loadSources')
                 ->will($this->returnValue([$i => new CheckoutSourceDefinition('test', false)]));
 
-            $checkoutSourceFieldListener->addSourceDefiner($definer);
+            $checkoutSourceFieldListener->addSourceDefinitionResolver($definitionResolver);
         }
 
         $ormResultSet = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\OrmResultAfter')

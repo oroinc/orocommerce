@@ -25,7 +25,7 @@ class CheckoutSourceFieldCompilerPass implements CompilerPassInterface
 
         foreach ($taggedServices as $id => $tags) {
             $definition->addMethodCall(
-                'addSourceDefiner',
+                'addSourceDefinitionResolver',
                 [new Reference($id)]
             );
         }

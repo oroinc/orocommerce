@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 /**
  * Interface for classes that will provide a source entity and a link to view it, for checkout data grid.
  */
-interface CheckoutSourceDefinerInterface
+interface CheckoutSourceDefinitionResolverInterface
 {
     /**
      * Look for sources and return array of CheckoutSourceDefinition DTO class instances

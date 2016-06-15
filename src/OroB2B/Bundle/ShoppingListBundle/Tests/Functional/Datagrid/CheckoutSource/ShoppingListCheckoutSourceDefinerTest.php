@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Datagrid\CheckoutSou
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\ShoppingListBundle\Datagrid\CheckoutSource\ShoppingListCheckoutSourceDefiner;
+use OroB2B\Bundle\ShoppingListBundle\Datagrid\CheckoutSource\ShoppingListCheckoutSourceDefinitionResolver;
 
 /**
  * @dbIsolation
  */
-class ShoppingListCheckoutSourceDefinerTest extends WebTestCase
+class ShoppingListCheckoutSourceDefinitionResolverTest extends WebTestCase
 {
     /**
      * {@inheritdoc}
@@ -41,7 +41,7 @@ class ShoppingListCheckoutSourceDefinerTest extends WebTestCase
             ->method('isGranted')
             ->will($this->returnValue('true'));
 
-        $definer = new ShoppingListCheckoutSourceDefiner($securityFacade);
+        $definer = new ShoppingListCheckoutSourceDefinitionResolver($securityFacade);
 
         $checkouts = $em->createQueryBuilder()
             ->select('c.id')

@@ -4,15 +4,15 @@ namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutSource\CheckoutSourceDefinerInterface;
+use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutSource\CheckoutSourceDefinitionResolverInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class CheckoutSourceFieldListener
 {
     /**
-     * @var CheckoutSourceDefinerInterface[]
+     * @var CheckoutSourceDefinitionResolverInterface[]
      */
-    private $definers = [];
+    private $definitionResolvers = [];
 
     /**
      * @param RegistryInterface $doctrine
@@ -24,11 +24,11 @@ class CheckoutSourceFieldListener
     }
 
     /**
-     * @param CheckoutSourceDefinerInterface $definer
+     * @param CheckoutSourceDefinitionResolverInterface $definitionResolver
      */
-    public function addSourceDefiner(CheckoutSourceDefinerInterface $definer)
+    public function addSourceDefinitionResolver(CheckoutSourceDefinitionResolverInterface $definitionResolver)
     {
-        $this->definers[] = $definer;
+        $this->definitionResolvers[] = $definitionResolver;
     }
 
     /**
@@ -48,11 +48,11 @@ class CheckoutSourceFieldListener
             $ids[] = $record->getValue('id');
         }
 
-        foreach ($this->definers as $definer) {
-            foreach ($definer->loadSources($em, $ids) as $id => $source) {
+        foreach ($this->definitionResolvers as $definitionResolver) {
+            foreach ($definitionResolver->loadSources($em, $ids) as $id => $source) {
                 foreach ($records as $record) {
                     if ($id == $record->getValue('id')) {
-                        $record->addData(['source' => $source]);
+                        $record->addData(['startedFrom' => $source]);
                     }
                 }
             }

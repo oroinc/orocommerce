@@ -34,7 +34,7 @@ orob2b:
         ordered_by.label: Ordered By
         checkout_type.label: Checkout Type
         line_items_count.label: Items
-        source.label: Started from
+        started_from.label: Started From
 
         basecheckout:
             entity_label: Base Checkout

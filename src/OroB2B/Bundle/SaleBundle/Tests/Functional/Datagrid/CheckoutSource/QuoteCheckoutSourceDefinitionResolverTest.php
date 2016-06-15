@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Datagrid\CheckoutSource;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\SaleBundle\Datagrid\CheckoutSource\QuoteCheckoutSourceDefiner;
+use OroB2B\Bundle\SaleBundle\Datagrid\CheckoutSource\QuoteCheckoutSourceDefinitionResolver;
 
 /**
  * @dbIsolation
  */
-class QuoteCheckoutSourceDefinerTest extends WebTestCase
+class CheckoutSourceDefinitionResolverTest extends WebTestCase
 {
     /**
      * {@inheritdoc}
@@ -44,7 +44,7 @@ class QuoteCheckoutSourceDefinerTest extends WebTestCase
         $translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
             ->getMock();
 
-        $definer = new QuoteCheckoutSourceDefiner($securityFacade, $translator);
+        $definer = new QuoteCheckoutSourceDefinitionResolver($securityFacade, $translator);
 
         $checkouts = $em->createQueryBuilder()
             ->select('c.id')

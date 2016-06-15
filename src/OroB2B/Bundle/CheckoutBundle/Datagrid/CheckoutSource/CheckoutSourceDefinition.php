@@ -66,6 +66,9 @@ class CheckoutSourceDefinition
         return $this->routeParams;
     }
 
+    /**
+     * @return bool
+     */
     public function isLinkable()
     {
         return $this->linkable;

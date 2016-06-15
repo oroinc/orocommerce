@@ -1,14 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Datagrid\CheckoutSource;
+namespace OroB2B\Bundle\SaleBundle\Datagrid\CheckoutSource;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutSource\CheckoutSourceDefinerInterface;
+use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutSource\CheckoutSourceDefinitionResolverInterface;
 use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutSource\CheckoutSourceDefinition;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class ShoppingListCheckoutSourceDefiner implements CheckoutSourceDefinerInterface
+class QuoteCheckoutSourceDefinitionResolver implements CheckoutSourceDefinitionResolverInterface
 {
     /**
      * @var SecurityFacade
@@ -16,11 +17,17 @@ class ShoppingListCheckoutSourceDefiner implements CheckoutSourceDefinerInterfac
     private $securityFacade;
 
     /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    /**
      * @param SecurityFacade $securityFacade
      */
-    public function __construct(SecurityFacade $securityFacade)
+    public function __construct(SecurityFacade $securityFacade, TranslatorInterface $translator)
     {
         $this->securityFacade = $securityFacade;
+        $this->translator = $translator;
     }
 
     /**
@@ -31,10 +38,11 @@ class ShoppingListCheckoutSourceDefiner implements CheckoutSourceDefinerInterfac
     public function loadSources(EntityManagerInterface $em, array $ids)
     {
         $databaseResults = $em->createQueryBuilder()
-            ->select('c.id, sl')
+            ->select('c.id, q')
             ->from('OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout', 'c')
             ->join('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource', 's', 'WITH', 'c.source = s')
-            ->join('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', 'sl', 'WITH', 's.shoppingList = sl')
+            ->join('OroB2B\Bundle\SaleBundle\Entity\QuoteDemand', 'qd', 'WITH', 's.quoteDemand = qd')
+            ->join('OroB2B\Bundle\SaleBundle\Entity\Quote', 'q', 'WITH', 'qd.quote = q')
             ->where('c.id in (:ids)')
             ->setParameter('ids', $ids)
             ->getQuery()
@@ -43,14 +51,18 @@ class ShoppingListCheckoutSourceDefiner implements CheckoutSourceDefinerInterfac
         $result = [];
 
         foreach ($databaseResults as $databaseResult) {
-            $source = $databaseResult[0];
+            if (!isset($databaseResult[0])) {
+                continue;
+            }
             
-            if ($source instanceof ShoppingList) {
+            $quote = $databaseResult[0];
+            
+            if ($quote instanceof Quote) {
                 $result[$databaseResult['id']] = new CheckoutSourceDefinition(
-                    $source->getLabel(),
-                    $this->hasCurrentUserRightToView($source),
-                    'orob2b_shopping_list_frontend_view',
-                    ['id' => $source->getId()]
+                    $this->translator->trans('orob2b.sale.quote.entity_label'),
+                    $this->hasCurrentUserRightToView($quote),
+                    'orob2b_sale_quote_frontend_view',
+                    ['id' => $quote->getId()]
                 );
             }
         }
