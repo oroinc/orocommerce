@@ -43,7 +43,7 @@ class InventoryLevelExportTypeExtension extends AbstractTypeExtension
     {
         $processorAliases = self::$processorAliases;
         $defaultChoice = reset($processorAliases);
-        $builder->remove('processorAlias');
+        $builder->remove(ExportType::CHILD_PROCESSOR_ALIAS);
 
         $builder->add(
             'detailLevel',
