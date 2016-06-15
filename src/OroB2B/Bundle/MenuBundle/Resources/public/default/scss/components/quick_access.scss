@@ -1,4 +1,7 @@
 .navigation-widget {
+  margin: .3rem 0 0;
+  background: $theme-slight-lightest-gray-color;
+
   &__list {
     @include list-normalize();
 
