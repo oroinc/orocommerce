@@ -1,0 +1,21 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_order_frontend_open_orders/layout.html.twig'
+
+        - '@add':
+            id: checkouts_title
+            parentId: content
+            blockType: text
+            siblingId: ~
+            prepend: true
+            options:
+                text: 'orob2b.checkout.open_orders.label'
+
+        - '@add':
+            id: checkouts
+            parentId: content
+            siblingId: checkouts_title
+            blockType: datagrid
+            options:
+                grid_name: frontend-checkouts-grid

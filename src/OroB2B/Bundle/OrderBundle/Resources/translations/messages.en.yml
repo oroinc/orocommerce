@@ -195,6 +195,7 @@ orob2b:
         order:
             entity_plural_label: Orders
             order_history: Order History
+            open_orders: Open Orders
             create.label: 'Create Order'
             form:
                 group_label:

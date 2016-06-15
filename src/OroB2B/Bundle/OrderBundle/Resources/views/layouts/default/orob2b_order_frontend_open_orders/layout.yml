@@ -1,0 +1,9 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroB2BOrderBundle:layouts:default/orob2b_order_frontend_open_orders/layout.html.twig'
+
+        - '@add':
+            id: account_sidebar
+            parentId: sidebar_left
+            blockType: container
