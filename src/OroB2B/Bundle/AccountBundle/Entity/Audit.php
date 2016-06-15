@@ -19,7 +19,7 @@ class Audit extends AbstractAudit
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     protected $accountUser;
-
+    
     /**
      * {@inheritdoc}
      */

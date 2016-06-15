@@ -1,15 +1,16 @@
 <?php
-
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\DataAuditBundle\Entity\AuditField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Component\Testing\Unit\EntityTestCase;
-
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Audit;
 
-class AuditTest extends EntityTestCase
+class AuditTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+    
     public function testUser()
     {
         $user = new AccountUser();
@@ -44,7 +45,7 @@ class AuditTest extends EntityTestCase
         $audit = new Audit();
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $audit->getFields());
 
-        $audit->createField('field1', 'string', 'a', 'b');
+        $audit->addField(new AuditField('field1', 'string', 'a', 'b'));
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $audit->getFields());
 
         $audit->getFields()->map(
@@ -56,28 +57,8 @@ class AuditTest extends EntityTestCase
         $this->assertInstanceOf('Oro\Bundle\DataAuditBundle\Entity\AuditField', $audit->getField('field1'));
         $this->assertFalse($audit->getField('field2'));
 
-        $audit->createField('field1', 'string', 'a2', 'b2');
+        $audit->addField(new AuditField('field1', 'string', 'a2', 'b2'));
         $this->assertEquals('a2', $audit->getField('field1')->getNewValue());
         $this->assertEquals('b2', $audit->getField('field1')->getOldValue());
-    }
-
-    public function testFieldsData()
-    {
-        $audit = new Audit();
-        $audit->createField('field1', 'string', 'a2', 'b2');
-        $this->assertEquals(['field1' => ['old' => 'b2', 'new' => 'a2']], $audit->getData());
-
-        $date = new \DateTime();
-        $audit->createField('date', 'datetime', $date, null);
-        $this->assertEquals(
-            [
-                'field1' => ['old' => 'b2', 'new' => 'a2'],
-                'date' => [
-                    'old' => ['value' => null, 'type' => 'datetime'],
-                    'new' => ['value' => $date, 'type' => 'datetime'],
-                ],
-            ],
-            $audit->getData()
-        );
     }
 }
