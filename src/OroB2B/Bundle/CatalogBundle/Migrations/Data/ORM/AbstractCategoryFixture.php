@@ -5,9 +5,10 @@ namespace OroB2B\Bundle\CatalogBundle\Migrations\Data\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 
 abstract class AbstractCategoryFixture extends AbstractFixture
 {

@@ -6,6 +6,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -23,9 +24,7 @@ class ShoppingListTest extends \PHPUnit_Framework_TestCase
             ['id', '123'],
             ['label', 'label-test-123'],
             ['notes', 'notes-test-123'],
-            ['currency', 'USD'],
-            ['subtotal', 123.45],
-            ['total', 543.21],
+            ['subtotal', new Subtotal()],
             ['organization', new Organization()],
             ['account', new Account()],
             ['accountUser', new AccountUser()],

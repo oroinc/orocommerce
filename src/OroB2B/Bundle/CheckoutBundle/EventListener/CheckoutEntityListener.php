@@ -9,8 +9,10 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
+use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 /**
  * While implementing custom checkout, alternative checkout entity can be set
@@ -51,13 +53,23 @@ class CheckoutEntityListener
     protected $checkoutType = '';
 
     /**
+     * @var UserCurrencyManager
+     */
+    protected $userCurrencyManager;
+
+    /**
      * @param WorkflowManager $workflowManager
      * @param RegistryInterface $doctrine
+     * @param UserCurrencyManager $userCurrencyManager
      */
-    public function __construct(WorkflowManager $workflowManager, RegistryInterface $doctrine)
-    {
+    public function __construct(
+        WorkflowManager $workflowManager,
+        RegistryInterface $doctrine,
+        UserCurrencyManager $userCurrencyManager
+    ) {
         $this->workflowManager = $workflowManager;
         $this->doctrine = $doctrine;
+        $this->userCurrencyManager = $userCurrencyManager;
     }
 
     /**
@@ -118,14 +130,29 @@ class CheckoutEntityListener
     protected function findExistingCheckout(CheckoutEntityEvent $event)
     {
         if ($event->getCheckoutId() && $this->isAcceptableCheckoutType($event, $this->getCheckoutType())) {
-            return $this->getRepository()->find($event->getCheckoutId());
+            /** @var BaseCheckout $checkout */
+            $checkout = $this->getRepository()->find($event->getCheckoutId());
+        } elseif ($event->getSource() && $event->getSource()->getId()) {
+            /** @var BaseCheckout $checkout */
+            $checkout = $this->getRepository()->findOneBy(['source' => $event->getSource()]);
         }
 
-        if ($event->getSource() && $event->getSource()->getId()) {
-            return $this->getRepository()->findOneBy(['source' => $event->getSource()]);
-        }
+        return isset($checkout) ? $this->actualizeCheckoutCurrency($checkout) : null;
+    }
 
-        return null;
+    /**
+     * @param BaseCheckout $checkout
+     * @return BaseCheckout
+     */
+    protected function actualizeCheckoutCurrency(BaseCheckout $checkout)
+    {
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManagerForClass('OroB2BCheckoutBundle:BaseCheckout');
+        $checkout->setCurrency($this->userCurrencyManager->getUserCurrency());
+        $em->persist($checkout);
+        $em->flush($checkout);
+
+        return $checkout;
     }
 
     /**

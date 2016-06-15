@@ -14,19 +14,3 @@ OroB2B\Bundle\WebsiteBundle\Entity\Website:
             - NotBlank: ~
         organization:
             - NotBlank: ~
-
-OroB2B\Bundle\WebsiteBundle\Entity\Locale:
-    constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: title
-    properties:
-        code:
-            - NotBlank: ~
-            - Length:
-                min: 2
-                max: 64
-        title:
-            - NotBlank: ~
-            - Length:
-                min: 2
-                max: 255

@@ -252,7 +252,7 @@
       border-bottom-right-radius: 0;
 
       text-align: right;
-      
+
       + .input-group-btn {
         border: 1px solid $theme-lighter-gray-color;
         border-left: 0;
@@ -636,6 +636,43 @@
 .pinned-dropdown {
   .icons-holder:not(:first-child) {
     display: none !important;
+  }
+}
+.input-append {
+  .select2-container.input.input_block {
+    display: inline-block;
+    width: auto;
+    height: auto;
+    padding: 7px;
+
+    .select2-choice {
+      max-width: 255px;
+    }
+  }
+}
+
+.select2-container {
+  a.select2-choice {
+    height: auto;
+
+    .select2-chosen {
+      padding: 11px 30px 11px 8px;
+    }
+
+    .select2-arrow,
+    .select2-search-choice-close {
+      top: 9px;
+    }
+  }
+
+  .select2-chosen {
+    max-width: 215px;
+
+    margin-right: 12px;
+  }
+  &.input.input_block {
+    display: inline-block;
+    width: auto;
   }
 }
 

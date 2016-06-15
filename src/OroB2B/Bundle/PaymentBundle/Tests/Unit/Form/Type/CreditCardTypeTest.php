@@ -84,11 +84,16 @@ class CreditCardTypeTest extends FormIntegrationTestCase
                             'mapped' => false,
                             'attr' => [
                                 'data-validation' => [
-                                    'creditCardNumberLuhnCheck' => [
-                                        'message' => 'orob2b.payment.account.error',
+                                    'credit-card-number' => [
+                                        'message' => 'orob2b.payment.validation.credit_card',
+                                        'payload' => null,
+                                    ],
+                                    'credit-card-type' => [
+                                        'message' => 'orob2b.payment.validation.credit_card_type',
                                         'payload' => null,
                                     ],
                                 ],
+                                'data-credit-card-type-validator' => 'credit-card-type',
                                 'data-gateway' => true,
                                 'data-card-number' => true,
                                 'autocomplete' => 'off',

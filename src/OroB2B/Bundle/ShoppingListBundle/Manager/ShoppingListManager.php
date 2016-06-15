@@ -9,17 +9,14 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class ShoppingListManager
@@ -50,19 +47,9 @@ class ShoppingListManager
     protected $rounding;
 
     /**
-     * @var TotalProcessorProvider
+     * @var UserCurrencyManager
      */
-    protected $totalProvider;
-
-    /**
-     * @var LineItemNotPricedSubtotalProvider
-     */
-    protected $lineItemNotPricedSubtotalProvider;
-
-    /**
-     * @var LocaleSettings
-     */
-    protected $localeSettings;
+    protected $userCurrencyManager;
 
     /**
      * @var WebsiteManager
@@ -70,33 +57,35 @@ class ShoppingListManager
     protected $websiteManager;
 
     /**
+     * @var ShoppingListTotalManager
+     */
+    protected $totalManager;
+
+    /**
      * @param ManagerRegistry $managerRegistry
      * @param TokenStorageInterface $tokenStorage
      * @param TranslatorInterface $translator
      * @param QuantityRoundingService $rounding
-     * @param TotalProcessorProvider $totalProvider
-     * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
-     * @param LocaleSettings $localeSettings
+     * @param UserCurrencyManager $userCurrencyManager
      * @param WebsiteManager $websiteManager
+     * @param ShoppingListTotalManager $totalManager
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         TokenStorageInterface $tokenStorage,
         TranslatorInterface $translator,
         QuantityRoundingService $rounding,
-        TotalProcessorProvider $totalProvider,
-        LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider,
-        LocaleSettings $localeSettings,
-        WebsiteManager $websiteManager
+        UserCurrencyManager $userCurrencyManager,
+        WebsiteManager $websiteManager,
+        ShoppingListTotalManager $totalManager
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
         $this->rounding = $rounding;
-        $this->totalProvider = $totalProvider;
-        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
-        $this->localeSettings = $localeSettings;
+        $this->userCurrencyManager = $userCurrencyManager;
         $this->websiteManager = $websiteManager;
+        $this->totalManager = $totalManager;
     }
 
     /**
@@ -111,7 +100,6 @@ class ShoppingListManager
             ->setOrganization($this->getAccountUser()->getOrganization())
             ->setAccount($this->getAccountUser()->getAccount())
             ->setAccountUser($this->getAccountUser())
-            ->setCurrency($this->localeSettings->getCurrency())
             ->setWebsite($this->websiteManager->getCurrentWebsite());
 
         return $shoppingList;
@@ -184,6 +172,8 @@ class ShoppingListManager
             $em->persist($lineItem);
         }
 
+        $this->totalManager->recalculateTotals($shoppingList, false);
+
         if ($flush) {
             $em->flush();
         }
@@ -193,7 +183,7 @@ class ShoppingListManager
      * @param ShoppingList $shoppingList
      * @param Product $product
      * @param bool $flush
-     * @return int                       Number of removed line items
+     * @return int Number of removed line items
      */
     public function removeProduct(ShoppingList $shoppingList, Product $product, $flush = true)
     {
@@ -207,6 +197,7 @@ class ShoppingListManager
             $objectManager->remove($lineItem);
         }
 
+        $this->totalManager->recalculateTotals($shoppingList, false);
         if ($lineItems && $flush) {
             $objectManager->flush();
         }
@@ -215,29 +206,20 @@ class ShoppingListManager
     }
 
     /**
-     * @param ShoppingList $shoppingList
-     * @param bool|true $flush
+     * @param LineItem $lineItem
      */
-    public function recalculateSubtotals(ShoppingList $shoppingList, $flush = true)
+    public function removeLineItem(LineItem $lineItem)
     {
-        $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotal($shoppingList);
-        $total = $this->totalProvider->getTotal($shoppingList);
-
-        if ($subtotal) {
-            $shoppingList->setSubtotal($subtotal->getAmount());
-        }
-        if ($total) {
-            $shoppingList->setTotal($total->getAmount());
-        }
-        $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
-        $em->persist($shoppingList);
-
-        if ($flush) {
-            $em->flush();
-        }
+        $objectManager = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+        $objectManager->remove($lineItem);
+        $shoppingList = $lineItem->getShoppingList();
+        $shoppingList->removeLineItem($lineItem);
+        $this->totalManager->recalculateTotals($lineItem->getShoppingList(), false);
+        $objectManager->flush();
     }
 
     /**
+     * TODO: refactor, recalculate subtotals once
      * @param array        $lineItems
      * @param ShoppingList $shoppingList
      * @param int          $batchSize

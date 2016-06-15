@@ -51,9 +51,6 @@
 /*Tooltip styles*/
 @import 'shared/tooltip.scss';
 
-/*Chosen selectbox plugin override styles*/
-@import 'shared/chosen-override.scss';
-
 /*Bootstrap override styles*/
 @import 'shared/bootstrap-override.scss';
 
@@ -80,7 +77,6 @@
 /*Current grid styles*/
 @import 'current-grid/current-grid.scss';
 @import 'shared/dialog-widget.scss';
-@import 'shared/select2.scss';
 
 /* Commerce theme */
 @import 'components/commerce/commerce.scss';

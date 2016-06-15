@@ -12,8 +12,8 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator;
 use OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -140,11 +140,11 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 
         $product = (new StubProduct())
             ->setSku(self::PRODUCT_SKU)
-            ->addUnitPrecision($this->prepareUnitPrecision(
+            ->setPrimaryUnitPrecision($this->prepareUnitPrecision(
                 self::UNIT_PRECISION_CODE_1,
                 self::UNIT_PRECISION_DEFAULT_PRECISION_1
             ))
-            ->addUnitPrecision($this->prepareUnitPrecision(
+            ->addAdditionalUnitPrecision($this->prepareUnitPrecision(
                 self::UNIT_PRECISION_CODE_2,
                 self::UNIT_PRECISION_DEFAULT_PRECISION_2
             ))
@@ -219,7 +219,11 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
     public function testDuplicateFailed()
     {
         $product = (new StubProduct())
-            ->setSku(self::PRODUCT_SKU);
+            ->setSku(self::PRODUCT_SKU)
+            ->setPrimaryUnitPrecision($this->prepareUnitPrecision(
+                self::UNIT_PRECISION_CODE_1,
+                self::UNIT_PRECISION_DEFAULT_PRECISION_1
+            ));
 
         $this->skuIncrementor->expects($this->once())
             ->method('increment')

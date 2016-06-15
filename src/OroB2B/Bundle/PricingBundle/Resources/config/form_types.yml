@@ -86,6 +86,16 @@ services:
         tags:
             - { name: form.type_extension, alias: orob2b_product }
 
+    orob2b_pricing.form.extension.currency_type:
+        class: 'OroB2B\Bundle\PricingBundle\Form\Extension\SystemCurrencyFormExtension'
+        public: true
+        arguments:
+            - "@oro_config.manager"
+            - '@oro_locale.settings'
+            - "@translator"
+        tags:
+            - { name: form.type_extension, alias: oro_currency }
+
     orob2b_pricing.form.type.price_list_schedule:
         class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListScheduleType'
         tags:
