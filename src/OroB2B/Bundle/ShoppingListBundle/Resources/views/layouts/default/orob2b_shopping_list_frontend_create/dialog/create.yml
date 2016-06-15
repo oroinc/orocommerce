@@ -12,11 +12,6 @@ layout:
             optionValue: { '@value': $data.shoppingList }
         - '@addTree':
             items:
-                form_errors:
-                    blockType: block
-                    options:
-                        vars:
-                            form: { '@value': $data.orob2b_shopping_list_shopping_list_form.view }
                 form_start:
                     blockType: form_start
                     options:
@@ -57,7 +52,6 @@ layout:
                         visible: { '@neq': [$data.createOnly, true] }
             tree:
                 widget_content:
-                    form_errors: ~
                     form_start: ~
                     form_fields: ~
                     form_comment: ~

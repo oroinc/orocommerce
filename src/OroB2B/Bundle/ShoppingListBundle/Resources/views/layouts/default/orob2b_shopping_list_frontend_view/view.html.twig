@@ -10,12 +10,10 @@
 {% endblock %}
 
 {% block _no_shopping_lists_widget %}
-    {% if not shoppingList %}
-        <div class="cart-list_empty">
-            <span class="badge badge_orange badge_xlg badge_circle"><i class="cf-basket"></i></span>
-            <span class="fs24 va-m_md">{{ 'orob2b.frontend.shoppinglist.view.not_have_available'|trans }}</span>
-        </div>
-    {% endif %}
+    <div class="cart-list_empty">
+        <span class="badge badge_orange badge_xlg badge_circle"><i class="cf-basket"></i></span>
+        <span class="fs24 va-m_md">{{ 'orob2b.frontend.shoppinglist.view.not_have_available'|trans }}</span>
+    </div>
 {% endblock %}
 
 {% block _shopping_list_title_widget %}
@@ -115,10 +113,9 @@
 
 {% block _shopping_list_line_items_list_widget %}
     {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
-    {% if shoppingList.lineItems is not empty %}
-        {% import 'OroUIBundle::macros.html.twig' as UI %}
-        {# TODO: Pass default currency from provider. BB-2218 #}
-        {% set defaultCurrency = 'USD' %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {# TODO: Pass default currency from provider. BB-2218 #}
+    {% set defaultCurrency = 'USD' %}
 
         {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"}) %}
         <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
@@ -339,26 +336,22 @@
                                     <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
                                 </label>
 
-                                <div class="form-input form-input_textarea" data-role="editor">
-                                    <textarea class="input input_sm input_block" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
-                                        placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
-                                </div>
+                            <div class="form-input form-input_textarea" data-role="editor">
+                                <textarea class="input input_sm input_block" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
+                                    placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
                             </div>
-                        </td>
-                    </tr>
-                </tbody>
-                {% endfor %}
-            </table>
-            {{ block_widget(block) }}
-        </div>
-    {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block _shopping_list_line_items_empty_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-list_empty"}) %}
-    {% if shoppingList.lineItems is not empty %}
-        {% set attr = attr|merge({ class: attr.class ~ " hidden"}) %}
-    {% endif %}
     <div {{ block('block_attributes') }}>
           <span class="badge badge_orange badge_xlg badge_circle">
             <i class="cf-basket"></i>
