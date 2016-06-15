@@ -23,6 +23,11 @@ class DefaultProductUnitProvider
     protected $registry;
 
     /**
+     * @var  int
+     */
+    protected $categoryId;
+
+    /**
      * @param ConfigManager $configManager
      * @param ManagerRegistry $registry
      */
@@ -30,6 +35,14 @@ class DefaultProductUnitProvider
     {
         $this->configManager = $configManager;
         $this->registry = $registry;
+    }
+
+    /**
+     * @param int $category
+     */
+    public function setCategoryId($categoryId)
+    {
+        $this->categoryId = $categoryId;
     }
     
     /**
@@ -40,6 +53,8 @@ class DefaultProductUnitProvider
         $defaultUnitValue = $this->configManager->get('orob2b_product.default_unit');
         $defaultUnitPrecision = $this->configManager->get('orob2b_product.default_unit_precision');
 
+        if($this->categoryId == 4) $defaultUnitValue = 'set';
+        if($this->categoryId == 2) $defaultUnitValue = 'hour';
         $unit = $this
             ->getRepository()->findOneBy(['code' => $defaultUnitValue]);
 

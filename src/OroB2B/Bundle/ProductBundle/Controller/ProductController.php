@@ -195,8 +195,13 @@ class ProductController extends Controller
             $form->handleRequest($request);
             $formData = $form->all();
 
+            $param = $request->request->get('orob2b_product_step_one');
+            $provider = $this->get('orob2b_product.provider.default_product_unit_provider');
+            $provider->setCategoryId($param['category']);
+
             if (!empty($formData)) {
                 $form = $this->createForm(ProductType::NAME, $product);
+
                 foreach ($formData as $key => $item) {
                     $data = $item->getData();
                     $form->get($key)->setData($data);
