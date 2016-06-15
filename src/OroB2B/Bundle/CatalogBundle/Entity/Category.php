@@ -221,8 +221,9 @@ class Category extends ExtendCategory
 
     /**
      * @var CategoryUnitPrecision
+     *
      * @ORM\OneToOne(targetEntity="CategoryUnitPrecision")
-     * @JoinColumn(name="unit_precision_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="unit_precision_id", referencedColumnName="id")
      *
      */
     protected $unitPrecision;
@@ -556,8 +557,26 @@ class Category extends ExtendCategory
         return $longDescription->first();
     }
 
+    /**
+     * @return CategoryUnitPrecision
+     */
     public function getUnitPrecision()
     {
         return $this->unitPrecision;
     }
+
+    /**
+     * Set unitPrecision
+     *
+     * @param CategoryUnitPrecision $unitPrecision
+     *
+     * @return Category
+     */
+    public function setUnitPrecision(CategoryUnitPrecision $unitPrecision = null)
+    {
+        $this->unitPrecision = $unitPrecision;
+    
+        return $this;
+    }
 }
+
