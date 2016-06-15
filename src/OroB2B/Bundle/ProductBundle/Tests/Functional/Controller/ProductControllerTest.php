@@ -46,6 +46,9 @@ class ProductControllerTest extends WebTestCase
     const DEFAULT_DESCRIPTION = 'default description';
     const DEFAULT_SHORT_DESCRIPTION = 'default short description';
 
+    const CATEGORY_ID = 1;
+    const CATEGORY_NAME = 'Master Catalog';
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -62,10 +65,25 @@ class ProductControllerTest extends WebTestCase
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_create'));
+        $this->assertEquals(1, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_NAME."')]")->count());
+        $form = $crawler->selectButton('Continue')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['input_action'] = 'orob2b_product_create';
+        $formValues['orob2b_product_step_one']['category'] = self::CATEGORY_ID;
 
-        /** @var Form $form */
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request(
+            'POST',
+            $this->getUrl('orob2b_product_create'),
+            $formValues
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertEquals(0, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_NAME."')]")->count());
+        $this->assertContains("Category:".self::CATEGORY_NAME, $crawler->html());
+
         $form = $crawler->selectButton('Save and Close')->form();
-
         $this->assertDefaultProductUnit($form);
 
         $formValues = $form->getPhpValues();
@@ -109,7 +127,7 @@ class ProductControllerTest extends WebTestCase
         $localizedName = $this->getLocalizedName($product, $localization);
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
-
+        $this->assertEquals(1, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_NAME."')]")->count());
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
@@ -344,8 +362,8 @@ class ProductControllerTest extends WebTestCase
                 'oro_action_operation_execute',
                 [
                     'operationName' => 'DELETE',
-                    'entityId' => $id,
-                    'entityClass' => $this->getContainer()->getParameter('orob2b_product.entity.product.class'),
+                    'entityId'      => $id,
+                    'entityClass'   => $this->getContainer()->getParameter('orob2b_product.entity.product.class'),
                 ]
             ),
             [],
@@ -355,9 +373,9 @@ class ProductControllerTest extends WebTestCase
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertEquals(
             [
-                'success' => true,
-                'message' => '',
-                'messages' => [],
+                'success'     => true,
+                'message'     => '',
+                'messages'    => [],
                 'redirectUrl' => $this->getUrl('orob2b_product_index')
             ],
             json_decode($this->client->getResponse()->getContent(), true)

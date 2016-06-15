@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Action;
 
+use Psr\Log\LoggerAwareTrait;
+
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -16,6 +18,8 @@ use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 abstract class AbstractPaymentMethodAction extends AbstractAction
 {
+    use LoggerAwareTrait;
+
     /** @var PaymentMethodRegistry */
     protected $paymentMethodRegistry;
 
@@ -155,18 +159,12 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
         return [
             'errorUrl' => $this->router->generate(
                 'orob2b_payment_callback_error',
-                [
-                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                    'accessToken' => $paymentTransaction->getAccessToken(),
-                ],
+                ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
             'returnUrl' => $this->router->generate(
                 'orob2b_payment_callback_return',
-                [
-                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                    'accessToken' => $paymentTransaction->getAccessToken(),
-                ],
+                ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
         ];
@@ -181,9 +179,12 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
         try {
             return $this->paymentMethodRegistry
                 ->getPaymentMethod($paymentTransaction->getPaymentMethod())
-                ->execute($paymentTransaction);
+                ->execute($paymentTransaction->getAction(), $paymentTransaction);
         } catch (\Exception $e) {
-            // do not expose sensitive data
+            if ($this->logger) {
+                // do not expose sensitive data in context
+                $this->logger->error($e->getMessage(), []);
+            }
         }
 
         return [];

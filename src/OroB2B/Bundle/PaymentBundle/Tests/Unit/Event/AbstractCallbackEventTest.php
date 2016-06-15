@@ -52,4 +52,16 @@ abstract class AbstractCallbackEventTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertSame($paymentTransaction, $event->getPaymentTransaction());
     }
+
+    public function testMarkResponse()
+    {
+        $event = $this->getEvent();
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+
+        $event->markSuccessful();
+        $this->assertEquals(Response::HTTP_OK, $event->getResponse()->getStatusCode());
+
+        $event->markFailed();
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+    }
 }
