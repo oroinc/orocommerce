@@ -182,7 +182,7 @@
 {% block orob2b_pricing_product_attribute_price_collection_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container price-list-grid-form' }) %}
     {% set id = id ~ '_collection' %}
-    <div class="pricing-price-list"{# data-page-component-module="orob2bpricing/js/app/components/price-lists-errors-handler"#}>
+    <div class="pricing-price-attribute">
         <div class="row-oro">
             <div {{ block('widget_container_attributes') }}>
                 <table class="grid table-hover table table-bordered">

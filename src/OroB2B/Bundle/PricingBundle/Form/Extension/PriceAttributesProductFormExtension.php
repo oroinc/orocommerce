@@ -56,8 +56,8 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
         $builder->add(self::PRODUCT_PRICE_ATTRIBUTES_PRICES, 'collection', [
             'mapped' => false,
             'type' => ProductAttributePriceCollectionType::NAME,
-            'label' => 'orob2b.pricing.priceattributepricelist.entity_plural_label',
-            'required' => false
+            'label' => false,
+            'required' => false,
         ]);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPreSetData']);
@@ -101,18 +101,28 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
      */
     public function onPostSubmit(FormEvent $event)
     {
-        //todo: Remove rows for deleted units
+        /** @var Product $product */
+        $product = $event->getData();
+        $units = $product->getAvailableUnitCodes();
         $data = $event->getForm()->get(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)->getData();
 
         foreach ($data as $attributePrices) {
             /** @var PriceAttributeProductPrice $price */
             foreach ($attributePrices as $price) {
+                //don't process prices for deleted units
+                if (!in_array($price->getUnit()->getCode(), $units, true)) {
+                    continue;
+                }
+
+                //remove nullable prices
                 if (!$price->getPrice()->getValue()) {
                     if (null !== $price->getId()) {
                         $this->getManager()->remove($price);
                     }
                     continue;
                 }
+
+                // persist new prices
                 if (null === $price->getId()) {
                     $this->getManager()->persist($price);
                 }

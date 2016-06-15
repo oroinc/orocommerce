@@ -597,13 +597,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     /**
      * Remove unitPrecisions
      *
-     * @param ProductUnitPrecision $unitPrecisions
+     * @param ProductUnitPrecision $unitPrecision
      * @return Product
      */
-    public function removeUnitPrecision(ProductUnitPrecision $unitPrecisions)
+    public function removeUnitPrecision(ProductUnitPrecision $unitPrecision)
     {
-        if ($this->unitPrecisions->contains($unitPrecisions)) {
-            $this->unitPrecisions->removeElement($unitPrecisions);
+        if ($this->unitPrecisions->contains($unitPrecision)) {
+            $this->unitPrecisions->removeElement($unitPrecision);
         }
 
         return $this;

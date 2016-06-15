@@ -486,6 +486,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_unique_price_list_validator }
 
+    orob2b_pricing.validator.price_for_product_unit_exists:
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExistsValidator'
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing_price_for_product_unit_exists_validator }
+
     #TODO: refactor after BB-1289
     orob2b_pricing.entity_listener.product_price:
         class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\ProductPriceEntityListener'

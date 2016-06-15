@@ -62,3 +62,8 @@ OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig:
                 type: integer
         priceList:
             - NotBlank: ~
+
+OroB2B\Bundle\ProductBundle\Entity\Product:
+    properties:
+        unitPrecisions:
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExists: ~
