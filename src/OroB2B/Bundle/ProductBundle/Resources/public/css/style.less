@@ -1,7 +1,21 @@
 .oro-item-collection {
+  td {
+    white-space: nowrap;
+    vertical-align: middle;
+
+    .conversion-rate-label {
+      position: absolute;
+      padding-top: 5px;
+    }
+
+    .sell {
+      margin-top: 0;
+    }
+  }
+
   input[type="text"] {
-    &.precision {
-      width: 180px;
+    &.precision, &.conversionRate {
+      width: 40px;
     }
   }
 }
@@ -17,7 +31,10 @@
 
   .collection-fields-list {
     td {
-      padding-left: 0;
+      padding-left: 10px;
+    }
+    button {
+      margin-left: 0;
     }
   }
 
@@ -89,5 +106,19 @@
   margin-left:50%;
   padding-left:20px;
   width: 50%;
+}
+
+table.unit-table{
+    min-width: 300px;
+    td {
+      padding-top:4px;
+      padding-bottom:4px;
+    }
+    td:first-child {
+      white-space: nowrap;
+      font-weight: bold;
+      font-size: 11px;
+    }
+
 }
 

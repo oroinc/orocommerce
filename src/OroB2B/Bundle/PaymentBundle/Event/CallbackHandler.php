@@ -7,9 +7,7 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class CallbackHandler
 {
@@ -18,68 +16,37 @@ class CallbackHandler
     /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var string */
-    protected $paymentTransactionClass;
+    /** @var PaymentTransactionProvider */
+    protected $paymentTransactionProvider;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
-     * @param DoctrineHelper $doctrineHelper
-     * @param $paymentTransactionClass
+     * @param PaymentTransactionProvider $paymentTransactionProvider
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
-        DoctrineHelper $doctrineHelper,
-        $paymentTransactionClass
+        PaymentTransactionProvider $paymentTransactionProvider
     ) {
         $this->eventDispatcher = $eventDispatcher;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->paymentTransactionClass = (string)$paymentTransactionClass;
+        $this->paymentTransactionProvider = $paymentTransactionProvider;
     }
 
     /**
-     * @param string $accessIdentifier
-     * @param string $accessToken
      * @param AbstractCallbackEvent $event
      * @return Response
      */
-    public function handle($accessIdentifier, $accessToken, AbstractCallbackEvent $event)
+    public function handle(AbstractCallbackEvent $event)
     {
-        $paymentTransaction = $this->getPaymentTransaction($accessIdentifier, $accessToken);
+        $paymentTransaction = $event->getPaymentTransaction();
         if (!$paymentTransaction) {
             return $event->getResponse();
         }
 
-        $event->setPaymentTransaction($paymentTransaction);
-
         $this->eventDispatcher->dispatch($event->getEventName(), $event);
         $this->eventDispatcher->dispatch($event->getTypedEventName($paymentTransaction->getPaymentMethod()), $event);
 
-        $entityManager = $this->doctrineHelper->getEntityManager($paymentTransaction);
-        try {
-            $entityManager->transactional(
-                function () {
-                }
-            );
-        } catch (\Exception $e) {
-            if ($this->logger) {
-                $this->logger->error($e->getMessage(), $e->getTrace());
-            }
-        }
+        $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
         return $event->getResponse();
-    }
-
-    /**
-     * @param string $accessIdentifier
-     * @param string $accessToken
-     * @return PaymentTransaction
-     */
-    protected function getPaymentTransaction($accessIdentifier, $accessToken)
-    {
-        return $this->doctrineHelper->getEntityRepository($this->paymentTransactionClass)
-            ->findOneBy(['accessIdentifier' => (string)$accessIdentifier, 'accessToken' => (string)$accessToken]);
     }
 }

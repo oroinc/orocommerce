@@ -1,0 +1,6 @@
+{% set paymentMethod  =  record.getValue('paymentMethod') %}
+{% if paymentMethod %}
+    {{ ('orob2b.payment.admin.' ~ paymentMethod ~ '.label')|trans }}
+{% else %}
+    {{ 'oro.ui.empty'|trans }}
+{% endif %}
