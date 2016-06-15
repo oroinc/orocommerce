@@ -66,13 +66,13 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
                 'product' => [
                     'id' => 1,
                     'unitPrecisions' => [
-                        ['unit' => ['code' => 'item']],
-                        ['unit' => ['code' => 'kg']],
+                        ['unit' => ['code' => 'item'], 'sell' => true],
+                        ['unit' => ['code' => 'kg'], 'sell' => false],
                     ],
                 ],
                 'unitPrecisionsWithPrices' => [
-                    ['unit' => ['code' => 'item']],
-                    ['unit' => ['code' => 'kg']],
+                    ['unit' => ['code' => 'item'], 'sell' => true],
+                    ['unit' => ['code' => 'kg'], 'sell' => false],
                 ],
                 'expectedData' => [],
             ],
@@ -80,12 +80,13 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
                 'product' => [
                     'id' => 1,
                     'unitPrecisions' => [
-                        ['unit' => ['code' => 'item']],
-                        ['unit' => ['code' => 'kg']],
+                        ['unit' => ['code' => 'item'],'sell' => true],
+                        ['unit' => ['code' => 'kg'], 'sell' => true],
+                        ['unit' => ['code' => 'set'], 'sell' => false],
                     ],
                 ],
                 'unitPrecisionsWithPrices' => [
-                    ['unit' => ['code' => 'item']],
+                    ['unit' => ['code' => 'item'],'sell' => true],
                 ],
                 'expectedData' => [
                     ['unit' => ['code' => 'kg']]
