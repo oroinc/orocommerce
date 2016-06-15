@@ -535,30 +535,6 @@
   }
 }
 
-/*Order checkout Table*/
-.order-checkout-widget__table {
-  margin: 0 0 1.5rem;
-
-  td {
-    text-align: left;
-    padding: .4rem 0 .3rem 2.5rem;
-
-    &.order-checkout-widget__total {
-      font-size: 1.8rem;
-      padding-top: .6rem;
-    }
-
-    &:last-child {
-      padding: .4rem 2.5rem;
-      text-align: right;
-    }
-  }
-
-  @media (max-width: 991px) {
-    margin: 0;
-  }
-}
-
 /*Matrix Widget Table Block*/
 .matrix-widget__table-block {
   display: table;

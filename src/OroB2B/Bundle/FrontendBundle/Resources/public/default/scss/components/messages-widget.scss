@@ -1,30 +1,32 @@
 /*Messages Widget*/
 .messages-widget {
-  padding: 0 0 2.5rem;
+  padding: 0 0 25px;
 
-  &.messages-widget_has-bg {
-    background: $base-sidebar-background-color;
+  &_has-bg {
+    background: $theme-slight-lightest-gray-color;
   }
 
   &.messages-widget__list-expanded,
   &.oro-mp-widget__list-expanded {
     .messages-widget__arrow {
-      transform: rotate(0);
+      transform: rotate(0deg);
     }
   }
 
   &.messages-widget__dropdown-mode {
-    display: none;
-    min-width: 22rem;
     position: absolute;
-    background: #fff;
-    top: 4.8rem;
+    top: 48px;
     right: 0;
-    padding: 3.5rem 1rem 2rem;
-    @include radiused(.2rem);
-    border: .1rem solid $base-border-color;
-    box-shadow: 0 .2rem .4rem 0 rgba(0,0,0,.3);
     z-index: 10;
+
+    display: none;
+    min-width: 220px;
+    padding: 35px 10px 20px;
+    border: 1px solid $theme-lighter-gray-color;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.3);
+    border-radius: 2px;
+
+    background: $base-white-color;
     text-align: left;
 
     &.opened {
@@ -33,33 +35,36 @@
 
     .btn_close {
       color: $base-link-color;
+
       opacity: 1;
 
       [class^="cf-"] {
-        font-size: 2rem;
+        font-size: 20px;
       }
 
       + .messages-widget__goto-btn {
-        right: 2.7rem;
-        top: .8rem;
+        right: 27px;
+        top: 8px;
       }
     }
 
     &.messages-widget__dropdown-mode_sticked {
-      top: 5.3rem;
+      top: 53px;
     }
 
     .messages-widget__goto-btn {
+      position: absolute;
+      top: 7px;
+      right: 5px;
+
       display: block;
       padding: 0;
-      position: absolute;
-      text-decoration: none;
-      top: .7rem;
-      right: .5rem;
-      background: transparent;
       border: 0;
       box-shadow: none;
+
+      background: transparent;
       color: $base-link-color;
+      text-decoration: none;
 
       [class^="cf-"] {
         font-size: 1.8rem;
@@ -68,47 +73,52 @@
   }
 
   &.pin_mode {
-    display: none;
-    min-width: 22rem;
-    background: #fff;
     position: absolute;
     bottom: 0;
     right: 0;
-    padding: 0;
-    @include radiused(.2rem);
-    border: .1rem solid $base-border-color;
-    box-shadow: 0 .2rem .4rem 0 rgba(0,0,0,.3);
     z-index: 10;
+
+    display: none;
+    min-width: 220px;
+    padding: 0;
+    border: 1px solid $theme-lighter-gray-color;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.3);
+    border-radius: 2px;
+
+    background: $base-white-color;
     text-align: left;
 
     .btn_close {
       color: $base-link-color;
+
       opacity: 1;
 
       [class^="cf-"] {
-        font-size: 2rem;
+        font-size: 20px;
       }
 
       + .messages-widget__goto-btn {
-        right: 2.7rem;
-        top: .8rem;
+        right: 27px;
+        top: 8px;
       }
     }
 
     .messages-widget__goto-btn {
-      display: block;
-      padding: 0;
       position: absolute;
-      text-decoration: none;
       top: .7rem;
       right: .5rem;
-      background: transparent;
+
+      display: block;
+      padding: 0;
       border: 0;
       box-shadow: none;
+
+      background: transparent;
       color: $base-link-color;
+      text-decoration: none;
 
       [class^="cf-"] {
-        font-size: 1.8rem;
+        font-size: 18px;
       }
     }
   }
@@ -117,72 +127,75 @@
     transform: rotate(-90deg);
   }
 
-}
-
-.messages-widget__title-container {
-  background: $base-topbar-background-color;
-  padding: 1.3rem 1.5rem;
-}
-
-.messages-widget__content-container {
-  padding: 1.5rem;
-}
-
-.messages-widget__header {
-  &.messages-widget__header_no-badge {
-    margin-bottom: 1rem;
+  &__container {
+    padding: 0 0 0 14px;
   }
-}
 
-.messages-widget__container {
-  padding: 0 0 0 1.4rem;
-}
+  &__title-container {
+    background: $theme-lighter-gray-color;
+    padding: 13px 15px;
+  }
 
-.messages-widget__trigger {
-  position: relative;
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  padding: 0; 
-  font-size: 1.8rem; 
-  vertical-align: middle;
-}
+  &__content-container {
+    padding: 15px;
+  }
 
-.messages-widget__badge {
-  position: absolute;
-  top: -0.3rem;
-  left: -0.8rem;
-}
-
-.messages-widget__title {
-  font-size: 1.3rem;
-  color: $base-font-color-light;
-}
-
-.messages-widget__content {
-  padding: 1rem 0 0 5.8rem;
-}
-
-.messages-widget__list {
-  @include list-normalize;
-  margin: 0 0 2rem;
-
-  li {
-    font-size: 1.3rem;
-    margin: 0 0 1.5rem;
-
-    > span {
-      margin-right: .5rem;
+  &__header {
+    &.messages-widget__header_no-badge {
+      margin-bottom: 10px;
     }
+  }
 
-    a {
-      white-space: nowrap;
+  &__trigger {
+    position: relative;
 
-      &:hover {
-        text-decoration: none;
-        
-        .underlined {
+    vertical-align: middle;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+
+    background: transparent;
+    font-size: 18px;
+  }
+
+  &__badge {
+    position: absolute;
+    top: -3px;
+    left: -8px;
+  }
+
+  &__title {
+    color: $base-font-color-light;
+    font-size: 13px;
+  }
+
+  &__content {
+    padding: 10px 0 0 58px;
+  }
+
+  &__list {
+    @include list-normalize();
+
+    margin: 0 0 20px;
+
+    li {
+      margin: 0 0 15px;
+
+      font-size: 13px;
+
+      > span {
+        margin-right: 5px;
+      }
+
+      a {
+        white-space: nowrap;
+
+        &:hover {
           text-decoration: none;
+
+          .underlined {
+            text-decoration: none;
+          }
         }
       }
     }

@@ -109,30 +109,6 @@
         }
       }
     }
-
-    .matrix-widget__table {
-      thead {
-        th {
-          small {
-            font-weight: 400;
-          }
-
-          @media (max-width: $screen-sm) {
-            padding: 0 3px !important;
-          }
-        }
-      }
-
-      tbody {
-        tr {
-          td {
-            @media (max-width: $screen-sm) {
-              padding: 9px 3px;
-            }
-          }
-        }
-      }
-    }
   }
 }
 
