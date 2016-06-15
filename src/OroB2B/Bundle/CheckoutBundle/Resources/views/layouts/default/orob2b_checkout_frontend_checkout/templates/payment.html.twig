@@ -1,5 +1,4 @@
 {% block _checkout_form_fields_widget %}
-    {{ dump(checkout.workflowItem.data['payment_validate']) }}
     <div class="hidden">
         <fieldset class="checkout__form__row">
             {{ form_widget(form.payment_method) }}
