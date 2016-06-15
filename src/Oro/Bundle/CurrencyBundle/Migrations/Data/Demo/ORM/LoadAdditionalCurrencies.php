@@ -31,9 +31,9 @@ class LoadAdditionalCurrencies extends AbstractFixture implements ContainerAware
      */
     public function load(ObjectManager $manager)
     {
-        $configManager = $this->container->get('oro_config.manager');
-        $currencies = $this->container->get('oro_config.manager')->get(self::ORO_CURRENCY_ALLOWED_CURRENCIES);
-        $currencies = array_merge($currencies, ['EUR']);
+        $configManager = $this->container->get('oro_config.global');
+        $currencies = $configManager->get(self::ORO_CURRENCY_ALLOWED_CURRENCIES);
+        $currencies = array_unique(array_merge($currencies, ['EUR']));
         $configManager->set(self::ORO_CURRENCY_ALLOWED_CURRENCIES, $currencies);
         $configManager->flush();
     }
