@@ -72,6 +72,12 @@ class PaymentTermView implements PaymentMethodViewInterface
     }
 
     /** {@inheritdoc} */
+    public function getShortLabel()
+    {
+        return $this->getConfigValue(Configuration::PAYMENT_TERM_SHORT_LABEL_KEY);
+    }
+
+    /** {@inheritdoc} */
     public function getPaymentMethodType()
     {
         return PaymentTermMethod::TYPE;

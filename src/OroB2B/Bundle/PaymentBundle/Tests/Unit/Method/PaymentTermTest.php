@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method;
 
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Doctrine\ORM\EntityManager;
@@ -81,6 +82,8 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->setEntityClass($entityClass)
             ->setEntityIdentifier($entityId);
 
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
+
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
             ->with($entityClass, $entityId)
@@ -89,8 +92,11 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->paymentTermProvider->expects($this->never())
             ->method('getCurrentPaymentTerm');
 
-        $this->assertEquals([], $this->method->execute($this->paymentTransaction));
-        $this->assertTrue($this->paymentTransaction->isSuccessful());
+        $this->assertEquals(
+            [],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
     }
 
     public function testExecuteNoPaymentTerm()
@@ -101,6 +107,8 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->paymentTransaction
             ->setEntityClass($entityClass)
             ->setEntityIdentifier($entityId);
+
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -114,8 +122,11 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->propertyAccessor->expects($this->never())
             ->method('setValue');
 
-        $this->assertEquals([], $this->method->execute($this->paymentTransaction));
-        $this->assertTrue($this->paymentTransaction->isSuccessful());
+        $this->assertEquals(
+            [],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
     }
 
     public function testExecute()
@@ -127,8 +138,9 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
         $this->paymentTransaction
             ->setEntityClass($entityClass)
-            ->setEntityIdentifier($entityId)
-            ->setSuccessful(true);
+            ->setEntityIdentifier($entityId);
+
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -157,8 +169,36 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->with($entity)
             ->willReturn($entityManager);
 
-        $this->assertEquals([], $this->method->execute($this->paymentTransaction));
+        $this->assertEquals(
+            [],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
         $this->assertTrue($this->paymentTransaction->isSuccessful());
+    }
+
+    public function testExecuteEntityWithoutPaymentTerm()
+    {
+        $this->paymentTransaction
+            ->setEntityClass('\stdClass')
+            ->setEntityIdentifier(1);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->willReturn(new \stdClass());
+
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getCurrentPaymentTerm')
+            ->willReturn(new \stdClass());
+
+        $this->propertyAccessor->expects($this->once())
+            ->method('setValue')
+            ->willThrowException(new NoSuchPropertyException());
+
+        $this->assertEquals(
+            [],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
     }
 
     /**
