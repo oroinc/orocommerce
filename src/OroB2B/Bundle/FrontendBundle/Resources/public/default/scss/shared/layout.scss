@@ -406,26 +406,26 @@
 
     .btn {
       min-width: 80px;
-    }
 
-    .btn_apply-rename {
-      margin-left: 5px;
-    }
+      &--apply-rename {
+        margin-left: 5px;
+      }
 
-    .btn_jeject-rename {
-      display: inline-block;
-      vertical-align: middle;
-      margin-left: 1rem;
-      padding: 0;
-      border: 0;
-      box-shadow: none;
+      &--reject-rename {
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 1rem;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
 
-      background: transparent;
-      color: $base-link-color;
-      font-size: $base-font-size;
+        background: transparent;
+        color: $base-link-color;
+        font-size: $base-font-size;
 
-      &:hover {
-        text-decoration: none;
+        &:hover {
+          text-decoration: none;
+        }
       }
     }
   }
@@ -645,6 +645,7 @@
 
 .action-select  {
   @include input();
+
   position: relative;
 
   padding: 6px 9px 6px !important;
