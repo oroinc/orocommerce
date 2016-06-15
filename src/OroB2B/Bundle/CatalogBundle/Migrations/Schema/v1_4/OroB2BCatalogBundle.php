@@ -46,6 +46,7 @@ class OroB2BCatalogBundle implements Migration
     {
         $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME);
         $table->addColumn('unit_precision_id', 'integer', ['notnull' => false]);
+        $table->addUniqueIndex(['unit_precision_id']);
     }
 
     /**
