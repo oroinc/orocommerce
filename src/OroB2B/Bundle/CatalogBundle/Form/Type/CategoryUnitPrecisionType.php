@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitsType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,7 +34,7 @@ class CategoryUnitPrecisionType extends AbstractType
         $builder
             ->add(
                 'unit',
-                ProductUnitsType::NAME,
+                ProductUnitSelectionType::NAME,
                 [
                     'empty_value' => 'orob2b.catalog.category.unit.empty.value'
                 ]

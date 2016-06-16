@@ -8,13 +8,14 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
  * @ORM\Table(name="orob2b_category_unit_precision")
  * @ORM\Entity
  * @Config(mode="hidden")
  */
-class CategoryUnitPrecision
+class CategoryUnitPrecision implements ProductUnitHolderInterface
 {
     /**
      * @ORM\Id
@@ -47,7 +48,7 @@ class CategoryUnitPrecision
     /**
      * @var integer
      *
-     * @ORM\Column(name="unit_precision",type="integer")
+     * @ORM\Column(name="unit_precision", type="integer")
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -114,6 +115,30 @@ class CategoryUnitPrecision
     public function getUnit()
     {
         return $this->unit;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductUnit()
+    {
+        return null;
     }
 
     /**

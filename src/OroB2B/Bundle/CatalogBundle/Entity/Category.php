@@ -15,7 +15,6 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Component\Tree\Entity\TreeTrait;
 use OroB2B\Bundle\CatalogBundle\Model\ExtendCategory;
-use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
 
 /**
  * @ORM\Table(name="orob2b_catalog_category")
@@ -224,8 +223,14 @@ class Category extends ExtendCategory
      * @var CategoryUnitPrecision
      *
      * @ORM\OneToOne(targetEntity="CategoryUnitPrecision", cascade={"persist"})
-     * @ORM\JoinColumn(name="unit_precision_id", referencedColumnName="id", onDelete="SET NULL")
-     *
+     * @ORM\JoinColumn(name="unit_precision_id", nullable=true, referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $unitPrecision;
 
