@@ -43,7 +43,9 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.initLayout({
+                prices: this.options.tierPrices
+            }).done(_.bind(this.handleLayoutInit, this));
 
             mediator.on('totals:update', this.updateValidators, this);
         },

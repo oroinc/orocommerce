@@ -51,6 +51,8 @@ define(function(require) {
 
         initPrices: function() {
             this.subview('productPricesComponents', new ProductPricesComponent({
+                prices: this.options.prices[this.fieldsByName.product.val()] || {},
+                productModel: this.model,
                 _sourceElement: this.$el,
                 $product: this.fieldsByName.product,
                 $priceValue: this.fieldsByName.priceValue,

@@ -8,6 +8,7 @@ define(function(require) {
     var layout = require('oroui/js/layout');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var ProductPricesEditableView = require('orob2bpricing/js/app/views/product-prices-editable-view');
 
     ProductPricesComponent = BaseComponent.extend({
         /**
@@ -24,7 +25,6 @@ define(function(require) {
             $priceType: null,
             $productUnit: null,
             $quantity: null,
-            $currency: null,
             bundledPriceTypeValue: '20',
             disabled: false,
             isNew: false,
@@ -76,9 +76,15 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
-            this.$el = this.options._sourceElement;
+            this.priceView = new ProductPricesEditableView($.extend(true, {}, this.options, {
+                el: options._sourceElement.get(0),
+                productModel: options.productModel,
+                modelAttr: {prices: options.prices}
+            }));
+            this.model = this.priceView.model;
 
             this.initTierPrices();
+            return;
             this.initMatchedPrices();
 
             if (this.options.isNew) {
@@ -92,11 +98,8 @@ define(function(require) {
         },
 
         initTierPrices: function() {
-            this.tierTableTemplate = _.template($(this.options.selectors.tierTableTemplate).text());
-            this.$tierButton = $($(this.options.selectors.tierButtonTemplate).text());
-            this.options.$priceValue.after(this.$tierButton);
-
             mediator.on('pricing:refresh:products-tier-prices', this.setTierPrices, this);
+            return;
 
             if (this.options.$product) {
                 this.options.$product.change(_.bind(this.updateTierPrices, this));
@@ -115,7 +118,7 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
-            var productId = this._getProductId();
+            var productId = this.model.get('id');
             if (productId.length === 0) {
                 this.setTierPrices({});
             } else {
@@ -133,13 +136,12 @@ define(function(require) {
         setTierPrices: function(tierPrices) {
             var productTierPrices = {};
 
-            var productId = this._getProductId();
+            var productId = this.model.get('id');
             if (productId.length !== 0) {
                 productTierPrices = tierPrices[productId] || {};
             }
 
-            this.tierPrices = productTierPrices;
-            this.setMatchedPrices();
+            this.model.set('prices', productTierPrices);
         },
 
         /**
