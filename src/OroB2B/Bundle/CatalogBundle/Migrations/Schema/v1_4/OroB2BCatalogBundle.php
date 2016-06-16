@@ -11,6 +11,7 @@ class OroB2BCatalogBundle implements Migration
 {
     const ORO_B2B_CATALOG_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
     const ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME = 'orob2b_category_unit_precision';
+    const ORO_B2B_PRODUCT_UNIT_TABLE_NAME = 'orob2b_product_unit';
 
 
     /**
@@ -23,6 +24,7 @@ class OroB2BCatalogBundle implements Migration
         $this->createOroB2BCategoryUnitPrecisionTable($schema);
         $this->updateOroB2BCategoryTable($schema);
         $this->addOroB2BCategoryUnitPrecisionForeignKeys($schema);
+        $this->addOroB2BCategoryForeignKeys($schema);
     }
 
     /**
@@ -36,6 +38,7 @@ class OroB2BCatalogBundle implements Migration
         $table->addColumn('unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('unit_precision', 'integer', []);
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['unit_code'], 'IDX_D4D5D6E4FBD3D1C2');
     }
 
     /**
@@ -46,6 +49,7 @@ class OroB2BCatalogBundle implements Migration
     {
         $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME);
         $table->addColumn('unit_precision_id', 'integer', ['notnull' => false]);
+        $table->addUniqueIndex(['unit_precision_id']);
     }
 
     /**
@@ -53,6 +57,21 @@ class OroB2BCatalogBundle implements Migration
      * @param Schema $schema
      */
     protected function addOroB2BCategoryUnitPrecisionForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_PRODUCT_UNIT_TABLE_NAME),
+            ['unit_code'],
+            ['code'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BCategoryForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME);
         $table->addForeignKeyConstraint(
@@ -63,4 +82,3 @@ class OroB2BCatalogBundle implements Migration
         );
     }
 }
-

@@ -15,6 +15,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Component\Tree\Entity\TreeTrait;
 use OroB2B\Bundle\CatalogBundle\Model\ExtendCategory;
+use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
 
 /**
  * @ORM\Table(name="orob2b_catalog_category")
@@ -41,6 +42,7 @@ use OroB2B\Bundle\CatalogBundle\Model\ExtendCategory;
  * @ORM\HasLifecycleCallbacks()
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class Category extends ExtendCategory
 {
@@ -218,6 +220,13 @@ class Category extends ExtendCategory
      */
     protected $longDescriptions;
 
+    /**
+     * @var CategoryUnitPrecision
+     *
+     * @ORM\OneToOne(targetEntity="CategoryUnitPrecision", cascade={"persist"})
+     * @ORM\JoinColumn(name="unit_precision_id", referencedColumnName="id", onDelete="SET NULL")
+     *
+     */
     protected $unitPrecision;
 
     /**
@@ -549,8 +558,25 @@ class Category extends ExtendCategory
         return $longDescription->first();
     }
 
+    /**
+     * @return CategoryUnitPrecision
+     */
     public function getUnitPrecision()
     {
         return $this->unitPrecision;
+    }
+
+    /**
+     * Set unitPrecision
+     *
+     * @param CategoryUnitPrecision $unitPrecision
+     *
+     * @return Category
+     */
+    public function setUnitPrecision(CategoryUnitPrecision $unitPrecision = null)
+    {
+        $this->unitPrecision = $unitPrecision;
+    
+        return $this;
     }
 }

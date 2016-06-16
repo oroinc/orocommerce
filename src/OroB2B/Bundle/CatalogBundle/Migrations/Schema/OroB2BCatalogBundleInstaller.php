@@ -24,6 +24,7 @@ class OroB2BCatalogBundleInstaller implements
     const ORO_B2B_CATALOG_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
     const ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME ='oro_fallback_localization_val';
     const ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME = 'orob2b_category_unit_precision';
+    const ORO_B2B_PRODUCT_UNIT_TABLE_NAME = 'orob2b_product_unit';
     const MAX_CATEGORY_IMAGE_SIZE_IN_MB = 10;
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
     const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
@@ -102,6 +103,7 @@ class OroB2BCatalogBundleInstaller implements
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('unit_precision_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['unit_precision_id']);
         $this->noteExtension->addNoteAssociation($schema, 'orob2b_catalog_category');
     }
 
@@ -144,6 +146,7 @@ class OroB2BCatalogBundleInstaller implements
         $table->addColumn('unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('unit_precision', 'integer', []);
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['unit_code'], 'IDX_D4D5D6E4FBD3D1C2');
     }
 
     /**
@@ -159,6 +162,12 @@ class OroB2BCatalogBundleInstaller implements
             ['parent_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME),
+            ['unit_precision_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 
@@ -285,12 +294,12 @@ class OroB2BCatalogBundleInstaller implements
      */
     protected function addOroB2BCategoryUnitPrecisionForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME),
-            ['unit_precision_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            $schema->getTable(self::ORO_B2B_PRODUCT_UNIT_TABLE_NAME),
+            ['unit_code'],
+            ['code'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 

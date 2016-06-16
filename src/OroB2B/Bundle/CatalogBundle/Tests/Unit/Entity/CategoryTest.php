@@ -7,6 +7,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -38,6 +39,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             ['parentCategory', null],
             ['createdAt', $date, false],
             ['updatedAt', $date, false],
+            ['unitPrecision', new CategoryUnitPrecision()]
         ];
 
         $this->assertPropertyAccessors(new Category(), $properties);
