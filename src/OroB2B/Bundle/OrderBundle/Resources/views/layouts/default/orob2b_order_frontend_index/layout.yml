@@ -26,6 +26,8 @@ layout:
             blockType: text
             options:
                 text: 'orob2b.frontend.order.past_orders.label'
+                vars:
+                    top_margin: { '@neq': [$data.orob2b_order_frontend_open_orders_separate_page_config_provider, true] }
 
         - '@add':
             id: orders
