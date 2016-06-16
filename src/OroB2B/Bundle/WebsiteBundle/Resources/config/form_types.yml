@@ -15,8 +15,3 @@ services:
         tags:
             - { name: form.type, alias: orob2b_website_type }
 
-    orob2b_website.form.extension.order:
-        class: 'OroB2B\Bundle\WebsiteBundle\Form\Extension\WebsiteSelectExtension'
-        public: true
-        tags:
-            - { name: form.type_extension, alias: orob2b_order_type }
