@@ -7,5 +7,12 @@ layout:
             options:
                 route_name: orob2b_order_frontend_index
                 text: orob2b.frontend.order.order_history
+        - '@add':
+            id: account_sidebar_open_orders
+            parentId: account_sidebar
+            blockType: link
+            options:
+                route_name: orob2b_order_frontend_open_orders
+                text: orob2b.frontend.order.open_orders
     conditions:
         '@acl': orob2b_order_frontend_view
