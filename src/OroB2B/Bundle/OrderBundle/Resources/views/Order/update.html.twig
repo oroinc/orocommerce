@@ -58,14 +58,16 @@
                  selectors: {
                      account: '#' ~ form.account.vars.id,
                      accountUser: '#' ~ form.accountUser.vars.id,
-                     website: '#' ~ form.website.vars.id
+                     website: form.website is defined ? '#' ~ form.website.vars.id : null
                  }
              }|json_encode }}">
             <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
                 {{ form_row(form.account) }}
                 {{ form_row(form.accountUser) }}
             </div>
-            {{ form_row(form.website) }}
+            {% if form.website is defined %}
+                {{ form_row(form.website) }}
+            {% endif %}
         </div>
     {% endset %}
 
