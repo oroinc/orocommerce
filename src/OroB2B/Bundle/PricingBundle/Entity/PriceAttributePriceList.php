@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
  * @ORM\Table(name="orob2b_price_attribute_pl")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository")
  * @Config(
  *      routeName="orob2b_pricing_price_attribute_price_list_index",
  *      routeView="orob2b_pricing_price_attribute_price_list_view",

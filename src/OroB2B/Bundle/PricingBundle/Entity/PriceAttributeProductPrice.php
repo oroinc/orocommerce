@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  *          )
  *      }
  * )
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository")
  */
 class PriceAttributeProductPrice extends BaseProductPrice
 {
