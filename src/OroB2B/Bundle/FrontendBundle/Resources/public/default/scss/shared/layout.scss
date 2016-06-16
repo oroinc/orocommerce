@@ -698,3 +698,13 @@
                 rgba(230,230,230,1) 100%);
   }
 }
+
+.button-icon {
+  padding: 0;
+  box-shadow: none;
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+}

@@ -1,7 +1,7 @@
 .datepicker {
-  padding: 0 1.5rem;
-  border: .1rem solid #ebebeb;
-  box-shadow: 0 .2rem .3rem 0 rgba(0,0,0,.15);
+  padding: 0 15px;
+  border: 1px solid $theme-lighter-gray-color;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,.15);
 
   table {
     border-collapse: separate;
@@ -29,18 +29,18 @@
 
   .datepicker-switch {
     color: $base-font-color;
-    font-size: 1.4rem;
+    font-size: $base-font-size;
   }
 
   table tr td.day:hover, table tr td.day.focused {
-    background: $base-sidebar-background-color-light;
+    background: $theme-lightest-gray-color;
   }
 
   .datepicker-switch:hover,
   .datepicker .prev:hover,
   .next:hover,
   tfoot tr th:hover {
-    background: $base-sidebar-background-color-light;
+    background: $theme-lightest-gray-color;
   }
 
   table tr td.active,
@@ -80,26 +80,27 @@
       content: "";
       display: inline-block;
       vertical-align: middle;
-      border-top: .7rem solid transparent;
-      border-bottom: .7rem solid transparent;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
     }
   }
 
   .prev {
     &:before {
-      border-right: .7rem solid $theme-datepicker-head-color;
+      border-right: 7px solid $theme-datepicker-head-color;
     }
   }
 
   .next {
     &:before {
-      border-left: .7rem solid $theme-datepicker-head-color;
+      border-left: .7px solid $theme-datepicker-head-color;
     }
   }
 }
 
 .datepicker-dropdown {
-  &:before, &:after {
+  &:before,
+  &:after {
     display: none;
   }
 }
