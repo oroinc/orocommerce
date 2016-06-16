@@ -31,9 +31,13 @@ class AccountUserAddressController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user_address.class')
+            'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user_address.class'),
+            'data' => [
+                'entity' => $this->getUser()
+            ]
         ];
     }
+
     /**
      * @Route(
      *     "/{entityId}/address-create",

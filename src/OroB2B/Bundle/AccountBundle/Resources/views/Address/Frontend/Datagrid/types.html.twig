@@ -1,0 +1,8 @@
+{% set types = record.getValue('types').toArray() %}
+
+{% set labels = [] %}
+{% for type in types %}
+    {% set labels = labels|merge([type.label]) %}
+{% endfor %}
+
+{{ labels|join(', ') }}

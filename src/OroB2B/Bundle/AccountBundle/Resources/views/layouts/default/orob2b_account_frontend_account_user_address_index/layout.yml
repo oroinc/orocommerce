@@ -44,10 +44,21 @@ layout:
                     blockType: button
                     options:
                         text: 'orob2b.account.frontend.account_user_address_book.create.label'
-                account_user_address_view_account_addresses_content:
+                account_user_address_view_account_addresses_content_grid:
                     blockType: datagrid
                     options:
-                        grid_name: frontend-account-account-user-roles-grid
+                        grid_name: frontend-account-account-address-grid
+                        grid_parameters:
+                            frontend_owner_id: {'@value': $data.entity.id}
+                        visible: { '@gte': [$data.entity.addresses.count(), 8] }
+                account_user_address_view_account_addresses_content_list:
+                    blockType: block
+                    options:
+                        visible: { '@lt': [$data.entity.addresses.count(), 8] }
+                        vars:
+                            addresses: { '@value': $data.entity.account.addresses }
+                account_user_address_view_account_user_addresses_head:
+                    blockType: container
                 account_user_address_view_account_user_addresses:
                     blockType: container
                     options:
@@ -56,10 +67,23 @@ layout:
                     blockType: text
                     options:
                         text: {'@value': 'orob2b.account.frontend.account_user_address_book.account_user_addresses'}
-                account_user_address_view_account_user_addresses_content:
+                account_user_address_view_account_user_addresses_add_button:
+                    blockType: button
+                    options:
+                        text: 'orob2b.account.address.add'
+                account_user_address_view_account_user_addresses_content_grid:
                     blockType: datagrid
                     options:
-                        grid_name: frontend-requests-grid
+                        grid_name: frontend-account-account-user-address-grid
+                        grid_parameters:
+                            frontend_owner_id: {'@value': $data.entity.account.id}
+                        visible: { '@gte': [$data.entity.addresses.count(), 8] }
+                account_user_address_view_account_user_addresses_content_list:
+                    blockType: block
+                    options:
+                        visible: { '@lt': [$data.entity.addresses.count(), 8] }
+                        vars:
+                            addresses: { '@value': $data.entity.addresses }
 
             tree:
                 content:
@@ -68,7 +92,11 @@ layout:
                             account_user_address_view_account_addresses_head:
                                 account_user_address_view_account_addresses_title: ~
                                 account_user_address_view_account_addresses_add_button: ~
-                            account_user_address_view_account_addresses_content: ~
+                            account_user_address_view_account_addresses_content_grid: ~
+                            account_user_address_view_account_addresses_content_list: ~
                         account_user_address_view_account_user_addresses:
-                            account_user_address_view_account_user_addresses_title: ~
-                            account_user_address_view_account_user_addresses_content: ~
+                            account_user_address_view_account_user_addresses_head:
+                                account_user_address_view_account_user_addresses_title: ~
+                                account_user_address_view_account_user_addresses_add_button: ~
+                            account_user_address_view_account_user_addresses_content_grid: ~
+                            account_user_address_view_account_user_addresses_content_list:

@@ -1125,3 +1125,90 @@ datagrid:
                 template: OroB2BAccountBundle:DataAudit:author.html.twig
                 frontend_type: html
                 data_name: author
+
+    frontend-account-address-grid-base:
+        source:
+            type: orm
+            query:
+                select:
+                    - address
+                    - address.id as id
+                    - address.street as street
+                    - address.city as city
+                    - address.postalCode as zip
+                    - country.name as countryName
+                join:
+                    left:
+                        - { join: address.country, alias: country}
+                where:
+                    and:
+                        - IDENTITY(address.frontendOwner) = :frontend_owner_id
+            bind_parameters:
+                - frontend_owner_id
+        properties:
+            id: ~
+        columns:
+            street:
+                label: street
+            city:
+                label: city
+            zip:
+                label: zip
+            countryName:
+                label: country
+            types:
+                label: types
+                type: twig
+                frontend_type: html
+                template: OroB2BAccountBundle:Address:Frontend/Datagrid/types.html.twig
+#        actions:
+#            view:
+#                type:         navigate
+#                label:        oro.grid.action.view
+#                icon:         eye-open
+#                rowAction:    true
+#            update:
+#                type:          navigate
+#                label:         oro.grid.action.update
+##                link:          update_link
+#                icon:          edit
+##                acl_resource:  orob2b_account_group_update
+#            delete:
+#                type:          delete
+#                label:         oro.grid.action.delete
+##                link:          delete_link
+#                icon:          trash
+##                acl_resource:  orob2b_account_group_delete
+
+    frontend-account-account-address-grid:
+        acl_resource: orob2b_account_frontend_account_view
+        extends: frontend-account-address-grid-base
+        source:
+            type: orm
+            query:
+                from:
+                    - { table: %orob2b_account.entity.account_address.class%, alias: address }
+#        actions:
+#            view:
+#                link:         map_link
+#            update:
+#                type:          navigate
+#                label:         oro.grid.action.update
+#                link:          update_link
+#                icon:          edit
+#                acl_resource:  orob2b_account_group_update
+#            delete:
+#                type:          delete
+#                label:         oro.grid.action.delete
+#                link:          delete_link
+#                icon:          trash
+#                acl_resource:  orob2b_account_group_delete
+
+    frontend-account-account-user-address-grid:
+        acl_resource: orob2b_account_frontend_account_user_view
+        extends: frontend-account-address-grid-base
+        source:
+            type: orm
+            query:
+                from:
+                    - { table: %orob2b_account.entity.account_user_address.class%, alias: address }
