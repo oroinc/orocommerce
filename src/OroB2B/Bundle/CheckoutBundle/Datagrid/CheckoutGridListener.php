@@ -166,15 +166,6 @@ class CheckoutGridListener
                 $currencyFields,
                 $updates) = $this->processMetadata($totalMetadata, $updates);
 
-            if ($totalFields) {
-                $updates['selects'][] = sprintf('COALESCE(%s) as total', implode(',', $totalFields));
-                $updates['columns']['total'] = [
-                    'label' => 'orob2b.checkout.grid.total.label',
-                    'type' => 'twig',
-                    'frontend_type' => 'html',
-                    'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
-                ];
-            }
             if ($subtotalFields) {
                 $updates['selects'][] = sprintf('COALESCE(%s) as subtotal', implode(',', $subtotalFields));
                 $updates['columns']['subtotal'] = [
@@ -189,6 +180,15 @@ class CheckoutGridListener
                 ];
 
                 $updates['sorters']['subtotal'] = ['data_name' => 'subtotal'];
+            }
+            if ($totalFields) {
+                $updates['selects'][] = sprintf('COALESCE(%s) as total', implode(',', $totalFields));
+                $updates['columns']['total'] = [
+                    'label' => 'orob2b.checkout.grid.total.label',
+                    'type' => 'twig',
+                    'frontend_type' => 'html',
+                    'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
+                ];
             }
             if ($currencyFields) {
                 $updates['selects'][] = sprintf('COALESCE(%s) as currency', implode(',', $currencyFields));
