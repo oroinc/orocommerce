@@ -179,7 +179,7 @@ class ProductRepository extends EntityRepository
     public function getProductsWithImage(array $products, $imageType = null)
     {
         $qb = $this->createQueryBuilder('p');
-        $qb->select('p, images, imageFile')
+        $qb->select('p, images, imageFile, imageTypes')
             ->join('p.images', 'images')
             ->join('images.image', 'imageFile')
             ->where($qb->expr()->in('p', ':products'))

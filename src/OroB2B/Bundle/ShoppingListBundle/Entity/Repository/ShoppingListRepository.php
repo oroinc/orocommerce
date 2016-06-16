@@ -14,47 +14,59 @@ class ShoppingListRepository extends EntityRepository
 {
     /**
      * @param AccountUser $accountUser
+     * @param bool        $selectRelations
      *
-     * @return ShoppingList|null
+     * @return null|ShoppingList
+     * @throws NonUniqueResultException
      */
-    public function findCurrentForAccountUser(AccountUser $accountUser)
+    public function findCurrentForAccountUser(AccountUser $accountUser, $selectRelations = false)
     {
-        return $this->createQueryBuilder('list')
-            ->select('list')
-            ->where('list.accountUser = :accountUser')
+        $qb = $this->createQueryBuilder('list')
+            ->select('list');
+        if ($selectRelations) {
+            $this->selectShoppingListRelations($qb);
+        }
+        $qb->where('list.accountUser = :accountUser')
             ->andWhere('list.current = true')
             ->setParameter('accountUser', $accountUser)
-            ->setMaxResults(1)
-            ->getQuery()->getOneOrNullResult();
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
      * @param AccountUser $accountUser
+     * @param bool        $selectRelations
      *
-     * @return ShoppingList|null
+     * @return null|ShoppingList
+     * @throws NonUniqueResultException
      */
-    public function findOneForAccountUser(AccountUser $accountUser)
+    public function findOneForAccountUser(AccountUser $accountUser, $selectRelations = false)
     {
-        return $this->createQueryBuilder('list')
-            ->select('list')
-            ->where('list.accountUser = :accountUser')
+        $qb = $this->createQueryBuilder('list')
+            ->select('list');
+        if ($selectRelations) {
+            $this->selectShoppingListRelations($qb);
+        }
+        $qb->where('list.accountUser = :accountUser')
             ->setParameter('accountUser', $accountUser)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
      * @param AccountUser $accountUser
+     * @param bool        $selectRelations
      *
      * @return null|ShoppingList
      */
-    public function findAvailableForAccountUser(AccountUser $accountUser)
+    public function findAvailableForAccountUser(AccountUser $accountUser, $selectRelations = false)
     {
-        $shoppingList = $this->findCurrentForAccountUser($accountUser);
+        $shoppingList = $this->findCurrentForAccountUser($accountUser, $selectRelations);
 
         if (!$shoppingList) {
-            $shoppingList = $this->findOneForAccountUser($accountUser);
+            $shoppingList = $this->findOneForAccountUser($accountUser, $selectRelations);
         }
 
         return $shoppingList;
@@ -159,19 +171,25 @@ class ShoppingListRepository extends EntityRepository
      * @param int $id
      * @return ShoppingList|null
      */
-    public function findWithRelatedObjectsById($id)
+    public function findOneByIdWithRelations($id)
     {
-        return $this->createQueryBuilder('list')
-            ->select('list', 'items', 'product', 'images', 'imageTypes', 'imageFile', 'unitPrecisions')
+        $qb = $this->createQueryBuilder('list')
+            ->select('list');
+        $this->selectShoppingListRelations($qb);
+        $qb->where('list.id = :id')
+            ->setParameter('id', $id);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    protected function selectShoppingListRelations(QueryBuilder $queryBuilder)
+    {
+        $queryBuilder->addSelect('items', 'product', 'images', 'imageTypes', 'imageFile', 'unitPrecisions')
             ->leftJoin('list.lineItems', 'items')
             ->leftJoin('items.product', 'product')
             ->leftJoin('product.images', 'images')
             ->leftJoin('images.types', 'imageTypes')
             ->leftJoin('images.image', 'imageFile')
-            ->leftJoin('product.unitPrecisions', 'unitPrecisions')
-            ->where('list.id = :id')
-            ->setParameter('id', $id)
-            ->getQuery()
-            ->getOneOrNullResult();
+            ->leftJoin('product.unitPrecisions', 'unitPrecisions');
     }
 }

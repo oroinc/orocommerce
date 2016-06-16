@@ -25,11 +25,6 @@ class ShoppingListController extends Controller
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @Route("/{id}", name="orob2b_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
-     * @ParamConverter(
-     *     "shoppingList",
-     *     class="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList",
-     *     isOptional="true",
-     *     options={"id" = "id"})
      * @Layout(vars={"title"})
      * @Acl(
      *      id="orob2b_shopping_list_frontend_view",
@@ -39,25 +34,22 @@ class ShoppingListController extends Controller
      *      group_name="commerce"
      * )
      *
-     * @param ShoppingList|null $shoppingList
+     * @param int|null $shoppingList
      *
      * @return array
      */
-    public function viewAction(ShoppingList $shoppingList = null)
+    public function viewAction($id = null)
     {
         /** @var ShoppingListRepository $repo */
         $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        $shoppingList = $repo->findOneByIdWithRelations($id);
 
         if (!$shoppingList) {
             $user = $this->getUser();
             if ($user instanceof AccountUser) {
-                $shoppingList = $repo->findAvailableForAccountUser($user);
+                $shoppingList = $repo->findAvailableForAccountUser($user, true);
             }
         }
-
-        $shoppingList = $shoppingList
-            ? $repo->findWithRelatedObjectsById($shoppingList->getId())
-            : null;
 
         $totalWithSubtotalsAsArray = $shoppingList
             ? $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList)
