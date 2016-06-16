@@ -59,7 +59,7 @@ class QuoteCheckoutSourceDefinitionResolver implements CheckoutSourceDefinitionR
             
             if ($quote instanceof Quote) {
                 $result[$databaseResult['id']] = new CheckoutSourceDefinition(
-                    $this->translator->trans('orob2b.sale.quote.entity_label'),
+                    $this->getQuoteLabel($quote),
                     $this->hasCurrentUserRightToView($quote),
                     'orob2b_sale_quote_frontend_view',
                     ['id' => $quote->getId()]
@@ -79,5 +79,14 @@ class QuoteCheckoutSourceDefinitionResolver implements CheckoutSourceDefinitionR
         $isGranted = $this->securityFacade->isGranted('ACCOUNT_VIEW', $quote);
 
         return $isGranted === true || $isGranted === "true"; // isGranted may return "true" as string
+    }
+
+    /**
+     * @param Quote $quote
+     * @return string
+     */
+    private function getQuoteLabel(Quote $quote)
+    {
+        return $this->translator->trans('orob2b.sale.quote.entity_label').' #'.$quote->getQid();
     }
 }
