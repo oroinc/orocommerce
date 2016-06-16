@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
 use OroB2B\Bundle\ProductBundle\Entity\Product;

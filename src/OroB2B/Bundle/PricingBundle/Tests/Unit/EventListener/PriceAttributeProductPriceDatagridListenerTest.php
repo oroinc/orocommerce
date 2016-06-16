@@ -113,7 +113,7 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
         $this->assertEquals(
             [
                 'price_attribute_price_column_usd_1' => [
-                    'label' => 'MSRP(USD)',
+                    'label' => 'MSRP (USD)',
                     'type' => 'twig',
                     'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
                     'frontend_type' => 'html',
@@ -139,7 +139,7 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
                 'columns' => [
                     'price_attribute_price_column_usd_1' => [
                         'type' => 'price-attribute-product-price',
-                        'data_name' => "USD",
+                        'data_name' => 'USD',
                     ],
                 ],
             ],
@@ -158,27 +158,24 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
 
     public function testOnResultAfter()
     {
-        $parameterBagParams = [];
-        $datagridParams = [];
-        $paramsBag = new ParameterBag($parameterBagParams);
-        $config = DatagridConfiguration::create($datagridParams);
-        $datagrid = new Datagrid('grid', $config, $paramsBag);
+        $config = DatagridConfiguration::create([]);
+        $datagrid = new Datagrid('grid', $config, new ParameterBag([]));
         /** @var OrmResultAfter $event * */
         $event = new OrmResultAfter($datagrid, [new ResultRecord(['id' => 1])]);
-        $priceAttributeProductPrice = new PriceAttributeProductPrice();
+
         $product = new Product();
         $this->setProperty($product, 'id', 1);
-        $price = new Price();
-        $price->setCurrency('USD');
-        $price->setValue('42');
-        $priceAttributeProductPrice->setPrice($price);
-        $this->setProperty($priceAttributeProductPrice, 'id', 1);
-        $priceAttributeProductPrice->setProduct($product);
+
         $priceAttribute = new PriceAttributePriceList();
         $this->setProperty($priceAttribute, 'id', 1);
-        $priceAttributeProductPrice->setPriceList($priceAttribute);
-        $currencies = ['USD', 'EUR'];
-        $this->setRequestHandlerExpectations($currencies);
+
+        $priceAttributeProductPrice = new PriceAttributeProductPrice();
+        $this->setProperty($priceAttributeProductPrice, 'id', 1);
+        $priceAttributeProductPrice->setPrice(Price::create('42', 'USD'))
+            ->setProduct($product)
+            ->setPriceList($priceAttribute);
+
+        $this->setRequestHandlerExpectations(['USD', 'EUR']);
         $priceRepository = $this->getMockBuilder(PriceAttributeProductPriceRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -193,7 +190,9 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
         $this->priceAttributeProductPriceDatagridListener
             ->setAttributesWithCurrencies([['id' => 1, 'name' => 'priceAttribute1', 'currency' => 'USD']]);
         $this->priceAttributeProductPriceDatagridListener->onResultAfter($event);
-        $prices = $event->getRecords()[0]->getValue('price_attribute_price_column_usd_1');
+
+        $prices = current($event->getRecords())->getValue('price_attribute_price_column_usd_1');
+        $this->assertCount(1, $prices);
         /** @var PriceAttributeProductPrice $price */
         $price = $prices[0];
         $this->assertEquals(1, $price->getProduct()->getId());

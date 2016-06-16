@@ -2,10 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
-
 use Doctrine\ORM\Query\Expr;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -17,6 +13,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 
 class PriceAttributeProductPriceDatagridListener
 {
@@ -171,7 +170,7 @@ class PriceAttributeProductPriceDatagridListener
     protected function createPriceColumn($currency, $priceAttributeName)
     {
         return [
-            'label' => sprintf('%s(%s)', $priceAttributeName, $currency),
+            'label' => sprintf('%s (%s)', $priceAttributeName, $currency),
             'type' => 'twig',
             'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
             'frontend_type' => 'html',
