@@ -1,5 +1,25 @@
+.product-review-widget {
+  &__bmargin {
+    margin-bottom: 2rem;
+  }
+
+  &__inline {
+    display: inline-block;
+  }
+}
+
 .product__review {
   margin: 0 0 30px;
+
+  &__count {
+    margin: 0 5px 0 2px;
+
+    font-size: 12px;
+  }
+
+  &__add-link {
+    font-size: 13px;
+  }
 
   &__create-mode {
     .btn {

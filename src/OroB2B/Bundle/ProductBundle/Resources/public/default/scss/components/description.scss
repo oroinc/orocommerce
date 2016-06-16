@@ -294,6 +294,33 @@
   }
 }
 
+.product__view-details-link {
+  &_gallery-view {
+    display: none;
+  }
+
+  &_list-view {
+    @media (max-width: $screen-sm) {
+      display: none;
+    }
+  }
+
+  &_no-image-view {
+    @media (max-width: $screen-sm) {
+      display: none;
+    }
+  }
+
+  &_no-image-view2 {
+    clear: left;
+    margin-left: 34%;
+
+    @media (max-width: $screen-sm) {
+      display: none;
+    }
+  }
+}
+
 .form-field-quantity {
   input[type="text"].input_block,
   input[type="number"].input_block {
