@@ -30,9 +30,6 @@
 /*Layout*/
 @import 'shared/layout.scss';
 
-/*Raty plugin styles*/
-@import 'shared/raty.scss';
-
 /*Tables*/
 @import 'shared/tables.scss';
 
@@ -45,12 +42,6 @@
 /*Bootstrap datepicker override styles*/
 @import 'shared/datepicker-override.scss';
 @import 'shared/ui-datepicker-override.scss';
-
-/*Slick slider override styles*/
-@import 'shared/slick-slider-override.scss';
-
-/*Perfect Scrollbar styles*/
-@import 'shared/perfect-scrollbar.scss';
 
 /*Old Browsers Fallbacks*/
 @import 'shared/_fallbacks.scss';
