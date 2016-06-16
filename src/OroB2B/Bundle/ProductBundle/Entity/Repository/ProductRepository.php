@@ -179,7 +179,7 @@ class ProductRepository extends EntityRepository
     public function getProductsWithImage(array $products, $imageType = null)
     {
         $qb = $this->createQueryBuilder('p');
-        $qb->select('p, images, imageFile, imageTypes')
+        $qb->select('p, images, imageFile')
             ->join('p.images', 'images')
             ->join('images.image', 'imageFile')
             ->where($qb->expr()->in('p', ':products'))
@@ -187,7 +187,8 @@ class ProductRepository extends EntityRepository
             ->indexBy('p', 'p.id');
 
         if ($imageType) {
-            $qb->join('images.types', 'imageTypes')
+            $qb->addSelect('imageTypes')
+                ->join('images.types', 'imageTypes')
                 ->andWhere($qb->expr()->eq('imageTypes.type', ':imageType'))
                 ->setParameter('imageType', $imageType);
         }

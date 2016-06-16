@@ -21,11 +21,7 @@ class ShoppingListRepository extends EntityRepository
      */
     public function findCurrentForAccountUser(AccountUser $accountUser, $selectRelations = false)
     {
-        $qb = $this->createQueryBuilder('list')
-            ->select('list');
-        if ($selectRelations) {
-            $this->selectShoppingListRelations($qb);
-        }
+        $qb = $this->getShoppingListQueryBuilder($selectRelations);
         $qb->where('list.accountUser = :accountUser')
             ->andWhere('list.current = true')
             ->setParameter('accountUser', $accountUser)
@@ -43,12 +39,8 @@ class ShoppingListRepository extends EntityRepository
      */
     public function findOneForAccountUser(AccountUser $accountUser, $selectRelations = false)
     {
-        $qb = $this->createQueryBuilder('list')
-            ->select('list');
-        if ($selectRelations) {
-            $this->selectShoppingListRelations($qb);
-        }
-        $qb->where('list.accountUser = :accountUser')
+        $qb = $this->getShoppingListQueryBuilder($selectRelations)
+            ->where('list.accountUser = :accountUser')
             ->setParameter('accountUser', $accountUser)
             ->setMaxResults(1);
 
@@ -173,23 +165,32 @@ class ShoppingListRepository extends EntityRepository
      */
     public function findOneByIdWithRelations($id)
     {
-        $qb = $this->createQueryBuilder('list')
-            ->select('list');
-        $this->selectShoppingListRelations($qb);
+        $qb = $this->getShoppingListQueryBuilder(true);
         $qb->where('list.id = :id')
             ->setParameter('id', $id);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    protected function selectShoppingListRelations(QueryBuilder $queryBuilder)
+    /**
+     * @param bool $selectRelations
+     *
+     * @return QueryBuilder
+     */
+    protected function getShoppingListQueryBuilder($selectRelations = false)
     {
-        $queryBuilder->addSelect('items', 'product', 'images', 'imageTypes', 'imageFile', 'unitPrecisions')
-            ->leftJoin('list.lineItems', 'items')
-            ->leftJoin('items.product', 'product')
-            ->leftJoin('product.images', 'images')
-            ->leftJoin('images.types', 'imageTypes')
-            ->leftJoin('images.image', 'imageFile')
-            ->leftJoin('product.unitPrecisions', 'unitPrecisions');
+        $qb = $this->createQueryBuilder('list')
+            ->select('list');
+        if ($selectRelations) {
+            $qb->addSelect('items', 'product', 'images', 'imageTypes', 'imageFile', 'unitPrecisions')
+                ->leftJoin('list.lineItems', 'items')
+                ->leftJoin('items.product', 'product')
+                ->leftJoin('product.images', 'images')
+                ->leftJoin('images.types', 'imageTypes')
+                ->leftJoin('images.image', 'imageFile')
+                ->leftJoin('product.unitPrecisions', 'unitPrecisions');
+        }
+        
+        return $qb;
     }
 }
