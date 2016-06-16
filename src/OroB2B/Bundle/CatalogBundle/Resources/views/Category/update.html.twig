@@ -73,8 +73,7 @@
                     form_row(form.shortDescriptions),
                     form_row(form.longDescriptions),
                     form_row(form.smallImage),
-                    form_row(form.largeImage),
-                    form_widget(form.unitPrecision)
+                    form_row(form.largeImage)
                 ]
             }]
         }]
@@ -84,6 +83,16 @@
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
         {% set additionalData = additionalData|merge([form_row(child)]) %}
     {% endfor %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.catalog.sections.default_options'|trans,
+        'subblocks': [{
+            'title': '',
+            'useSpan': false,
+            'data' : [form_widget(form.unitPrecision)]
+        }]
+    }] ) %}
+
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.catalog.sections.additional'|trans,

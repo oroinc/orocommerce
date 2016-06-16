@@ -223,8 +223,14 @@ class Category extends ExtendCategory
      * @var CategoryUnitPrecision
      *
      * @ORM\OneToOne(targetEntity="CategoryUnitPrecision", cascade={"persist"})
-     * @ORM\JoinColumn(name="unit_precision_id", referencedColumnName="id", onDelete="SET NULL")
-     *
+     * @ORM\JoinColumn(name="unit_precision_id", nullable=true, referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $unitPrecision;
 

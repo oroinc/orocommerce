@@ -24,6 +24,7 @@ orob2b:
         sections:
             general: 'General'
             additional: 'Additional'
+            default_options: 'Default Product Options'
 
         subcategory:
             entity_label:   'Subcategory'
