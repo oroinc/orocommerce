@@ -150,3 +150,16 @@
 {% block orob2b_country_widget %}
     {{ form_widget(form, {'class_prefix': 'checkout'}) }}
 {% endblock %}
+
+{# TODO: remove due BB-3540 #}
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <div class="notification notification_xsm notification_error notification-radiused">
+            <ul>
+                {%- for error in errors -%}
+                    <li><i class="cf-attention cf--base-line"></i><span class="mml5-md">{{ error.message }}</span></li>
+                {%- endfor -%}
+            </ul>
+        </div>
+    {%- endif -%}
+{%- endblock form_errors -%}

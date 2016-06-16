@@ -24,10 +24,9 @@ layout:
                 account_user_address_edit_container:
                     blockType: container
                 account_user_address_edit_form_errors:
-                    blockType: block
+                    blockType: form_errors
                     options:
-                        vars:
-                            form: { '@value': $data.orob2b_account_frontend_account_user_address_form.view }
+                        form: { '@value': $data.orob2b_account_frontend_account_user_address_form.view }
                 account_user_address_edit_form_start:
                     blockType: form_start
                     options:
@@ -60,8 +59,8 @@ layout:
             tree:
                 content:
                     account_user_address_edit_container:
-                        account_user_address_edit_form_errors: ~
                         account_user_address_edit_form_start: ~
+                        account_user_address_edit_form_errors: ~
                         account_user_address_edit_form_fields: ~
                         account_user_address_edit_form_actions:
                             account_user_address_edit_form_actions_update: ~
