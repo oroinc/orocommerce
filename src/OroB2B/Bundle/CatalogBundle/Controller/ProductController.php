@@ -5,11 +5,6 @@ namespace OroB2B\Bundle\CatalogBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-
 class ProductController extends BaseProductController
 {
     /**
