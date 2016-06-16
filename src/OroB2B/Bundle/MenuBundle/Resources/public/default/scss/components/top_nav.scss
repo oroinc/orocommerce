@@ -8,6 +8,8 @@
   }
 
   &__navigation {
+    display: inline-block;
+
     ul {
       @include list-normalize();
 
@@ -38,6 +40,10 @@
       &:hover {
         text-decoration: underline;
       }
+    }
+
+    &--has-sibling {
+      margin-right: 10px;
     }
   }
 
