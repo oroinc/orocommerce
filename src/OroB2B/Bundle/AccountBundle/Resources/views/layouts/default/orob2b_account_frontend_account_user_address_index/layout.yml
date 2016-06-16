@@ -44,19 +44,25 @@ layout:
                     blockType: button
                     options:
                         text: 'orob2b.account.frontend.account_user_address_book.create.label'
+                # Account address grid
                 account_user_address_view_account_addresses_content_grid:
                     blockType: datagrid
                     options:
+                        visible: { '@gte': [$data.accountAddressCount, 8] }
                         grid_name: frontend-account-account-address-grid
                         grid_parameters:
                             frontend_owner_id: {'@value': $data.entity.account.id}
-                        visible: { '@gte': [$data.entity.addresses.count(), 8] }
+                # Account address list with map
                 account_user_address_view_account_addresses_content_list:
-                    blockType: block
+                    blockType: address_book
                     options:
-                        visible: { '@lt': [$data.entity.addresses.count(), 8] }
-                        vars:
-                            addresses: { '@value': $data.entity.account.addresses }
+                        visible: { '@lt': [$data.accountAddressCount, 8] }
+                        entity: { '@value': $data.entity }
+                        addressListRouteName: 'orob2b_api_account_frontend_get_accountuser_addresses'
+                        addressCreateRouteName: 'orob2b_account_frontend_account_user_address_create'
+                        addressCreateAclResource: 'orob2b_account_frontend_account_user_address_create'
+                        addressUpdateRouteName: 'orob2b_account_frontend_account_user_address_update'
+                        addressUpdateAclResource: 'orob2b_account_frontend_account_user_address_update'
                 account_user_address_view_account_user_addresses_head:
                     blockType: container
                 account_user_address_view_account_user_addresses:
@@ -68,22 +74,31 @@ layout:
                     options:
                         text: {'@value': 'orob2b.account.frontend.account_user_address_book.account_user_addresses'}
                 account_user_address_view_account_user_addresses_add_button:
-                    blockType: button
+                    blockType: link
                     options:
+                        visible: { '@acl': orob2b_account_frontend_account_user_address_create }
+                        route_name: orob2b_account_frontend_account_user_address_create
+                        route_parameters: { entityId: {'@value': $data.entity.id }}
                         text: 'orob2b.account.address.add'
+                # Account user address grid
                 account_user_address_view_account_user_addresses_content_grid:
                     blockType: datagrid
                     options:
+                        visible: { '@gte': [$data.accountUserAddressCount, 8] }
                         grid_name: frontend-account-account-user-address-grid
                         grid_parameters:
                             frontend_owner_id: {'@value': $data.entity.id}
-                        visible: { '@gte': [$data.entity.addresses.count(), 8] }
+                # Account user address list with map
                 account_user_address_view_account_user_addresses_content_list:
-                    blockType: block
+                    blockType: address_book
                     options:
-                        visible: { '@lt': [$data.entity.addresses.count(), 8] }
-                        vars:
-                            addresses: { '@value': $data.entity.addresses }
+                        visible: { '@lt': [$data.accountUserAddressCount, 8] }
+                        entity: { '@value': $data.entity }
+                        addressListRouteName: 'orob2b_api_account_frontend_get_accountuser_addresses'
+                        addressCreateRouteName: 'orob2b_account_frontend_account_user_address_create'
+                        addressCreateAclResource: 'orob2b_account_frontend_account_user_address_create'
+                        addressUpdateRouteName: 'orob2b_account_frontend_account_user_address_update'
+                        addressUpdateAclResource: 'orob2b_account_frontend_account_user_address_update'
 
             tree:
                 content:
