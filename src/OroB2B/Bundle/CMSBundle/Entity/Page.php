@@ -12,6 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
 
+use OroB2B\Bundle\CMSBundle\Model\ExtendPage;
 use OroB2B\Bundle\RedirectBundle\Entity\Slug;
 use OroB2B\Component\Tree\Entity\TreeTrait;
 
@@ -43,7 +44,7 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class Page
+class Page extends ExtendPage
 {
     use TreeTrait;
     use AuditableOrganizationAwareTrait;
@@ -182,6 +183,8 @@ class Page
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->slugs      = new ArrayCollection();
         $this->childPages = new ArrayCollection();
         $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));

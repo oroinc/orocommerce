@@ -12,6 +12,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 use OroB2B\Bundle\CMSBundle\Entity\Page;
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 
 abstract class AbstractLoadPageData extends AbstractFixture implements ContainerAwareInterface
 {
