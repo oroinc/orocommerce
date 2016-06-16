@@ -22,8 +22,6 @@ use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 class ShoppingListController extends Controller
 {
     /**
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     *
      * @Route("/{id}", name="orob2b_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
      * @Layout(vars={"title"})
      * @Acl(
@@ -44,19 +42,22 @@ class ShoppingListController extends Controller
         $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
         $shoppingList = $repo->findOneByIdWithRelations($id);
 
-        if (!$shoppingList) {
+        if(!$shoppingList) {
             $user = $this->getUser();
             if ($user instanceof AccountUser) {
                 $shoppingList = $repo->findAvailableForAccountUser($user, true);
             }
         }
-
-        $totalWithSubtotalsAsArray = $shoppingList
-            ? $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList)
-            : [];
+        if ($shoppingList) {
+            $title = $shoppingList->getLabel();
+            $totalWithSubtotalsAsArray = $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList);
+        } else {
+            $title = null;
+            $totalWithSubtotalsAsArray = [];
+        }
 
         return [
-            'title' => $shoppingList ? $shoppingList->getLabel() : null,
+            'title' => $title,
             'data' => [
                 'entity' => $shoppingList,
                 'totals' => [
