@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\ImportExport\Strategy;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Context\Context;
@@ -33,7 +31,6 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         if (!$container->hasParameter('orob2b_product.entity.product.class')) {
             $this->markTestSkipped('ProductBundle is missing');
         }
-
         $this->loadFixtures(
             ['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']
         );
@@ -62,6 +59,8 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
      */
     public function testProcess(array $entityData = [], array $expectedNames = [], array $itemData = [])
     {
+        $entityData = $this->convertArrayToEntities($entityData);
+
         $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
 
         $context = new Context([]);
@@ -119,36 +118,39 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             [
                 [
                     'sku' => 'product.1',
-                    'primaryUnitPrecision' => $this->getEntity(
-                        'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
-                        [
+                    'primaryUnitPrecision' => [
+                        'testEntity' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                        'testProperties' => [
                             'unit' => $this->getEntity(
                                 'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
                                 ['code' => 'kg']
                             ),
                             'precision' => 3,
                         ]
-                    ),
-                    'names' => new ArrayCollection(
+                    ],
+                    'names' => [
                         [
-                            $this->getEntity(
-                                'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                                ['string' => 'product.1 Default Title']
-                            ),
-                            $this->getEntity(
-                                'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                                [
-                                    'string' => 'product.1 en_US Title',
-                                    'fallback' => 'parent_localization',
-                                    'localization' => $localizationEnUs,
-                                ]
-                            ),
-                            $this->getEntity(
-                                'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                                ['string' => 'product.1 en_CA Title', 'localization' => $localizationEnCa]
-                            ),
-                        ]
-                    ),
+                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
+                            'testProperties' => [
+                                'string' => 'product.1 Default Title'
+                            ],
+                        ],
+                        [
+                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
+                            'testProperties' => [
+                                'string' => 'product.1 en_US Title',
+                                'fallback' => 'parent_localization',
+                                'localization' => $localizationEnUs,
+                            ]
+                        ],
+                        [
+                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
+                            'testProperties' => [
+                                'string' => 'product.1 en_CA Title',
+                                'localization' => $localizationEnCa
+                            ]
+                        ],
+                    ],
                 ],
                 [
                     'default' => [
@@ -193,6 +195,8 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
      */
     public function testProcessSkipped(array $entityData, callable $resultCallback)
     {
+        $entityData = $this->convertArrayToEntities($entityData);
+
         $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
 
         $this->strategy->setImportExportContext(new Context([]));
@@ -226,17 +230,16 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             'new product, no fallback from another entity' => [
                 [
                     'sku' => 'new_sku',
-                    'primaryUnitPrecision' => $this->getEntity(
-                        'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
-                        [
-                            'id' => 1,
+                    'primaryUnitPrecision' => [
+                        'testEntity' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                        'testProperties' => [
                             'unit' => $this->getEntity(
                                 'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
                                 ['code' => 'kg']
                             ),
                             'precision' => 3,
                         ]
-                    ),
+                    ],
                 ],
                 function ($product) {
                     $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
@@ -249,28 +252,28 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             'existing product with, id not mapped for new fallback' => [
                 [
                     'sku' => 'product.4',
-                    'primaryUnitPrecision' => $this->getEntity(
-                        'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
-                        [
+                    'primaryUnitPrecision' => [
+                        'testEntity' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                        'testProperties' => [
                             'unit' => $this->getEntity(
                                 'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
                                 ['code' => 'each']
                             ),
                             'precision' => 0,
                         ]
-                    ),
-                    'names' => new ArrayCollection(
+                    ],
+                    'names' => [
                         [
-                            $this->getEntity(
-                                'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                                ['string' => 'product.4 Default Title']
-                            ),
-                            $this->getEntity(
-                                'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                                ['string' => 'product.4 en_US Title', 'localization' => $localizationEnUs]
-                            ),
-                        ]
-                    ),
+                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
+                            'testProperties' => ['string' => 'product.4 Default Title']
+                        ],
+                        [
+                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
+                            'testProperties' => [
+                                'string' => 'product.4 en_US Title',
+                                'localization' => $localizationEnUs],
+                        ],
+                    ]
                 ],
                 function ($product) {
                     $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
