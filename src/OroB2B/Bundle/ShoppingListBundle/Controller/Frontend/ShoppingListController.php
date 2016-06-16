@@ -42,7 +42,7 @@ class ShoppingListController extends Controller
         $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
         $shoppingList = $repo->findOneByIdWithRelations($id);
 
-        if(!$shoppingList) {
+        if (!$shoppingList) {
             $user = $this->getUser();
             if ($user instanceof AccountUser) {
                 $shoppingList = $repo->findAvailableForAccountUser($user, true);
