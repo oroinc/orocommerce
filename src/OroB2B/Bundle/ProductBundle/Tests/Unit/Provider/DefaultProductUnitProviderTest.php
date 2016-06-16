@@ -53,11 +53,22 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
             ->willReturn($productUnitRepository);
 
+        $manager->expects($this->once())
+            ->method('getRepository')
+            ->with('OroB2B\Bundle\CatalogBundle\Entity\Category')
+            ->willReturn($this->createMockCategoryRepository());
+
         $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
             ->willReturn($manager);
+
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with('OroB2B\Bundle\CatalogBundle\Entity\Category')
+            ->willReturn($manager);
+
 
         $this->expectedUnitPrecision = new ProductUnitPrecision();
         $this->expectedUnitPrecision->setUnit($productUnit)->setPrecision('3');
@@ -72,4 +83,15 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             $this->defaultProductUnitProvider->getDefaultProductUnitPrecision()
         );
     }
+
+    private function createMockCategoryRepository()
+    {
+         $categoryRepository = $this
+                    ->getMockBuilder('OroB2B\Bundle\CategoryBundle\Entity\Repository\CategoryRepository')
+                    ->disableOriginalConstructor()
+                    ->getMock();
+
+         return $categoryRepository;
+    }
+
 }

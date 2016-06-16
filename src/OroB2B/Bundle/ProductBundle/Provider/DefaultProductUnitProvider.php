@@ -3,12 +3,15 @@
 namespace OroB2B\Bundle\ProductBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
 
 class DefaultProductUnitProvider
 {
@@ -50,13 +53,37 @@ class DefaultProductUnitProvider
      */
     public function getDefaultProductUnitPrecision()
     {
+
+        if (null != $this->categoryId) {
+            /*$categoryRepository = $this->registry->getRepository('OroB2BCatalogBundle:Category');
+            $categoryRepository = $this->registry
+                ->getManagerForClass('OroB2BCatalogBundle:Category')
+                ->getRepository('OroB2BCatalogBundle:Category');
+            */
+            $categoryRepository =  $this->getRepository('OroB2BCatalogBundle:Category');
+
+            $category = $categoryRepository->findOneById($this->categoryId);
+
+            do {
+                $categoryUnitPrecision = $category->getUnitPrecision();
+
+                if (null != $categoryUnitPrecision) {
+                    $productUnitPrecision = new ProductUnitPrecision();
+                    $productUnitPrecision
+                        ->setUnit($categoryUnitPrecision->getUnit())
+                        ->setPrecision($categoryUnitPrecision->getPrecision());
+                    return $productUnitPrecision;
+                }
+
+                $category = $category->getParentCategory();
+            } while (null != $category);
+        }
+
         $defaultUnitValue = $this->configManager->get('orob2b_product.default_unit');
         $defaultUnitPrecision = $this->configManager->get('orob2b_product.default_unit_precision');
 
-        if($this->categoryId == 4) $defaultUnitValue = 'set';
-        if($this->categoryId == 2) $defaultUnitValue = 'hour';
         $unit = $this
-            ->getRepository()->findOneBy(['code' => $defaultUnitValue]);
+            ->getRepository('OroB2BProductBundle:ProductUnit')->findOneBy(['code' => $defaultUnitValue]);
 
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision
@@ -67,12 +94,14 @@ class DefaultProductUnitProvider
     }
 
     /**
-     * @return ProductUnitRepository
+     * @param string $className
+     * @return EntityRepository
      */
-    protected function getRepository()
+    protected function getRepository($className)
     {
         return $this->registry
-            ->getManagerForClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
-            ->getRepository('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
+            ->getManagerForClass($className)
+            ->getRepository($className);
     }
 }
+
