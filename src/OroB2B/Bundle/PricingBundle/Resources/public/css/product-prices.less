@@ -65,17 +65,23 @@ table.product-price-attributes {
   width: auto;
 }
 
-.price-attributes-collection{
-  &.control-group > .controls {
-    margin-left: 0  ;
-  }
+.form-horizontal {
+  .price-attributes-collection{
+    &.control-group > .controls {
+      margin-left: 0;
 
-  .pricing-price-attribute {
-    .table{
-      width: auto;
+      .control-group .control-label.wrap {
+        width: 160px;
+      }
+    }
 
-      .price-value{
-        width: 100px;
+    .pricing-price-attribute {
+      .table{
+        width: auto;
+
+        .price-value{
+          width: 100px;
+        }
       }
     }
   }

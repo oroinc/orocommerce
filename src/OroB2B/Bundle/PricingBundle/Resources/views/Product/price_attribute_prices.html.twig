@@ -1,43 +1,51 @@
 {% for attribute in productAttributes %}
-    {{ attribute.name }}
-    {% if attribute.currencies|length > 1 %}
-        <table class="grid table table-condensed table-bordered product-price-attributes">
-            <thead>
-            <th>{{ 'orob2b.pricing.priceAttribute.unit.label'|trans }}</th>
-            {% for currency in attribute.currencies %}
-                <th>{{ currency }}</th>
-            {% endfor %}
-            </thead>
-            <tbody>
-            {% for unit in productUnits %}
-                <tr>
-                    <td>
-                        {{ unit }}
-                    </td>
+    <div class = "control-group control-group-collection">
+        <div class="control-label wrap">
+            <label>{{ attribute.name }}</label>
+        </div>
+        <div class="controls">
+            <div class="control-label">
+            {% if attribute.currencies|length > 1 %}
+                <table class="grid table table-condensed table-bordered product-price-attributes">
+                    <thead>
+                    <th>{{ 'orob2b.pricing.priceAttribute.unit.label'|trans }}</th>
                     {% for currency in attribute.currencies %}
-                        <td>
-                            {% if priceAttributePrices[attribute.name][unit][currency] is defined %}
-                                {{ priceAttributePrices[attribute.name][unit][currency]|oro_format_currency({'currency': currency})  }}
-                            {% else %}
-                                {{ 'orob2b.pricing.priceAttribute.withoutPrice'|trans }}
-                            {% endif %}
-                        </td>
+                        <th>{{ currency }}</th>
                     {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <ul class="radio-ul">
-            {% for unit in productUnits %}
-                {% for currency in attribute.currencies %}
-                    {% if priceAttributePrices[attribute.name][unit][currency] is defined %}
-                        <li>{{ priceAttributePrices[attribute.name][unit][currency]|oro_format_currency({'currency': currency}) }} / {{ unit }}</li>
-                    {% else %}
-                        {{ 'orob2b.pricing.priceAttribute.withoutPrice'|trans }} / {{ unit }}
-                    {% endif %}
-                {% endfor %}
-            {% endfor %}
-        </ul>
-    {% endif %}
+                    </thead>
+                    <tbody>
+                    {% for unit in productUnits %}
+                        <tr>
+                            <td>
+                                {{ unit }}
+                            </td>
+                            {% for currency in attribute.currencies %}
+                                <td>
+                                    {% if priceAttributePrices[attribute.name][unit][currency] is defined %}
+                                        {{ priceAttributePrices[attribute.name][unit][currency]|oro_format_currency({'currency': currency})  }}
+                                    {% else %}
+                                        {{ 'orob2b.pricing.priceAttribute.withoutPrice'|trans }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <ul class="radio-ul">
+                    {% for unit in productUnits %}
+                        {% for currency in attribute.currencies %}
+                            {% if priceAttributePrices[attribute.name][unit][currency] is defined %}
+                                <li>{{ priceAttributePrices[attribute.name][unit][currency]|oro_format_currency({'currency': currency}) }} / {{ unit }}</li>
+                            {% else %}
+                                <li>{{ 'orob2b.pricing.priceAttribute.withoutPrice'|trans }} / {{ unit }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            </div>
+        </div>
+    </div>
 {% endfor %}
