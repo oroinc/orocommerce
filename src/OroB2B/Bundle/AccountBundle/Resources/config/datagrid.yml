@@ -1133,7 +1133,7 @@ datagrid:
                 select:
                     - address
                     - address.id as id
-                    - address.street as street
+                    - address.label as label
                     - address.city as city
                     - address.postalCode as zip
                     - country.name as countryName
@@ -1148,16 +1148,16 @@ datagrid:
         properties:
             id: ~
         columns:
-            street:
-                label: street
+            label:
+                label: orob2b.account.accountaddress.label.label
             city:
-                label: city
+                label: orob2b.account.accountaddress.city.label
             zip:
-                label: zip
+                label: orob2b.account.accountaddress.postal_code.label
             countryName:
-                label: country
+                label: orob2b.account.accountaddress.country.label
             types:
-                label: types
+                label: orob2b.account.accountaddress.types.label
                 type: twig
                 frontend_type: html
                 template: OroB2BAccountBundle:Address:Frontend/Datagrid/types.html.twig

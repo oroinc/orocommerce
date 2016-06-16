@@ -49,7 +49,7 @@ layout:
                     options:
                         grid_name: frontend-account-account-address-grid
                         grid_parameters:
-                            frontend_owner_id: {'@value': $data.entity.id}
+                            frontend_owner_id: {'@value': $data.entity.account.id}
                         visible: { '@gte': [$data.entity.addresses.count(), 8] }
                 account_user_address_view_account_addresses_content_list:
                     blockType: block
@@ -76,7 +76,7 @@ layout:
                     options:
                         grid_name: frontend-account-account-user-address-grid
                         grid_parameters:
-                            frontend_owner_id: {'@value': $data.entity.account.id}
+                            frontend_owner_id: {'@value': $data.entity.id}
                         visible: { '@gte': [$data.entity.addresses.count(), 8] }
                 account_user_address_view_account_user_addresses_content_list:
                     blockType: block

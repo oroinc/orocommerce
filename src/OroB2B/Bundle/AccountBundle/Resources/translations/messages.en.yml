@@ -470,7 +470,7 @@ orob2b.account:
         account_user_address_book:
             account_addresses:      'Company Addresses'
             account_user_addresses: 'My Addresses'
-            create.label:           'Add Company Address'
+            create.label: 'Add Company Address'
         title:
             account_user_role.create: Create Account User Role
             account_user_role.edit: Edit Account User Role
