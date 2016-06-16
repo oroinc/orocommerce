@@ -60,6 +60,8 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Product extends ExtendProduct implements OrganizationAwareInterface, \JsonSerializable
 {
