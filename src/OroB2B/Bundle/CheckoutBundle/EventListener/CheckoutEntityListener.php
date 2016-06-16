@@ -224,7 +224,7 @@ class CheckoutEntityListener
             'TODO. Implement. getApplicableWorkflowByEntityClass was removed'
         );
 
-        return $this->workflowManager->getApplicableWorkflowByEntityClass($this->getCheckoutClassName());
+        //return $this->workflowManager->getApplicableWorkflowByEntityClass($this->getCheckoutClassName());
     }
 
     /**
