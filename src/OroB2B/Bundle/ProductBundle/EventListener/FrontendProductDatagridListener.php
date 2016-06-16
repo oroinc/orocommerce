@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
 use Doctrine\ORM\Query\Expr;
+
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
@@ -14,7 +14,7 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
@@ -23,6 +23,7 @@ class FrontendProductDatagridListener
 {
     const COLUMN_PRODUCT_UNITS = 'product_units';
     const PRODUCT_IMAGE_FILTER = 'product_large';
+    const PRODUCT_IMAGE_TYPE = 'listing';
 
     /**
      * @var DataGridThemeHelper
@@ -106,15 +107,6 @@ class FrontendProductDatagridListener
     protected function addImageToConfig(DatagridConfiguration $config)
     {
         $updates = [
-            '[source][query][select]' => [
-                'productImage.filename as image',
-            ],
-            '[source][query][join][left]' => [
-                [
-                    'join' => 'product.image',
-                    'alias' => 'productImage',
-                ]
-            ],
             '[columns]' => [
                 'image' => [
                     'label' => 'orob2b.product.image.label',
@@ -193,22 +185,20 @@ class FrontendProductDatagridListener
             return;
         }
 
-        $products = $this->getProductRepository()->getProductsWithImage($productIds);
-        $imageUrls = [];
-        foreach ($products as $product) {
-            $image = $product->getImage();
-            if ($image) {
-                $imageUrls[$product->getId()] = $this->attachmentManager->getFilteredImageUrl(
-                    $image,
-                    self::PRODUCT_IMAGE_FILTER
-                );
-            }
-        }
+        $products = $this->getProductRepository()->getProductsWithImage($productIds, self::PRODUCT_IMAGE_TYPE);
 
         foreach ($records as $record) {
+            $imageUrl = null;
             $productId = $record->getValue('id');
-            if (array_key_exists($productId, $imageUrls)) {
-                $record->addData(['image' => $imageUrls[$productId]]);
+            if (isset($products[$productId])) {
+                $product = $products[$productId];
+                /** @var ProductImage $listingImage */
+                $listingImage = $product->getImages()->first();
+                $imageUrl = $this->attachmentManager->getFilteredImageUrl(
+                    $listingImage->getImage(),
+                    self::PRODUCT_IMAGE_FILTER
+                );
+                $record->addData(['image' => $imageUrl]);
             }
         }
     }
@@ -220,6 +210,7 @@ class FrontendProductDatagridListener
     protected function addProductUnits($productIds, $records)
     {
         $productUnits = $this->getProductUnitRepository()->getProductsUnits($productIds);
+
         foreach ($records as $record) {
             $units = [];
             $productId = $record->getValue('id');

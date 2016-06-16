@@ -41,6 +41,7 @@ services:
         arguments:
             - "@orob2b_payment.provider.payment_transaction"
             - "@orob2b_payment.payment_method.view.registry"
+            - "@translator"
         tags:
             - { name: twig.extension }
 
@@ -123,10 +124,7 @@ services:
         lazy: true
         arguments:
             - '@event_dispatcher'
-            - '@oro_entity.doctrine_helper'
-            - '%orob2b_payment.entity.payment_transaction.class%'
-        calls:
-            - ['setLogger', ['@logger']]
+            - '@orob2b_payment.provider.payment_transaction'
 
     orob2b_payment.provider.payment_transaction:
         class: 'OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider'
@@ -143,35 +141,33 @@ services:
             - '@orob2b_payment.provider.payment_transaction'
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
 
-    orob2b_payment.action.capture:
-        class: 'OroB2B\Bundle\PaymentBundle\Action\CaptureAction'
+    orob2b_payment.action.payment_method_action.abstract:
+        abstract: true
         arguments:
             - '@oro_action.context_accessor'
             - '@orob2b_payment.payment_method.registry'
             - '@orob2b_payment.provider.payment_transaction'
             - '@router'
+        calls:
+            - ['setLogger', ['@logger']]
+
+    orob2b_payment.action.capture:
+        class: 'OroB2B\Bundle\PaymentBundle\Action\CaptureAction'
+        parent: orob2b_payment.action.payment_method_action.abstract
         tags:
             - { name: oro_workflow.action, alias: payment_capture }
             - { name: oro_action.action, alias: payment_capture }
 
     orob2b_payment.action.purchase:
         class: 'OroB2B\Bundle\PaymentBundle\Action\PurchaseAction'
-        arguments:
-            - '@oro_action.context_accessor'
-            - '@orob2b_payment.payment_method.registry'
-            - '@orob2b_payment.provider.payment_transaction'
-            - '@router'
+        parent: orob2b_payment.action.payment_method_action.abstract
         tags:
             - { name: oro_workflow.action, alias: payment_purchase }
             - { name: oro_action.action, alias: payment_purchase }
 
     orob2b_payment.action.validate:
         class: 'OroB2B\Bundle\PaymentBundle\Action\ValidateAction'
-        arguments:
-            - '@oro_action.context_accessor'
-            - '@orob2b_payment.payment_method.registry'
-            - '@orob2b_payment.provider.payment_transaction'
-            - '@router'
+        parent: orob2b_payment.action.payment_method_action.abstract
         tags:
             - { name: oro_workflow.action, alias: payment_validate }
             - { name: oro_action.action, alias: payment_validate }

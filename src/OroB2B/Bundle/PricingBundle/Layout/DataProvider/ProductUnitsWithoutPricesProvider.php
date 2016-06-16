@@ -45,9 +45,17 @@ class ProductUnitsWithoutPricesProvider extends AbstractServerRenderDataProvider
             }
             $units = $product->getUnitPrecisions()->map(
                 function (ProductUnitPrecision $unitPrecision) {
-                    return $unitPrecision->getUnit();
+                    if ($unitPrecision->isSell()) {
+                        return $unitPrecision->getUnit();
+                    }
                 }
             )->toArray();
+
+            foreach ($units as $key => $unit) {
+                if (!$unit) {
+                    unset($units[$key]);
+                }
+            }
 
             $this->data[$product->getId()] = array_diff($units, $unitWithPrices);
         }

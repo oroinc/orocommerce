@@ -20,11 +20,6 @@ class StubProduct extends Product
     private $visibility = [];
 
     /**
-     * @var mixed
-     */
-    private $image = [];
-    
-    /**
      * @var string
      */
     private $size;
@@ -49,25 +44,6 @@ class StubProduct extends Product
     public function setVisibility($visibility)
     {
         $this->visibility = $visibility;
-
-        return $this;
-    }
-
-    /**
-     * @return File
-     */
-    public function getImage()
-    {
-        return $this->image;
-    }
-
-    /**
-     * @param File $image
-     * @return File
-     */
-    public function setImage($image)
-    {
-        $this->image = $image;
 
         return $this;
     }
