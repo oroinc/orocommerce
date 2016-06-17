@@ -87,6 +87,11 @@ class QuoteCheckoutSourceDefinitionResolver implements CheckoutSourceDefinitionR
      */
     private function getQuoteLabel(Quote $quote)
     {
-        return $this->translator->trans('orob2b.sale.quote.entity_label').' #'.$quote->getQid();
+        return $this->translator->trans(
+            'orob2b.frontend.sale.quote.title.label',
+            [
+                '%id%' => $quote->getQid()
+            ]
+        );
     }
 }
