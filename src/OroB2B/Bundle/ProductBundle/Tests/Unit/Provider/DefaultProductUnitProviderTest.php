@@ -116,6 +116,7 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return  Mock_CategoryRepository
+     *
      */
     private function createMockCategoryRepository()
     {
