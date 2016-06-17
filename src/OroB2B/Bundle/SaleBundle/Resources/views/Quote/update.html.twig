@@ -73,6 +73,9 @@
         >
             {{ form_row(form.owner) }}
             {{ ownerSelectors }}
+            {% if form.website is defined %}
+                {{ form_row(form.website) }}
+            {% endif %}
             {{ form_row(form.validUntil) }}
             {{ form_row(form.locked) }}
             {{ form_row(form.poNumber) }}
