@@ -1,0 +1,13 @@
+services:
+    orob2b_payment.layout.block_type.payment_methods:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        views: {required: true}
+                        currentPaymentMethod: {required: true}
+            - [setName, ['payment_methods']]
+        tags:
+            - { name: layout.block_type, alias: payment_methods }
