@@ -84,15 +84,6 @@
         {% set additionalData = additionalData|merge([form_row(child)]) %}
     {% endfor %}
 
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.catalog.sections.default_options'|trans,
-        'subblocks': [{
-            'title': '',
-            'useSpan': false,
-            'data' : [form_widget(form.unitPrecision)]
-        }]
-    }] ) %}
-
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.catalog.sections.additional'|trans,
@@ -117,6 +108,15 @@
             ]
         }]) %}
     {% endif %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.catalog.sections.default_options'|trans,
+        'subblocks': [{
+            'title': '',
+            'useSpan': false,
+            'data' : [form_widget(form.unitPrecision)]
+        }]
+    }] ) %}
 
     {% set data = {
         'formErrors': form_errors(form),
