@@ -3,15 +3,12 @@
 namespace OroB2B\Bundle\ProductBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
 
 class DefaultProductUnitProvider
 {
@@ -34,7 +31,7 @@ class DefaultProductUnitProvider
         $this->configManager = $configManager;
         $this->registry = $registry;
     }
-
+    
     /**
      * @return ProductUnitPrecision
      */
