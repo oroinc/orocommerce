@@ -95,6 +95,12 @@ body {
 a {
   color: $base-link-color;
 
+  &.red {
+    &:hover, &:focus, &:active {
+      color: $theme-red-color;
+    }
+  }
+
   &:hover {
     color: $base-link-color;
     text-decoration: underline;
