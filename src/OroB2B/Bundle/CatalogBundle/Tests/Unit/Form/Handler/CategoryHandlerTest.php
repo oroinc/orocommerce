@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Handler;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
@@ -128,6 +129,19 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ->method('get')
             ->with('removeProducts')
             ->will($this->returnValue($removeProducts));
+        
+        $unitPrecision = $this->getMockBuilder('Symfony\Component\Form\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $unitPrecision->expects($this->once())
+            ->method('getData')
+            ->will($this->returnValue(new CategoryUnitPrecision()));
+
+        $this->form->expects($this->at(5))
+            ->method('get')
+            ->with('unitPrecision')
+            ->will($this->returnValue($unitPrecision));
     }
 
     protected function mockProductCategory()

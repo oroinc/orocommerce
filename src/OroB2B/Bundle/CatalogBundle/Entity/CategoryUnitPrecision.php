@@ -48,7 +48,7 @@ class CategoryUnitPrecision implements ProductUnitHolderInterface
     /**
      * @var integer
      *
-     * @ORM\Column(name="unit_precision", type="integer")
+     * @ORM\Column(name="unit_precision", nullable=true, type="integer")
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -154,6 +154,7 @@ class CategoryUnitPrecision implements ProductUnitHolderInterface
      */
     public function __toString()
     {
-        return $this->getUnit()->getCode() . ' ' . $this->getPrecision();
+        $code = $this->getUnit() ? $this->getUnit()->getCode() : '';
+        return $code . ' ' . $this->getPrecision();
     }
 }

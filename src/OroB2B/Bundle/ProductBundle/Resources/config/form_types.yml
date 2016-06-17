@@ -131,6 +131,14 @@ services:
         tags:
             - { name: form.type, alias: 'orob2b_product_quick_add_import_from_file' }
 
+    orob2b_product.form.type.product_image_collection:
+        class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductImageCollectionType'
+        public: true
+        arguments:
+            - "@oro_layout.provider.image_type"
+        tags:
+            - { name: form.type, alias: 'orob2b_product_image_collection' }
+
     orob2b_product.form.type.frontend_line_item:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType'
         tags:
