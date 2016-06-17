@@ -1,0 +1,8 @@
+services:
+    orob2b_frontend.layout.type.exception:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{status_code: {required: true}, status_text: {required: true}}]]
+            - [setName, ['exception']]
+        tags:
+             - { name: layout.block_type, alias: exception }
