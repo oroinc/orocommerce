@@ -1,6 +1,3 @@
-{% block _quote_view_top_widget %}
-{% endblock %}
-
 {% block _quote_view_controls_list_widget %}
     <ul class="oro-order__controls-list">
         <li><a href="#"><i class="cf-reply"></i>Share</a></li>
@@ -93,7 +90,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for quoteProduct in quote.quoteProducts %}
+                    {% for quoteProduct in quoteProducts %}
                         {% for productOffer in quoteProduct.quoteProductOffers %}
                             <tr class="borderless">
                                 {% if loop.first %}
@@ -185,7 +182,7 @@
             <div class="account-oq__item__body">
                 <table class="oro-grid-table  oro-grid-table-properties oro-grid-table__orders_order-details">
                     <tbody>
-                    {% for quoteProduct in quote.quoteProducts %}
+                    {% for quoteProduct in quoteProducts %}
                         <tr>
                             <td class="va-t_sm">
                                 <h3 class="product-item__title product-item__title_in-cart mb1-md">
