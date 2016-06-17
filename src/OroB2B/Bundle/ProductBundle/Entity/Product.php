@@ -377,6 +377,28 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     protected $shortDescriptions;
 
     /**
+     * @var Collection|ProductImage[]
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductImage",
+     *     mappedBy="product",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *               "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $images;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -388,6 +410,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         $this->descriptions = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
         $this->variantLinks = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     /**
@@ -800,6 +823,53 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     }
 
     /**
+     * @return Collection|ProductImage[]
+     */
+    public function getImages()
+    {
+        return $this->images;
+    }
+
+    /**
+     * @param string $type
+     * @return ProductImage[]|Collection
+     */
+    public function getImagesByType($type)
+    {
+        return $this->getImages()->filter(function (ProductImage $image) use ($type) {
+            return $image->hasType($type);
+        });
+    }
+
+    /**
+     * @param ProductImage $image
+     * @return $this
+     */
+    public function addImage(ProductImage $image)
+    {
+        $image->setProduct($this);
+
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ProductImage $image
+     * @return $this
+     */
+    public function removeImage(ProductImage $image)
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return Collection|LocalizedFallbackValue[]
      */
     public function getShortDescriptions()
@@ -886,6 +956,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
             $this->names = new ArrayCollection();
             $this->descriptions = new ArrayCollection();
             $this->shortDescriptions = new ArrayCollection();
+            $this->images = new ArrayCollection();
             $this->variantLinks = new ArrayCollection();
             $this->variantFields = [];
         }
