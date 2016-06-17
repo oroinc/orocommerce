@@ -80,13 +80,15 @@ class CategoryHandler
      * @param Category $category
      * @param Product[] $appendProducts
      * @param Product[] $removeProducts
-     * @param CategoryUnitPrecision $unitPrecision
+     * @param CategoryUnitPrecision|null $unitPrecision
      */
     protected function onSuccess(Category $category, array $appendProducts, array $removeProducts, $unitPrecision)
     {
         $this->appendProducts($category, $appendProducts);
         $this->removeProducts($category, $removeProducts);
-        $this->removeUnitPrecision($category, $unitPrecision);
+        if ($unitPrecision && !$unitPrecision->getUnit()) {
+            $this->removeUnitPrecision($category, $unitPrecision);
+        }
         
         $this->manager->persist($category);
         $this->manager->flush();
@@ -132,13 +134,11 @@ class CategoryHandler
      * @param Category $category
      * @param CategoryUnitPrecision $unitPrecision
      */
-    protected function removeUnitPrecision(Category $category, CategoryUnitPrecision $unitPrecision)
+    protected function removeUnitPrecision(Category $category, $unitPrecision)
     {
-        if (!$unitPrecision->getUnit()) {
-            $this->manager->remove($unitPrecision);
-            $category->setUnitPrecision(null);
-            // both CategoryUnitPrecision and Category must be updated in the same flush
-            $this->manager->flush([$unitPrecision,$category]);
-        }
+        $this->manager->remove($unitPrecision);
+        $category->setUnitPrecision(null);
+        // both CategoryUnitPrecision and Category must be updated in the same flush
+        $this->manager->flush([$unitPrecision,$category]);
     }
 }
