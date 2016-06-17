@@ -41,6 +41,7 @@ services:
         arguments:
             - "@orob2b_payment.provider.payment_transaction"
             - "@orob2b_payment.payment_method.view.registry"
+            - "@translator"
         tags:
             - { name: twig.extension }
 

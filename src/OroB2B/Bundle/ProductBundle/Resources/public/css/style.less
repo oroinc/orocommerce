@@ -122,3 +122,31 @@ table.unit-table{
 
 }
 
+.image-collection {
+  overflow-x: scroll;
+
+  &.view table {
+    width: 60%;
+  }
+
+  .add-list-item {
+    margin-top: 8px;
+    margin-left: 0;
+  }
+
+  th, td {
+    &:not(:first-child) {
+      text-align: center;
+    }
+  }
+
+  th {
+    &.file {
+      width: 320px;
+    }
+
+    &.remove {
+      width: 65px;
+    }
+  }
+}
