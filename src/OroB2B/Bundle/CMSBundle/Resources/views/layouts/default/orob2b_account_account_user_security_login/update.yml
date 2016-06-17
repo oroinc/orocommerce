@@ -12,11 +12,10 @@ layout:
         - '@add':
             id: login_page_logo
             parentId: login_page
-            blockType: block
+            blockType: login_page_logo
             options:
                 visible: { '@not_empty': $data.orob2b_cms_login_page.logoImage }
-                vars:
-                    loginPage: { '@value': $data.orob2b_cms_login_page }
+                logo: { '@value': $data.orob2b_cms_login_page.logoImage }
             prepend: true
         - '@add':
             id: login_page_top
