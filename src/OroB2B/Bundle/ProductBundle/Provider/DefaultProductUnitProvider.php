@@ -57,21 +57,17 @@ class DefaultProductUnitProvider
         if (null != $this->categoryId) {
             $categoryRepository = $this->getRepository('OroB2BCatalogBundle:Category');
             $category = $categoryRepository->findOneById($this->categoryId);
-
             do {
                 $categoryUnitPrecision = $category->getUnitPrecision();
 
                 if (null != $categoryUnitPrecision) {
-                    $productUnitPrecision = new ProductUnitPrecision();
-                    $productUnitPrecision
-                        ->setUnit($categoryUnitPrecision->getUnit())
-                        ->setPrecision($categoryUnitPrecision->getPrecision());
-                    return $productUnitPrecision;
+                    return $this->createProductUnitPrecision(
+                        $categoryUnitPrecision->getUnit(),
+                        $categoryUnitPrecision->getPrecision()
+                    );
                 }
-
                 $category = $category->getParentCategory();
             } while (null != $category);
-
         }
 
         $defaultUnitValue = $this->configManager->get('orob2b_product.default_unit');
@@ -80,12 +76,7 @@ class DefaultProductUnitProvider
         $unit = $this
             ->getRepository('OroB2BProductBundle:ProductUnit')->findOneBy(['code' => $defaultUnitValue]);
 
-        $unitPrecision = new ProductUnitPrecision();
-        $unitPrecision
-            ->setUnit($unit)
-            ->setPrecision($defaultUnitPrecision);
-
-        return $unitPrecision;
+        return $this->createProductUnitPrecision($unit, $defaultUnitPrecision);
     }
 
     /**
@@ -98,4 +89,16 @@ class DefaultProductUnitProvider
             ->getManagerForClass($className)
             ->getRepository($className);
     }
+
+    /**
+     * @param ProductUnit $unit
+     * @param int $precision
+     * @return ProductUnitPrecision
+     */
+    protected function createProductUnitPrecision($unit, $precision)
+    {
+        $productUnitPrecision = new ProductUnitPrecision();
+        return $productUnitPrecision->setUnit($unit)->setPrecision($precision);
+    }
 }
+
