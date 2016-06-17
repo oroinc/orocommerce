@@ -91,6 +91,7 @@ class DefaultProductUnitProvider
     /**
      * @param string $className
      * @return EntityRepository
+     * 
      */
     protected function getRepository($className)
     {
