@@ -23,28 +23,24 @@ layout:
                 quick_add_import_validation_items_table_body:
                     blockType: container
                 quick_add_import_validation_total_items_count:
-                    blockType: text
+                    blockType: import_validation_items_count_text
                     options:
                         text: 'orob2b.product.frontend.quick_add.import_validation.total_items'
-                        vars:
-                            collection: { '@value': $data.collection }
+                        collection: { '@value': $data.collection }
                 quick_add_import_validation_valid_items_count:
-                    blockType: text
+                    blockType: import_validation_items_count_text
                     options:
                         text: 'orob2b.product.frontend.quick_add.import_validation.valid_items'
-                        vars:
-                            collection: { '@value': $data.collection }
+                        collection: { '@value': $data.collection }
                 quick_add_import_validation_invalid_items_count:
-                    blockType: text
+                    blockType: import_validation_items_count_text
                     options:
                         text: 'orob2b.product.frontend.quick_add.import_validation.invalid_items'
-                        vars:
-                            collection: { '@value': $data.collection }
+                        collection: { '@value': $data.collection }
                 quick_add_import_validation_invalid_items:
-                    blockType: block
+                    blockType: import_validation_items
                     options:
-                        vars:
-                            collection: { '@value': $data.collection }
+                        collection: { '@value': $data.collection }
                 quick_add_form:
                     blockType: container
                 quick_add_form_start:
