@@ -2,55 +2,76 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
 
+use Doctrine\Common\Inflector\Inflector;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ConfigurableAddOrReplaceStrategy;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class WarehouseInventoryLevelStrategy extends ConfigurableAddOrReplaceStrategy
 {
-    /** @var array $importDataCache */
-    protected $importDataCache;
+    /** @var array $inventoryStatusCache */
+    protected $inventoryStatusCache = [];
+
+    /** @var array $unitRequiredCache */
+    protected $unitRequiredCache = [];
 
     /**
-     * Process entity according to current strategy
-     * Return either updated entity, or null if entity must not be used
-     *
-     * @param WarehouseInventoryLevel $entity
-     * @return mixed|null
+     * @inheritdoc
      */
-    public function process($entity)
-    {
-        $this->assertEnvironment($entity);
+    protected function processEntity(
+        $entity,
+        $isFullData = false,
+        $isPersistNew = false,
+        $itemData = null,
+        array $searchContext = array(),
+        $entityIsRelation = false
+    ) {
+        $warehouse = $this->getWarehouse($entity);
 
-        $entity = $this->beforeProcessEntity($entity);
-
-        $productUnitPrecision = $entity->getProductUnitPrecision();
-        $unit = $productUnitPrecision->getUnit();
-        $unit = $this->checkEntityExistence(get_class($unit), 'code', $unit->getCode());
-        if (!$unit) {
-            return null;
-        }
-        $productUnitPrecision->setUnit($unit);
-
-        $product = $this->getExistingProduct($entity->getProduct());
+        $product = $this->checkProductAndInventoryStatus($entity->getProduct());
         if (!$product) {
             return null;
         }
-        $productUnitPrecision->setProduct($product);
-        $entity->setProductUnitPrecision($productUnitPrecision);
 
-        $warehouse = $entity->getWarehouse();
-        $warehouse = $this->checkEntityExistence(get_class($warehouse), 'name', $warehouse->getName());
-        if (!$warehouse) {
-            return null;
+        $productUnitPrecision = $entity->getProductUnitPrecision();
+        $productUnit = $this->checkProductUnit($product, $warehouse, $productUnitPrecision->getUnit());
+
+        if ($productUnit) {
+            $productUnitPrecision = $this->checkEntityExistence(ProductUnitPrecision::class, [
+                'product' => $product,
+                'unit' => $productUnit
+            ]);
+        } else {
+            $productUnitPrecision = $this->databaseHelper->findOneByIdentity($product->getPrimaryUnitPrecision());
         }
-        $entity->setWarehouse($warehouse);
 
-        $entity = $this->afterProcessEntity($entity);
-        $entity = $this->validateAndUpdateContext($entity);
+        if (!$productUnit && empty($entity->getQuantity())) {
+            $this->importExistingEntity($entity->getProduct(), $product, $itemData);
+
+            return $product;
+        }
+
+        /** @var WarehouseInventoryLevel $existingEntity */
+        $existingEntity = $this->getExistingWarehouseInventoryLevel($product, $productUnitPrecision, $warehouse);
+
+        if (!$existingEntity) {
+            $existingEntity = new WarehouseInventoryLevel();
+            $existingEntity->setProductUnitPrecision($productUnitPrecision);
+            $existingEntity->setWarehouse($warehouse);
+        }
+
+        $existingEntity->setQuantity($entity->getQuantity());
+
+        // import entity fields
+        if ($existingEntity) {
+            $this->importExistingEntity($entity, $existingEntity, $itemData);
+
+            $entity = $existingEntity;
+        }
 
         return $entity;
     }
@@ -66,9 +87,9 @@ class WarehouseInventoryLevelStrategy extends ConfigurableAddOrReplaceStrategy
      * @param Product $product
      * @return Product
      */
-    protected function getExistingProduct(Product $product)
+    protected function checkProductAndInventoryStatus(Product $product)
     {
-        if (!$this->validateInventoryStatusConsistence($product->getSku(), $product->getInventoryStatus())) {
+        if (!empty($product->getInventoryStatus()) && !$this->validInventoryStatusConsistence($product->getSku(), $product->getInventoryStatus())) {
             $errorMessage = $this->translator->trans(
                 'orob2b.warehouse.import.error.inventory_status'
             );            
@@ -76,16 +97,70 @@ class WarehouseInventoryLevelStrategy extends ConfigurableAddOrReplaceStrategy
             return null;
         }
 
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        $inventoryStatus = $this->checkEntityExistence($inventoryStatusClassName, 'name', $product->getInventoryStatus());
+        $inventoryStatus = null;
+        if (!empty(trim($product->getInventoryStatus()))) {
+            $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+            $inventoryStatus = $this->checkEntityExistence($inventoryStatusClassName, ['name' => $product->getInventoryStatus()]);
+        }
 
-        $existingProduct = $this->checkEntityExistence(get_class($product), 'sku', $product->getSku());
+        $existingProduct = $this->checkEntityExistence(Product::class, ['sku' => $product->getSku()]);
 
-        if(!$inventoryStatus || !$existingProduct) {
+        if(!$existingProduct) {
             return null;
         }
 
-        return $existingProduct->setInventoryStatus($inventoryStatus);
+        if ($inventoryStatus) {
+            $existingProduct->setInventoryStatus($inventoryStatus);
+        }
+
+        return $existingProduct;
+    }
+
+    /**
+     * Find a warehouse entity in the system which corresponds to the imported warehouse name.
+     * If the import didn't contain the warehouse, then the main warehouse found in the system will
+     * be used.
+     *
+     * @param WarehouseInventoryLevel $entity
+     * @return null|object
+     */
+    protected function getWarehouse(WarehouseInventoryLevel $entity)
+    {
+        $warehouse = $entity->getWarehouse();
+        if (!$warehouse) {
+            $manager = $this->strategyHelper->getEntityManager(Warehouse::class);
+            $repository = $manager->getRepository(Warehouse::class);
+            return $repository->getSingularWarehouse();
+        }
+
+        return $this->checkEntityExistence(Warehouse::class, ['name' => $warehouse->getName()]);
+    }
+
+    /**
+     * Verify if in the import the unit (ProductUnit) is required and if it is so and the unit
+     * from the import is empty or not found then a validation error is added. Else, we search for
+     * the existing ProductUnit entitty that corresponds to the import value.
+     *
+     * @param Product $product
+     * @param Warehouse $warehouse
+     * @param ProductUnit|null $productUnit
+     * @return null|object
+     */
+    protected function checkProductUnit(Product $product, Warehouse $warehouse, ProductUnit $productUnit = null)
+    {
+        if (!$productUnit && $this->isUnitRequired($product, $warehouse)) {
+            $errorMessage = $this->translator->trans(
+                'oro.importexport.import.errors.unit_required'
+            );
+            $this->strategyHelper->addValidationErrors([$errorMessage], $this->context);
+        }
+
+        if (!$productUnit) {
+            return null;
+        }
+
+        return $this->checkEntityExistence(ProductUnit::class, ['code' => Inflector::singularize($productUnit->getCode())]);
+
     }
 
     /**
@@ -98,9 +173,9 @@ class WarehouseInventoryLevelStrategy extends ConfigurableAddOrReplaceStrategy
      * @param $searchFieldValue
      * @return null|object
      */
-    protected function checkEntityExistence($class, $searchFieldName, $searchFieldValue)
+    protected function checkEntityExistence($class, $criteria)
     {
-        $existingEntity = $this->databaseHelper->findOneBy($class, [$searchFieldName => $searchFieldValue]);
+        $existingEntity = $this->databaseHelper->findOneBy($class, $criteria);
         if (!$existingEntity) {
             $errorMessage = $this->translator->trans(
                 'oro.importexport.import.errors.not_found_entity',
@@ -123,20 +198,45 @@ class WarehouseInventoryLevelStrategy extends ConfigurableAddOrReplaceStrategy
      * @param $inventoryStatus
      * @return bool
      */
-    protected function validateInventoryStatusConsistence($product, $inventoryStatus)
+    protected function validInventoryStatusConsistence($product, $inventoryStatus)
     {
-        if (!array_key_exists($product, $this->importDataCache)) {
-            $this->updateCache($product, $inventoryStatus);
+        if (!array_key_exists($product, $this->inventoryStatusCache)) {
+            $this->updateInventoryStatusCache($product, $inventoryStatus);
             return true;
         }
 
-        if (!empty($inventoryStatus) && array_search($inventoryStatus, $this->importDataCache[$product]) === false) {
+        if (!empty($inventoryStatus) && array_search($inventoryStatus, $this->inventoryStatusCache[$product]) === false) {
             return false;
         }
 
-        $this->updateCache($product, $inventoryStatus);
+        $this->updateInventoryStatusCache($product, $inventoryStatus);
 
         return true;
+    }
+
+    /**
+     * Retrieves the existing, if any, WarehouseInventoryLevel entity base on the Product,
+     * ProductUnitPrecision and/or Warehouse
+     *
+     * @param Product $product
+     * @param $productPrecisionUnit
+     * @param null $warehouse
+     * @return null|object
+     */
+    protected function getExistingWarehouseInventoryLevel(Product $product, $productPrecisionUnit, $warehouse = null)
+    {
+        $criteria = [
+            'product' => $product,
+            'productUnitPrecision' => $productPrecisionUnit
+        ];
+
+        if ($warehouse) {
+            $criteria['warehouse'] = $warehouse;
+        }
+
+        $existingEntity = $this->databaseHelper->findOneBy(WarehouseInventoryLevel::class, $criteria);
+
+        return $existingEntity;
     }
 
     /**
@@ -145,12 +245,72 @@ class WarehouseInventoryLevelStrategy extends ConfigurableAddOrReplaceStrategy
      * @param $product
      * @param $inventoryStatus
      */
-    protected function updateCache($product, $inventoryStatus)
+    protected function updateInventoryStatusCache($product, $inventoryStatus)
     {
-        if (!array_key_exists($product, $this->importDataCache)) {
-            $this->importDataCache[$product] = [];
+        if (!array_key_exists($product, $this->inventoryStatusCache)) {
+            $this->inventoryStatusCache[$product] = [];
         }
 
-        $this->importDataCache[$product][] = $inventoryStatus;
+        $this->inventoryStatusCache[$product][] = $inventoryStatus;
+    }
+
+    /**
+     * Update the cache which will be used to determine if unit is required. This cache
+     * contains keys formed from product sku and warehouse name.
+     *
+     * @param $product
+     * @param $warehouse
+     */
+    protected function updateUnitRequiredCache($product, $warehouse)
+    {
+        $key = $this->getUnitRequiredCacheKey($product, $warehouse);
+        if (!array_key_exists($key , $this->unitRequiredCache)) {
+            $this->unitRequiredCache[$key] = 0;
+        }
+
+        $this->unitRequiredCache[$key] = $this->unitRequiredCache[$key]++;
+    }
+
+    /**
+     * Generate a key for a product and warehouse combination
+     *
+     * @param $product
+     * @param $warehouse
+     * @return string
+     */
+    protected function getUnitRequiredCacheKey($product, $warehouse)
+    {
+        return $product . '-' . $warehouse;
+    }
+
+    /**
+     * Verify if the unit is required by searching in the cache for the combination of
+     * product and warehouse and if the combination is found more then once then the unit
+     * is required
+     *
+     * @param $product
+     * @param $warehouse
+     * @return bool
+     */
+    protected function isUnitRequired($product, $warehouse)
+    {
+        $this->updateUnitRequiredCache($product, $warehouse);
+
+        return $this->unitRequiredCache[$this->getUnitRequiredCacheKey($product, $warehouse)] > 1;
+    }
+
+    /**
+     * Check if warehouse is required by verifying that at least one Warehouse is found in the
+     * system and that there is a Quantity column in the import.
+     *
+     * @param $importData
+     * @return bool
+     */
+    protected function isWarehouseRequired($importData)
+    {
+        $manager = $this->strategyHelper->getEntityManager(Warehouse::class);
+        $repository = $manager->getRepository(Warehouse::class);
+
+        return $repository->warehouseCount() > 1 && array_key_exists('Quantity', $importData);
     }
 }
