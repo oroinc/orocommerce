@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class CategoryHandler
@@ -60,7 +61,8 @@ class CategoryHandler
             if ($this->form->isValid()) {
                 $appendProducts = $this->form->get('appendProducts')->getData();
                 $removeProducts = $this->form->get('removeProducts')->getData();
-                $this->onSuccess($category, $appendProducts, $removeProducts);
+                $unitPrecision = $this->form->get('unitPrecision')->getData();
+                $this->onSuccess($category, $appendProducts, $removeProducts, $unitPrecision);
 
                 $this->eventDispatcher->dispatch(
                     'orob2b_catalog.category.edit',
@@ -78,12 +80,14 @@ class CategoryHandler
      * @param Category $category
      * @param Product[] $appendProducts
      * @param Product[] $removeProducts
+     * @param CategoryUnitPrecision $unitPrecision
      */
-    protected function onSuccess(Category $category, array $appendProducts, array $removeProducts)
+    protected function onSuccess(Category $category, array $appendProducts, array $removeProducts, $unitPrecision)
     {
         $this->appendProducts($category, $appendProducts);
         $this->removeProducts($category, $removeProducts);
-
+        $this->removeUnitPrecision($category, $unitPrecision);
+        
         $this->manager->persist($category);
         $this->manager->flush();
     }
@@ -121,6 +125,20 @@ class CategoryHandler
         /** @var $product Product */
         foreach ($products as $product) {
             $category->removeProduct($product);
+        }
+    }
+
+    /**
+     * @param Category $category
+     * @param CategoryUnitPrecision $unitPrecision
+     */
+    protected function removeUnitPrecision(Category $category, CategoryUnitPrecision $unitPrecision)
+    {
+        if (!$unitPrecision->getUnit()) {
+            $this->manager->remove($unitPrecision);
+            $category->setUnitPrecision(null);
+            // both CategoryUnitPrecision and Category must be updated in the same flush
+            $this->manager->flush([$unitPrecision,$category]);
         }
     }
 }
