@@ -26,7 +26,6 @@
 
     margin: 0 0 50px;
 
-
     .download-csv-link {
       position: absolute;
       right: 0;
@@ -41,73 +40,6 @@
 
     .quick-order__form__title {
       margin-top: 0;
-    }
-
-    .nav.nav_custom {
-      border: 0;
-
-      > li {
-        margin-left: 0;
-
-        &:focus, &:active {
-          outline: 0;
-        }
-
-        &.active {
-          &:focus, &:active {
-            outline: 0;
-          }
-
-          > a {
-            background: $theme-lightest-gray-color;
-
-            &:focus, &:active {
-              outline: 0;
-            }
-
-            @media (max-width: $screen-sm) {
-              background: $base-white-color;
-            }
-          }
-        }
-
-        > a {
-          margin-right: 5px;
-
-          &:focus, &:active {
-            outline: 0 !important;
-          }
-
-          @media (min-width: 768px) {
-            padding: 8px 35px;
-            border: 0;
-
-            font-size: 15px;
-          }
-        }
-      }
-    }
-
-    .tab-content {
-      @media (max-width: $screen-sm) {
-        border: 1px solid $theme-lighter-gray-color;
-        border-radius: 5px;
-        border-top-left-radius: 0;
-      }
-
-      .tab-pane.tab-pane_custom {
-        @media (min-width: 768px) {
-          padding: 30px 12px;
-          border-radius: 5px;
-          border-top-left-radius: 0;
-
-          background: $theme-lightest-gray-color;
-        }
-
-        @media (max-width: $screen-sm) {
-          box-shadow: 0 2px 5px 0 rgba(0,0,0,.2);
-        }
-      }
     }
   }
 }
