@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Cache\Cache;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -128,7 +128,7 @@ class CheckoutGridListener
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
-        $em = $this->doctrine->getEntityManagerForClass(BaseCheckout::class);
+        $em = $this->doctrine->getManagerForClass(BaseCheckout::class);
         // todo: Reduce db queries count
         foreach ($records as $record) {
             if (!$record->getValue('total')) {
@@ -299,7 +299,7 @@ class CheckoutGridListener
     public function resolveMetadata(array $metadata, $entityName)
     {
         $metadata = $this->getMetadataOptionsResolver()->resolve($metadata);
-        $em = $this->doctrine->getEntityManagerForClass($entityName);
+        $em = $this->doctrine->getManagerForClass($entityName);
         $entityMetadata = $em->getClassMetadata($entityName);
         $fieldsResolver = $this->getFieldsOptionsResolver();
 
