@@ -47,7 +47,7 @@ class DefaultProductUnitProvider
     {
         $this->categoryId = $categoryId;
     }
-    
+
     /**
      * @return ProductUnitPrecision
      */
@@ -55,13 +55,7 @@ class DefaultProductUnitProvider
     {
 
         if (null != $this->categoryId) {
-            /*$categoryRepository = $this->registry->getRepository('OroB2BCatalogBundle:Category');
-            $categoryRepository = $this->registry
-                ->getManagerForClass('OroB2BCatalogBundle:Category')
-                ->getRepository('OroB2BCatalogBundle:Category');
-            */
-            $categoryRepository =  $this->getRepository('OroB2BCatalogBundle:Category');
-
+            $categoryRepository = $this->getRepository('OroB2BCatalogBundle:Category');
             $category = $categoryRepository->findOneById($this->categoryId);
 
             do {
@@ -77,6 +71,7 @@ class DefaultProductUnitProvider
 
                 $category = $category->getParentCategory();
             } while (null != $category);
+
         }
 
         $defaultUnitValue = $this->configManager->get('orob2b_product.default_unit');

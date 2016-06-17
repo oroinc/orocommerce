@@ -51,6 +51,7 @@ define(function (require) {
          */
         onChange: function () {
             var select = this.options._sourceElement.find(this.options.unitSelect);
+            select.on('change', _.bind(this.onSelectChange, this));
             var option = select.find('option:selected');
             var changes = {};
             changes['removed'] = this.getData() || {};
@@ -59,17 +60,27 @@ define(function (require) {
 
             if (option.val() != undefined) {
                 storedData[option.val()] = option.text();
-                var value = this.options.precisions[option.val()];
-                select.closest('tr').find('input[class="precision"]').val(value);
             } else {
                 storedData = changes['removed'];
             }
             this.saveData(storedData);
             changes['added'] = storedData;
-            
+
             if(changes['added'] != changes['removed']){
                 this.triggerChangeEvent(changes);
             }
+        },
+
+        /**
+         * Handle select change
+         *
+         * @param {jQuery.Event}  e
+         */
+        onSelectChange: function (e) {
+            var select = $(e.target);
+            var option = select.find('option:selected');
+            var value = this.options.precisions[option.val()];
+            select.closest('tr').find('input[class="precision"]').val(value);
         },
 
         /**
@@ -94,7 +105,7 @@ define(function (require) {
             });
             _.each(precisions, function(text,val){
                 select.append($('<option></option>').val(val).text(text));
-            }); 
+            });
             $(select).find(selected.val()).selected(true).trigger('change');
         },
 
