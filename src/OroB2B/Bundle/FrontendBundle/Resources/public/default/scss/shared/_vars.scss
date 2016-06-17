@@ -30,6 +30,7 @@ $theme-yellow-color: #fcb91d;
 $theme-red-color: #b84926;
 $theme-red2-color: #ab1a25;
 $theme-blue-color: #348fc6;
+$theme-blue2-color: #1980ec;
 $theme-gray-color: #dbdbdb;
 $theme-green-color: #598527;
 $theme-green2-color: #9db699;
@@ -54,7 +55,7 @@ $base-cart-group-head-color: $theme-lighter-gray-color;
 
 /*Sales panel colors*/
 $base-sales-panel-top-background-color: #e0e0e0;
-$base-sales-panel-bottom-background-color: #f7f7f7;
+$base-sales-panel-bottom-background-color: $theme-lightest-gray-color;
 
 //Theme borders colors
 $base-border-color: $theme-lighter-gray-color;

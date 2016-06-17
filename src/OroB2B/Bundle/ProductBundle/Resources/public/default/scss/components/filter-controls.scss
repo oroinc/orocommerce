@@ -3,6 +3,7 @@
   flex-wrap: wrap;
   align-content: stretch;
   align-items: center;
+  margin: 0;
   padding: 10px 0 !important;
   border-bottom: 1px solid $theme-lighter-gray-color;
   border-top: 1px solid $theme-lighter-gray-color;
@@ -76,14 +77,6 @@
   position: relative;
   padding: 15px 10px 4px 90px;
   background: $base-sidebar-background-color-light;
-
-  &.catalog-filter_hidden {
-    display: none;
-
-    &.opened {
-      display: block;
-    }
-  }
 
   form {
     display: flex;
