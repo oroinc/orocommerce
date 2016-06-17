@@ -148,6 +148,7 @@ datagrid:
                     - warehouse.name as warehouseName
                     - inventory.quantity as quantity
                     - precisionUnit.code as unit
+                    - productPrecision.precision as inventoryLevelPrecision
                 from:
                     - { table: %orob2b_warehouse.entity.warehouse_inventory_level.class%, alias: inventory}
                 join:
@@ -166,6 +167,7 @@ datagrid:
         properties:
             id: ~
             productId: ~
+            inventoryLevelPrecision: ~
             delete_link:
                 type: url
                 route: orob2b_api_warehouse_delete_warehouse_inventory_level
@@ -200,6 +202,12 @@ datagrid:
             quantity:
                 label:           orob2b.warehouse.warehouseinventorylevel.quantity.label
                 frontend_type:   decimal
+                inline_editing:
+                    enable: true
+                    editor:
+                        view: orob2bwarehouse/js/app/views/decimals-number-editor-view
+                        view_options:
+                            decimals: inventoryLevelPrecision
             unit:
                 label:           orob2b.product.productunit.code.label
         sorters:

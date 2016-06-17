@@ -1,3 +1,4 @@
 config:
     paths:
         'orob2bwarehouse/js/datagrid/builder/level-quantity-builder': 'bundles/orob2bwarehouse/js/datagrid/builder/level-quantity-builder.js'
+        'orob2bwarehouse/js/app/views/editor/decimals-number-editor-view': 'bundles/orob2bwarehouse/js/app/views/decimals-number-editor-view.js'
