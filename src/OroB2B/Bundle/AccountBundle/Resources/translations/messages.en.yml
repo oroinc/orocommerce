@@ -385,6 +385,8 @@ orob2b.account:
             welcome_failed.message: 'Welcome email sending failed'
         accountuseraddress:
             saved.message: 'Account User Address has been saved'
+        accountaddress:
+            saved.message: 'Account Address has been saved'
         accountuserrole:
             saved.message:     'Account User Role has been saved'
 

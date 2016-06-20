@@ -41,8 +41,11 @@ layout:
                     options:
                         text: {'@value': 'orob2b.account.frontend.account_user_address_book.account_addresses'}
                 account_user_address_view_account_addresses_add_button:
-                    blockType: button
+                    blockType: link
                     options:
+                        visible: { '@acl': orob2b_account_frontend_account_address_create }
+                        route_name: orob2b_account_frontend_account_address_create
+                        route_parameters: { entityId: {'@value': $data.entity.account.id }}
                         text: 'orob2b.account.frontend.account_user_address_book.create.label'
                 # Account address grid
                 account_user_address_view_account_addresses_content_grid:
