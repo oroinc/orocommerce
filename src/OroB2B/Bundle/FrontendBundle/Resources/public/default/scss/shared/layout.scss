@@ -221,13 +221,13 @@
 
 .logo {
   display: block;
-  width: 25.8rem;
+  width: 19rem;
   height: 3.5rem;
   margin: 1.2rem 0 0;
   text-indent: -999rem;
+  background-size: 100%;
 
   @media (max-width: 991px) {
-    background-size: 24rem 3.2rem;
     margin: 0 auto;
   }
 }
