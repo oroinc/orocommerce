@@ -91,15 +91,24 @@ This gives the following advantages:
 </div>
 ```
 
-The order of the attributes:
+### The order of the attributes
 
-1. **id**.
-2. **class**.
-3. **src, href**.
-4. **name, for, type**.
-5. **title, alt**.
-6. **data-**.
+First - required and optional attributes for tag(example: name, type, src, href, etc).
 
+Then attributes used for UI customization(example: class, data-*, etc).
+
+Last - attributes with JSON content.
+
+```HTML
+<input name type id
+    class
+    data-*
+    data-entity="{{ {
+        id: entity.id,
+        title: entity.title
+    }|json_encode }}"
+    />
+```
 
 ## CSS coding standards
 
@@ -177,7 +186,7 @@ Add space before opening brace and line break after. And line break before closi
 
 #### Selector delimiters
 
-Add line break after each selector delimiter. Delimeter shouldn't have spaces before and after.
+Add line break after each selector delimiter. Delimiter shouldn't have spaces before and after.
 
 ##### Acceptable
 ```scss
