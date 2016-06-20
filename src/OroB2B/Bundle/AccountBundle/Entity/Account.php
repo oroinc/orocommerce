@@ -52,6 +52,7 @@ use OroB2B\Bundle\AccountBundle\Model\ExtendAccount;
  * )
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class Account extends ExtendAccount
 {
@@ -556,6 +557,14 @@ class Account extends ExtendAccount
         }
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSalesRepresentatives()
+    {
+        return $this->salesRepresentatives->count() > 0;
     }
 
     /**

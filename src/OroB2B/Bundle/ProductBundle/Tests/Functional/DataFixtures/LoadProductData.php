@@ -11,12 +11,13 @@ use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -36,7 +37,10 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
      */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData'];
+        return [
+            'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits'
+        ];
     }
 
     /**
@@ -63,13 +67,22 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         $data = Yaml::parse(file_get_contents($filePath));
 
         foreach ($data as $item) {
+            $unit = $this->getReference('product_unit.milliliter');
+
+            $unitPrecision = new ProductUnitPrecision();
+            $unitPrecision->setUnit($unit)
+                ->setPrecision((int)$item['primaryUnitPrecision']['precision'])
+                ->setConversionRate(1)
+                ->setSell(true);
+
             $product = new Product();
             $product
                 ->setSku($item['productCode'])
                 ->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->setInventoryStatus($inventoryStatuses[$item['inventoryStatus']])
-                ->setStatus($item['status']);
+                ->setStatus($item['status'])
+                ->setPrimaryUnitPrecision($unitPrecision);
 
             if (!empty($item['names'])) {
                 foreach ($item['names'] as $name) {
@@ -103,10 +116,10 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     protected function createValue(array $name)
     {
         $value = new LocalizedFallbackValue();
-        if (array_key_exists('locale', $name)) {
-            /** @var Locale $locale */
-            $locale = $this->getReference($name['locale']);
-            $value->setLocale($locale);
+        if (array_key_exists('localization', $name)) {
+            /** @var Localization $localization */
+            $localization = $this->getReference($name['localization']);
+            $value->setLocalization($localization);
         }
         if (array_key_exists('fallback', $name)) {
             $value->setFallback($name['fallback']);

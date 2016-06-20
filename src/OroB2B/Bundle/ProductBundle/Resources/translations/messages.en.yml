@@ -15,7 +15,10 @@ orob2b:
         status.label: Status
         owner.label: Owner
         organization.label: Organization
-        unit_precisions.label: Units of Quantity
+        primary_unit_precision.label: Unit of Quantity
+        primary_unit_precision_id.label: Primary Unit Precision Id
+        additional_unit_precisions.label: Additional Units
+        unit_precisions.label: Unit Precisions
         image.label: Image
         names.label: Name
         descriptions.label: Description
@@ -23,6 +26,7 @@ orob2b:
         removed: '{title} - removed'
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
+        images.label: Images
 
         status:
             enabled: Enabled
@@ -53,9 +57,16 @@ orob2b:
             product.label: Product
             unit.label: Unit
             precision.label: Precision
+            conversion_rate.label: Conversion Rate
+            sell.label: Sell
+            sell_yes.label: Yes
+            sell_not.label: No
+
             representation: "{0} {{ label }} (whole numbers)|{1} {{ label }} (fractional, %count% decimal digit)|]1,Inf[ {{ label }} (fractional, %count% decimal digits)"
+            conversion: ", %count% of {{ label }}"
             zero_representation: ""
             unit_precision_required: Please select a unit precision first...
+            of: '# of'
 
         productvariantlink:
             entity_label: Product Variant Link
@@ -64,6 +75,20 @@ orob2b:
             visible.label: Visible
             parent_product.label: Parent Product
             product.label: Product
+
+        productimage:
+            entity_label: Product Image
+            entity_plural_label: Product Images
+            id.label: Id
+            types.label: Types
+            product.label: Product
+            image.label: Image
+            file.label: File
+            add.label: Add Image
+            type:
+                main.label: Main
+                additional.label: Additional
+                listing.label: Listing
 
         lineitem:
             unit.label: Unit
@@ -126,6 +151,7 @@ orob2b:
         ui:
             duplicate: Duplicate
             save_and_duplicate: Save And Duplicate
+            continue: Continue
 
         frontend:
             index:

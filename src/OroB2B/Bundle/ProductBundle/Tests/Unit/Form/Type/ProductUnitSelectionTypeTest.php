@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Guzzle\Common\Collection;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormEvent;
@@ -11,6 +12,8 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
@@ -26,6 +29,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTy
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 {
@@ -108,10 +112,98 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'choices_updated' => false,
                     'required' => true,
                     'empty_label' => 'orob2b.product.productunit.removed',
+                    'sell' => null,
                 ]
             );
 
         $this->formType->configureOptions($resolver);
+    }
+
+    /**
+     * @dataProvider getProductUnitsDataProvider
+     *
+     * @param array $option
+     * @param primaryUnitPrecision $primaryUnitPrecision
+     * @param ArrayCollection $additionalUnitPrecisions
+     * @param array $expectedData ;
+     */
+    public function testGetProductUnits($option, $primaryUnitPrecision, $additionalUnitPrecisions, $expectedData)
+    {
+        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config->expects($this->any())
+            ->method('getOptions')
+            ->willReturn($option);
+
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config);
+
+        $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $product->expects($this->any())
+            ->method('getPrimaryUnitPrecision')
+            ->willReturn($primaryUnitPrecision);
+
+        $product->expects($this->any())
+            ->method('getAdditionalUnitPrecisions')
+            ->willReturn($additionalUnitPrecisions);
+
+        $method = new \ReflectionMethod(
+            'OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType',
+            'getProductUnits'
+        );
+        $method->setAccessible(true);
+        $this->assertEquals($expectedData, $method->invokeArgs($this->formType, array($form, $product)));
+    }
+
+    /**
+     * @param string $code
+     * @param boolean $sell
+     * @return ProductUnitPrecision
+     */
+    private function makePrecision($code, $sell)
+    {
+        $unit = new ProductUnit();
+        $unit->setCode($code);
+        $precision = new ProductUnitPrecision();
+        $precision->setUnit($unit);
+        $precision->setSell($sell);
+        return $precision;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductUnitsDataProvider()
+    {
+        $primaryUnitPrecision = $this->makePrecision('box', true);
+
+        $precision1 = $this->makePrecision('set', true);
+        $precision2 = $this->makePrecision('each', false);
+        $additionalUnitPrecisions = new ArrayCollection();
+        $additionalUnitPrecisions->add($precision1);
+        $additionalUnitPrecisions->add($precision2);
+
+        return [
+            'with_sell_true' => [
+                ['sell' => true],
+                $primaryUnitPrecision,
+                $additionalUnitPrecisions,
+                ['box', 'set']
+            ],
+            'with_sell_null' => [
+                ['sell' => null],
+                $primaryUnitPrecision,
+                $additionalUnitPrecisions,
+                ['box', 'set', 'each']
+            ],
+            'without_additional' => [
+                ['sell' => null],
+                $primaryUnitPrecision,
+                new ArrayCollection(),
+                ['box']
+            ]
+        ];
     }
 
     /**
@@ -404,7 +496,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'choices' => [
-                        null => 'orob2b.product.productunit.removed:sku',
+                        'sku' => 'orob2b.product.productunit.removed:sku',
                         'code' => 'orob2b.product_unit.code.label.full',
                     ],
                 ],

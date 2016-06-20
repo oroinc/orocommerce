@@ -18,7 +18,7 @@ use Oro\Component\Action\Model\ContextAccessor;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
@@ -81,9 +81,9 @@ class StartCheckout extends AbstractAction
     protected $tokenStorage;
 
     /**
-     * @var UserCurrencyProvider
+     * @var UserCurrencyManager
      */
-    protected $currencyProvider;
+    protected $currencyManager;
 
     /**
      * @var PropertyAccessor
@@ -109,7 +109,7 @@ class StartCheckout extends AbstractAction
      * @param ContextAccessor $contextAccessor
      * @param ManagerRegistry $registry
      * @param WebsiteManager $websiteManager
-     * @param UserCurrencyProvider $currencyProvider
+     * @param UserCurrencyManager $currencyManager
      * @param TokenStorageInterface $tokenStorage
      * @param PropertyAccessor $propertyAccessor
      * @param AbstractAction $redirect
@@ -119,7 +119,7 @@ class StartCheckout extends AbstractAction
         ContextAccessor $contextAccessor,
         ManagerRegistry $registry,
         WebsiteManager $websiteManager,
-        UserCurrencyProvider $currencyProvider,
+        UserCurrencyManager $currencyManager,
         TokenStorageInterface $tokenStorage,
         PropertyAccessor $propertyAccessor,
         AbstractAction $redirect,
@@ -129,7 +129,7 @@ class StartCheckout extends AbstractAction
 
         $this->registry = $registry;
         $this->websiteManager = $websiteManager;
-        $this->currencyProvider = $currencyProvider;
+        $this->currencyManager = $currencyManager;
         $this->tokenStorage = $tokenStorage;
         $this->propertyAccessor = $propertyAccessor;
         $this->redirect = $redirect;
@@ -262,7 +262,7 @@ class StartCheckout extends AbstractAction
             'owner' => $owner,
             'organization' => $organization,
             'website' => $this->websiteManager->getCurrentWebsite(),
-            'currency' => $this->currencyProvider->getUserCurrency()
+            'currency' => $this->currencyManager->getUserCurrency()
         ];
         $this->setCheckoutData($context, $checkout, $defaultData);
     }

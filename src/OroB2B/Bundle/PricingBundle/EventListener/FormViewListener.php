@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use Doctrine\ORM\EntityRepository;
+
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -17,9 +19,10 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -159,7 +162,12 @@ class FormViewListener
 
         $template = $event->getEnvironment()->render(
             'OroB2BPricingBundle:Product:prices_view.html.twig',
-            ['entity' => $product]
+            [
+                'entity' => $product,
+                'productUnits' => $product->getAvailableUnitCodes(),
+                'productAttributes' => $this->getProductAttributes(),
+                'priceAttributePrices' => $this->getPriceAttributePrices($product)
+            ]
         );
         $this->addProductPricesBlock($event->getScrollData(), $template);
     }
@@ -177,11 +185,49 @@ class FormViewListener
     }
 
     /**
-     * @return PriceListRepository
+     * @return array|PriceAttributePriceList[]
      */
-    protected function getPriceListRepository()
+    protected function getProductAttributes()
     {
-        return $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:PriceList');
+        return $this->getPriceAttributePriceListRepository()->findAll();
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    protected function getPriceAttributePrices(Product $product)
+    {
+        /** @var PriceAttributeProductPrice[] $priceAttributePrices */
+        $priceAttributePrices = $this->getPriceAttributePriceListPricesRepository()->findBy(['product' => $product]);
+
+        $result = [];
+        foreach ($priceAttributePrices as $priceAttributePrice) {
+            $priceAttributeName = $priceAttributePrice->getPriceList()->getName();
+            $currency = $priceAttributePrice->getPrice()->getCurrency();
+            $unit = $priceAttributePrice->getProductUnitCode();
+            $amount = $priceAttributePrice->getPrice()->getValue();
+
+            $result[$priceAttributeName][$unit][$currency] = $amount;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return EntityRepository
+     */
+    protected function getPriceAttributePriceListRepository()
+    {
+        return $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:PriceAttributePriceList');
+    }
+    
+    /**
+     * @return EntityRepository
+     */
+    protected function getPriceAttributePriceListPricesRepository()
+    {
+        return $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:PriceAttributeProductPrice');
     }
 
     /**

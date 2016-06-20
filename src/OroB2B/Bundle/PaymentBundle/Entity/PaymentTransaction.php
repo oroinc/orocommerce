@@ -14,11 +14,18 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 /**
- * @ORM\Table(name="orob2b_payment_transaction")
+ * @ORM\Table(
+ *      name="orob2b_payment_transaction",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="orob2b_pay_trans_access_uidx", columns={"access_identifier", "access_token"})
+ *      }
+ * )
  * @ORM\Entity
  * @Config(
  *       mode="hidden",
@@ -168,20 +175,12 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      */
     protected $organization;
 
-    /**
-     * @return string
-     */
-    public static function generate()
-    {
-        return md5(microtime() . uniqid('PaymentTransaction', true));
-    }
-
     public function __construct()
     {
         $this->relatedPaymentTransactions = new ArrayCollection();
 
-        $this->accessIdentifier = self::generate();
-        $this->accessToken = self::generate();
+        $this->accessIdentifier = UUIDGenerator::v4();
+        $this->accessToken = UUIDGenerator::v4();
     }
 
     /**
@@ -554,5 +553,21 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
         $this->organization = $organization;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isClone()
+    {
+        if (!$this->sourcePaymentTransaction) {
+            return false;
+        }
+
+        if ($this->sourcePaymentTransaction->getAction() !== PaymentMethodInterface::VALIDATE) {
+            return false;
+        }
+
+        return $this->reference === $this->sourcePaymentTransaction->getReference();
     }
 }

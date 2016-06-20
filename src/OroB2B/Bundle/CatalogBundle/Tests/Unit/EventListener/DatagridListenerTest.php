@@ -45,7 +45,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                     ]
                 ],
                 'where' => [
-                    'and' => ['categoryTitle.locale IS NULL']
+                    'and' => ['categoryTitle.localization IS NULL']
                 ]
             ],
         ],

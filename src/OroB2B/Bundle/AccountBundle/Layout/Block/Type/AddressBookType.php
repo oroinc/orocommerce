@@ -3,9 +3,9 @@
 namespace OroB2B\Bundle\AccountBundle\Layout\Block\Type;
 
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
 use Oro\Component\Layout\Block\Type\AbstractType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
@@ -39,7 +39,7 @@ class AddressBookType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [

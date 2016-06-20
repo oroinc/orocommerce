@@ -1,0 +1,430 @@
+//Cart Groups
+.oro-grid-table__ungroup-items {
+
+  .group-check-checkbox-container {
+    padding-left: 1.2rem !important; 
+    padding-right: 0 !important;
+
+    + td {
+      padding-left: 0 !important; 
+    }
+  }
+
+  .cart-item-checkbox-row {
+    > td {
+      &:first-child {
+        + td {
+          padding-left: 0 !important;
+        }
+      }
+    }
+  }
+
+  tr.item-checked {
+    > td {
+      background: $base-checked-item-in-cart-group;
+      &:first-child {
+        width: 5rem;
+      }
+    }
+
+    + .cart-item-checkbox-row {
+      > td {
+        background: $base-checked-item-in-cart-group;
+
+        .checkbox_custom-wrapper {
+          background: $base-sidebar-background-color;
+        }
+      }
+    }
+  }
+}
+
+.oro-grid-table__group-items {
+
+  .group-check-checkbox-container {
+
+    .checkbox_custom {
+      display: none;
+    }
+  }
+
+  &.oro-grid-table__group-items_edit-mode {
+
+    .oro-grid-table__group__head {
+      ~ tr {
+        > .group-check-checkbox-container {
+          padding-left: 1.2rem !important;  
+
+          .checkbox_custom {
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+
+  .oro-grid-table__group__head {
+    > td {
+      padding: 0 .6rem 0 1.2rem!important;
+      background: $base-cart-group-head-color;
+
+      &:first-child {
+        padding-left: .5rem !important;
+      }
+
+      &:last-child {
+        padding-right: 0 !important;
+      }
+    }
+
+    + tr {
+      > td {
+        border-top: 0 !important;
+      }
+    }
+
+    ~ tr {
+      &.item-checked {
+        > td {
+          background: $base-checked-item-in-cart-group;
+          &:first-child {
+            width: 5rem;
+          }
+        }
+
+        + .cart-item-checkbox-row {
+          > td {
+            background: $base-checked-item-in-cart-group;
+          }
+        }
+      }
+
+      > td {
+        background: $theme-lightest-gray-color;
+
+        &:first-child {
+          width: 3rem;
+          padding: 0 !important;
+          border: 0 !important;
+
+          + td {
+            padding-left: 0 !important;
+          }
+        }
+
+        .checkbox_custom-wrapper {
+          background: $base-sidebar-background-color;
+        }
+      }
+    }
+  }
+}
+
+.oro-grid-table__group__control-container {
+  position: relative;
+}
+
+.oro-grid-table__group__control {
+  display: inline-block;
+  width: 3.6rem;
+  height: 3rem;
+  text-align: center;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: $theme-bucket-color;
+  cursor: pointer;
+
+  &.active {
+    box-shadow: inset .1rem .1rem .2rem 0 rgba(0,0,0,.2);
+
+    + .oro-grid-table__group__control-popup {
+      display: block;
+    }
+  }
+}
+
+.oro-grid-table__group__control-popup {
+  display: none;
+  z-index: 10;
+  border-radius: .3rem;
+  text-align: left;
+  min-width: 13.5rem;
+  @include list-normalize();
+  padding: .5rem 0;
+  position: absolute;
+  top: 3rem;
+  right: 0;
+  background: #fff;
+  box-shadow: .1rem .1rem .5rem 0 rgba(0,0,0,.3);
+
+  li {
+    a {
+      display: block;
+      padding: 1rem 2rem;
+      color: $base-font-color;
+      text-decoration: none;
+
+      &:focus, &:hover, &:visited {
+        color: $base-font-color;
+        text-decoration: none;
+      }
+
+      &:hover {
+        background: $theme-lightest-gray-color;
+      }
+    }
+  }
+}
+
+.oro-grid-table__group__edit-controls {
+  display: none;
+
+  > td {
+    font-size: 0;
+    padding: .9rem 1.2rem;
+    background: $base-sidebar-background-color;
+
+    .oro-custom-selectbox,
+    .product__select {
+      display: inline-block;
+    }
+
+    .product__select {
+      width: 14rem;
+      margin-right: 1rem;
+    }
+
+    .oro-custom-selectbox {
+      margin-right: 2rem;
+    }
+
+    .oro-custom-selectbox__trigger {
+      padding: .2rem 0 .2rem .4rem;
+    }
+
+    .oq-group-btn {
+      line-height: 1.3;
+      padding: .7rem 1.5rem !important;
+
+      &:first-of-type {
+        margin-right:2rem;
+      }
+    }
+  }
+
+  &.oro-grid-table__group__edit-controls_edit-mode {
+    display: table-row;
+  }
+}
+
+.cart__group-title_rename-mode {
+  font-size: 0;
+
+  input[type="text"].input_group-rename {
+    @include input();
+    vertical-align: middle;
+    padding: .1rem .9rem !important;
+    border-radius: .3rem;
+    width: calc(100% - 95px); //95 is a sum of icon width, save button width, input right margin
+
+    &:focus {
+      border-color: $base-link-color;
+      outline: 0;
+      box-shadow: inset 0 .1rem .1rem rgba(0,0,0,.075), 0 0 .7rem rgba(102,175,233,.6);
+    }
+  }
+
+  .btn_group-rename {
+    margin-left: .5rem;
+    padding: .3rem 1.2rem .4rem !important;
+  }
+}
+
+
+/*Mobile groups*/
+.cart-list-group_mobile {
+  padding-top: 1rem;
+  border-top: .1rem solid $base-border-color;
+  margin: 1.5rem 0 0;
+
+  &.cart-list-group_edit-mode {
+
+    .cart-list__item_mobile {
+      margin-top: 0;
+    }
+
+    .cart-list-group__body {
+      padding: 0;
+
+      .cart-list__item_mobile {
+        padding-left: 5rem;
+        padding-bottom: 1.5rem;
+        padding-right: 1rem;
+        position: relative;
+
+        &.checked {
+          background: $base-checked-item-in-cart-group;
+          padding-bottom: 1.5rem;
+
+          + .cart-list__item_mobile {
+            margin: 0;
+          }
+
+          .checkbox_custom-wrapper {
+            background: $base-sidebar-background-color;
+          }
+        }
+
+        > .checkbox_custom {
+          position: absolute;
+          top: 4.5rem;
+          left: .5rem;
+        }
+      }
+    }
+    
+    ~ .cart-list__item_mobile {
+      padding-left: 3rem;
+      padding-right: 1rem;
+      position: relative;
+
+      &.checked {
+        background: $base-checked-item-in-cart-group;
+        padding-bottom: 1.5rem;
+
+        + .cart-list__item_mobile {
+          margin: 0;
+        }
+
+        .checkbox_custom-wrapper {
+          background: $base-sidebar-background-color;
+        }
+      }
+
+      > .checkbox_custom {
+        position: absolute;
+        top: 4.5rem;
+        left: .5rem;
+      }
+    }
+  }
+
+  + .cart-list__item_mobile {
+    margin-top: 0;
+  }
+
+  .cart-list__item_mobile {
+
+    &:first-of-type {
+      margin-top: 0;
+      border-top: 0;
+    }
+  }
+}
+
+.cart-list-group__head {
+  background: $base-cart-group-head-color;
+  min-height: 3.1rem;
+
+  &:before, &:after {
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+  }
+}
+
+.oro-grid-table__group__control-container {
+  float: right;
+  width: 3.6rem;
+}
+
+.cart-list-group__title {
+  float: left;
+  width: calc(100% - 36px);
+  line-height: 3rem;
+  padding-left: .5rem;
+}
+
+.cart-list-group__body {
+  padding: 0 1rem 2rem 3rem;
+  background: $theme-lightest-gray-color;
+
+  .checkbox_custom-wrapper {
+    background: $base-sidebar-background-color;
+  }
+}
+
+.cart-list-group__edit-controls {
+  padding: 1rem;
+  background: $base-sidebar-background-color;
+  
+  &:before, &:after {
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+  }
+}
+
+.cart-list-group__edit-controls_left {
+  float: left;
+  width: 6.5rem;
+
+  .oro-custom-selectbox__trigger {
+    padding: .2rem 0 .2rem .4rem;
+  }
+}
+
+.cart-list-group__edit-controls_right {
+  font-size: 0;
+  float: left;
+  width: calc(100% - 65px);
+
+  .product__select  {
+    margin: 0 0 1rem;
+
+    select {
+      &.input_sm {
+        padding: .5rem .9rem;
+      }
+    }
+  }
+
+  .oq-group-btn {
+    width: calc(50% - 5px);
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+
+    &:first-of-type {
+      margin-right: 1rem;
+    }
+  }
+}
+
+.cart-list-group__sticky-controls {
+  display: flex;
+  padding: 1.5rem 0 .5rem;
+
+  .product__select-wrapper {
+    flex-grow: 2;
+
+    .product__select {
+      margin: 0 0 1rem;
+       select {
+        &.input_sm {
+          padding: .4rem .9rem .5rem;
+        }
+      }
+    }
+  }
+
+  > .oq-group-btn {
+    flex-grow: 1;
+    max-height: 3rem;
+    margin-left: .5rem;
+    padding: .4rem 1.5rem !important;
+  }
+}

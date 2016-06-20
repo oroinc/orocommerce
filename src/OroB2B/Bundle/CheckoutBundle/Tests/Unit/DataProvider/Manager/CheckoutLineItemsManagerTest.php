@@ -4,12 +4,14 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\DataProvider\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
 class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
@@ -26,12 +28,23 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected $checkoutLineItemsManager;
 
+    /**
+     * @var UserCurrencyManager
+     */
+    protected $currencyManager;
+
     protected function setUp()
     {
         $this->checkoutLineItemsConverter = $this
             ->getMockBuilder('OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->currencyManager = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->currencyManager->expects($this->any())->method('getUserCurrency')->willReturn('USD');
 
         $this->checkoutLineItemsConverter->expects($this->any())
             ->method('convert')
@@ -43,7 +56,10 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
                 return $result;
             }));
 
-        $this->checkoutLineItemsManager = new CheckoutLineItemsManager($this->checkoutLineItemsConverter);
+        $this->checkoutLineItemsManager = new CheckoutLineItemsManager(
+            $this->checkoutLineItemsConverter,
+            $this->currencyManager
+        );
     }
 
     public function testAddProvider()
@@ -127,16 +143,19 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     {
         $productWithPrice = $this->getProductDataWithPrice();
         $productWithoutPrice = $this->getProductDataWithoutPrice();
+        $productWithAnotherCurrency = $this->getProductDataWithoutPrice();
+        $productWithAnotherCurrency['price'] = Price::create('2', 'CAD');
+        
         return [
             [
-                'providerData' => [$productWithPrice, $productWithoutPrice],
+                'providerData' => [$productWithPrice, $productWithoutPrice, $productWithAnotherCurrency],
                 'disablePriceFilter' => false,
                 'expectedData' => [$productWithPrice],
             ],
             [
-                'providerData' => [$productWithPrice, $productWithoutPrice],
+                'providerData' => [$productWithPrice, $productWithoutPrice, $productWithAnotherCurrency],
                 'disablePriceFilter' => true,
-                'expectedData' => [$productWithPrice, $productWithoutPrice],
+                'expectedData' => [$productWithPrice, $productWithoutPrice, $productWithAnotherCurrency],
             ],
         ];
     }
@@ -154,7 +173,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
             'quantity' => 10,
             'productUnit' => $productUnitLitre,
             'productUnitCode' => $productUnitLitre->getCode(),
-            'price' => $this->getEntity('Oro\Bundle\CurrencyBundle\Entity\Price')
+            'price' => Price::create('1', 'USD')
         ];
     }
 

@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
