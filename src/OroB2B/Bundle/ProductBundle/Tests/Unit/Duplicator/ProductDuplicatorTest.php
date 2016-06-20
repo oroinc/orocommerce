@@ -20,6 +20,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 
 class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -128,6 +129,11 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $image = new File();
         $imageCopy = new File();
 
+        $productImage = new StubProductImage();
+        $productImage->setImage($image);
+        $productImageCopy = new StubProductImage();
+        $productImageCopy->setImage($imageCopy);
+
         $attachmentFile1 = new File();
         $attachmentFileCopy1 = new File();
         $attachmentFile2 = new File();
@@ -140,11 +146,11 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 
         $product = (new StubProduct())
             ->setSku(self::PRODUCT_SKU)
-            ->addUnitPrecision($this->prepareUnitPrecision(
+            ->setPrimaryUnitPrecision($this->prepareUnitPrecision(
                 self::UNIT_PRECISION_CODE_1,
                 self::UNIT_PRECISION_DEFAULT_PRECISION_1
             ))
-            ->addUnitPrecision($this->prepareUnitPrecision(
+            ->addAdditionalUnitPrecision($this->prepareUnitPrecision(
                 self::UNIT_PRECISION_CODE_2,
                 self::UNIT_PRECISION_DEFAULT_PRECISION_2
             ))
@@ -154,7 +160,7 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
             ->addDescription($this->prepareLocalizedValue(null, self::DESCRIPTION_CUSTOM_LOCALE))
             ->addShortDescription($this->prepareLocalizedValue(null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE))
             ->addShortDescription($this->prepareLocalizedValue(null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE))
-            ->setImage($image);
+            ->addImage($productImage);
 
         $this->skuIncrementor->expects($this->once())
             ->method('increment')
@@ -213,13 +219,17 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::SHORT_DESCRIPTION_DEFAULT_LOCALE, $productCopyShortDescriptions[0]->getText());
         $this->assertEquals(self::SHORT_DESCRIPTION_CUSTOM_LOCALE, $productCopyShortDescriptions[1]->getText());
 
-        $this->assertEquals($imageCopy, $productCopy->getImage());
+        $this->assertEquals($imageCopy, $productImageCopy->getImage());
     }
 
     public function testDuplicateFailed()
     {
         $product = (new StubProduct())
-            ->setSku(self::PRODUCT_SKU);
+            ->setSku(self::PRODUCT_SKU)
+            ->setPrimaryUnitPrecision($this->prepareUnitPrecision(
+                self::UNIT_PRECISION_CODE_1,
+                self::UNIT_PRECISION_DEFAULT_PRECISION_1
+            ));
 
         $this->skuIncrementor->expects($this->once())
             ->method('increment')

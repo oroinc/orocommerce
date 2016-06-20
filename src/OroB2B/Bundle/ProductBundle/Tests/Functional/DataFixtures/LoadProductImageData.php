@@ -6,6 +6,9 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
+use Symfony\Component\Yaml\Yaml;
+
 use Oro\Bundle\AttachmentBundle\Entity\File;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -38,7 +41,12 @@ class LoadProductImageData extends AbstractFixture implements DependentFixtureIn
             $product = $this->getReference($productReference);
             $image = new File();
             $image->setFilename($product->getSku());
-            $product->setImage($image);
+
+            $productImage = new ProductImage();
+            $productImage->setImage($image);
+
+            $product->addImage($productImage);
+
             $manager->persist($image);
             $manager->persist($product);
         }
