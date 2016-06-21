@@ -17,10 +17,7 @@ class LoadWebsiteDefaultRoles extends AbstractFixture implements DependentFixtur
      */
     public function getDependencies()
     {
-        return [
-            'OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData',
-            'OroB2B\Bundle\WebsiteBundle\Migrations\Data\Demo\ORM\LoadWebsiteDemoData'
-        ];
+        return [LoadWebsiteData::class];
     }
 
     /**
