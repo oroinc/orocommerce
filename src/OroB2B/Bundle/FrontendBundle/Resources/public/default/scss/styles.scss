@@ -38,7 +38,6 @@
 @import 'components/sticky-widget.scss';
 @import 'components/lbgallery-widget.scss';
 @import 'components/uploader-widget.scss';
-@import 'components/elevatezoom.scss';
 /*=== END COMPONENTS===*/
 
 /*Layout*/
@@ -46,9 +45,6 @@
 
 /*Gallery*/
 @import 'shared/gallery.scss';
-
-/*Raty plugin styles*/
-@import 'shared/raty.scss';
 
 /*Tables*/
 @import 'shared/tables.scss';
@@ -59,18 +55,8 @@
 /*Bootstrap override styles*/
 @import 'shared/bootstrap-override.scss';
 
-/*Bootstrap datepicker override styles*/
-@import 'shared/datepicker-override.scss';
+/*jQuery UI datepicker override styles*/
 @import 'shared/ui-datepicker-override.scss';
-
-/*Slick slider override styles*/
-@import 'shared/slick-slider-override.scss';
-
-/*Perfect Scrollbar styles*/
-@import 'shared/perfect-scrollbar.scss';
-
-/*Old Browsers Fallbacks*/
-@import 'shared/_fallbacks.scss';
 
 @import 'shared/forms.scss';
 

@@ -183,7 +183,16 @@ workflows:
                     page_component_module: 'orob2bcheckout/js/app/components/payment-transition-button-component'
                 form_options:
                     init_actions:
-                        - '@assign_value': [$payment_validate, false]
+                        - '@assign_value': [$payment_validate, true]
+                        - '@call_service_method':
+                            service: orob2b_payment.provider.payment_transaction
+                            method: getActiveValidatePaymentTransaction
+                            method_parameters: [$payment_method]
+                            attribute: $.result.validatePaymentTransaction
+                        - '@assign_value':
+                            conditions:
+                                '@not_empty': [$.result.validatePaymentTransaction]
+                            parameters: [$payment_validate, false]
                     attribute_fields:
                         payment_method: ~
                         payment_validate:

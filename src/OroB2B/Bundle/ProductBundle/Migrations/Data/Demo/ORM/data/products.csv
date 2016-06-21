@@ -1,4 +1,4 @@
-sku,name,description,category,information,specifications,price,unit,precision
+sku,name,description,category,information,specifications,price,MSRP,MAP,unit,precision
 0RT28,220 Lumen Rechargeable Headlamp,"This rechargeable headlamp can also be used with standard AAA batteries. It's light weight, comfortable, economic, flexible, and gives you 100 yards of visibility in pitch black. It features six light modes and allows you to easily recharge it with a USB or a standard wall plug in. The redesigned switch is easy to use, and is designed to work easily with gloves. It features two energy modes--Energy Saving Mode to help you optimize burning life, as well as Constant Mode that features continuous output.",Lighting Products,"Catalog Page: 9927
 220 lumen power
 Light modes: low power, mid power, high power, dim, blink, SOS
@@ -9,7 +9,7 @@ Flexible mount ","Width: 3”
 Length: 3”
 Height: 3.5”
 Depth: 2.5”
-Weight: .8 lb.",99.99,item,0
+Weight: .8 lb.",99.99,89.99,94.99,item,0
 1AB92,Credit Card Pin Pad Reader,Choosing the right credit card processing terminal to fit your business needs can help you increase your profits and reduce your processing costs. This credit card reader helps you do just that. Its' easy-to-use ATM style interface accepts PIN-based debit card transactions and swipes traditional payment cards. It also accepts chip cards and features a built-in receipt printer ,Retail Supplies,"Catalog Page: 2976
 Performs PIN based debit card transactions 
 Accepts chip cards
@@ -19,20 +19,20 @@ Large, backlit display
 Supports all magnetic stripe cards
 Color: Purple","Width: 6”
 Height: 3”
-Weight: .6 lb.",95,item,0
+Weight: .6 lb.",95,85,90,item,0
 1GB82,Women’s Slip-On Clog,"These clogs are designed to deliver all day comfort and lightness. The rubber outsole is slip-resistant and flexible, while the insole is soft and formulated to be stain resistant. The non-marking soles are made to reduce foot and leg fatigue so you can feel comfortable being on your feet all day. They are easily washable and hygienic, and feature holes for ventilation around the foot bed for all-day heat releaf",Medical Apparel,"Catalog Page: 5235
 Ultra light material
 Anti-fungal and anti-bacterial
 Slip resistant 
 Removable inner sole
 Made with EVA foam
-Cooling ventilation holes",,19.99,set,0
+Cooling ventilation holes",,19.99,9.99,14.99,set,0
 1GS46,500-watt Work Light,"This powerful, 500-watt work light is a great choice for any job. It emits 7,000 lumens and is great for work sites and home projects. The tempered glass lens with a metal safety grill makes it very portable and easy to carry. It’s easy to attach to any surface and features a grid that allows light to pass through without casting shadows. The durable powder finish also adds durability to the light",Lighting Products,"Catalog Page: 9273
 500-watt power
 7,000 lumens","Width: 8.5”
 Height: 5.5”
 Depth: 3.5”
-Weight: 5 lb.",24.99,item,0
+Weight: 5 lb.",24.99,14.99,19.99,item,0
 1TB10,Touch Screen Credit Card POS System,"This small and light POS system brings flexibility, functionality, and style to POS and is great for small businesses and traveling retailers. It gives the user full range of standard connectivity ports for retail POS and hospitality applications. With a high screen resolution, a credit card reader, and a receipt printer, it has everything you need from a POS system without the hassle and extra weight",Retail Supplies,"Catalog Page: 4827
 Screen size: 7 inches
 Maximum resolution: 1024 X 768
@@ -41,7 +41,7 @@ Color: grey
 Includes POS software","Width: 8.5”
 Length: 8”
 Height: 4.5”
-Weight: 2 lb.",300,set,0
+Weight: 2 lb.",300,290,295,set,0
 2CF67,Industrial Steel Handheld Flashlight,"This flashlight is ideal for harsh work environments and has been approved for use in hazardous working conditions. It is made with stainless steel and is waterproof to 1.5 meters . Its' beam distance is up to 850 feet in pitch black. It features three light modes for energy saving and flexibility: low at 55 lumens, medium at 185 lumens, and high at 580 lumens.It also includes three AAA batteries",Lighting Products,"Catalog Page: 7617
 Made with stainless steel
 Light modes: low (55 lumens), medium (185 lumens), high (580 lumens)
@@ -50,7 +50,7 @@ Burn time: 2.5 hours
 Beam distance: 850 ft.","Width: 2”
 Height: 7.5”
 Depth: 1.8”
-Weight: .75 lb.",29.99,item,0
+Weight: .75 lb.",29.99,19.99,24.99,item,0
 2EW02,Touchscreen POS System,"This all-inclusive POS system features a 15-inch touchscreen, a credit card pin pad reader, and a receipt printer. The screen has a maximum resolution of 1024 x 768 and is water-resistant. This system gives the user full range of standard connectivity ports for retail POS and hospitality applications. It also features a high-quality and secure, all steel lock-and-key cash box ",Retail Supplies,"Catalog Page: 7292
 Touch screen is 15 inches
 Maximum resolution: 1024 X 768
@@ -58,7 +58,7 @@ Includes power chord, power adapter, VGA signal cable, USB cable
 Easily integrated with a variety of POS systems
 Cash box material: steel","Width: 9”
 Height: 7”
-Weight: 5 lb.",469.99,set,0
+Weight: 5 lb.",469.99,459.99,464.99,set,0
 2JD29,Handheld Flashlight,"This lightweight and easy-to-use flashlight produces a broad floor beam, giving you the best beam for most indoor and short distance applications. It is powered by three premium, high-intensity LED lights and gives you 700 feet of visibility. It features three light modes for energy saving and flexibility: low, high, and strobe model. It comes with two alkaline D batteries",Lighting Products,"Catalog Page: 2927
 15 ft. shock-resistant
 3 modes: low, high, strobe
@@ -71,7 +71,7 @@ Burn time: 2 hours
 Distance: 700 ft.","Length: 7”
 Width: 2.5”
 Height: 11” 
-Weight: 1 lb.",16.99,item,0
+Weight: 1 lb.",16.99,6.99,11.99,item,0
 2JD90,90-Watt Bright White LED Light Bulb,"This bright, eco-friendly 90-watt bulb is great for a focused light distribution effect. It is dimmable and is an energy efficient replacement for a standard 90-watt halogen. It consumes only 16 watts to produce 1200 lumens in a white color temperature. It is compatible with most LED dimmers and has a total life span of 22.5 years. It works for both indoor and outdoor use, making it ideal for security lighting",Lighting Products,"Catalog Page: 4227
 90-watt power
 Does not contain mercury
@@ -80,14 +80,14 @@ Dimmable
 Life: 22.5 years","Width: 4.75”
 Diameter: 4.75”
 Depth: 4.75”
-Height: 5.5”",24.95,item,0
+Height: 5.5”",24.95,14.95,19.95,item,0
 2JV62,Basic Women’s 4-Pocket Black Scrub Set,"This simple, comfortable scrub set comes in a variety of colors. The set features a V-neck top and set-in sleeves. There are two chest pockets for storage. The relaxed-fit, straight-leg pants have a matching drawstring for a comfortable, adjustable, fit. There are two pockets on the side of the pants, and two pockets in the back for extra storage. The comfortable 65/35 polyester/cotton material is suitable for all day wear.",Medical Apparel,"Catalog Page: 7635
 65% polyester / 35% cotton
 V-neck scrub top
 Side vents
 Straight leg scrub pant
 2 front pockets, 2 back pockets
-Runs large",,35.99,set,0
+Runs large",,35.99,25.99,30.99,set,0
 2LM04,Credit Card Pin Pad Reader,Brighten up your reail space with this fun and sleek credit card reader--it is easy to use and perfect for any business. Its' easy-to-use ATM style interface accepts PIN-based debit card transactions and swipes traditional payment cards. It also accepts chip cards. ,Retail Supplies,"Catalog Page: 9927
 Performs PIN based debit card transactions 
 Accepts chip cards
@@ -97,13 +97,13 @@ Large, backlit display
 Supports all magnetic stripe cards
 Color: Yellow","Width: 5”
 Height: 4”
-Weight: .3 lb.",120,item,0
+Weight: .3 lb.",120,110,115,item,0
 2RW93,15- Inch POS Touch Screen Monitor With Card Reader,"This 15-inch touch screen monitor is great for retail—it is easily integrated with a variety of POS systems. It gives the user full range of standard connectivity ports for retail POS and hospitality applications. The sensitive touch screen recognizes touch input from fingers, gloved fingers, stylus, and pens. The screen has a maximum resolution of 1024 x 768 and is water-resistant. It features a built-in magnetic card reader for quick and easy credit card payment",Retail Supplies,"Catalog Page: 4226
 Screen size: 15 inches
 Maximum resolution: 1024 X 768
 Includes power chord, power adapter, VGA signal cable, USB cable","Width: 16”
 Height: 14”
-Weight: 6 lb.",220,item,0
+Weight: 6 lb.",220,210,215,item,0
 2TK59,500-Lumen Portable Suspended Work Lamp,"This 500-lumen powered suspended lamp is a powerful and compact LED work light that is ideal for construction work and auto repair. It is portable and easy to transport with a hook at the top allows you to attach it to multiple surfaces. It shines bright at 500 lumens and is protected by a shatter-proof polycarbonate lens, and a stainless steel mounting bracket. It features a brightly colored plastic handle for visibility",Lighting Products,"Catalog Page: 9263
 500 lumen power output 
 300-watts
@@ -111,7 +111,7 @@ Comes with extension chord
 Hook to attach","Length: 7”
 Width: 3”
 Height: 12” 
-Weight: 2 lb.",19.99,item,0
+Weight: 2 lb.",19.99,9.99,14.99,item,0
 2WE71,Mobile Phone Card Reader ,This easy-to-use mobile card reader allows merchants to take their businesses anywhere using their mobile device’s headphone jack. This device is compatible with both IOS and Android. It is a safe and secure way to make payments as it encrypts card information at the moment of the swipe and doesn't store data on the device after the payment has been processed. It works with all major credit cards and allows you to swipe payments without a connection in Offline Mode,Retail Supplies,"Catalog Page: 1193
 Includes card reader software
 Processes all major credit cards
@@ -120,7 +120,7 @@ Works with IOS and Android
 Encrypts card information 
 Plugs into standard headset jack","Width: 2”
 length: 2”
-Weight: .1 lb.",49.95,item,0
+Weight: .1 lb.",49.95,39.95,44.95,item,0
 3ET67,"Steel Storage Shelves, 65 x 55 in.","Add these practical and spacious shelves to your office storage collection. This shelving unit features welded steel construction for added durability and support, four adjustable shelves for versatile storage options, and a 4000 pound weight capacity. The hammered granite finish and tread-plate design create a bold look in your space, and the powder coating provides a layer of protection against wear and tear. ",Office Furniture,"Catalog Page: 4236
 Shipping Weight: 200 lbs.
 Total Weight Capacity: 4,000 lbs.
@@ -131,7 +131,7 @@ Shelves are adjustable so you can customize your storage as needed
 Materials: Steel
 12 shelves total","Overall Width: 65”
 Overall Height: 55”
-Color: Grey",259.99,set,0
+Color: Grey",259.99,249.99,254.99,set,0
 3JK76,"Wooden Office Desk, 60 x 29 x 30 in.","This 5-drawer desk keeps your office space organized. The desk's large work surface is ideal for writing or working on your laptop or computer. It features a cabinet for additional storage, as well as a sliding keyboard pad. The scratch and stain-resistant melamine laminate finish protects the work surface and retains a polished look for years of productive use.",Office Furniture,"Catalog Page: 2543
 Shipping Weight: 200 lbs.
 Country of Origin: United States
@@ -147,7 +147,7 @@ Overall Height: 29”
 Overall Depth: 30”
 Color: Light Brown
 Material: Wood
-Number of Drawers: 5",659.45,item,0
+Number of Drawers: 5",659.45,649.45,654.45,item,0
 3JK90,Executive Chair With Headrest,"The executive chair is designed for ultimate back comfort and support. For extra softness and cushioning, this high-back chair has high-quality mesh upholstery. The chair is designed to offer lumbar support by conforming to the curve of your body. Functional and fashionable, this chair also has an adjustable headrest that supports your head and alleviates neck pain while you work.",Office Furniture,"Catalog Page: 7612
 Shipping Weight: 42 lbs.
 Country of Origin: United States
@@ -162,18 +162,18 @@ Frame material: Steel
 Seat Material: Nylon","Overall Width: 24”
 Minimum Height: 18-1/8”
 Maximum height: 55”
-Weight capacity: 242 lbs.",545,item,0
+Weight capacity: 242 lbs.",545,535,540,item,0
 3LV37,Women’s 5-Pocket V-neck Fashion Scrub Top,"This fashionable women’s scrub top offers fashionable comfort at a reasonable price.It features a bold V-neck for some fashionable contrast at the neckline. The top has five pockets in total—one chest pocket, two side pockets, and two hidden pockets. It is made with high a quality poly/cotton combination and the fabric is brushed to give you a smoother feel. The top is double-stitched for durability and has a five-button closure.",Medical Apparel,"Catalog Page: 8762
 23% Polyester / 77% Cotton
 Center back length for size S: 25.5"".
 Contrast knit at neckline
 5 pockets
-5-button closure",,24.99,piece,0
+5-button closure",,24.99,14.99,19.99,piece,0
 3RE23,Men’s 2-Pocket Lab Coat,"This lab coat is light and is designed to move with you all day. A simpler, lighter version of the Physician’s lab coat, it is available in two different lengths, has two front pockets, a three button closure, and side-hand access. The comfortable 65/35 polyester/cotton material is suitable for all day wear. Sizes include small, medium, large, extra large, 2-extra large, 3-extra large, 4-extra large, and 5-extra large.",Medical Apparel,"Catalog Page: 5492
 Three-button closure
 65% polyester/ 35% cotton
 Two front pockets
-Length options: Regular (37"") and Long (40"")",,25.99,piece,0
+Length options: Regular (37"") and Long (40"")",,25.99,15.99,20.99,piece,0
 3TU20,400-Watt Bulb Work Light,"This 400 watt bulb light is great for both indoor and outdoor projects. This light is suitable for wet areas as well as hazardous workspaces and conditions. It resists the effects of rust and corrosion with powder coat, stainless steel hardware, and a tripod made of copper-free and corrosion resitant aluminum. It features a single LED light fixture and a versatile tripod mounting for convenient and powerful illumination for work areas. It stands at four feet tall, and is a smaller, lighter version of the 600-watt work light",Lighting Products,"Catalog Page: 6281
 400-watt power bulb
 Tripod is fixed at 4 ft.
@@ -184,7 +184,7 @@ Water resistant ","Width: 9”
 Length: 23”
 Depth: 23”
 Height: 4 ft.
-Weight: 6 lb.",39.99,item,0
+Weight: 6 lb.",39.99,29.99,34.99,item,0
 3UK92,General Purpose Handheld LED Spotlight,"This bright, compact and durable handheld spotlight is a great tool for guiding you through poorly-lit areas. Eight bright white LED's illuminate dark jobsite work areas, with a 450 meter range. It has a 25-hour burn life and is shock-proof to 1.5 meters. Its' over-molded lens cover increases durability and provides protection from wear and tear. Batteries for this light are sold separately. ",Lighting Products,"Catalog Page: 3387
 180 lumens
 450 meter range
@@ -193,17 +193,17 @@ Battery type: C (not included)
 Burn time: 25 hours","Width: 4”
 Length: 8”
 Height: 7”
-Weight: 1.5 lb.",59.99,item,0
+Weight: 1.5 lb.",59.99,49.99,54.99,item,0
 3YB32,Women’s Teal Scrub Cap,This comfortable one-size-fits-all scrub cap is made to last you wear after wear. It has double-stitch construction as well as a soft cloth band on the inside as an additional layer of support and sweat protection. It also has contoured seaming with back elastic to ensure a better fit. It features an adjustable drawstring in the back ,Medical Apparel,"Catalog Page: 3981
 Circumference: 23“
 Soft cloth band inside
 Adjustable drawstring
-One size fits all",,10.99,piece,0
+One size fits all",,10.99,0.99,5.99,piece,0
 4HC51,Women’s Physician’s 3-Pocket Lab Coat,"This stylish and comfortable three-button lab coat features two patch pockets, a chest pocket, and a back-belt for adjustability and functionality. The comfortable 65/35 polyester/cotton material is suitable for all day wear. Sizes include small, medium, large, extra large, 2-extra large, 3-extra large, 4-extra large, and 5-extra large.",Medical Apparel,"Catalog Page: 0273
 65% polyester/ 35% cotton
 Two patch pockets, one chest pocket
 Button back-belt
-32"" long",,30.99,piece,0
+32"" long",,30.99,20.99,25.99,piece,0
 4HJ92,500-Watt Portable Work Light,"This 500 watt work light is perfect for contruction/work sites or at home projects. It produces a maximum of 16,000 lumens. The light head can be adjusted on the base and features comfort grips. The work light features a heat-resistant tempered glass shade for ultimate protection This lamp is great for both indoor and outdoor work and is weather resistant. It's small, lightweight, and easy to transport",Lighting Products,"Catalog Page: 5193
 500-watt power
 Adjustable lamp head
@@ -211,7 +211,7 @@ Weather resistant
 Bulb type: halogen","Width: 6.5”
 Height: 9”
 Depth: 6”
-Weight: 3.5 lb.",35.99,item,0
+Weight: 3.5 lb.",35.99,25.99,30.99,item,0
 4KL66,"4 Drawer File Cabinet, 15 x 52 x 25, Grey","Start organizing your professional or home office life with this 4-drawer, letter size vertical cabinet. With high-sided drawers that conveniently accept hanging file folders, this file cabinet offers ample space to store and organize multiple legal-size files without bending or folding. It features precision steel ball-bearings to provide smooth and quiet drawer performace and has adjustable feet for an even stance on uneven surfaces.",Office Furniture,"Catalog Page: 1901
 Shipping Weight: 115.0 lbs.
 Country of Origin: United States
@@ -224,19 +224,19 @@ Overall Width: 15”
 Overall Height: 52”
 Overall Depth: 25”
 Color: Grey
-Material: Steel",395.25,item,0
+Material: Steel",395.25,385.25,390.25,item,0
 4PJ19,Handheld Laser Barcode Scanner,"This lightweight laser handheld barcode scanner offers high performace scanning at a reasonable price by allowing merchants to capture barcodes quickly and effectively. It connects to any POS system via USB cable and is easy to install and use with little or no training. The color options include white, gray, and black and the material is plastic.",Retail Supplies,"Catalog Page: 3458
 Material: plastic
 Color: white
 Color Options: white, black, grey
 Includes USB cable","Width: 7”
 Length: 3”
-Height: 3”",200,item,0
+Height: 3”",200,190,195,item,0
 4QI22,Women’s Basic 1-Pocket Pink Scrub Top,"The simple and light scrub top has one chest pocket and a button back-belt. It is made with high a quality poly/cotton combination and the fabric is brushed to give you a smoother feel. The top is double-stitched for durability and has a five-button closure. Sizes include extra extra small, extra small, small, medium, large, extra large, 2-extra large, 3-extra large, 4-extra large, and 5-extra large.",Medical Apparel,"Catalog Page: 2566
 77% Polyester / 23% Cotton
 Center back length for size S: 25.5"".
 1 chest pocket
-Button back-belt",,19.99,piece,0
+Button back-belt",,19.99,9.99,14.99,piece,0
 5BM69,"Conference Table, 47 in. x 10 ft.","Make your meetings more productive with this durable wood-top conference table. Both stylish and comfortable, the laminate table top is durable, easy to clean, and great for high-volume use. The table is spacious, stain resistant, and easy to clean. The base is made with metal and the legs are adjustable, with leveling guides at the base to help maintain a level surface on uneven floors.",Office Furniture,"Catalog Page: 5599
 Shipping Weight: 360 lbs.
 Country of Origin: United States
@@ -248,7 +248,7 @@ Storage space under table
 Seats 10 to 12
 Top Finish: Wood","Length: 10 ft.”
 Height: 30”
-Width: 47”",689,item,0
+Width: 47”",689,679,684,item,0
 5GE27,Pricing Labeler,"This pricing labeler is easy to use and comes with one roll of white labels and spare ink. Print up to seven characters with this pricing gun. Made with strength in mind, this pricing labeler is built with quality materials and is drop-tested to ensure durability in the warehouse, stockroom, showroom, and other areas with hard floors. The erganomic design keeps your hands comfortable during use, reducing strain and allowing you to comfortably use the labeler",Retail Supplies,"Catalog Page: 1279
 Number of lines: 2
 Characters per line: 7
@@ -257,7 +257,7 @@ Label size: 22mm x 12mm
 Color: Red","Length: 9.2”
 Width: 5.6”
 Height: 3” 
-Weight: 1 lb.",175,item,0
+Weight: 1 lb.",175,165,170,item,0
 5GF68,300-Watt Floodlight,"This 300-watt flood light provides bright and focused illumination. Ideal for construction sites and outdoor use, as well as in commercial applications and residential areas, pools, and other recreational areas. Its' sturdy, weather-resistant metal housing protects from rain, rust, and debris.",Lighting Products,"Catalog Page: 5934
 300-watt power
 Made with weather and rust-resistant metal
@@ -266,12 +266,12 @@ Power type: hardwired","Width: 5”
 Length: 9.5”
 Height: 7”
 Depth: 6”
-Weight: 4.5 lb.",45.99,item,0
+Weight: 4.5 lb.",45.99,35.99,40.99,item,0
 5GN30,Physician’s 5-Pocket Lab Coat,"This physician’s lab coat is available in 2 different lengths--regular (37"") and long (40""). It features a four-button front closure, two inside pockets, three front pockets, and side hand access. The comfortable 75/25 polyester/cotton material is suitable for all day wear. Sizes include small, medium, large, extra large, 2-extra large, 3-extra large, 4-extra large, and 5-extra large.",Medical Apparel,"Catalog Page: 3098
 Four-button closure
 Three front pockets, two inside pockets, side hand access
 Regular (37"") and Long (40"")
-75% polyester/ 25% cotton",,45.99,piece,0
+75% polyester/ 25% cotton",,45.99,35.99,40.99,piece,0
 5IF41,"Modern Floor Display Rack, 66 in.","Organize and decorate your office space with this sleek display rack. This piece features two adjustable shelves for increased customization, and two fixed shelves for increased stability. The rack comes with a 10-year limited warranty and is made in the United States. It is made from all recyclable materials. The color options include light brown, brown, black, and white.",Office Furniture,"Catalog Page: 4354
 Shipping Weight: 100 lbs.
 Country of Origin: United States
@@ -284,7 +284,7 @@ Made with recyclable materials ","Overall Width: 30-1/2”
 Overall Height: 66”
 Overall Depth: 17”
 Color: Light Brown
-Material: Wood",689.49,item,0
+Material: Wood",689.49,679.49,684.49,item,0
 5TJ23,17-inch POS Touch Screen Monitor with Card Reader,"This sleek and slim 17-inch touch screen monitor is great for retail—it is easily integrated with a variety of POS systems. The sensitive touch screen recognizes touch input from fingers, gloved fingers, stylus, and pens. It features a built-in magnetic card reader. It gives the user full range of standard connectivity ports for retail POS and hospitality applications. The screen has a maximum resolution of 1040 x 768 and is water-resistant. It features a built-in magnetic card reader for quick and easy credit card payment",Retail Supplies,"Catalog Page: 6642
 Screen size: 17 inches
 Maximum resolution: 1040 X 768
@@ -292,7 +292,7 @@ Includes power chord, power adapter, VGA signal cable, USB cable
 Slim screen 
 Features magnetic card reader","Width: 18”
 Height: 16”
-Weight: 4 lb.",300,set,0
+Weight: 4 lb.",300,290,295,set,0
 5TU10,600-Watt Bulb Work Light,"This 600 watt bulb light is a heavy duty work light and is perfect for contruction/work sites or at home projects. It features a 4-7 foot adjustable tripod unit and an adjustable lamp head. It produces a maximum of 16,000 lumens. The light head can be adjusted on the base and features comfort grips. The work light features a heat-resistant tempered glass shade for ultimate protection This lamp is great for both indoor and outdoor work and is weather resistant. ",Lighting Products,"Catalog Page: 6972
 600-watt power bulb
 Tripod is adjustable—ranges from 4 feet to 7 feet
@@ -303,7 +303,7 @@ Water resistant","Width: 9”
 Length: 23”
 Depth: 23”
 Height: 4-7 ft.
-Weight: 7 lb.",49.99,item,0
+Weight: 7 lb.",49.99,39.99,44.99,item,0
 5UB78,Green Beige Sofa,"This cost-effective barcode label maker allows you to create almost any label size you need. It includes software that allows you to connect to and directly print from any computer or smartphone. Create labels directly from text in Microsoft Word, Excel, Outlook, QuickBooks, and other programs withrout retyping. Print your labels with ultra speed, at 94 labels per minute. The built-in auto cutter ensures a clean and precise finished edge every time.",Office Furniture,"Catalog Page: 5467
 Shipping Weight: 400 lbs.
 Country of Origin: United States
@@ -317,7 +317,7 @@ Overall Height: 37”
 Seat Depth: 22”
 Seat Height: 19-1/4”
 Seat Material: Polyester 
-Color: Green Beige",625,item,0
+Color: Green Beige",625,615,620,item,0
 5XY10,Barcode Label Maker,"Make any office feel like a home with this green beige sofa. This sofa is the ideal way to maximize space use in small areas.The high-density, thick foam cushion has a core of pocket springs and a top of cut foam and polyester fibers. The core of pocket springs is durable and keeps its form and soft comfort for a longer time. The wide seat angle provide great seating comfort for you and any guests you welcome into your office. ",Retail Supplies,"Catalog Page: 6972
 Comes with software that allows you to connect to and print from any smartphone
 USB Connection
@@ -327,7 +327,7 @@ Media sizes supported: Die-cut and Continuous
 Maximum Tape Width: 2.4""
 Maximum Label Length: 3'","Width:6” 
 Length: 5”
-Weight: 2.5 lb.",250,item,0
+Weight: 2.5 lb.",250,240,245,item,0
 6BC45,Industrial Handheld Flashlight,"This lightweight and easy-to-use flashlight is powered by premium LED lights with alkaline batteries included. It produces a broad floor beam, giving you the best beam for most indoor and short distance applications. It features three modes: low, medium, and high mode. It is powered by a premium, high-intensity LED light and gives you 850 feet of visibility. It comes with two alkaline AA batteries",Lighting Products,"Catalog Page: 5389
 25 ft. shock-resistant
 3 modes: low, high, strobe
@@ -340,7 +340,7 @@ Burn time: 2 hours
 Beam Distance: 950 ft.","Length: 7.5”
 Width: 3”
 Height: 12”
-Weight: 1.5 lb.",29.99,item,0
+Weight: 1.5 lb.",29.99,19.99,24.99,item,0
 6GH85,"4 Drawer File Cabinet, 15 x 26 x 22","This 4-drawer file cabinet is suitable for letter-size hanging files. With high-sided drawers that conveniently accept hanging file folders, this file cabinet offers ample space to store and organize multiple legal-size files without bending or folding. It features precision ball-bearings to provide smooth and quiet drawer performace and has adjustable feet for an even stance on uneven surfaces.Made from real wood, it features four wheels for increased mobility, and a lock and key for added security",Office Furniture,"Catalog Page: 1158
 Shipping Weight: 55 lbs.
 Country of Origin: United States
@@ -354,7 +354,7 @@ Material: Wood
 Four wheels for easy movement","Overall Width: 15”
 Overall Height: 26”
 Depth: 22”
-Color: Light Brown ",325.25,item,0
+Color: Light Brown ",325.25,315.25,320.25,item,0
 6LJ54,Manager’s Desk Chair,"Provide yourself with the ultimate comfort at the office with the Manager’s Desk Chair. This chair features adjustable padded arms, black upholstery, and seat height adjustment to encourage more natural posture at your desk. For extra softness and cushioning, this chair has high-quality mesh upholstery. Enjoy built-in lumbar support with this comfortable, ergonomic, durable high-back chair. ",Office Furniture,"Catalog Page: 1802
 Shipping Weight: 40.2 lbs.
 Country of Origin: China
@@ -371,7 +371,7 @@ Color: Black
 Material: Leather
 Seat Material: Foam
 Cushion Thickness: 5-1/2”
-Weight Capacity: 225 lb.",225.85,item,0
+Weight Capacity: 225 lb.",225.85,215.85,220.85,item,0
 6PM40,"Round Meeting Table, 30 in. x 30in.","Add this round table to your office furniture collection. Great for meeting rooms, lunch rooms, and break rooms, it features a lightweight UV-resistant top, and a removable base and top for easy transport.The table top is made with antimicrobial additives which include antibacterial and anti-fungal properties so you can use it for years. It has a simple design, and requires no assembly or disassembly, and seats up to 4 people comfortably",Office Furniture,"Catalog Page: 5378
 Shipping Weight: 30 lbs.
 Country of Origin: United States
@@ -386,10 +386,10 @@ No tools required to assemble or disassemble ","Overall Width: 30”
 Overall Height: 30”
 Diameter: 30”
 Shape: Round
-Color: Light Brown ",250.95,item,0
+Color: Light Brown ",250.95,240.95,245.95,item,0
 6UB33,Men’s White Scrub Set,"Work in style and comfort with this all-white men’s scrub set. The fabric is all cotton, and features two pockets on the scrub top, and two large velcro pockets on the scrub pants. The relaxed-fit, straight-leg pants have a matching drawstring for a comfortable, adjustable, fit. Sizes include extra extra small, extra small, small, medium, large, extra large, 2-extra large, 3-extra large, 4-extra large, and 5-extra large.",Medical Apparel,"Catalog Page: 2146
 100% cotton fabric
-Straight Leg pants",,42.95,set,0
+Straight Leg pants",,42.95,32.95,37.95,set,0
 6UK81,Hardhat with 300 Lumen LED Light,"This hardhat is great for night work. It features a bright, 300 lumen detachable headlamp for optimal illumination. The light is battery operated and includes 2 AA batteries. The bright and sturdy shell is made with polyethylene, making it weather and debris-resistant. The color options include yellow, white, orange, and red, and the sizing options include 6, 7, and 8.",Lighting Products,"Catalog Page: 2459
 Light is battery operated
 Batteries: AA
@@ -400,7 +400,7 @@ Size options: 6, 7, 8
 Color Options: Yellow, White, Red, Orange","Width: 9”
 Height: 7”
 Depth: 10”
-Weight: 1.3 lb.",59.99,item,0
+Weight: 1.3 lb.",59.99,49.99,54.99,item,0
 6VC22,Bluetooth Barcode Scanner,"This innovative Bluetooth barcode scanner allows easy bar code transmission to a host application via Bluetooth connection to laptops, smartphones, and other devices. The bluetooth technology offers high performace scanning at a reasonable price by allowing merchants to capture barcodes quickly and effectively. It also includes a USB cable and is easy to install and use with little or no training.",Retail Supplies,"Catalog Page: 1267
 Material: plastic
 Color: Black, Blue
@@ -409,7 +409,7 @@ Long battery life
 Simple button design
 Easy to integrate with host device","Width: 4”
 Length: 6”
-Weight: 7”",350,item,0
+Weight: 7”",350,340,345,item,0
 7BS71,"Modern White Table, 37 x 37 in.","Great for any waiting/reception area, this table gives any office a sleek and modern look. Legs include plastic feet to protect from floor scratching. The table is made in the United States and comes with a 10-year limited warranty and the color options include white and black. The table is made with particleboard, steel, printed fiberboard, and has a shiny coat finish.",Office Furniture,"Catalog Page: 1543
 Shipping Weight: 70 lbs.
 Country of Origin: United States
@@ -419,7 +419,7 @@ Materials: particleboard, steel, printed fiberboard
 Plastic feet","Length: 37-3/8”
 Height: 12-1/4”
 Width: 37”
-Depth: 37”",199.5,item,0
+Depth: 37”",199.5,189.5,194.5,item,0
 7BS72,12-volt Rechargeable Search light Set,"These bright, rechargeable searchlights feature 15 LED area lights and a spotlight. Great for outdoor work, auto repair, search and rescue, and power outages. These lights are powered by 12-volt rechargeable lead acid batteries and the internal batteries are easily accessible. The total burn time for these lights is 40 hours and a shoulder strap is included with both lights",Lighting Products,"Catalog Page: 0436
 12-volt rechargeable battery
 Battery type: lead acid
@@ -429,14 +429,14 @@ Internal battery easily accessible
 Shoulder strap included","Length: 6”
 Width: 9”
 Height: 5”
-Weight: 8 lb. each",200,set,0
+Weight: 8 lb. each",200,190,195,set,0
 7NM98,Men’s Slip On Clogs,"These clogs are designed to deliver all day comfort and lightness. The non-marking soles are made to reduce foot and leg fatigue. The holes on the heels and in the insole allow for additional ventilation and the rubber outsole is slip-resistant and flexible, while the insole is soft and formulated to be stain resistant. They are easily washable and hygienic, and feature holes for ventilation around the foot bed for all-day heat releaf.",Medical Apparel,"Catalog Page: 0826
 Ultra light material
 Anti-fungal and anti-bacterial
 Slip resistant 
 Removable inner sole
 Made with EVA foam
-Cooling ventilation holes",,19.99,set,0
+Cooling ventilation holes",,19.99,9.99,14.99,set,0
 7NQ22,Storage Combination with Doors,"Store and display your favorite items with this storage-display cabinet. With sixteen shelves total, and two cabinets for additional storage, keep your items dust-free but still visible with the glass door cabinets. Two of the cabinet shelves are adjustable so you can customize your storage as needed, while two of the shelves are fixed to provide increased stability. The accompanying damper allows for slow, silent, and soft opening and closing of cabinet doors",Office Furniture,"Catalog Page: 6904
 Shipping Weight: 400 lbs.
 Country of Origin: United States
@@ -449,7 +449,7 @@ Glass-door cabinets
 Materials: Glass, wood, fiberboard","Overall Width: 113”
 Overall Height: 84”
 Depth: 14-5/8”
-Color: Light Brown with Grey sides ",799.99,set,0
+Color: Light Brown with Grey sides ",799.99,789.99,794.99,set,0
 7TY55,Handheld Laser Barcode Scanner,This lightweight handheld barcode scanner offers high performace scanning at a reasonable price by allowing merchants to capture barcodes quickly and effectively. It connects to any POS system via USB cable and is easy to install and use with little or no training. It features a 3-inch display screen as well as a full letter and number pad that allows you to manually enter data and information,Retail Supplies,"Catalog Page: 7642
 3-inch screen
 Numbers and letter on keypad
@@ -458,15 +458,15 @@ Host interface: USB
 Material: plastic","Width: 4”
 Length: 7”
 Height: 5”
-Weight: .8 lb.",129.99,item,0
+Weight: .8 lb.",129.99,119.99,124.99,item,0
 7YV41,Women’s Fashion Scrub Set,"Work in style and comfort with this all-white women’s scrub set. The fabric is all cotton, and features two pockets on the scrub top, and two pockets on the scrub pants. The fabric is brushed to give you a smoother feel. The top and bottom are both double-stitched for durability. Sizes include extra extra small, extra small, small, medium, large, extra large, 2-extra large, 3-extra large, 4-extra large, and 5-extra large.",Medical Apparel,"Catalog Page: 3227
 100% cotton fabric
 Vertical black lining on the scrub top
-Button back-belt",,45.99,set,0
+Button back-belt",,45.99,35.99,40.99,set,0
 8BC37,Colorful Floral Women’s Scrub Top,"This bright, colorful women’s scrub top is not only comfortable, but fun to wear. It has a V-neck line and two front pockets. It is made with high a quality poly/cotton combination and the fabric is brushed to give you a smoother feel. The top is double-stitched for durability. Sizes include extra extra small, extra small, small, medium, large, extra large, 2-extra large, 3-extra large, 4-extra large, and 5-extra large.",Medical Apparel,"Catalog Page: 2034
 23% Polyester / 77% Cotton
 Center back length for size S: 25.5"".
-2 pockets",,24.95,piece,0
+2 pockets",,24.95,14.95,19.95,piece,0
 8DO33,Receipt Printer,"This receipt printer uses a ribbon to transfer ink to paper, making it resistant to discoloration and smears from heat and humidity. It can easily be connected to any laptop/computer via USB cable. It's light weight, easy to use, and is suitable for an outdoor work environment. It's powered by rechargeable lithium batteries and includes a power adapter. ",Retail Supplies,"Catalog Page: 3335
 Printing method: thermal line printing 
 Paper type: thermal paper
@@ -474,7 +474,7 @@ Power: rechargeable lithium batteries
 Includes: power adapter","Width: 4”
 Length: 2.5”
 Height: 1.8”
-Weight: 1.2 lb.",250,item,0
+Weight: 1.2 lb.",250,240,245,item,0
 8LG34,"Reception Desk, 71 x 42 in.","With high-sided walls and a tall counter, this reception desk is suitable for conducting business transactions and greeting guests. This reception desk comes with a 10-year limited warranty. It has been tested for office use and meets the requirements for safety, durability, and stability. It includes four drawers for extra storage, a keyboard drawer, and locks with two keys for extra security.",Office Furniture,"Catalog Page: 4735
 Shipping Weight: 300 lbs.
 Country of Origin: United States
@@ -485,14 +485,14 @@ Number of Drawers: 4
 Includes keyboard drawer
 Locks with 2 keys each","Height: 42”
 Width: 71”
-Depth: 83”",425.59,item,0
+Depth: 83”",425.59,415.59,420.59,item,0
 8NN54,Women’s Nursing Shoe,"These shoes are designed to deliver all day comfort and lightness. The non-marking soles are made to reduce foot and leg fatigue. The holes on the heels allow for additional ventilation and the rubber outsole is slip-resistant and flexible, while the insole is soft and formulated to be stain resistant. They are easily washable and hygienic, and feature holes for ventilation around the foot bed for all-day heat releaf.",Medical Apparel,"Catalog Page: 5437
 Ultra light material
 Anti-fungal and anti-bacterial
 Slip resistant 
 Removable inner sole
 Made with EVA foam
-Cooling ventilation holes",,24.99,set,0
+Cooling ventilation holes",,24.99,14.99,19.99,set,0
 8TF72,Industrial 310 Lumen LED Headlamp,"This headlamp has a 310 lumen output making ideal for work in poorly-lit areas. The easy-to-twist focus ring makes it easy to adjust the beam while you’re working. The top strap is removable so you can attach the headlamp to a hard hat. It's light weight, comfortable, economic, flexible, and gives you 60 yards of visibility in pitch black. The headlamp is battery-operated and comes with two AA batteries.",Lighting Products,"Catalog Page: 1785
 310 lumen output
 Batteries: AA (included)
@@ -501,7 +501,7 @@ Focus ring for easy adjustment
 Burn time: 4 hours","Width: 4”
 Length: 4”
 Height: 4”
-Weight: 4.5 oz.",45.99,item,0
+Weight: 4.5 oz.",45.99,35.99,40.99,item,0
 8UF78,"Wooden Storage Cabinet, Bookshelf, 72 in.","Organize your space with this spacious, bookshelf-cabinet combination. This piece features two sets of five adjustable shelves, with five additional shelves in the interior. Two of the shelves are adjustable so you can customize your storage as needed, and two shelves are fixed to provide increased stability. The accompanying damper allows the doors to close slowly, silently, and softly, and the cabinet feet are adjustable for increased stability on uneven floors.",Office Furniture,"Catalog Page: 1663
 Shipping Weight: 400 lbs.
 Country of Origin: United States
@@ -517,7 +517,7 @@ Wheels on bottom to allow for easy movement ","Overall Width: 55”
 Overall Height: 72”
 Overall Depth: 14”
 Color: Light Brown
-Material: Wood",850.55,item,0
+Material: Wood",850.55,840.55,845.55,item,0
 8VS71,"White Bookshelf, 35 x 77 in.","Keep your books and decorative items within easy reach with this five case book shelf. Built with a traditional design and durable construction, this bookcase is ideal for professional environments. Made with five spacious shelves, this bookcase has abundant space to display all of your books, awards, and decor. The solid wood has a natural feel. The shelf comes with a 10-year limited warranty and is recyclable and possible to use for energy recovery.",Office Furniture,"Catalog Page: 3768
 Shipping Weight: 100 lbs.
 Country of Origin: United States
@@ -528,7 +528,7 @@ Materials: solid pine, printed fiberboard
 Product possible to recycle or use for energy recovery","Width: 35”
 Depth: 14-5/8”
 Height: 77 in. 
-Maximum load/shelf: 80 lbs.",199.99,item,0
+Maximum load/shelf: 80 lbs.",199.99,189.99,194.99,item,0
 9GQ28,NFC Credit Card Reader,"This NFC credit card reader accepts PIN-based debit card transactions and swipes traditional payment cards. It accepts chip cards and enables contactless payments for easy and efficient credit card transactions. Compatible with Apple Pay, LoopPay, Google Wallet, Plastc, and Coin. It is a safe and secure way to make payments as it encrypts card information at the moment of the swipe and doesn't store data on the device after the payment has been processed.",Retail Supplies,"Catalog Page: 1634
 Performs PIN based debit card transactions 
 Accepts chip cards
@@ -538,11 +538,11 @@ Supports all magnetic stripe cards
 Color: Black
 NFC technology, includes POS software","Width: 4”
 Height: 3”
-Weight: .3 lb.",250,item,0
+Weight: .3 lb.",250,240,245,item,0
 9OK21,"Men’s Basic V-neck, 1-Pocket Light Blue Scrub Top","This simple, comfortable scrub top comes in a variety of colors. This top has one chest pocket and runs large. The comfortable 65/35 polyester/cotton material is suitable for all day wear and has double-stitch construction Sizes include extra extra small, extra small, small, medium, large, extra large, 2-extra large, 3-extra large, 4-extra large, and 5-extra large.",Medical Apparel,"Catalog Page: 5129
 65% polyester / 35% cotton
 One chest pocket with pencil slot
-V-neck top",,18.99,piece,0
+V-neck top",,18.99,8.99,13.99,piece,0
 9OL25,Women’s White Slip-On Clogs,"These clogs are designed to deliver all day comfort and lightness. The rubber outsole is slip-resistant and flexible, while the insole is soft and formulated to be stain resistant. The non-marking soles are made to reduce foot and leg fatigue so you can feel comfortable being on your feet all day. They are easily washable and hygienic, and feature holes for ventilation around the foot bed for all-day heat releaf",Medical Apparel,"Catalog Page: 3583
 Ultra light material
 Anti-fungal and anti-bacterial
@@ -551,7 +551,7 @@ Removable inner sole
 Made with EVA foam
 Unisex
 Cooling ventilation holes
-Straps for added security",,25.99,set,0
+Straps for added security",,25.99,15.99,20.99,set,0
 XS56,Pricing Labeler,"This pricing labeler is easy to use and comes with one roll of white labels and spare ink. Print up to six characters with this pricing labeler. Made with strength in mind, this pricing labeler is built with quality materials and is drop-tested to ensure durability in the warehouse, stockroom, showroom, and other areas with hard floors. The erganomic design keeps your hands comfortable during use, reducing strain and allowing you to comfortably use the labeler",Retail Supplies,"Catalog Page: 4433
 Number of lines: 1
 Characters per line: 6
@@ -560,7 +560,7 @@ Label size: 22mm x 12mm
 Color: Blue","Length: 7.2”
 Width: 5.6”
 Height: 3” 
-Weight: 1 lb.",95.99,item,0
+Weight: 1 lb.",95.99,85.99,90.99,item,0
 WLCH1,Foldable Wheelchair,Foldable Wheelchair features a powder coated steel frame with durable nylon upholstery and padded removable armrests. Composite magnesium alloy wheels with maintenance-free bearings and composite handrims make for a smooth ride.,Hospital Wheelchairs,"Powder coated steel frame
 Durable nylon upholstery
 Composite magnesium alloy wheels with maintenance-free bearings
@@ -569,7 +569,7 @@ Padded removable armrests
 Composite handrims
 220lb. weight capacity
 Removable armrests
-Warranty: 3 years on welds, 2 years on upholstery and wheel locks",,245,item,0
-TAG1,"Medical Tag, Stainless Steel","This medical identifications tag is a convenient and practical way to wear your medical information. Measuring 1"" x 3/4"", the stainless steel tag can be engraved on the back.",Medical Identification Tags,,,8.45,item,0
-TAG2,"Medical Tag, Sterling Silver","This medical identifications tag is a beautiful and practical way to wear your medical information. Measuring 1"" x 3/4"", the tag can be engraved on the back.",Medical Identification Tags,,,,item,0
-TAG3,"Medical Tag, Sterling Silver, Rhodium Plated","This medical identifications tag is a beautiful and practical way to wear your medical information. Measuring 1"" x 3/4"", the tag is coated with a fine, Rhodium finish, helping the tag stay shiny and resistant to tarnish. The tag can be engraved on the back.",Medical Identification Tags,,,,item,0
+Warranty: 3 years on welds, 2 years on upholstery and wheel locks",,245,235,240,item,0
+TAG1,"Medical Tag, Stainless Steel","This medical identifications tag is a convenient and practical way to wear your medical information. Measuring 1"" x 3/4"", the stainless steel tag can be engraved on the back.",Medical Identification Tags,,,8.45,,,item,0
+TAG2,"Medical Tag, Sterling Silver","This medical identifications tag is a beautiful and practical way to wear your medical information. Measuring 1"" x 3/4"", the tag can be engraved on the back.",Medical Identification Tags,,,,,,item,0
+TAG3,"Medical Tag, Sterling Silver, Rhodium Plated","This medical identifications tag is a beautiful and practical way to wear your medical information. Measuring 1"" x 3/4"", the tag is coated with a fine, Rhodium finish, helping the tag stay shiny and resistant to tarnish. The tag can be engraved on the back.",Medical Identification Tags,,,,,,item,0

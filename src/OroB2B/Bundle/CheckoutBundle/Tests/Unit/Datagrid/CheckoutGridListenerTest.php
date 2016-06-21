@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -109,7 +109,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->em->method('getClassMetadata')->willReturn($metadata);
 
         $this->doctrine->expects($this->any())
-            ->method('getEntityManagerForClass')
+            ->method('getManagerForClass')
             ->willReturn($this->em);
 
         $this->currencyManager = $this->getMockBuilder(UserCurrencyManager::class)
