@@ -244,8 +244,8 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
         $expectedSelects = [
             'rootAlias.id as id',
-            'COALESCE(_relationOne.total) as total',
             'COALESCE(_relationOne.subtotal,_relationTwo_totals.subtotal) as subtotal',
+            'COALESCE(_relationOne.total) as total',
             'COALESCE(_relationOne.currency,_relationTwo_totals.currency) as currency'
         ];
         $expectedColumns = [
