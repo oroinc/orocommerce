@@ -17,12 +17,12 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var array defaultSetting
      */
-    protected $defaultSetting = ['code'=>'kg', 'precision'=>3];
+    protected $systemPrecision = ['code'=>'kg', 'precision'=>3];
 
     /**
-     * @var array category1Setting
+     * @var array categoryPrecision
      */
-    protected $category1Setting = ['code'=>'set', 'precision'=>2];
+    protected $categoryPrecision = ['code'=>'set', 'precision'=>2];
 
     public function setUp()
     {
@@ -31,8 +31,8 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $map = [
-            ['orob2b_product.default_unit', false, false, $this->defaultSetting['code']],
-            ['orob2b_product.default_unit_precision', false, false, $this->defaultSetting['precision']]
+            ['orob2b_product.default_unit', false, false, $this->systemPrecision['code']],
+            ['orob2b_product.default_unit_precision', false, false, $this->systemPrecision['precision']]
         ];
         $configManager->expects($this->any())
             ->method('get')
@@ -44,7 +44,7 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $productUnit = new ProductUnit();
-        $productUnit->setCode($this->defaultSetting['code']);
+        $productUnit->setCode($this->systemPrecision['code']);
 
         $productUnitRepository->expects($this->any())
             ->method('findOneBy')
@@ -73,13 +73,13 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getDataProvider
+     * @dataProvider productUnitDataProvider
      * @param int $categoryId
      * @param array $expectedData
      */
     public function testGetDefaultProductUnit($categoryId, $expectedData)
     {
-        if(null != $categoryId) {
+        if (null != $categoryId) {
             $this->defaultProductUnitProvider->setCategoryId($categoryId);
         }
         $expectedUnitPrecision = $this->createProductUnitPrecision(
@@ -104,7 +104,7 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         
         $productUnit = new ProductUnit();
-        $productUnit->setCode($this->category1Setting['code']);
+        $productUnit->setCode($this->categoryPrecision['code']);
         
         $category1UnitPrecision->expects($this->any())
             ->method('getUnit')
@@ -112,7 +112,7 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
         
         $category1UnitPrecision->expects($this->any())
             ->method('getPrecision')
-            ->will($this->returnValue($this->category1Setting['precision']));
+            ->will($this->returnValue($this->categoryPrecision['precision']));
 
 
         $category1 = $this->createMockCategory($category1UnitPrecision, null);
@@ -178,26 +178,25 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function getDataProvider()
+    public function productUnitDataProvider()
     {
         return [
             'noCategory' => [
-                'categoryId' => Null,
-                'expectedData' => $this->defaultSetting
+                'categoryId' => null,
+                'expectedData' => $this->systemPrecision
             ],
             'CategoryWithPrecision' => [
                 'categoryId' => 1,
-                'expectedData' => $this->category1Setting
+                'expectedData' => $this->categoryPrecision
             ],
             'CategoryWithParentPrecision' => [
                 'categoryId' => 2,
-                'expectedData' => $this->category1Setting
+                'expectedData' => $this->categoryPrecision
             ],
             'CategoryWithNoPrecision' => [
                 'categoryId' => 3,
-                'expectedData' => $this->defaultSetting
+                'expectedData' => $this->systemPrecision
             ],
         ];
     }
 }
-
