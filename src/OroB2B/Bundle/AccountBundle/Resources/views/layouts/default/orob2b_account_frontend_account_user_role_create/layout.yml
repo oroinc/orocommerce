@@ -43,7 +43,7 @@ layout:
                         grid_parameters:
                             role: {'@value': $data.entity.id}
                             account: {'@value': $data.entity.account}
-                        form: { '@value': $data.orob2b_account_frontend_account_user_role_form.view }
+                        form: { '@value': $data.orob2b_account_frontend_account_user_role_form }
                 account_user_role_edit_form_end:
                     blockType: form_end
                     options:
