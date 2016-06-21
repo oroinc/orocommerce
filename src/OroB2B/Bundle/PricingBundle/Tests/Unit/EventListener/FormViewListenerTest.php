@@ -2,10 +2,13 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\EntityRepository;
+
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
@@ -19,6 +22,9 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\EventListener\FormViewListener;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -236,11 +242,51 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with('OroB2BProductBundle:Product', $productId)
             ->willReturn($product);
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $priceAttributePriceListRepository */
+        $priceAttributePriceListRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $priceAttributePriceListRepository->expects($this->once())
+            ->method('findAll');
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $priceAttributePriceListRepository */
+        $priceAttributeProductPriceRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $priceAttributePrices = [
+            (new PriceAttributeProductPrice())
+                ->setPriceList((new PriceList())->setName('Test'))
+                ->setPrice((new Price())->setCurrency('USD')->setValue('100'))
+                ->setUnit((new ProductUnit())->setCode('item'))
+        ];
+
+        $priceAttributeProductPriceRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['product' => $product])
+            ->willReturn($priceAttributePrices);
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->willReturnMap([
+                ['OroB2BPricingBundle:PriceAttributePriceList', $priceAttributePriceListRepository],
+                ['OroB2BPricingBundle:PriceAttributeProductPrice', $priceAttributeProductPriceRepository]
+            ]);
+
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
         $environment->expects($this->once())
             ->method('render')
-            ->with('OroB2BPricingBundle:Product:prices_view.html.twig', ['entity' => $product])
+            ->with(
+                'OroB2BPricingBundle:Product:prices_view.html.twig',
+                [
+                    'entity' => $product,
+                    'productUnits' => [],
+                    'productAttributes' => null,
+                    'priceAttributePrices' => ['Test' => ['item' => ['USD' => 100]]]
+                ]
+            )
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment);
