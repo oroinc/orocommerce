@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_order_frontend_index/layout.html.twig'
+            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_order_frontend_open_orders/layout.html.twig'
 
         - '@add':
             id: checkouts_title
@@ -11,7 +11,6 @@ layout:
             prepend: true
             options:
                 text: 'orob2b.checkout.open_orders.label'
-                visible: { '@neq': [$data.orob2b_order_frontend_open_orders_separate_page_config_provider, true] }
 
         - '@add':
             id: checkouts
@@ -20,4 +19,3 @@ layout:
             blockType: datagrid
             options:
                 grid_name: frontend-checkouts-grid
-                visible: { '@neq': [$data.orob2b_order_frontend_open_orders_separate_page_config_provider, true] }

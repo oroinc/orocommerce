@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@add':
+            id: account_sidebar
+            parentId: sidebar_left
+            blockType: container

@@ -59,6 +59,15 @@ class OrderControllerTest extends WebTestCase
         $this->assertContains('Orders', $crawler->filter('h1.page-title')->html());
     }
 
+    public function testOpenOrders()
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_open_orders'));
+        $result = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('Open Orders', $crawler->filter('h1.page-title')->html());
+    }
+
     /**
      * @return int
      */

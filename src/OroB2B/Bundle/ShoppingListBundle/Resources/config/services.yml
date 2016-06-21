@@ -216,3 +216,16 @@ services:
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
             - '@orob2b_pricing.user_currency_manager'
             - '@oro_config.global'
+
+    orob2b_shopping_list.datagrid.checkout_items_counters.shopping_list_items:
+        class: OroB2B\Bundle\ShoppingListBundle\Datagrid\CheckoutItemsCounters\ShoppingListItemsCounter
+        tags:
+            - { name: checkout.items_counter }
+
+    orob2b_shopping_list.datagrid.checkout_source.shopping_list.definer:
+        class: OroB2B\Bundle\ShoppingListBundle\Datagrid\CheckoutSource\ShoppingListCheckoutSourceDefinitionResolver
+        arguments:
+            - "@oro_security.security_facade"
+            - '@translator'
+        tags:
+            - { name: checkout.source_field_definer }

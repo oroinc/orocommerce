@@ -24,7 +24,7 @@ use OroB2B\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
 class OrderController extends AbstractOrderController
 {
     /**
-     * @Route("/", name="orob2b_order_frontend_index")
+     * @Route("/history", name="orob2b_order_frontend_index")
      * @Layout(vars={"entity_class"})
      * @Acl(
      *      id="orob2b_order_frontend_view",
@@ -37,6 +37,26 @@ class OrderController extends AbstractOrderController
      * @return array
      */
     public function indexAction()
+    {
+        return [
+            'entity_class' => $this->container->getParameter('orob2b_order.entity.order.class'),
+        ];
+    }
+
+    /**
+     * @Route("/open", name="orob2b_order_frontend_open_orders")
+     * @Layout(vars={"entity_class"})
+     * @Acl(
+     *      id="orob2b_order_frontend_view",
+     *      type="entity",
+     *      class="OroB2BOrderBundle:Order",
+     *      permission="ACCOUNT_VIEW",
+     *      group_name="commerce"
+     * )
+     *
+     * @return array
+     */
+    public function openOrdersAction()
     {
         return [
             'entity_class' => $this->container->getParameter('orob2b_order.entity.order.class'),

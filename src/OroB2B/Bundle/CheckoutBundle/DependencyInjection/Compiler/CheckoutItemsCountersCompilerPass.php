@@ -1,0 +1,33 @@
+<?php
+
+namespace OroB2B\Bundle\CheckoutBundle\DependencyInjection\Compiler;
+
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
+
+class CheckoutItemsCountersCompilerPass implements CompilerPassInterface
+{
+    const GRID_CHECKOUT_LISTENER = 'orob2b_checkout.datagrid.checkout_line_items_count_listener';
+    const GRID_CHECKOUT_ITEMS_COUNTER_TAG = 'checkout.items_counter';
+
+    /**
+     * {@inheritDoc}
+     */
+    public function process(ContainerBuilder $container)
+    {
+        if (!$container->has(self::GRID_CHECKOUT_LISTENER)) {
+            return;
+        }
+
+        $definition = $container->getDefinition(self::GRID_CHECKOUT_LISTENER);
+        $taggedServices = $container->findTaggedServiceIds(self::GRID_CHECKOUT_ITEMS_COUNTER_TAG);
+
+        foreach ($taggedServices as $id => $tags) {
+            $definition->addMethodCall(
+                'addCounter',
+                [new Reference($id)]
+            );
+        }
+    }
+}
