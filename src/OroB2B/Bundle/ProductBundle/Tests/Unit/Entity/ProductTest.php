@@ -6,15 +6,19 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
+
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ProductTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,6 +32,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['sku', 'sku-test-01'],
             ['owner', new User()],
             ['organization', new Organization()],
+            ['primaryUnitPrecision',  new ProductUnitPrecision()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
             ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED]
@@ -42,6 +47,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['names', new LocalizedFallbackValue()],
             ['descriptions', new LocalizedFallbackValue()],
             ['shortDescriptions', new LocalizedFallbackValue()],
+            ['images', new ProductImage()],
         ];
 
         $this->assertPropertyCollections(new Product(), $collections);
@@ -71,7 +77,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit((new ProductUnit())->setCode('kg'));
-        $product->addUnitPrecision($unitPrecision);
+        $product->setPrimaryUnitPrecision($unitPrecision);
 
         $this->assertEquals('{"id":123,"product_units":["kg"]}', json_encode($product));
     }
@@ -108,7 +114,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $product->getUnitPrecisions());
 
         // Add new ProductUnitPrecision
-        $this->assertSame($product, $product->addUnitPrecision($unitPrecision));
+        $this->assertSame($product, $product->addAdditionalUnitPrecision($unitPrecision));
         $this->assertCount(1, $product->getUnitPrecisions());
 
         $actual = $product->getUnitPrecisions();
@@ -116,16 +122,41 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([$unitPrecision], $actual->toArray());
 
         // Add already added ProductUnitPrecision
-        $this->assertSame($product, $product->addUnitPrecision($unitPrecision));
+        $this->assertSame($product, $product->addAdditionalUnitPrecision($unitPrecision));
         $this->assertCount(1, $product->getUnitPrecisions());
 
         // Remove ProductUnitPrecision
-        $this->assertSame($product, $product->removeUnitPrecision($unitPrecision));
+        $this->assertSame($product, $product->removeAdditionalUnitPrecision($unitPrecision));
         $this->assertCount(0, $product->getUnitPrecisions());
 
         $actual = $product->getUnitPrecisions();
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
         $this->assertNotContains($unitPrecision, $actual->toArray());
+    }
+
+    public function testImagesRelation()
+    {
+        $productImage = new ProductImage();
+        $product = new Product();
+
+        $this->assertCount(0, $product->getImages());
+
+        $this->assertSame($product, $product->addImage($productImage));
+        $this->assertCount(1, $product->getImages());
+
+        $actual = $product->getImages();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertEquals([$productImage], $actual->toArray());
+
+        $this->assertSame($product, $product->addImage($productImage));
+        $this->assertCount(1, $product->getImages());
+
+        $this->assertSame($product, $product->removeImage($productImage));
+        $this->assertCount(0, $product->getImages());
+
+        $actual = $product->getImages();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertNotContains($productImage, $actual->toArray());
     }
 
     public function testGetUnitPrecisionByUnitCode()
@@ -141,7 +172,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ->setPrecision($unit->getDefaultPrecision());
 
         $product = new Product();
-        $product->addUnitPrecision($unitPrecision);
+        $product->addAdditionalUnitPrecision($unitPrecision);
 
         $this->assertNull($product->getUnitPrecision('item'));
         $this->assertEquals($unitPrecision, $product->getUnitPrecision('kg'));
@@ -160,21 +191,44 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ->setPrecision($unit->getDefaultPrecision());
 
         $product = new Product();
-        $product->addUnitPrecision($unitPrecision);
+        $product->setPrimaryUnitPrecision($unitPrecision);
 
         $this->assertEquals(['kg'], $product->getAvailableUnitCodes());
+    }
+
+    public function testGetAvailableUnits()
+    {
+        $unit = new ProductUnit();
+        $unit
+            ->setCode('itm')
+            ->setDefaultPrecision(3);
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision
+            ->setUnit($unit)
+            ->setPrecision($unit->getDefaultPrecision());
+
+        $product = new Product();
+        $product->addUnitPrecision($unitPrecision);
+
+        $this->assertEquals([$unit], $product->getAvailableUnits());
     }
 
     public function testClone()
     {
         $id = 123;
+        $unit = new ProductUnit();
+        $unit->setCode('kg')->setDefaultPrecision(3);
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setUnit($unit);
         $product = new Product();
-        $product->getUnitPrecisions()->add(new ProductUnitPrecision());
+        $product->addAdditionalUnitPrecision($unitPrecision);
         $product->getNames()->add(new LocalizedFallbackValue());
         $product->getDescriptions()->add(new LocalizedFallbackValue());
         $product->getShortDescriptions()->add(new LocalizedFallbackValue());
         $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
         $product->setVariantFields(['field']);
+        $product->addImage(new ProductImage());
 
         $refProduct = new \ReflectionObject($product);
         $refId = $refProduct->getProperty('id');
@@ -186,6 +240,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $product->getNames());
         $this->assertCount(1, $product->getDescriptions());
         $this->assertCount(1, $product->getShortDescriptions());
+        $this->assertCount(1, $product->getImages());
         $this->assertCount(1, $product->getVariantLinks());
         $this->assertCount(1, $product->getVariantFields());
 
@@ -196,6 +251,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $productCopy->getNames());
         $this->assertCount(0, $productCopy->getDescriptions());
         $this->assertCount(0, $productCopy->getShortDescriptions());
+        $this->assertCount(0, $productCopy->getImages());
         $this->assertCount(0, $productCopy->getVariantLinks());
         $this->assertCount(0, $productCopy->getVariantFields());
     }
@@ -339,5 +395,61 @@ class ProductTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInternalType('array', Product::getStatuses());
         $this->assertNotEmpty('array', Product::getStatuses());
+    }
+
+    public function testUnitPrecisions()
+    {
+        $product = new Product();
+        $unitPrecision1 = $this->createUnitPrecision('kg', 3);
+        $unitPrecision2 = $this->createUnitPrecision('piece', 1);
+        $unitPrecision3 = $this->createUnitPrecision('set', 1);
+
+        $product->setPrimaryUnitPrecision($unitPrecision1);
+        $product->addAdditionalUnitPrecision($unitPrecision2);
+        $product->addAdditionalUnitPrecision($unitPrecision3);
+
+        $expectedAdditionalUnits = [$unitPrecision1, $unitPrecision2, $unitPrecision3];
+        $actualAdditionalUnits = $product->getUnitPrecisions()->toArray();
+
+        $this->assertEquals($expectedAdditionalUnits, array_values($actualAdditionalUnits));
+    }
+
+    /**
+     * @param string $code
+     * @param integer $precisionValue
+     * @return ProductUnitPrecision $unitPrecision
+     */
+    private function createUnitPrecision($code, $precisionValue)
+    {
+        $unit = new ProductUnit();
+        $unit
+            ->setCode($code)
+            ->setDefaultPrecision($precisionValue);
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision
+            ->setUnit($unit)
+            ->setPrecision($unit->getDefaultPrecision());
+        return $unitPrecision;
+    }
+
+    public function testGetImagesByType()
+    {
+        $product = new Product();
+
+        $this->assertCount(0, $product->getImagesByType('main'));
+
+        $image1 = new ProductImage();
+        $image1->addType('main');
+        $image1->addType('additional');
+
+        $image2 = new ProductImage();
+        $image2->addType('main');
+
+        $product->addImage($image1);
+        $product->addImage($image2);
+
+        $this->assertCount(2, $product->getImagesByType('main'));
+        $this->assertCount(1, $product->getImagesByType('additional'));
     }
 }

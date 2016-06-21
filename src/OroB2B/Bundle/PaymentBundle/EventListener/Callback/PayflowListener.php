@@ -2,25 +2,35 @@
 
 namespace OroB2B\Bundle\PaymentBundle\EventListener\Callback;
 
+use Psr\Log\LoggerAwareTrait;
+
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
 
 class PayflowListener
 {
+    use LoggerAwareTrait;
+    
     /** @var Session */
     protected $session;
 
+    /** @var PaymentMethodRegistry */
+    protected $paymentMethodRegistry;
+
     /**
      * @param Session $session
+     * @param PaymentMethodRegistry $paymentMethodRegistry
      */
-    public function __construct(Session $session)
+    public function __construct(Session $session, PaymentMethodRegistry $paymentMethodRegistry)
     {
         $this->session = $session;
+        $this->paymentMethodRegistry = $paymentMethodRegistry;
     }
 
     /**
@@ -28,8 +38,6 @@ class PayflowListener
      */
     public function onError(AbstractCallbackEvent $event)
     {
-        $this->onCallback($event);
-
         $eventData = $event->getData();
         $response = new Response($eventData);
 
@@ -41,39 +49,29 @@ class PayflowListener
     /**
      * @param AbstractCallbackEvent $event
      */
-    public function onCallback(AbstractCallbackEvent $event)
+    public function onNotify(AbstractCallbackEvent $event)
     {
-        $eventData = $event->getData();
-        $response = new Response($eventData);
-
         $paymentTransaction = $event->getPaymentTransaction();
-        $paymentTransactionData = $paymentTransaction->getResponse();
 
-        $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
-        $keys = array_flip($keys);
-        $dataToken = array_intersect_key($eventData, $keys);
-        $transactionDataToken = array_intersect_key($paymentTransactionData, $keys);
-
-        if (!$dataToken || !$transactionDataToken) {
+        if (!$paymentTransaction || $paymentTransaction->getReference()) {
             return;
         }
 
-        if ($dataToken != $transactionDataToken) {
-            return;
-        }
+        $data = $event->getData();
 
         $paymentTransaction
-            ->setReference($response->getReference())
-            ->setResponse(array_replace($paymentTransactionData, $eventData));
+            ->setResponse(array_replace($paymentTransaction->getResponse(), $data));
 
-        if (in_array(
-            $paymentTransaction->getAction(),
-            [PaymentMethodInterface::AUTHORIZE, PaymentMethodInterface::VALIDATE],
-            true
-        )) {
-            $paymentTransaction
-                ->setActive($response->isSuccessful())
-                ->setSuccessful($response->isSuccessful());
+        try {
+            $this->paymentMethodRegistry
+                ->getPaymentMethod($paymentTransaction->getPaymentMethod())
+                ->execute(PayflowGateway::COMPLETE, $paymentTransaction);
+            $event->markSuccessful();
+        } catch (\InvalidArgumentException $e) {
+            if ($this->logger) {
+                // do not expose sensitive data in context
+                $this->logger->error($e->getMessage(), []);
+            }
         }
     }
 }

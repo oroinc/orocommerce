@@ -19,6 +19,8 @@ orob2b:
         subtotal.label: Subtotal
         total.label: Total
         payment_term.label: Payment Term
+        payment_method.label: Payment Method
+        payment_status.label: Payment Status
         billing_address.label: Billing Address
         shipping_address.label: Shipping Address
         price_list.label: 'Price List'
