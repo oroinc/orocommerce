@@ -2,12 +2,8 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\Tests\Integration;
 
-use Oro\Bundle\ImportExportBundle\Context\Context;
-use Oro\Bundle\ImportExportBundle\Processor\ImportProcessor;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy;
 
 /**
  * @dbIsolation
@@ -15,9 +11,6 @@ use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelS
  */
 class SingleWarehouseInventoryLevelImportTest extends BaseWarehouseInventoryLevelImportTestCase
 {
-    /** @var ImportProcessor $importProcessor */
-    protected $importProcessor;
-
     protected function setUp()
     {
         parent::setUp();

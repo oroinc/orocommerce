@@ -3,8 +3,10 @@
 namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
 
 use Doctrine\Common\Inflector\Inflector;
+
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ConfigurableAddOrReplaceStrategy;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -31,6 +33,10 @@ class WarehouseInventoryLevelStrategy extends ConfigurableAddOrReplaceStrategy
         $entityIsRelation = false
     ) {
         $warehouse = $this->getWarehouse($entity);
+
+        if (!$warehouse && $this->isWarehouseRequired($itemData)) {
+            return null;
+        }
 
         $product = $this->checkProductAndInventoryStatus($entity->getProduct());
         if (!$product) {
@@ -155,7 +161,7 @@ class WarehouseInventoryLevelStrategy extends ConfigurableAddOrReplaceStrategy
             $this->strategyHelper->addValidationErrors([$errorMessage], $this->context);
         }
 
-        if (!$productUnit) {
+        if (!$productUnit || empty($productUnit->getCode())) {
             return null;
         }
 
@@ -311,6 +317,6 @@ class WarehouseInventoryLevelStrategy extends ConfigurableAddOrReplaceStrategy
         $manager = $this->strategyHelper->getEntityManager(Warehouse::class);
         $repository = $manager->getRepository(Warehouse::class);
 
-        return $repository->warehouseCount() > 1 && array_key_exists('Quantity', $importData);
+        return $repository->getWarehouseCount() > 1 && array_key_exists('Quantity', $importData);
     }
 }

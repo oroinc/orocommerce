@@ -7,7 +7,7 @@ use Oro\Bundle\ImportExportBundle\Exception\LogicException;
 
 class WarehouseRepository extends EntityRepository
 {
-    public function warehouseCount()
+    public function getWarehouseCount()
     {
         $queryBuilder = $this->createQueryBuilder('w')
             ->select('count(w.id)');
