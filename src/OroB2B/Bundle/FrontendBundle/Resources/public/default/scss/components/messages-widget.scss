@@ -6,8 +6,7 @@
     background: $theme-slight-lightest-gray-color;
   }
 
-  &.messages-widget__list-expanded,
-  &.oro-mp-widget__list-expanded {
+  &.messages-widget__list-expanded {
     .messages-widget__arrow {
       transform: rotate(0deg);
     }
