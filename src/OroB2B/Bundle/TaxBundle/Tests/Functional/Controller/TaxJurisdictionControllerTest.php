@@ -163,7 +163,6 @@ class TaxJurisdictionControllerTest extends WebTestCase
             ->getToken('orob2b_tax_jurisdiction_type')->getValue();
 
         $formData = [
-            'input_action' => '',
             'orob2b_tax_jurisdiction_type' => [
                 'code' => $code,
                 'description' => $description,

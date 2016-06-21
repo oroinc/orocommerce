@@ -221,13 +221,13 @@
 
 .logo {
   display: block;
-  width: 25.8rem;
+  width: 19rem;
   height: 3.5rem;
   margin: 1.2rem 0 0;
   text-indent: -999rem;
+  background-size: 100%;
 
   @media (max-width: 991px) {
-    background-size: 24rem 3.2rem;
     margin: 0 auto;
   }
 }
@@ -3797,19 +3797,6 @@ $gutter: 105px;
     margin-top: 1.2rem;
     margin-bottom: -1.2rem;
   }
-
-
-  div {
-    @include ellipsis;
-
-    &.oro-long-text-expanded {
-      overflow: visible;
-
-      line-height: 1.2;
-
-      white-space: normal;
-    }
-  }
 }
 
 .account-oq__order-breakdown {
@@ -3868,12 +3855,6 @@ $gutter: 105px;
         }
       }
     }
-  }
-}
-
-.oro-long-text-expanded {
-  .cf-play {
-    transform: rotate(90deg);
   }
 }
 
@@ -5136,8 +5117,7 @@ $gutter: 105px;
       display: block;
     }
 
-    &.account-widget__list-expanded,
-    &.oro-mp-widget__list-expanded {
+    &.account-widget__list-expanded {
 
       .cf-play {
         transform: rotate(90deg);
@@ -5182,8 +5162,7 @@ $gutter: 105px;
     background: $base-sidebar-background-color-light;
   }
 
-  &.account-widget__list-expanded,
-  &.oro-mp-widget__list-expanded {
+  &.account-widget__list-expanded {
 
     .account-widget__arrow,
     .oro-mp-widget__arrow {
@@ -5724,10 +5703,6 @@ $gutter: 105px;
   padding: 2rem 2rem 1.5rem;
   border: .1rem solid $base-border-color;
   border-radius: .5rem;
-
-  .oro-more-info-toggler {
-    margin: 0 0 1rem;
-  }
 }
 
 .checkout__multiple-shipping-block__items {
@@ -5955,19 +5930,6 @@ $gutter: 105px;
   }
 }
 
-.checkout-order-summary__tab {
-
-  &.active {
-    .checkout-order-summary__tab__content {
-      display: block;
-    }
-
-    .cf-play {
-      transform: rotate(90deg);
-    }
-  }
-}
-
 .checkout-order-summary__header {
   position: relative;
   padding: 2.1rem 13.5rem 2.1rem 9rem;
@@ -6003,7 +5965,6 @@ $gutter: 105px;
 }
 
 .checkout-order-summary__tab__content {
-  display: none;
   padding: 0 3rem 1rem 9rem;
 
   .oro-grid-table {

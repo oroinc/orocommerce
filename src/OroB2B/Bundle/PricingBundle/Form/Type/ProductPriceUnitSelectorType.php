@@ -38,11 +38,10 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
             return parent::getProductUnits($form, $product);
         }
 
-        /**
-         * @var ProductUnitPrecision $primaryUnitPrecision
-         * @var ProductUnitPrecision[] $additionalUnitPrecisions
-         */
+        /** @var ProductUnitPrecision $primaryUnitPrecision */
         $primaryUnitPrecision = $productForm->get('primaryUnitPrecision')->getData();
+
+        /** @var ProductUnitPrecision[] $additionalUnitPrecisions */
         $additionalUnitPrecisions = $productForm->get('additionalUnitPrecisions')->getData();
         $units = [];
         if ($primaryUnitPrecision) {
