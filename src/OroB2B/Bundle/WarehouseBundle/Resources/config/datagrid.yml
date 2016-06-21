@@ -208,6 +208,9 @@ datagrid:
                         view: orob2bwarehouse/js/app/views/decimals-number-editor-view
                         view_options:
                             decimals: inventoryLevelPrecision
+                    validation_rules:
+                        DecimalsNumber:
+                            decimals: inventoryLevelPrecision
             unit:
                 label:           orob2b.product.productunit.code.label
         sorters:

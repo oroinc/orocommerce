@@ -10,10 +10,18 @@ define(function(require) {
         className: 'decimals-number-editor',
 
         initialize: function(options) {
-            if (!_.isNumber(this.decimals)) {
+            if (!_.isNumber(options.decimals)) {
                 options.decimals = parseInt(options.model.attributes[options.decimals]);
             }
-            DecimalsNumberEditorView .__super__.initialize.apply(this, arguments);
+
+            var decimalsNumberValidator = options.validationRules['DecimalsNumber'];
+            if (typeof decimalsNumberValidator !== undefined) {
+                if (!_.isNumber(decimalsNumberValidator.decimals)) {
+                    decimalsNumberValidator.decimals = options.model.attributes[decimalsNumberValidator.decimals];
+                }
+            }
+
+            DecimalsNumberEditorView.__super__.initialize.apply(this, arguments);
         }
     });
 
