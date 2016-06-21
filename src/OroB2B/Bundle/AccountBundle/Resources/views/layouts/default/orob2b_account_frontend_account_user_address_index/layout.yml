@@ -30,6 +30,8 @@ layout:
             items:
                 account_user_address_view_page:
                     blockType: container
+                    options:
+                        class_prefix: 'user-page'
                 account_user_address_view_account_addresses:
                     blockType: container
                     options:
@@ -66,12 +68,12 @@ layout:
                         addressCreateAclResource: 'orob2b_account_frontend_account_user_address_create'
                         addressUpdateRouteName: 'orob2b_account_frontend_account_user_address_update'
                         addressUpdateAclResource: 'orob2b_account_frontend_account_user_address_update'
-                account_user_address_view_account_user_addresses_head:
-                    blockType: container
                 account_user_address_view_account_user_addresses:
                     blockType: container
                     options:
                         visible: { '@acl': orob2b_account_frontend_account_user_view }
+                account_user_address_view_account_user_addresses_head:
+                    blockType: container
                 account_user_address_view_account_user_addresses_title:
                     blockType: text
                     options:
@@ -83,6 +85,8 @@ layout:
                         route_name: orob2b_account_frontend_account_user_address_create
                         route_parameters: { entityId: {'@value': $data.entity.id }}
                         text: 'orob2b.account.address.add'
+                        attr:
+                            class: btn btn_xsm btn-dark oq-group-btn
                 # Account user address grid
                 account_user_address_view_account_user_addresses_content_grid:
                     blockType: datagrid

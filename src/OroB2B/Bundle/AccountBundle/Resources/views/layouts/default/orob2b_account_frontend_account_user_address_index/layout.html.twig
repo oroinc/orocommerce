@@ -1,9 +1,44 @@
+{% block _account_user_address_view_page_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
+    }) %}
+    <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
 {% block _account_user_address_view_account_addresses_content_list_widget %}
     {{ block_widget(block) }}
 {% endblock %}
 
 {% block _account_user_address_view_account_user_addresses_content_list_widget %}
     {{ block_widget(block) }}
+{% endblock %}
+
+{% block _account_user_address_view_account_user_addresses_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-grid" }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _account_user_address_view_account_user_addresses_head_widget %}
+    <div class="oro-grid__row">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _account_user_address_view_account_user_addresses_title_widget %}
+    <div class="oro-grid__column oro-grid__column-half">
+        <h2 class="account-oq__item__title">
+            <span class="badge badge_sm badge_circle badge_orange"><i class="fa fa-map-o" aria-hidden="true"></i></span>
+            {{ block_widget(block) }}
+        </h2>
+    </div>
+{% endblock %}
+
+{% block _account_user_address_view_account_user_addresses_add_button_widget %}
+    <div class="oro-grid__column oro-grid__column-half text-right">
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block _account_user_address_view_account_addresses_content_grid_widget %}
