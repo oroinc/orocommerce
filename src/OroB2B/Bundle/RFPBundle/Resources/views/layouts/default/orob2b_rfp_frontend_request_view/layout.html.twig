@@ -114,7 +114,10 @@
 
 {% block _rfp_request_view_line_items_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% set maxChars = 80 %}
+    {% set expandTextOptions = {
+        widgetModule: 'orob2bfrontend/default/js/widgets/expand-text-widget',
+        maxLength: 100
+    }|json_encode() %}
     <!-- START ITEMS ORDERED DESKTOP -->
     <div class="account-oq-container hidden-sm hidden-xs">
         <div class="account-oq__item account-oq__item_full">
@@ -166,11 +169,11 @@
                             <tr class="borderless">
                                 <td colspan="4">
                                     <div class="account-oq__order-item-more">
-                                         <div data-oro-expand-widget>
-                                            {% if (requestProduct.comment|length > maxChars) %}
-                                                <i class="cf-play" data-oro-expand-trigger></i>
-                                            {% endif %}
-                                            {{ 'orob2b.frontend.rfp.requestproduct.comment.label'|trans }}: <span data-oro-expand-container max-length="{{ maxChars }}">{{ requestProduct.comment }}</span>
+                                        <div class="expand-text"
+                                             data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                                             data-page-component-options="{{ expandTextOptions }}"
+                                        >
+                                            {{ 'orob2b.frontend.rfp.requestproduct.comment.label'|trans }}: {{ requestProduct.comment }}
                                         </div>
                                     </div>
                                 </td>
@@ -193,7 +196,10 @@
 
 {% block _rfp_request_view_line_items_mobile_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% set maxChars = 100 %}
+    {% set expandTextOptions = {
+        widgetModule: 'orob2bfrontend/default/js/widgets/expand-text-widget',
+        maxLength: 100
+    }|json_encode() %}
     <!-- START ITEMS ORDERED MOBILE -->
     <div class="account-oq-container hidden-lg hidden-md">
         <div class="account-oq__item account-oq__item_full">
@@ -242,11 +248,11 @@
                                             <tr class="borderless t_paddingless">
                                                 <td colspan="2">
                                                     <div class="account-oq__order-item-more">
-                                                        <div data-oro-expand-widget>
-                                                            {% if (requestProduct.comment|length > maxChars) %}
-                                                                <i class="cf-play" data-oro-expand-trigger></i>
-                                                            {% endif %}
-                                                            {{ 'orob2b.frontend.rfp.requestproduct.comment.label'|trans }}: <span data-oro-expand-container max-length="{{ maxChars }}">{{ requestProduct.comment }}</span>
+                                                        <div class="expand-text"
+                                                             data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                                                             data-page-component-options="{{ expandTextOptions }}"
+                                                        >
+                                                            {{ 'orob2b.frontend.rfp.requestproduct.comment.label'|trans }}: {{ requestProduct.comment }}
                                                         </div>
                                                     </div>
                                                 </td>

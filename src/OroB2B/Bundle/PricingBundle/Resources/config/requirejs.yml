@@ -22,6 +22,8 @@ config:
 
         'oro/filter/product-price-filter': 'bundles/orob2bpricing/js/filter/product-price-filter.js'
         'oro/filter/frontend-product-price-filter': 'bundles/orob2bpricing/js/filter/frontend-product-price-filter.js'
-
+    map:
+        '*':
+            'oro/filter/price-attribute-product-price-filter': 'oro/filter/product-price-filter'
     appmodules:
         - orob2bpricing/js/app/modules/validator-constraints-module
