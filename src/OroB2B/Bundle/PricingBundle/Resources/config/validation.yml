@@ -13,6 +13,18 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
             - OroB2B\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection: ~
             - Valid: ~
 
+OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+    constraints:
+        - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        currencies:
+            - NotBlank: ~
+            - Valid: ~
+
 OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule:
     constraints:
         - OroB2B\Bundle\PricingBundle\Validator\Constraints\DatesChain:
@@ -62,3 +74,8 @@ OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig:
                 type: integer
         priceList:
             - NotBlank: ~
+
+OroB2B\Bundle\ProductBundle\Entity\Product:
+    properties:
+        unitPrecisions:
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExists: ~

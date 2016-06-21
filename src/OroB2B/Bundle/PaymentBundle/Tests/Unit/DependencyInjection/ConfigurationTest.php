@@ -4,8 +4,9 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Currency;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
+
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguraton;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -252,15 +253,15 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'scope' => 'app'
                         ],
                         'paypal_payments_pro_allowed_currencies' => [
-                            'value' => Currency::$currencies,
+                            'value' => CurrencyConfiguraton::$defaultCurrencies,
                             'scope' => 'app'
                         ],
                         'payflow_gateway_allowed_currencies' => [
-                            'value' => Currency::$currencies,
+                            'value' => CurrencyConfiguraton::$defaultCurrencies,
                             'scope' => 'app'
                         ],
                         'payment_term_allowed_currencies' => [
-                            'value' =>  Currency::$currencies,
+                            'value' =>  CurrencyConfiguraton::$defaultCurrencies,
                             'scope' => 'app'
                         ],
                         'payment_term_allowed_countries' => [

@@ -113,7 +113,6 @@ class ProductType extends AbstractType
                     ]
                 ]
             )
-            ->add('image', 'oro_image', ['label' => 'orob2b.product.image.label', 'required' => false])
             ->add(
                 'primaryUnitPrecision',
                 ProductPrimaryUnitPrecisionType::NAME,
@@ -138,7 +137,11 @@ class ProductType extends AbstractType
                 'variantFields',
                 ProductCustomFieldsChoiceType::NAME,
                 ['label' => 'orob2b.product.variant_fields.label']
+            )->add(
+                'images',
+                ProductImageCollectionType::NAME
             );
+
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
     }
 

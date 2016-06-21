@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -115,16 +117,9 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'source' => [
                         'query' => [
                             'select' => [
-                                'productImage.filename as image',
                                 'productShortDescriptions.text as shortDescription'
                             ],
                             'join' => [
-                                'left' => [
-                                    [
-                                        'join' => 'product.image',
-                                        'alias' => 'productImage'
-                                    ]
-                                ],
                                 'inner' => [
                                     [
                                         'join' => 'product.shortDescriptions',
@@ -152,21 +147,6 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 DataGridThemeHelper::VIEW_TILES,
                 [
                     'name' => 'grid-name',
-                    'source' => [
-                        'query' => [
-                            'select' => [
-                                'productImage.filename as image',
-                            ],
-                            'join' => [
-                                'left' => [
-                                    [
-                                        'join' => 'product.image',
-                                        'alias' => 'productImage'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
                     'properties' => [
                         'product_units' => [
                             'type' => 'field',
@@ -261,28 +241,35 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $products = [];
         foreach ($productWithImages as $index => $productId) {
-            $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product', ['getId', 'getImage']);
+            $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product', ['getId', 'getImages']);
             $product->expects($this->any())
                 ->method('getId')
                 ->willReturn($productId);
+
             $image = $this->getMock('Oro\Bundle\AttachmentBundle\Entity\File');
-            $product->expects($this->once())
+
+            $productImage = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\ProductImage', ['getImage']);
+            $productImage->expects($this->any())
                 ->method('getImage')
                 ->willReturn($image);
-            $products[] = $product;
+
+            $product->expects($this->once())
+                ->method('getImages')
+                ->willReturn(new ArrayCollection([$productImage]));
+            $products[$productId] = $product;
 
             $this->attachmentManager->expects($this->at($index))
                 ->method('getFilteredImageUrl')
                 ->with(
                     $image,
-                    'product_large'
+                    FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER
                 )
                 ->willReturn($productId);
         }
 
         $productRepository->expects($this->once())
             ->method('getProductsWithImage')
-            ->with($ids)
+            ->with($ids, FrontendProductDatagridListener::PRODUCT_IMAGE_TYPE)
             ->willReturn($products);
         $productUnitRepository->expects($this->once())
             ->method('getProductsUnits')
