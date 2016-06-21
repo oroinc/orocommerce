@@ -44,9 +44,7 @@ class ProductUnitPrecisionListener
             $this->eventDispatcher
                 ->dispatch(ProductPricesRemoveBefore::NAME, new ProductPricesRemoveBefore($args));
             
-            /**
-             * @var ProductPriceRepository $repository
-             */
+            /** @var ProductPriceRepository $repository */
             $repository = $event->getEntityManager()->getRepository($this->productPriceClass);
             $repository->deleteByProductUnit($product, $unit);
             $this->eventDispatcher

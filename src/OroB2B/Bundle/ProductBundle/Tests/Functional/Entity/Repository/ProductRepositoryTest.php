@@ -259,7 +259,7 @@ class ProductRepositoryTest extends WebTestCase
     public function testGetProductsWithImage(array $products, array $expectedProducts)
     {
         $result = $this->repository->getProductsWithImage($this->referencesToEntities($products));
-        $this->assertEquals($this->referencesToEntities($expectedProducts), $result);
+        $this->assertEquals($this->referencesToEntities($expectedProducts), array_values($result));
     }
 
     /**

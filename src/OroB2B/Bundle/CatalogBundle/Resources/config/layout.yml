@@ -13,3 +13,12 @@ services:
             - [setName, ['category_list']]
         tags:
             - { name: layout.block_type, alias: category_list }
+
+    orob2b_catalog.layout.data_provider.current_category:
+        class: 'OroB2B\Bundle\CatalogBundle\Layout\DataProvider\CurrentCategoryProvider'
+        public: true
+        arguments:
+            - "@orob2b_catalog.handler.request_product"
+            - "@orob2b_catalog.repository.category"
+        tags:
+            - { name: layout.data_provider, alias: category }

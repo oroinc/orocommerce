@@ -127,6 +127,6 @@ orob2b:
             use_authorized_card: '< Use an existing card'
 
         admin:
-            payment_term.label: 'Payment Term'
-            paypal_payments_pro.label: 'Credit Card (Paypal Payments Pro)'
-            payflow_gateway.label: 'Credit Card (Payflow Gateway)'
+            payment_term.label: 'Payment Terms'
+            paypal_payments_pro.label: 'Paypal Payments Pro'
+            payflow_gateway.label: 'Payflow Gateway'

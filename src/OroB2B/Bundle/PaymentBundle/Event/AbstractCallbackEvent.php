@@ -2,21 +2,15 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Response;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-
-abstract class AbstractCallbackEvent extends Event
+abstract class AbstractCallbackEvent extends AbstractTransactionEvent
 {
     /** @var string */
     protected $data;
 
     /** @var Response */
     protected $response;
-
-    /** @var PaymentTransaction */
-    protected $paymentTransaction;
 
     /**
      * @param array $data
@@ -25,7 +19,7 @@ abstract class AbstractCallbackEvent extends Event
     {
         $this->data = $data;
 
-        $this->response = new Response();
+        $this->response = Response::create(null, Response::HTTP_FORBIDDEN);
     }
 
     /**
@@ -66,19 +60,13 @@ abstract class AbstractCallbackEvent extends Event
      */
     abstract public function getEventName();
 
-    /**
-     * @return PaymentTransaction
-     */
-    public function getPaymentTransaction()
+    public function markSuccessful()
     {
-        return $this->paymentTransaction;
+        $this->response->setStatusCode(Response::HTTP_OK);
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     */
-    public function setPaymentTransaction(PaymentTransaction $paymentTransaction)
+    public function markFailed()
     {
-        $this->paymentTransaction = $paymentTransaction;
+        $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
     }
 }
