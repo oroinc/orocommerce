@@ -2,7 +2,10 @@
 
 namespace OroB2B\Bundle\SEOBundle\Tests\Functional\Controller;
 
+use Symfony\Component\DomCrawler\Crawler;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\PhpUtils\ArrayUtil;
 
 use OroB2B\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadProductMetaData;
 
@@ -19,7 +22,7 @@ class ProductControllerTest extends WebTestCase
 
     public function testViewProduct()
     {
-        $product = $this->getProduct();
+        $product = $this->getReference('product.1');
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $product->getId()]));
 
@@ -28,23 +31,36 @@ class ProductControllerTest extends WebTestCase
 
     public function testEditProduct()
     {
-        $product = $this->getProduct();
+        $product = $this->getReference('product.1');
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $product->getId()]));
 
         $this->checkSeoSectionExistence($crawler);
 
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
-        $parameters = [
-            'input_action' => 'save_and_stay',
-            'orob2b_catalog_category' => ['_token' => $crfToken],
-        ];
-        $parameters['orob2b_product_product']['metaTitles']['values']['default'] = LoadProductMetaData::META_TITLES;
-        $parameters['orob2b_product_product']['metaDescriptions']['values']['default'] =
-            LoadProductMetaData::META_DESCRIPTIONS;
-        $parameters['orob2b_product_product']['metaKeywords']['values']['default'] = LoadProductMetaData::META_KEYWORDS;
-
         $form = $crawler->selectButton('Save')->form();
+        $parameters = ArrayUtil::arrayMergeRecursiveDistinct(
+            $form->getPhpValues(),
+            [
+                'input_action' => 'save_and_stay',
+                'orob2b_product_product' => [
+                    'metaTitles' => [
+                        'values' => [
+                            'default' => LoadProductMetaData::META_TITLES
+                        ]
+                    ],
+                    'metaDescriptions' => [
+                        'values' => [
+                            'default' => LoadProductMetaData::META_DESCRIPTIONS
+                        ]
+                    ],
+                    'metaKeywords' => [
+                        'values' => [
+                            'default' => LoadProductMetaData::META_KEYWORDS
+                        ]
+                    ]
+                ]
+            ]
+        );
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $parameters);
@@ -58,16 +74,10 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(LoadProductMetaData::META_KEYWORDS, $html);
     }
 
-    protected function getProduct()
-    {
-        $repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_product.entity.product.class')
-        );
-
-        return $repository->findOneBy(['sku' => 'product.1']);
-    }
-
-    public function checkSeoSectionExistence($crawler)
+    /**
+     * @param Crawler $crawler
+     */
+    public function checkSeoSectionExistence(Crawler $crawler)
     {
         $result = $this->client->getResponse();
 

@@ -55,14 +55,22 @@
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-order-summary"}) %}
     {% set workfowItem = checkout.workflowItem %}
     <div{{ block('block_attributes') }}>
-        <div class="checkout-order-summary__tab {% if app.request.cookies.has('order-tab:state') %}active{% endif %}" data-tab="">
+        <div class="checkout-order-summary__tab collapse-view {% if app.request.cookies.has('order-tab:state') %}expanded{% endif %}"
+             data-page-component-module="oroui/js/app/components/jquery-widget-component"
+             data-page-component-options="{{ {
+                 widgetModule: 'orob2bfrontend/default/js/widgets/collapse-widget',
+                 animationSpeed: 0
+             }|json_encode() }}"
+        >
             <div class="checkout-order-summary__header">
-                <div data-tab-trigger="" data-allow-tab-toggle="true">
+                <div data-collapse-trigger>
                     <div class="checkout-order-summary__header__icon-group">
                         <span class="badge badge_sm badge_orange badge_circled-corners mmr7-md mmr7-sm">
                           <i class="cf-basket"></i>
                         </span>
-                        <i class="cf-play"></i>
+                        <span class="collapse-view__trigger">
+                            <i class="collapse-view__trigger-icon cf-play cf--gray"></i>
+                        </span>
                     </div>
                     <h3 class="checkout-order-summary__header__title">{{ 'orob2b.checkout.order_summary.label'|trans }}</h3>
                     <div class="checkout-order-summary__header__desc">
@@ -85,7 +93,7 @@
 
 {% block _checkout_order_summary_table_widget %}
     {% set workfowItem = checkout.workflowItem %}
-    <div class="checkout-order-summary__tab__content">
+    <div class="checkout-order-summary__tab__content collapse-view__container" data-collapse-container>
         <table class="oro-grid-table table-scrollable"  
                data-page-component-module="oroui/js/app/components/view-component"  
                data-page-component-options="{{ {view: 'orob2bfrontend/js/app/views/scrollable-table'}|json_encode }}">
