@@ -41,7 +41,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'configs'  => [[]],
                 'expected' => [
                     'settings' => [
-                        'resolved' => 1,
+                        'resolved' => true,
                         'backend_product_visibility' => [
                             'value' => [
                                 Product::INVENTORY_STATUS_IN_STOCK,
@@ -54,6 +54,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                                 Product::INVENTORY_STATUS_IN_STOCK,
                                 Product::INVENTORY_STATUS_OUT_OF_STOCK
                             ],
+                            'scope' => 'app'
+                        ],
+                        'frontend_open_orders_separate_page' => [
+                            'value' => false,
                             'scope' => 'app'
                         ]
                     ]
