@@ -101,4 +101,3 @@ class DefaultProductUnitProvider
         return $productUnitPrecision->setUnit($unit)->setPrecision($precision);
     }
 }
-
