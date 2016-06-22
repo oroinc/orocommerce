@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - '@setOption':
+              id: datagrid_toolbar_button_container
+              optionName: visible
+              optionValue: true
+        - '@remove':
+              id: account_user_address_view_account_user_addresses_add_button_container
+        - '@move':
+              id: account_user_address_view_account_user_addresses_add_button
+              parentId: datagrid_toolbar_button_container
+    conditions:
+        - '@gte': [$context.accountUserAddressCount, 8]

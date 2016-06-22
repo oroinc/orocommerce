@@ -72,12 +72,22 @@ layout:
                     blockType: container
                     options:
                         visible: { '@acl': orob2b_account_frontend_account_user_view }
+                        attr:
+                            class: oro-grid
                 account_user_address_view_account_user_addresses_head:
                     blockType: container
+                    options:
+                        attr:
+                            class: oro-grid__row
                 account_user_address_view_account_user_addresses_title:
                     blockType: text
                     options:
                         text: {'@value': 'orob2b.account.frontend.account_user_address_book.account_user_addresses'}
+                        class_prefix: 'oro-grid__column'
+                account_user_address_view_account_user_addresses_add_button_container:
+                    blockType: container
+                    options:
+                        class_prefix: 'oro-grid__column'
                 account_user_address_view_account_user_addresses_add_button:
                     blockType: link
                     options:
@@ -119,6 +129,7 @@ layout:
                         account_user_address_view_account_user_addresses:
                             account_user_address_view_account_user_addresses_head:
                                 account_user_address_view_account_user_addresses_title: ~
-                                account_user_address_view_account_user_addresses_add_button: ~
+                                account_user_address_view_account_user_addresses_add_button_container:
+                                  account_user_address_view_account_user_addresses_add_button: ~
                             account_user_address_view_account_user_addresses_content_grid: ~
                             account_user_address_view_account_user_addresses_content_list:
