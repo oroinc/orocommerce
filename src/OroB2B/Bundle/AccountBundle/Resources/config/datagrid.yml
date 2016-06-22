@@ -1215,13 +1215,11 @@ datagrid:
         actions:
             update:
                 type:          navigate
-                label:         oro.grid.action.update
                 link:          update_link
-                icon:          edit
+                icon:          pencil
                 acl_resource:  orob2b_account_frontend_account_user_address_update
             delete:
                 type:          delete
-                label:         oro.grid.action.delete
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_account_account_user_delete

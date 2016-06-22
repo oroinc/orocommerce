@@ -1406,10 +1406,33 @@
         }
       }
 
+      .launchers-list {
+        text-align: right;
+
+        white-space: nowrap;
+      }
+
       .launcher-item {
+        float:none;
+        padding: 0 0 0 10px;
+        display: inline-block;
+        border-left: 1px solid $base-font-color-lightest;
+
+        &:first-child {
+          border: 0;
+        }
+        
         a.action{
-          padding-left: 18px;
           position: relative;
+
+          min-width: 12px;
+          min-height: 18px;
+          padding-left: 18px;
+
+
+          &:hover, &:hover, &:active {
+            background: transparent;
+          }
 
           [class^='icon-'].hide-text{
             position: absolute;
@@ -1418,7 +1441,7 @@
 
             &:after,
             &:before {
-              color: $base-link-color;
+              color: $base-font-color-lightest;
             }
           }
         }
