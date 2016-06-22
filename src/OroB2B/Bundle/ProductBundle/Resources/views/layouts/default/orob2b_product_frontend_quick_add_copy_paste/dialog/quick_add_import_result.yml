@@ -53,7 +53,7 @@ layout:
                         form: { '@value': $data.orob2b_product_quick_add_form_provider }
                         form_route_name: 'orob2b_product_frontend_quick_add_validation_result'
                 quick_add_form_fields:
-                    blockType: form
+                    blockType: form_fields
                     options:
                         form: { '@value': $data.orob2b_product_quick_add_form_provider }
                 quick_add_form_end:
