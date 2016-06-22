@@ -872,12 +872,12 @@ services:
             - '@oro_entity.doctrine_helper'
 
     orob2b_account.provider.frontend_account_user_address_grid:
-        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserAddressGridProvider'
+        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserAddressCountProvider'
         tags:
-            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_address_show_grid }
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_address_count }
 
     orob2b_account.provider.frontend_account_address_grid:
-        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountAddressGridProvider'
+        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountAddressCountProvider'
         tags:
-            - { name: layout.data_provider, alias: orob2b_account_frontend_account_address_show_grid }
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_address_count }
 

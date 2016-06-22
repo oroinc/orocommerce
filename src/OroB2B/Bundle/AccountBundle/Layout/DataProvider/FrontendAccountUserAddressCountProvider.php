@@ -7,10 +7,8 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
-class FrontendAccountUserAddressGridProvider extends AbstractServerRenderDataProvider
+class FrontendAccountUserAddressCountProvider extends AbstractServerRenderDataProvider
 {
-    const ADDRESS_DIPLAY_CHANGE_THRESHOLD = 8;
-
     /**
      * {@inheritdoc}
      */
@@ -19,6 +17,6 @@ class FrontendAccountUserAddressGridProvider extends AbstractServerRenderDataPro
         /** @var AccountUser $accountUser */
         $accountUser = $context->data()->get('entity');
 
-        return $accountUser->getAddresses()->count() >= self::ADDRESS_DIPLAY_CHANGE_THRESHOLD;
+        return $accountUser->getAddresses()->count();
     }
 }
