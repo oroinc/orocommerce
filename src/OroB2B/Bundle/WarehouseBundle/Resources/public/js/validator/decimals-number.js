@@ -7,7 +7,7 @@ define([
     var options = localeSettings.getNumberFormats('decimal'),
         decimalSeparator = options.decimal_separator_symbol,
         defaultParam = {
-            message: 'This value should have {{ limit }} or less decimals.'
+            message: 'This value should have {{ limit }} or less decimal digits.'
         };
 
     return [
@@ -17,15 +17,14 @@ define([
                 return true;
             }
 
-            var numberOfDecimals = parseInt(param.decimals);
-            if (!_.isNumber(numberOfDecimals)) {
+            if (!_.isNumber(param.decimals)) {
                 return true;
             }
 
             var decimals = value.split(decimalSeparator).pop();
             decimals.replace(' ', '');
 
-            return isNaN(decimals) || decimals.length <= numberOfDecimals;
+            return isNaN(decimals) || decimals.length <= param.decimals;
         },
         function (param, element) {
             var value = this.elementValue(element);
