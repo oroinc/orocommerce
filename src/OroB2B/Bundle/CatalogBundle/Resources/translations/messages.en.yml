@@ -18,6 +18,7 @@ orob2b:
             products.label:              'Products'
             include_subcategories.label: 'Include Sub-Categories'
             unit.empty.value:            'Parent Category'
+            unit_precision.label:        'Unit Precision'
             unit.label:                  'Unit of Quantity'
             precision.label:             'Precision'
 

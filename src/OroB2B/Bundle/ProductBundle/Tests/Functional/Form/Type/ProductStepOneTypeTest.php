@@ -46,7 +46,7 @@ class ProductStepOneTypeTest extends WebTestCase
         $form = $this->formFactory->create(ProductStepOneType::NAME, []);
         $form->submit($submitData);
         $this->assertEquals($isValid, $form->isValid());
-        if ($isValid) {
+        if ($isValid && $submitData['category']) {
             $this->assertEquals($submitData['category'], $form->get('category')->getViewData());
         }
     }

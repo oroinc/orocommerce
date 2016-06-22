@@ -197,7 +197,6 @@ class ProductController extends Controller
             $formData = $form->all();
 
             if (!empty($formData)) {
-
                 if ($formData['category']->getData()) {
                     $provider = $this->get('orob2b_product.provider.default_product_unit_provider');
                     $provider->setCategoryId($formData['category']->getData()->getId());
