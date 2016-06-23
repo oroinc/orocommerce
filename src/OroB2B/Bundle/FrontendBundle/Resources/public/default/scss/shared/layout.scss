@@ -654,11 +654,6 @@
 .select2-container {
   a.select2-choice {
     height: auto;
-    padding: 8px !important;
-
-    .select2-chosen {
-      padding-right: 20px !important;
-    }
 
     .select2-arrow,
     .select2-search-choice-close {
@@ -668,12 +663,27 @@
 
   .select2-chosen {
     max-width: 215px;
-
     margin-right: 12px;
   }
+
   &.input.input_block {
     display: inline-block;
     width: auto;
+  }
+}
+
+.action-selectbox_custom_in-pager {
+  display: inline-block;
+  max-width: 165px;
+
+  .select2-container {
+    a.select2-choice {
+      padding: 8px !important;
+
+      .select2-chosen {
+        padding-right: 20px !important;
+      }
+    }
   }
 }
 
@@ -708,9 +718,4 @@
   background: transparent;
 
   cursor: pointer;
-}
-
-.action-selectbox_custom_in-pager {
-  display: inline-block;
-  max-width: 165px;
 }
