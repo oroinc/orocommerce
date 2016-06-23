@@ -1,13 +1,13 @@
 layout:
     actions:
         - '@add':
-            id: account_user_address_view_account_user_addresses_content_grid
-            parentId: account_user_address_view_account_user_addresses
-            blockType: datagrid
-            options:
-                grid_name: frontend-account-account-user-address-grid
-                grid_parameters:
-                    frontend_owner_id: {'@value': $data.entity.id}
+              id: account_user_address_view_account_user_addresses_content_grid
+              parentId: account_user_address_view_account_user_addresses
+              blockType: datagrid
+              options:
+                  grid_name: frontend-account-account-user-address-grid
+                  grid_parameters:
+                      frontend_owner_id: {'@value': $data.entity.id}
         - '@setOption':
               id: datagrid_toolbar_button_container
               optionName: visible
@@ -18,4 +18,4 @@ layout:
               id: account_user_address_view_account_user_addresses_add_button
               parentId: datagrid_toolbar_button_container
     conditions:
-        - '@gte': [$context.orob2b_account_frontend_account_user_address_count, 8]
+          '@gte': [$context.account_user_address_count, 8]
