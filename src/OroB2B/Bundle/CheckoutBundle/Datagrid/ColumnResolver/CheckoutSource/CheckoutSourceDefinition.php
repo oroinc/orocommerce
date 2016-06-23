@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutSource;
+namespace OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnResolver\CheckoutSource;
 
 /**
  * Checkouts grid source definition DTO

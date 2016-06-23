@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Cache\Cache;
 
+use OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnResolver\ColumnResolverInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -58,6 +59,11 @@ class CheckoutGridListener
      * @var TotalProcessorProvider
      */
     protected $totalProcessor;
+
+    /**
+     * @var ColumnResolverInterface[]
+     */
+    private $additionalColumnResolvers = [];
 
     /**
      * @param ConfigProvider $configProvider
@@ -136,6 +142,15 @@ class CheckoutGridListener
                 $ch = $em->find(BaseCheckout::class, $id);
                 $record->addData(['total' => $this->totalProcessor->getTotal($ch->getSourceEntity())->getAmount()]);
             }
+        }
+
+        $test = [1, 2, 3];
+
+        $test[] = 4;
+        
+
+        foreach ($this->additionalColumnResolvers as $additionalColumnResolver) {
+            $additionalColumnResolver->resolveColumn($event);
         }
     }
 
@@ -372,5 +387,13 @@ class CheckoutGridListener
                 );
             }
         }
+    }
+
+    /**
+     * @param ColumnResolverInterface $columnResolver
+     */
+    public function addColumnResolver(ColumnResolverInterface $columnResolver)
+    {
+        $this->additionalColumnResolvers[] = $columnResolver;
     }
 }

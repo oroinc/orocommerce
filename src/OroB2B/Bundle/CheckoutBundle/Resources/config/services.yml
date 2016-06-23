@@ -131,6 +131,25 @@ services:
         calls:
             - [ setNamespace, [ 'orob2b_checkout_grid_totals_metadata' ] ]
 
+    orob2b_checkout.repository.base_checkout:
+        class: Doctrine\ORM\EntityRepository
+        public: false
+        factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
+        arguments:
+            - '%orob2b_checkout.entity.base_checkout.class%'
+
+    orob2b_checkout.datagrid.column_resolver.items_count:
+        class: OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnResolver\ItemsCountColumnResolver
+        arguments:
+            - '@orob2b_checkout.repository.base_checkout'
+
+    orob2b_checkout.datagrid.column_resolver.started_from:
+        class: OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnResolver\StartedFromColumnResolver
+        arguments:
+            - '@orob2b_checkout.repository.base_checkout'
+            - '@translator'
+            - '@oro_security.security_facade'
+
     orob2b_checkout.datagrid.checkout_grid_listener:
         class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener
         arguments:
@@ -141,15 +160,10 @@ services:
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
         calls:
             - [setCache, ['@orob2b_checkout.grid_totals_metadata.cache']]
+            - [addColumnResolver, ['@orob2b_checkout.datagrid.column_resolver.items_count']]
+            - [addColumnResolver, ['@orob2b_checkout.datagrid.column_resolver.started_from']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
-
-    orob2b_checkout.datagrid.checkout_line_items_count_listener:
-        class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutLineItemsCountListener
-        arguments:
-            - '@doctrine'
-        tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
 
     orob2b_checkout.datagrid.checkout_grid_column_filter:
@@ -165,10 +179,3 @@ services:
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: oro_workflow.condition, alias: order_line_item_has_count }
-
-    orob2b_checkout.datagrid.checkout_source_field_listener:
-        class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutSourceFieldListener
-        arguments:
-            - '@doctrine'
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
