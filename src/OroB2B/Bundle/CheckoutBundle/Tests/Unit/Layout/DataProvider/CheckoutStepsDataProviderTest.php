@@ -84,8 +84,6 @@ class CheckoutStepsDataProviderTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($expected);
         }
 
-        $checkout->setWorkflowItem($workflowItem);
-
         $this->workflowManager->expects($this->once())
             ->method('getWorkflow')
             ->with($workflowItem)
@@ -93,6 +91,7 @@ class CheckoutStepsDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $context = new LayoutContext();
         $context->data()->set('checkout', null, $checkout);
+        $context->data()->set('workflowItem', null, $workflowItem);
 
         $result = $this->provider->getData($context);
         $this->assertEquals($expected, $result);

@@ -32,8 +32,7 @@ class ContinueTransitionDataProviderTest extends AbstractTransitionDataProviderT
         $workflowItem = new WorkflowItem();
         $step = new WorkflowStep();
         $workflowItem->setCurrentStep($step);
-        $checkout->setWorkflowItem($workflowItem);
-        $context = $this->prepareContext($checkout);
+        $context = $this->prepareContext($checkout, $workflowItem);
 
         $transitionWithoutForm = new Transition();
         $transitionWithoutForm->setName('transition1');
