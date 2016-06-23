@@ -120,7 +120,7 @@
                                     <td class="va-t_md">
                                         <h3 class="product-item__title product-item__title_in-cart mb1-md">
                                             {% if lineItem.product is not null %}
-                                                <a href="{{ path('orob2b_product_frontend_product_view', {'id':lineItem.product.id}) }}">{{ lineItem.product.defaultName }}</a>
+                                                <a href="{{ path('orob2b_product_frontend_product_view', {'id':lineItem.product.id}) }}" tabindex="-1">{{ lineItem.product.defaultName }}</a>
                                             {% else %}
                                                 {{ lineItem.freeFormProduct }}
                                             {% endif %}
