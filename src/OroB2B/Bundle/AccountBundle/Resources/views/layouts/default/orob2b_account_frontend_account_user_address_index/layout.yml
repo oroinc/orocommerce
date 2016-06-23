@@ -103,12 +103,12 @@ layout:
             tree:
                 content:
                     account_user_address_view_page:
-                        account_user_address_view_account_addresses:
-                            account_user_address_view_account_addresses_head:
-                                account_user_address_view_account_addresses_title: ~
-                                account_user_address_view_account_addresses_add_button: ~
-                            account_user_address_view_account_addresses_content_grid: ~
-                            account_user_address_view_account_addresses_content_list: ~
+                        #account_user_address_view_account_addresses:
+                        #    account_user_address_view_account_addresses_head:
+                        #        account_user_address_view_account_addresses_title: ~
+                        #        account_user_address_view_account_addresses_add_button: ~
+                        #    account_user_address_view_account_addresses_content_grid: ~
+                        #    account_user_address_view_account_addresses_content_list: ~
                         account_user_address_view_account_user_addresses:
                             account_user_address_view_account_user_addresses_head:
                                 account_user_address_view_account_user_addresses_title: ~

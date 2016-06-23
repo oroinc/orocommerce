@@ -30,12 +30,14 @@ class AccountUserAddressController extends Controller
      */
     public function indexAction()
     {
+        $addresses = $this->getUser()->getAccount()->getAddresses();
         return [
             'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user_address.class'),
             'data' => [
                 'entity' => $this->getUser(),
                 'accountUserAddressCount' => $this->getUser()->getAddresses()->count(),
-                'accountAddressCount' => $this->getUser()->getAccount()->getAddresses()->count()
+                'accountAddress' => $addresses,
+                'accountAddressCount' => $addresses->count(),
             ]
         ];
     }

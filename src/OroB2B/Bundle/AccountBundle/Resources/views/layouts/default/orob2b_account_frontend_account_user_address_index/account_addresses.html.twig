@@ -1,0 +1,5 @@
+{% block _account_user_address_view_account_addresses_widget %}
+    {% for address in addresses %}
+        <p>{{ address.label }}</p>
+    {% endfor %}
+{% endblock %}

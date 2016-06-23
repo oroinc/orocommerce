@@ -1,0 +1,18 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'account_addresses.html.twig'
+
+        - '@addTree':
+            items:
+                account_user_address_view_account_addresses:
+                    blockType: container
+                    options:
+                        vars:
+                            addresses: { '@value': $data.accountAddress }
+
+            tree:
+                account_user_address_view_page:
+                    account_user_address_view_account_addresses: ~
+    conditions:
+        '@acl': orob2b_account_frontend_account_view
