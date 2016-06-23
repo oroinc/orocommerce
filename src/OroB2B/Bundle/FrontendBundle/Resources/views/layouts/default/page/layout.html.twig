@@ -74,7 +74,7 @@
     {% endfor %}
     {% set hasSidebarLeft = blocks.sidebar_left is defined and visibleSidebarChildren|length > 0 %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " content" ~ (hasSidebarLeft ? " content_has-sidebar")
+        class: attr.class|default('') ~ " content" ~ (hasSidebarLeft ? " content--has-sidebar")
     }) %}
     <div{{ block('block_attributes') }}>
         <div class="content__container">

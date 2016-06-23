@@ -1,6 +1,6 @@
 {% block _check_email_page_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full {{ class_prefix }}_pos-absolute_vert-centered"
+        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}--full {{ class_prefix }}--pos-absolute-vert-centered"
     }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}

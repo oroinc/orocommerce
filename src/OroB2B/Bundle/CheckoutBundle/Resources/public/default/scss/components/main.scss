@@ -1,0 +1,210 @@
+.page-container {
+  @media (max-width: $screen-md) {
+    margin: 0 -15px 5px;
+  }
+}
+
+.checkout {
+  padding: 30px 35px;
+  border-radius: 5px;
+
+  background: $theme-lightest-gray-color;
+
+  + & {
+    margin-top: 2px;
+  }
+
+  @media (max-width: $screen-md) {
+    padding: 15px;
+    border-radius: 0;
+  }
+
+  &.active {
+    @media (max-width: $screen-md) {
+      .checkout__body {
+        display: block;
+      }
+    }
+  }
+
+  &__head {
+    position: relative;
+
+    padding: 0 0 0 50px;
+
+    @media (max-width: $screen-md) {
+      padding: 0 50px 0 40px;
+    }
+
+    &__edit-link {
+      position: absolute;
+      top: 5px;
+      right: 0;
+
+      @media (min-width: 992px) {
+        display: none;
+      }
+    }
+  }
+
+  &__body {
+    padding: 10px 0 0 50px;
+
+    @media (max-width: $screen-md) {
+      display: none;
+      padding: 10px 0 0;
+    }
+  }
+
+  &__title {
+    display: block;
+
+    color: $base-font-color;
+    font-size: 20px;
+    line-height: 1.65;
+    font-weight: 400;
+
+    &:hover, &:focus, &:active {
+      color: $base-font-color;
+      text-decoration: none;
+    }
+
+    .badge {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    @media (max-width: 991px) {
+      font-size: 16px;
+      line-height: 1.625;
+
+      .badge {
+        &.badge_md {
+          width: 26px;
+          height: 26px;
+
+          font-size: 13px;
+          line-height: 2;
+
+        }
+      }
+    }
+  }
+}
+
+.scrollable-content {
+  max-height: 490px;
+  width: 100%;
+
+  overflow: auto;
+
+  &__table {
+    width:100%;
+  }
+}
+
+// *** The Code below has ot implemented yet!!!
+.checkout-page-container_in-content {
+  padding-left: 24rem;
+
+  @media (max-width: 991px) {
+    padding-left: 0;
+
+    .checkout-page-title {
+      padding: 0 1.5rem;
+    }
+  }
+
+  .checkout__form__col {
+
+    &.form__col_x6 {
+      @media (min-width: 992px) and (max-width: 1250px) {
+        float: none;
+        width: 100%;
+      }
+    }
+  }
+}
+
+.checkout-page-container_experimental {
+
+  @media (max-width: 991px) {
+    .checkout-page-title {
+      padding: 0 1.5rem;
+    }
+  }
+}
+
+.checkout__multiple-shipping-block {
+  background: #fff;
+  padding: 2rem 2rem 1.5rem;
+  border: .1rem solid $base-border-color;
+  border-radius: .5rem;
+
+  .oro-more-info-toggler {
+    margin: 0 0 1rem;
+  }
+}
+
+.checkout__multiple-shipping-block__items {
+  > div {
+    margin: 1rem 0 0;
+    padding: 0 0 1rem;
+    border-bottom: .1rem solid $base-border-color;
+
+    &:last-child {
+      border: 0;
+    }
+  }
+}
+
+.checkout__multiple-shipping-block__title {
+  font-size: 1.4rem;
+  line-height: 1.7rem;
+  font-weight: 400;
+  margin: 0 0 .5rem;
+}
+
+.checkout__multiple-shipping-block__more-link {
+  cursor: pointer;
+  font-size: 1.4rem;
+}
+
+.checkout__edit-link_sticky {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  @media (min-width: 992px) {
+    display: none;
+  }
+}
+
+.checkout__order-review-info_mobile {
+
+  h3 {
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    margin: 1.8rem 0 .8rem;
+  }
+
+  div {
+    font-style: italic;
+  }
+
+  @media (min-width: 992px) {
+    display: none;
+  }
+}
+
+.edit-order-list-link-mobile-container {
+  text-align: left;
+  border-top: .1rem solid $base-border-color;
+  padding: 1rem 0 0;
+  margin: 1rem 0 0;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}

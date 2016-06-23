@@ -1,6 +1,6 @@
 {% block _checkout_content_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-page-container"}) %}
-    <h1 class="checkout-page-title">{{ 'orob2b.checkout.entity_label'|trans }}</h1>
+    {% set attr = attr|merge({class: attr.class|default('') ~ " page-container"}) %}
+    <h1 class="page-title page-title--decreased">{{ 'orob2b.checkout.entity_label'|trans }}</h1>
     <div {{ block('block_attributes') }}
         data-role="checkout-content"
         data-page-component-module="oroui/js/app/components/view-component"

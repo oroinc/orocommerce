@@ -2,46 +2,53 @@
   display: inline-block;
   vertical-align: middle;
 
-  &.credit-card-icon_mastercard {
-    width: 3.9rem;
-    height: 2.5rem;
+  &_mastercard {
+    width: 39px;
+    height: 25px;
+
     background: url('../images/payments/mastercard.png') no-repeat;
   }
 
-  &.credit-card-icon_visa {
-    width: 4.1rem;
-    height: 2.5rem;
+  &_visa {
+    width: 41px;
+    height: 25px;
+
     background: url('../images/payments/visa.png') no-repeat;
   }
 
-  &.credit-card-icon_american_express {
-    width: 4rem;
-    height: 2.5rem;
+  &_american_express {
+    width: 40px;
+    height: 25px;
+
     background: url('../images/payments/american_express.png') no-repeat;
   }
 
-  &.credit-card-icon_discover {
-    width: 4rem;
-    height: 2.5rem;
+  &_discover {
+    width: 40px;
+    height: 25px;
+
     background: url('../images/payments/discover.png') no-repeat;
   }
 }
 
 .oro-icon-dollar {
+  font-family: 'Roboto', 'Helvetica', Arial, sans-serif;
   font-style: normal;
   font-weight: 700;
-  font-family: 'Roboto', 'Helvetica', Arial, sans-serif;
 }
 
-.icon-bars:before {
-  content: "\f03a";
+.icon-bars {
+  &:before {
+    content: "\f03a";
+  }
 }
 
-[class^="cf-"], [class*=" cf-"] {
+[class^="cf-"],
+[class*=" cf-"] {
   display: inline-block;
   vertical-align: middle;
 
-  margin-right: .3rem;
+  margin-right: 3px;
 
   font-family: 'custom-font-icon';
   font-weight: normal;
