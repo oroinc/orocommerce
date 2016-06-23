@@ -1,5 +1,6 @@
 .ui-widget-overlay {
-  background: #000;
+  background: $base-dark-color;
+
   opacity: .5;
 }
 
@@ -7,16 +8,19 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  border-radius: 0.4rem;
+
+  border-radius: 4px;
 
   &.ui-widget-content {
     border: 0;
+
     color: $base-font-color;
   }
 
   .ui-dialog-titlebar {
-    padding: 4rem 4rem 1.5rem;
+    padding: 40px 40px 15px;
     border: 0;
+
     background: transparent;
     color: $base-font-color;
     font-weight: 400;
@@ -27,9 +31,11 @@
   }
 
   .ui-dialog-titlebar-close {
-    background: none;
     border: 0;
+
+    background: none;
     color: $base-dark-color;
+
     opacity: .2;
 
     &:hover {
@@ -41,17 +47,19 @@
 
       &:before {
         content: "\e5cd";
-        font-family: 'custom-font-icon';
-        font-weight: normal;
-        font-style: normal;
-        font-size: 2.1rem;
         display: inline-block;
         vertical-align: middle;
         width: 1em;
         height: 1em;
+
+        font-family: 'custom-font-icon';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 21px;
         line-height: 1;
         text-transform: none;
         letter-spacing: normal;
+
         word-wrap: normal;
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
@@ -75,36 +83,37 @@
   }
 
   .ui-dialog-title {
-    font-size: 2.2rem;
+    font-size: 22px;
   }
 
   .ui-widget-content {
     border: 0;
     color: $base-font-color;
-    padding: 0 4rem;
+    padding: 0 40px;
 
     form {
       .__form__row {
-        margin-bottom: 1.5rem;
+        margin-bottom: 15px;
       }
       .__form__label {
         display: block;
+        margin: 0 0 5px;
+
         font-weight: 400;
-        margin: 0 0 .5rem;
       }
     }
   }
 
   .ui-dialog-buttonpane {
-    padding: 2rem 4rem 4rem;
-    border-bottom-left-radius: 0.4rem;
-    border-bottom-right-radius: 0.4rem;
+    padding: 20px 40px 40px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
 
     .pull-right .action-wrapper {
-      margin-left: 1rem;
+      margin-left: 10px;
     }
     .pull-left .action-wrapper {
-      margin-right: 1rem;
+      margin-right: 10px;
     }
   }
 }

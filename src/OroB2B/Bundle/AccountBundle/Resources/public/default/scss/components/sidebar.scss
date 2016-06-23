@@ -1,0 +1,51 @@
+.account-sidebar {
+  width: 225px;
+  padding: 25px 30px;
+  margin: 30px 0 0 15px;
+  border-radius: 3px;
+
+  background: $theme-lightest-gray-color;
+}
+
+.account-navigation-title {
+  font-size: 16px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.account-navigation-list,
+.oro-mp-navigation-list {
+  @include list-normalize();
+
+  li {
+    position: relative;
+
+    margin: 10px 0 0;
+    padding: 0 0 0 18px;
+
+    &.current {
+      &:before {
+        @include after();
+
+        top: 7px;
+        left: 0;
+
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+
+        background: $theme-orange-color;
+      }
+
+      a {
+        font-weight: 700;
+      }
+    }
+
+    a {
+      display: block;
+
+      color: $base-font-color;
+    }
+  }
+}
