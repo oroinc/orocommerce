@@ -11,13 +11,13 @@ define(function(require) {
 
         initialize: function(options) {
             if (typeof options.decimalsField != 'undefined') {
-                options.decimals = parseInt(options.model.attributes[options.decimalsField]);
+                options.decimals = parseInt(options.model.get(options.decimalsField));
             }
 
             var decimalsNumberValidator = options.validationRules['DecimalsNumber'];
             if (typeof decimalsNumberValidator != 'undefined') {
                 if (typeof decimalsNumberValidator.decimalsField != 'undefined') {
-                    var numberOfDecimals = parseInt(options.model.attributes[decimalsNumberValidator.decimalsField]);
+                    var numberOfDecimals = parseInt(options.model.get(decimalsNumberValidator.decimalsField));
                     decimalsNumberValidator.decimals = numberOfDecimals;
                 }
             }
