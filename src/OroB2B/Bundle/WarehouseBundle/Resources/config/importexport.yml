@@ -32,6 +32,14 @@ services:
         arguments:
             - "@doctrine.orm.entity_manager"
 
+
+    # Template Fixture
+    orob2b_product.importexport.template_fixture.product:
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\TemplateFixture\WarehouseInventoryLevelFixture'
+        public: false
+        tags:
+            - { name: oro_importexport.template_fixture }
+
     # Import processor
     orob2b_warehouse.importexport.processor.import.warehouse_inventory_level:
         parent: oro_importexport.processor.import_abstract
