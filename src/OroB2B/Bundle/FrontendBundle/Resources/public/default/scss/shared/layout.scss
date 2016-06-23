@@ -654,9 +654,10 @@
 .select2-container {
   a.select2-choice {
     height: auto;
+    padding: 8px !important;
 
     .select2-chosen {
-      padding: 11px 30px 11px 8px;
+      padding-right: 20px !important;
     }
 
     .select2-arrow,
@@ -707,4 +708,9 @@
   background: transparent;
 
   cursor: pointer;
+}
+
+.action-selectbox_custom_in-pager {
+  display: inline-block;
+  max-width: 165px;
 }
