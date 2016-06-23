@@ -23,8 +23,6 @@
 
   &.checked {
     + .form-input_datepicker,
-    + .checkout__form__optional-ref-number,
-    + .checkout__form__order-note,
     + .form-input_textarea {
       display: block;
     }
