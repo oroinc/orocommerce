@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method;
 
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Doctrine\ORM\EntityManager;
@@ -81,6 +82,8 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->setEntityClass($entityClass)
             ->setEntityIdentifier($entityId);
 
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
+
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
             ->with($entityClass, $entityId)
@@ -89,8 +92,11 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->paymentTermProvider->expects($this->never())
             ->method('getCurrentPaymentTerm');
 
-        $this->assertEquals([], $this->method->execute($this->paymentTransaction));
-        $this->assertTrue($this->paymentTransaction->isSuccessful());
+        $this->assertEquals(
+            [],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
     }
 
     public function testExecuteNoPaymentTerm()
@@ -101,6 +107,8 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->paymentTransaction
             ->setEntityClass($entityClass)
             ->setEntityIdentifier($entityId);
+
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -114,8 +122,11 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->propertyAccessor->expects($this->never())
             ->method('setValue');
 
-        $this->assertEquals([], $this->method->execute($this->paymentTransaction));
-        $this->assertTrue($this->paymentTransaction->isSuccessful());
+        $this->assertEquals(
+            [],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
     }
 
     public function testExecute()
@@ -127,8 +138,9 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
         $this->paymentTransaction
             ->setEntityClass($entityClass)
-            ->setEntityIdentifier($entityId)
-            ->setSuccessful(true);
+            ->setEntityIdentifier($entityId);
+
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -157,24 +169,47 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->with($entity)
             ->willReturn($entityManager);
 
-        $this->assertEquals([], $this->method->execute($this->paymentTransaction));
+        $this->assertEquals(
+            [],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
         $this->assertTrue($this->paymentTransaction->isSuccessful());
+    }
+
+    public function testExecuteEntityWithoutPaymentTerm()
+    {
+        $this->paymentTransaction
+            ->setEntityClass('\stdClass')
+            ->setEntityIdentifier(1);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->willReturn(new \stdClass());
+
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getCurrentPaymentTerm')
+            ->willReturn(new \stdClass());
+
+        $this->propertyAccessor->expects($this->once())
+            ->method('setValue')
+            ->willThrowException(new NoSuchPropertyException());
+
+        $this->assertEquals(
+            [],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
     }
 
     /**
      * @dataProvider isEnabledProvider
-     * @param bool $paymentTermPresent
      * @param bool $configValue
      * @param bool $expected
      */
-    public function testIsEnabled($paymentTermPresent, $configValue, $expected)
+    public function testIsEnabled($configValue, $expected)
     {
-        $this->paymentTermProvider->expects($this->once())
-            ->method('getCurrentPaymentTerm')
-            ->willReturn($paymentTermPresent ? new PaymentTerm() : null);
-
         $this->setConfig(
-            $paymentTermPresent ? $this->once() : $this->never(),
+            $this->once(),
             Configuration::PAYMENT_TERM_ENABLED_KEY,
             $configValue
         );
@@ -189,22 +224,10 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'paymentTermPresent' => true,
                 'configValue' => true,
                 'expected' => true,
             ],
             [
-                'paymentTermPresent' => false,
-                'configValue' => true,
-                'expected' => false,
-            ],
-            [
-                'paymentTermPresent' => true,
-                'configValue' => false,
-                'expected' => false,
-            ],
-            [
-                'paymentTermPresent' => false,
                 'configValue' => false,
                 'expected' => false,
             ],
@@ -239,5 +262,52 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             [false, PaymentTermMethod::VALIDATE],
             [true, PaymentTermMethod::PURCHASE],
         ];
+    }
+
+    public function testIsApplicable()
+    {
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->withConsecutive(
+                [$this->getConfigKey(Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY)],
+                [$this->getConfigKey(Configuration::PAYMENT_TERM_ALLOWED_CURRENCIES)]
+            )
+            ->willReturnOnConsecutiveCalls(Configuration::ALLOWED_COUNTRIES_ALL, ['USD']);
+
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getCurrentPaymentTerm')
+            ->willReturn(new PaymentTerm());
+
+        $this->assertTrue($this->method->isApplicable(['currency' => 'USD']));
+    }
+
+    public function testIsApplicableWithoutCountry()
+    {
+        $this->configManager->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(
+                [$this->getConfigKey(Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY)],
+                [$this->getConfigKey(Configuration::PAYMENT_TERM_SELECTED_COUNTRIES_KEY)]
+            )
+            ->willReturnOnConsecutiveCalls(Configuration::ALLOWED_COUNTRIES_SELECTED, []);
+
+        $this->paymentTermProvider->expects($this->never())->method('getCurrentPaymentTerm');
+
+        $this->assertFalse($this->method->isApplicable(['country' => 'US']));
+    }
+
+    public function testIsApplicableWithoutCurrentPaymentTerm()
+    {
+        $this->setConfig(
+            $this->once(),
+            Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY,
+            Configuration::ALLOWED_COUNTRIES_ALL
+        );
+
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getCurrentPaymentTerm')
+            ->willReturn(null);
+
+        $this->assertFalse($this->method->isApplicable([]));
     }
 }

@@ -1,0 +1,48 @@
+services:
+    orob2b_order.layout.block_type.address:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{address: {required: true}}]]
+            - [setName, ['address']]
+        tags:
+             - { name: layout.block_type, alias: address }
+
+    orob2b_order.layout.block_type.currency:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        currency: {required: true}
+                        value: {required: true}
+                        attributes: {default: []}
+                        textAttributes: {default: []}
+                        symbols: {default: []}
+                        locale: {default: null}
+            - [setName, ['currency']]
+        tags:
+             - { name: layout.block_type, alias: currency }
+
+    orob2b_order.layout.block_type.date:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        date: {required: true}
+                        dateType: {default: null}
+                        locale: {default: null}
+                        timeZone: {default: null}
+            - [setName, ['date']]
+        tags:
+             - { name: layout.block_type, alias: date }
+
+    orob2b_order.layout.block_type.order_total:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{total: {required: true}, subtotals: {required: true}}]]
+            - [setName, ['order_total']]
+        tags:
+             - { name: layout.block_type, alias: order_total }

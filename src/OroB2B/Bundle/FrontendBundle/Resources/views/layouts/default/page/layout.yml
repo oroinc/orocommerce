@@ -6,15 +6,15 @@ layout:
             items:
                 wrapper:
                     blockType: container
+                    options:
+                        attr:
+                          id: 'container'
                 header:
                     blockType: container
                 notification:
                     blockType: block
                 main:
                     blockType: container
-                    options:
-                        attr:
-                          id: 'container'
                 content:
                     blockType: container
                 sidebar_left:
@@ -25,10 +25,6 @@ layout:
                     blockType: text
                     options:
                         text: ~
-                scripts:
-                    blockType: script
-                    options:
-                        content: 'require(["orob2bfrontend/default/js/main"])'
             tree:
                 body:
                     wrapper:
@@ -39,7 +35,6 @@ layout:
                                 page_title_container:
                                     page_title: ~
                             sidebar_left: ~
-                    scripts: ~
         - '@add':
             id: require_js_config
             parentId: require_js

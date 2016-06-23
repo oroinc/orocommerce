@@ -16,7 +16,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
  *          })
  *      }
  * )
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListAccountGroupFallbackRepository")
  */
 class PriceListAccountGroupFallback extends PriceListFallback
 {

@@ -1,0 +1,21 @@
+orob2b:
+    money_order:
+        menu:
+            money_order.label: 'Check/Money Order'
+
+        system_configuration:
+            groups:
+                money_order.title: 'Check/Money Order'
+                display_options.title: 'Display Options'
+            fields:
+                enabled.label: 'Enabled'
+                sort_order.label: 'Sort Order'
+                pay_to.label: 'Pay To'
+                send_to.label: 'Send To'
+
+        pay_to: 'Make Check Payable To'
+        send_to: 'Send Check To'
+
+    payment:
+        admin:
+            money_order.label: 'Check/Money Order'

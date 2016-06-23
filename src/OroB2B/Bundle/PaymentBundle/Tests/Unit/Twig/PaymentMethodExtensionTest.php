@@ -2,9 +2,9 @@
 
 namespace OroB2B\src\OroB2B\Bundle\PaymentBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use OroB2B\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use OroB2B\Bundle\PaymentBundle\Twig\PaymentMethodExtension;
 
@@ -16,9 +16,9 @@ class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
     protected $paymentTransactionProvider;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var  PaymentMethodLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $configManager;
+    protected $paymentMethodLabelFormatter;
 
     /**
      * @var PaymentMethodExtension
@@ -31,18 +31,33 @@ class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->configManager = $this
-            ->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+        $this->paymentMethodLabelFormatter = $this
+            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extension = new PaymentMethodExtension($this->paymentTransactionProvider, $this->configManager);
+        $this->extension = new PaymentMethodExtension(
+            $this->paymentTransactionProvider,
+            $this->paymentMethodLabelFormatter
+        );
     }
 
     public function testGetFunctions()
     {
         $this->assertEquals(
             [
-                new \Twig_SimpleFunction('get_payment_methods', [$this->extension, 'getPaymentMethods'])
+                new \Twig_SimpleFunction(
+                    'get_payment_methods',
+                    [$this->extension, 'getPaymentMethods']
+                ),
+                new \Twig_SimpleFunction(
+                    'get_payment_method_label',
+                    [$this->paymentMethodLabelFormatter, 'formatPaymentMethodLabel']
+                ),
+                new \Twig_SimpleFunction(
+                    'get_payment_method_admin_label',
+                    [$this->paymentMethodLabelFormatter, 'formatPaymentMethodAdminLabel'],
+                    ['is_safe' => ['html']]
+                )
             ],
             $this->extension->getFunctions()
         );
@@ -56,7 +71,8 @@ class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
     public function testGetPaymentMethods()
     {
         $entity = new PaymentTerm();
-        $paymentMethodConstant = 'SomePaymentMethod';
+        $label = 'label';
+        $paymentMethodConstant = 'payment_term';
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod($paymentMethodConstant);
         $this->paymentTransactionProvider
@@ -64,12 +80,13 @@ class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getPaymentTransactions')
             ->with($entity)
             ->willReturn([$paymentTransaction]);
-        $label = 'label';
-        $this->configManager
+
+        $this->paymentMethodLabelFormatter
             ->expects($this->once())
-            ->method('get')
-            ->with(sprintf('orob2b_payment.%s_label', $paymentMethodConstant))
+            ->method('formatPaymentMethodLabel')
+            ->with($paymentMethodConstant, false)
             ->willReturn($label);
+
         $this->assertEquals($this->extension->getPaymentMethods($entity), [$label]);
     }
 }

@@ -1,7 +1,6 @@
 services:
     orob2b_catalog.form.type.category:
         class: 'OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType'
-        public: true
         calls:
             - [setDataClass, ['%orob2b_catalog.entity.category.class%']]
             - [setProductClass, ['%orob2b_product.entity.product.class%']]
@@ -10,7 +9,6 @@ services:
 
     orob2b_catalog.form.type.category_tree:
         class: 'OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType'
-        public: true
         calls:
             - [setEntityClass, ['%orob2b_catalog.entity.category.class%']]
         tags:
@@ -18,8 +16,13 @@ services:
 
     orob2b_catalog.form.extension.product_type:
         class: 'OroB2B\Bundle\CatalogBundle\Form\Extension\ProductFormExtension'
-        public: true
         arguments:
             - "@doctrine"
         tags:
             - { name: form.type_extension, alias: orob2b_product }
+
+    orob2b_catalog.form.extension.product_step_one_type:
+        class: 'OroB2B\Bundle\CatalogBundle\Form\Extension\ProductStepOneFormExtension'
+        public: true
+        tags:
+            - { name: form.type_extension, alias: orob2b_product_step_one }

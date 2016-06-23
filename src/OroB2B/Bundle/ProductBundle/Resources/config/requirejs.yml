@@ -1,5 +1,6 @@
 config:
     paths:
+        'orob2bproduct/js/app/components/product-primary-unit-limitations-component': 'bundles/orob2bproduct/js/app/components/product-primary-unit-limitations-component.js'
         'orob2bproduct/js/app/components/product-unit-selection-limitations-component': 'bundles/orob2bproduct/js/app/components/product-unit-selection-limitations-component.js'
         'orob2bproduct/js/app/components/grid-sidebar-component': 'bundles/orob2bproduct/js/app/components/grid-sidebar-component.js'
         'orob2bproduct/js/app/components/product-unit-component': 'bundles/orob2bproduct/js/app/components/product-unit-component.js'
@@ -16,6 +17,8 @@ config:
         'orob2bproduct/js/app/datagrid/frontend-product-display-options-builder': 'bundles/orob2bproduct/js/app/datagrid/frontend-product-display-options-builder.js'
         'orob2bproduct/js/app/views/base-product-view': 'bundles/orob2bproduct/js/app/views/base-product-view.js'
         'orob2bproduct/js/content-processor/product-add-to-dropdown-button': 'bundles/orob2bproduct/js/content-processor/product-add-to-dropdown-button.js'
+        'orob2bproduct/js/vendors/elevatezoom/jquery-elevatezoom': 'bundles/orob2bproduct/js/vendors/elevatezoom/jquery-elevatezoom.js'
+        'orob2bproduct/js/app/components/product-image-type-radio-control-component': 'bundles/orob2bproduct/js/app/components/product-image-type-radio-control-component.js'
 
     shim:
         'tinymce/plugins/fullscreen/plugin.min':

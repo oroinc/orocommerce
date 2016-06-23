@@ -33,6 +33,7 @@ orob2b:
             general_information: General information
 
         methods:
+            label: "Payment Method"
             select_method: 'Select a Payment Method'
             no_method: 'No payment methods are available, Please contact us to complete the order submission.'
             required_field: 'Required Field'
@@ -58,7 +59,10 @@ orob2b:
                 merchant_country.label: 'Merchant Country'
 
                 enabled.label: 'Enabled'
-                label.label: 'Label'
+                label.label: 'Checkout Label'
+                label.tooltip: 'This label is used on the checkout screens'
+                short_label.label: 'Short Label'
+                short_label.tooltip: 'This label is used in order history'
                 sort_order.label: 'Sort Order'
                 allowed_countries:
                     label: 'Allowed Countries'
@@ -121,3 +125,8 @@ orob2b:
             authorized_card: 'Credit Card  **** **** **** {{ last4 }}'
             use_different_card: 'Use a different card >'
             use_authorized_card: '< Use an existing card'
+
+        admin:
+            payment_term.label: 'Payment Terms'
+            paypal_payments_pro.label: 'Paypal Payments Pro'
+            payflow_gateway.label: 'Payflow Gateway'

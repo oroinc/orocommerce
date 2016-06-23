@@ -4,32 +4,36 @@ namespace OroB2B\Bundle\FrontendBundle\Tests\Functional\Controller;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\ResponseExtension;
 
 /**
  * @dbIsolation
  */
 class ExceptionControllerTest extends WebTestCase
 {
+    use ResponseExtension;
+
     public function setUp()
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
+            true
         );
     }
 
     /**
      * @dataProvider showActionNotFoundDataProvider
+     *
      * @param string $url
-     * @param string $selector
      */
-    public function testShowActionNotFound($url, $selector)
+    public function testShowActionNotFound($url)
     {
         $this->client->followRedirects();
-        $crawler = $this->client->request('GET', $url);
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 404);
-        $this->assertContains('404 Not Found', $crawler->filter($selector)->text());
+        $this->client->request('GET', $url);
+
+        $this->assertLastResponseStatus(404);
+        $this->assertLastResponseContentTypeHtml();
     }
 
     /**
@@ -40,11 +44,9 @@ class ExceptionControllerTest extends WebTestCase
         return [
             'frontend' => [
                 'url' => '/page-does-not-exist',
-                'selector' => 'div.text-center h1',
             ],
             'admin' => [
                 'url' => '/admin/page-does-not-exist',
-                'selector' => 'div.popup-frame div.popup-holder div.pagination-centered.popup-box-errors h1',
             ],
         ];
     }

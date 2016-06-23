@@ -117,7 +117,6 @@ class AccountUserRoleControllerTest extends WebTestCase
             ->getToken('orob2b_account_account_user_role')->getValue();
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
-            'input_action'        => '',
             'orob2b_account_account_user_role' => [
                 '_token' => $token,
                 'label' => self::UPDATED_TEST_ROLE,

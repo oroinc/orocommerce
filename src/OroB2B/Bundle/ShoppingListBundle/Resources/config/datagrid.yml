@@ -12,9 +12,8 @@ datagrid:
                     - shopping_list.id
                     - shopping_list.label
                     - shopping_list.notes
-                    - shopping_list.subtotal
-                    - shopping_list.total
-                    - shopping_list.currency as totalsCurrency
+                    - cachedTotal.subtotalValue as subtotal
+                    - cachedTotal.currency
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
                     - shopping_list_account.name as account
@@ -25,6 +24,9 @@ datagrid:
                     left:
                         - { join: shopping_list.account, alias: shopping_list_account }
                         - { join: shopping_list.accountUser, alias: shopping_list_acc_user }
+                        - { join: %orob2b_account.entity.account_user_settings.class%, alias: userSettings, conditionType: WITH, condition: "shopping_list_acc_user = userSettings.accountUser and userSettings.website = shopping_list.website" }
+                        - { join: %orob2b_shopping_list.entity.shopping_list_total.class%, alias: cachedTotal, conditionType: WITH, condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = COALESCE(userSettings.currency, '@oro_config.manager->get('oro_b2b_pricing.default_currency')')" }
+
         columns:
             id:
                 label:         orob2b.shoppinglist.id.label
@@ -41,12 +43,6 @@ datagrid:
                 type:          twig
                 frontend_type: html
                 template:      OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig
-                renderable:    false
-            total:
-                label:         orob2b.shoppinglist.total.label
-                type:          twig
-                frontend_type: html
-                template:      OroB2BPricingBundle:Datagrid:Column/total.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -69,9 +65,7 @@ datagrid:
                 account_user:
                     data_name: account_user
                 subtotal:
-                    data_name: shopping_list.subtotal
-                total:
-                    data_name: shopping_list.total
+                    data_name: subtotal
                 createdAt:
                     data_name: shopping_list.createdAt
                 updatedAt:
@@ -94,11 +88,7 @@ datagrid:
                     data_name: account_user
                 subtotal:
                     type:      number
-                    data_name: shopping_list.subtotal
-                    enabled:   false
-                total:
-                    type:      number
-                    data_name: shopping_list.total
+                    data_name: subtotal
                 createdAt:
                     type:      datetime
                     data_name: shopping_list.createdAt
@@ -139,7 +129,7 @@ datagrid:
                             join: product.names
                             alias: productNames
                             conditionType: WITH
-                            condition: productNames.locale IS NULL
+                            condition: productNames.localization IS NULL
                 where:
                     and:
                         - IDENTITY(lineItem.shoppingList) = :shopping_list_id

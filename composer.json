@@ -27,7 +27,8 @@
         "oro/platform": "self.version",
         "box/spout": "2.3.*",
         "nicholas-eden/math": "0.6.*",
-        "myclabs/deep-copy": "1.5.*"
+        "myclabs/deep-copy": "1.5.*",
+        "leafo/scssphp": "0.6.3"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

@@ -52,7 +52,7 @@ class ProductControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
-        $formValues['orob2b_product']['unitPrecisions'][] = ['unit' => 'box', 'precision' => 0];
+        $formValues['orob2b_product']['additionalUnitPrecisions'][] = ['unit' => 'box', 'precision' => 0];
         $formValues['orob2b_product'][ProductFormExtension::FORM_ELEMENT_NAME][] = $data;
 
         $this->client->followRedirects(true);

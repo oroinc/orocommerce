@@ -15,7 +15,7 @@ use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
 class PaymentTerm implements PaymentMethodInterface
 {
-    use ConfigTrait;
+    use ConfigTrait, CountryAwarePaymentMethodTrait, CurrencyAwarePaymentMethodTrait;
 
     const TYPE = 'payment_term';
 
@@ -47,12 +47,8 @@ class PaymentTerm implements PaymentMethodInterface
     }
 
     /** {@inheritdoc} */
-    public function execute(PaymentTransaction $paymentTransaction)
+    public function execute($action, PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction
-            ->setSuccessful(true)
-            ->setActive(false);
-
         $entity = $this->doctrineHelper->getEntityReference(
             $paymentTransaction->getEntityClass(),
             $paymentTransaction->getEntityIdentifier()
@@ -72,7 +68,12 @@ class PaymentTerm implements PaymentMethodInterface
             $this->propertyAccessor->setValue($entity, 'paymentTerm', $paymentTerm);
             $this->doctrineHelper->getEntityManager($entity)->flush($entity);
         } catch (NoSuchPropertyException $e) {
+            return [];
         }
+
+        $paymentTransaction
+            ->setSuccessful(true)
+            ->setActive(false);
 
         return [];
     }
@@ -80,8 +81,7 @@ class PaymentTerm implements PaymentMethodInterface
     /** {@inheritdoc} */
     public function isEnabled()
     {
-        return (bool)$this->paymentTermProvider->getCurrentPaymentTerm() &&
-            $this->getConfigValue(Configuration::PAYMENT_TERM_ENABLED_KEY);
+        return $this->getConfigValue(Configuration::PAYMENT_TERM_ENABLED_KEY);
     }
 
     /** {@inheritdoc} */
@@ -91,8 +91,41 @@ class PaymentTerm implements PaymentMethodInterface
     }
 
     /** {@inheritdoc} */
+    public function isApplicable(array $context = [])
+    {
+        return $this->isCountryApplicable($context)
+            && (bool)$this->paymentTermProvider->getCurrentPaymentTerm()
+            && $this->isCurrencyApplicable($context);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function getAllowedCountries()
+    {
+        return $this->getConfigValue(Configuration::PAYMENT_TERM_SELECTED_COUNTRIES_KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isAllCountriesAllowed()
+    {
+        return $this->getConfigValue(Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY)
+            === Configuration::ALLOWED_COUNTRIES_ALL;
+    }
+
+    /** {@inheritdoc} */
     public function supports($actionName)
     {
         return $actionName === self::PURCHASE;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getAllowedCurrencies()
+    {
+        return $this->getConfigValue(Configuration::PAYMENT_TERM_ALLOWED_CURRENCIES);
     }
 }

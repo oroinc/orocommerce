@@ -1,0 +1,314 @@
+//Helpers
+.borderless {
+  td, th {
+    border: 0 !important;
+  }
+}
+
+.paddingless {
+  td, th {
+    padding: 0 !important;
+  }
+}
+
+.t_paddingless {
+  td, th {
+    padding-top: 0 !important;
+  }
+}
+
+.b_paddingless {
+  td, th {
+    padding-bottom: 0 !important;
+  }
+}
+
+.width-auto {
+  max-width: none !important;
+  width: auto !important;
+}
+
+.wsnr {
+  white-space: nowrap;
+}
+
+//Widths
+.w70 {
+  width: 70px !important;
+}
+
+//Margins
+@mixin generate-margin-top-helpers($i, $n, $param, $size) {
+  @if ($i >= 0) {
+    @include generate-margin-top-helpers(($i - 10), ($n - 1), $param, $size);
+
+    .m#{$param}#{$n}-#{$size} {
+      margin-top: $i + 'px' !important;
+    }
+  }
+}
+
+@mixin generate-margin-bottom-helpers($i, $n, $param, $size) {
+  @if ($i >= 0) {
+    @include generate-margin-bottom-helpers(($i - 10), ($n - 1), $param, $size);
+
+    .m#{$param}#{$n}-#{$size} {
+      margin-bottom: $i + 'px' !important;
+    }
+  }
+}
+
+@mixin generate-margin-right-helpers($i, $n, $param, $size) {
+  @if ($i >= 0) {
+    @include generate-margin-right-helpers(($i - 10), ($n - 1), $param, $size);
+
+    .m#{$param}#{$n}-#{$size} {
+      margin-right: $i + 'px' !important;
+    }
+  }
+}
+
+@mixin generate-margin-left-helpers($i, $n, $param, $size) {
+  @if ($i >= 0) {
+    @include generate-margin-left-helpers(($i - 10), ($n - 1), $param, $size);
+
+    .m#{$param}#{$n}-#{$size} {
+      margin-left: $i + 'px' !important;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  @include generate-margin-top-helpers(120, 12, t, sm);
+  @include generate-margin-bottom-helpers(120, 12, b, sm);
+  @include generate-margin-right-helpers(120, 12, r, sm);
+  @include generate-margin-left-helpers(120, 12, l, sm);
+}
+
+@media (min-width: 992px) {
+  @include generate-margin-top-helpers(120, 12, t, md);
+  @include generate-margin-bottom-helpers(120, 12, b, md);
+  @include generate-margin-right-helpers(120, 12, r, md);
+  @include generate-margin-left-helpers(120, 12, l, md);
+}
+
+//Micro Margins
+@mixin generate-micro-margin-top-helpers($i, $param, $size) {
+  @if ($i >= 1) {
+    @include generate-micro-margin-top-helpers(($i - 1), $param, $size);
+
+    .mm#{$param}#{$i}-#{$size} {
+      margin-top: $i + 'px' !important;
+    }
+  }
+}
+
+@mixin generate-micro-margin-bottom-helpers($i, $param, $size) {
+  @if ($i >= 1) {
+    @include generate-micro-margin-bottom-helpers(($i - 1), $param, $size);
+
+    .mm#{$param}#{$i}-#{$size} {
+      margin-bottom: $i + 'px' !important;
+    }
+  }
+}
+
+@mixin generate-micro-margin-right-helpers($i, $param, $size) {
+  @if ($i >= 1) {
+    @include generate-micro-margin-right-helpers(($i - 1), $param, $size);
+
+    .mm#{$param}#{$i}-#{$size} {
+      margin-right: $i + 'px' !important;
+    }
+  }
+}
+
+@mixin generate-micro-margin-left-helpers($i, $param, $size) {
+  @if ($i >= 1) {
+    @include generate-micro-margin-left-helpers(($i - 1), $param, $size);
+
+    .mm#{$param}#{$i}-#{$size} {
+      margin-left: $i + 'px' !important;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  @include generate-micro-margin-top-helpers(9, t, sm);
+  @include generate-micro-margin-bottom-helpers(9, b, sm);
+  @include generate-micro-margin-right-helpers(9, r, sm);
+  @include generate-micro-margin-left-helpers(9, l, sm);
+}
+
+@media (min-width: 992px) {
+  @include generate-micro-margin-top-helpers(9, t, md);
+  @include generate-micro-margin-bottom-helpers(9, b, md);
+  @include generate-micro-margin-right-helpers(9, r, md);
+  @include generate-micro-margin-left-helpers(9, l, md);
+}
+
+//Negative Micro Margins
+@mixin generate-negative-micro-margin-top-helpers($i, $param, $size) {
+  @if ($i >= 1) {
+    @include generate-negative-micro-margin-top-helpers(($i - 1), $param, $size);
+
+    .nmm#{$param}#{$i}-#{$size} {
+      margin-top: -$i + 'px' !important;
+    }
+  }
+}
+
+@mixin generate-negative-micro-margin-bottom-helpers($i, $param, $size) {
+  @if ($i >= 1) {
+    @include generate-negative-micro-margin-bottom-helpers(($i - 1), $param, $size);
+
+    .nmm#{$param}#{$i}-#{$size} {
+      margin-bottom: -$i + 'px' !important;
+    }
+  }
+}
+
+@mixin generate-negative-micro-margin-right-helpers($i, $param, $size) {
+  @if ($i >= 1) {
+    @include generate-negative-micro-margin-right-helpers(($i - 1), $param, $size);
+
+    .nmm#{$param}#{$i}-#{$size} {
+      margin-right: -$i + 'px' !important;
+    }
+  }
+}
+
+@mixin generate-negative-micro-margin-left-helpers($i, $param, $size) {
+  @if ($i >= 1) {
+    @include generate-negative-micro-margin-left-helpers(($i - 1), $param, $size);
+
+    .nmm#{$param}#{$i}-#{$size} {
+      margin-left: -$i + 'px'  !important;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  @include generate-negative-micro-margin-top-helpers(9, t, sm);
+  @include generate-negative-micro-margin-bottom-helpers(9, b, sm);
+  @include generate-negative-micro-margin-right-helpers(9, r, sm);
+  @include generate-negative-micro-margin-left-helpers(9, l, sm);
+}
+
+@media (min-width: 992px) {
+  @include generate-negative-micro-margin-top-helpers(9, t, md);
+  @include generate-negative-micro-margin-bottom-helpers(9, b, md);
+  @include generate-negative-micro-margin-right-helpers(9, r, md);
+  @include generate-negative-micro-margin-left-helpers(9, l, md);
+}
+
+//Font sizes
+@mixin generate-font-size-helpers($i) {
+  @if ($i >= 0) {
+    @include generate-font-size-helpers($i - 1);
+
+    .fs#{$i} {
+      font-size: $i + 'px' !important;
+    }
+  }
+}
+
+@include generate-font-size-helpers(32);
+
+//Colors
+.red {
+  color: $theme-red-color;
+}
+
+.orange {
+  color: $theme-orange-color;
+}
+
+.base-color {
+  color: $base-font-color !important;
+}
+
+.gray {
+  color: $theme-bucket-color;
+}
+
+.blue {
+  color: $base-link-color;
+}
+
+.green2 {
+  color: $product_color-green2;
+}
+
+.green3 {
+  color: $theme-green-color;
+}
+
+.price-up-color {
+  color: $theme-orange-color-light;
+}
+
+.price-old-color {
+  color: $theme-edit-mode-btn-color;
+}
+
+.price-out-of-stock-color {
+  color: $theme-red-color;
+}
+
+//Notifications colors
+.warning {
+  color: $theme-warning-color;
+}
+
+//Alignments
+.va-t_sm {
+  @media (max-width: $screen-md) {
+    vertical-align: top !important;
+  }
+}
+
+.va-t_md {
+  @media (min-width: 992px) {
+    vertical-align: top !important;
+  }
+}
+
+.va-m_md {
+  vertical-align: middle !important;
+}
+
+//Elements displayings
+.inline {
+  display: inline-block;
+}
+
+//Text decorations
+.underlined {
+  text-decoration: underline;
+}
+
+//Other
+.buttons-flex-container {
+  display: flex;
+
+  &.buttons-flex-container_in-cart {
+    padding: 20px 0;
+    border-bottom: 1px solid $theme-lighter-gray-color;
+    border-top: 1px solid $theme-lighter-gray-color;
+  }
+
+  &.buttons-flex-container_equal-btns {
+    .btn {
+      flex-basis: 50%;
+    }
+  }
+
+  .btn {
+    flex-grow: 1;
+
+    &:first-child {
+      margin-right: 10px;
+    }
+  }
+}

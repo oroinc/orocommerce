@@ -8,12 +8,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
 
 /**
@@ -58,7 +58,10 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Product extends ExtendProduct implements OrganizationAwareInterface, \JsonSerializable
 {
@@ -243,10 +246,29 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     protected $unitPrecisions;
 
     /**
+     * @var ProductUnitPrecision
+     *
+     * @ORM\OneToOne(targetEntity="ProductUnitPrecision", cascade={"persist"})
+     * @ORM\JoinColumn(name="primary_unit_precision_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=25,
+     *              "full"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $primaryUnitPrecision;
+
+    /**
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
@@ -278,7 +300,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
@@ -328,7 +350,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
@@ -357,6 +379,28 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     protected $shortDescriptions;
 
     /**
+     * @var Collection|ProductImage[]
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductImage",
+     *     mappedBy="product",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *               "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $images;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -368,6 +412,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         $this->descriptions = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
         $this->variantLinks = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     /**
@@ -577,13 +622,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     /**
      * Remove unitPrecisions
      *
-     * @param ProductUnitPrecision $unitPrecisions
+     * @param ProductUnitPrecision $unitPrecision
      * @return Product
      */
-    public function removeUnitPrecision(ProductUnitPrecision $unitPrecisions)
+    public function removeUnitPrecision(ProductUnitPrecision $unitPrecision)
     {
-        if ($this->unitPrecisions->contains($unitPrecisions)) {
-            $this->unitPrecisions->removeElement($unitPrecisions);
+        if ($this->unitPrecisions->contains($unitPrecision)) {
+            $this->unitPrecisions->removeElement($unitPrecision);
         }
 
         return $this;
@@ -636,6 +681,22 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     }
 
     /**
+     * Get available units
+     *
+     * @return ProductUnit[]
+     */
+    public function getAvailableUnits()
+    {
+        $result = [];
+
+        foreach ($this->unitPrecisions as $unitPrecision) {
+            $result[] = $unitPrecision->getUnit();
+        }
+
+        return $result;
+    }
+
+    /**
      * @return Collection|LocalizedFallbackValue[]
      */
     public function getNames()
@@ -678,7 +739,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     public function getDefaultName()
     {
         $names = $this->names->filter(function (LocalizedFallbackValue $name) {
-            return null === $name->getLocale();
+            return null === $name->getLocalization();
         });
 
         if ($names->count() > 1) {
@@ -733,7 +794,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     public function getDefaultDescription()
     {
         $descriptions = $this->descriptions->filter(function (LocalizedFallbackValue $description) {
-            return null === $description->getLocale();
+            return null === $description->getLocalization();
         });
 
         if ($descriptions->count() > 1) {
@@ -774,6 +835,53 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     {
         if ($this->variantLinks->contains($variantLink)) {
             $this->variantLinks->removeElement($variantLink);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductImage[]
+     */
+    public function getImages()
+    {
+        return $this->images;
+    }
+
+    /**
+     * @param string $type
+     * @return ProductImage[]|Collection
+     */
+    public function getImagesByType($type)
+    {
+        return $this->getImages()->filter(function (ProductImage $image) use ($type) {
+            return $image->hasType($type);
+        });
+    }
+
+    /**
+     * @param ProductImage $image
+     * @return $this
+     */
+    public function addImage(ProductImage $image)
+    {
+        $image->setProduct($this);
+
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ProductImage $image
+     * @return $this
+     */
+    public function removeImage(ProductImage $image)
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
         }
 
         return $this;
@@ -822,7 +930,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     public function getDefaultShortDescription()
     {
         $shortDescriptions = $this->shortDescriptions->filter(function (LocalizedFallbackValue $shortDescription) {
-            return null === $shortDescription->getLocale();
+            return null === $shortDescription->getLocalization();
         });
 
         if ($shortDescriptions->count() > 1) {
@@ -866,6 +974,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
             $this->names = new ArrayCollection();
             $this->descriptions = new ArrayCollection();
             $this->shortDescriptions = new ArrayCollection();
+            $this->images = new ArrayCollection();
             $this->variantLinks = new ArrayCollection();
             $this->variantFields = [];
         }
@@ -880,5 +989,83 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
             'id' => $this->getId(),
             'product_units' => $this->getAvailableUnitCodes(),
         ];
+    }
+
+    /**
+     * @param ProductUnitPrecision|null $primaryUnitPrecision
+     * @return Product
+     */
+    public function setPrimaryUnitPrecision($primaryUnitPrecision)
+    {
+        $primaryUnitPrecision->setConversionRate(1.0)->setSell(true);
+        $this->primaryUnitPrecision = $primaryUnitPrecision;
+        if ($primaryUnitPrecision) {
+            $this->addUnitPrecision($primaryUnitPrecision);
+        }
+        return $this;
+    }
+
+    /**
+     * @return ProductUnitPrecision
+     */
+    public function getPrimaryUnitPrecision()
+    {
+        return $this->primaryUnitPrecision;
+    }
+
+    /**
+     * Add additionalUnitPrecisions
+     *
+     * @param ProductUnitPrecision $unitPrecision
+     * @return Product
+     */
+    public function addAdditionalUnitPrecision(ProductUnitPrecision $unitPrecision)
+    {
+        $productUnit = $unitPrecision->getUnit();
+        $primary = $this->getPrimaryUnitPrecision();
+        $primaryUnit = $primary ? $primary->getUnit() : null;
+        if ($productUnit == $primaryUnit) {
+            return $this;
+        }
+        $this->addUnitPrecision($unitPrecision);
+
+        return $this;
+    }
+
+    /**
+     * Remove additionalUnitPrecisions
+     *
+     * @param ProductUnitPrecision $unitPrecision
+     * @return Product
+     */
+    public function removeAdditionalUnitPrecision(ProductUnitPrecision $unitPrecision)
+    {
+        $productUnit = $unitPrecision->getUnit();
+        $primary = $this->getPrimaryUnitPrecision();
+        $primaryUnit = $primary ? $primary->getUnit() : null;
+        if ($productUnit == $primaryUnit) {
+            return $this;
+        }
+        $this->removeUnitPrecision($unitPrecision);
+
+        return $this;
+    }
+
+    /**
+     * Get additionalUnitPrecisions
+     *
+     * @return Collection|ProductUnitPrecision[]
+     */
+    public function getAdditionalUnitPrecisions()
+    {
+        $primaryPrecision = $this->getPrimaryUnitPrecision();
+        $additionalPrecisions = $this->getUnitPrecisions()
+            ->filter(function ($precision) use ($primaryPrecision) {
+                return $precision != $primaryPrecision;
+            });
+
+        $additionalPrecisionsSorted = new ArrayCollection(array_values($additionalPrecisions->toArray()));
+
+        return $additionalPrecisionsSorted;
     }
 }

@@ -1,0 +1,197 @@
+.notification-flash {
+  margin-bottom: -20px;
+
+  .notification.notification_lg  {
+    width: auto;
+
+    margin-left: 15px;
+    margin-right: 15px;
+    padding-left: 48px;
+    padding-right: 48px;
+
+    line-height: 20px;
+  }
+
+  .badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+  }
+
+  .cf-clear {
+    position: absolute;
+    top: 14px;
+    right: 8px;
+
+    font-size: 24px;
+
+    cursor: pointer;
+  }
+
+  &:empty {
+    display: none;
+    margin-bottom: 0;
+  }
+}
+
+.notification {
+  &_success {
+    background: $theme-notice-bg-color;
+    color: $theme-notice-font-color;
+  }
+
+  &_notice {
+    background: $theme-notice-bg-color;
+    color: $theme-notice-font-color;
+  }
+
+  &_alert {
+    background: $theme-alert-bg-color;
+    color: $theme-alert-font-color;
+  }
+
+  &_warning {
+    background: $theme-alert-bg-color;
+    color: $theme-alert-font-color;
+  }
+
+  &_error {
+    background: $theme-error-bg-color;
+    color: $theme-error-font-color;
+  }
+
+  &_info {
+    background: $theme-notice-bg-color;
+    color: $theme-notice-font-color;
+  }
+
+  &_xsm {
+    min-height: 24px;
+    padding: 0 10px;
+
+    font-size: 13px;
+    line-height: 1.85;
+
+    .badge {
+      margin-bottom: 3px;
+    }
+  }
+
+  &_sm {
+    min-height: 30px;
+    padding: 5px 10px;
+
+    [class^="cf-"] {
+      vertical-align: middle;
+
+      font-size: 20px;
+    }
+  } 
+
+  &_md {
+    min-height: 34px;
+    padding: 7px 10px;
+
+    [class^="cf-"] {
+      vertical-align: middle;
+
+      font-size: 20px;
+    }
+  }
+
+  &_xmd {
+    padding: 20px 15px;
+    min-height: 40px;
+
+    [class^="cf-"] {
+      vertical-align: middle;
+
+      font-size: 20px;
+    }
+
+    @media (max-width: $screen-md) {
+      margin: -10px -15px 10px;
+    }
+  }
+
+  &_lg {
+    position: relative;
+    z-index: 101;
+
+    width: 100%;
+    min-height: 50px;
+    line-height: 30px;
+  }
+
+  &-radiused {
+    border-radius: 3px;
+  }
+
+  &_in-order {
+    @media (max-width: $screen-md) {
+      margin: -10px -15px 10px;
+    }
+  }
+
+  > ul {
+    @include list-normalize();
+  }
+
+  &__relative-container {
+    position: relative;
+
+    padding: 0 20px;
+  }
+
+  &__sign {
+    vertical-align: middle;
+
+    &.notification__sign_abs {
+      position: absolute;
+      top: 50%;
+      left: 0;
+
+      &.notification__sign_error {
+        margin-top: -16px;
+      }
+
+      &.notification__sign_notice {
+        margin-top: -16px;
+      }
+
+      &.notification__sign_alert {
+        margin-top: -13px;
+      }
+    }
+  }
+
+  &__additional-content {
+    padding-left: 30px;
+
+    color: $base-font-color;
+  }
+}
+
+
+/*Messages*/
+.input-errors-list {
+  @include list-normalize;
+
+  li {
+    margin: 5px 0 0;
+  }
+}
+
+.error-message {
+  color: $theme-input-error;
+  font-size: 13px;
+  line-height: 1;
+
+  ul {
+    @include list-normalize();
+
+    li {
+      margin-bottom: 5px;
+    }
+  }
+}

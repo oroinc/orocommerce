@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 
 /**
@@ -44,7 +45,22 @@ class CombinedPriceListToAccountGroupRepositoryTest extends AbstractCombinedPric
         //Remove Base Relation
         $em->remove($priceListToAccount);
         $em->flush();
+
+        $fallback = new PriceListAccountGroupFallback();
+        $fallback->setAccountGroup($combinedPriceListToAccountGroup->getAccountGroup());
+        $fallback->setWebsite($combinedPriceListToAccountGroup->getWebsite());
+        $fallback->setFallback(PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY);
+        $em->persist($fallback);
+        $em->flush();
+
         $repo->deleteInvalidRelations();
+
+        $this->assertCount(1, $repo->findAll());
+
+        $fallback->setFallback(PriceListAccountGroupFallback::WEBSITE);
+        $em->flush();
+        $repo->deleteInvalidRelations();
+        
         $this->assertCount(0, $repo->findAll());
     }
 }

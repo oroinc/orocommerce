@@ -12,12 +12,12 @@ parameters:
 services:
     orob2b_shipping.factory.shipping_origin_model_factory:
         class: OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory
+        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
 
     orob2b_shipping.event_listener.config.shipping_origin:
         class: OroB2B\Bundle\ShippingBundle\EventListener\Config\ShippingOriginEventListener
-        public: true
         arguments:
             - '@orob2b_shipping.factory.shipping_origin_model_factory'
         tags:
@@ -26,7 +26,6 @@ services:
 
     orob2b_shipping.shipping_origin.provider:
         class: OroB2B\Bundle\ShippingBundle\Provider\ShippingOriginProvider
-        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_config.global'
@@ -34,7 +33,6 @@ services:
 
     orob2b_shipping.event_listener.form_view:
         class: OroB2B\Bundle\ShippingBundle\EventListener\FormViewListener
-        public: true
         arguments:
             - '@translator'
             - '@oro_entity.doctrine_helper'
@@ -45,10 +43,10 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-edit, method: onWarehouseEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
 
     orob2b_shipping.event_listener.product_shipping_options_datagrid:
         class: 'OroB2B\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener'
-        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
         calls:
@@ -60,38 +58,34 @@ services:
     # formatters
     orob2b_shipping.formatter.length_unit_label:
         parent: orob2b_product.formatter.unit_label
-        public: true
         calls:
             - [setTranslationPrefix, ['orob2b.length_unit']]
 
     orob2b_shipping.formatter.weight_unit_label:
         parent: orob2b_product.formatter.unit_label
-        public: true
         calls:
             - [setTranslationPrefix, ['orob2b.weight_unit']]
 
     orob2b_shipping.formatter.freight_class_label:
         parent: orob2b_product.formatter.unit_label
-        public: true
         calls:
             - [setTranslationPrefix, ['orob2b.freight_class']]
 
     orob2b_shipping.formatter.weight_unit_value:
         parent: orob2b_product.formatter.unit_value
-        public: true
         calls:
             - [setTranslationPrefix, ['orob2b.weight_unit']]
 
     orob2b_shipping.formatter.dimensions_unit_value:
         parent: orob2b_product.formatter.unit_value
         class: 'OroB2B\Bundle\ShippingBundle\Formatter\DimensionsValueFormatter'
-        public: true
         calls:
             - [setTranslationPrefix, ['orob2b.length_unit']]
 
     # twig extensions
     orob2b_shipping.twig.shipping_option_label:
         class: OroB2B\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension
+        public: false
         arguments:
             - '@orob2b_shipping.formatter.length_unit_label'
             - '@orob2b_shipping.formatter.weight_unit_label'
@@ -101,6 +95,7 @@ services:
 
     orob2b_shipping.twig.weight_unit_value:
         class: OroB2B\Bundle\ShippingBundle\Twig\WeightUnitValueExtension
+        public: false
         arguments:
             - '@orob2b_shipping.formatter.weight_unit_value'
         tags:
@@ -108,6 +103,7 @@ services:
 
     orob2b_shipping.twig.dimensions_unit_value:
         class: OroB2B\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension
+        public: false
         arguments:
             - '@orob2b_shipping.formatter.dimensions_unit_value'
         tags:
@@ -115,31 +111,34 @@ services:
 
     orob2b_shipping.repository.product_shipping_options:
         class: Doctrine\ORM\EntityRepository
+        public: false
         factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
         arguments:
             - '%orob2b_shipping.entity.product_shipping_options.class%'
 
     orob2b_shipping.repository.length_unit:
         class: Doctrine\ORM\EntityRepository
+        public: false
         factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
         arguments:
             - '%orob2b_shipping.entity.length_unit.class%'
 
     orob2b_shipping.repository.weight_unit:
         class: Doctrine\ORM\EntityRepository
+        public: false
         factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
         arguments:
             - '%orob2b_shipping.entity.weight_unit.class%'
 
     orob2b_shipping.repository.freight_class:
         class: Doctrine\ORM\EntityRepository
+        public: false
         factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
         arguments:
             - '%orob2b_shipping.entity.freight_class.class%'
 
     orob2b_shipping.provider.measure_units.weight:
         class: 'OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider'
-        public: true
         arguments:
             - '@orob2b_shipping.repository.weight_unit'
             - '@oro_config.manager'
@@ -147,7 +146,6 @@ services:
 
     orob2b_shipping.provider.measure_units.length:
         class: 'OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider'
-        public: true
         arguments:
             - '@orob2b_shipping.repository.length_unit'
             - '@oro_config.manager'
@@ -155,7 +153,6 @@ services:
 
     orob2b_shipping.provider.measure_units.freight:
         class: 'OroB2B\Bundle\ShippingBundle\Provider\FreightClassesProvider'
-        public: true
         arguments:
             - '@orob2b_shipping.repository.freight_class'
             - '@oro_config.manager'
@@ -163,41 +160,36 @@ services:
 
     orob2b_shipping.extension.freight_classes:
         class: 'OroB2B\Bundle\ShippingBundle\Extension\FreightClassesExtension'
-        public: true
         tags:
             - { name: orob2b_shipping.extension.freight_classes }
 
     orob2b_shipping.validator.unique_product_unit_shipping_options:
         class: 'OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator'
-        public: true
         tags:
             - { name: validator.constraint_validator, alias: orob2b_shipping_unique_product_unit_shipping_options_validator }
 
     orob2b_shipping.form.data_transformer.measure:
         class: 'OroB2B\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer'
+        public: false
         abstract: true
 
     orob2b_shipping.form.data_transformer.length_unit:
         parent: 'orob2b_shipping.form.data_transformer.measure'
-        public: true
         arguments:
             - '@orob2b_shipping.repository.length_unit'
 
     orob2b_shipping.form.data_transformer.weight_unit:
         parent: 'orob2b_shipping.form.data_transformer.measure'
-        public: true
         arguments:
             - '@orob2b_shipping.repository.weight_unit'
 
     orob2b_shipping.form.data_transformer.freight_class:
         parent: 'orob2b_shipping.form.data_transformer.measure'
-        public: true
         arguments:
             - '@orob2b_shipping.repository.freight_class'
 
     orob2b_shipping.event_listener.product_duplicate:
         class: 'OroB2B\Bundle\ShippingBundle\EventListener\ProductDuplicateListener'
-        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
         calls:

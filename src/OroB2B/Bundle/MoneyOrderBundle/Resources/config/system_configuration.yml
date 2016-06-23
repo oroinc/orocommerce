@@ -1,0 +1,114 @@
+oro_system_configuration:
+    groups:
+        money_order:
+            title: orob2b.money_order.system_configuration.groups.money_order.title
+        money_order_display:
+            title: orob2b.money_order.system_configuration.groups.display_options.title
+    fields:
+        orob2b_money_order.money_order_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: orob2b.money_order.system_configuration.fields.enabled.label
+
+        orob2b_money_order.money_order_label:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: orob2b.payment.system_configuration.fields.label.label
+                tooltip: orob2b.payment.system_configuration.fields.label.tooltip
+                constraints:
+                    - NotBlank: ~
+
+        orob2b_money_order.money_order_short_label:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: orob2b.payment.system_configuration.fields.short_label.label
+                tooltip: orob2b.payment.system_configuration.fields.short_label.tooltip
+                constraints:
+                    - NotBlank: ~
+
+        orob2b_money_order.money_order_sort_order:
+            data_type: string
+            type: text
+            priority: 80
+            options:
+                label: orob2b.money_order.system_configuration.fields.sort_order.label
+                constraints:
+                    - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+
+        orob2b_money_order.money_order_allowed_countries:
+            data_type: string
+            type: choice
+            priority: 70
+            options:
+                label: orob2b.payment.system_configuration.fields.allowed_countries.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    all: orob2b.payment.system_configuration.fields.allowed_countries.all
+                    selected: orob2b.payment.system_configuration.fields.allowed_countries.selected
+                attr:
+                    'data-page-component-module': 'orob2bpayment/js/app/components/config-hide-fields-component'
+                    'data-dependency-id': 'money_order_allowed_countries'
+
+        orob2b_money_order.money_order_selected_countries:
+            data_type: string
+            type: oro_locale_country
+            priority: 60
+            options:
+                label: orob2b.payment.system_configuration.fields.selected_countries.label
+                multiple: true
+                attr:
+                    'data-depends-on-field': 'money_order_allowed_countries'
+                    'data-depends-on-field-value': 'selected'
+
+        orob2b_money_order.money_order_pay_to:
+            data_type: string
+            type: text
+            priority: 50
+            options:
+                label: orob2b.money_order.system_configuration.fields.pay_to.label
+                resettable: false
+                required: true
+                constraints:
+                    - NotBlank: ~
+
+        orob2b_money_order.money_order_send_to:
+            data_type: string
+            type: textarea
+            priority: 40
+            options:
+                label: orob2b.money_order.system_configuration.fields.send_to.label
+                resettable: false
+                required: true
+                constraints:
+                    - NotBlank: ~
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    payment:
+                        priority: 400
+                        children:
+                            money_order:
+                                priority: 70
+                                children:
+                                    money_order_display:
+                                        priority: 100
+                                        children:
+                                            - orob2b_money_order.money_order_enabled
+                                            - orob2b_money_order.money_order_label
+                                            - orob2b_money_order.money_order_short_label
+                                            - orob2b_money_order.money_order_sort_order
+                                            - orob2b_money_order.money_order_allowed_countries
+                                            - orob2b_money_order.money_order_selected_countries
+                                            - orob2b_money_order.money_order_pay_to
+                                            - orob2b_money_order.money_order_send_to

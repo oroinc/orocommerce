@@ -1,0 +1,43 @@
+input.error,
+textarea.error,
+.input-widget-select.error{
+  border: 1px solid $theme-input-error;
+  box-shadow: 0 1px 7px 0 rgba(223,96,96,.6);
+}
+
+.validation-failed,
+.validation-passed {
+  display: block;
+
+  min-height: 2.4rem;
+
+  padding: 0 1rem;
+
+  line-height: 2.4rem;
+  font-size: 1.3rem;
+
+  border-radius: .3rem;
+}
+
+.validation-failed {
+  background: $theme-error-bg-color;
+  color: $theme-error-font-color;
+
+  &:before {
+    content: "\e900";
+
+    display: inline-block;
+
+    width: 1.1em;
+
+    margin-right: .1em;
+
+    font-style: normal;
+    font-family: $font-icon;
+  }
+}
+
+.validation-passed {
+  background-color: $theme-notice-bg-color;
+  color: $theme-notice-font-color;
+}

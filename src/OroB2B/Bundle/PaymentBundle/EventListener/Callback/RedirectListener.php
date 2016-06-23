@@ -31,11 +31,6 @@ class RedirectListener
     public function onReturn(CallbackReturnEvent $event)
     {
         $this->handleEvent($event, self::SUCCESS_URL_KEY);
-
-        $event
-            ->getPaymentTransaction()
-            ->setActive(true)
-            ->setSuccessful(true);
     }
 
     /**
@@ -44,11 +39,6 @@ class RedirectListener
     public function onError(CallbackErrorEvent $event)
     {
         $this->handleEvent($event, self::FAILURE_URL_KEY);
-
-        $event
-            ->getPaymentTransaction()
-            ->setActive(false)
-            ->setSuccessful(false);
 
         $flashBag = $this->session->getFlashBag();
 
@@ -64,6 +54,10 @@ class RedirectListener
     protected function handleEvent(AbstractCallbackEvent $event, $expectedOptionsKey)
     {
         $transaction = $event->getPaymentTransaction();
+        if (!$transaction) {
+            return;
+        }
+
         $transactionOptions = $transaction->getTransactionOptions();
 
         if (!empty($transactionOptions[$expectedOptionsKey])) {

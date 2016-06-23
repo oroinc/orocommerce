@@ -1,0 +1,196 @@
+.user-page {
+  .oro-account__block {
+    margin-top: 15px;
+
+    .map-address-list {
+      .list-item {
+        border-bottom: 1px solid #f7f7f7;
+        padding: 15px;
+        &.active {
+          background-color: #f7f7f7;
+        }
+      }
+    }
+    .account-oq__item {
+      padding-bottom: 5px;
+    }
+    .account-oq__item__body {
+      border-top: 1px solid #ebebeb;
+      padding-top: 10px;
+      margin-left: 15px;
+    }
+  }
+
+  .oro-account__controls-list {
+    text-align: right;
+  }
+
+  .customer-info {
+    ul.inline {
+      margin-bottom: 0;
+      color: #777;
+
+      li {
+        &:first-child {
+          padding: 0 10px 0 0;
+          border: 0;
+        }
+
+        padding: 0 10px;
+        margin-bottom: 4px;
+        border-left: 1px solid #e6e6e6;
+        font-size: 11px;
+        line-height: 14px;
+      }
+    }
+  }
+
+  .form-horizontal .control-group label.control-label {
+    float: left;
+    width: 160px;
+    padding-top: 1.8rem;
+    color: #777;
+    font-weight: normal;
+    font-size: 13px;
+    text-align: right;
+  }
+
+  .form-horizontal .control-group .controls{
+    margin-left: 170px;
+  }
+
+  .form-horizontal .control-group .controls .control-label{
+    padding-top: 1.8rem;
+    width: 100%;
+    word-wrap: break-word;
+    padding-left: 5px;
+    box-sizing: border-box;
+    text-align: left;
+  }
+
+  .form-horizontal .control-label{
+    font-size: 13px;
+    text-align: left;
+    line-height: 1.2em;
+  }
+
+  .actions-list{
+    text-align: right;
+  }
+
+  ul.inline {
+    margin-left: 0;
+    list-style: none;
+
+    li {
+      display: inline-block;
+    }
+  }
+}
+
+.profile__form__row {
+  position: relative;
+
+  legend {
+    text-transform: uppercase;
+    padding: 2rem 0;
+    margin: 0 0 2rem 0;
+    border-bottom: 1px solid #e6e6e6;
+    font-size: 1.6rem;
+  }
+
+  .field {
+    margin: 0 0 1.5rem;
+  }
+
+  .profile__form__col.col_first{
+    padding-right: 2rem;
+  }
+
+  .profile__form__col.col_last{
+    padding-left: 2rem;
+  }
+}
+
+.profile__form__fields_container{
+  margin: 0 0 2rem 0;
+}
+
+.profile__form__col.form__col_x6 {
+  width: 50%;
+}
+
+.profile__form__col {
+  float: left;
+}
+
+.profile__form__label.profile__form__label_additional {
+  text-transform: none;
+}
+.profile__form__label {
+  display: block;
+  font-weight: 400;
+  margin: 0 0 1rem;
+}
+
+.profile__form__req-text {
+  position: absolute;
+  left: 21rem;
+  top: -3.2rem;
+  color: #b84926;
+}
+
+
+.profile__form__input.input_md {
+  padding: 1.1rem .9rem;
+  font-size: 1.4rem;
+}
+.profile__form__input.input_block {
+  display: block;
+  width: 100% !important;
+}
+.profile__form__input {
+  padding: 1.3rem 1.2rem;
+  border: .1rem solid #ebebeb;
+  border-radius: .5rem;
+}
+
+.account-profile-edit-page {
+  .checkbox_custom {
+    input[type="checkbox"] {
+      display: block;
+      opacity: 0;
+      position: absolute;
+    }
+  }
+
+  .password {
+    overflow: hidden;
+  }
+}
+
+.map-address-list {
+  .list-item {
+    &.map-item {
+      &.active {
+        .actions {
+          a {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}
+
+.oro-account-user-address__add-link {
+  a {
+    i {
+      margin-right: 0.3rem;
+    }
+  }
+}
+
+.oro-account-user-role__back-link {
+  padding-left: 0;
+}

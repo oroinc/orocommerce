@@ -1,21 +1,25 @@
 services:
     orob2b_payment.paypal.payflow.nvp_encoder:
         class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\NVP\Encoder'
+        public: false
 
     orob2b_payment.event_listener.callback.payflow:
         class: 'OroB2B\Bundle\PaymentBundle\EventListener\Callback\PayflowListener'
-        public: true
         lazy: true
         arguments:
             - '@session'
+            - '@orob2b_payment.payment_method.registry'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.return.payflow_gateway, method: onCallback }
             - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow_gateway, method: onError }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.return.paypal_payments_pro, method: onCallback }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.notify.payflow_gateway, method: onNotify }
             - { name: kernel.event_listener, event: orob2b_payment.callback.error.paypal_payments_pro, method: onError }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.notify.paypal_payments_pro, method: onNotify }
 
     orob2b_payment.paypal.payflow.request.registry:
         class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestRegistry'
+        public: false
         calls:
             - ['addRequest', ['@orob2b_payment.paypal.payflow.request.authorize']]
             - ['addRequest', ['@orob2b_payment.paypal.payflow.request.delayed_capture']]
@@ -24,26 +28,33 @@ services:
 
     orob2b_payment.paypal.payflow.request.authorize:
         class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\AuthorizationRequest'
+        public: false
 
     orob2b_payment.paypal.payflow.request.delayed_capture:
         class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\DelayedCaptureRequest'
+        public: false
 
     orob2b_payment.paypal.payflow.request.sale:
         class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\SaleRequest'
+        public: false
 
     orob2b_payment.paypal.payflow.request.void:
         class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\VoidRequest'
+        public: false
 
     orob2b_payment.paypal.payflow.processor.registry:
         class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Processor\ProcessorRegistry'
+        public: false
         calls:
             - ['addProcessor', ['@orob2b_payment.paypal.payflow.processor.paypal']]
 
     orob2b_payment.paypal.payflow.processor.paypal:
         class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Processor\PayPal'
+        public: false
 
     orob2b_payment.paypal.payflow.gateway:
         class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway'
+        public: false
         arguments:
             - '@orob2b_payment.paypal.payflow.client.nvp'
             - '@orob2b_payment.paypal.payflow.request.registry'
@@ -51,10 +62,12 @@ services:
 
     orob2b_payment.paypal.payflow.client.nvp:
         class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Client\NVPClient'
+        public: false
         arguments:
             - '@orob2b_payment.paypal.payflow.client.http'
             - '@orob2b_payment.paypal.payflow.nvp_encoder'
 
     orob2b_payment.paypal.payflow.client.http:
         class: 'Guzzle\Http\Client'
+        public: false
         lazy: true

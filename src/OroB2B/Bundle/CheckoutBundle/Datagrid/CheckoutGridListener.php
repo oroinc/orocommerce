@@ -2,20 +2,33 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Cache\Cache;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\EntityBundle\Exception\IncorrectEntityException;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+
 /**
  * Add total and subtotal fields to grid where root entity is checkout
- * Total field consider to be first non empty field among source entities and marked as is_total in field config
- * Subtotal field consider to be first non empty field among source entities and marked as is_subtotal in field config
  */
 class CheckoutGridListener
 {
+    const TYPE_JOIN_COLLECTION = 'join_collection';
+    const TYPE_ENTITY_FIELDS = 'entity_fields';
+    const USER_CURRENCY_PARAMETER = 'user_currency';
     /**
      * @var ConfigProvider
      */
@@ -32,15 +45,39 @@ class CheckoutGridListener
     protected $cache;
 
     /**
+     * @var RegistryInterface
+     */
+    protected $doctrine;
+
+    /**
+     * @var UserCurrencyManager
+     */
+    protected $currencyManager;
+
+    /**
+     * @var TotalProcessorProvider
+     */
+    protected $totalProcessor;
+
+    /**
      * @param ConfigProvider $configProvider
      * @param EntityFieldProvider $fieldProvider
+     * @param RegistryInterface $doctrine
+     * @param UserCurrencyManager $currencyManager
+     * @param TotalProcessorProvider $totalProcessor
      */
     public function __construct(
         ConfigProvider $configProvider,
-        EntityFieldProvider $fieldProvider
+        EntityFieldProvider $fieldProvider,
+        RegistryInterface $doctrine,
+        UserCurrencyManager $currencyManager,
+        TotalProcessorProvider $totalProcessor
     ) {
         $this->configProvider = $configProvider;
         $this->fieldProvider = $fieldProvider;
+        $this->doctrine = $doctrine;
+        $this->currencyManager = $currencyManager;
+        $this->totalProcessor = $totalProcessor;
     }
 
     /**
@@ -50,7 +87,7 @@ class CheckoutGridListener
     {
         $this->cache = $cache;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -74,6 +111,31 @@ class CheckoutGridListener
             $config->offsetAddToArrayByPath('[filters][columns]', $updates['filters']);
             $config->offsetAddToArrayByPath('[sorters][columns]', $updates['sorters']);
             $config->offsetAddToArrayByPath('[source][query][join][left]', $updates['joins']);
+            $config->offsetAddToArrayByPath('[source][bind_parameters]', $updates['bindParameters']);
+
+            if (in_array(self::USER_CURRENCY_PARAMETER, $updates['bindParameters'], true)) {
+                $event->getDatagrid()
+                    ->getParameters()
+                    ->set(self::USER_CURRENCY_PARAMETER, $this->currencyManager->getUserCurrency());
+            }
+        }
+    }
+
+    /**
+     * @param OrmResultAfter $event
+     */
+    public function onResultAfter(OrmResultAfter $event)
+    {
+        /** @var ResultRecord[] $records */
+        $records = $event->getRecords();
+        $em = $this->doctrine->getManagerForClass(BaseCheckout::class);
+        // todo: Reduce db queries count
+        foreach ($records as $record) {
+            if (!$record->getValue('total')) {
+                $id = $record->getValue('id');
+                $ch = $em->find(BaseCheckout::class, $id);
+                $record->addData(['total' => $this->totalProcessor->getTotal($ch->getSourceEntity())->getAmount()]);
+            }
         }
     }
 
@@ -84,30 +146,25 @@ class CheckoutGridListener
     protected function getGridUpdates(DatagridConfiguration $config)
     {
         $totalMetadata = $this->getSourceTotalsMetadata();
+        $updates = [
+            'selects' => [],
+            'columns' => [],
+            'filters' => [],
+            'sorters' => [],
+            'joins' => [],
+            'bindParameters' => []
+        ];
 
-        $updates = [];
         if ($totalMetadata) {
             $from = $config->offsetGetByPath('[source][query][from]');
             $firstFrom = current($from);
             $updates['joins'][] = ['join' => $firstFrom['alias'] . '.source', 'alias' => '_source'];
 
-            $totalFields = [];
-            $subtotalFields = [];
-            $currencyFields = [];
-            foreach ($totalMetadata as $field => $metadata) {
-                $totalHolderAlias = '_' . $field;
-                $updates['joins'][] = ['join' => '_source.' . $field, 'alias' => $totalHolderAlias];
-
-                if (!empty($metadata['total'])) {
-                    $totalFields[] = $totalHolderAlias . '.' . $metadata['total'];
-                }
-                if (!empty($metadata['subtotal'])) {
-                    $subtotalFields[] = $totalHolderAlias . '.' . $metadata['subtotal'];
-                }
-                if (!empty($metadata['currency'])) {
-                    $currencyFields[] = $totalHolderAlias . '.' . $metadata['currency'];
-                }
-            }
+            list(
+                $totalFields,
+                $subtotalFields,
+                $currencyFields,
+                $updates) = $this->processMetadata($totalMetadata, $updates);
 
             if ($totalFields) {
                 $updates['selects'][] = sprintf('COALESCE(%s) as total', implode(',', $totalFields));
@@ -117,12 +174,6 @@ class CheckoutGridListener
                     'frontend_type' => 'html',
                     'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
                 ];
-
-                $updates['filters']['total'] = [
-                    'type' => 'number',
-                    'data_name' => 'total'
-                ];
-                $updates['sorters']['total'] = ['data_name' => 'total'];
             }
             if ($subtotalFields) {
                 $updates['selects'][] = sprintf('COALESCE(%s) as subtotal', implode(',', $subtotalFields));
@@ -153,12 +204,7 @@ class CheckoutGridListener
     protected function getSourceTotalsMetadata()
     {
         $metadata = [];
-        $relationsMetadata = $this->fieldProvider->getRelations(
-            'OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource',
-            false,
-            false,
-            false
-        );
+        $relationsMetadata = $this->fieldProvider->getRelations(CheckoutSource::class, false, false, false);
 
         if (!$relationsMetadata) {
             return $metadata;
@@ -169,7 +215,8 @@ class CheckoutGridListener
                 $relatedEntityName = $relationMetadata['related_entity_name'];
                 $relationField = $relationMetadata['name'];
 
-                if ($totalsMetadata = $this->getTotalsMetadata($relatedEntityName)) {
+                $totalsMetadata = $this->getTotalsMetadata($relatedEntityName);
+                if ($totalsMetadata) {
                     $metadata[$relationField] = $totalsMetadata;
                 }
             }
@@ -184,27 +231,146 @@ class CheckoutGridListener
      */
     protected function getTotalsMetadata($entityName)
     {
-        $metadata = [];
-        $fields = $this->fieldProvider->getFields($entityName);
-        if (!$fields) {
-            return $metadata;
+        $entityConfig = $this->configProvider->getConfig($entityName);
+        if ($entityConfig->has('totals_mapping')) {
+            return $this->resolveMetadata($entityConfig->get('totals_mapping'), $entityName);
         }
-        foreach ($fields as $field) {
-            $fieldName = $field['name'];
-            if ($this->configProvider->hasConfig($entityName, $fieldName)) {
-                $fieldConfig = $this->configProvider->getConfig($entityName, $fieldName);
-                if ($fieldConfig->get('is_total')) {
-                    $metadata['total'] = $fieldName;
+
+        return [];
+    }
+
+    /**
+     * @param array $totalMetadata
+     * @param array $updates
+     * @return array
+     */
+    protected function processMetadata(array $totalMetadata, array $updates)
+    {
+        $totalFields = [];
+        $subtotalFields = [];
+        $currencyFields = [];
+
+        foreach ($totalMetadata as $field => $metadata) {
+            $totalHolderAlias = '_' . $field;
+            $updates['joins'][] = ['join' => '_source.' . $field, 'alias' => $totalHolderAlias];
+
+            if ($metadata['type'] === self::TYPE_JOIN_COLLECTION) {
+                $relationAlias = $totalHolderAlias . '_' . $metadata['join_field'];
+                $fields = $metadata['relation_fields'];
+                $updates['joins'][] = [
+                    'join' => $totalHolderAlias . '.' . $metadata['join_field'],
+                    'alias' => $relationAlias,
+                    'conditionType' => 'WITH',
+                    'condition' => sprintf(
+                        '%s = :'.self::USER_CURRENCY_PARAMETER,
+                        $relationAlias . '.' . $fields['currency']
+                    )
+                ];
+                if (!in_array(self::USER_CURRENCY_PARAMETER, $updates['bindParameters'], true)) {
+                    $updates['bindParameters'][] = self::USER_CURRENCY_PARAMETER;
                 }
-                if ($fieldConfig->get('is_subtotal')) {
-                    $metadata['subtotal'] = $fieldName;
+                $currencyFields[] = $relationAlias . '.' . $fields['currency'];
+                if ($fields['subtotal']) {
+                    $subtotalFields[] = $relationAlias . '.' . $fields['subtotal'];
                 }
-                if ($fieldConfig->get('is_total_currency')) {
-                    $metadata['currency'] = $fieldName;
+            }
+
+            if ($metadata['type'] === self::TYPE_ENTITY_FIELDS) {
+                $fields = $metadata['fields'];
+                if ($fields['total']) {
+                    $totalFields[] = $totalHolderAlias . '.' . $fields['total'];
+                }
+                if ($fields['subtotal']) {
+                    $subtotalFields[] = $totalHolderAlias . '.' . $fields['subtotal'];
+                }
+                if ($fields['currency']) {
+                    $currencyFields[] = $totalHolderAlias . '.' . $fields['currency'];
                 }
             }
         }
+        return [$totalFields, $subtotalFields, $currencyFields, $updates];
+    }
+
+    /**
+     * @param array $metadata
+     * @param string $entityName
+     * @return array
+     */
+    public function resolveMetadata(array $metadata, $entityName)
+    {
+        $metadata = $this->getMetadataOptionsResolver()->resolve($metadata);
+        $em = $this->doctrine->getManagerForClass($entityName);
+        $entityMetadata = $em->getClassMetadata($entityName);
+        $fieldsResolver = $this->getFieldsOptionsResolver();
+
+        if ($metadata['type'] === self::TYPE_ENTITY_FIELDS) {
+            $metadata['fields'] = $fieldsResolver->resolve($metadata['fields']);
+            $this->checkFieldsExists($metadata['fields'], $entityMetadata, $entityName);
+        }
+
+        if ($metadata['type'] === self::TYPE_JOIN_COLLECTION) {
+            if (!$entityMetadata->hasAssociation($metadata['join_field'])) {
+                throw new IncorrectEntityException(
+                    sprintf("Entity '%s' doesn't have association '%s'", $entityName, $metadata['join_field'])
+                );
+            }
+
+            $metadata['relation_fields'] = $fieldsResolver->resolve($metadata['relation_fields']);
+            $relationName = $entityMetadata->getAssociationTargetClass($metadata['join_field']);
+            $this->checkFieldsExists($metadata['relation_fields'], $em->getClassMetadata($relationName), $relationName);
+        }
 
         return $metadata;
+    }
+
+    /**
+     * @return OptionsResolver
+     */
+    protected function getMetadataOptionsResolver()
+    {
+        $metadataResolver = new OptionsResolver();
+        $metadataResolver->setRequired('type')
+            ->setAllowedValues('type', [self::TYPE_JOIN_COLLECTION, self::TYPE_ENTITY_FIELDS])
+            ->setDefaults([
+                'join_field' => '',
+                'relation_fields' => [],
+                'fields' => []
+            ])
+            ->setAllowedTypes('join_field', 'string')
+            ->setAllowedTypes('relation_fields', 'array')
+            ->setAllowedTypes('fields', 'array');
+
+        return $metadataResolver;
+    }
+
+    /**
+     * @return OptionsResolver
+     */
+    protected function getFieldsOptionsResolver()
+    {
+        $fieldsResolver = new OptionsResolver();
+        $fieldsResolver->setDefaults([
+            'currency' => '',
+            'subtotal' => '',
+            'total' => ''
+        ]);
+
+        return $fieldsResolver;
+    }
+
+    /**
+     * @param array $fields
+     * @param ClassMetadata $relationMetadata
+     * @param string $relationName
+     */
+    protected function checkFieldsExists(array $fields, ClassMetadata $relationMetadata, $relationName)
+    {
+        foreach ($fields as $field) {
+            if ($field && !$relationMetadata->hasField($field)) {
+                throw new IncorrectEntityException(
+                    sprintf("Entity '%s' doesn't have field '%s'", $relationName, $field)
+                );
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 {% block _top_nav_container_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " topbar hidden-sm hidden-xs"
+        class: attr.class|default('') ~ " topbar"
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="container-fluid">
@@ -12,35 +12,30 @@
 {% endblock %}
 
 {% block _top_nav_widget %}
+    <nav class="topbar__navigation topbar__navigation--has-sibling">
+        {{ block_widget(block) }}
+    </nav>
+{% endblock %}
+
+{% block _top_nav_menu_container_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " col-md-7 col-sm-7 text-right"
     }) %}
     <div {{ block('block_attributes') }}>
-        <nav class="topbar__navigation">
-            {{ block_widget(block) }}
-        </nav>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
+
 {% block _top_nav_controls_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " col-md-5 col-sm-5 text-left"
+        class: attr.class|default('') ~ " col-md-5 col-sm-5"
     }) %}
     <div {{ block('block_attributes') }}>
         <nav class="topbar__navigation">
-            <ul class="pull-left">
+            <ul>
                 {{ block_widget(block) }}
             </ul>
         </nav>
-        {#<div class="topbar__controls">
-            <span class="currency">
-              <span>$</span>
-              <i class="icon-down-open-mini"></i>
-            </span>
-            <span class="language">
-              <span>Eng</span>
-              <i class="icon-down-open-mini"></i>
-            </span>
-        </div>#}
     </div>
 {% endblock %}

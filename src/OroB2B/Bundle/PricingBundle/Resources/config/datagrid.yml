@@ -419,7 +419,7 @@ datagrid:
                             join: product.names
                             alias: productNames
                             conditionType: WITH
-                            condition: productNames.locale IS NULL
+                            condition: productNames.localization IS NULL
                 where:
                     and:
                         - IDENTITY(productPrice.priceList) = :price_list_id
@@ -606,3 +606,76 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_pricing_price_list_view
                 rowAction:     true
+
+    pricing-price-attribute-price-list-grid:
+        acl_resource:      orob2b_pricing_price_attribute_price_list_view
+        options:
+            entityHint:        priceAttributepriceList
+        source:
+            type:              orm
+            query:
+                select:
+                    - priceAttributepriceList
+                from:
+                    - { table: %orob2b_pricing.entity.price_attribute_price_list.class%, alias: priceAttributepriceList }
+
+        columns:
+            name:
+                label:         orob2b.pricing.priceattributepricelist.name.label
+            currencies:
+                label:         orob2b.pricing.priceattributepricelist.currencies.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BPricingBundle:PriceAttributePriceList:Datagrid/currencies.html.twig
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        properties:
+            view_link:
+                type:  url
+                route: orob2b_pricing_price_attribute_price_list_view
+                params:
+                    - id
+            update_link:
+                type:  url
+                route: orob2b_pricing_price_attribute_price_list_update
+                params:
+                    - id
+        sorters:
+            columns:
+                name:
+                    data_name: priceAttributepriceList.name
+                createdAt:
+                    data_name: priceAttributepriceList.createdAt
+                updatedAt:
+                    data_name: priceAttributepriceList.updatedAt
+            default:
+                createdAt:     %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: priceAttributepriceList.name
+                createdAt:
+                    type:      datetime
+                    data_name: priceAttributepriceList.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: priceAttributepriceList.updatedAt
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_pricing_price_attribute_price_list_view
+                rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_pricing_price_attribute_price_list_update

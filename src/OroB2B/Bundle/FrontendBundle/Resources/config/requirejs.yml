@@ -18,6 +18,8 @@ config:
         'orob2bfrontend/js/app/components/delete-item-component': 'bundles/orob2bfrontend/js/app/components/delete-item-component.js'
         'orob2bfrontend/js/app/components/empty-items-component': 'bundles/orob2bfrontend/js/app/components/empty-items-component.js'
         'orob2bfrontend/js/app/components/delete-confirmation': 'bundles/orob2bfrontend/js/app/components/delete-confirmation.js'
+        'orob2bfrontend/default/js/widgets/expand-text-widget': 'bundles/orob2bfrontend/default/js/widgets/expand-text-widget.js'
+        'orob2bfrontend/default/js/widgets/collapse-widget': 'bundles/orob2bfrontend/default/js/widgets/collapse-widget.js'
 
         'orob2bfrontend/js/app/elements-helper': 'bundles/orob2bfrontend/js/app/elements-helper.js'
     appmodules:
