@@ -13,6 +13,7 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Model\ContextAccessor;
@@ -70,6 +71,11 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
      */
     protected $eventDispatcher;
 
+    /**
+     * @var WorkflowManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $workflowManager;
+
     public function setUp()
     {
         $this->registry = $this->getMockWithoutConstructor('Symfony\Bridge\Doctrine\ManagerRegistry');
@@ -85,6 +91,10 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->getMockWithoutConstructor('Symfony\Component\PropertyAccess\PropertyAccessor');
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
+        $this->workflowManager = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\WorkflowManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->action = new StartCheckout(
             new ContextAccessor(),
             $this->registry,
@@ -93,7 +103,8 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             $this->tokenStorage,
             $this->propertyAccessor,
             $this->redirect,
-            $this->eventDispatcher
+            $this->eventDispatcher,
+            $this->workflowManager
         );
 
         $this->action->setDispatcher($this->eventDispatcher);
@@ -130,6 +141,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(function ($eventName, $event) use ($checkout) {
                 if ($eventName === CheckoutEvents::GET_CHECKOUT_ENTITY && $event instanceof CheckoutEntityEvent) {
                     $event->setCheckoutEntity($checkout);
+                    $event->setWorkflowName('test');
                 }
             });
 
@@ -172,17 +184,24 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                     }
                 );
 
+            $this->workflowManager->expects($this->at(0))
+                ->method('getWorkflowItem')
+                ->willReturn(null);
+
+            $this->workflowManager->expects($this->at(1))
+                ->method('getWorkflowItem')
+                ->willReturn(new WorkflowItem());
+
             $em->expects($this->once())
                 ->method('persist')
-                ->with($this->isInstanceOf('OroB2B\Bundle\CheckoutBundle\Entity\Checkout'))
-                ->willReturnCallback(
-                    function (Checkout $entity) {
-                        $entity->setWorkflowItem(new WorkflowItem());
-                    }
-                );
+                ->with($this->isInstanceOf('OroB2B\Bundle\CheckoutBundle\Entity\Checkout'));
             $em->expects($this->exactly(2))->method('flush');
         } else {
-            $checkout->setWorkflowItem(new WorkflowItem());
+            $workflowItem = new WorkflowItem();
+
+            $this->workflowManager->expects($this->exactly(2))
+                ->method('getWorkflowItem')
+                ->willReturn($workflowItem);
         }
 
         $this->redirect
