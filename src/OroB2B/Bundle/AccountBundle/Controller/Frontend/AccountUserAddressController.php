@@ -23,7 +23,7 @@ class AccountUserAddressController extends Controller
 {
     /**
      * @Route("/", name="orob2b_account_frontend_account_user_address_index")
-     * @Layout(vars={"entity_class"})
+     * @Layout(vars={"entity_class", "account_address_count", "account_user_address_count"})
      * @AclAncestor("orob2b_account_frontend_account_user_address_view")
      *
      * @return array
@@ -32,10 +32,10 @@ class AccountUserAddressController extends Controller
     {
         return [
             'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user_address.class'),
+            'account_user_address_count' => $this->getUser()->getAddresses()->count(),
+            'account_address_count' => $this->getUser()->getAccount()->getAddresses()->count(),
             'data' => [
-                'entity' => $this->getUser(),
-                'accountUserAddressCount' => $this->getUser()->getAddresses()->count(),
-                'accountAddressCount' => $this->getUser()->getAccount()->getAddresses()->count()
+                'entity' => $this->getUser()
             ]
         ];
     }
