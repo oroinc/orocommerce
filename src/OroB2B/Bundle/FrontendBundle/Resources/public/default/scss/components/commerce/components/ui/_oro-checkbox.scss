@@ -39,7 +39,7 @@
     display: inline-block;
     vertical-align: middle;
 
-    margin-right: @offset-x-m / 2;
+    margin-right: $offset-x-m / 2;
 
     font-weight: normal;
     font-style: normal;
@@ -55,7 +55,7 @@
 
       display: inline-block;
 
-      font-family: @font-icon;
+      font-family: $font-icon;
       font-size: 17px;
       line-height: 1;
       color: #d1d1d1;
