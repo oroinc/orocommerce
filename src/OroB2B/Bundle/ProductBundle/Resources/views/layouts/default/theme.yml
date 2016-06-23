@@ -3,15 +3,19 @@ data:
         types:
             main:
                 label: orob2b.product.productimage.type.main.label
-                dimensions: ~
+                dimensions:
+                    - { width: 100, height: 100 }
+                    - { width: 200, height: 200 }
                 max_number: 1
             listing:
                 label: orob2b.product.productimage.type.listing.label
-                dimensions: ~
+                dimensions:
+                    - { width: 75, height: 75 }
                 max_number: 1
             additional:
                 label: orob2b.product.productimage.type.additional.label
-                dimensions: ~
+                dimensions:
+                    - { width: 50, height: 50 }
                 max_number: ~
     assets:
         styles:
