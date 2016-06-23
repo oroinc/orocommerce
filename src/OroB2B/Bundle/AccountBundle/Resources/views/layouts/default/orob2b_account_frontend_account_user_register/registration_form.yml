@@ -27,7 +27,7 @@ layout:
                     options:
                         form: { '@value': $data.orob2b_account_frontend_account_user_register }
                 registration_form_fields:
-                    blockType: form
+                    blockType: form_fields
                     options:
                         form: { '@value': $data.orob2b_account_frontend_account_user_register }
                 registration_form_submit:

@@ -17,7 +17,7 @@ layout:
                     options:
                         form: { '@value': $data.orob2b_shopping_list_shopping_list_form }
                 form_fields:
-                    blockType: form
+                    blockType: form_fields
                     options:
                         form: { '@value': $data.orob2b_shopping_list_shopping_list_form }
                 form_end:

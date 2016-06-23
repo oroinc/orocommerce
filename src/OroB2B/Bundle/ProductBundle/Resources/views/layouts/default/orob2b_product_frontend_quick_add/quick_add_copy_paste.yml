@@ -13,7 +13,7 @@ layout:
                     options:
                         form: { '@value': $data.orob2b_product_quick_add_copy_paste_form_provider }
                 quick_add_copy_paste_form_fields:
-                    blockType: form
+                    blockType: form_fields
                     options:
                         form: { '@value': $data.orob2b_product_quick_add_copy_paste_form_provider }
                 quick_add_copy_paste_form_end:

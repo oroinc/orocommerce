@@ -1,0 +1,176 @@
+.account-oq-container {
+  margin: 23px -15px 0;
+
+  @include clearfix();
+}
+
+.account-oq__item {
+  position: relative;
+
+  float: left;
+  width: 50%;
+  padding: 0 15px;
+
+  &.account-oq__item_full {
+    float: none;
+    width: 100%;
+
+    @include clearfix();
+  }
+
+  @media (max-width: $screen-sm) {
+    float: none;
+    width: 100%;
+    margin: 0;
+  }
+
+  &__head {
+    @include clearfix();
+  }
+
+  &__body {
+    @include clearfix();
+
+    @media (max-width: $screen-sm) {
+      margin: 0 0 15px;
+    }
+  }
+
+  &__title {
+    float: left;
+
+    font-size: 16px;
+    font-weight: 400;
+    text-transform: uppercase;
+
+    @media (max-width: $screen-md) {
+      &.styled {
+        float: none;
+
+        padding-bottom: 10px;
+        margin-bottom: 16px;
+
+        border-bottom: 1px solid $base-border-color;
+      }
+    }
+  }
+}
+
+.account-oq__order-info {
+  max-width: 350px;
+
+  &__title {
+    font-size: 16px;
+  }
+
+  .table {
+    // TODO: override hard selector
+    > tbody > tr > td {
+      padding-left: 0;
+
+      line-height: 1.4;
+
+      vertical-align: top;
+    }
+
+    td {
+      line-height: 1;
+      vertical-align: bottom;
+
+      &:last-child {
+        font-style: italic;
+        line-height: 1.75;
+      }
+    }
+  }
+}
+
+.account-oq__order-item-more {
+  width: 52%;
+
+  color: $base-font-color-lighter;
+
+  @media (max-width: $screen-sm) {
+    width: 95%;
+    margin-top: 12px;
+    margin-bottom: -12px;
+  }
+
+
+  div {
+    @include ellipsis();
+
+    &.oro-long-text-expanded {
+      overflow: visible;
+
+      line-height: 1.2;
+
+      white-space: normal;
+    }
+  }
+}
+
+.account-oq__order-breakdown {
+  > a {
+    color: $theme-red-color;
+  }
+
+  > i {
+    width: 10px;
+
+    transition: transform .3s linear;
+
+    &.expanded {
+      transform: rotate(90deg);
+    }
+  }
+
+  > div {
+    padding: 5px 0 0 20px;
+
+    > .table {
+      > tbody {
+        > tr {
+          > td {
+            &:not(:first-child) {
+              text-align: center;
+            }
+          }
+        }
+      }
+
+      &.account-oq__order__size-table {
+        > tbody {
+          > tr {
+            > td {
+              text-align: left;
+              padding-bottom: 7px;
+
+              &:first-child {
+                padding-left: 0;
+              }
+            }
+          }
+
+          + tbody {
+            border: 0;
+
+            > tr {
+              &:first-child {
+                > td {
+                  padding-top: 10px !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.oro-long-text-expanded {
+  .cf-play {
+    transform: rotate(90deg);
+  }
+}

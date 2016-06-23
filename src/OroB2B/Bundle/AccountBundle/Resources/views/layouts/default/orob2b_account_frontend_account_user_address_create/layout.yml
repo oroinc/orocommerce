@@ -32,7 +32,7 @@ layout:
                     options:
                         form: { '@value': $data.orob2b_account_frontend_account_user_address_form }
                 account_user_address_edit_form_fields:
-                    blockType: form
+                    blockType: form_fields
                     options:
                         form: { '@value': $data.orob2b_account_frontend_account_user_address_form }
                 account_user_address_edit_form_end:

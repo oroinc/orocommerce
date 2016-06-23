@@ -1,0 +1,106 @@
+.datepicker {
+  padding: 0 15px;
+  border: 1px solid $theme-lighter-gray-color;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,.15);
+
+  table {
+    border-collapse: separate;
+    border-spacing: .5rem;
+  }
+
+  &.dropdown-menu {
+    margin: 0;
+  }
+
+  th {
+    color: $theme-datepicker-head-color;
+    font-weight: 400;
+    vertical-align: middle;
+   }
+
+  table tr td.old,
+  table tr td.new {
+    color: $theme-datepicker-head-color;
+  }
+
+  table tr td.new {
+    display: none;
+  }
+
+  .datepicker-switch {
+    color: $base-font-color;
+    font-size: $base-font-size;
+  }
+
+  table tr td.day:hover, table tr td.day.focused {
+    background: $theme-lightest-gray-color;
+  }
+
+  .datepicker-switch:hover,
+  .datepicker .prev:hover,
+  .next:hover,
+  tfoot tr th:hover {
+    background: $theme-lightest-gray-color;
+  }
+
+  table tr td.active,
+  table tr td.active:hover,
+  table tr td.active.disabled,
+  table tr td.active.disabled:hover {
+    background: $theme-orange-color;
+  }
+
+  table tr td.active:hover,
+  table tr td.active:hover:hover,
+  table tr td.active.disabled:hover,
+  table tr td.active.disabled:hover:hover,
+  table tr td.active:active,
+  table tr td.active:hover:active,
+  table tr td.active.disabled:active,
+  table tr td.active.disabled:hover:active,
+  table tr td.active.active,
+  table tr td.active:hover.active,
+  table tr td.active.disabled.active,
+  table tr td.active.disabled:hover.active,
+  table tr td.active.disabled,
+  table tr td.active:hover.disabled,
+  table tr td.active.disabled.disabled,
+  table tr td.active.disabled:hover.disabled,
+  table tr td.active[disabled],
+  table tr td.active:hover[disabled],
+  table tr td.active.disabled[disabled],
+  table tr td.active.disabled:hover[disabled] {
+    background: $theme-orange-color;
+  }
+
+  .prev, .next {
+    font-size: 0;
+
+    &:before {
+      content: "";
+      display: inline-block;
+      vertical-align: middle;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+    }
+  }
+
+  .prev {
+    &:before {
+      border-right: 7px solid $theme-datepicker-head-color;
+    }
+  }
+
+  .next {
+    &:before {
+      border-left: .7px solid $theme-datepicker-head-color;
+    }
+  }
+}
+
+.datepicker-dropdown {
+  &:before,
+  &:after {
+    display: none;
+  }
+}

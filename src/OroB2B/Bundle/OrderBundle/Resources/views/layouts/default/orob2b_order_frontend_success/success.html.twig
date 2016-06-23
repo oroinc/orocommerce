@@ -1,6 +1,6 @@
 {% block _success_order_widget %}
     <div class="checkout__success">
-        <h1 class="checkout__success___title">{{ 'orob2b.order.success.thank_you'|trans }}</h1>
+        <h1 class="checkout__success__title">{{ 'orob2b.order.success.thank_you'|trans }}</h1>
         <div class="checkout__success__order">
             <p>{{ 'orob2b.order.success.order_number'|trans }} {{ order.id }} (<a href="{{ path('orob2b_order_frontend_view', {id: order.id}) }}">{{ 'orob2b.order.success.click_to_review'|trans }}</a>)</p>
             <p>{{ 'orob2b.order.success.receive_email'|trans }}</p>
