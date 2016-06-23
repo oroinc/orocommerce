@@ -1,7 +1,6 @@
 {% block _checkout_form_fields_widget %}
     <fieldset class="checkout__form__row">
         <div class="checkout__form__col form__col_x6">
-            {% set workflowItem = checkout.workflowItem %}
             {% if workflowItem.data.get('disallow_shipping_method_edit') %}
                 <div class="checkout__form__radio">
                     <label class="radio_custom radio_custom_blue checked" data-radio="">

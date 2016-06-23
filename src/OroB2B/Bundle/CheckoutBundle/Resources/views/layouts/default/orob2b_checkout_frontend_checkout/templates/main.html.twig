@@ -53,7 +53,6 @@
 
 {% block _checkout_order_summary_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-order-summary"}) %}
-    {% set workfowItem = checkout.workflowItem %}
     <div{{ block('block_attributes') }}>
         <div class="checkout-order-summary__tab collapse-view {% if app.request.cookies.has('order-tab:state') %}expanded{% endif %}"
              data-page-component-module="oroui/js/app/components/jquery-widget-component"
@@ -78,7 +77,7 @@
                         <span>{{ 'orob2b.checkout.order_summary.subtotal'|trans }}: <strong>{{ summary.generalTotal.totalPrice|oro_format_price }}</strong></span>
                     </div>
                 </div>
-                {% set editLink = workfowItem.data.get('edit_order_link') %}
+                {% set editLink = workflowItem.data.get('edit_order_link') %}
                 {% if editLink %}
                 <a href="{{ editLink }}" class="checkout-order-summary__header__edit-link">
                     <i class="cf-pencil"></i>
@@ -92,7 +91,6 @@
 {% endblock %}
 
 {% block _checkout_order_summary_table_widget %}
-    {% set workfowItem = checkout.workflowItem %}
     <div class="checkout-order-summary__tab__content collapse-view__container" data-collapse-container>
         <table class="oro-grid-table table-scrollable"  
                data-page-component-module="oroui/js/app/components/view-component"  
@@ -158,7 +156,7 @@
                 </td>
             </tr>
             <tr>
-                {% set editLink = workfowItem.data.get('edit_order_link') %}
+                {% set editLink = workflowItem.data.get('edit_order_link') %}
                 {% set hasEditList = editLink and workflowStep.name == 'order_review' %}
                 {% if hasEditList %}
                     <td class="va-t_md hidden-xs">

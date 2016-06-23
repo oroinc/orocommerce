@@ -10,6 +10,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
@@ -106,6 +107,11 @@ class StartCheckout extends AbstractAction
     protected $dispatcher;
 
     /**
+     * @var WorkflowManager
+     */
+    protected $workflowManager;
+
+    /**
      * @param ContextAccessor $contextAccessor
      * @param ManagerRegistry $registry
      * @param WebsiteManager $websiteManager
@@ -114,6 +120,7 @@ class StartCheckout extends AbstractAction
      * @param PropertyAccessor $propertyAccessor
      * @param AbstractAction $redirect
      * @param EventDispatcherInterface $dispatcher
+     * @param WorkflowManager $workflowManager
      */
     public function __construct(
         ContextAccessor $contextAccessor,
@@ -123,7 +130,8 @@ class StartCheckout extends AbstractAction
         TokenStorageInterface $tokenStorage,
         PropertyAccessor $propertyAccessor,
         AbstractAction $redirect,
-        EventDispatcherInterface $dispatcher
+        EventDispatcherInterface $dispatcher,
+        WorkflowManager $workflowManager
     ) {
         parent::__construct($contextAccessor);
 
@@ -134,6 +142,7 @@ class StartCheckout extends AbstractAction
         $this->propertyAccessor = $propertyAccessor;
         $this->redirect = $redirect;
         $this->dispatcher = $dispatcher;
+        $this->workflowManager = $workflowManager;
     }
 
     /**
@@ -191,25 +200,36 @@ class StartCheckout extends AbstractAction
         $checkoutSource = $sourceRepository->findOneBy([$sourceFieldName => $sourceEntity])
             ?: $this->createCheckoutSource($sourceFieldName, $sourceEntity);
 
-        $checkout = $this->getCheckout($checkoutSource);
-        if ($this->isNewCheckoutEntity($checkout)) {
+        /** @var CheckoutInterface $checkout */
+        list($checkout, $workflowName) = $this->getCheckoutWithWorkflowName($checkoutSource);
+        if ($this->isNewCheckoutEntity($checkout, $workflowName)) {
             $this->updateCheckoutData($context, $checkout);
             $em->persist($checkout);
             $em->flush($checkout);
-            $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
-            $em->flush($checkout->getWorkflowItem());
+
+            $workflowItem = $this->getWorkflowItem($checkout, $workflowName);
+
+            $this->addWorkflowItemDataSettings($context, $workflowItem);
+            $em->flush($workflowItem);
         } else {
             if ($this->getOptionFromContext($context, self::FORCE, false)) {
                 $this->updateCheckoutData($context, $checkout);
-                $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
+
+                $workflowItem = $this->getWorkflowItem($checkout, $workflowName);
+
+                $this->addWorkflowItemDataSettings($context, $workflowItem);
                 $em->flush();
             }
+        }
+        
+        if (empty($workflowItem)) {
+            $workflowItem = $this->getWorkflowItem($checkout, $workflowName);
         }
 
         $this->redirect->initialize(
             [
                 'route' => $this->checkoutRoute,
-                'route_parameters' => ['id' => $checkout->getId(), 'checkoutType' => $checkout->getCheckoutType()]
+                'route_parameters' => ['id' => $workflowItem->getId(), 'checkoutType' => $checkout->getCheckoutType()]
             ]
         );
         $this->redirect->execute($context);
@@ -326,9 +346,9 @@ class StartCheckout extends AbstractAction
 
     /**
      * @param CheckoutSource $checkoutSource
-     * @return CheckoutInterface
+     * @return array
      */
-    protected function getCheckout($checkoutSource)
+    protected function getCheckoutWithWorkflowName($checkoutSource)
     {
         $event = new CheckoutEntityEvent();
         $event->setSource($checkoutSource);
@@ -344,15 +364,32 @@ class StartCheckout extends AbstractAction
             throw new \RuntimeException('Checkout entity should be specified.');
         }
 
-        return $checkout;
+        $workflowName = $event->getWorkflowName();
+
+        if (!$workflowName) {
+            throw new \RuntimeException('Workflow name for checkout entity should be specified.');
+        }
+
+        return [$checkout, $workflowName];
     }
 
     /**
      * @param CheckoutInterface $checkout
+     * @param string $workflowName
      * @return bool
      */
-    protected function isNewCheckoutEntity(CheckoutInterface $checkout)
+    protected function isNewCheckoutEntity(CheckoutInterface $checkout, $workflowName)
     {
-        return !$checkout->getWorkflowItem();
+        return !$this->getWorkflowItem($checkout, $workflowName);
+    }
+
+    /**
+     * @param CheckoutInterface $checkout
+     * @param string $workflowName
+     * @return null|WorkflowItem
+     */
+    protected function getWorkflowItem(CheckoutInterface $checkout, $workflowName)
+    {
+        return $this->workflowManager->getWorkflowItem($checkout, $workflowName);
     }
 }

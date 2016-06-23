@@ -1,5 +1,4 @@
 {% block _checkout_form_fields_widget -%}
-    {% set workflowItem = checkout.workflowItem %}
     {% if workflowItem.data.get('disallow_shipping_address_edit') %}
         <fieldset class="checkout__form__row">
             <div class="checkout__form__col form__col_x6">
@@ -30,7 +29,6 @@
 
             {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress) }}
 
-            {% set workflowItem = checkout.workflowItem %}
             {% if workflowItem.data.get('billing_address_has_shipping') %}
             <fieldset class="checkout__form__row">
                 {{ form_row(form.ship_to_billing_address) }}

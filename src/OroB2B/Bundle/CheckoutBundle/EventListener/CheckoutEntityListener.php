@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
@@ -56,6 +57,11 @@ class CheckoutEntityListener
      * @var UserCurrencyManager
      */
     protected $userCurrencyManager;
+
+    /**
+     * @var array
+     */
+    protected $workflows = [];
 
     /**
      * @param WorkflowManager $workflowManager
@@ -119,6 +125,7 @@ class CheckoutEntityListener
     {
         if ($checkout) {
             $event->setCheckoutEntity($checkout);
+            $event->setWorkflowName($this->getWorkflowName($checkout));
             $event->stopPropagation();
         }
     }
@@ -181,11 +188,7 @@ class CheckoutEntityListener
      */
     protected function isStartWorkflowAllowed($checkout)
     {
-        return $this->workflowManager->isStartTransitionAvailable(
-            $this->getWorkflowName(),
-            static::START_TRANSITION_DEFINITION,
-            $checkout
-        );
+        return null !== $this->getWorkflowName($checkout);
     }
 
     /**
@@ -215,16 +218,39 @@ class CheckoutEntityListener
     }
 
     /**
-     * @return string
+     * @param CheckoutInterface $checkout
+     * @return null|string
      */
-    protected function getWorkflowName()
+    protected function getWorkflowName(CheckoutInterface $checkout)
     {
-        //todo fix in scope of issue BAP-10825
-        throw new \RuntimeException(
-            'TODO. Implement. getApplicableWorkflowByEntityClass was removed'
-        );
+        $key = sprintf('%s_%s', $checkout->getCheckoutType(), $checkout->getId());
+        
+        if (!array_key_exists($key, $this->workflows)) {
+            $workflows = $this->workflowManager->getApplicableWorkflows($this->getCheckoutClassName());
+            $workflows = array_filter(
+                $workflows,
+                function (Workflow $workflow) use ($checkout) {
+                    return $this->workflowManager->isStartTransitionAvailable(
+                        $workflow->getName(),
+                        static::START_TRANSITION_DEFINITION,
+                        $checkout
+                    );
+                }
+            );
 
-        //return $this->workflowManager->getApplicableWorkflowByEntityClass($this->getCheckoutClassName());
+            if (count($workflows) > 1) {
+                throw new \LogicException(
+                    sprintf('More than one active workflow found for entity "%s".', $this->getCheckoutClassName())
+                );
+            }
+
+            /** @var Workflow $workflow */
+            $workflow = array_shift($workflows);
+            
+            $this->workflows[$key] = $workflow ? $workflow->getName() : null;
+        }
+
+        return $this->workflows[$key];
     }
 
     /**

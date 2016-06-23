@@ -23,7 +23,7 @@ class ContinueTransitionDataProvider extends AbstractTransitionDataProvider
         /** @var Checkout $checkout */
         $checkout = $context->data()->get('checkout');
 
-        return $this->getContinueTransition($checkout->getWorkflowItem());
+        return $this->getContinueTransition($context->data()->get('workflowItem'));
     }
 
     /**

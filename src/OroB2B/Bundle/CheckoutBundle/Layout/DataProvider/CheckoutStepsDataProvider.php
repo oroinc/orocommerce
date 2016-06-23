@@ -38,7 +38,7 @@ class CheckoutStepsDataProvider extends AbstractServerRenderDataProvider
     {
         /** @var Checkout $checkout */
         $checkout = $context->data()->get('checkout');
-        $workflowItem = $checkout->getWorkflowItem();
+        $workflowItem = $context->data()->get('workflowItem');
 
         $workflow = $this->workflowManager->getWorkflow($workflowItem);
 

@@ -89,6 +89,7 @@ services:
             - '@property_accessor'
             - '@oro_action.action.redirect'
             - '@event_dispatcher'
+            - '@oro_workflow.manager'
         tags:
             - { name: oro_action.action, alias: start_checkout }
 

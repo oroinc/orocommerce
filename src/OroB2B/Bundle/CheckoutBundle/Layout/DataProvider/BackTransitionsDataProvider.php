@@ -23,7 +23,7 @@ class BackTransitionsDataProvider extends AbstractTransitionDataProvider
     {
         /** @var Checkout $checkout */
         $checkout = $context->data()->get('checkout');
-        $workflowItem = $checkout->getWorkflowItem();
+        $workflowItem = $context->data()->get('workflowItem');
 
         $cacheKey = $workflowItem->getId() . '_' . $workflowItem->getCurrentStep()->getId();
         if (!array_key_exists($cacheKey, $this->transitions)) {

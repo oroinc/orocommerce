@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Entity;
 
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface;
-
-interface CheckoutInterface extends WorkflowAwareInterface
+interface CheckoutInterface
 {
     /**
      * @return CheckoutSource
