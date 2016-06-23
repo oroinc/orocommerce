@@ -10,7 +10,6 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
-//use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
 abstract class AbstractTransitionDataProvider extends AbstractServerRenderDataProvider
@@ -43,13 +42,4 @@ abstract class AbstractTransitionDataProvider extends AbstractServerRenderDataPr
 
         return null;
     }
-
-//    /**
-//     * @param CheckoutInterface $checkout
-//     * @return WorkflowItem
-//     */
-//    protected function getWorkflowItem(CheckoutInterface $checkout)
-//    {
-//        return $this->workflowManager->getWorkflowItemByGroup($checkout, 'checkout');
-//    }
 }
