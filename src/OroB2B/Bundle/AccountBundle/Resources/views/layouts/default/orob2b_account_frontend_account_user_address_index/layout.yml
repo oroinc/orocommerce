@@ -97,19 +97,10 @@ layout:
                         text: 'orob2b.account.address.add'
                         attr:
                             class: btn btn_xsm btn-dark oq-group-btn
-                # Account user address grid
-                account_user_address_view_account_user_addresses_content_grid:
-                    blockType: datagrid
-                    options:
-                        visible: { '@gte': [$data.orob2b_account_frontend_account_user_address_count, 8] }
-                        grid_name: frontend-account-account-user-address-grid
-                        grid_parameters:
-                            frontend_owner_id: {'@value': $data.entity.id}
                 # Account user address list with map
                 account_user_address_view_account_user_addresses_content_list:
                     blockType: address_book
                     options:
-                        visible: { '@lt': [$data.orob2b_account_frontend_account_user_address_count, 8] }
                         entity: { '@value': $data.entity }
                         addressListRouteName: 'orob2b_api_account_frontend_get_accountuser_addresses'
                         addressCreateRouteName: 'orob2b_account_frontend_account_user_address_create'
@@ -131,5 +122,4 @@ layout:
                                 account_user_address_view_account_user_addresses_title: ~
                                 account_user_address_view_account_user_addresses_add_button_container:
                                   account_user_address_view_account_user_addresses_add_button: ~
-                            account_user_address_view_account_user_addresses_content_grid: ~
                             account_user_address_view_account_user_addresses_content_list:
