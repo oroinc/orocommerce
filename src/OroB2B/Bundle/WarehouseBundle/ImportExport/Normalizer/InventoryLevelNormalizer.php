@@ -21,10 +21,9 @@ class InventoryLevelNormalizer implements NormalizerInterface
      */
     public function normalize($object, $format = null, array $context = array())
     {
-        /** @var WarehouseInventoryLevel $object */
         $product = $object->getProduct();
         $unitPrecision = $object->getProductUnitPrecision();
-        $result = [
+        return [
             'product' => [
                 'sku' => $product->getSku(),
                 'defaultName' => $product->getDefaultName() ? $product->getDefaultName()->getString() : null,
@@ -43,7 +42,5 @@ class InventoryLevelNormalizer implements NormalizerInterface
             ]
 
         ];
-
-        return $result;
     }
 }

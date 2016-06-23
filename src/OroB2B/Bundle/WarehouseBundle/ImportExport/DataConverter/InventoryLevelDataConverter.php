@@ -14,10 +14,10 @@ class InventoryLevelDataConverter extends AbstractTableDataConverter
         return [
             'SKU' => 'product:sku',
             'Product' => 'product:defaultName',
-            'Inventory status' => 'product:inventoryStatus',
+            'Inventory Status' => 'product:inventoryStatus',
             'Warehouse' => 'warehouse:name',
-            'Unit' => 'productUnitPrecision:unit:code',
             'Quantity' => 'quantity',
+            'Unit' => 'productUnitPrecision:unit:code',
         ];
     }
 

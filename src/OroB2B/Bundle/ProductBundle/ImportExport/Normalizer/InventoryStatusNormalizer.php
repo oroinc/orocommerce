@@ -21,15 +21,12 @@ class InventoryStatusNormalizer implements NormalizerInterface
      */
     public function normalize($object, $format = null, array $context = array())
     {
-        /** @var Product $object */
-        $result = [
+        return [
             'product' => [
                 'sku' => $object->getSku(),
                 'defaultName' => $object->getDefaultName() ? $object->getDefaultName()->getString() : null,
                 'inventoryStatus' => ($object->getInventoryStatus()) ? $object->getInventoryStatus()->getName() : null
             ]
         ];
-
-        return $result;
     }
 }

@@ -14,7 +14,7 @@ class InventoryStatusDataConverter extends AbstractTableDataConverter
         return [
             'SKU' => 'product:sku',
             'Product' => 'product:defaultName',
-            'Inventory status' => 'product:inventoryStatus',
+            'Inventory Status' => 'product:inventoryStatus',
         ];
     }
 

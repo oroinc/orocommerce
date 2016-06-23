@@ -16,8 +16,8 @@ class InventoryLevelExportType extends AbstractTypeExtension
 
     /** @var string[] */
     protected static $processorAliases = [
-        'export_inventory_status_only',
-        'orob2b_warehouse_detailed_inventory_levels'
+        'orob2b_warehouse.export_inventory_status_only',
+        'orob2b_warehouse.detailed_inventory_levels'
     ];
 
     /**
@@ -49,6 +49,7 @@ class InventoryLevelExportType extends AbstractTypeExtension
             'detailLevel',
             'choice',
             [
+                'label' => false,
                 'choices' => [
                     $this->getExportDetailLevelsByProcessorAliases($processorAliases)
                 ],
