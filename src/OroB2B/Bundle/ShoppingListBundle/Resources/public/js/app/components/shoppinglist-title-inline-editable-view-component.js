@@ -35,8 +35,18 @@ define(function(require) {
          */
         repackageEvent: function(data) {
             mediator.trigger('shopping-list-event:' + this.eventChannelId + ':update', data);
-        }
+        },
 
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$el.off();
+            mediator.off('inlineEditor:' + this.eventChannelId + ':update', this.repackageEvent, this);
+
+            ShoppingListTitleInlineEditableViewComponent.__super__.dispose.call(this);
+        }
     });
 
     return ShoppingListTitleInlineEditableViewComponent;

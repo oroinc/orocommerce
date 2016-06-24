@@ -6,7 +6,6 @@ use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPage;
 
 class ShoppingListTestPage extends AbstractPage
 {
-
     /**
      * @var string
      */
@@ -15,20 +14,17 @@ class ShoppingListTestPage extends AbstractPage
     /**
      * @var string
      */
-    private $editIcon =
-        "//*[@data-role='start-editing']";
-
-    /**
-     * @var
-     */
-    private $inlineEditInput =
-        "//*[@id='title-inline-editable']//input";
+    private $editIcon = "//*[@data-role='start-editing']";
 
     /**
      * @var string
      */
-    private $submitButton =
-        "//button[@type='submit']";
+    private $inlineEditInput = "//*[@id='title-inline-editable']//input";
+
+    /**
+     * @var string
+     */
+    private $submitButton = "//button[@type='submit']";
 
     /**
      * @var string
@@ -100,7 +96,7 @@ class ShoppingListTestPage extends AbstractPage
     public function checkSidebarShoppingListName()
     {
         $element = $this->getTest()
-                        ->byXPath($this->sidebarLabelElement);
+            ->byXPath($this->sidebarLabelElement);
 
         $this->getTest()->assertTrue(
             !empty($element),
@@ -118,7 +114,7 @@ class ShoppingListTestPage extends AbstractPage
         $this->getTest()->byCssSelector('.shopping-lists-frontend-widget')->click();
         
         $element = $this->getTest()
-                        ->byXPath($this->widgetLabelElement);
+            ->byXPath($this->widgetLabelElement);
 
         $this->getTest()->assertTrue(
             !empty($element),

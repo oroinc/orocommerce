@@ -43,6 +43,18 @@ define(function(require) {
          */
         getShoppingListId: function(id) {
             this.shoppingListId = id;
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$el.off();
+            mediator.off('shopping-list-event:' + this.eventChannelId + ':shopping-list-id', this.getShoppingListId, this);
+            mediator.off('shopping-list-event:' + this.eventChannelId + ':update', this.updateTitle, this);
+
+            ShoppingListWidgetViewComponent.__super__.dispose.call(this);
         }
     });
 
