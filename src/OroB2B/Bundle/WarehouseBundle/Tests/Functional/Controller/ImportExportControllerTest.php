@@ -74,7 +74,7 @@ class ImportExportControllerTest extends WebTestCase
     {
         $this->client->useHashNavigation(false);
         $parameters = $this->getDefaultRequestParameters();
-        $parameters['processorAlias'] = 'orob2b_warehouse_inventory_level_export_template';
+        $parameters['processorAlias'] = 'orob2b_warehouse.inventory_level_export_template';
 
         $crawler = $this->client->request(
             'GET',
@@ -96,8 +96,8 @@ class ImportExportControllerTest extends WebTestCase
     public function getExportTemplateTestInput()
     {
         return [
-            ['orob2b_warehouse_inventory_status_only_export_template', self::$inventoryStatusOnlyHeader],
-            ['orob2b_warehouse_inventory_level_export_template', self::$inventoryLevelHeader]
+            ['orob2b_warehouse.inventory_status_only_export_template', self::$inventoryStatusOnlyHeader],
+            ['orob2b_warehouse.inventory_level_export_template', self::$inventoryLevelHeader]
         ];
     }
 

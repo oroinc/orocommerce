@@ -46,8 +46,10 @@ orob2b:
         export:
             popup:
                 title: Export Options
+            template_popup:
+                title: Import Options
             inventory_status:
                 orob2b_warehouse.export_inventory_status_only: "Inventory statuses only"
                 orob2b_warehouse.detailed_inventory_levels: "Detailed inventory levels"
-                orob2b_warehouse_inventory_status_only_export_template: "Inventory statuses only"
-                orob2b_warehouse_inventory_level_export_template: "Detailed inventory levels"
+                orob2b_warehouse.inventory_status_only_export_template: "Inventory statuses only"
+                orob2b_warehouse.inventory_level_export_template: "Detailed inventory levels"

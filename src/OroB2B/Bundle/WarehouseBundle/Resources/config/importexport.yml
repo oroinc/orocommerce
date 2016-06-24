@@ -40,4 +40,11 @@ services:
         calls:
             - [setDataConverter, ['@orob2b_warehouse.importexport.inventory_status_converter']]
         tags:
-            - { name: oro_importexport.processor, type: export_template, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse_inventory_level_export_template }
+            - { name: oro_importexport.processor, type: export_template, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.inventory_level_export_template }
+
+    # Template Fixture
+    orob2b_warehouse.importexport.template_fixture.warehouse_inventory_level:
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\TemplateFixture\WarehouseInventoryLevelFixture'
+        public: false
+        tags:
+            - { name: oro_importexport.template_fixture }
