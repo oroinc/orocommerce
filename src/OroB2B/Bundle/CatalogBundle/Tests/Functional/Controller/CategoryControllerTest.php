@@ -23,12 +23,14 @@ class CategoryControllerTest extends WebTestCase
     const DEFAULT_SUBCATEGORY_TITLE = 'Subcategory Title';
     const DEFAULT_CATEGORY_SHORT_DESCRIPTION = 'Category Short Description';
     const DEFAULT_CATEGORY_LONG_DESCRIPTION = 'Category Long Description';
-    const DEFAULT_CATEGORY_UNIT_PRECISION = ['code' => 'set', 'precision' => 5];
+    const DEFAULT_CATEGORY_UNIT_CODE = 'set';
+    const DEFAULT_CATEGORY_UNIT_PRECISION = 5;
     const UPDATED_DEFAULT_CATEGORY_TITLE = 'Updated Category Title';
     const UPDATED_DEFAULT_SUBCATEGORY_TITLE = 'Updated Subcategory Title';
     const UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION = 'Updated Category Short Description';
     const UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION = 'Updated Category Long Description';
-    const UPDATED_DEFAULT_CATEGORY_UNIT_PRECISION = ['code' => 'item', 'precision' => 3];
+    const UPDATED_DEFAULT_CATEGORY_UNIT_CODE = 'item';
+    const UPDATED_DEFAULT_CATEGORY_UNIT_PRECISION = 3;
     const LARGE_IMAGE_NAME = 'large_image.png';
     const SMALL_IMAGE_NAME = 'small_image.png';
 
@@ -128,14 +130,20 @@ class CategoryControllerTest extends WebTestCase
             self::DEFAULT_CATEGORY_TITLE,
             self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
             self::DEFAULT_CATEGORY_LONG_DESCRIPTION,
-            self::DEFAULT_CATEGORY_UNIT_PRECISION
+            [
+                'code' => self::DEFAULT_CATEGORY_UNIT_CODE,
+                'precision' => self::DEFAULT_CATEGORY_UNIT_PRECISION,
+            ]
         ];
 
         list($newTitle, $newShortDescription, $newLongDescription, $newUnitPrecision) = [
             self::UPDATED_DEFAULT_CATEGORY_TITLE,
             self::UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION,
             self::UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION,
-            self::UPDATED_DEFAULT_CATEGORY_UNIT_PRECISION
+            [
+                'code' => self::UPDATED_DEFAULT_CATEGORY_UNIT_CODE,
+                'precision' => self::UPDATED_DEFAULT_CATEGORY_UNIT_PRECISION,
+            ]
         ];
 
         return $this->assertEdit(
@@ -164,14 +172,20 @@ class CategoryControllerTest extends WebTestCase
             self::DEFAULT_SUBCATEGORY_TITLE,
             self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
             self::DEFAULT_CATEGORY_LONG_DESCRIPTION,
-            self::DEFAULT_CATEGORY_UNIT_PRECISION
+            [
+                'code' => self::DEFAULT_CATEGORY_UNIT_CODE,
+                'precision' => self::DEFAULT_CATEGORY_UNIT_PRECISION,
+            ]
         ];
 
         list($newTitle, $newShortDescription, $newLongDescription, $newUnitPrecision) = [
             self::UPDATED_DEFAULT_CATEGORY_TITLE,
             self::UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION,
             self::UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION,
-            self::UPDATED_DEFAULT_CATEGORY_UNIT_PRECISION
+            [
+                'code' => self::UPDATED_DEFAULT_CATEGORY_UNIT_CODE,
+                'precision' => self::UPDATED_DEFAULT_CATEGORY_UNIT_PRECISION,
+            ]
         ];
 
         return $this->assertEdit(
@@ -240,7 +254,10 @@ class CategoryControllerTest extends WebTestCase
         $title = self::DEFAULT_CATEGORY_TITLE,
         $shortDescription = self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
         $longDescription = self::DEFAULT_CATEGORY_LONG_DESCRIPTION,
-        $unitPrecision = self::DEFAULT_CATEGORY_UNIT_PRECISION
+        $unitPrecision = [
+            'code' => self::DEFAULT_CATEGORY_UNIT_CODE,
+            'precision' => self::DEFAULT_CATEGORY_UNIT_PRECISION
+        ]
     ) {
         $crawler = $this->client->request(
             'GET',
