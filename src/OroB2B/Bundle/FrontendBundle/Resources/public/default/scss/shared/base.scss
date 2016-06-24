@@ -7,6 +7,7 @@
 html {
   width: 100%;
   height: 100%;
+
   font-size: $default-font-size;
   font-family: $lato-font;
   -ms-overflow-style: scrollbar;
@@ -14,17 +15,17 @@ html {
 
 body {
   width: 100%;
-  font-family: $lato-font;
-  -webkit-font-smoothing: antialiased;
-  -moz-font-smoothing: antialiased;
-  font-smoothing: antialiased;
   vertical-align: baseline;
+
+  background: $base-white-color;
+  color: $base-font-color;
+  font-family: $lato-font;
   font-size: $base-font-size;
   line-height: $base-line-height;
-  color: $base-font-color;
-  background: $base-background-color;
 
-  @media (max-width: 991px) {
+  font-smoothing: antialiased;
+
+  @media (max-width: $screen-md) {
     &.sales-mode {
       overflow-x: hidden; 
     }
@@ -42,12 +43,14 @@ body {
 .wrapper {
   
   &.sales-mode {
-    padding-top: 1.1rem;
+    padding-top: 11px;
+
     transition: transform .2s linear;
 
-    @media (max-width: 991px) {
-      transform: translate3d(0, 0, 0);
+    @media (max-width: $screen-md) {
       padding-top: 0;
+
+      transform: translate3d(0, 0, 0);
     }
 
     /*&.expanded {
@@ -62,27 +65,29 @@ body {
 }
 
 //Bootstrap override
-.container-fluid, .main {
-  max-width: 140rem;
+.container-fluid,
+.main {
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .main {
-  margin: 0 auto 7rem;
+  margin: 0 auto 70px;
 
-  @media (max-width: 767px) {
-    margin-bottom: 0;
-  }
-
-  &.main_home {
+  &_home {
     max-width: 100%;
   }
 
-  &:before, &:after {
-    content: "";
-    display: block;
-    height: 0;
-    clear: both;
+  @include clearfix();
+
+  @media (max-width: $screen-sm) {
+    margin-bottom: 0;
+  }
+
+  &.sticky-nav {
+    @media (max-width: $screen-md) {
+      padding-top: 5rem;
+    }
   }
 }
 
@@ -90,17 +95,14 @@ body {
 a {
   color: $base-link-color;
 
+  &.red {
+    &:hover, &:focus, &:active {
+      color: $theme-red-color;
+    }
+  }
+
   &:hover {
     color: $base-link-color;
     text-decoration: underline;
   }
-}
-
-.main {
-
-  &.sticky-nav {
-    @media (max-width: 991px) {
-      padding-top: 5rem;
-    }
-  } 
 }
