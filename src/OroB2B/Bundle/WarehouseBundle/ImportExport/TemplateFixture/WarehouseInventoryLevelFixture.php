@@ -2,12 +2,15 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\ImportExport\TemplateFixture;
 
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
@@ -18,7 +21,7 @@ class WarehouseInventoryLevelFixture extends AbstractTemplateRepository implemen
      */
     public function getEntityClass()
     {
-        return 'OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel';
+        return WarehouseInventoryLevel::class;
     }
 
     /**
@@ -26,7 +29,7 @@ class WarehouseInventoryLevelFixture extends AbstractTemplateRepository implemen
      */
     public function getData()
     {
-        return $this->getEntityData('Example WarehouseInventoryLevel');
+        return $this->getEntityData('Example Inventory Level');
     }
 
     /**
@@ -43,50 +46,35 @@ class WarehouseInventoryLevelFixture extends AbstractTemplateRepository implemen
      */
     public function fillEntityData($key, $entity)
     {
+        $product = new Product();
         $inventoryStatus = new StubEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'in stock');
 
-        $product = new Product();
+        $localization = new Localization();
+        $localization->setName('English');
+
+        $name = new LocalizedFallbackValue();
+        $name->setString('Product Name');
+
+        $localizedName = new LocalizedFallbackValue();
+        $localizedName->setLocalization($localization)
+            ->setString('US Product Name')
+            ->setFallback('system');
+
         $product->setSku('product.1')
-            ->setStatus('enabled')
             ->setInventoryStatus($inventoryStatus)
-            ->setHasVariants(true);
-
-        $additionalProductUnit = (new ProductUnit())
-            ->setCode('liter')
-            ->setDefaultPrecision(0);
-
-        $additionalProductUnitPrecision = $this
-            ->createEntityWithId('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision', 2);
-        $additionalProductUnitPrecision
-            ->setUnit($additionalProductUnit)
-            ->setPrecision($additionalProductUnit->getDefaultPrecision())
-            ->setConversionRate(5)
-            ->setSell(false);
-        $additionalProductUnitPrecision->setProduct($product);
+            ->addName($name)
+            ->addName($localizedName);
 
         $warehouse = new Warehouse();
         $warehouse->setName('First Warehouse');
+        $entity->setWarehouse($warehouse);
+        $entity->setQuantity(50);
 
-        $entity->setProductUnitPrecision($additionalProductUnitPrecision)
-            ->setQuantity(12)
-            ->setWarehouse($warehouse);
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     *
-     * @return object
-     */
-    protected function createEntityWithId($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
+        $unitPrecision = new ProductUnitPrecision();
+        $unit = new ProductUnit();
+        $unit->setCode('liter');
+        $unitPrecision->setUnit($unit);
+        $unitPrecision->setProduct($product);
+        $entity->setProductUnitPrecision($unitPrecision);
     }
 }

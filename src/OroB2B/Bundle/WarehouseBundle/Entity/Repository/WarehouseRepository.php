@@ -3,26 +3,35 @@
 namespace OroB2B\Bundle\WarehouseBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\ImportExportBundle\Exception\LogicException;
 
 class WarehouseRepository extends EntityRepository
 {
+    /**
+     * Returns the number of the warehouses found in the system
+     *
+     * @return integer
+     */
     public function getWarehouseCount()
     {
-        $queryBuilder = $this->createQueryBuilder('w')
-            ->select('count(w.id)');
+        $queryBuilder = $this->createQueryBuilder('w')->select('count(w.id)');
 
         return $queryBuilder->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * Checks if we have warehouses in the system. If there is no warehouse found than throws
+     * and exception. Otherwise it will return the first warehouse
+     *
+     * @return mixed
+     */
     public function getSingularWarehouse()
     {
-        $warehouses = $this->findAll();
+        $queryBuilder = $this->createQueryBuilder('w')
+            ->orderBy('w.id', 'ASC')
+            ->setMaxResults(1);
 
-        if (count($warehouses) < 1) {
-            throw new LogicException('Expecting at least one warehouse in the system and found none.');
-        }
-
-        return $warehouses[0];
+        return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 }

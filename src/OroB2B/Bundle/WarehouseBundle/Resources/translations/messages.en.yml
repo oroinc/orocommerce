@@ -56,3 +56,4 @@ orob2b:
         import:
             error:
                 inventory_status: Multiple products found having different Inventory Status
+                warehouse_inexistent: Expecting at least one warehouse in the system and found none.

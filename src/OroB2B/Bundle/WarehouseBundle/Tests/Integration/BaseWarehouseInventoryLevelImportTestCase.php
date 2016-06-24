@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\WarehouseBundle\Tests\Integration;
 
 use Doctrine\Common\Inflector\Inflector;
+
 use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\ImportExportBundle\Processor\ImportProcessor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -23,7 +24,8 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
         $this->initClient();
         $this->importProcessor = new ImportProcessor();
         $this->importProcessor->setSerializer($this->getContainer()->get('oro_importexport.serializer'));
-        $this->importProcessor->setDataConverter($this->getContainer()->get('orob2b_warehouse.importexport.data_converter.warehouse_inventory_level'));
+        $this->importProcessor->setDataConverter($this->getContainer()
+            ->get('orob2b_warehouse.importexport.inventory_status_converter'));
 
         $strategy = new WarehouseInventoryLevelStrategy(
             $this->getContainer()->get('event_dispatcher'),
@@ -31,7 +33,8 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
             $this->getContainer()->get('oro_importexport.field.field_helper'),
             $this->getContainer()->get('oro_importexport.field.database_helper'),
             $this->getContainer()->get('oro_entity.entity_class_name_provider'),
-            $this->getContainer()->get('translator')
+            $this->getContainer()->get('translator'),
+            $this->getContainer()->get('oro_importexport.strategy.new_entities_helper')
         );
 
         $this->importProcessor->setStrategy($strategy);
@@ -44,7 +47,7 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
      *
      * @dataProvider processDataProvider
      */
-    public function testProcess($fieldsMapping, $testData)
+    public function testProcess(array $fieldsMapping = [], array $testData = [])
     {
         $context = new Context([]);
         $this->importProcessor->setImportExportContext($context);
@@ -54,7 +57,12 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
             $entity = $this->importProcessor->process($dataSet['data']);
 
             $this->assertInstanceOf($dataSet['class'], $entity);
-            $this->assertTrue($this->assertFields($entity, $dataSet['data'], $fieldsMapping, isset($dataSet['options']) ? $dataSet['options'] : []));
+            $this->assertTrue($this->assertFields(
+                $entity,
+                $dataSet['data'],
+                $fieldsMapping,
+                isset($dataSet['options']) ? $dataSet['options'] : []
+            ));
         }
     }
 
@@ -86,7 +94,7 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
 
         foreach ($objectFields as $objectField) {
             $getterMethod = 'get' . ucfirst($objectField);
-            $object = $object->{$getterMethod}();
+            $object = $object->$getterMethod();
         }
 
         return $object;

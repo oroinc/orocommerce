@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\Tests\Integration\DataFixtures;
 
-use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels as BaseFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
@@ -11,6 +10,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels as BaseFixture;
 
 class LoadWarehousesAndInventoryLevels extends BaseFixture
 {

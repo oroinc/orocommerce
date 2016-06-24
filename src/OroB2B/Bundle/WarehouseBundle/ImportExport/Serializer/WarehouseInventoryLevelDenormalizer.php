@@ -11,15 +11,21 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use OroB2B\Bundle\WarehouseBundle\ImportExport\Converter\WarehouseInventoryLevelConverter as Converter;
+use OroB2B\Bundle\WarehouseBundle\ImportExport\DataConverter\InventoryLevelDataConverter as Converter;
 
 class WarehouseInventoryLevelDenormalizer implements DenormalizerInterface
 {
+    const PRODUCT = 'product';
+    const PRODUCT_INVENTORY_STATUS = 'inventoryStatus';
+    const INVENTORY_LEVEL_QUANTITY = 'Quantity';
+    const INVENTORY_LEVEL_WAREHOUSE = 'Warehouse';
+    const INVENTORY_LEVEL_PRODUCT_UNIT = 'Unit';
+
     /** @var ObjectManager $entityManager */
     protected $entityManager;
 
     /**
-     * WarehouseInventoryLevelDenormalizer constructor.
+     * @param ObjectManager $manager
      */
     public function __construct(ObjectManager $manager)
     {
@@ -31,35 +37,39 @@ class WarehouseInventoryLevelDenormalizer implements DenormalizerInterface
      */
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        if (!is_array($data) || !isset($data[Converter::PRODUCT_SKU])) {
+        if (!is_array($data) || !isset($data[self::PRODUCT])) {
             return null;
         }
-        
-        $product = new Product();
-        $product->setSku($data[Converter::PRODUCT_SKU]);
+
+        $productData = $data['product'];
+
+        $productEntity = new Product();
+        $productEntity->setSku($productData['sku']);
 
         $inventoryLevel = new WarehouseInventoryLevel();
         $productUnitPrecision = new ProductUnitPrecision();
 
-        $productUnitPrecision->setProduct($product);
+        $productUnitPrecision->setProduct($productEntity);
 
-        if (array_key_exists(Converter::PRODUCT_INVENTORY_STATUS, $data)) {
-            $product->setInventoryStatus($data[Converter::PRODUCT_INVENTORY_STATUS]);
+        if (array_key_exists('inventoryStatus', $productData)) {
+            $productEntity->setInventoryStatus($productData['inventoryStatus']);
         }
 
-        if (array_key_exists(Converter::INVENTORY_LEVEL_QUANTITY, $data)) {
-            $inventoryLevel->setQuantity($data[Converter::INVENTORY_LEVEL_QUANTITY]);
+        if (array_key_exists('quantity', $data)) {
+            $inventoryLevel->setQuantity($data['quantity']);
         }
 
-        if (array_key_exists(Converter::INVENTORY_LEVEL_WAREHOUSE, $data) && isset($data[Converter::INVENTORY_LEVEL_WAREHOUSE])) {
+        if (isset($data['warehouse'])) {
             $warehouse = new Warehouse();
-            $warehouse->setName($data[Converter::INVENTORY_LEVEL_WAREHOUSE]);
+            $warehouse->setName($data['warehouse']['name']);
             $inventoryLevel->setWarehouse($warehouse);
         }
 
-        if (array_key_exists(Converter::INVENTORY_LEVEL_PRODUCT_UNIT, $data)) {
+        if (array_key_exists('productUnitPrecision', $data)) {
+            $productUnitPrecisionData = $data['productUnitPrecision'];
+
             $productUnit = new ProductUnit();
-            $productUnit->setCode($data[Converter::INVENTORY_LEVEL_PRODUCT_UNIT]);
+            $productUnit->setCode($data['productUnitPrecision']['unit']['code']);
             $productUnitPrecision->setUnit($productUnit);
         }
 
@@ -73,7 +83,6 @@ class WarehouseInventoryLevelDenormalizer implements DenormalizerInterface
      */
     public function supportsDenormalization($data, $type, $format = null, array $context = array())
     {
-        return !empty($data) && isset($data[Converter::PRODUCT_SKU]) &&
-            $type === WarehouseInventoryLevel::class;
+        return !empty($data) && isset($data[self::PRODUCT]) && $type === WarehouseInventoryLevel::class;
     }
 }
