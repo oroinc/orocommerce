@@ -36,6 +36,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture
     /**
      * @param Category $root
      * @param array $categories
+     * @param ObjectManager $manager
      */
     protected function addCategories(Category $root, array $categories, ObjectManager $manager)
     {

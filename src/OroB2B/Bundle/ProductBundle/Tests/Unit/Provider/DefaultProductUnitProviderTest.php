@@ -2,10 +2,12 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\UnitProvider;
 
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
+use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,12 +17,12 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     protected $defaultProductUnitProvider;
 
     /**
-     * @var array defaultSetting
+     * @var array
      */
     protected $systemPrecision = ['code'=>'kg', 'precision'=>3];
 
     /**
-     * @var array categoryPrecision
+     * @var array
      */
     protected $categoryPrecision = ['code'=>'set', 'precision'=>2];
 
@@ -93,7 +95,7 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return  Mock_CategoryRepository
+     * @return  CategoryRepository
      *
      */
     private function createMockCategoryRepository()
@@ -139,9 +141,9 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param categoryUnitPrecision $categoryUnitPrecision,
+     * @param CategoryUnitPrecision $categoryUnitPrecision,
      * @param Category $parent
-     * @return  Mock_Category
+     * @return  Category
      *
      */
     private function createMockCategory($categoryUnitPrecision, $parent)

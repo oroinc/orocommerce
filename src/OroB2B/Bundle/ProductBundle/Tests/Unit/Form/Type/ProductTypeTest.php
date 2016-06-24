@@ -305,6 +305,7 @@ class ProductTypeTest extends FormIntegrationTestCase
      * @param bool|false $withProductUnitPrecision
      * @param bool|false $withNamesAndDescriptions
      * @param bool|true $hasVariants
+     * @param bool|true hasImages
      * @return StubProduct
      */
     protected function createExpectedProductEntity(

@@ -17,6 +17,7 @@ use OroB2B\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 use OroB2B\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
+use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 
 class ProductController extends Controller
 {
@@ -198,6 +199,7 @@ class ProductController extends Controller
 
             if (!empty($formData)) {
                 if ($formData['category']->getData()) {
+                    /** @var DefaultProductUnitProvider $provider */
                     $provider = $this->get('orob2b_product.provider.default_product_unit_provider');
                     $provider->setCategoryId($formData['category']->getData()->getId());
                 }

@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Handler;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
