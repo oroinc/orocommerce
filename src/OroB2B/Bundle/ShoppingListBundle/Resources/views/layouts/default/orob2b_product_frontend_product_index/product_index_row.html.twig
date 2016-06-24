@@ -22,3 +22,30 @@
     } %}
     {{ buttons.getButtonsHtml(options) }}
 {% endblock %}
+
+{% block _product_shopping_lists_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <button type="button"><span>In Shopping Lists(2)</span></button>
+    <br/>
+    {{ UI.clientLink({
+        'label' : 'In Shopping Lists',
+        'widget' : {
+            'type' : 'content',
+            'options' : {
+                'content': '#in-shopping-lists-template',
+                'dialogOptions': {
+                    'title': 'In Shopping Lists',
+                    'modal': true,
+                    'resizable': false,
+                    'width': 820,
+                    'autoResize': true
+                }
+            }
+        }
+    }) }}
+    <div id="in-shopping-lists-template" style="display: none">
+        <div>
+            <b>In Shopping Lists Table</b>
+        </div>
+    </div>
+{% endblock %}
