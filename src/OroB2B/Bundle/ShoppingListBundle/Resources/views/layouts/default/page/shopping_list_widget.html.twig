@@ -33,7 +33,7 @@
 {% block _main_menu_shopping_lists_widget_content_widget %}
     {% set attr = attr|merge({
         id: 'order-widget-dropdown',
-        class: attr.class|default('') ~ " order-widget order-widget_dropdown-mode"
+        class: attr.class|default('') ~ " order-widget order-widget--dropdown-mode"
     }) %}
 
     <div {{ block('block_attributes') }}>
