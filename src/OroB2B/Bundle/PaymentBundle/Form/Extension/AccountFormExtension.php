@@ -32,7 +32,7 @@ class AccountFormExtension extends AbstractPaymentTermExtension
             } else {
                 $placeholder = $this->translator->trans('orob2b.payment.account.payment_term_non_defined_in_group');
             }
-            
+
             $options['paymentTermOptions']['configs']['placeholder'] = $placeholder;
         }
 
