@@ -222,7 +222,7 @@ class StartCheckout extends AbstractAction
             }
         }
         
-        if (empty($workflowItem)) {
+        if (!isset($workflowItem)) {
             $workflowItem = $this->getWorkflowItem($checkout, $workflowName);
         }
 
