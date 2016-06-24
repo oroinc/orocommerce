@@ -144,11 +144,6 @@ class CheckoutGridListener
             }
         }
 
-        $test = [1, 2, 3];
-
-        $test[] = 4;
-        
-
         foreach ($this->additionalColumnResolvers as $additionalColumnResolver) {
             $additionalColumnResolver->resolveColumn($event);
         }
