@@ -11,10 +11,10 @@
     %}
 
     <div {{ block('widget_attributes') }} data-validation="{{ validation|json_encode }}">
-        <div class="{{ class_prefix }}__form__select {{ class_prefix }}__form__select_exp-month">
+        <div class="{{ class_prefix }}__form__select {{ class_prefix }}__form__select--exp-month">
             {{ form_widget(form.month, {'attr': {'data-expiration-date-month': true}}) }}
         </div>
-        <div class="{{ class_prefix }}__form__select {{ class_prefix }}__form__select_exp-year">
+        <div class="{{ class_prefix }}__form__select {{ class_prefix }}__form__select--exp-year">
             {{ form_widget(form.year, {'attr': {'data-expiration-date-year': true}}) }}
         </div>
     </div>

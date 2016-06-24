@@ -1,4 +1,12 @@
 @import 'orob2bfrontend/default/scss/shared/_vars.scss';
+@import 'orob2bfrontend/default/scss/shared/_mixins.scss';
 
-@import 'elevatezoom';
-@import 'quick-order';
+@import 'components/elevatezoom';
+@import 'components/description';
+@import 'components/filter-controls';
+@import 'components/gallery';
+@import 'components/grid';
+@import 'components/quick-order';
+@import 'components/review';
+
+

@@ -16,14 +16,13 @@
             <fieldset class="checkout__form__row"
                       data-trigger-selector="#addShipDate"
                       data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
-                <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm">
-                    <label for="addShipDate" class="checkbox_custom checkbox_custom_blue" data-checkbox>
-                        <input type="checkbox" name="addShipDate" id="addShipDate"/>
-                        <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
-                        <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
-                        <span class="checkbox_custom__text fs13">{{ "orob2b.checkout.order_review.shipping_date"|trans }}</span>
+                <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm toggle-block">
+                    <label for="addShipDate" class="oro-checkbox toggle-block__trigger" data-checkbox>
+                        <input class="oro-checkbox__input" type="checkbox" name="addShipDate" id="addShipDate"/>
+                        <span class="oro-checkbox__icon"></span>
+                        <span class="oro-checkbox__text">{{ "orob2b.checkout.order_review.shipping_date"|trans }}</span>
                     </label>
-                    <div class="form-input form-input_datepicker mmt9-md mmt9-sm">
+                    <div class="toggle-block__content form-input form-input_datepicker mmt9-md mmt9-sm">
                         <span class="form-input_datepicker_icon gray fs22"><i class="cf-calendar"></i></span>
                         {{ form_widget(form.ship_until, {'attr': {'class': 'input input_sm input_block input_datepicker', 'placeholder': 'orob2b.checkout.order_review.shipping_date_placeholder'|trans }}) }}
                     </div>
@@ -32,29 +31,27 @@
             <fieldset class="checkout__form__row"
                       data-trigger-selector="#addPoNumber"
                       data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
-                <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm">
-                    <label for="addPoNumber" class="checkbox_custom checkbox_custom_blue" data-checkbox>
-                        <input type="checkbox" name="addPoNumber" id="addPoNumber" checked="checked"/>
-                        <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
-                        <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
-                        <span class="checkbox_custom__text fs13">{{ "orob2b.checkout.order_review.po_number"|trans }}</span>
+                <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm toggle-block">
+                    <label for="addPoNumber" class="oro-checkbox toggle-block__trigger" data-checkbox>
+                        <input class="oro-checkbox__input" type="checkbox" name="addPoNumber" id="addPoNumber"/>
+                        <span class="oro-checkbox__icon"></span>
+                        <span class="oro-checkbox__text">{{ "orob2b.checkout.order_review.po_number"|trans }}</span>
                     </label>
-                    <div class="checkout__form__optional-ref-number">
-                        {{ form_widget(form.po_number, {'attr': {'placeholder': 'orob2b.checkout.order_review.po_number_placeholder'|trans}}) }}
+                    <div class="toggle-block__content checkout__form__optional-ref-number">
+                        {{ form_widget(form.po_number, {'attr': {'class': 'checkout__form__input', 'placeholder': 'orob2b.checkout.order_review.po_number_placeholder'|trans}}) }}
                     </div>
                 </div>
             </fieldset>
             <fieldset class="checkout__form__row"
                       data-trigger-selector="#addNote"
                       data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
-                <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm">
-                    <label for="addNote" class="checkbox_custom checkbox_custom_blue" data-checkbox>
-                        <input type="checkbox" name="addNote" id="addNote" checked="checked"/>
-                        <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
-                        <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
-                        <span class="checkbox_custom__text fs13">{{ "orob2b.checkout.order_review.note"|trans }}</span>
+                <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm toggle-block">
+                    <label for="addNote" class="oro-checkbox toggle-block__trigger" data-checkbox>
+                        <input class="oro-checkbox__input" type="checkbox" name="addNote" id="addNote"/>
+                        <span class="oro-checkbox__icon"></span>
+                        <span class="oro-checkbox__text">{{ "orob2b.checkout.order_review.note"|trans }}</span>
                     </label>
-                    <div class="checkout__form__order-note">
+                    <div class="toggle-block__content checkout__form__order-not">
                         {{ form_widget(form.customer_notes, {'attr': {'class': 'input input_md input_block checkout__form__input', 'placeholder': 'orob2b.checkout.order_review.note_placeholder'|trans}}) }}
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 {% block _quick_access_container_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " middlebar__right hidden-sm hidden-xs"
+        class: attr.class|default('') ~ " middlebar__right"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block _quick_access_menu_widget %}
-    <ul class="navigation-widget__list navigation-widget__list_inline text-right">
+    <ul class="navigation-widget__list navigation-widget--inline navigation-widget--right">
         <li>
             <a href="{{ path('orob2b_order_frontend_index') }}">
               <span class="badge badge_sm_xs badge_circled-corners badge_yellow navigation-widget__badge">
