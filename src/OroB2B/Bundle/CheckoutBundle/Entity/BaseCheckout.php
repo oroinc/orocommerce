@@ -54,7 +54,6 @@ class BaseCheckout implements
     ShippingAwareInterface
 {
     use DatesAwareTrait;
-    use WorkflowAwareTrait;
     use UserAwareTrait;
     use FrontendAccountUserAwareTrait;
 

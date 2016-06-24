@@ -21,8 +21,6 @@ orob2b:
         source.label: Source
         currency.label: Currency
         website.label: Website
-        workflow_item.label: Workflow Item
-        workflow_step.label: Workflow Step
         shipping_estimate_amount.label: Shipping Estimate Ammount
         shipping_estimate_currency.label: Shipping Estimate Currency
         payment_method.label: Payment Method
@@ -51,8 +49,6 @@ orob2b:
             source.label: Source
             currency.label: Currency
             website.label: Website
-            workflow_item.label: Workflow Item
-            workflow_step.label: Workflow Step
             shipping_estimate_amount.label: Shipping Estimate Ammount
             shipping_estimate_currency.label: Shipping Estimate Currency
             payment_method.label: Payment Method
