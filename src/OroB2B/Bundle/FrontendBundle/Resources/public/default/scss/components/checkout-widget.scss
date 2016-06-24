@@ -1,0 +1,138 @@
+/*Order checkout widget*/
+.order-checkout-widget {
+  position: relative;
+
+  @include clearfix();
+
+  &.order-checkout-widget_block {
+    margin: 15px 0 0;
+
+    .ttip {
+      text-align: left;
+    }
+  }
+
+  &.order-checkout-widget_fixed {
+    display: none;
+
+    .dropdown-menu {
+      top: auto;
+      bottom: 50px;
+    }
+
+    @media (max-width: $screen-md) {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      z-index: 999999;
+
+      width: 100%;
+      padding: 0 15px 10px 15px;
+      box-shadow: 0 -1px 0 0 $theme-lighter-gray-color;
+
+      background: $theme-lightest-gray-color;
+
+      .order-checkout-widget__table {
+        width: 100%;
+
+        td {
+          width: 50%;
+          padding: 8px 19px 10px 19px;
+
+          &:first-child {
+            text-align: right;
+          }
+
+          &:last-child {
+            text-align: left;
+          }
+        }
+      }
+    }
+  }
+
+  &__container-wrapper {
+    margin: 0 0 20px;
+
+    @include clearfix();
+
+    @media (max-width: $screen-md) {
+      margin: 20px 0;
+    }
+  }
+
+  &__container {
+    float: right;
+    padding: 15px;
+    border-radius: .3rem;
+
+    background: $theme-lightest-gray-color;
+
+    @media (max-width: $screen-md) {
+      float: none;
+    }
+
+    + .order-checkout-widget__container {
+      margin-top: 4px;
+      clear: right;
+    }
+
+    .order-checkout-widget__table {
+      width: 100%;
+      margin: 0;
+
+      td {
+        padding: 0;
+
+        &:last-child {
+          padding: 0;
+        }
+      }
+
+      .order-checkout-widget__total {
+        padding-top: 6px;
+      }
+    }
+
+    &_lg {
+      width: 280px;
+
+      @media (max-width: $screen-md) {
+        width: 100%;
+        padding: 15px 30px;
+      }
+    }
+
+    &_error {
+      background: $theme-error-bg-color;
+      color: $theme-error-font-color;
+      text-align: left;
+    }
+  }
+
+  &__table {
+    margin: 0 0 15px;
+
+    td {
+      padding: 4px 0 3px 25px;
+
+      text-align: left;
+
+      &.order-checkout-widget__total {
+        padding-top: 6px;
+
+        font-size: 18px;
+      }
+
+      &:last-child {
+        padding: 4px 25px;
+
+        text-align: right;
+      }
+    }
+
+    @media (max-width: $screen-md) {
+      margin: 0;
+    }
+  }
+}

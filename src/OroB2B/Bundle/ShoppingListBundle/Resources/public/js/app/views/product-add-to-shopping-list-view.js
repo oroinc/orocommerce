@@ -221,7 +221,7 @@ define(function(require) {
                     _.each(modelLineItems, function(count, unit) {
                         if (_.size(model.get('product_units')) > 1) {
                             lineItems = _.__(
-                                'orob2b.product.product_unit.' + unit + '.value.short',
+                                'orob2b.product.product_unit.' + unit + '.value.full',
                                 {'count': count},
                                 count
                             );
