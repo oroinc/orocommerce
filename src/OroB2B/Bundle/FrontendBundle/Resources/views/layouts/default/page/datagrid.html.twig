@@ -3,7 +3,7 @@
         class: attr.class|default('') ~ " sorting pull-left form-horizontal",
         'data-grid-sorting': ''
     }) %}
-    <div class="oro-oq__filter__item">
+    <div class="grid__tool">
         <div{{ block('block_attributes') }}></div>
     </div>
 {% endblock %}
@@ -12,7 +12,7 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " mass-actions-panel btn-group icons-holder"
     }) %}
-    <div class="oro-oq__filter__item">
+    <div class="grid__tool">
         <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
     </div>
 {% endblock %}
@@ -22,7 +22,7 @@
         class: attr.class|default('') ~ " extra-actions-panel",
         'data-grid-extra-actions-panel': ''
     }) %}
-    <div class="oro-oq__filter__item">
+    <div class="grid__tool">
         <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
     </div>
 {% endblock %}
@@ -32,7 +32,7 @@
         class: attr.class|default('') ~ " oro-pagination",
         'data-grid-pagination': ''
     }) %}
-    <div class="oro-oq__filter__item">
+    <div class="grid__tool">
         <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
     </div>
 {% endblock %}
@@ -42,7 +42,7 @@
         class: attr.class|default('') ~ " page-size pull-right form-horizontal",
         'data-grid-pagesize': ''
     }) %}
-    <div class="oro-oq__filter__item">
+    <div class="grid__tool">
         <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
     </div>
 {% endblock %}
@@ -52,14 +52,14 @@
         class: attr.class|default('') ~ " actions-panel pull-right form-horizontal",
         'data-grid-actions-panel': ''
     }) %}
-    <div class="oro-oq__filter__item">
+    <div class="grid__tool">
         <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
     </div>
 {% endblock %}
 
 {% block _datagrid_toolbar_button_container_widget %}
     {% if block.children|length %}
-        {% set attr = attr|merge({class: attr.class|default('') ~ "oro-oq__filter__item oro-oq__filter__item_group-btn"}) %}
+        {% set attr = attr|merge({class: attr.class|default('') ~ "grid__tool grid__tool--specific-action"}) %}
         <div{{ block('block_attributes') }}>
             {{ block_widget(block) }}
         </div>

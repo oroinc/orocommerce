@@ -29,3 +29,7 @@ orob2b:
             quick_add:
                 invalid_file_type: This file type is not allowed
                 invalid_format: Invalid format
+
+        product_image:
+            not_blank: 'The file cannot be blank'
+            type_restriction: 'You cannot choose more than %maxNumber% images with type "%type%"'

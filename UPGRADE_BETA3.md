@@ -39,6 +39,7 @@ MenuBundle:
 ProductBundle:
 --------------
 - Entity `OroB2B\Bundle\ProductBundle\Entity\Product` now uses an entity `Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue` for `names`, `desciptions` and `shorDescriptions`.
+- Replaced single product image with typed product image collection
 
 WebsiteBundle:
 --------------
@@ -52,3 +53,18 @@ WebsiteBundle:
 - Migration `OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\UpdateLocaleData` removed.
 - Test DataFixture `OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData` moved to `Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData`.
 - Test `OroB2B\Bundle\WebsiteBundle\Tests\Functional\Entity\Repository\LocaleRepository` moved to `Oro\Bundle\LocaleBundle\Tests\Functional\Entity\Repository\LocalizationRepository`.
+
+OrderBundle:
+--------------
+- Added `OroB2B/Bundle/OrderBundle/Layout/DataProvider/OrderPaymentMethodProvider` in order to get payment method by `Order` object.
+- Added `Payment Method` and `Payment Status` data to order tables and views on frontend and admin side.
+- Added `get_payment_status_label` twig function in order to show payment status by order id.
+
+CheckoutBundle:
+--------------
+- Payment Method table filters removed.
+
+PaymentBundle:
+--------------
+- Added short label for Payment Methods in order to show it on frontend tables.
+- Added transactions demo data for orders demo data.

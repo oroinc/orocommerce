@@ -13,6 +13,7 @@ class Configuration implements ConfigurationInterface
 {
     const MONEY_ORDER_ENABLED_KEY = 'money_order_enabled';
     const MONEY_ORDER_LABEL_KEY = 'money_order_label';
+    const MONEY_ORDER_SHORT_LABEL_KEY = 'money_order_short_label';
     const MONEY_ORDER_SORT_ORDER_KEY = 'money_order_sort_order';
     const MONEY_ORDER_PAY_TO_KEY = 'money_order_pay_to';
     const MONEY_ORDER_SEND_TO_KEY = 'money_order_send_to';
@@ -39,6 +40,10 @@ class Configuration implements ConfigurationInterface
                     'value' => false
                 ],
                 self::MONEY_ORDER_LABEL_KEY             => [
+                    'type'  => 'text',
+                    'value' => self::MONEY_ORDER_LABEL
+                ],
+                self::MONEY_ORDER_SHORT_LABEL_KEY             => [
                     'type'  => 'text',
                     'value' => self::MONEY_ORDER_LABEL
                 ],

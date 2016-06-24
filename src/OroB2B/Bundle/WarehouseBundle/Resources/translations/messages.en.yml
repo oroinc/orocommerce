@@ -11,11 +11,12 @@ orob2b:
             warehouse.saved.message: Warehouse has been saved
 
         menu:
-            warehouse_tab.label: Inventory
+            warehouse_tab.label:  Inventory
+            inventory_list.label: Manage Inventory
 
         widgets:
             warehouse_information: Warehouse Information
-            inventory_management: Inventory
+            inventory_management:  Inventory
 
             actions:
                 save: Save
@@ -33,7 +34,11 @@ orob2b:
             product.label: Product
             product_unit_precision.label: Product Unit Precision
             warehouse.label: Warehouse
+            status.label: Status
 
             error:
                 units: "Please add at least one Unit of Quantity to the current product to enable inventory management."
                 warehouses: "There are no warehouses configured in the system."
+
+        inventory:
+            entity_plural_label: Inventories

@@ -16,39 +16,18 @@
 @import 'shared/base.scss';
 
 /*=== START COMPONENTS===*/
-@import 'components/accountnavigation-widget.scss';
-@import 'components/autocomplete-widget.scss';
-@import 'components/cart-groups.scss';
-@import 'components/filter-widget.scss';
-@import 'components/hero-widget.scss';
-@import 'components/matrix-widget.scss';
+@import 'components/checkout-widget.scss';
 @import 'components/messages-widget.scss';
 @import 'components/notification-messages.scss';
 @import 'components/dialog.scss';
-@import 'components/order-widget.scss';
 @import 'components/pagination-widget.scss';
-@import 'components/pin-widget.scss';
-@import 'components/productdescription-widget.scss';
-@import 'components/product-badges.scss';
 @import 'components/products-widget.scss';
-@import 'components/pseudo-selectbox.scss';
-@import 'components/review-widget.scss';
-@import 'components/sales-panel.scss';
 @import 'components/search-widget.scss';
-@import 'components/sticky-widget.scss';
-@import 'components/lbgallery-widget.scss';
 @import 'components/uploader-widget.scss';
-@import 'components/elevatezoom.scss';
 /*=== END COMPONENTS===*/
 
 /*Layout*/
 @import 'shared/layout.scss';
-
-/*Gallery*/
-@import 'shared/gallery.scss';
-
-/*Raty plugin styles*/
-@import 'shared/raty.scss';
 
 /*Tables*/
 @import 'shared/tables.scss';
@@ -62,12 +41,6 @@
 /*Bootstrap datepicker override styles*/
 @import 'shared/datepicker-override.scss';
 @import 'shared/ui-datepicker-override.scss';
-
-/*Slick slider override styles*/
-@import 'shared/slick-slider-override.scss';
-
-/*Perfect Scrollbar styles*/
-@import 'shared/perfect-scrollbar.scss';
 
 /*Old Browsers Fallbacks*/
 @import 'shared/_fallbacks.scss';

@@ -9,7 +9,7 @@
         },
         'data-dropdown-trigger': true
     }|merge(attr|merge({
-        class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg shopping-lists-frontend-widget"
+        class: attr.class|default('') ~ " top-nav__item top-nav__item--nested shopping-lists-frontend-widget"
     })) %}
 
     <li {{ block('block_attributes') }}>
@@ -23,7 +23,7 @@
             <i class="cf-clipboard"></i>
         </span>
         <span class="cart-widget__list-trigger">
-            <span class="cart-widget-text">{{ 'orob2b.frontend.shoppinglist.view.entity.label'|transchoice(shoppingLists|length)|raw }} </span>
+            <span class="cart-widget__text">{{ 'orob2b.frontend.shoppinglist.view.entity.label'|transchoice(shoppingLists|length)|raw }} </span>
             <i class="cf-down-open-mini"></i>
         </span>
     </div>
