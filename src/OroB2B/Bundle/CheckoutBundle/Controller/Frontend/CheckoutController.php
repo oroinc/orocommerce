@@ -31,7 +31,7 @@ class CheckoutController extends Controller
      * Create checkout form
      *
      * @Route(
-     *     "/{id}/{checkoutType}",
+     *     "/{id}",
      *     name="orob2b_checkout_frontend_checkout",
      *     requirements={"id"="\d+", "checkoutType"="\w+"}
      * )
@@ -46,11 +46,10 @@ class CheckoutController extends Controller
      *
      * @param Request $request
      * @param WorkflowItem $workflowItem
-     * @param null|string $checkoutType
      * @return array|Response
      * @throws \Exception
      */
-    public function checkoutAction(Request $request, WorkflowItem $workflowItem, $checkoutType = null)
+    public function checkoutAction(Request $request, WorkflowItem $workflowItem)
     {
         $checkout = $this->getCheckout($workflowItem);
 
@@ -58,7 +57,7 @@ class CheckoutController extends Controller
             throw new NotFoundHttpException(sprintf('Checkout not found'));
         }
 
-        $workflowItem = $this->handleTransition($checkout, $workflowItem, $request);
+        $workflowItem = $this->handleTransition($workflowItem, $request);
         $currentStep = $this->validateStep($workflowItem);
         $this->validateOrderLineItems($workflowItem, $checkout, $request);
 
@@ -156,15 +155,14 @@ class CheckoutController extends Controller
     }
 
     /**
-     * @param CheckoutInterface $checkout
      * @param WorkflowItem $workflowItem
      * @param Request $request
      * @return WorkflowItem
-     * @throws \Exception
      * @throws \Oro\Bundle\WorkflowBundle\Exception\InvalidTransitionException
      * @throws \Oro\Bundle\WorkflowBundle\Exception\WorkflowException
+     * @internal param CheckoutInterface $checkout
      */
-    protected function handleTransition(CheckoutInterface $checkout, WorkflowItem $workflowItem, Request $request)
+    protected function handleTransition(WorkflowItem $workflowItem, Request $request)
     {
         if ($request->isMethod(Request::METHOD_POST)) {
             $continueTransition = $this->get('orob2b_checkout.layout.data_provider.continue_transition')
