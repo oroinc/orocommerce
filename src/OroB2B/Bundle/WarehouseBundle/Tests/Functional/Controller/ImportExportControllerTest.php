@@ -96,7 +96,7 @@ class ImportExportControllerTest extends WebTestCase
     public function getExportTemplateTestInput()
     {
         return [
-            ['orob2b_warehouse.inventory_status_only_export_template', self::$inventoryStatusOnlyHeader],
+            ['orob2b_product.inventory_status_only_export_template', self::$inventoryStatusOnlyHeader],
             ['orob2b_warehouse.inventory_level_export_template', self::$inventoryLevelHeader]
         ];
     }
