@@ -39,19 +39,16 @@ class BaseCheckoutRepository extends EntityRepository
      * @param array $ids
      * @return array
      */
-    public function findSourceByIds(array $ids)
+    public function getSourcesByIds(array $ids)
     {
         $databaseResults = $this->createQueryBuilder('c')
             ->select('c.id as id')
-            ->addSelect('q as quote')
+            ->addSelect('qd as quote')
             ->addSelect('sl as shoppingList')
-            ->join('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource', 's', 'WITH', 'c.source = s')
-
+            ->leftJoin('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource', 's', 'WITH', 'c.source = s')
             ->leftJoin('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', 'sl', 'WITH', 's.shoppingList = sl')
-
             ->leftJoin('OroB2B\Bundle\SaleBundle\Entity\QuoteDemand', 'qd', 'WITH', 's.quoteDemand = qd')
             ->leftJoin('OroB2B\Bundle\SaleBundle\Entity\Quote', 'q', 'WITH', 'qd.quote = q')
-
             ->where('c.id in (:ids)')
             ->groupBy('c.id')
             ->where('c.id in (:ids)')
@@ -73,6 +70,8 @@ class BaseCheckoutRepository extends EntityRepository
 
                     continue;
                 }
+            } else {
+                $id = null;
             }
 
             if (isset($databaseResult['quote']) && $databaseResult['quote'] !== null && $id) {

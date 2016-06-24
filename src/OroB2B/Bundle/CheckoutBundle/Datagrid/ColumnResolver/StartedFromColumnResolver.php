@@ -54,7 +54,7 @@ class StartedFromColumnResolver implements ColumnResolverInterface
             $ids[] = $record->getValue('id');
         }
 
-        $sources = $this->baseCheckoutRepository->findSourceByIds($ids);
+        $sources = $this->baseCheckoutRepository->getSourcesByIds($ids);
 
         foreach ($event->getRecords() as $record) {
             if (isset($sources[$record->getValue('id')])) {
@@ -75,7 +75,7 @@ class StartedFromColumnResolver implements ColumnResolverInterface
 
                 if ($source instanceof Quote) {
                     $sourceName = $this->translator->trans(
-                        'orob2b.frontend.sale.quote.title.label',
+                        'orob2b.frontend.sale.quote.orders_grid_label.label',
                         [
                             '%id%' => $source->getId()
                         ]

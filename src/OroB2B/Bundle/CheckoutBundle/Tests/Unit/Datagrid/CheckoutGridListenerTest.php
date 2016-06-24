@@ -391,6 +391,25 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(10, $record2->getValue('total'));
     }
 
+    public function testCallsColumnResolvers()
+    {
+        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
+
+        $columnResolver = $this->getMock(
+            'OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnResolver\ColumnResolverInterface'
+        );
+
+        $columnResolver->expects($this->once())
+            ->method('resolveColumn');
+
+        $this->listener->addColumnResolver($columnResolver);
+
+        $event->expects($this->once())->method('getRecords')->willReturn([]);
+
+        $this->listener->onResultAfter($event);
+    }
+    
     /**
      * @param array $parameters
      * @return Config
