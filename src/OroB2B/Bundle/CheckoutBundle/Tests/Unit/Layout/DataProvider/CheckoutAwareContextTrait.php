@@ -23,7 +23,7 @@ trait CheckoutAwareContextTrait
             ->disableOriginalConstructor()
             ->getMock();
 
-        $data->expects($this->exactly(2))
+        $data->expects($this->exactly(1))
             ->method('get')
             ->willReturnMap(
                 [
@@ -31,7 +31,7 @@ trait CheckoutAwareContextTrait
                     ['workflowItem', $workflowItem]
                 ]
             );
-        $context->expects($this->exactly(2))
+        $context->expects($this->exactly(1))
             ->method('data')
             ->will($this->returnValue($data));
 
