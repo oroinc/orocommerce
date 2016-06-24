@@ -11,7 +11,6 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
 class TransitionFormDataProvider extends AbstractServerRenderDataProvider
@@ -52,9 +51,6 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
      */
     public function getData(ContextInterface $context)
     {
-        /** @var Checkout $checkout */
-        $checkout = $context->data()->get('checkout');
-
         $workflowItem = $context->data()->get('workflowItem');
         /** @var TransitionData $continueTransitionData */
         $transitionData = $this->continueTransitionDataProvider->getData($context);

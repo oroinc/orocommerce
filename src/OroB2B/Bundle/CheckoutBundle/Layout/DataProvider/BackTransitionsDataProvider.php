@@ -6,7 +6,6 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Component\Layout\ContextInterface;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
 class BackTransitionsDataProvider extends AbstractTransitionDataProvider
@@ -21,8 +20,6 @@ class BackTransitionsDataProvider extends AbstractTransitionDataProvider
      */
     public function getData(ContextInterface $context)
     {
-        /** @var Checkout $checkout */
-        $checkout = $context->data()->get('checkout');
         $workflowItem = $context->data()->get('workflowItem');
 
         $cacheKey = $workflowItem->getId() . '_' . $workflowItem->getCurrentStep()->getId();

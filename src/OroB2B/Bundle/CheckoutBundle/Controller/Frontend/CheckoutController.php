@@ -221,12 +221,12 @@ class CheckoutController extends Controller
      */
     protected function getCheckout(WorkflowItem $workflowItem)
     {
-        $repository = $this->getDoctrine()
-            ->getManagerForClass($workflowItem->getEntityClass())
-            ->getRepository($workflowItem->getEntityClass());
+        $entityClass = $workflowItem->getEntityClass();
 
-        $entity = $repository->find($workflowItem->getEntityId());
-        
+        $entity = $this->getDoctrine()
+            ->getManagerForClass($entityClass)
+            ->find($entityClass, $workflowItem->getEntityId());
+
         return $entity instanceof CheckoutInterface ? $entity : null;
     }
 }

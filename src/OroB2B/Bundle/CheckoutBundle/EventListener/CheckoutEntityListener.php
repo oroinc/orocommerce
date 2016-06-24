@@ -223,15 +223,15 @@ class CheckoutEntityListener
      */
     protected function getWorkflowName(CheckoutInterface $checkout)
     {
-        $key = sprintf('%s_%s', $checkout->getCheckoutType(), $checkout->getId());
+        $cacheKey = sprintf('%s_%s', $checkout->getCheckoutType(), $checkout->getId());
         
-        if (!array_key_exists($key, $this->workflows)) {
+        if (!array_key_exists($cacheKey, $this->workflows)) {
             $workflows = $this->workflowManager->getApplicableWorkflows($this->getCheckoutClassName());
             $workflows = array_filter(
                 $workflows,
                 function (Workflow $workflow) use ($checkout) {
                     return $this->workflowManager->isStartTransitionAvailable(
-                        $workflow->getName(),
+                        $workflow,
                         static::START_TRANSITION_DEFINITION,
                         $checkout
                     );
@@ -247,10 +247,10 @@ class CheckoutEntityListener
             /** @var Workflow $workflow */
             $workflow = array_shift($workflows);
             
-            $this->workflows[$key] = $workflow ? $workflow->getName() : null;
+            $this->workflows[$cacheKey] = $workflow ? $workflow->getName() : null;
         }
 
-        return $this->workflows[$key];
+        return $this->workflows[$cacheKey];
     }
 
     /**

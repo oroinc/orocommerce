@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Layout\ContextInterface;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
 class ContinueTransitionDataProvider extends AbstractTransitionDataProvider
@@ -20,9 +19,6 @@ class ContinueTransitionDataProvider extends AbstractTransitionDataProvider
      */
     public function getData(ContextInterface $context)
     {
-        /** @var Checkout $checkout */
-        $checkout = $context->data()->get('checkout');
-
         return $this->getContinueTransition($context->data()->get('workflowItem'));
     }
 
