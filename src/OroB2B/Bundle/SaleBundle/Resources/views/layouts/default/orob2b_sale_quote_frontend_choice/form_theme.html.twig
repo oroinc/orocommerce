@@ -1,5 +1,8 @@
 {% block orob2b_sale_quote_product_demand_widget %}
-    {% set maxChars = 60 %}
+    {% set expandTextOptions = {
+        widgetModule: 'orob2bfrontend/default/js/widgets/expand-text-widget',
+        maxLength: 60
+    }|json_encode() %}
     {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
     {% set isQuantityValid = form.quantity.vars.valid %}
 

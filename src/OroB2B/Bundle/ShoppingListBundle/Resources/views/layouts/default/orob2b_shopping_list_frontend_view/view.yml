@@ -114,3 +114,13 @@ layout:
                     '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists
                 selectedShoppingList:
                     '@value': $data.entity
+        - '@add':
+            id: shopping_lists_sidebar_list
+            parentId: sidebar_left
+            blockType: shopping_lists_sidebar_list
+            options:
+                visible: { '@has_elements': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
+                shoppingLists:
+                    '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists
+                selectedShoppingList:
+                    '@value': $data.entity

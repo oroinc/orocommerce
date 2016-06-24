@@ -1,0 +1,30 @@
+.what-this-link {
+  margin-left: 12px;
+}
+
+.checkbox_custom {
+  @include ellipsis();
+
+  span {
+    vertical-align: middle;
+  }
+
+  + .form-input_datepicker,
+  + .form-input_textarea {
+    display: none;
+    margin-bottom: 5px;
+  }
+
+  + .form-input_textarea {
+    @media (min-width: 992px) {
+      margin: 10px 0 5px;
+    }
+  }
+
+  &.checked {
+    + .form-input_datepicker,
+    + .form-input_textarea {
+      display: block;
+    }
+  }
+}

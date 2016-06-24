@@ -1,6 +1,6 @@
 {% block _checkout_content_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-page-container"}) %}
-    <h1 class="checkout-page-title">{{ 'orob2b.checkout.entity_label'|trans }}</h1>
+    {% set attr = attr|merge({class: attr.class|default('') ~ " page-container"}) %}
+    <h1 class="page-title page-title--decreased">{{ 'orob2b.checkout.entity_label'|trans }}</h1>
     <div {{ block('block_attributes') }}
         data-role="checkout-content"
         data-page-component-module="oroui/js/app/components/view-component"
@@ -118,7 +118,7 @@
                                     <td class="va-t_md">
                                         <h3 class="product-item__title product-item__title_in-cart mb1-md">
                                             {% if lineItem.product is not null %}
-                                                <a href="{{ path('orob2b_product_frontend_product_view', {'id':lineItem.product.id}) }}">{{ lineItem.product.defaultName }}</a>
+                                                <a href="{{ path('orob2b_product_frontend_product_view', {'id':lineItem.product.id}) }}" tabindex="-1">{{ lineItem.product.defaultName }}</a>
                                             {% else %}
                                                 {{ lineItem.freeFormProduct }}
                                             {% endif %}
