@@ -1,11 +1,18 @@
 {% block _checkout_form_fields_widget -%}
     {% set workflowItem = checkout.workflowItem %}
-    <div class="oro-more-info-toggler">
-        <i class="cf-play" data-more-info-expand tabindex="0"></i>
-        <a href="#" data-more-info-expand tabindex="0">
+    <div class="collapse-view"
+         data-page-component-module="oroui/js/app/components/jquery-widget-component"
+         data-page-component-options="{{ {
+             widgetModule: 'orob2bfrontend/default/js/widgets/collapse-widget'
+         }|json_encode() }}"
+    >
+        <span class="collapse-view__trigger collapse-view__trigger--icon" data-collapse-trigger>
+            <i class="collapse-view__trigger-icon cf-play cf--gray" data-toggle="collapse" data-target="#orderOptionsContainer"></i>
+        </span>
+        <a href="#" class="collapse-view__trigger" data-collapse-trigger>
             {{ 'orob2b.checkout.workflow.view_options.label'|trans }}
         </a>
-        <div class="oro-more-info-toggler__container ml1-md mmt5-md" data-more-info>
+        <div class="collapse-view__container ml1-md mmt5-md" data-collapse-container>
             <fieldset class="checkout__form__row"
                       data-trigger-selector="#addShipDate"
                       data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">

@@ -196,6 +196,24 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['kg'], $product->getAvailableUnitCodes());
     }
 
+    public function testGetAvailableUnits()
+    {
+        $unit = new ProductUnit();
+        $unit
+            ->setCode('itm')
+            ->setDefaultPrecision(3);
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision
+            ->setUnit($unit)
+            ->setPrecision($unit->getDefaultPrecision());
+
+        $product = new Product();
+        $product->addUnitPrecision($unitPrecision);
+
+        $this->assertEquals([$unit], $product->getAvailableUnits());
+    }
+
     public function testClone()
     {
         $id = 123;
