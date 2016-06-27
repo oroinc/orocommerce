@@ -28,7 +28,7 @@ services:
         class: OroB2B\Bundle\ShippingBundle\Provider\ShippingOriginProvider
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_config.global'
+            - '@oro_config.manager'
             - '@orob2b_shipping.factory.shipping_origin_model_factory'
 
     orob2b_shipping.event_listener.form_view:

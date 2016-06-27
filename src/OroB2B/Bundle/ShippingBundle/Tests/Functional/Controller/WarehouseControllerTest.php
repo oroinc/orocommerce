@@ -164,7 +164,7 @@ class WarehouseControllerTest extends WebTestCase
      */
     protected function setSystemConfig($reset = false)
     {
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = $this->getContainer()->get('oro_config.manager');
 
         if (!$reset) {
             $configManager->set(

@@ -1,0 +1,7 @@
+orob2b:
+    website_config:
+        grid.action.config: Configuration
+        website_configuration.label : Configuration
+        use_default: Use System
+        menu:
+            website_configuration.label: Organization Configuration

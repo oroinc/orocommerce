@@ -41,7 +41,7 @@ class ProductVisibilityTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
-        $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
+        $configManager = $this->getClientInstance()->getContainer()->get('oro_config.manager');
         $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, $configValue);
         $configManager->flush();
         foreach ($expectedData as $productSKU => $resultCode) {
@@ -87,7 +87,7 @@ class ProductVisibilityTest extends WebTestCase
 
     protected function tearDown()
     {
-        $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
+        $configManager = $this->getClientInstance()->getContainer()->get('oro_config.manager');
         $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, ProductVisibility::VISIBLE);
         $configManager->flush();
     }

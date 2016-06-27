@@ -1,0 +1,9 @@
+placeholders:
+    view_navButtons_before:
+        items:
+            website_config_button: ~
+
+items:
+    website_config_button:
+        template: "OroB2BWebsiteConfigBundle:Configuration:button.html.twig"
+        applicable: "@orob2b_website_config.placeholder.filter->isWebsitePage($entity$)"

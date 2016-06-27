@@ -316,7 +316,7 @@ services:
     orob2b_product.event_listener.abstract_product_select_db_query:
         abstract: true
         arguments:
-            - "@oro_config.global"
+            - "@oro_config.website"
             - "@orob2b_product.model.product_visibility_query_builder_modifier"
             - "@orob2b_frontend.request.frontend_helper"
 

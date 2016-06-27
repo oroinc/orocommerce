@@ -192,7 +192,7 @@ services:
         class: 'OroB2B\Bundle\AccountBundle\Mailer\Processor'
         arguments:
             - "@doctrine"
-            - "@oro_config.global"
+            - "@oro_config.manager"
             - "@oro_email.email_renderer"
             - "@oro_email.email_holder_helper"
             - "@oro_email.direct_mailer"
@@ -577,7 +577,7 @@ services:
         class: 'OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier'
         public: false
         arguments:
-            - "@oro_config.global"
+            - "@oro_config.manager"
             - "@security.token_storage"
             - "@orob2b_website.manager"
             - "@orob2b_account.provider.account_user_relations_provider"

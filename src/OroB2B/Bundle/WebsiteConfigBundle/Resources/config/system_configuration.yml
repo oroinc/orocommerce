@@ -1,0 +1,47 @@
+oro_system_configuration:
+    tree:
+        website_configuration:
+            commerce:
+                children:
+                    account:
+                        priority: 500
+                        children:
+                            account_users:
+                                children:
+                                    account_users_registration:
+                                        children:
+                                            - oro_b2b_account.default_account_owner
+                                            - oro_b2b_account.registration_allowed
+                                            - oro_b2b_account.confirmation_required
+                                            - oro_b2b_account.send_password_in_welcome_email
+                    design:
+                        priority: 400
+                        children:
+                            theme:
+                                children:
+                                    theme_settings:
+                                        children:
+                                            - oro_b2b_frontend.frontend_theme
+                    product:
+                        priority: 300
+                        children:
+                            product_inventory:
+                                children:
+                                    frontend_inventory_statuses_visibility:
+                                        children:
+                                            - orob2b_product.general_frontend_product_visibility
+                                            - oro_b2b_rfp.frontend_product_visibility
+                                            - oro_b2b_order.frontend_product_visibility
+                    sales:
+                        priority: 200
+                        children:
+                            rfq:
+                                children:
+                                    rfp_requeststatus_settings:
+                                        children:
+                                            - oro_b2b_rfp.default_request_status
+                                    notifications:
+                                        children:
+                                            - oro_b2b_rfp.notify_assigned_sales_reps_of_the_account
+                                            - oro_b2b_rfp.notify_owner_of_account_user_record
+                                            - oro_b2b_rfp.notify_owner_of_account
