@@ -1,4 +1,5 @@
 {% block currency_switcher_widget %}
+    {% if currencies|length > 1 %}
     <div class="oro-toolbar"
          data-page-component-module="orob2bpricing/js/app/components/currency-switcher-component"
          data-page-component-options="{{ {
@@ -24,4 +25,5 @@
             </ul>
         </div>
     </div>
+    {% endif %}
 {% endblock %}
