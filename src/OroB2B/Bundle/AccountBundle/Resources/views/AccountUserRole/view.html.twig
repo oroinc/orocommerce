@@ -30,20 +30,26 @@
         }
     ] %}
 
-    {% for privilegeConfigName, privilegeConfig in privileges.privilegesConfig %}
-        {% set privilegeDataBLock %}
-            {% include '@OroB2BAccount/AccountUserRole/privileges.html.twig' %}
-        {% endset %}
-
-        {% set dataBlocks = dataBlocks|merge([{
-            'title': privilegeConfig.label|trans,
-            'subblocks': [{'data' : [privilegeDataBLock]}]
-        }]) %}
-    {% endfor %}
+    {% set rolePermissionsGrid %}
+        <div {{ UI.renderPageComponentAttributes({
+            module: 'orouser/js/components/role/entity-category-tabs-component',
+            options: tabsOptions
+        }) }}></div>
+        {{ dataGrid.renderGrid('account-user-role-permission-grid', {role: entity}, { cssClass: 'inner-permissions-grid' }) }}
+        <div {{ UI.renderPageComponentAttributes({
+            module: 'orouser/js/components/role/capability-set-component',
+            options: capabilitySetOptions
+        }) }}></div>
+    {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'orob2b.account.sections.accountuserrole.users'|trans,
-        'subblocks': [{'data' : [dataGrid.renderGrid(gridName, {role: entity.id}, { cssClass: 'inner-grid' })]}]
+        'subblocks': [{
+            'data': [
+                rolePermissionsGrid,
+                dataGrid.renderGrid(gridName, {role: entity.id}, { cssClass: 'inner-grid' })
+            ]
+        }]
     }]) %}
 
     {% set id = 'account-account-user-role-view' %}

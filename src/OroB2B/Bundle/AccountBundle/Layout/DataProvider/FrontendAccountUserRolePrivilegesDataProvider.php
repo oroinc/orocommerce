@@ -6,21 +6,9 @@ use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper;
 
 class FrontendAccountUserRolePrivilegesDataProvider implements DataProviderInterface
 {
-    /** @var AccountUserRolePrivilegesHelper */
-    protected $privilegesHelper;
-
-    /**
-     * @param AccountUserRolePrivilegesHelper $privilegesHelper
-     */
-    public function __construct(AccountUserRolePrivilegesHelper $privilegesHelper)
-    {
-        $this->privilegesHelper = $privilegesHelper;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -44,6 +32,6 @@ class FrontendAccountUserRolePrivilegesDataProvider implements DataProviderInter
             return null;
         }
 
-        return $this->privilegesHelper->collect($role);
+        return [];
     }
 }

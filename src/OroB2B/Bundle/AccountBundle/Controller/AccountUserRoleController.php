@@ -10,6 +10,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\UserBundle\Model\PrivilegeCategory;
+use Oro\Bundle\UserBundle\Provider\RolePrivilegeCapabilityProvider;
+use Oro\Bundle\UserBundle\Provider\RolePrivilegeCategoryProvider;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 
@@ -44,11 +47,15 @@ class AccountUserRoleController extends Controller
      */
     public function viewAction(AccountUserRole $role)
     {
-        $privileges = $this->get('orob2b_account.helper.account_user_role_privileges')->collect($role);
-
         return [
             'entity' => $role,
-            'privileges'   => $privileges
+            'tabsOptions' => [
+                'data' => $this->getTabListOptions()
+            ],
+            'capabilitySetOptions' => [
+                'data' => $this->getRolePrivilegeCapabilityProvider()->getCapabilities($role),
+                'tabIds' => $this->getRolePrivilegeCategoryProvider()->getTabList()
+            ]
         ];
     }
 
@@ -96,25 +103,59 @@ class AccountUserRoleController extends Controller
     protected function update(AccountUserRole $role)
     {
         $handler = $this->get('orob2b_account.form.handler.update_account_user_role');
-        $form = $handler->createForm($role);
+        $handler->createForm($role);
 
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
-            $role,
-            $form,
-            function (AccountUserRole $role) {
+        if ($handler->process($role)) {
+            $this->get('session')->getFlashBag()->add(
+                'success',
+                $this->get('translator')->trans('orob2b.account.controller.accountuserrole.saved.message')
+            );
+
+            return $this->get('oro_ui.router')->redirect($role);
+        } else {
+            return [
+                'entity' => $role,
+                'form' => $handler->createView(),
+                'tabsOptions' => [
+                    'data' => $this->getTabListOptions()
+                ],
+                'capabilitySetOptions' => [
+                    'data' => $this->getRolePrivilegeCapabilityProvider()->getCapabilities($role),
+                    'tabIds' => $this->getRolePrivilegeCategoryProvider()->getTabList()
+                ]
+            ];
+        }
+    }
+
+    /**
+     * @return RolePrivilegeCategoryProvider
+     */
+    protected function getRolePrivilegeCategoryProvider()
+    {
+        return $this->get('oro_user.provider.role_privilege_category_provider');
+    }
+
+    /**
+     * @return RolePrivilegeCapabilityProvider
+     */
+    protected function getRolePrivilegeCapabilityProvider()
+    {
+        return $this->get('oro_user.provider.role_privilege_capability_provider');
+    }
+
+    /**
+     * @return array
+     */
+    protected function getTabListOptions()
+    {
+        return array_map(
+            function (PrivilegeCategory $tab) {
                 return [
-                    'route'      => 'orob2b_account_account_user_role_update',
-                    'parameters' => ['id' => $role->getId()]
+                    'id' => $tab->getId(),
+                    'label' => $this->get('translator')->trans($tab->getLabel())
                 ];
             },
-            function (AccountUserRole $role) {
-                return [
-                    'route' => 'orob2b_account_account_user_role_view',
-                    'parameters' => ['id' => $role->getId()]
-                ];
-            },
-            $this->get('translator')->trans('orob2b.account.controller.accountuserrole.saved.message'),
-            $handler
+            $this->getRolePrivilegeCategoryProvider()->getTabbedCategories()
         );
     }
 }

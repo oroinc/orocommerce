@@ -542,16 +542,6 @@ services:
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata }
 
-    orob2b_account.helper.account_user_role_privileges:
-        class: 'OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper'
-        arguments:
-            - "@orob2b_account.form.handler.update_account_user_role="
-
-    orob2b_account.helper.account_user_role_privileges.frontend:
-        class: 'OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper'
-        arguments:
-            - "@orob2b_account.form.handler.update_account_user_role_frontend="
-
     orob2b_account.visibility.resolver.category_visibility_resolver:
         class: 'OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver'
         arguments:
@@ -817,8 +807,6 @@ services:
 
     orob2b_account.provider.frontend_account_user_role_privileges:
         class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRolePrivilegesDataProvider'
-        arguments:
-            - '@orob2b_account.helper.account_user_role_privileges.frontend'
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_role_privileges }
 
