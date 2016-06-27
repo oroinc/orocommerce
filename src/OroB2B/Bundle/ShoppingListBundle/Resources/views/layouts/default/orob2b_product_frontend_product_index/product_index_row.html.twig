@@ -25,8 +25,10 @@
 
 {% block _product_shopping_lists_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    <button type="button"><span>In Shopping Lists(2)</span></button>
-    <br/>
+    <button class="shopping-lists-button" type="button">
+        <i class="shopping-lists-button__icon"></i>
+        <span class="shopping-lists-button__text">In Shopping Lists (<span class="shopping-lists-button__count">2</span>)</span>
+    </button>
     {{ UI.clientLink({
         'label' : 'In Shopping Lists',
         'widget' : {
@@ -34,18 +36,84 @@
             'options' : {
                 'content': '#in-shopping-lists-template',
                 'dialogOptions': {
-                    'title': 'In Shopping Lists',
+                    'title': 'Basic Women’s Full Length Lab Coat',
                     'modal': true,
                     'resizable': false,
-                    'width': 820,
+                    'width': 580,
                     'autoResize': true
                 }
             }
         }
     }) }}
     <div id="in-shopping-lists-template" style="display: none">
-        <div>
-            <b>In Shopping Lists Table</b>
-        </div>
+        <table class="shopping-lists-popup">
+            <thead class="shopping-lists-popup__headline">
+                <tr class="shopping-lists-popup__item">
+                    <th class="shopping-lists-popup__list">Shopping List</th>
+                    <th class="shopping-lists-popup__quantity">Qty</th>
+                </tr>
+            </thead>
+            <tfoot class="shopping-lists-popup__footer">
+                <tr class="shopping-lists-popup__actions">
+                    <td></td>
+                    <td class="shopping-lists-popup__cancel">
+                        <button class="btn theme-btn btn-orange" type="submit">Close</button>
+                    </td>
+                </tr>
+            </tfoot>
+            <tbody class="shopping-lists-popup__content">
+                <tr class="shopping-lists-popup__item">
+                    <td class="shopping-lists-popup__list">
+                        <a class="shopping-lists-popup__link" href="#">Shopping List 1</a>
+                    </td>
+                    <td class="shopping-lists-popup__quantity">
+                        <span class="shopping-lists-popup__units">
+                            <span class="shopping-lists-popup__number">14</span>
+                            <span class="shopping-lists-popup__separate">/</span>
+                            <span class="shopping-lists-popup__measurements">Boxes</span>
+                        </span>
+                    </td>
+                </tr>
+                <tr class="shopping-lists-popup__item">
+                    <td class="shopping-lists-popup__list">
+                        <a class="shopping-lists-popup__link" href="#">Shopping List 2</a>
+                    </td>
+                    <td class="shopping-lists-popup__quantity">
+                        <span class="shopping-lists-popup__units">
+                            <span class="shopping-lists-popup__number">10</span>
+                            <span class="shopping-lists-popup__separate">/</span>
+                            <span class="shopping-lists-popup__measurements">Units</span>
+                        </span>
+                        <span class="shopping-lists-popup__units">
+                            <span class="shopping-lists-popup__number">3</span>
+                            <span class="shopping-lists-popup__separate">/</span>
+                            <span class="shopping-lists-popup__measurements">Boxes</span>
+                        </span>
+                    </td>
+                </tr>
+                <tr class="shopping-lists-popup__item">
+                    <td class="shopping-lists-popup__list">
+                        <a class="shopping-lists-popup__link" href="#">Shopping List 3</a>
+                    </td>
+                    <td class="shopping-lists-popup__quantity">
+                        <span class="shopping-lists-popup__units">
+                            <span class="shopping-lists-popup__number">10</span>
+                            <span class="shopping-lists-popup__separate">/</span>
+                            <span class="shopping-lists-popup___measurement">Units</span>
+                        </span>
+                        <span class="shopping-lists-popup__units">
+                            <span class="shopping-lists-popup__number">3</span>
+                            <span class="shopping-lists-popup__separate">/</span>
+                            <span class="shopping-lists-popup___measurement">Boxes</span>
+                        </span>
+                        <span class="shopping-lists-popup__units">
+                            <span class="shopping-lists-popup__number">1</span>
+                            <span class="shopping-lists-popup__separate">/</span>
+                            <span class="shopping-lists-popup___measurement">Pallet</span>
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 {% endblock %}
