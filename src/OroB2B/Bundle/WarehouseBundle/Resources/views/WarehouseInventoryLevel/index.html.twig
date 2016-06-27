@@ -6,6 +6,7 @@
 {% block navButtons %}
     {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
         entity_class: entity_class,
+        exportJob: 'warehouse_inventory_level_export_to_csv',
         exportProcessor: 'orob2b_warehouse.detailed_inventory_levels',
         importProcessor: 'orob2b_warehouse.add_or_replace',
         exportTemplateProcessor: 'orob2b_warehouse.inventory_level_export_template',

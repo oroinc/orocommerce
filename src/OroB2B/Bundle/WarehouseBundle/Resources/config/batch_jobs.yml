@@ -1,0 +1,15 @@
+connector:
+    name: oro_importexport
+    jobs:
+        warehouse_inventory_level_export_to_csv:
+            title: "Export Warehouse inventory level to CSV"
+            type: export
+            steps:
+                export:
+                    title:     export
+                    class:     Oro\Bundle\BatchBundle\Step\ItemStep
+                    services:
+                        reader:    orob2b_warehouse.importexport.reader.inventory_level
+                        processor: oro_importexport.processor.export_delegate
+                        writer:    oro_importexport.writer.csv
+                    parameters: ~

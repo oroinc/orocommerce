@@ -48,3 +48,9 @@ services:
         public: false
         tags:
             - { name: oro_importexport.template_fixture }
+
+    # Inventory level Reader
+    orob2b_warehouse.importexport.reader.inventory_level:
+        public: false
+        parent: oro_importexport.reader.entity
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Reader\InventoryLevelReader'
