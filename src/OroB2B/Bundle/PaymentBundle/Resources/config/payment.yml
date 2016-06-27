@@ -12,7 +12,7 @@ services:
         public: false
         arguments:
             - '@orob2b_payment.paypal.payflow.gateway'
-            - '@oro_config.manager'
+            - '@oro_config.global'
             - '@router'
 
     orob2b_payment.payment_method.paypal_payments_pro:
@@ -25,7 +25,7 @@ services:
         public: false
         arguments:
             - '@orob2b_payment.provider.payment_term'
-            - '@oro_config.manager'
+            - '@oro_config.global'
             - '@property_accessor'
             - '@oro_entity.doctrine_helper'
 
@@ -44,7 +44,7 @@ services:
         public: false
         arguments:
             - '@form.factory'
-            - '@oro_config.manager'
+            - '@oro_config.global'
             - '@orob2b_payment.provider.payment_transaction'
 
     orob2b_payment.payment_method.view.paypal_payments_pro:
@@ -58,4 +58,4 @@ services:
         arguments:
             - '@orob2b_payment.provider.payment_term'
             - '@translator'
-            - '@oro_config.manager'
+            - '@oro_config.global'
