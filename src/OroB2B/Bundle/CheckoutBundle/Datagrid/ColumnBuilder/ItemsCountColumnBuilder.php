@@ -1,11 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnResolver;
+namespace OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder;
 
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
 
-class ItemsCountColumnResolver implements ColumnResolverInterface
+class ItemsCountColumnBuilder implements ColumnBuilderInterface
 {
     /**
      * @var BaseCheckoutRepository
@@ -22,21 +23,21 @@ class ItemsCountColumnResolver implements ColumnResolverInterface
     }
 
     /**
-     * @param OrmResultAfter $event
+     * @param ResultRecord[] $records
      */
-    public function resolveColumn(OrmResultAfter $event)
+    public function buildColumn($records)
     {
-        $ids = [];
+        $ids = [ ];
 
-        foreach ($event->getRecords() as $record) {
+        foreach ($records as $record) {
             $ids[] = $record->getValue('id');
         }
 
-        $counts = $this->baseCheckoutRepository->countItemsByIds($ids);
+        $counts = $this->baseCheckoutRepository->countItemsPerCheckout($ids);
 
-        foreach ($event->getRecords() as $record) {
+        foreach ($records as $record) {
             if (isset($counts[$record->getValue('id')])) {
-                $record->addData(['itemsCount' => $counts[$record->getValue('id')]]);
+                $record->addData([ 'itemsCount' => $counts[$record->getValue('id')] ]);
             }
         }
     }

@@ -32,7 +32,7 @@ class BaseCheckoutRepositoryTest extends WebTestCase
         return $this->getContainer()->get('doctrine')->getRepository('OroB2BCheckoutBundle:BaseCheckout');
     }
 
-    public function testCountItemsByIds()
+    public function testCountItemsPerCheckout()
     {
         $repository = $this->getRepository();
 
@@ -44,7 +44,7 @@ class BaseCheckoutRepositoryTest extends WebTestCase
             $ids[] = $checkout->getId();
         }
 
-        $counts = $repository->countItemsByIds($ids);
+        $counts = $repository->countItemsPerCheckout($ids);
 
         $this->assertTrue(count($counts) > 0);
 
@@ -59,7 +59,7 @@ class BaseCheckoutRepositoryTest extends WebTestCase
         $this->assertEquals(count($ids), $found);
     }
 
-    public function testGetSourcesByIds()
+    public function testGetSourcePerCheckout()
     {
         $repository = $this->getRepository();
 
@@ -77,7 +77,7 @@ class BaseCheckoutRepositoryTest extends WebTestCase
             }
         }
 
-        $sources = $repository->getSourcesByIds($ids);
+        $sources = $repository->getSourcePerCheckout($ids);
 
         $found = 0;
 

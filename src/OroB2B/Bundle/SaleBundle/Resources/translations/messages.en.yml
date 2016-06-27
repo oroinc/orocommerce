@@ -228,7 +228,6 @@ orob2b:
                 ship_estimate.label: 'Shipping Estimate'
                 assigned_account_users.label: 'Assigned To'
                 title.label: 'Quote #%id%'
-                orders_grid_label.label: 'Quote #%id%#'
                 shipping_address.label: 'Shipping Address'
                 sections:
                     general: 'Quote Information'

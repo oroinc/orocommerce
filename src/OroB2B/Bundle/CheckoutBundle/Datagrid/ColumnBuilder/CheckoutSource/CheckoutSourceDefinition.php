@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnResolver\CheckoutSource;
+namespace OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder\CheckoutSource;
 
 /**
  * Checkouts grid source definition DTO
@@ -20,7 +20,7 @@ class CheckoutSourceDefinition
     /**
      * @var array
      */
-    private $routeParams = [];
+    private $routeParams = [ ];
 
     /**
      * @var bool
@@ -29,16 +29,16 @@ class CheckoutSourceDefinition
 
     /**
      * CheckoutSourceDefinition constructor.
-     * @param $label
-     * @param $linkable
-     * @param null $route
+     * @param       $label
+     * @param       $linkable
+     * @param null  $route
      * @param array $routeParams
      */
-    public function __construct($label, $linkable, $route = null, $routeParams = [])
+    public function __construct($label, $linkable, $route = null, $routeParams = [ ])
     {
-        $this->label = $label;
-        $this->linkable = $linkable;
-        $this->route = $route;
+        $this->label       = $label;
+        $this->linkable    = $linkable;
+        $this->route       = $route;
         $this->routeParams = $routeParams;
     }
 

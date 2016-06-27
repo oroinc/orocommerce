@@ -7,10 +7,14 @@ use Doctrine\ORM\EntityRepository;
 class BaseCheckoutRepository extends EntityRepository
 {
     /**
+     * This method is returning the count of all line items,
+     * whether originated from a quote, or a shopping list,
+     * per Checkout.
+     *
      * @param array $ids
      * @return array
      */
-    public function countItemsByIds(array $ids)
+    public function countItemsPerCheckout(array $ids)
     {
         $databaseResults = $this->createQueryBuilder('c')
             ->select('c.id as id')
@@ -25,21 +29,17 @@ class BaseCheckoutRepository extends EntityRepository
             ->setParameter('ids', $ids)
             ->getQuery()
             ->getScalarResult();
-
-        $result = [];
-
-        foreach ($databaseResults as $databaseResult) {
-            $result[$databaseResult['id']] = $databaseResult['itemsCount'];
-        }
-
-        return $result;
+        
+        return $this->extractCheckoutItemsCounts($databaseResults);
     }
 
     /**
+     * Returning the source information of the checkouts.
+     *
      * @param array $ids
      * @return array
      */
-    public function getSourcesByIds(array $ids)
+    public function getSourcePerCheckout(array $ids)
     {
         $databaseResults = $this->createQueryBuilder('c')
             ->select('c.id as id')
@@ -50,48 +50,66 @@ class BaseCheckoutRepository extends EntityRepository
             ->leftJoin('OroB2B\Bundle\SaleBundle\Entity\QuoteDemand', 'qd', 'WITH', 's.quoteDemand = qd')
             ->leftJoin('OroB2B\Bundle\SaleBundle\Entity\Quote', 'q', 'WITH', 'qd.quote = q')
             ->where('c.id in (:ids)')
-            ->groupBy('c.id')
-            ->where('c.id in (:ids)')
             ->setParameter('ids', $ids)
             ->getQuery()
             ->getResult();
 
-        $id = null;
+        return $this->extractShoppingListQuoteSources($databaseResults);
+    }
+
+    /**
+     * Cutting out ID and ITEMSCOUNT columns from the query
+     * and making an associative array out of it.
+     *
+     * @param $results
+     * @return array
+     */
+    private function extractCheckoutItemsCounts($results)
+    {
         $result = [];
 
-        foreach ($databaseResults as $databaseResult) {
-            if (isset($databaseResult['id']) && $databaseResult['id']) {
-                $id = $databaseResult['id'];
-
-                if (isset($shoppingListToInsert) && !isset($result[$id])) {
-                    $result[$id] = $shoppingListToInsert;
-
-                    unset($shoppingListToInsert);
-
-                    continue;
-                }
-            } else {
-                $id = null;
-            }
-
-            if (isset($databaseResult['quote']) && $databaseResult['quote'] !== null && $id) {
-                $result[$id] = $databaseResult['quote'];
-
-                continue;
-            }
-
-            if (isset($databaseResult['shoppingList']) && $databaseResult['shoppingList'] !== null && $id) {
-                $result[$id] = $databaseResult['shoppingList'];
-
-                continue;
-            }
-
-            if (isset($databaseResult['shoppingList']) && $databaseResult['shoppingList'] !== null) {
-                $shoppingListToInsert = $databaseResult['shoppingList'];
-
-                continue;
-            }
+        if (!count($results)) {
+            return $result;
         }
+
+        $ids        = array_column($results, 'id');
+        $itemCounts = array_column($results, 'itemsCount');
+
+        $result = array_combine(
+            $ids,
+            $itemCounts
+        );
+        
+        return $result;
+    }
+    
+    /**
+     * Collecting Quote and ShoppingList objects from the query result
+     * and integrating into one dataset, indexed by Checkout ID.
+     *
+     * @param $results
+     * @return array
+     */
+    private function extractShoppingListQuoteSources($results)
+    {
+        if (!count($results)) {
+            return [];
+        }
+        
+        $quotes         = array_column($results, 'quote');
+        $shoppingLists  = array_column($results, 'shoppingList');
+        $ids            = array_column($results, 'id');
+
+        // we will overwrite one array with another
+        // thus get rid of nulls, as they should not overwrite real values
+        $quotes         = array_filter($quotes);
+        
+        $integrated     = array_replace($shoppingLists, $quotes);
+
+        $result         = array_combine(
+            $ids,
+            $integrated
+        );
 
         return $result;
     }
