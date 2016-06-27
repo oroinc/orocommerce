@@ -3,6 +3,7 @@ services:
         class: 'OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType'
         arguments:
             - "@doctrine"
+            - "@orob2b_website.website.provider"
         tags:
             - { name: form.type, alias: orob2b_website_scoped_data_type }
         calls:

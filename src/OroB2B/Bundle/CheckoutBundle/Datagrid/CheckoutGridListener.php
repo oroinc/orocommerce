@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Cache\Cache;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,8 +26,8 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
  */
 class CheckoutGridListener
 {
-    const TYPE_JOIN_COLLECTION = "join_collection";
-    const TYPE_ENTITY_FIELDS = "entity_fields";
+    const TYPE_JOIN_COLLECTION = 'join_collection';
+    const TYPE_ENTITY_FIELDS = 'entity_fields';
     const USER_CURRENCY_PARAMETER = 'user_currency';
     /**
      * @var ConfigProvider
@@ -128,7 +128,7 @@ class CheckoutGridListener
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
-        $em = $this->doctrine->getEntityManagerForClass(BaseCheckout::class);
+        $em = $this->doctrine->getManagerForClass(BaseCheckout::class);
         // todo: Reduce db queries count
         foreach ($records as $record) {
             if (!$record->getValue('total')) {
@@ -262,7 +262,7 @@ class CheckoutGridListener
                     'alias' => $relationAlias,
                     'conditionType' => 'WITH',
                     'condition' => sprintf(
-                        "%s = :".self::USER_CURRENCY_PARAMETER,
+                        '%s = :'.self::USER_CURRENCY_PARAMETER,
                         $relationAlias . '.' . $fields['currency']
                     )
                 ];
@@ -299,7 +299,7 @@ class CheckoutGridListener
     public function resolveMetadata(array $metadata, $entityName)
     {
         $metadata = $this->getMetadataOptionsResolver()->resolve($metadata);
-        $em = $this->doctrine->getEntityManagerForClass($entityName);
+        $em = $this->doctrine->getManagerForClass($entityName);
         $entityMetadata = $em->getClassMetadata($entityName);
         $fieldsResolver = $this->getFieldsOptionsResolver();
 

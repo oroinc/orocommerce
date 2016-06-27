@@ -66,11 +66,11 @@
         <tr class="borderless">
             <td colspan="4">
                 <div class="account-oq__order-item-more">
-                     <span data-oro-expand-widget>
-                        {% if (quoteProduct.commentAccount|length > maxChars) %}
-                            <i class="cf-play" data-oro-expand-trigger></i>
-                        {% endif %}
-                         {{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}: <span data-oro-expand-container max-length="{{ maxChars }}">{{ quoteProduct.commentAccount }}</span>
+                    <span class="expand-text"
+                         data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                         data-page-component-options="{{ expandTextOptions }}"
+                    >
+                         {{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
                     </span>
                 </div>
             </td>
@@ -81,13 +81,13 @@
         <tr class="borderless">
             <td colspan="4">
                 <div class="account-oq__order-item-more">
-                    <span data-oro-expand-widget>
-                        {% if (quoteProduct.comment|length > maxChars) %}
-                            <i class="cf-play" data-oro-expand-trigger></i>
-                        {% endif %}
-                        {{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}: <span data-oro-expand-container max-length="{{ maxChars }}">{{ quoteProduct.comment }}</span>
+                    <span class="expand-text"
+                               data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                               data-page-component-options="{{ expandTextOptions }}"
+                    >
+                        {{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
                     </span>
-                </div>
+                </>
             </td>
         </tr>
     {% endif %}
