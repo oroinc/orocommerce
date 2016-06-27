@@ -212,7 +212,7 @@ datagrid:
                         DecimalsNumber:
                             decimalsField: inventoryLevelPrecision
             unit:
-                label:           orob2b.product.productunit.code.label
+                label:           orob2b.product.productunitprecision.unit.label
         sorters:
             columns:
                 sku:
