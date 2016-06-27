@@ -1,6 +1,16 @@
 oro_system_configuration:
     tree:
         website_configuration:
+            platform:
+                children:
+                    general_setup:
+                        children:
+                            email_configuration:
+                                children:
+                                    email_notifications_settings:
+                                        children:
+                                            - oro_notification.email_notification_sender_email
+                                            - oro_notification.email_notification_sender_name
             commerce:
                 children:
                     account:
@@ -14,8 +24,17 @@ oro_system_configuration:
                                             - oro_b2b_account.registration_allowed
                                             - oro_b2b_account.confirmation_required
                                             - oro_b2b_account.send_password_in_welcome_email
+                    catalog:
+                        children:
+                            pricing:
+                                priority: 400
+                                children:
+                                    display_currencies:
+                                        children:
+                                            - oro_b2b_pricing.enabled_currencies
+                                            - oro_b2b_pricing.default_currency
                     design:
-                        priority: 400
+                        priority: 300
                         children:
                             theme:
                                 children:
@@ -23,7 +42,7 @@ oro_system_configuration:
                                         children:
                                             - oro_b2b_frontend.frontend_theme
                     product:
-                        priority: 300
+                        priority: 200
                         children:
                             product_inventory:
                                 children:
@@ -33,7 +52,7 @@ oro_system_configuration:
                                             - oro_b2b_rfp.frontend_product_visibility
                                             - oro_b2b_order.frontend_product_visibility
                     sales:
-                        priority: 200
+                        priority: 100
                         children:
                             rfq:
                                 children:
