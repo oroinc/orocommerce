@@ -22,7 +22,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
  */
 class FrontendProductDatagridListener
 {
-    const COLUMN_LINE_ITEMS = 'current_shopping_list_line_items';
+    const COLUMN_LINE_ITEMS = 'shopping_lists';
 
     /**
      * @var SecurityFacade
@@ -125,25 +125,51 @@ class FrontendProductDatagridListener
         /** @var LineItemRepository $lineItemRepository */
         $lineItemRepository = $em->getRepository('OroB2BShoppingListBundle:LineItem');
         /** @var LineItem[] $lineItems */
-        $lineItems = $lineItemRepository->findBy(
-            [
-                'product' => array_map(
+        $lineItems = $lineItemRepository->getProductItemsWithShoppingListNames(
+                array_map(
                     function (ResultRecord $record) {
                         return $record->getValue('id');
                     },
                     $records
                 ),
-                'accountUser' => $accountUser,
-                'shoppingList' => $shoppingList
-            ]
+                $accountUser
         );
 
-        $groupedUnits = [];
-        foreach ($lineItems as $lineItem) {
-            $groupedUnits[$lineItem->getProduct()->getId()][$lineItem->getProductUnitCode()] = $lineItem->getQuantity();
-        }
-        unset($lineItems);
 
-        return $groupedUnits;
+        $groupedUnits = [];
+        $shoppingListLabels = [];
+        foreach ($lineItems as $lineItem) {
+            $shoppingListId = $lineItem->getShoppingList()->getId();
+            $productId = $lineItem->getProduct()->getId();
+            $groupedUnits[$productId][$shoppingListId][$lineItem->getProductUnitCode()] = $lineItem->getQuantity();
+            if (!isset($shoppingListLabels[$shoppingListId])) {
+                $shoppingListLabels[$shoppingListId] = $lineItem->getShoppingList()->getLabel();
+            }
+        }
+        //unset($lineItems);
+
+        $productShoppingLists = [];
+        foreach ($groupedUnits as $productId => $productGroupedUnits) {
+
+            /* Active shopping list goes first*/
+            $activeShoppingListId = $shoppingList->getId();
+            if (isset($productGroupedUnits[$activeShoppingListId])) {
+                $productShoppingLists[$productId][] = [
+                    'shopping_list_id' => $activeShoppingListId,
+                    'shopping_list_label' => $shoppingListLabels[$activeShoppingListId],
+                    'line_items' => $groupedUnits[$productId][$activeShoppingListId],
+                ];
+                unset($productGroupedUnits[$activeShoppingListId]);
+            }
+
+            foreach ($productGroupedUnits as $shoppingListId => $lineItems) {
+                $productShoppingLists[$productId][] = [
+                    'shopping_list_id' => $shoppingListId,
+                    'shopping_list_label' => $shoppingListLabels[$shoppingListId],
+                    'line_items' => $lineItems,
+                ];
+            }
+        }
+        return $productShoppingLists;
     }
 }
