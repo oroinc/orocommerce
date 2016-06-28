@@ -41,14 +41,17 @@ layout:
                     options:
                         text: {'@value': 'orob2b.account.frontend.account_user_address_book.account_addresses'}
                 account_user_address_view_account_addresses_add_button:
-                    blockType: button
+                    blockType: link
                     options:
+                        visible: { '@acl': orob2b_account_frontend_account_address_create }
+                        route_name: orob2b_account_frontend_account_address_create
+                        route_parameters: { entityId: {'@value': $data.entity.account.id }}
                         text: 'orob2b.account.frontend.account_user_address_book.create.label'
                 # Account address grid
                 account_user_address_view_account_addresses_content_grid:
                     blockType: datagrid
                     options:
-                        visible: { '@gte': [$data.accountAddressCount, 8] }
+                        visible: { '@gte': [$data.account_address_count, 8] }
                         grid_name: frontend-account-account-address-grid
                         grid_parameters:
                             frontend_owner_id: {'@value': $data.entity.account.id}
@@ -56,7 +59,7 @@ layout:
                 account_user_address_view_account_addresses_content_list:
                     blockType: address_book
                     options:
-                        visible: { '@lt': [$data.accountAddressCount, 8] }
+                        visible: { '@lt': [$data.account_address_count, 8] }
                         entity: { '@value': $data.entity }
                         addressListRouteName: 'orob2b_api_account_frontend_get_accountuser_addresses'
                         addressCreateRouteName: 'orob2b_account_frontend_account_user_address_create'
@@ -85,7 +88,7 @@ layout:
                 account_user_address_view_account_user_addresses_content_grid:
                     blockType: datagrid
                     options:
-                        visible: { '@gte': [$data.accountUserAddressCount, 8] }
+                        visible: { '@gte': [$data.account_user_address_count, 8] }
                         grid_name: frontend-account-account-user-address-grid
                         grid_parameters:
                             frontend_owner_id: {'@value': $data.entity.id}
@@ -93,7 +96,7 @@ layout:
                 account_user_address_view_account_user_addresses_content_list:
                     blockType: address_book
                     options:
-                        visible: { '@lt': [$data.accountUserAddressCount, 8] }
+                        visible: { '@lt': [$data.account_user_address_count, 8] }
                         entity: { '@value': $data.entity }
                         addressListRouteName: 'orob2b_api_account_frontend_get_accountuser_addresses'
                         addressCreateRouteName: 'orob2b_account_frontend_account_user_address_create'

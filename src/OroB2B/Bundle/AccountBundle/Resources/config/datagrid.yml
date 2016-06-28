@@ -1133,13 +1133,15 @@ datagrid:
                 select:
                     - address
                     - address.id as id
-                    - address.label as label
+                    - address.street as street
                     - address.city as city
+                    - region.name as state
                     - address.postalCode as zip
                     - country.name as countryName
                 join:
                     left:
                         - { join: address.country, alias: country}
+                        - { join: address.region, alias: region}
                 where:
                     and:
                         - IDENTITY(address.frontendOwner) = :frontend_owner_id
@@ -1148,37 +1150,21 @@ datagrid:
         properties:
             id: ~
         columns:
-            label:
-                label: orob2b.account.accountaddress.label.label
+            street:
+                label: orob2b.account.accountaddress.entity_label
             city:
                 label: orob2b.account.accountaddress.city.label
+            state:
+                label: orob2b.account.accountaddress.region.label
             zip:
-                label: orob2b.account.accountaddress.postal_code.label
+                label: orob2b.account.accountuseraddress.postal_code.label
             countryName:
                 label: orob2b.account.accountaddress.country.label
             types:
-                label: orob2b.account.accountaddress.types.label
+                label: orob2b.account.accountaddress.types.singular_label
                 type: twig
                 frontend_type: html
                 template: OroB2BAccountBundle:Address:Frontend/Datagrid/types.html.twig
-#        actions:
-#            view:
-#                type:         navigate
-#                label:        oro.grid.action.view
-#                icon:         eye-open
-#                rowAction:    true
-#            update:
-#                type:          navigate
-#                label:         oro.grid.action.update
-##                link:          update_link
-#                icon:          edit
-##                acl_resource:  orob2b_account_group_update
-#            delete:
-#                type:          delete
-#                label:         oro.grid.action.delete
-##                link:          delete_link
-#                icon:          trash
-##                acl_resource:  orob2b_account_group_delete
 
     frontend-account-account-address-grid:
         acl_resource: orob2b_account_frontend_account_view
@@ -1188,21 +1174,29 @@ datagrid:
             query:
                 from:
                     - { table: %orob2b_account.entity.account_address.class%, alias: address }
-#        actions:
-#            view:
-#                link:         map_link
-#            update:
-#                type:          navigate
-#                label:         oro.grid.action.update
-#                link:          update_link
-#                icon:          edit
-#                acl_resource:  orob2b_account_group_update
-#            delete:
-#                type:          delete
-#                label:         oro.grid.action.delete
-#                link:          delete_link
-#                icon:          trash
-#                acl_resource:  orob2b_account_group_delete
+        properties:
+            update_link:
+                type: url
+                route: orob2b_account_frontend_account_address_update
+                params: {entityId: frontendOwner.id , id: id}
+
+            delete_link:
+                type: url
+                route: orob2b_api_account_frontend_delete_account_address
+                params: {entityId: frontendOwner.id , addressId: id}
+        actions:
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_account_frontend_account_address_update
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_account_delete
 
     frontend-account-account-user-address-grid:
         acl_resource: orob2b_account_frontend_account_user_view
@@ -1212,3 +1206,26 @@ datagrid:
             query:
                 from:
                     - { table: %orob2b_account.entity.account_user_address.class%, alias: address }
+        properties:
+            update_link:
+                type: url
+                route: orob2b_account_frontend_account_user_address_update
+                params: {entityId: frontendOwner.id , id: id}
+
+            delete_link:
+                type: url
+                route: orob2b_api_account_frontend_delete_accountuser_address
+                params: {entityId: frontendOwner.id , addressId: id}
+        actions:
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_account_frontend_account_user_address_update
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_account_account_user_delete
