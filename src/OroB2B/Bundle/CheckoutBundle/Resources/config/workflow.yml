@@ -419,12 +419,12 @@ workflows:
                                 attribute: $.result.successUrl
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $checkout.id
+                                    id: $.id
                             - '@assign_url':
                                 attribute: $.result.failureUrl
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $checkout.id
+                                    id: $.id
                                     transition: 'payment_error'
                             - '@payment_validate':
                                 conditions:
@@ -541,13 +541,13 @@ workflows:
                                 attribute: $.result.successUrl
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $checkout.id
+                                    id: $.id
                                     transition: 'finish_checkout'
                             - '@assign_url':
                                 attribute: $.result.failureUrl
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $checkout.id
+                                    id: $.id
                                     transition: 'payment_error'
                             - '@payment_purchase':
                                 attribute: $.result.responseData
@@ -568,7 +568,7 @@ workflows:
                                     action: 'validate'
                         route: orob2b_checkout_frontend_checkout
                         route_parameters:
-                            id: $checkout.id
+                            id: $.id
                             transition: finish_checkout
 
                     - '@redirect':
@@ -580,7 +580,7 @@ workflows:
                                     action: 'validate'
                         route: orob2b_checkout_frontend_checkout
                         route_parameters:
-                            id: $checkout.id
+                            id: $.id
                             transition: payment_error
 
                     - '@send_email_template':
