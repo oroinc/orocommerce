@@ -49,7 +49,6 @@ class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
         $workflowData = new WorkflowData();
         $checkout = new Checkout();
         $workflowItem = new WorkflowItem();
-        $checkout->setWorkflowItem($workflowItem);
 
         $context = $this->prepareContext($checkout, $workflowItem);
 
