@@ -10,10 +10,11 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\EventListener\AccountFormViewListener;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountFormViewListenerTest extends FormViewListenerTestCase
 {
@@ -43,6 +44,7 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
     {
         $accountId = 1;
         $account = new Account();
+        $websites = $this->websiteProvider->getWebsites();
 
         $priceListToAccount1 = new PriceListToAccount();
         $priceListToAccount1->setAccount($account);
@@ -56,6 +58,7 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
         $fallbackEntity = new PriceListAccountFallback();
         $fallbackEntity->setAccount($account);
         $fallbackEntity->setFallback(PriceListAccountFallback::CURRENT_ACCOUNT_ONLY);
+        $fallbackEntity->setWebsite(current($websites));
 
         $request = new Request(['id' => $accountId]);
         $requestStack = $this->getRequestStack($request);
@@ -63,7 +66,7 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
         /** @var AccountFormViewListener $listener */
         $listener = $this->getListener($requestStack);
 
-        $this->setRepositoryExpectationsForAccount($account, $priceListsToAccount, $fallbackEntity);
+        $this->setRepositoryExpectationsForAccount($account, $priceListsToAccount, $fallbackEntity, $websites);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
@@ -164,7 +167,8 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
         return new AccountFormViewListener(
             $requestStack,
             $this->translator,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->websiteProvider
         );
     }
 
@@ -172,11 +176,13 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
      * @param Account $account
      * @param PriceListToAccount[] $priceListsToAccount
      * @param PriceListAccountFallback $fallbackEntity
+     * @param Website[] $websites
      */
     protected function setRepositoryExpectationsForAccount(
         Account $account,
         $priceListsToAccount,
-        PriceListAccountFallback $fallbackEntity
+        PriceListAccountFallback $fallbackEntity,
+        array $websites
     ) {
         $priceToAccountRepository = $this
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
@@ -185,7 +191,7 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
 
         $priceToAccountRepository->expects($this->once())
             ->method('findBy')
-            ->with(['account' => $account])
+            ->with(['account' => $account, 'website' => $websites])
             ->willReturn($priceListsToAccount);
 
         $fallbackRepository = $this
@@ -195,7 +201,7 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
 
         $fallbackRepository->expects($this->once())
             ->method('findOneBy')
-            ->with(['account' => $account])
+            ->with(['account' => $account, 'website' => $websites])
             ->willReturn($fallbackEntity);
 
         $this->doctrineHelper->expects($this->once())

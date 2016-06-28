@@ -34,14 +34,15 @@ class AccountFormViewListener extends AbstractAccountFormViewListener
         $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', (int)$request->get('id'));
 
         /** @var PriceListToAccount[] $priceLists */
+        $websites = $this->websiteProvider->getWebsites();
         $priceLists = $this->doctrineHelper
             ->getEntityRepository('OroB2BPricingBundle:PriceListToAccount')
-            ->findBy(['account' => $account]);
+            ->findBy(['account' => $account, 'website' => $websites]);
 
         /** @var PriceListAccountFallback $fallbackEntity */
         $fallbackEntity = $this->doctrineHelper
             ->getEntityRepository('OroB2BPricingBundle:PriceListAccountFallback')
-            ->findOneBy(['account' => $account]);
+            ->findOneBy(['account' => $account, 'website' => $websites]);
 
         $fallback = $fallbackEntity
             ? $this->fallbackChoices[$fallbackEntity->getFallback()]

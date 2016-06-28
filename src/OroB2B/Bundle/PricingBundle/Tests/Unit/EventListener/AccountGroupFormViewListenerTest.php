@@ -15,6 +15,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\EventListener\AccountGroupFormViewListener;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
 {
@@ -48,6 +49,7 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
         $priceListToAccountGroup1 = new PriceListToAccountGroup();
         $priceListToAccountGroup1->setAccountGroup($accountGroup);
         $priceListToAccountGroup1->setPriority(3);
+        $priceListToAccountGroup1->setWebsite(current($this->websiteProvider->getWebsites()));
         $priceListToAccountGroup2 = clone $priceListToAccountGroup1;
         $priceListsToAccountGroup = [$priceListToAccountGroup1, $priceListToAccountGroup2];
         
@@ -66,7 +68,8 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
         $this->setRepositoryExpectationsForAccountGroup(
             $accountGroup,
             $priceListsToAccountGroup,
-            $fallbackEntity
+            $fallbackEntity,
+            $this->websiteProvider->getWebsites()
         );
         
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
@@ -172,7 +175,8 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
         return new AccountGroupFormViewListener(
             $requestStack,
             $this->translator,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->websiteProvider
         );
     }
     
@@ -180,11 +184,13 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
      * @param AccountGroup $accountGroup
      * @param PriceListToAccountGroup[] $priceListsToAccountGroup
      * @param PriceListAccountGroupFallback $fallbackEntity
+     * @param Website[] $websites
      */
     protected function setRepositoryExpectationsForAccountGroup(
         AccountGroup $accountGroup,
         $priceListsToAccountGroup,
-        PriceListAccountGroupFallback $fallbackEntity
+        PriceListAccountGroupFallback $fallbackEntity,
+        array $websites
     ) {
         $priceToAccountGroupRepository = $this
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
@@ -192,7 +198,7 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
         $priceToAccountGroupRepository->expects($this->once())
             ->method('findBy')
-            ->with(['accountGroup' => $accountGroup])
+            ->with(['accountGroup' => $accountGroup, 'website' => $websites])
             ->willReturn($priceListsToAccountGroup);
         $fallbackRepository = $this
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
@@ -200,7 +206,7 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
         $fallbackRepository->expects($this->once())
             ->method('findOneBy')
-            ->with(['accountGroup' => $accountGroup])
+            ->with(['accountGroup' => $accountGroup, 'website' => $websites])
             ->willReturn($fallbackEntity);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')

@@ -39,12 +39,12 @@ class AccountGroupFormViewListener extends AbstractAccountFormViewListener
         /** @var PriceListToAccountGroup[] $priceLists */
         $priceLists = $this->doctrineHelper
             ->getEntityRepository('OroB2BPricingBundle:PriceListToAccountGroup')
-            ->findBy(['accountGroup' => $accountGroup]);
+            ->findBy(['accountGroup' => $accountGroup, 'website' => $this->websiteProvider->getWebsites()]);
         
         /** @var PriceListAccountGroupFallback $fallbackEntity */
         $fallbackEntity = $this->doctrineHelper
             ->getEntityRepository('OroB2BPricingBundle:PriceListAccountGroupFallback')
-            ->findOneBy(['accountGroup' => $accountGroup]);
+            ->findOneBy(['accountGroup' => $accountGroup, 'website' => $this->websiteProvider->getWebsites()]);
 
         $fallback = $fallbackEntity
             ? $this->fallbackChoices[$fallbackEntity->getFallback()]

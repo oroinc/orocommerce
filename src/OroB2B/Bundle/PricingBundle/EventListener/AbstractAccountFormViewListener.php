@@ -9,6 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 
 abstract class AbstractAccountFormViewListener
 {
@@ -28,6 +29,11 @@ abstract class AbstractAccountFormViewListener
     protected $requestStack;
 
     /**
+     * @var WebsiteProviderInterface
+     */
+    protected $websiteProvider;
+
+    /**
      * @var string
      */
     protected $updateTemplate = 'OroB2BPricingBundle:Account:price_list_update.html.twig';
@@ -36,15 +42,18 @@ abstract class AbstractAccountFormViewListener
      * @param RequestStack $requestStack
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
+     * @param WebsiteProviderInterface $websiteProvider
      */
     public function __construct(
         RequestStack $requestStack,
         TranslatorInterface $translator,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        WebsiteProviderInterface $websiteProvider
     ) {
         $this->requestStack = $requestStack;
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
+        $this->websiteProvider = $websiteProvider;
     }
 
     /**

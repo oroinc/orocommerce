@@ -238,6 +238,7 @@ services:
             - '@request_stack'
             - '@translator'
             - '@oro_entity.doctrine_helper'
+            - '@orob2b_website.website.provider'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEntityEdit }
@@ -248,6 +249,7 @@ services:
             - '@request_stack'
             - '@translator'
             - '@oro_entity.doctrine_helper'
+            - '@orob2b_website.website.provider'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onAccountGroupView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEntityEdit }
