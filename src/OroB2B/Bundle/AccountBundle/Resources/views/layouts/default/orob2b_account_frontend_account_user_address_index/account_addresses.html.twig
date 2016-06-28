@@ -3,29 +3,32 @@
 {# static content - start #}
     <div class="line-wrapper">
         <h2 class="address-list-title">
-            <i class="address-list-title__icon badge badge_sm badge_circle badge_orange icon-map-marker"></i>
-            <span class="address-list-title__text">Company addresses</span>
+            <span class="address-list-title__icon">
+                <i class="badge badge_sm badge_circle badge_orange icon-map-marker"></i>
+            </span>
+            Company addresses
         </h2>
         <div class="btn btn_xsm btn-orange oq-group-btn"><a href="/app_dev.php/account/user/address/1/address-create">Add Company Address</a></div>
     </div>
 
-{# static content - end #}
-
-
     <ul class="map-address-list">
         {% for address in addresses %}
         {#{{ dump(address) }}#}
-        <li class="map-item {% if address.id == 1 %}map-item--active{% endif %}">
+        <li class="map-address-list__item {% if address.id == 1 %}map-address-list__item--active{% endif %}">
 
-            <div class="map-item__address">{{ address.street }}, {{ address.city }}, {{ address.postalCode }}, {{ address.region.combinedCode }}</div>
-            <div class="map-item__label">{{ address.label }}</div>
+            <div class="map-address-list__address">{{ address.street }}, {{ address.city }}, {{ address.postalCode }}, {{ address.region.combinedCode }}</div>
+            <div class="map-address-list__label">{{ address.label }}</div>
 
-            <ul class="map-item__actions">
-                <li class="cf-pencil" title="Edit"></li>
+            <nav class="map-address-list__actions">
+                <button type="button" class="map-address-list__button">
+                    <i class="cf-pencil cf--no-offset"></i>
+                </button>
                 {% if not (address.id == 1) %}
-                    <li class="cf-trash" title="Remove"></li>
+                    <button type="button" class="map-address-list__button">
+                        <i class="cf-trash cf--no-offset"></i>
+                    </button>
                 {% endif %}
-            </ul>
+            </nav>
 
         </li>
         {% endfor %}
@@ -34,6 +37,8 @@
     <div class="map-visual-frame">
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6446.584101967654!2d-79.67825230562099!3d36.1107420162977!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x885321185b60513b%3A0x3c13048694fa19fa!2sHarvest+Rd%2C+McLeansville%2C+NC+27301%2C+USA!5e0!3m2!1sen!2sua!4v1467043537874" width="100%" height="420" frameborder="0" style="border:0" allowfullscreen></iframe>
     </div>
+
+{# static content - end #}
 
 {% endblock %}
 

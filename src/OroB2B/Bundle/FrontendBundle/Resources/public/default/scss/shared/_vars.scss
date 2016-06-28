@@ -29,6 +29,7 @@ $theme-red-color: #b84926;
 $theme-red2-color: #ab1a25;
 $theme-blue-color: #348fc6;
 $theme-gray-color: #dbdbdb;
+$theme-gray-color-regular: #ccc;
 $theme-green-color: #598527;
 $theme-green2-color: #9db699;
 $theme-middle-gray-color: #626365;
@@ -71,8 +72,8 @@ $product_color-green2: #8f9e56;
 $product-color-green-light: #00a651;
 $products-color-gray: #959595;
 
-$theme-bucket-color: #ccc;
-$theme-datepicker-head-color: #ccc;
+$theme-bucket-color: $theme-gray-color-regular;
+$theme-datepicker-head-color: $theme-gray-color-regular;
 
 //Notifications colors
 $theme-success-bg-color: #d9e8d2;

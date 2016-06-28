@@ -1,28 +1,21 @@
-// list heading
 .address-list-title {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
-    font-size: 1.6rem;
+
+    font-size: 16px;
     text-transform: uppercase;
 
     &__icon {
-        margin-right: 0.5rem;
+        margin-right: 5px;
     }
 
-    &__text {
-
-    }
 }
 
 .line-wrapper {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     justify-content: space-between;
-    margin: 1rem 0;
+    margin: 10px 0;
 }
 
 .map-visual-frame{
@@ -30,72 +23,66 @@
     width: 45%;
 }
 
-// list of addresses - START
 .map-address-list {
     float: left;
     width: 54%;
     padding-left: 0;
-    margin-right: 0.5rem;
+    margin-right: 5px;
 
-    .map-item {
-        display: -webkit-box;
-        display: -ms-flexbox;
+    &__item {
         display: flex;
         justify-content: space-between;
-        padding: 1.3rem 1rem 1.3rem 1.5rem;
-        border-bottom: 1px solid #dddddd;
+        padding: 13px 10px 13px 15px;
+
+        border-bottom: 1px solid $theme-gray-color;
 
         &:first-of-type {
-            border-top: 1px solid #dddddd;
+            border-top: 1px solid $theme-gray-color;
         }
 
         &--active {
-            background-color: #f5f5f5;
-        }
-
-        // address
-        &__address {
-            width: 65%;
-        }
-
-        // address label
-        &__label {
-            width: 22%;
-            text-align: center;
-            text-transform: capitalize;
-        }
-
-        // action buttons
-        &__actions {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            justify-content: flex-end;
-            width: 13%;
-            padding: 0;
-
-            // This adds a | delimiter to buttons.
-            :not(:first-child) {
-                border-left: 1px solid #cccccc;
-            }
-        }
-
-        .cf-trash, .cf-pencil {
-            width: 50%;
-            height: 2rem;
-            line-height: 2rem;
-            margin: 0;
-            color: #cccccc;
-            text-align: center;
-            font-size: 1.6rem;
-
-            &:hover {
-                text-decoration: inherit;
-                // @todo: insert it as $base-link-color
-                color: #4597ca;
-            }
+            background-color: $base-footer-background-color;
         }
     }
-}
 
-// list of addresses - END
+    &__button {
+        width: 50%;
+        height: 2rem;
+
+        line-height: 20px;
+        text-align: center;
+
+        // reset default styles
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        color: $theme-gray-color-regular;
+
+        &:hover {
+            text-decoration: inherit;
+            color: $base-link-color;
+        }
+    }
+
+    &__address {
+        width: 65%;
+    }
+
+    &__label {
+        width: 22%;
+        text-align: center;
+        text-transform: capitalize;
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+        width: 13%;
+
+        // This adds a | delimiter to buttons.
+        :not(:first-child) {
+            border-left: 1px solid $theme-gray-color-regular;
+        }
+    }
+
+}
