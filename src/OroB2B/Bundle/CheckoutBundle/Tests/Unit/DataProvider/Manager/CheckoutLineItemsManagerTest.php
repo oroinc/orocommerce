@@ -4,7 +4,9 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\DataProvider\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
@@ -12,6 +14,7 @@ use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
 use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
 class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
@@ -32,6 +35,11 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      * @var UserCurrencyManager
      */
     protected $currencyManager;
+
+    /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $configManager;
 
     protected function setUp()
     {
@@ -55,10 +63,14 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
                 }
                 return $result;
             }));
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->checkoutLineItemsManager = new CheckoutLineItemsManager(
             $this->checkoutLineItemsConverter,
-            $this->currencyManager
+            $this->currencyManager,
+            $this->configManager
         );
     }
 
@@ -83,6 +95,11 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDataEntitySupported($withDataProvider, $isEntitySupported)
     {
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_b2b_order.frontend_product_visibility')
+            ->willReturn(['in_stock']);
+
         $entity = new \stdClass();
         $data = [];
         if ($withDataProvider) {
@@ -127,6 +144,11 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetData(array $providerData, $disablePriceFilter, array $expectedData)
     {
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_b2b_order.frontend_product_visibility')
+            ->willReturn(['in_stock']);
+
         $entity = new \stdClass();
 
         $this->checkoutLineItemsManager->addProvider($this->getProvider($entity, $providerData));
@@ -165,7 +187,11 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getProductDataWithPrice()
     {
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['sku' => 'PRO']);
+        $product = new StubProduct();
+        $product->setSku('PRO');
+        $inventoryStatus = new StubEnumValue('in_stock', 'In stock');
+        $product->setInventoryStatus($inventoryStatus);
+
         $productUnitLitre = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'litre']);
         return [
             'product' => $product,
@@ -182,7 +208,8 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getProductDataWithoutPrice()
     {
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['sku' => 'PRO2']);
+        $product = new StubProduct();
+        $product->setSku('PRO2');
         $productUnitEa = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'each']);
         return [
             'product' => $product,
