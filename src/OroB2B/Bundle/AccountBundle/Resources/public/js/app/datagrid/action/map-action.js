@@ -34,9 +34,7 @@ define(function(require) {
         popoverTemplate: [
             '<div class="popover map-popover">',
                 '<button type="button" class="map-popover__close" aria-hidden="true" data-map-popover-close>&times;</button>',
-                '<div class="popover-inner map-popover__inner">',
-                    '<div class="popover-content map-popover__content"></div>',
-                '</div>',
+                '<div class="popover-content map-popover__content"></div>',
             '</div>'
         ].join(''),
 

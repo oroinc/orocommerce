@@ -7,16 +7,17 @@
 
   &__close {
     float: right;
-    padding: 0;
-    border: 0;
+    padding: 0; // Overrides default button styles
+    border: 0; // Overrides default button styles
     margin-right: 5px;
 
-    background: 0 0;
-    color: $base-dark-color;
     font-size: 21px;
     font-weight: 700;
     line-height: 1;
     text-shadow: 0 1px 0 $base-white-color;
+
+    background: 0 0;
+    color: $base-dark-color;
 
     opacity: .2;
     cursor: pointer;
@@ -30,11 +31,11 @@
   &__frame {
     width: 400px;
     height: 250px;
+  }
 
-    .map-box,
-    .map-visual {
-      width: 100%;
-      height: 250px;
-    }
+  .map-box,
+  .map-visual {
+    width: 100%;
+    height: 250px;
   }
 }
