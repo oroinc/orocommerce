@@ -168,6 +168,9 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->will($this->returnValue($em));
 
+        $workflowItem = new WorkflowItem();
+        $workflowItem->setId(1);
+
         if (!$checkoutSource) {
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             $this->propertyAccessor
@@ -190,15 +193,13 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
 
             $this->workflowManager->expects($this->at(1))
                 ->method('getWorkflowItem')
-                ->willReturn(new WorkflowItem());
+                ->willReturn($workflowItem);
 
             $em->expects($this->once())
                 ->method('persist')
                 ->with($this->isInstanceOf('OroB2B\Bundle\CheckoutBundle\Entity\Checkout'));
             $em->expects($this->exactly(2))->method('flush');
         } else {
-            $workflowItem = new WorkflowItem();
-
             $this->workflowManager->expects($this->exactly(2))
                 ->method('getWorkflowItem')
                 ->willReturn($workflowItem);
@@ -210,7 +211,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     'route' => 'orob2b_checkout_frontend_checkout',
-                    'route_parameters' => ['id' => $checkout->getId()]
+                    'route_parameters' => ['id' => $workflowItem->getId()]
                 ]
             );
         $this->redirect->expects($this->once())
@@ -221,7 +222,6 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * /**
      * @return array
      */
     public function executeActionDataProvider()
