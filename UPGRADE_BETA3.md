@@ -55,13 +55,13 @@ WebsiteBundle:
 - Test `OroB2B\Bundle\WebsiteBundle\Tests\Functional\Entity\Repository\LocaleRepository` moved to `Oro\Bundle\LocaleBundle\Tests\Functional\Entity\Repository\LocalizationRepository`.
 
 OrderBundle:
---------------
+------------
 - Added `OroB2B/Bundle/OrderBundle/Layout/DataProvider/OrderPaymentMethodProvider` in order to get payment method by `Order` object.
 - Added `Payment Method` and `Payment Status` data to order tables and views on frontend and admin side.
 - Added `get_payment_status_label` twig function in order to show payment status by order id.
 
 CheckoutBundle:
---------------
+---------------
 - Payment Method table filters removed.
 - Method `checkoutAction` in `OroB2B\Bundle\CheckoutBundle\Controller\Frontend\CheckoutController` changed signature to 
 `checkoutAction(Request $request, WorkflowItem $workflowItem)`.
