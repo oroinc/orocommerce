@@ -73,6 +73,7 @@ layout:
                     blockType: text
                     options:
                         text: {'@value': 'orob2b.account.frontend.account_user_address_book.account_user_addresses'}
+
                 account_user_address_view_account_user_addresses_add_button:
                     blockType: link
                     options:
@@ -109,9 +110,10 @@ layout:
                         #        account_user_address_view_account_addresses_add_button: ~
                         #    account_user_address_view_account_addresses_content_grid: ~
                         #    account_user_address_view_account_addresses_content_list: ~
-                        account_user_address_view_account_user_addresses:
-                            account_user_address_view_account_user_addresses_head:
-                                account_user_address_view_account_user_addresses_title: ~
-                                account_user_address_view_account_user_addresses_add_button: ~
-                            account_user_address_view_account_user_addresses_content_grid: ~
-                            account_user_address_view_account_user_addresses_content_list:
+#                        account_user_address_view_account_user_addresses:
+#                            account_user_address_view_account_user_addresses_head:
+#                                account_user_address_view_account_user_addresses_title: ~
+#                            ilya_link_container:
+#                            account_user_address_view_account_user_addresses_add_button: ~
+#                            account_user_address_view_account_user_addresses_content_grid: ~
+#                            account_user_address_view_account_user_addresses_content_list:
