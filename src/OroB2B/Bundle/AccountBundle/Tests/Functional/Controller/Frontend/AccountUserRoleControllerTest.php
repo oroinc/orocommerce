@@ -156,8 +156,8 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $token = $this->getContainer()->get('security.csrf.token_manager')
             ->getToken('orob2b_account_frontend_account_user_role')->getValue();
-        $this->client->followRedirects(true);
 
+        $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
             'orob2b_account_frontend_account_user_role' => [
                 '_token' => $token,

@@ -78,10 +78,7 @@ class AccountUserRoleController extends Controller
      */
     public function createAction()
     {
-        $role = new AccountUserRole();
-        $role->setSelfManaged(true);
-
-        return $this->update($role);
+        return $this->update(new AccountUserRole());
     }
 
     /**
