@@ -20,7 +20,7 @@ class CheckoutSourceDefinition
     /**
      * @var array
      */
-    private $routeParams = [ ];
+    private $routeParams = [];
 
     /**
      * @var bool
@@ -29,12 +29,12 @@ class CheckoutSourceDefinition
 
     /**
      * CheckoutSourceDefinition constructor.
-     * @param       $label
-     * @param       $linkable
-     * @param null  $route
-     * @param array $routeParams
+     * @param string  $label
+     * @param boolean $linkable
+     * @param null    $route
+     * @param array   $routeParams
      */
-    public function __construct($label, $linkable, $route = null, $routeParams = [ ])
+    public function __construct($label, $linkable, $route = null, $routeParams = [])
     {
         $this->label       = $label;
         $this->linkable    = $linkable;

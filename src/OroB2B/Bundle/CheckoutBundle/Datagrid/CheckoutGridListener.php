@@ -53,7 +53,7 @@ class CheckoutGridListener
      * @var UserCurrencyManager
      */
     protected $currencyManager;
-    
+
     /**
      * @var ColumnBuilderInterface[]
      */

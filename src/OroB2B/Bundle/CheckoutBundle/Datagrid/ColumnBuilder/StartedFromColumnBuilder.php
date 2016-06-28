@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder\CheckoutSource\CheckoutSourceDefinition;
 use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -52,7 +52,7 @@ class StartedFromColumnBuilder implements ColumnBuilderInterface
      */
     public function buildColumn($records)
     {
-        $ids = [ ];
+        $ids = [];
 
         foreach ($records as $record) {
             $ids[] = $record->getValue('id');
