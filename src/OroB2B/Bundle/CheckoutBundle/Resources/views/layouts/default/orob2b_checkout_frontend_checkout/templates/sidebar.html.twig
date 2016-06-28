@@ -14,7 +14,7 @@
                 {% if isCurrent %}
                     {% set isComplete = false %}
                 {% endif %}
-                <li {{ isComplete ? 'class="past-step"' : '' }} data-role="transition-trigger-container">
+                <li class="checkout-navigation__step {{ isComplete ? 'checkout-navigation__step--past' : '' }}" data-role="transition-trigger-container">
                     {% set badgeClass = 'badge_ll_gray' %}
                     {% if isComplete %}
                         {% set badgeClass = 'badge_complete' %}

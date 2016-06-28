@@ -1,35 +1,39 @@
-div.uploader {
+.uploader {
   display: flex;
   align-items: center;
 
   input {
-    width: 100%;
     z-index: 2;
+
+    width: 100%;
   }
 
   .filename {
-     order: 2;
     z-index: 1;
+
+    order: 2;
   }
 
   .action {
+    z-index: 1;
+
     display: inline-block;
+    vertical-align: middle;
+    padding: 0 26px;
+    margin: 0 10px 0 0;
     order: 1;
-    font-size: 14px;
-    padding: 0 2.6rem;
-    margin: 0 1rem 0 0;
-    line-height: 4rem;
+    border-radius: 4px;
+
+    color: $base-white-color;
+    background: $theme-dark-gray-color;
+    font-size: $base-font-size;
+    line-height: 2.85;
     font-weight: 400;
     text-align: center;
     white-space: nowrap;
-    vertical-align: middle;
-    -ms-touch-action: manipulation;
+
     touch-action: manipulation;
     -webkit-user-select: none;
-    border-radius: 4px;
-    color: #fff;
-    background: #252525;
     cursor: pointer;
-    z-index: 1;
   }
 }

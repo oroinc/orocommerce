@@ -9,14 +9,18 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\SearchBundle\Tests\Unit\Fixture\Entity\Product;
 
+use OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityVisibilityType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     const WEBSITE_ID = 42;
 
     /**
@@ -24,6 +28,9 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function getExtensions()
     {
         $entityVisibilityType = new EntityVisibilityType();
@@ -42,7 +49,7 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $website = $this->createWebsite(self::WEBSITE_ID);
+        $website = $this->getEntity(Website::class, ['id' => self::WEBSITE_ID]);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -76,7 +83,13 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
             ->with('TestWebsiteClass')
             ->willReturn($em);
 
-        $this->formType = new WebsiteScopedDataType($registry);
+        /** @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject $websiteProvider */
+        $websiteProvider = $this->getMock('OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface');
+        $websiteProvider->expects($this->any())
+            ->method('getWebsites')
+            ->willReturn([$website]);
+
+        $this->formType = new WebsiteScopedDataType($registry, $websiteProvider);
         $this->formType->setWebsiteClass('TestWebsiteClass');
     }
 
@@ -166,20 +179,6 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals(WebsiteScopedDataType::NAME, $this->formType->getName());
-    }
-
-    /**
-     * @param int $id
-     * @return Website
-     */
-    protected function createWebsite($id)
-    {
-        $website = new Website();
-        $idReflection = new \ReflectionProperty($website, 'id');
-        $idReflection->setAccessible(true);
-        $idReflection->setValue($website, $id);
-
-        return $website;
     }
 
     /**

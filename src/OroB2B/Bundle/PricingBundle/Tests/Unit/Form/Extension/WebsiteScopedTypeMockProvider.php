@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 
 class WebsiteScopedTypeMockProvider extends \PHPUnit_Framework_TestCase
 {
@@ -51,6 +52,12 @@ class WebsiteScopedTypeMockProvider extends \PHPUnit_Framework_TestCase
             ->with('OroB2B\Bundle\WebsiteBundle\Entity\Website')
             ->willReturn($em);
 
-        return new WebsiteScopedDataType($registry);
+        /** @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject $websiteProvider */
+        $websiteProvider = $this->getMock('OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface');
+        $websiteProvider->expects($this->any())
+            ->method('getWebsites')
+            ->willReturn([$website]);
+
+        return new WebsiteScopedDataType($registry, $websiteProvider);
     }
 }

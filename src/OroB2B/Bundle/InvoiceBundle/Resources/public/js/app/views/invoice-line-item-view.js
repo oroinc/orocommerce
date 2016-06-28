@@ -132,7 +132,8 @@ define(function(require) {
 
             $product.find('a' + this.options.selectors.freeFormType).click(_.bind(function() {
                 showFreeFormType();
-                this.fieldsByName.product.inputWidget('val', '').change();
+                this.fieldsByName.product.inputWidget('val', '');
+                this.fieldsByName.product.change();
             }, this));
 
             if (this.fieldsByName.freeFormProduct.val() !== '') {
