@@ -1,29 +1,4 @@
-.address-list-title {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-
-    font-size: 16px;
-    text-transform: uppercase;
-
-    &__icon {
-        margin-right: 5px;
-    }
-
-}
-
-.line-wrapper {
-    display: flex;
-    justify-content: space-between;
-    margin: 10px 0;
-}
-
-.map-visual-frame{
-    float: left;
-    width: 45%;
-}
-
-.map-address-list {
+.address-list {
     float: left;
     width: 54%;
     padding-left: 0;
