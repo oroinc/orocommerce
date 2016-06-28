@@ -33,7 +33,7 @@ class CheckoutController extends Controller
      * @Route(
      *     "/{id}",
      *     name="orob2b_checkout_frontend_checkout",
-     *     requirements={"id"="\d+", "checkoutType"="\w+"}
+     *     requirements={"id"="\d+"}
      * )
      * @Layout(vars={"workflowStepName", "workflowName", "checkout"})
      * @Acl(

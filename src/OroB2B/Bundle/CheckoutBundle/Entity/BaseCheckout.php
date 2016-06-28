@@ -11,7 +11,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareTrait;
 use Oro\Component\Layout\ContextItemInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
