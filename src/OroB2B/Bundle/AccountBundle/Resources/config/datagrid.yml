@@ -1213,6 +1213,9 @@ datagrid:
                 route: orob2b_api_account_frontend_delete_accountuser_address
                 params: {entityId: frontendOwner.id , addressId: id}
         actions:
+            show_map:
+                type:          map
+                icon:          map-marker
             update:
                 type:          navigate
                 label:         oro.grid.action.update

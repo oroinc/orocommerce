@@ -1,0 +1,22 @@
+<% obj.attributesTemplate = function(attributes) {
+_.each(attributes, function(attribute, name) { %>
+<%= name %><% if (!_.isNull(attribute)) { %>="<%= attribute %>"<% } %>
+<% });
+} %>
+
+<<%= tagName %>
+    <% if (tagName == "a") { %> href="<%= link %>"<% } %>
+    class="action
+    <%= className ? " " + className : "" %>
+    <%= !enabled ? " disabled" : "" %>"
+
+    <% attributesTemplate(attributes) %>
+    title="<%= title %>"
+    data-map-popover-trigger>
+    <% if (icon) { %>
+    <i class="icon-<%= icon %> hide-text"><%= label %></i><% if (!iconHideText) { %><%= label %><% } %>
+    <% } else { %>
+    <% if (iconClassName) { %><i class="<%= iconClassName %>"></i><% } %>
+    <%= label %>
+    <% } %>
+</<%= tagName %>>
