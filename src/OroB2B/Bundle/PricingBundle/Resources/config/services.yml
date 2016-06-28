@@ -105,6 +105,16 @@ services:
             - '@oro_config.global'
             - '@orob2b_pricing.system_config_converter'
 
+    orob2b_pricing.provider.price_rule_attribute_provider:
+        class: 'OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_query_designer.virtual_field_provider'
+        calls:
+            - [addAvailableClass, ['OroB2BProductBundle:Product']]
+            - [addAvailableClass, ['OroB2BPricingBundle:ProductPrice']]
+            - [addAvailableClass, ['OroB2BCatalogBundle:Category']]
+
     orob2b_pricing.resolver.combined_product_price_resolver:
         class: 'OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver'
         arguments:
