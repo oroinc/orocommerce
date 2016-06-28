@@ -805,11 +805,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onRequest }
 
-    orob2b_account.provider.frontend_account_user_role_privileges:
-        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRolePrivilegesDataProvider'
-        tags:
-            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_role_privileges }
-
     orob2b_account.provider.frontend_account_user_role_form:
         class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleFormDataProvider'
         arguments:
