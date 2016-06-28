@@ -52,13 +52,11 @@ define(function(require) {
             this.initMapContainer();
             this.initMap();
 
-            //this.mapView.updateMap(this.getAddress(), this.model.get('label'));
-
             MapAction.__super__.initialize.apply(this, arguments);
         },
 
         onGridRendered: function() {
-            var $popoverTrigger = $('[data-map-popover-trigger]');
+            var $popoverTrigger = $(this.subviews[0].el);
 
             $popoverTrigger.popover({
                 title: 'Map',
@@ -77,13 +75,19 @@ define(function(require) {
             });
 
             $popoverTrigger
-                .on('shown.bs.popover', function() {
-                    $('[data-map-popover-close]').on('click', function() {
-                        $popoverTrigger.popover('hide');
+                .on('shown.bs.popover', _.bind(function(event) {
+                    var $target = $(event.target);
+
+                    this.mapView.updateMap(this.getAddress(), this.model.get('label'));
+
+                    $target.parent().find('[data-map-popover-close]').on('click', function() {
+                        $target.popover('hide');
                     });
-                })
-                .on('hide.bs.popover', function() {
-                    $('[data-map-popover-close]').off('click');
+                }, this))
+                .on('hide.bs.popover', function(event) {
+                    var $target = $(event.target);
+
+                    $target.parent().find('[data-map-popover-close]').off('click');
                 });
         },
 
