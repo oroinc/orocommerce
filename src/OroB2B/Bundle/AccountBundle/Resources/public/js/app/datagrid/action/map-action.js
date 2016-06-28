@@ -29,6 +29,18 @@ define(function(require) {
         },
 
         /**
+         * * @property {String}
+         * */
+        popoverTemplate: [
+            '<div class="popover map-popover">',
+                '<button type="button" class="map-popover__close" aria-hidden="true" data-map-popover-close>&times;</button>',
+                '<div class="popover-inner map-popover__inner">',
+                    '<div class="popover-content map-popover__content"></div>',
+                '</div>',
+            '</div>'
+        ].join(''),
+
+        /**
          * @property {Boolean}
          */
         dispatched: true,
@@ -64,14 +76,7 @@ define(function(require) {
                 content: this.$mapContainerFrame,
                 animation: false,
                 html: true,
-                template: [
-                    '<div class="popover">',
-                        '<button type="button" class="close" aria-hidden="true" data-map-popover-close>&times;</button>',
-                        '<div class="popover-inner">',
-                            '<div class="popover-content"></div>',
-                        '</div>',
-                    '</div>'
-                ].join('')
+                template: this.popoverTemplate
             });
 
             $popoverTrigger
@@ -92,7 +97,7 @@ define(function(require) {
         },
 
         initMapContainer: function() {
-            this.$mapContainerFrame = $('<div class="map-popup-frame"/>');
+            this.$mapContainerFrame = $('<div class="map-popover__frame"/>');
         },
 
         initMap: function() {
