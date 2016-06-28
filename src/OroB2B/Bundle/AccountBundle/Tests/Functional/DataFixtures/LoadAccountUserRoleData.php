@@ -110,6 +110,7 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
         $entity = new AccountUserRole();
         $entity->setLabel($roleLabel);
         $entity->setOrganization($this->getDefaultOrganization($manager));
+        $entity->setSelfManaged(true);
         $this->setReference($entity->getLabel(), $entity);
         $manager->persist($entity);
 

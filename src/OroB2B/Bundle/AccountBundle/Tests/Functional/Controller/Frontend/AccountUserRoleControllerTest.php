@@ -157,6 +157,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         $token = $this->getContainer()->get('security.csrf.token_manager')
             ->getToken('orob2b_account_frontend_account_user_role')->getValue();
         $this->client->followRedirects(true);
+
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
             'orob2b_account_frontend_account_user_role' => [
                 '_token' => $token,
@@ -303,6 +304,51 @@ class AccountUserRoleControllerTest extends WebTestCase
         /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserRole $role */
         $role = $this->getUserRoleRepository()->find($id);
         $this->assertFalse($role->isPredefined());
+    }
+
+    public function testDoesntDisplaySelfManagedRoles()
+    {
+        $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_role_index'));
+
+        $response = $this->client->requestGrid(
+            'frontend-account-account-user-roles-grid'
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+
+        foreach ($result['data'] as $row) {
+            if (!$row['selfManaged']) {
+                $this->fail('Frontend Account User Role grid should not display not self managed roles.');
+            }
+        }
+    }
+
+    public function testShouldNotAllowViewingNotSelfManagedRole()
+    {
+        $selfManagedRole = $this->getUserRoleRepository()->findOneBy([
+            'selfManaged' => false
+        ]);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_frontend_account_user_role_view', ['id' => $selfManagedRole->getId()])
+        );
+
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 403);
+    }
+
+    public function testShouldNotAllowUpdatingNotSelfManagedRole()
+    {
+        $selfManagedRole = $this->getUserRoleRepository()->findOneBy([
+            'selfManaged' => false
+        ]);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_frontend_account_user_role_update', ['id' => $selfManagedRole->getId()])
+        );
+
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 403);
     }
 
     /**

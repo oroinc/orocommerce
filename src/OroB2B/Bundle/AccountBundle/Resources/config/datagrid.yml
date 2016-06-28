@@ -531,6 +531,10 @@ datagrid:
         extended_entity_name: %orob2b_account.entity.account_user_role.class%
         source:
             skip_acl_apply: true
+            query:
+                where:
+                    and:
+                        - role.selfManaged = true
         properties:
             view_link:
                 route:  orob2b_account_frontend_account_user_role_view
