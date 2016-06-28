@@ -47,4 +47,31 @@ class ProductPrice extends BaseProductPrice
      * )
      **/
     protected $priceList;
+
+    /**
+     * @var PriceRule
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceRule", inversedBy="productPrices")
+     * @ORM\JoinColumn(name="price_rule_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     **/
+    protected $priceRule;
+
+    /**
+     * @return PriceRule
+     */
+    public function getPriceRule()
+    {
+        return $this->priceRule;
+    }
+
+    /**
+     * @param PriceRule $priceRule
+     * @return $this
+     */
+    public function setPriceRule($priceRule)
+    {
+        $this->priceRule = $priceRule;
+        
+        return $this;
+    }
 }
