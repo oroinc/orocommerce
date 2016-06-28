@@ -47,6 +47,14 @@ abstract class AbstractAccountUserRoleType extends AbstractType
                 ]
             )
             ->add(
+                'selfManaged',
+                'checkbox',
+                [
+                    'required' => false,
+                    'label' => 'orob2b.account.accountuserrole.self_managed.label'
+                ]
+            )
+            ->add(
                 'appendUsers',
                 'oro_entity_identifier',
                 [
@@ -97,6 +105,7 @@ abstract class AbstractAccountUserRoleType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             /** @var AccountUserRole|null $role */
             $role = $event->getData();
+
             // set role if it's not defined yet
             if ($role && !$role->getRole()) {
                 $label = $role->getLabel();

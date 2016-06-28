@@ -17,6 +17,7 @@ class LoadAnonymousUserRole extends LoadAccountUserRoles
     {
         $role = new AccountUserRole($name);
         $role->setLabel($label);
+        $role->setSelfManaged(false);
         return $role;
     }
 }

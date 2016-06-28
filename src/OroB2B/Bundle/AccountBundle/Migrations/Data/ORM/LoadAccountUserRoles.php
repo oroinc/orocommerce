@@ -45,6 +45,8 @@ class LoadAccountUserRoles extends AbstractRolesData
             $role->setOrganization($organization);
             $manager->persist($role);
 
+            $role->setSelfManaged(isset($roleConfigData['self_managed']) ? $roleConfigData['self_managed'] : false);
+
             if (!$aclManager->isAclEnabled()) {
                 continue;
             }
