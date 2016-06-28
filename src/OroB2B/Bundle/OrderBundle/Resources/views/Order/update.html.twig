@@ -57,8 +57,7 @@
              data-page-component-options="{{ {
                  selectors: {
                      account: '#' ~ form.account.vars.id,
-                     accountUser: '#' ~ form.accountUser.vars.id,
-                     website: form.website is defined ? '#' ~ form.website.vars.id : null
+                     accountUser: '#' ~ form.accountUser.vars.id
                  }
              }|json_encode }}">
             <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
@@ -78,7 +77,6 @@
                  matchedPrices: orderData.matchedPrices|default({}),
                  currency: entity.currency,
                  account: entity.account is null ? null : entity.account.id,
-                 website: entity.website is null ? null : entity.website.id,
                  subtotalType: subtotalType
              }|json_encode }}"
              data-layout="separate">
