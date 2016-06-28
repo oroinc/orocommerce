@@ -117,10 +117,6 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->currencyManager->expects($this->any())->method('getUserCurrency')->willReturn('USD');
-        $this->totalProcessor = $this
-            ->getMockBuilder(TotalProcessorProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $this->cache = $this->getMock(Cache::class);
 
@@ -128,8 +124,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             $this->configProvider,
             $this->fieldProvider,
             $this->doctrine,
-            $this->currencyManager,
-            $this->totalProcessor
+            $this->currencyManager
         );
         $this->listener->setCache($this->cache);
     }
@@ -380,17 +375,29 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
-        $record1 = new ResultRecord(['id' => 1, 'total' => 10]);
-        $record2 = new ResultRecord(['id' => 2]);
-        $event->expects($this->once())->method('getRecords')->willReturn([$record1, $record2]);
-
-        $this->totalProcessor->expects($this->once())->method('getTotal')->willReturn((new Subtotal())->setAmount(10));
-        $this->em->expects($this->once())->method('find')->with(BaseCheckout::class, 2)->willReturn(new Checkout());
-
+        $event->expects($this->once())->method('getRecords');
         $this->listener->onResultAfter($event);
-        $this->assertSame(10, $record2->getValue('total'));
     }
 
+    public function testColumnBuilders()
+    {
+        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
+
+        $columnBuilder = $this->getMock(
+            'OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder\ColumnBuilderInterface'
+        );
+
+        $columnBuilder->expects($this->once())
+            ->method('buildColumn');
+
+        $this->listener->addColumnBuilder($columnBuilder);
+
+        $event->expects($this->once())->method('getRecords')->willReturn([]);
+
+        $this->listener->onResultAfter($event);
+    }
+    
     /**
      * @param array $parameters
      * @return Config

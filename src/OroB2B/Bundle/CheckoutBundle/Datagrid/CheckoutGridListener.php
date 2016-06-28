@@ -16,10 +16,10 @@ use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
+use OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder\ColumnBuilderInterface;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 /**
  * Add total and subtotal fields to grid where root entity is checkout
@@ -55,29 +55,26 @@ class CheckoutGridListener
     protected $currencyManager;
 
     /**
-     * @var TotalProcessorProvider
+     * @var ColumnBuilderInterface[]
      */
-    protected $totalProcessor;
+    protected $columnBuilders = [];
 
     /**
      * @param ConfigProvider $configProvider
      * @param EntityFieldProvider $fieldProvider
      * @param RegistryInterface $doctrine
      * @param UserCurrencyManager $currencyManager
-     * @param TotalProcessorProvider $totalProcessor
      */
     public function __construct(
         ConfigProvider $configProvider,
         EntityFieldProvider $fieldProvider,
         RegistryInterface $doctrine,
-        UserCurrencyManager $currencyManager,
-        TotalProcessorProvider $totalProcessor
+        UserCurrencyManager $currencyManager
     ) {
         $this->configProvider = $configProvider;
         $this->fieldProvider = $fieldProvider;
         $this->doctrine = $doctrine;
         $this->currencyManager = $currencyManager;
-        $this->totalProcessor = $totalProcessor;
     }
 
     /**
@@ -128,14 +125,9 @@ class CheckoutGridListener
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
-        $em = $this->doctrine->getManagerForClass(BaseCheckout::class);
-        // todo: Reduce db queries count
-        foreach ($records as $record) {
-            if (!$record->getValue('total')) {
-                $id = $record->getValue('id');
-                $ch = $em->find(BaseCheckout::class, $id);
-                $record->addData(['total' => $this->totalProcessor->getTotal($ch->getSourceEntity())->getAmount()]);
-            }
+
+        foreach ($this->columnBuilders as $columnBuilder) {
+            $columnBuilder->buildColumn($records);
         }
     }
 
@@ -321,6 +313,14 @@ class CheckoutGridListener
         }
 
         return $metadata;
+    }
+
+    /**
+     * @param ColumnBuilderInterface $columnBuilder
+     */
+    public function addColumnBuilder(ColumnBuilderInterface $columnBuilder)
+    {
+        $this->columnBuilders[] = $columnBuilder;
     }
 
     /**
