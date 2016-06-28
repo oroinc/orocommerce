@@ -37,25 +37,16 @@ layout:
                 account_user_role_items:
                     blockType: container
                 account_user_role_items_view_privileges:
-                    blockType: container
+                    blockType: datagrid
                     options:
                         visible: { '@not_empty': $data.entity }
+                        grid_name: frontend-account-user-role-permission-grid
+                        grid_parameters:
+                            role: {'@value': $data.entity}
+                        grid_render_parameters:
+                            cssClass: 'inner-permissions-grid'
                         vars:
-                            entity: { '@value': $data.entity }
-                account_user_role_items_view_privileges_container:
-                    blockType: container
-                account_user_role_items_view_privileges_entity:
-                    blockType: container
-                account_user_role_items_view_privileges_entity_privilege:
-                    blockType: container
-                account_user_role_items_view_privileges_entity_privilege_permission:
-                    blockType: container
-                account_user_role_items_view_privileges_action:
-                    blockType: container
-                account_user_role_items_view_privileges_action_privilege:
-                    blockType: container
-                account_user_role_items_view_privileges_action_privilege_permission:
-                    blockType: container
+                            options: { '@value': $data.orob2b_account_fronted_account_user_role_options }
                 account_user_role_items_view_users:
                     blockType: datagrid
                     options:
@@ -69,12 +60,5 @@ layout:
                         account_user_role_back_link: ~
                         account_user_role_items:
                             account_user_role_top_actions: ~
-                            account_user_role_items_view_privileges:
-                                account_user_role_items_view_privileges_container:
-                                    account_user_role_items_view_privileges_entity:
-                                        account_user_role_items_view_privileges_entity_privilege:
-                                            account_user_role_items_view_privileges_entity_privilege_permission: ~
-                                    account_user_role_items_view_privileges_action:
-                                        account_user_role_items_view_privileges_action_privilege:
-                                            account_user_role_items_view_privileges_action_privilege_permission: ~
+                            account_user_role_items_view_privileges: ~
                             account_user_role_items_view_users: ~

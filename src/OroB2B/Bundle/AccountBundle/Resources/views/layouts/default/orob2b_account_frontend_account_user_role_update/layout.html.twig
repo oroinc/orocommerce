@@ -22,3 +22,19 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block _account_user_role_edit_form_privileges_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    <div {{ UI.renderPageComponentAttributes({
+        module: 'orouser/js/components/role/entity-category-tabs-component',
+        options: options.tabsOptions
+    }) }}></div>
+
+    {{ block_widget(block) }}
+
+    <div {{ UI.renderPageComponentAttributes({
+        module: 'orouser/js/components/role/capability-set-component',
+        options: options.capabilitySetOptions
+    }) }}></div>
+{% endblock %}
