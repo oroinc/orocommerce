@@ -24,7 +24,14 @@
             'subblocks': [
                 {'data' : [
                     UI.renderProperty('orob2b.account.accountuserrole.label.label'|trans, entity.label),
-                    UI.renderProperty('orob2b.account.accountuserrole.account.label'|trans, entity.account)
+                    UI.renderProperty('orob2b.account.accountuserrole.account.label'|trans, entity.account),
+                    UI.renderProperty(
+                        'orob2b.account.accountuserrole.self_managed.label'|trans,
+                        entity.selfManaged ?
+                            'orob2b.account.accountuserrole.self_managed.value.true.label'|trans
+                            :
+                            'orob2b.account.accountuserrole.self_managed.value.false.label'|trans
+                    )
                 ]}
             ]
         }

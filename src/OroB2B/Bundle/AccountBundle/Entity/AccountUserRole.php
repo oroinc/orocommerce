@@ -140,6 +140,13 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     protected $accountUsers;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", name="self_managed")
+     */
+    protected $selfManaged = false;
+
+    /**
      * @param string|null $role
      */
     public function __construct($role = null)
@@ -314,5 +321,21 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     public function getAccountUsers()
     {
         return $this->accountUsers;
+    }
+
+    /**
+     * @return string
+     */
+    public function isSelfManaged()
+    {
+        return $this->selfManaged;
+    }
+
+    /**
+     * @param string $selfManaged
+     */
+    public function setSelfManaged($selfManaged)
+    {
+        $this->selfManaged = $selfManaged;
     }
 }
