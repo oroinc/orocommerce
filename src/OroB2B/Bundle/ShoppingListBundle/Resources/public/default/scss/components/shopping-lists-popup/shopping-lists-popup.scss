@@ -35,22 +35,9 @@
         font-weight: normal;
     }
 
-    &__units {
-        display: block;
-        margin-top: 8px;
-    }
-
-    &__units:first-child {
-        display: block;
-        margin-top: 0;
-    }
-
-    &__separate {
-        margin: 0 3px;
-    }
-
     &__cancel {
         padding: 15px 0;
+
         text-align: right;
     }
 }

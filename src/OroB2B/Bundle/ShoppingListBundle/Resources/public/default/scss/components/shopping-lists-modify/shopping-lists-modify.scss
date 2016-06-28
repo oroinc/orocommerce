@@ -1,0 +1,27 @@
+.shopping-lists-modify {
+    position: absolute;
+    right: -16px;
+    top: -10px;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+    white-space: nowrap;
+
+    background: #fff;
+
+    &__text,
+    &__select,
+    &__badges {
+        display: inline-block;
+    }
+
+    &__input {
+        width: 50px;
+    }
+
+    &__select {
+        margin-right: 45px;
+    }
+}

@@ -1,0 +1,32 @@
+.shopping-lists-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    margin: 0;
+    padding: 0;
+
+    font-size: 15px;
+
+    list-style: none;
+
+    &__edit,
+    &__remove {
+        display: inline-block;
+
+        color: #348fc6;
+
+        cursor: pointer;
+    }
+
+    &__icon {
+        margin-right: 0;
+    }
+
+    &__separate {
+        display: inline-block;
+        margin: 0 4px;
+
+        color: #ccc;
+    }
+}
