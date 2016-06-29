@@ -94,12 +94,25 @@ class PriceList extends BasePriceList
     protected $containSchedule = false;
 
     /**
+     * @var Collection|PriceRule[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceRule",
+     *      mappedBy="priceList",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     **/
+    protected $priceRules;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
     {
         parent::__construct();
         $this->schedules = new ArrayCollection();
+        $this->priceRules = new ArrayCollection();
     }
 
     /**
@@ -181,6 +194,48 @@ class PriceList extends BasePriceList
     public function setContainSchedule($containSchedule)
     {
         $this->containSchedule = $containSchedule;
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|PriceRule[]
+     */
+    public function getPriceRules()
+    {
+        return $this->priceRules;
+    }
+
+    /**
+     * @param ArrayCollection|PriceRule[] $priceRules
+     * @return $this
+     */
+    public function setPriceRules($priceRules)
+    {
+        $this->priceRules = $priceRules;
+
+        return $this;
+    }
+
+    /**
+     * @param PriceRule $priceRule
+     * @return $this
+     */
+    public function addPriceRule(PriceRule $priceRule)
+    {
+        $priceRule->setPriceList($this);
+        $this->priceRules->add($priceRule);
+
+        return $this;
+    }
+
+    /**
+     * @param PriceRule $priceRule
+     * @return $this
+     */
+    public function removePriceRule(PriceRule $priceRule)
+    {
+        $this->priceRules->removeElement($priceRule);
 
         return $this;
     }
