@@ -1135,8 +1135,12 @@ datagrid:
                     - address.id as id
                     - address.street as street
                     - address.city as city
-                    - region.name as state
                     - address.postalCode as zip
+                    - address.primary as isPrimary
+                    - address.label as label
+                    - address.street2 as street2
+                    - address.phone as phone
+                    - region.name as state
                     - country.name as countryName
                 join:
                     left:
