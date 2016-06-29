@@ -22,6 +22,7 @@ services:
 
     orob2b_warehouse.event_listener.order_warehouse_before_render:
         class: 'OroB2B\Bundle\WarehouseBundle\EventListener\OrderWarehouseBeforeRenderListener'
+        arguments: ["@orob2b_warehouse.entity.helper.warehouse_counter"]
         tags:
             - { name: kernel.event_listener, event: oro.entity_extend_event.before_value_render, method: onWarehouseOrderDisplay, priority: -255 }
 
