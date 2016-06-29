@@ -43,9 +43,10 @@ abstract class AbstractWarehouseInventoryLevelStrategyHelper implements Warehous
     {
         $existingEntity = $this->databaseHelper->findOneBy($class, $criteria);
         if (!$existingEntity) {
+            $shortClassName = end(explode('\\', $class));
             $this->addError(
                 'orob2b.warehouse.import.error.not_found_entity',
-                ['%entity%' => end(explode('\\', $class))]
+                ['%entity%' => $shortClassName]
             );
         }
 

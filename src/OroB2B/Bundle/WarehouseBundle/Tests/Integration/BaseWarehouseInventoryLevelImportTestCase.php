@@ -11,7 +11,11 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\DetailedInventoryLevelStrategyHelper;
 use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\InventoryStatusesStrategyHelper;
+use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\ProductUnitStrategyHelper;
 use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy;
+use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategyHelper;
+use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategyHelperInterface;
+use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseStrategyHelper;
 
 /**
  * @dbIsolation
@@ -39,19 +43,30 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
             $this->getContainer()->get('oro_importexport.strategy.new_entities_helper')
         );
 
-        $inventoryStatusHelper = new InventoryStatusesStrategyHelper(
-            $this->getContainer()->get('oro_importexport.field.database_helper'),
-            $this->getContainer()->get('translator')
-        );
-        $detailedInventoryLevelHelper = new DetailedInventoryLevelStrategyHelper(
-            $this->getContainer()->get('oro_importexport.field.database_helper'),
-            $this->getContainer()->get('translator')
-        );
-        $inventoryStatusHelper->setSuccessor($detailedInventoryLevelHelper);
+        $warehouseInventoryLevelHelper = $this->createStrategyHelper(WarehouseInventoryLevelStrategyHelper::class);
+        $productUnitHelper = $this->createStrategyHelper(ProductUnitStrategyHelper::class, $warehouseInventoryLevelHelper);
+        $warehouseHelper = $this->createStrategyHelper(WarehouseStrategyHelper::class, $productUnitHelper);
+        $inventoryStatusHelper = $this->createStrategyHelper(InventoryStatusesStrategyHelper::class, $warehouseHelper);
+
         $strategy->setInventoryLevelStrategyHelper($inventoryStatusHelper);
 
         $this->importProcessor->setStrategy($strategy);
         $this->importProcessor->setEntityName(WarehouseInventoryLevel::class);
+    }
+
+    protected function createStrategyHelper($class, $successor = null)
+    {
+        /** @var WarehouseInventoryLevelStrategyHelperInterface $helper */
+        $helper = new $class(
+            $this->getContainer()->get('oro_importexport.field.database_helper'),
+            $this->getContainer()->get('translator')
+        );
+
+        if ($successor) {
+            $helper->setSuccessor($successor);
+        }
+
+        return $helper;
     }
 
     /**

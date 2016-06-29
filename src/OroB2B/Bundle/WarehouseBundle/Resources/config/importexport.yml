@@ -69,12 +69,30 @@ services:
         class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Reader\InventoryLevelReader'
 
     #Strategy Helpers
-    orob2b_warehouse.importexport.strategy_helper.detailed_inventory_level:
-        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\DetailedInventoryLevelStrategyHelper'
+    orob2b_warehouse.importexport.strategy_helper.warehouse_inventory_level:
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategyHelper'
         public: false
         arguments:
             - "@oro_importexport.field.database_helper"
             - "@translator"
+
+    orob2b_warehouse.importexport.strategy_helper.product_unit:
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\ProductUnitStrategyHelper'
+        public: false
+        arguments:
+            - "@oro_importexport.field.database_helper"
+            - "@translator"
+        calls:
+             - [setSuccessor, ["@orob2b_warehouse.importexport.strategy_helper.warehouse_inventory_level"]]
+
+    orob2b_warehouse.importexport.strategy_helper.warehouse:
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseStrategyHelper'
+        public: false
+        arguments:
+            - "@oro_importexport.field.database_helper"
+            - "@translator"
+        calls:
+             - [setSuccessor, ["@orob2b_warehouse.importexport.strategy_helper.product_unit"]]
 
     orob2b_warehouse.importexport.strategy_helper.inventory_statuses:
         class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\InventoryStatusesStrategyHelper'
@@ -82,4 +100,4 @@ services:
             - "@oro_importexport.field.database_helper"
             - "@translator"
         calls:
-             - [setSuccessor, ["@orob2b_warehouse.importexport.strategy_helper.detailed_inventory_level"]]
+             - [setSuccessor, ["@orob2b_warehouse.importexport.strategy_helper.warehouse"]]

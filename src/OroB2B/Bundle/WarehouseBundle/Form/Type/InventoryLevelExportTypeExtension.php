@@ -15,7 +15,7 @@ class InventoryLevelExportTypeExtension extends AbstractTypeExtension
     const NAME = 'oro_importexport_export_type_extension';
 
     /** @var string[] */
-    protected static $processorAliases = [
+    public static $processorAliases = [
         'orob2b_product.export_inventory_status_only',
         'orob2b_warehouse.detailed_inventory_levels'
     ];

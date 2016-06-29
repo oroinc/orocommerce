@@ -17,13 +17,13 @@ class ImportExportControllerTest extends WebTestCase
     public static $inventoryStatusOnlyHeader = [
         'SKU',
         'Product',
-        'Inventory status',
+        'Inventory Status',
     ];
 
     public static $inventoryLevelHeader = [
         'SKU',
         'Product',
-        'Inventory status',
+        'Inventory Status',
         'Warehouse',
         'Quantity',
         'Unit',
@@ -60,8 +60,8 @@ class ImportExportControllerTest extends WebTestCase
     public function getExportTestInput()
     {
         return [
-            ['export_inventory_status_only', self::$inventoryStatusOnlyHeader],
-            ['orob2b_warehouse_detailed_inventory_levels', self::$inventoryLevelHeader],
+            ['orob2b_product.export_inventory_status_only', self::$inventoryStatusOnlyHeader],
+            ['orob2b_warehouse.detailed_inventory_levels', self::$inventoryLevelHeader],
         ];
     }
 

@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\ImportExport\Normalizer;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\ImportExport\Normalizer\InventoryStatusNormalizer;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\ImportExport\Stub\ProductStub;
