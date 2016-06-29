@@ -30,33 +30,8 @@ layout:
             items:
                 account_user_address_view_page:
                     blockType: container
-                    options:
-                        class_prefix: 'user-page'
                 account_user_address_view_account_addresses:
                     blockType: container
-                    options:
-                        visible: { '@acl': orob2b_account_frontend_account_view }
-                account_user_address_view_account_addresses_head:
-                    blockType: container
-                account_user_address_view_account_addresses_title:
-                    blockType: text
-                    options:
-                        text: {'@value': 'orob2b.account.frontend.account_user_address_book.account_addresses'}
-                account_user_address_view_account_addresses_add_button:
-                    blockType: link
-                    options:
-                        visible: { '@acl': orob2b_account_frontend_account_address_create }
-                        route_name: orob2b_account_frontend_account_address_create
-                        route_parameters: { entityId: {'@value': $data.entity.account.id }}
-                        text: 'orob2b.account.frontend.account_user_address_book.create.label'
-                # Account address grid
-                account_user_address_view_account_addresses_content_grid:
-                    blockType: datagrid
-                    options:
-                        visible: { '@gte': [$data.account_address_count, 8] }
-                        grid_name: frontend-account-account-address-grid
-                        grid_parameters:
-                            frontend_owner_id: {'@value': $data.entity.account.id}
                 # Account address list with map
                 account_user_address_view_account_addresses_content_list:
                     blockType: address_book
@@ -70,33 +45,6 @@ layout:
                         addressUpdateAclResource: 'orob2b_account_frontend_account_user_address_update'
                 account_user_address_view_account_user_addresses:
                     blockType: container
-                    options:
-                        visible: { '@acl': orob2b_account_frontend_account_user_view }
-                        attr:
-                            class: oro-grid
-                account_user_address_view_account_user_addresses_head:
-                    blockType: container
-                    options:
-                        attr:
-                            class: oro-grid__row
-                account_user_address_view_account_user_addresses_title:
-                    blockType: text
-                    options:
-                        text: {'@value': 'orob2b.account.frontend.account_user_address_book.account_user_addresses'}
-                        class_prefix: 'oro-grid__column'
-                account_user_address_view_account_user_addresses_add_button_container:
-                    blockType: container
-                    options:
-                        class_prefix: 'oro-grid__column'
-                account_user_address_view_account_user_addresses_add_button:
-                    blockType: link
-                    options:
-                        visible: { '@acl': orob2b_account_frontend_account_user_address_create }
-                        route_name: orob2b_account_frontend_account_user_address_create
-                        route_parameters: { entityId: {'@value': $data.entity.id }}
-                        text: 'orob2b.account.address.add'
-                        attr:
-                            class: btn btn_xsm btn-dark oq-group-btn
                 # Account user address list with map
                 account_user_address_view_account_user_addresses_content_list:
                     blockType: address_book
@@ -113,14 +61,14 @@ layout:
                 content:
                     account_user_address_view_page:
                         account_user_address_view_account_addresses:
-                            account_user_address_view_account_addresses_head:
-                                account_user_address_view_account_addresses_title: ~
-                                account_user_address_view_account_addresses_add_button: ~
-                            account_user_address_view_account_addresses_content_grid: ~
+#                            account_user_address_view_account_addresses_head:
+#                                account_user_address_view_account_addresses_title: ~
+#                                account_user_address_view_account_addresses_add_button_container:
+#                                    account_user_address_view_account_addresses_add_button: ~
                             account_user_address_view_account_addresses_content_list: ~
                         account_user_address_view_account_user_addresses:
-                            account_user_address_view_account_user_addresses_head:
-                                account_user_address_view_account_user_addresses_title: ~
-                                account_user_address_view_account_user_addresses_add_button_container:
-                                  account_user_address_view_account_user_addresses_add_button: ~
-                            account_user_address_view_account_user_addresses_content_list:
+#                            account_user_address_view_account_user_addresses_head:
+#                                account_user_address_view_account_user_addresses_title: ~
+#                                account_user_address_view_account_user_addresses_add_button_container:
+#                                    account_user_address_view_account_user_addresses_add_button: ~
+                            account_user_address_view_account_user_addresses_content_list: ~

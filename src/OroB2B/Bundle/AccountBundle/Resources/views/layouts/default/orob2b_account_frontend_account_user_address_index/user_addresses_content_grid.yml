@@ -1,0 +1,40 @@
+layout:
+    actions:
+        - '@setOption':
+              id: datagrid_toolbar_button_container
+              optionName: visible
+              optionValue: true
+        - '@add':
+              id: account_user_address_view_account_user_addresses_head
+              parentId: account_user_address_view_account_user_addresses
+              blockType: container
+        - '@add':
+              id: account_user_address_view_account_user_addresses_title
+              parentId: account_user_address_view_account_user_addresses_head
+              blockType: text
+              options:
+                  text: {'@value': 'orob2b.account.frontend.account_user_address_book.account_user_addresses'}
+                  class_prefix: 'oro-grid__column'
+        - '@add':
+              id: account_user_address_view_account_user_addresses_add_button
+              parentId: datagrid_toolbar_button_container
+              blockType: link
+              options:
+                  visible: { '@acl': orob2b_account_frontend_account_user_address_create }
+                  route_name: orob2b_account_frontend_account_user_address_create
+                  route_parameters: { entityId: {'@value': $data.entity.id }}
+                  text: 'orob2b.account.address.add'
+                  attr:
+                      class: btn btn_xsm btn-dark oq-group-btn
+        - '@add':
+              id: account_user_address_view_account_user_addresses_content_grid
+              parentId: account_user_address_view_account_user_addresses
+              blockType: datagrid
+              options:
+                  grid_name: frontend-account-account-user-address-grid
+                  grid_parameters:
+                      frontend_owner_id: {'@value': $data.entity.id}
+    conditions:
+        '@and':
+            - '@acl': orob2b_account_frontend_account_user_view
+            - '@gte': [$context.account_user_address_count, 8]
