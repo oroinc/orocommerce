@@ -206,25 +206,31 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         /** @var Product $productOne */
         $productOne = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
-        $lineItemRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $lineItemRepository = $this->getMockBuilder('LineItemRepository')
+                                    ->setMethods(['getProductItemsWithShoppingListNames'])
+                                    ->getMock();
+        $shoppingList1 = $this->createShoppingList(1, 'Shopping List1');
+        $shoppingList2 = $this->createShoppingList(2, 'Shopping List2');
+
         $lineItemRepository->expects($this->once())
-            ->method('findBy')
-            ->with(
-                [
-                    'product' => [1, 2],
-                    'accountUser' => $user,
-                    'shoppingList' => $shoppingList
-                ]
-            )
+            ->method('getProductItemsWithShoppingListNames')
+            ->with([1, 2], $user)
             ->willReturn(
                 [
                     (new LineItem())
                         ->setUnit((new ProductUnit())->setCode('unt1'))
                         ->setQuantity(1)
+                        ->setShoppingList($shoppingList1)
                         ->setProduct($productOne),
                     (new LineItem())
                         ->setUnit((new ProductUnit())->setCode('unt2'))
                         ->setQuantity(2)
+                        ->setShoppingList($shoppingList2)
+                        ->setProduct($productOne),
+                    (new LineItem())
+                        ->setUnit((new ProductUnit())->setCode('unt3'))
+                        ->setQuantity(5)
+                        ->setShoppingList($shoppingList2)
                         ->setProduct($productOne)
                 ]
             );
@@ -255,7 +261,43 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onResultAfter($event);
 
-        $this->assertEquals(['unt1' => 1, 'unt2' => 2], $recordOne->getValue('current_shopping_list_line_items'));
-        $this->assertEmpty($recordTwo->getValue('current_shopping_list_line_items'));
+        $this->assertEquals(
+            [
+                [
+                'shopping_list_id' => 1,
+                'shopping_list_label' => 'Shopping List1',
+                'line_items' => ['unt1' => 1]
+                ],
+                [
+                    'shopping_list_id' => 2,
+                    'shopping_list_label' => 'Shopping List2',
+                    'line_items' => ['unt2' => 2, 'unt3' => 5]
+                ],
+            ],
+            $recordOne->getValue('shopping_lists')
+        );
+        $this->assertEmpty($recordTwo->getValue('shopping_lists'));
+    }
+
+    /*
+     * @param int $id
+     * @param string $label
+     *
+     * @return  Mock_ShoppingList
+     *
+     */
+    private function createShoppingList($id, $label)
+    {
+        $shoppingList = $this
+            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
+            ->setMethods(['getId', 'getLabel'])
+            ->getMock();
+        $shoppingList ->expects($this->any())
+            ->method('getId')
+            ->will($this->returnValue($id));
+        $shoppingList ->expects($this->any())
+            ->method('getLabel')
+            ->will($this->returnValue($label));
+        return $shoppingList;
     }
 }
