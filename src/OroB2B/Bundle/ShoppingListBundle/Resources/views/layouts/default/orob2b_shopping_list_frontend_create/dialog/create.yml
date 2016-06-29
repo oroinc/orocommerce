@@ -4,11 +4,11 @@ layout:
             themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_shopping_list_frontend_create/dialog/create.html.twig'
         - '@setOption':
             id: widget_content
-            optionName: 'vars.savedId'
+            optionName: savedId
             optionValue: { '@value': $data.savedId }
         - '@setOption':
             id: widget_content
-            optionName: 'vars.shoppingList'
+            optionName: shoppingList
             optionValue: { '@value': $data.shoppingList }
         - '@addTree':
             items:

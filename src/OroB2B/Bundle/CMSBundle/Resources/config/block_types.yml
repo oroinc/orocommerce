@@ -1,0 +1,16 @@
+services:
+    orob2b_cms.layout.block_type.login_page_logo:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{logo: {required: true}}]]
+            - [setName, ['login_page_logo']]
+        tags:
+            - { name: layout.block_type, alias: login_page_logo }
+
+    orob2b_cms.layout.block_type.extension.login_page:
+        parent: oro_layout.block_type.extension.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{loginPage: ~}]]
+            - [setName, ['login_page']]
+        tags:
+            - { name: layout.block_type, alias: login_page }

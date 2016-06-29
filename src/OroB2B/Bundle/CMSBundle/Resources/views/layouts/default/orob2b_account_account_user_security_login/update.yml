@@ -36,5 +36,5 @@ layout:
                 escape: false
         - '@setOption':
             id: login_page
-            optionName: vars.loginPage
+            optionName: loginPage
             optionValue: { '@value': $data.orob2b_cms_login_page }
