@@ -67,30 +67,36 @@ class StartedFromColumnBuilder implements ColumnBuilderInterface
             }
 
             $source     = $sources[$id];
-            $sourceName = null;
+            $sourceName = $routeName = null;
 
             // @todo Refactor this: https://magecore.atlassian.net/browse/BB-3614
             if ($source instanceof ShoppingList) {
                 $sourceName = $source->getLabel();
+                $routeName = 'orob2b_shopping_list_frontend_view';
             }
 
-            if ($source instanceof Quote || $source instanceof QuoteDemand) {
+            if ($source instanceof QuoteDemand) {
+                $source = $source->getQuote();
+            }
+
+            if ($source instanceof Quote) {
                 $sourceName = $this->translator->trans(
                     'orob2b.frontend.sale.quote.title.label',
                     [
                         '%id%' => $source->getId()
                     ]
                 );
+                $routeName = 'orob2b_sale_quote_frontend_view';
             }
 
             $sourceResult = new CheckoutSourceDefinition(
                 $sourceName,
                 $this->hasCurrentUserRightToView($source),
-                'orob2b_shopping_list_frontend_view',
-                [ 'id' => $source->getId() ]
+                $routeName,
+                ['id' => $source->getId()]
             );
 
-            $record->addData([ 'startedFrom' => $sourceResult ]);
+            $record->addData(['startedFrom' => $sourceResult]);
         }
     }
 

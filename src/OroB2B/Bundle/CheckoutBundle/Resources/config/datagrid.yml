@@ -116,7 +116,7 @@ datagrid:
         actions:
             view:
                 type: navigate
-                label: orob2b.frontend.order.grid.checkout_link
+                label: orob2b.checkout.grid.checkout_link.label
                 link: view_link
                 icon: shopping-cart
                 acl_resource: orob2b_checkout_frontend_checkout
