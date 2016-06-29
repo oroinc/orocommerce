@@ -9,9 +9,6 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
-
 class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -23,11 +20,6 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $doctrineHelper;
-
-    /**
-     * @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $websiteProvider;
 
     protected function setUp()
     {
@@ -43,12 +35,6 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->websiteProvider = $this->getMockBuilder(WebsiteProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $website = new Website();
-        $this->websiteProvider->method('getWebsites')->willReturn([$website]);
     }
 
     protected function tearDown()

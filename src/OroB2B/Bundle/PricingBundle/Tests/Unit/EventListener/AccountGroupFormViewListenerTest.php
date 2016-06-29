@@ -16,12 +16,33 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\EventListener\AccountGroupFormViewListener;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 
 class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
 {
+
+    /**
+     * @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $websiteProvider;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->websiteProvider = $this->getMockBuilder(WebsiteProviderInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $website = new Website();
+        $this->websiteProvider->method('getWebsites')->willReturn([$website]);
+    }
+
     protected function tearDown()
     {
-        unset($this->doctrineHelper, $this->translator);
+        unset($this->doctrineHelper, $this->translator, $this->websiteProvider);
     }
     
     public function testOnViewNoRequest()
