@@ -120,14 +120,6 @@ services:
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_select_with_priority }
 
-    orob2b_pricing.form.extension.website_type:
-        class: 'OroB2B\Bundle\PricingBundle\Form\Extension\WebsiteFormExtension'
-        arguments:
-            - '%orob2b_pricing.entity.price_list_to_website.class%'
-            - "@orob2b_pricing.entity_listener.website"
-        tags:
-            - { name: form.type_extension, alias: orob2b_website_type }
-
     orob2b_pricing.form.type.price_list_system_config:
         class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType'
         arguments:

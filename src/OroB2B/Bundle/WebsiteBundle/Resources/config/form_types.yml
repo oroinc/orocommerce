@@ -9,9 +9,3 @@ services:
         calls:
             - [setWebsiteClass,['%orob2b_website.entity.website.class%']]
 
-    orob2b_website.form.type.website:
-        class: 'OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteType'
-        calls:
-            - [setDataClass, ['%orob2b_website.entity.website.class%']]
-        tags:
-            - { name: form.type, alias: orob2b_website_type }

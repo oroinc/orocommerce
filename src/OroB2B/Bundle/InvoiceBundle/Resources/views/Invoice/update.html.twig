@@ -39,6 +39,14 @@
     {% set id = 'invoice-edit' %}
 
     {% set totals %}
+        {% set events = [
+            'line-items-totals:update',
+            'update:account',
+            'update:currency'
+        ]%}
+        {% if form.website is defined %}
+            {% set events = events|merge(['update:website']) %}
+        {% endif %}
         {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
             options: {
                 route: 'orob2b_pricing_recalculate_entity_totals',
@@ -46,12 +54,7 @@
                     template: '#totals-template',
                     form: '#' ~ form.vars.id
                 },
-                events: [
-                    'line-items-totals:update',
-                    'update:account',
-                    'update:website',
-                    'update:currency'
-                ],
+                events: events,
                 entityClassName: 'OroB2B\\Bundle\\InvoiceBundle\\Entity\\Invoice',
                 entityId: form.vars.value.id,
                 data: totals
@@ -96,7 +99,9 @@
                 {{ form_row(form.invoiceDate) }}
                 {{ form_row(form.paymentDueDate) }}
                 {{ form_row(form.poNumber) }}
-                {{ form_row(form.website) }}
+                {% if form.website is defined %}
+                    {{ form_row(form.website) }}
+                {% endif %}
                 {{ form_row(form.currency) }}
             </div>
         </div>
