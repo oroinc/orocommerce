@@ -226,7 +226,8 @@ class MultipleWarehouseInventoryLevelImportTest extends BaseWarehouseInventoryLe
                             'Quantity' => 300,
                             'Warehouse' => 'Second Warehouse',
                             'Unit' => ''
-                        ]
+                        ],
+                        'expectNull' => true
                     ]
                 ]
             ],

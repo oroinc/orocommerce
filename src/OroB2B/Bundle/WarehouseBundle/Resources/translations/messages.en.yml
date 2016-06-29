@@ -56,4 +56,8 @@ orob2b:
         import:
             error:
                 inventory_status: Multiple products found having different Inventory Status
-                warehouse_inexistent: Expecting at least one warehouse in the system and found none.
+                warehouse_inexistent: Expecting at least one warehouse in the system and found none
+                warehouse_required: The Warehouse field is required when Quantity is specified and the system contains multiple warehouses
+                unit_required: The Unit must be specified
+                not_found_entity: The specified %entity% has not been found in the system
+                general_error: General error:

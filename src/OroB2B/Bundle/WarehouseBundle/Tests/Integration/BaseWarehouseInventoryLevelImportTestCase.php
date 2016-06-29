@@ -9,6 +9,8 @@ use Oro\Bundle\ImportExportBundle\Processor\ImportProcessor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\DetailedInventoryLevelStrategyHelper;
+use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\InventoryStatusesStrategyHelper;
 use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy;
 
 /**
@@ -36,6 +38,17 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
             $this->getContainer()->get('translator'),
             $this->getContainer()->get('oro_importexport.strategy.new_entities_helper')
         );
+
+        $inventoryStatusHelper = new InventoryStatusesStrategyHelper(
+            $this->getContainer()->get('oro_importexport.field.database_helper'),
+            $this->getContainer()->get('translator')
+        );
+        $detailedInventoryLevelHelper = new DetailedInventoryLevelStrategyHelper(
+            $this->getContainer()->get('oro_importexport.field.database_helper'),
+            $this->getContainer()->get('translator')
+        );
+        $inventoryStatusHelper->setSuccessor($detailedInventoryLevelHelper);
+        $strategy->setInventoryLevelStrategyHelper($inventoryStatusHelper);
 
         $this->importProcessor->setStrategy($strategy);
         $this->importProcessor->setEntityName(WarehouseInventoryLevel::class);

@@ -133,7 +133,7 @@ class ImportExportTest extends WebTestCase
             ->get('oro_importexport.handler.export')
             ->getExportResult(
                 JobExecutor::JOB_EXPORT_TEMPLATE_TO_CSV,
-                'orob2b_warehouse_inventory_level_export_template',
+                'orob2b_warehouse.inventory_level_export_template',
                 ProcessorRegistry::TYPE_EXPORT_TEMPLATE
             );
 
