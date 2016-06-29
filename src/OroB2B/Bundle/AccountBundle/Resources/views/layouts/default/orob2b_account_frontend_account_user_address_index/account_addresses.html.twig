@@ -1,36 +1,34 @@
-{% block _account_user_address_view_account_addresses_widget %}
+{#{% set parentClass = attr.class %}#}
+{% block _page_wrapper_widget %}
+<div class="line-wrapper">
+    {{ block_widget(block) }}
+</div>
+{% endblock %}
 
+{% block _page_heading_text_and_icon_widget %}
+    <h2{{ block('block_attributes') }}>
+        <span class="address-list-heading__icon">
+            <i class="badge badge_sm badge_circle badge_orange icon-map-marker"></i>
+        </span>
+    {{ block_widget(block) }}
+    </h2>
+{% endblock %}
+
+{% block _add_company_action_widget %}
+    {{ block_widget(block) }}
+{% endblock %}
+
+
+
+{% block _account_user_address_view_account_addresses_widget %}
 {# static content - start #}
-    <div class="line-wrapper">
-        <h2 class="address-list-heading">
-            <span class="address-list-heading__icon">
-                <i class="badge badge_sm badge_circle badge_orange icon-map-marker"></i>
-            </span>
-            Company addresses
-        </h2>
-        <div class="btn btn_xsm btn-orange oq-group-btn"><a href="/app_dev.php/account/user/address/1/address-create">Add Company Address</a></div>
-    </div>
 
     <ul class="address-list">
         {% for address in addresses %}
-        {#{{ dump(address) }}#}
-        <li class="address-list__item {% if address.id == 1 %}address-list__item--active{% endif %}">
 
-            <div class="address-list__address">{{ address.street }}, {{ address.city }}, {{ address.postalCode }}, {{ address.region.combinedCode }}</div>
-            <div class="address-list__label">{{ address.label }}</div>
+            {% do block|merge_context({'address': address}) %}
+            {{ block('container_widget') }}
 
-            <nav class="address-list__actions">
-                <button type="button" class="address-list__button">
-                    <i class="cf-pencil cf--no-offset"></i>
-                </button>
-                {% if not (address.id == 1) %}
-                    <button type="button" class="address-list__button">
-                        <i class="cf-trash cf--no-offset"></i>
-                    </button>
-                {% endif %}
-            </nav>
-
-        </li>
         {% endfor %}
     </ul>
 
@@ -41,4 +39,28 @@
 {# static content - end #}
 
 {% endblock %}
+
+{% block _account_user_address_view_account_addresses_item_widget %}
+    {#{% set parentClass = attr.class %}#}
+
+    <li class="address-list__item {% if address.isPrimary %}address-list__item--active{% endif %}">
+
+        <div class="address-list__address">{{ address.street }}, {{ address.city }}, {{ address.postalCode }}, {{ address.region.combinedCode }}</div>
+        <div class="address-list__label">{{ address.label }}</div>
+
+        <nav class="address-list__actions">
+            <button type="button" class="address-list__button">
+                <i class="cf-pencil cf--no-offset"></i>
+            </button>
+            {% if not address.isPrimary %}
+                <button type="button" class="address-list__button">
+                    <i class="cf-trash cf--no-offset"></i>
+                </button>
+            {% endif %}
+        </nav>
+
+    </li>
+{% endblock %}
+
+
 

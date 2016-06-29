@@ -10,9 +10,34 @@ layout:
                     options:
                         vars:
                             addresses: { '@value': $data.accountAddress }
+                account_user_address_view_account_addresses_item:
+                    blockType: container
+                page_wrapper:
+                    blockType: container
+                page_heading_text_and_icon:
+                    blockType: text
+                    options:
+                        text: {'@value': 'Company addresses'}
+                        attr:
+                            class: 'address-list-heading'
+                add_company_action:
+                    blockType: link
+                    options:
+                        path: { '@value': '/app_dev.php/account/user/address/1/address-create' }
+#                       @todo replace hardcoded text with smth like:    text: orob2b.account.frontend.address.title.create
+                        text: 'orob2b.account.frontend.account_user_address_book.create.label'
+                        vars:
+                            style: auto
+                        attr:
+                            'class': 'btn btn_xsm btn-orange'
+
 
             tree:
                 account_user_address_view_page:
-                    account_user_address_view_account_addresses: ~
+                    page_wrapper:
+                        page_heading_text_and_icon: ~
+                        add_company_action: ~
+                    account_user_address_view_account_addresses:
+                        account_user_address_view_account_addresses_item: ~
     conditions:
         '@acl': orob2b_account_frontend_account_view
