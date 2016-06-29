@@ -7,9 +7,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguration;
 
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Currency;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class Configuration implements ConfigurationInterface
 {
@@ -94,14 +95,14 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
 
         $rootNode = $treeBuilder->root(OroB2BPaymentExtension::ALIAS);
-
+        $paymentCurrencies = array_intersect(CurrencyConfiguration::$defaultCurrencies, Currency::$currencies);
         SettingsBuilder::append(
             $rootNode,
             [
                 // General
                 self::MERCHANT_COUNTRY_KEY => [
                     'type' => 'text',
-                    'value' => ''
+                    'value' => '',
                 ],
 
                 // PayPal Payments Pro
@@ -195,7 +196,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES => [
                     'type' => 'array',
-                    'value' => Currency::$currencies
+                    'value' => $paymentCurrencies,
                 ],
 
                 // Payflow Gateway
@@ -289,7 +290,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYFLOW_GATEWAY_ALLOWED_CURRENCIES => [
                     'type' => 'array',
-                    'value' => Currency::$currencies
+                    'value' => $paymentCurrencies,
                 ],
                 // Payment Term
                 self::PAYMENT_TERM_ENABLED_KEY => [
@@ -318,7 +319,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYMENT_TERM_ALLOWED_CURRENCIES => [
                     'type' => 'array',
-                    'value' => Currency::$currencies
+                    'value' => $paymentCurrencies,
                 ],
             ]
         );
@@ -332,6 +333,6 @@ class Configuration implements ConfigurationInterface
      */
     public static function getFullConfigKey($key)
     {
-        return OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
+        return OroB2BPaymentExtension::ALIAS.ConfigManager::SECTION_MODEL_SEPARATOR.$key;
     }
 }

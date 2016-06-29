@@ -34,28 +34,40 @@
 
     {% set websiteProductVisibilityTabsWidget %}
         <div class="responsive-cell">
-            {% set tabs = [] %}
-            {% for website in form.vars.websites %}
-                {% set content = '' %}
-                {% if form.children[website.id] is defined  %}
-                    {% set content %}
+            {% set websites = form.vars.websites %}
+            {% if websites|length == 1 %}
+                {% set website = websites|first %}
+                {% if website %}
+                    {% set content = '' %}
+                    {% if form.children[website.id] is defined  %}
                         {% include 'OroB2BAccountBundle:ProductVisibility/widget:website.html.twig' with {form: form.children[website.id]} %}
-                    {% endset %}
+                    {% endif %}
                 {% endif %}
-                {% set tab = {
-                    'alias': website.id,
-                    'widgetType': 'block',
-                    'label': website.name|trans,
-                    'url': path(
-                        'orob2b_product_visibility_website',
-                        { productId: entity.id,  id: website.id}
-                    ),
-                    'content': content
-                } %}
-                {% set tabs = tabs|merge([tab]) %}
-            {% endfor %}
+            {% else %}
+                {% set tabs = [] %}
+                {% for website in websites %}
+                    {% set content = '' %}
+                    {% if form.children[website.id] is defined  %}
+                        {% set content %}
+                            {% include 'OroB2BAccountBundle:ProductVisibility/widget:website.html.twig' with {form: form.children[website.id]} %}
+                        {% endset %}
+                    {% endif %}
 
-            {{ tabPanel(tabs, {'useDropdown': true}) }}
+                    {% set tab = {
+                        'alias': website.id,
+                        'widgetType': 'block',
+                        'label': website.name|trans,
+                        'url': path(
+                            'orob2b_product_visibility_website',
+                            { productId: entity.id,  id: website.id}
+                        ),
+                        'content': content
+                    } %}
+
+                    {% set tabs = tabs|merge([tab]) %}
+                {% endfor %}
+                {{ tabPanel(tabs, {'useDropdown': true}) }}
+            {% endif %}
         </div>
     {% endset %}
 

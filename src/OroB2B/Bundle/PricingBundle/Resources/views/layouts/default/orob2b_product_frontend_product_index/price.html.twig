@@ -20,7 +20,7 @@
                 <% var firstPrice = model.prices ? model.prices[_.keys(model.prices)[0]] : null; %>
                 <div>
                     <span class="fs16 blue" data-name="price-value"><%= firstPrice ? firstPrice.formatted_price : '' %></span>
-                    / <%= firstPrice ? firstPrice.formatted_unit : ''%>
+                    / <span data-name="unit"><%= firstPrice ? firstPrice.formatted_unit : ''%></span>
                 </div>
             </div>
         </div>
