@@ -1,4 +1,4 @@
-.shopping-lists-actions {
+.actions-menu-row {
     position: absolute;
     top: 0;
     right: 0;
@@ -8,15 +8,19 @@
 
     font-size: $font-size;
 
-    list-style: none;
-
-    &__edit,
-    &__remove {
+    &__item {
         display: inline-block;
 
         color: $base-link-color;
 
         cursor: pointer;
+
+        &--separate {
+            display: inline-block;
+            margin: 0 4px;
+
+            color: $theme-gray-color;
+        }
     }
 
     &__button {
@@ -29,12 +33,5 @@
 
     &__icon {
         margin-right: 0;
-    }
-
-    &__separate {
-        display: inline-block;
-        margin: 0 4px;
-
-        color: $theme-gray-color;
     }
 }
