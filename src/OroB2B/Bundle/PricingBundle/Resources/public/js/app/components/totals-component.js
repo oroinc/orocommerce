@@ -32,7 +32,7 @@ define(function(require) {
                 noDataTemplate: '#totals-template-no-data',
                 totals: '[data-totals-container]'
             },
-            events: [],
+            events: ['update:totals'],
             skipMaskView: false,
             application: ''
         },
