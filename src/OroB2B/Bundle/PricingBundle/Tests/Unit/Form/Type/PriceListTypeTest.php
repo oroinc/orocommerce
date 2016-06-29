@@ -18,7 +18,6 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
 
 class PriceListTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceList';
     const ACCOUNT_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
     const ACCOUNT_GROUP_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup';
     const WEBSITE_CLASS = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
@@ -36,10 +35,6 @@ class PriceListTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->type = new PriceListType();
-        $this->type->setDataClass(self::DATA_CLASS);
-        $this->type->setAccountClass(self::ACCOUNT_CLASS);
-        $this->type->setAccountGroupClass(self::ACCOUNT_GROUP_CLASS);
-        $this->type->setWebsiteClass(self::WEBSITE_CLASS);
     }
 
     /**
