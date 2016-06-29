@@ -9,12 +9,16 @@
     list-style: none;
     white-space: nowrap;
 
-    background: #fff;
+    background: $base-white-color;
 
     &__text,
     &__select,
     &__badges {
         display: inline-block;
+    }
+
+    &__text {
+        margin-right: 4px;
     }
 
     &__input {
@@ -23,5 +27,22 @@
 
     &__select {
         margin-right: 45px;
+    }
+
+    &__edit,
+    &__remove {
+        margin-left: 4px;
+    }
+
+    &__button {
+        display: inline-block;
+        padding: 0;
+
+        border: 0;
+        background: transparent;
+    }
+
+    &--hidden {
+        display: none;
     }
 }

@@ -22,10 +22,7 @@
         visibility: hidden;
         opacity: 0;
 
-        -webkit-transition: visibility 0 linear .3s, opacity .3s linear;
-           -moz-transition: visibility 0 linear .3s, opacity .3s linear;
-            -ms-transition: visibility 0 linear .3s, opacity .3s linear;
-                transition: visibility 0 linear .3s, opacity .3s linear;
+        transition: visibility 0 linear .3s, opacity .3s linear;
     }
 
     &:hover &__actions,
@@ -35,9 +32,6 @@
     }
 
     &:hover &__actions {
-        -webkit-transition-delay: 0;
-           -moz-transition-delay: 0;
-            -ms-transition-delay: 0;
-                transition-delay: 0;
+        transition-delay: 0;
     }
 }

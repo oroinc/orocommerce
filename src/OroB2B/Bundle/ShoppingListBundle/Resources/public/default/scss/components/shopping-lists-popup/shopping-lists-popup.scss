@@ -1,10 +1,10 @@
 .shopping-lists-popup {
     width: 100%;
 
-    font-family: 'Lato', 'Helvetica', Arial, sans-serif;
+    font-family: $lato-font;
 
     &__item {
-        border-bottom: 1px solid #ebebeb;
+        border-bottom: 1px solid $base-topbar-background-color;
     }
 
     &__list,
@@ -21,7 +21,7 @@
     }
 
     &__headline {
-        background: #f7f7f7;
+        background: $base-sidebar-background-color-light;
     }
 
     &__headline &__item {
