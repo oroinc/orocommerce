@@ -1,0 +1,42 @@
+services:
+    # Event listener
+    orob2b_warehouse.event_listener.order_warehouse_grid_listener:
+        class: 'OroB2B\Bundle\WarehouseBundle\EventListener\OrderWarehouseGridListener'
+        arguments:
+            - "@orob2b_warehouse.entity.helper.warehouse_counter"
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orders-grid, method: onBuildBefore }
+
+    orob2b_warehouse.event_listener.order_line_item_warehouse_grid_listener:
+        class: 'OroB2B\Bundle\WarehouseBundle\EventListener\OrderLineItemWarehouseGridListener'
+        arguments:
+            - "@orob2b_warehouse.entity.helper.warehouse_counter"
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
+
+    orob2b_warehouse.event_listener.order_form_view:
+        class: 'OroB2B\Bundle\WarehouseBundle\EventListener\OrderFormViewListener'
+        arguments: ["@orob2b_warehouse.entity.helper.warehouse_counter"]
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-edit, method: onOrderEdit }
+
+    orob2b_warehouse.event_listener.order_warehouse_before_render:
+        class: 'OroB2B\Bundle\WarehouseBundle\EventListener\OrderWarehouseBeforeRenderListener'
+        tags:
+            - { name: kernel.event_listener, event: oro.entity_extend_event.before_value_render, method: onWarehouseOrderDisplay, priority: -255 }
+
+    # Form extension
+    orob2b_warehouse.form.extension.order:
+        class: 'OroB2B\Bundle\WarehouseBundle\Form\Extension\OrderFormExtension'
+        arguments:
+            - "@orob2b_warehouse.entity.helper.warehouse_counter"
+        tags:
+            - { name: form.type_extension, alias: orob2b_order_type }
+
+    orob2b_warehouse.form.extension.order_line:
+        class: 'OroB2B\Bundle\WarehouseBundle\Form\Extension\OrderLineItemFormExtension'
+        arguments:
+            - "@orob2b_order.form.section.provider"
+            - "@orob2b_warehouse.entity.helper.warehouse_counter"
+        tags:
+            - { name: form.type_extension, alias: orob2b_order_line_item }
