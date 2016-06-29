@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
 
 use Doctrine\Common\Inflector\Inflector;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -14,6 +15,7 @@ class DetailedInventoryLevelStrategyHelper extends AbstractWarehouseInventoryLev
     /** @var array $requiredUnitCache */
     protected $requiredUnitCache = [];
 
+    /** @var null|integer $warehouseCount  */
     protected $warehouseCount = null;
 
     /**
@@ -221,6 +223,13 @@ class DetailedInventoryLevelStrategyHelper extends AbstractWarehouseInventoryLev
         return $this->requiredUnitCache[$this->getUnitRequiredCacheKey($product->getSku(), $warehouse->getName())] > 1;
     }
 
+    /**
+     * Return the count of warehouses in the system. Because it will be called multiple times
+     * during a process step, once the result is returned from repository it is stored
+     * in a variable so that on next call we won't make another request to repository level.
+     *
+     * @return int|null
+     */
     protected function countWarehouses()
     {
         if ($this->warehouseCount !== null) {

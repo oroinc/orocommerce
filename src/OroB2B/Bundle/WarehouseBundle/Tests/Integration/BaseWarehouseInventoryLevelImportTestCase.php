@@ -79,6 +79,16 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
         }
     }
 
+    /**
+     * Verify if the entity contains the expected values for the fields mentioned in the
+     * $fieldsMapping list.
+     *
+     * @param $entity
+     * @param $data
+     * @param $fieldsMapping
+     * @param array $options
+     * @return bool
+     */
     protected function assertFields($entity, $data, $fieldsMapping, $options = [])
     {
         foreach ($fieldsMapping as $name => $fieldMap) {
@@ -101,6 +111,14 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
         return true;
     }
 
+    /**
+     * Retrieves the value for a field of the object, field which is specified in the $fieldMap
+     * in the form 'objectField:someField'
+     *
+     * @param $object
+     * @param $fieldMap
+     * @return mixed
+     */
     protected function getValue($object, $fieldMap)
     {
         $objectFields = explode(':', $fieldMap);

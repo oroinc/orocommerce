@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
 
-use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
-
 use Symfony\Component\Translation\TranslatorInterface;
+
+use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
 
 abstract class AbstractWarehouseInventoryLevelStrategyHelper implements WarehouseInventoryLevelStrategyHelperInterface
 {
@@ -17,6 +17,7 @@ abstract class AbstractWarehouseInventoryLevelStrategyHelper implements Warehous
     /** @var  WarehouseInventoryLevelStrategyHelperInterface $successor */
     protected $successor;
 
+    /** @var array $errors */
     protected $errors = [];
 
     /**

@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\WarehouseBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\ImportExportBundle\Exception\LogicException;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class WarehouseRepository extends EntityRepository
@@ -22,8 +21,7 @@ class WarehouseRepository extends EntityRepository
     }
 
     /**
-     * Checks if we have warehouses in the system. If there is no warehouse found than throws
-     * and exception. Otherwise it will return the first warehouse
+     * Returns the firtst warehouse in the system or null if there are no warehouses
      *
      * @return null|Warehouse
      */
