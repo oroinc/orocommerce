@@ -8,6 +8,7 @@ use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
+ * @group CommunityEdition
  */
 class WebsiteProviderTest extends WebTestCase
 {
