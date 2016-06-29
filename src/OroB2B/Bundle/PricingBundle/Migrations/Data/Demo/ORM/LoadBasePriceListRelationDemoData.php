@@ -17,9 +17,19 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
     DependentFixtureInterface
 {
     /**
+     * @var Website[]
+     */
+    protected $websites;
+
+    /**
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var PriceList[]
+     */
+    protected $priceLists;
 
     /**
      * {@inheritdoc}
@@ -36,13 +46,13 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
      */
     protected function getPriceListByName(EntityManager $manager, $name)
     {
-        $website = $manager->getRepository('OroB2BPricingBundle:PriceList')->findOneBy(['name' => $name]);
-
-        if (!$website) {
-            throw new \LogicException(sprintf('There is no priceList with name "%s" .', $name));
+        foreach ($this->getPriceLists($manager) as $priceList) {
+            if ($priceList->getName() === $name) {
+                return $priceList;
+            }
         }
 
-        return $website;
+        throw new \LogicException(sprintf('There is no priceList with name "%s" .', $name));
     }
 
     /**
@@ -52,13 +62,39 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
      */
     protected function getWebsiteByName(EntityManager $manager, $name)
     {
-        $website = $manager->getRepository('OroB2BWebsiteBundle:Website')->findOneBy(['name' => $name]);
-
-        if (!$website) {
-            throw new \LogicException(sprintf('There is no website with name "%s" .', $name));
+        foreach ($this->getWebsites($manager) as $website) {
+            if ($website->getName() === $name) {
+                return $website;
+            }
         }
 
-        return $website;
+        throw new \LogicException(sprintf('There is no website with name "%s" .', $name));
+    }
+
+    /**
+     * @param EntityManager $manager
+     * @return Website[]
+     */
+    protected function getWebsites(EntityManager $manager)
+    {
+        if (!$this->websites) {
+            $this->websites = $manager->getRepository('OroB2BWebsiteBundle:Website')->findAll();
+        }
+
+        return $this->websites;
+    }
+
+    /**
+     * @param EntityManager $manager
+     * @return PriceList[]
+     */
+    protected function getPriceLists(EntityManager $manager)
+    {
+        if (!$this->priceLists) {
+            $this->priceLists = $manager->getRepository('OroB2BPricingBundle:PriceList')->findAll();
+        }
+
+        return $this->priceLists;
     }
 
     /**
