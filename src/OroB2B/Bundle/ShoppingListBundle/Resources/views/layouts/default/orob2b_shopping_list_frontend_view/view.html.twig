@@ -20,15 +20,19 @@
 
 {% block _shopping_list_title_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-
+    {% set attr = attr|merge({id: "title-inline-editable"}) %}
     <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-        module: 'oroform/js/app/components/inline-editable-view-component',
+        module: 'orob2bshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component',
         options: {
             frontend_type: 'title',
             value: shoppingList.label,
             fieldName: 'label',
             insertEditorMethod: 'after',
+            eventChannelId: 'shopping-list-title',
             metadata: {
+                broadcast_parameters: {
+                    id: shoppingList.id
+                },
                 inline_editing: {
                     enable: resource_granted('orob2b_shopping_list_frontend_update'),
                     save_api_accessor: {
@@ -427,3 +431,43 @@
         } only %}
     </div>
 {% endblock %}
+
+{% block _shopping_lists_sidebar_list_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    <div class="orders-sidebar mt3-md">
+        {% set attr = {
+                'data-page-component-module': 'orob2bshoppinglist/js/app/views/shoppinglist-sidebar-view',
+                'data-page-component-options': {
+                    view: 'oroui/js/app/views/layout-subtree-view',
+                    rootId : block.vars.id,
+                    reloadEvents: ['shopping-list:updated'],
+                    eventChannelId: 'shopping-list-title'
+                },
+                'data-dropdown-trigger': true
+            }|merge(attr|merge({
+            class: attr.class|default('') ~ " orders-list mt1-md"
+        })) %}
+        <!-- START ORDERS TABS LIST -->
+        <ul {{ block('block_attributes') }}>
+            {% for shoppingList in shoppingLists %}
+                <li class="orders-list__item">
+                    <a href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}" class="orders-list__item__link {% if shoppingList.id == selectedShoppingList.id %} current {% endif %}">
+                        <span class='badge badge_sm badge_orange badge_circled-corners orders-list__item-indicator'><i class="cf-basket"></i></span>
+                        <div class="orders-list__item__content">
+                            <h3 class="orders-list__item__title text-uppercase {% if shoppingList.id == selectedShoppingList.id %}current-title{% endif %}">{{ shoppingList.label }}</h3>
+                            {% set itemsCount = shoppingList.lineItems.count %}
+                            {% if itemsCount %}
+                                <div class="orders-list__item__desc">
+                                    <span class="mr1-md"><strong>{{ shoppingList.lineItems.count }}</strong> {{ 'orob2b.shoppinglist.items.label'|transchoice(itemsCount) }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        <!-- END ORDERS TABS LIST -->
+    </div>
+{% endblock _shopping_lists_sidebar_list_widget %}
+
