@@ -81,15 +81,13 @@ class CheckoutLineItemsManager
                                 $allowedProduct = !empty($supportedStatuses[$product->getInventoryStatus()->getId()]);
                             }
 
-                            $price = $lineItem->getPrice();
-                            if ($allowedProduct && $price && $price->getCurrency() === $currency) {
-                                $allowedProduct = (bool)$lineItem->getPrice();
-                            }
-
-                            return $allowedProduct;
+                            return $allowedProduct
+                                && (bool)$lineItem->getPrice()
+                                && $lineItem->getPrice()->getCurrency() === $currency;
                         }
                     );
                 }
+
                 return $lineItems;
             }
         }

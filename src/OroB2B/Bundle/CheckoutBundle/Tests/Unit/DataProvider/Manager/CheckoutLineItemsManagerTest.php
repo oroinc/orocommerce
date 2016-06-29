@@ -14,6 +14,7 @@ use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
 use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
@@ -104,7 +105,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
         $data = [];
         if ($withDataProvider) {
             if ($isEntitySupported) {
-                $data = [$this->getProductDataWithPrice()];
+                $data = [$this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD'))];
             }
             $provider = $this->getProvider($entity, $data, $isEntitySupported);
 
@@ -142,61 +143,76 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function getDataDataProvider()
     {
-        $productWithPrice = $this->getProductDataWithPrice();
-        $productWithoutPrice = $this->getProductDataWithoutPrice();
-        $productWithAnotherCurrency = $this->getProductDataWithoutPrice();
-        $productWithAnotherCurrency['price'] = Price::create('2', 'CAD');
-        
         return [
             [
-                'providerData' => [$productWithPrice, $productWithoutPrice, $productWithAnotherCurrency],
+                'providerData' => [
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(0, 'USD')),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', null),
+                    $this->getLineItemData('PRO', 'out_of_stock', 10, 'litre', null),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                    $this->getLineItemData('PRO', null, 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
+                ],
                 'disablePriceFilter' => false,
-                'expectedData' => [$productWithPrice],
+                'expectedData' => [
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(0, 'USD')),
+                ],
             ],
             [
-                'providerData' => [$productWithPrice, $productWithoutPrice, $productWithAnotherCurrency],
+                'providerData' => [
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', null),
+                    $this->getLineItemData('PRO', 'out_of_stock', 10, 'litre', null),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                    $this->getLineItemData('PRO', null, 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
+                ],
                 'disablePriceFilter' => true,
-                'expectedData' => [$productWithPrice, $productWithoutPrice, $productWithAnotherCurrency],
+                'expectedData' => [
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', null),
+                    $this->getLineItemData('PRO', 'out_of_stock', 10, 'litre', null),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                    $this->getLineItemData('PRO', null, 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
+                ],
             ],
         ];
     }
 
     /**
+     * @param string|null $productSku
+     * @param string|null $inventoryStatus
+     * @param string $unit
+     * @param float $qty
+     * @param Price|null $price
      * @return array
      */
-    protected function getProductDataWithPrice()
+    protected function getLineItemData($productSku, $inventoryStatus, $qty, $unit, Price $price = null)
     {
-        $product = new StubProduct();
-        $product->setSku('PRO');
-        $inventoryStatus = new StubEnumValue('in_stock', 'In stock');
-        $product->setInventoryStatus($inventoryStatus);
+        $product = null;
+        if ($productSku) {
+            $product = new StubProduct();
+            $product->setSku($productSku);
 
-        $productUnitLitre = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'litre']);
+            if ($inventoryStatus) {
+                $inventoryStatus = new StubEnumValue($inventoryStatus, $inventoryStatus);
+                $product->setInventoryStatus($inventoryStatus);
+            }
+        }
+
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($unit);
+
         return [
             'product' => $product,
             'productSku' => $product->getSku(),
-            'quantity' => 10,
-            'productUnit' => $productUnitLitre,
-            'productUnitCode' => $productUnitLitre->getCode(),
-            'price' => Price::create('1', 'USD')
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    protected function getProductDataWithoutPrice()
-    {
-        $product = new StubProduct();
-        $product->setSku('PRO2');
-        $productUnitEa = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'each']);
-        return [
-            'product' => $product,
-            'productSku' => $product->getSku(),
-            'quantity' => 5,
-            'productUnit' => $productUnitEa,
-            'productUnitCode' => $productUnitEa->getCode(),
-            'price' => null
+            'quantity' => $qty,
+            'productUnit' => $productUnit,
+            'productUnitCode' => $productUnit->getCode(),
+            'price' => $price
         ];
     }
 
