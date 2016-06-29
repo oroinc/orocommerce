@@ -20,7 +20,7 @@ define(function(require) {
     });
 
     InputWidgetManager.addWidget('select2', {
-        selector: 'select',
+        selector: 'select,input.select2',
         Widget: Select2InputWidget
     });
 });
