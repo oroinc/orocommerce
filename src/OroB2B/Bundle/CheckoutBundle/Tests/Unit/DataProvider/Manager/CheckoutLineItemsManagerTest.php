@@ -116,27 +116,6 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return array
-     */
-    public function getDataEntitySupportedDataProvider()
-    {
-        return [
-            'without data providers' => [
-                'withDataProvider' => false,
-                'isEntitySupported' => false
-            ],
-            'not supported entity' => [
-                'withDataProvider' => true,
-                'isEntitySupported' => false
-            ],
-            'supported entity' => [
-                'withDataProvider' => true,
-                'isEntitySupported' => true
-            ]
-        ];
-    }
-
-    /**
      * @dataProvider getDataDataProvider
      * @param array $providerData
      * @param bool $disablePriceFilter
