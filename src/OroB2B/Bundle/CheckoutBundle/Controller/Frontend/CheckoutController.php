@@ -160,7 +160,6 @@ class CheckoutController extends Controller
      * @return WorkflowItem
      * @throws \Oro\Bundle\WorkflowBundle\Exception\InvalidTransitionException
      * @throws \Oro\Bundle\WorkflowBundle\Exception\WorkflowException
-     * @internal param CheckoutInterface $checkout
      */
     protected function handleTransition(WorkflowItem $workflowItem, Request $request)
     {
