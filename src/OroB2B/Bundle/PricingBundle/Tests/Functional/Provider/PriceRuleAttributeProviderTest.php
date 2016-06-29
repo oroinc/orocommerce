@@ -31,6 +31,18 @@ class PriceRuleAttributeProviderTest extends WebTestCase
     public function testGetAvailableConditionAttributes()
     {
         $fields = $this->provider->getAvailableConditionAttributes();
-        $this->assertEquals($fields['OroB2BProductBundle:Product'], ['id', 'owner_id']);
+        $this->assertEquals(
+            $fields['OroB2BProductBundle:Product'],
+            [
+                'id',
+                'sku',
+                'hasVariants',
+                'status',
+                'variantFields',
+                'createdAt',
+                'updatedAt',
+                'owner_id',
+            ]
+        );
     }
 }

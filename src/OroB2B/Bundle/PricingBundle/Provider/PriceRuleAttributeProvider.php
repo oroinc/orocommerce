@@ -8,6 +8,8 @@ use Oro\Bundle\EntityBundle\Provider\VirtualFieldProviderInterface;
 
 class PriceRuleAttributeProvider
 {
+    const SUPPORTED_TYPES = ['integer' => true, 'float' => true, 'money' => true, 'decimal' => true];
+
     /**
      * @var VirtualFieldProviderInterface
      */
@@ -50,18 +52,18 @@ class PriceRuleAttributeProvider
     {
         if ($this->availableRuleAttributes === null) {
             $this->availableRuleAttributes = [];
-            $availableFieldTypes = ['integer', 'float', 'money', 'decimal'];
             foreach ($this->getAvailableClasses() as $class) {
                 $metadata = $this->registry->getManagerForClass($class)->getClassMetadata($class);
                 foreach ($metadata->getFieldNames() as $fieldName) {
-                    if (in_array($metadata->getTypeOfField($fieldName), $availableFieldTypes, true)) {
+                    $type = $metadata->getTypeOfField($fieldName);
+                    if (!empty(self::SUPPORTED_TYPES[$type])) {
                         $this->availableRuleAttributes[$class][] = $fieldName;
                     }
                 }
             }
         }
-        return $this->availableRuleAttributes;
 
+        return $this->availableRuleAttributes;
     }
 
     /**
@@ -70,17 +72,17 @@ class PriceRuleAttributeProvider
     public function getAvailableConditionAttributes()
     {
         if ($this->availableConditionAttributes === null) {
-            $this->availableConditionAttributes = $this->getAvailableRuleAttributes();
+            $this->availableConditionAttributes = [];
             foreach ($this->getAvailableClasses() as $class) {
-                $classAttributes = [];
-                if (isset($this->availableConditionAttributes[$class])) {
-                    $classAttributes = $this->availableConditionAttributes[$class];
-                }
+                $classAttributes = $this->registry
+                    ->getManagerForClass($class)
+                    ->getClassMetadata($class)
+                    ->getFieldNames();
                 $virtualFields = $this->virtualFieldProvider->getVirtualFields($class);
-                if (!empty($virtualFields)) {
+                if (0 !== count($virtualFields)) {
                     $classAttributes = array_merge($classAttributes, $virtualFields);
                 }
-                if (!empty($classAttributes)) {
+                if (0 !== count($classAttributes)) {
                     $this->availableConditionAttributes[$class] = $classAttributes;
                 }
             }
