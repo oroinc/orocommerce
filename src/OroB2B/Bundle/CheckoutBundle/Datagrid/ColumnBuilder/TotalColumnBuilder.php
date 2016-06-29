@@ -45,5 +45,4 @@ class TotalColumnBuilder implements ColumnBuilderInterface
             }
         }
     }
-
 }
