@@ -14,7 +14,11 @@ define(function(require) {
         },
 
         render: function(options) {
-            this.setElement($($(this.options.content).html()));
+            var $content = $(this.options.content);
+            $content.find(':input').inputWidget('dispose');
+            $content = $($content.html());
+
+            this.setElement($content);
             ContentWidget.__super__.render.apply(this, arguments);
         }
     });
