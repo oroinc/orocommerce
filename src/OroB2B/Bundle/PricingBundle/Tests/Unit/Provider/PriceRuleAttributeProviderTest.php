@@ -57,9 +57,15 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
         ];
         $this->mockManager($fields, $fieldTypes);
         $className = 'ClassName';
-        $this->priceRuleAttributeProvider->addAvailableClass($className);
-        $actualFields = $this->priceRuleAttributeProvider->getAvailableRuleAttributes();
-        $expectFields = [$className => ['field1', 'field2', 'field4']];
+        $this->priceRuleAttributeProvider->addSupportedClass($className);
+        $actualFields = $this->priceRuleAttributeProvider->getAvailableRuleAttributes($className);
+
+        $expectFields = [
+            'field1' => ['name' => 'field1', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
+            'field2' => ['name' => 'field2', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
+            'field4' => ['name' => 'field4', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
+
+        ];
         $this->assertEquals($expectFields, $actualFields);
     }
 
@@ -74,19 +80,27 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
         ];
         $this->mockManager($fields, $fieldTypes);
         $className = 'ClassName';
-        $this->virtualFieldProvider->method('getVirtualFields')->willReturn(['virtualMethodName']);
+        $this->virtualFieldProvider->method('getVirtualFields')->willReturn(['virtualField']);
 
-        $this->priceRuleAttributeProvider->addAvailableClass($className);
-        $actualFields = $this->priceRuleAttributeProvider->getAvailableConditionAttributes();
-        $expectFields = [$className => ['field1', 'field2', 'field3', 'field4', 'virtualMethodName']];
+        $this->priceRuleAttributeProvider->addSupportedClass($className);
+        $actualFields = $this->priceRuleAttributeProvider->getAvailableConditionAttributes($className);
+        $expectFields = [
+            'field1' => ['name' => 'field1', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
+            'field2' => ['name' => 'field2', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
+            'field3' => ['name' => 'field3', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
+            'field4' => ['name' => 'field4', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
+            'virtualField' => ['name' => 'virtualField', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_VIRTUAL],
+        ];
         $this->assertEquals($expectFields, $actualFields);
     }
 
     public function testAddAvailableClass()
     {
         $class = 'ClassName';
-        $this->priceRuleAttributeProvider->addAvailableClass($class);
-        $this->assertEquals(['ClassName'], $this->priceRuleAttributeProvider->getAvailableClasses());
+        $this->priceRuleAttributeProvider->addSupportedClass($class);
+        $this->assertEquals(['ClassName'], $this->priceRuleAttributeProvider->getSupportedClasses());
+        $this->assertTrue($this->priceRuleAttributeProvider->isClassSupported($class));
+        $this->assertFalse($this->priceRuleAttributeProvider->isClassSupported('invalidClassName'));
     }
 
     protected function mockManager(array $fields, array $fieldTypes)

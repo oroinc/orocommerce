@@ -24,24 +24,56 @@ class PriceRuleAttributeProviderTest extends WebTestCase
 
     public function testGetAvailableRuleAttributes()
     {
-        $fields = $this->provider->getAvailableRuleAttributes();
-        $this->assertEquals($fields['OroB2BProductBundle:Product'], ['id']);
+        $fields = $this->provider->getAvailableRuleAttributes('OroB2BProductBundle:Product');
+        $this->assertEquals(
+            $fields,
+            [
+                'id' => [
+                    'name' => 'id',
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                ]
+            ]
+        );
     }
 
     public function testGetAvailableConditionAttributes()
     {
-        $fields = $this->provider->getAvailableConditionAttributes();
+        $fields = $this->provider->getAvailableConditionAttributes('OroB2BProductBundle:Product');
         $this->assertEquals(
-            $fields['OroB2BProductBundle:Product'],
+            $fields,
             [
-                'id',
-                'sku',
-                'hasVariants',
-                'status',
-                'variantFields',
-                'createdAt',
-                'updatedAt',
-                'owner_id',
+                'id' => [
+                    'name' => 'id',
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                ],
+                'sku' => [
+                    'name' => 'sku',
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                ],
+                'hasVariants' => [
+                    'name' => 'hasVariants',
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                ],
+                'status' => [
+                    'name' => 'status',
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                ],
+                'variantFields' => [
+                    'name' => 'variantFields',
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                ],
+                'createdAt' => [
+                    'name' => 'createdAt',
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                ],
+                'updatedAt' => [
+                    'name' => 'updatedAt',
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                ],
+                'owner_id' => [
+                    'name' => 'owner_id',
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_VIRTUAL
+                ],
             ]
         );
     }
