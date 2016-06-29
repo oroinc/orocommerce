@@ -37,7 +37,6 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
         $env = $this->getMock('\Twig_Environment');
         $event = $this->createEvent($env);
         $listener->onAccountView($event);
-
     }
 
     public function testOnAccountView()
