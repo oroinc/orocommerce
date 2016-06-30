@@ -48,9 +48,9 @@ class PriceListToProduct
     /**
      * @var bool
      *
-     * @ORM\Column(name="isSystem", type="boolean")
+     * @ORM\Column(name="is_manual", type="boolean")
      */
-    protected $isManual = true;
+    protected $manual = true;
 
     /**
      * @return int
@@ -101,18 +101,18 @@ class PriceListToProduct
     /**
      * @return boolean
      */
-    public function isIsManual()
+    public function isManual()
     {
-        return $this->isManual;
+        return $this->manual;
     }
 
     /**
-     * @param boolean $isManual
+     * @param boolean $manual
      * @return $this
      */
-    public function setIsManual($isManual)
+    public function setManual($manual)
     {
-        $this->isManual = $isManual;
+        $this->manual = $manual;
 
         return $this;
     }
