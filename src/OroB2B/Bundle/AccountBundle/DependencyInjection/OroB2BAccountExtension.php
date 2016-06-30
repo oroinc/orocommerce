@@ -27,6 +27,7 @@ class OroB2BAccountExtension extends Extension implements PrependExtensionInterf
         $loader->load('services.yml');
         $loader->load('form_types.yml');
         $loader->load('ownership.yml');
+        $loader->load('block_types.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }

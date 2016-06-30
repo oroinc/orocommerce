@@ -4,14 +4,12 @@ layout:
             themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_product_frontend_product_view/layout.html.twig'
         - '@add':
             id: add_to_shopping_list_form_button
-            blockType: block
+            blockType: add_to_shopping_list_form_button
             parentId: line_item_buttons
             siblingId: ~
             prepend: true
             options:
-                vars:
-                    product: { '@value': $data.product }
-                    shoppingLists: { '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
-                    unitsQuantity: { '@value': $data.orob2b_shopping_list_product_units_quantity }
+                shoppingLists: { '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
+                unitsQuantity: { '@value': $data.orob2b_shopping_list_product_units_quantity }
     conditions:
         '@eq': [{ '@acl': orob2b_shopping_list_line_item_frontend_add }, true]

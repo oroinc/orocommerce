@@ -21,45 +21,36 @@ layout:
                     blockType: container
                 checkout_content:
                     blockType: container
-                    options:
-                        vars:
-                            checkout: { '@value': $data.checkout }
                 checkout_information:
-                    blockType: container
+                    blockType: checkout_information
                     options:
-                        vars:
-                            workflowStep: { '@value': $data.workflowStep }
-                            stepOrder: '-'
+                        workflowStep: { '@value': $data.workflowStep }
+                        stepOrder: '-'
                 checkout_form:
-                    blockType: container
+                    blockType: checkout_form
                     options:
-                        vars:
-                            checkout: { '@value': $data.checkout }
-                            workflowStep: { '@value': $data.workflowStep }
-                            form: { '@value': $data.orob2b_checkout_transition_form }
+                        checkout: { '@value': $data.checkout }
+                        form: { '@value': $data.orob2b_checkout_transition_form }
                 checkout_form_fields:
-                    blockType: container
+                    blockType: checkout_form_fields
                     options:
-                        vars:
-                            checkout: { '@value': $data.checkout }
-                            form: { '@value': $data.orob2b_checkout_transition_form }
-                            workflowItem: { '@value': $data.workflowItem }
+                        checkout: { '@value': $data.checkout }
+                        form: { '@value': $data.orob2b_checkout_transition_form }
+                        workflowItem: { '@value': $data.workflowItem }
                 checkout_order_summary:
-                    blockType: container
+                    blockType: checkout_order_summary
                     options:
                         visible: { '@neq': [$context.workflowStepName, 'order_review'] }
-                        vars:
-                            summary: { '@value': $data.orob2b_checkout_summary }
-                            checkout: { '@value': $data.checkout }
-                            workflowItem: { '@value': $data.workflowItem }
+                        summary: { '@value': $data.orob2b_checkout_summary }
+                        checkout: { '@value': $data.checkout }
+                        workflowItem: { '@value': $data.workflowItem }
                 checkout_order_summary_table:
-                    blockType: block
+                    blockType: checkout_order_summary_table
                     options:
-                        vars:
-                            checkout: { '@value': $data.checkout }
-                            workflowStep: { '@value': $data.workflowStep }
-                            summary: { '@value': $data.orob2b_checkout_summary }
-                            workflowItem: { '@value': $data.workflowItem }
+                        checkout: { '@value': $data.checkout }
+                        workflowStep: { '@value': $data.workflowStep }
+                        summary: { '@value': $data.orob2b_checkout_summary }
+                        workflowItem: { '@value': $data.workflowItem }
                 body:
                     blockType: body
             tree:

@@ -836,14 +836,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_address_form }
 
-    orob2b_account.layout.block_type.address_book:
-        class: OroB2B\Bundle\AccountBundle\Layout\Block\Type\AddressBookType
-        arguments:
-            - '@router'
-            - '@fragment.handler'
-        tags:
-             - { name: layout.block_type, alias: address_book }
-
     orob2b_account.provider.frontend_account_user_profile_form:
         class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserProfileFormProvider'
         arguments:

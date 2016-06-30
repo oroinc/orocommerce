@@ -104,3 +104,13 @@
     }) %}
     {{ parent() }}
 {% endblock %}
+
+{% block icon_block -%}
+    <i class="cf-{{ icon }}{% if icon_class is defined %} {{ icon_class }}{% endif %}"></i>
+{%- endblock %}
+
+{% block back_link_widget %}
+    <div class="order-builder-clear-btn">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

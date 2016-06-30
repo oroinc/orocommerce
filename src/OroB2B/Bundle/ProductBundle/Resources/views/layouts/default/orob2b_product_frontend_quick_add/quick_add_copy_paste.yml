@@ -28,8 +28,7 @@ layout:
                         type: button
                         action: submit
                         text: orob2b.product.frontend.quick_add.continue.label
-                        vars:
-                            style: dark
+                        style: dark
                 quick_add_copy_paste_title:
                     blockType: text
                     options:
