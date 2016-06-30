@@ -40,7 +40,6 @@ class OrderLineItemWarehouseGridListener
             sprintf('[columns][%s]', self::WAREHOUSE_COLUMN_NAME),
             [
                 'label' => self::WAREHOUSE_COLUMN_LABEL,
-                'renderable' => false
             ]
         );
     }
