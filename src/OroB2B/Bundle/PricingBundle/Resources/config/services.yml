@@ -67,7 +67,7 @@ services:
         arguments:
             - '@session'
             - '@security.token_storage'
-            - '@oro_config.global'
+            - '@oro_config.manager'
             - '@orob2b_website.manager'
             - '@orob2b_account_user.manager'
 
@@ -357,7 +357,7 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\DefaultCurrencyValidator'
         public: true
         arguments:
-            - "@oro_config.global"
+            - "@oro_config.manager"
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_default_currency_validator }
 
