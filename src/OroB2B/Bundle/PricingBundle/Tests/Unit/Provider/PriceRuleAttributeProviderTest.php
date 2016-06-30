@@ -6,7 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\EntityBundle\Provider\VirtualFieldProviderInterface;
+use Oro\Bundle\EntityBundle\Provider\ChainVirtualFieldProvider;
 
 use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
 
@@ -18,7 +18,7 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var VirtualFieldProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ChainVirtualFieldProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $virtualFieldProvider;
 
@@ -39,7 +39,7 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
 
-        $this->virtualFieldProvider = $this->getMock('Oro\Bundle\EntityBundle\Provider\VirtualFieldProviderInterface');
+        $this->virtualFieldProvider = $this->getMock(ChainVirtualFieldProvider::class);
         $this->priceRuleAttributeProvider = new PriceRuleAttributeProvider(
             $this->registry,
             $this->virtualFieldProvider

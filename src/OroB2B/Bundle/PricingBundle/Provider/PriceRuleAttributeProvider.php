@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Provider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
+use Oro\Bundle\EntityBundle\Provider\ChainVirtualFieldProvider;
 use Oro\Bundle\EntityBundle\Provider\VirtualFieldProviderInterface;
 
 class PriceRuleAttributeProvider
@@ -40,9 +41,9 @@ class PriceRuleAttributeProvider
 
     /**
      * @param Registry $registry
-     * @param VirtualFieldProviderInterface $virtualFieldProvider
+     * @param ChainVirtualFieldProvider $virtualFieldProvider
      */
-    public function __construct(Registry $registry, VirtualFieldProviderInterface $virtualFieldProvider)
+    public function __construct(Registry $registry, ChainVirtualFieldProvider $virtualFieldProvider)
     {
         $this->registry = $registry;
         $this->virtualFieldProvider = $virtualFieldProvider;
@@ -105,16 +106,11 @@ class PriceRuleAttributeProvider
             $this->availableRuleAttributes = [];
 
             foreach ($this->getSupportedClasses() as $class) {
-                $this->availableRuleAttributes[$class] = [];
-                $metadata = $this->registry->getManagerForClass($class)->getClassMetadata($class);
-
-                foreach ($metadata->getFieldNames() as $fieldName) {
-                    $type = $metadata->getTypeOfField($fieldName);
-                    if (!empty(self::SUPPORTED_TYPES[$type])) {
-                        $field = ['name' => $fieldName, 'type' => self::FIELD_TYPE_NATIVE];
-                        $this->availableRuleAttributes[$class][$fieldName] = $field;
-                    }
-                }
+                $fields = $this->getClassFields($class);
+                array_filter($fields, function ($field) {
+                    return !empty(PriceRuleAttributeProvider::SUPPORTED_TYPES[$field['data_type']]);
+                });
+                $this->availableRuleAttributes[$class] = $fields;
             }
         }
     }
@@ -123,24 +119,33 @@ class PriceRuleAttributeProvider
     {
         if ($this->availableConditionAttributes === null) {
             $this->availableConditionAttributes = [];
-
             foreach ($this->getSupportedClasses() as $class) {
-                $this->availableConditionAttributes[$class] = [];
-                $metadata = $this->registry
-                    ->getManagerForClass($class)
-                    ->getClassMetadata($class);
-
-                foreach ($metadata->getFieldNames() as $fieldName) {
-                    $field = ['name' => $fieldName, 'type' => self::FIELD_TYPE_NATIVE];
-                    $this->availableConditionAttributes[$class][$fieldName] = $field;
-                }
-
-                $virtualFields = $this->virtualFieldProvider->getVirtualFields($class);
-                foreach ($virtualFields as $fieldName2) {
-                    $field = ['name' => $fieldName2, 'type' => self::FIELD_TYPE_VIRTUAL];
-                    $this->availableConditionAttributes[$class][$fieldName2] = $field;
-                }
+                $this->availableConditionAttributes[$class] = $this->getClassFields($class);
             }
         }
+    }
+
+    protected function getClassFields($class)
+    {
+        $fields = [];
+        $metadata = $this->registry
+            ->getManagerForClass($class)
+            ->getClassMetadata($class);
+
+        foreach ($metadata->getFieldNames() as $fieldName) {
+            $dataType = $metadata->getTypeOfField($fieldName);
+            $field = ['name' => $fieldName, 'type' => self::FIELD_TYPE_NATIVE, 'data_type' => $dataType];
+            $fields[$fieldName] = $field;
+        }
+
+        $virtualFields = $this->virtualFieldProvider->getVirtualFields($class);
+        foreach ($virtualFields as $fieldName) {
+            $fieldQuery = $this->virtualFieldProvider->getVirtualFieldQuery($class, $fieldName);
+            $dataType = $fieldQuery['select']['return_type'];
+            $field = ['name' => $fieldName, 'type' => self::FIELD_TYPE_VIRTUAL, 'data_type' => $dataType];
+            $fields[$fieldName] = $field;
+        }
+
+        return $fields;
     }
 }
