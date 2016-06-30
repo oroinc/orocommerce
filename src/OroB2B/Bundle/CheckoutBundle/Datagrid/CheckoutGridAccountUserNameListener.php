@@ -35,7 +35,6 @@ class CheckoutGridAccountUserNameListener
         if (isset($columns['accountUserName']) && !$this->hasPermissionToViewAllPastCheckouts()) {
             $config->offsetUnsetByPath('[columns][accountUserName]');
             $config->offsetUnsetByPath('[sorters][columns][accountUserName]');
-            $this->normalizeColumnOrder($config);
         }
     }
 
@@ -45,43 +44,5 @@ class CheckoutGridAccountUserNameListener
     private function hasPermissionToViewAllPastCheckouts()
     {
         return $this->accountUserProvider->isGrantedViewLocal('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
-    }
-
-    /**
-     * This function modifies all column orders
-     * by making the min order value as the base 0 value.
-     *
-     * @param ConfigObject $config
-     * @return array|null
-     */
-    private function normalizeColumnOrder($config)
-    {
-        if (empty($config)) {
-            return;
-        }
-
-        $columns = $config->offsetGetByPath('[columns]');
-
-        if (0 === count($columns)) {
-            return;
-        }
-
-        $orderValues = array_column($columns, 'order');
-
-        $minOffset = min($orderValues);
-
-        if (0 === $minOffset) {
-            return;
-        }
-        
-        foreach ($columns as $key => $column) {
-            if (!isset($column['order'])) {
-                continue;
-            }
-
-            $columns[$key]['order'] = $column['order'] - $minOffset;
-        }
-
-        $config->offsetSetByPath('[columns]', $columns);
     }
 }

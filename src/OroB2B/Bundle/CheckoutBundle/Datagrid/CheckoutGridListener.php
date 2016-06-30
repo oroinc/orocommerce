@@ -165,6 +165,7 @@ class CheckoutGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'template' => 'OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig',
+                    'order' => 25
                 ];
                 $updates['filters']['subtotal'] = [
                     'type' => 'number',
@@ -180,6 +181,7 @@ class CheckoutGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
+                    'order' => 85
                 ];
             }
             if ($currencyFields) {
