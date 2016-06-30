@@ -80,7 +80,7 @@ class FrontendControllerTest extends WebTestCase
      */
     protected function setTheme($theme)
     {
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = $this->getContainer()->get('oro_config.manager');
         $configManager->set(self::FRONTEND_THEME_CONFIG_KEY, $theme);
         $configManager->flush();
     }
