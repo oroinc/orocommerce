@@ -202,7 +202,10 @@ class StartCheckout extends AbstractAction
 
         /** @var CheckoutInterface $checkout */
         list($checkout, $workflowName) = $this->getCheckoutWithWorkflowName($checkoutSource);
-        if ($this->isNewCheckoutEntity($checkout, $workflowName)) {
+        
+        $workflowItem = $this->getWorkflowItem($checkout, $workflowName);
+        
+        if (!$workflowItem) {
             $this->updateCheckoutData($context, $checkout);
             $em->persist($checkout);
             $em->flush($checkout);
@@ -215,15 +218,9 @@ class StartCheckout extends AbstractAction
             if ($this->getOptionFromContext($context, self::FORCE, false)) {
                 $this->updateCheckoutData($context, $checkout);
 
-                $workflowItem = $this->getWorkflowItem($checkout, $workflowName);
-
                 $this->addWorkflowItemDataSettings($context, $workflowItem);
                 $em->flush();
             }
-        }
-        
-        if (!isset($workflowItem)) {
-            $workflowItem = $this->getWorkflowItem($checkout, $workflowName);
         }
 
         $this->redirect->initialize(
@@ -371,16 +368,6 @@ class StartCheckout extends AbstractAction
         }
 
         return [$checkout, $workflowName];
-    }
-
-    /**
-     * @param CheckoutInterface $checkout
-     * @param string $workflowName
-     * @return bool
-     */
-    protected function isNewCheckoutEntity(CheckoutInterface $checkout, $workflowName)
-    {
-        return !$this->getWorkflowItem($checkout, $workflowName);
     }
 
     /**

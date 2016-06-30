@@ -200,7 +200,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                 ->with($this->isInstanceOf('OroB2B\Bundle\CheckoutBundle\Entity\Checkout'));
             $em->expects($this->exactly(2))->method('flush');
         } else {
-            $this->workflowManager->expects($this->exactly(2))
+            $this->workflowManager->expects($this->once())
                 ->method('getWorkflowItem')
                 ->willReturn($workflowItem);
         }
