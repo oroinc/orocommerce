@@ -44,7 +44,7 @@ class CheckoutGridAccountUserNameListener
      */
     private function hasPermissionToViewAllPastCheckouts()
     {
-        return $this->accountUserProvider->isGrantedViewLocal('OroB2B\Bundle\OrderBundle\Entity\Order');
+        return $this->accountUserProvider->isGrantedViewLocal('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
 
     /**
