@@ -4,13 +4,14 @@ operations:
             - frontend-checkouts-grid
     orob2b_order_delete_order:
         extends: DELETE
-        replace:
-            - for_all_datagrids
-            - for_all_entities
-            - preconditions
+        applications: [frontend]
+        for_all_datagrids: false
+        for_all_entities: false
         preconditions:
             '@not_blank': $.data
-
         datagrids:
             - frontend-checkouts-grid
-
+        replace:
+            - applications
+            - preconditions
+            - datagrids
