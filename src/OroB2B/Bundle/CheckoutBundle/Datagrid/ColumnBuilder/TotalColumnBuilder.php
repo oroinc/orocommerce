@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 

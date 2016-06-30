@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Component\Config\Common\ConfigObject;
+
 use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
 class CheckoutGridColumnFilter

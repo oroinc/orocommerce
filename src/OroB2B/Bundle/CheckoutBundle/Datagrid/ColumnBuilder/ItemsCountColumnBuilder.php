@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+
 use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
 
 class ItemsCountColumnBuilder implements ColumnBuilderInterface
