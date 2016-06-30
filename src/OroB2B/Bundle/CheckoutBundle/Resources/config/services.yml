@@ -22,7 +22,7 @@ services:
         arguments:
             - '@orob2b_checkout.data_provider.converter.checkout_line_items'
             - '@orob2b_pricing.user_currency_manager'
-            - '@oro_config.manager'
+            - '@oro_config.global'
 
     orob2b_checkout.layout.data_provider.summary:
         class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\SummaryDataProvider'
