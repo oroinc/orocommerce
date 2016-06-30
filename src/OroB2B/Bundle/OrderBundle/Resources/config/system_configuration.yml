@@ -4,8 +4,6 @@ oro_system_configuration:
             title: orob2b.order.system_configuration.groups.orders.title
         orders_history:
             title: orob2b.order.system_configuration.groups.orders_history.title
-        orders_history_open_orders:
-            title: orob2b.order.system_configuration.groups.open_orders.title
     fields:
         oro_b2b_order.backend_product_visibility:
             data_type: array
@@ -17,13 +15,6 @@ oro_system_configuration:
             type: orob2b_product_inventory_status_select
             options:
                 label: orob2b.order.system_configuration.fields.frontend_product_visibility.title
-        oro_b2b_order.frontend_open_orders_separate_page:
-            data_type: boolean
-            type: oro_config_checkbox
-            priority: 10
-            options:
-                label: orob2b.order.system_configuration.fields.frontend_open_orders_separate_page.title
-
     tree:
         system_configuration:
             commerce:
@@ -38,10 +29,3 @@ oro_system_configuration:
                                     backend_inventory_statuses_visibility:
                                         children:
                                             - oro_b2b_order.backend_product_visibility
-                    orders:
-                        children:
-                            orders_history:
-                                children:
-                                    orders_history_open_orders:
-                                        children:
-                                            - oro_b2b_order.frontend_open_orders_separate_page

@@ -223,10 +223,3 @@ services:
             - '@orob2b_payment.provider.payment_transaction'
         tags:
             - { name: layout.data_provider, alias: orob2b_order_frontend_payment_method_provider }
-
-    orob2b_order.layout.provider.open_orders_separate_page_config:
-        class: 'OroB2B\Bundle\OrderBundle\Layout\DataProvider\OpenOrdersSeparatePageConfigProvider'
-        arguments:
-            - '@oro_config.manager'
-        tags:
-            - { name: layout.data_provider, alias: orob2b_order_frontend_open_orders_separate_page_config_provider }

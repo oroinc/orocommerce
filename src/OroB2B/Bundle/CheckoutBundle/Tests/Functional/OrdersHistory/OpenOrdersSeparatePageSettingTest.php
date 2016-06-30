@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Functional\OrdersHistory;
+namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\OrdersHistory;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
@@ -24,7 +24,7 @@ class OpenOrdersSeparatePageSettingTest extends WebTestCase
             ->getContainer()
             ->get('oro_config.manager');
 
-        $configManager->set('oro_b2b_order.frontend_open_orders_separate_page', true);
+        $configManager->set('oro_b2b_checkout.frontend_open_orders_separate_page', true);
         $configManager->flush();
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_index'));
@@ -40,7 +40,7 @@ class OpenOrdersSeparatePageSettingTest extends WebTestCase
             ->getContainer()
             ->get('oro_config.manager');
 
-        $configManager->set('oro_b2b_order.frontend_open_orders_separate_page', false);
+        $configManager->set('oro_b2b_checkout.frontend_open_orders_separate_page', false);
         $configManager->flush();
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_index'));
@@ -56,7 +56,7 @@ class OpenOrdersSeparatePageSettingTest extends WebTestCase
             ->getContainer()
             ->get('oro_config.manager');
 
-        $configManager->set('oro_b2b_order.frontend_open_orders_separate_page', true);
+        $configManager->set('oro_b2b_checkout.frontend_open_orders_separate_page', true);
         $configManager->flush();
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_index'));
@@ -84,7 +84,7 @@ class OpenOrdersSeparatePageSettingTest extends WebTestCase
             ->getContainer()
             ->get('oro_config.manager');
 
-        $configManager->set('oro_b2b_order.frontend_open_orders_separate_page', false);
+        $configManager->set('oro_b2b_checkout.frontend_open_orders_separate_page', false);
         $configManager->flush();
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_index'));

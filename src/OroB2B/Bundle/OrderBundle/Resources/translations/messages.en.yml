@@ -183,11 +183,9 @@ orob2b:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Orders'
                 frontend_product_visibility.title: 'Can Be Added to Orders'
-                frontend_open_orders_separate_page.title: 'Show open orders on a separate page'
             groups:
                 orders.title: 'Orders'
                 orders_history.title: 'Orders History'
-                open_orders.title: 'Open Orders'
         success:
             thank_you: 'Thank You For Your Purchase!'
             order_number: 'Your order number is'

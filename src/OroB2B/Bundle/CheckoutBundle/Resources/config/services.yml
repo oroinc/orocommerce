@@ -185,3 +185,10 @@ services:
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: oro_workflow.condition, alias: order_line_item_has_count }
+
+    orob2b_checkout.layout.provider.open_orders_separate_page_config:
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\OpenOrdersSeparatePageConfigProvider'
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_checkout_frontend_open_orders_separate_page_config_provider }

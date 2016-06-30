@@ -163,3 +163,9 @@ orob2b:
         workflow.condition:
             order_line_item_has_count.message: No products can be added to this order. Please create an RFQ to request price.
         order.line_items.line_item_has_no_price.message: Some products have not been added to this order. Please create an RFQ to request price.
+
+        system_configuration:
+            fields:
+                frontend_open_orders_separate_page.title: 'Show open orders on a separate page'
+            groups:
+                open_orders.title: 'Open Orders'
