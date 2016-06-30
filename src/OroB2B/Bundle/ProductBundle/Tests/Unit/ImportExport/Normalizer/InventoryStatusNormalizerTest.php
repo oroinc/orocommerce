@@ -28,7 +28,13 @@ class InventoryStatusNormalizerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->inventoryStatusNormalizer->supportsNormalization($data, $format, []));
 
         $data = new Product();
-        $this->assertTrue($this->inventoryStatusNormalizer->supportsNormalization($data, $format, []));
+        $this->assertFalse($this->inventoryStatusNormalizer->supportsNormalization($data, $format, []));
+
+        $context = ['processorAlias' => InventoryStatusNormalizer::PRODUCT_INVENTORY_STATUS_ONLY_PROCESSOR];
+        $this->assertTrue($this->inventoryStatusNormalizer->supportsNormalization($data, $format, $context));
+
+        $context = ['processorAlias' => InventoryStatusNormalizer::WAREHOUSE_INVENTORY_STATUS_ONLY_PROCESSOR];
+        $this->assertTrue($this->inventoryStatusNormalizer->supportsNormalization($data, $format, $context));
     }
 
     public function testNormalize()

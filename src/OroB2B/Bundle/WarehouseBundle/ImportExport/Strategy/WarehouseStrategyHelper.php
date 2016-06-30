@@ -38,7 +38,7 @@ class WarehouseStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHel
             $existingWarehouse = $this->getSingleWarehouse();
         }
 
-        if (!$existingWarehouse) {
+        if (!$existingWarehouse && $this->countWarehouses() < 1) {
             $this->addError(
                 'orob2b.warehouse.import.error.warehouse_inexistent',
                 [],

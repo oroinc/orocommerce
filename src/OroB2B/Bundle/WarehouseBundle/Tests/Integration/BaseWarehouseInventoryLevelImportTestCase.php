@@ -9,7 +9,6 @@ use Oro\Bundle\ImportExportBundle\Processor\ImportProcessor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\DetailedInventoryLevelStrategyHelper;
 use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\InventoryStatusesStrategyHelper;
 use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\ProductUnitStrategyHelper;
 use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy;
@@ -31,7 +30,7 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
         $this->importProcessor = new ImportProcessor();
         $this->importProcessor->setSerializer($this->getContainer()->get('oro_importexport.serializer'));
         $this->importProcessor->setDataConverter($this->getContainer()
-            ->get('orob2b_warehouse.importexport.inventory_status_converter'));
+            ->get('orob2b_warehouse.importexport.inventory_level_converter'));
 
         $strategy = new WarehouseInventoryLevelStrategy(
             $this->getContainer()->get('event_dispatcher'),
@@ -44,7 +43,10 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
         );
 
         $warehouseInventoryLevelHelper = $this->createStrategyHelper(WarehouseInventoryLevelStrategyHelper::class);
-        $productUnitHelper = $this->createStrategyHelper(ProductUnitStrategyHelper::class, $warehouseInventoryLevelHelper);
+        $productUnitHelper = $this->createStrategyHelper(
+            ProductUnitStrategyHelper::class,
+            $warehouseInventoryLevelHelper
+        );
         $warehouseHelper = $this->createStrategyHelper(WarehouseStrategyHelper::class, $productUnitHelper);
         $inventoryStatusHelper = $this->createStrategyHelper(InventoryStatusesStrategyHelper::class, $warehouseHelper);
 

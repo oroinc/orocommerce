@@ -21,9 +21,9 @@ class WarehouseInventoryLevelStrategyHelper extends AbstractWarehouseInventoryLe
     ) {
         $this->errors = $errors;
 
-        $existingWarehouse = isset($newEntities['warehouse']) ? $newEntities['warehouse'] : null;
-        $product = isset($newEntities['product']) ? $newEntities['product'] : null;
-        $productUnitPrecision = isset($newEntities['productUnitPrecision']) ? $newEntities['productUnitPrecision'] : null;
+        $existingWarehouse = $this->getProcessedEntity($newEntities, 'warehouse');
+        $product = $this->getProcessedEntity($newEntities, 'product');
+        $productUnitPrecision = $this->getProcessedEntity($newEntities, 'productUnitPrecision');
 
         /** @var WarehouseInventoryLevel $existingEntity */
         $existingEntity = $this->getExistingWarehouseInventoryLevel(
@@ -31,10 +31,6 @@ class WarehouseInventoryLevelStrategyHelper extends AbstractWarehouseInventoryLe
             $productUnitPrecision,
             $existingWarehouse
         );
-
-        if (!$existingEntity) {
-            $existingEntity = new WarehouseInventoryLevel();
-        }
 
         $existingEntity->setProductUnitPrecision($productUnitPrecision);
         $existingEntity->setWarehouse($existingWarehouse);
@@ -72,6 +68,10 @@ class WarehouseInventoryLevelStrategyHelper extends AbstractWarehouseInventoryLe
         }
 
         $existingEntity = $this->databaseHelper->findOneBy(WarehouseInventoryLevel::class, $criteria);
+
+        if (!$existingEntity) {
+            $existingEntity = new WarehouseInventoryLevel();
+        }
 
         return $existingEntity;
     }

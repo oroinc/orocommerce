@@ -1,14 +1,14 @@
 services:
     #Converter
-    orob2b_warehouse.importexport.inventory_status_converter:
+    orob2b_warehouse.importexport.inventory_level_converter:
         parent: oro_importexport.data_converter.configurable
-        class: OroB2B\Bundle\WarehouseBundle\ImportExport\DataConverter\InventoryLevelDataConverter
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\DataConverter\InventoryLevelDataConverter'
 
     orob2b_warehouse.importexport.processor.export_detailed_inventory_levels:
         parent: oro_importexport.processor.export_abstract
         public: false
         calls:
-             - [setDataConverter, ["@orob2b_warehouse.importexport.inventory_status_converter"]]
+             - [setDataConverter, ["@orob2b_warehouse.importexport.inventory_level_converter"]]
         tags:
             - { name: oro_importexport.processor, type: export, entity: %orob2b_warehouse.entity.warehouse_inventory_level.class%, alias: orob2b_warehouse.detailed_inventory_levels }
 
@@ -40,7 +40,7 @@ services:
         parent: oro_importexport.processor.import_abstract
         public: false
         calls:
-            - [setDataConverter, ['@orob2b_warehouse.importexport.inventory_status_converter']]
+            - [setDataConverter, ['@orob2b_warehouse.importexport.inventory_level_converter']]
             - [setStrategy, ['@orob2b_warehouse.importexport.strategy.warehouse_inventory_level']]
         tags:
             - { name: oro_importexport.processor, type: import, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.warehouse_inventory_level }
@@ -51,7 +51,7 @@ services:
         public: false
         parent: oro_importexport.processor.export_abstract
         calls:
-            - [setDataConverter, ['@orob2b_warehouse.importexport.inventory_status_converter']]
+            - [setDataConverter, ['@orob2b_warehouse.importexport.inventory_level_converter']]
         tags:
             - { name: oro_importexport.processor, type: export_template, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.inventory_level_export_template }
 

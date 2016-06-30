@@ -29,11 +29,8 @@ class ProductUnitStrategyHelper extends AbstractWarehouseInventoryLevelStrategyH
     ) {
         $this->errors = $errors;
 
-        $existingWarehouse = isset($newEntities['warehouse']) ? $newEntities['warehouse'] : null;
-        $product = isset($newEntities['product']) ? $newEntities['product'] : null;
-        if (!$product || ! $existingWarehouse) {
-            return null;
-        }
+        $existingWarehouse = $this->getProcessedEntity($newEntities, 'warehouse');
+        $product = $this->getProcessedEntity($newEntities, 'product');
 
         $productUnitPrecision = $importedEntity->getProductUnitPrecision();
         $productUnit = $productUnitPrecision->getUnit();
@@ -44,12 +41,7 @@ class ProductUnitStrategyHelper extends AbstractWarehouseInventoryLevelStrategyH
             return null;
         }
 
-        if ($productUnit && !empty($productUnit->getCode())) {
-            $productUnit = $this->checkAndRetrieveEntity(
-                ProductUnit::class,
-                ['code' => Inflector::singularize($productUnit->getCode())]
-            );
-        }
+        $productUnit = $this->getProductUnit($productUnit);
 
         $productUnitPrecision = $this->getPoductUnitPrecision($product, $productUnit);
         $newEntities['productUnitPrecision'] = $productUnitPrecision;
@@ -59,6 +51,24 @@ class ProductUnitStrategyHelper extends AbstractWarehouseInventoryLevelStrategyH
         }
 
         return $importedEntity;
+    }
+
+    /**
+     * Extract the existing product unit based on its code
+     *
+     * @param null|ProductUnit $productUnit
+     * @return null|object|ProductUnit
+     */
+    protected function getProductUnit(ProductUnit $productUnit = null)
+    {
+        if ($productUnit && !empty($productUnit->getCode())) {
+            $productUnit = $this->checkAndRetrieveEntity(
+                ProductUnit::class,
+                ['code' => Inflector::singularize($productUnit->getCode())]
+            );
+        }
+
+        return $productUnit;
     }
 
     /**

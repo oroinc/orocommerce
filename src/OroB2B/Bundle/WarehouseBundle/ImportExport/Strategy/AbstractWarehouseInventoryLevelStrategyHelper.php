@@ -43,7 +43,8 @@ abstract class AbstractWarehouseInventoryLevelStrategyHelper implements Warehous
     {
         $existingEntity = $this->databaseHelper->findOneBy($class, $criteria);
         if (!$existingEntity) {
-            $shortClassName = end(explode('\\', $class));
+            $classNamespace = explode('\\', $class);
+            $shortClassName = end($classNamespace);
             $this->addError(
                 'orob2b.warehouse.import.error.not_found_entity',
                 ['%entity%' => $shortClassName]
@@ -87,5 +88,16 @@ abstract class AbstractWarehouseInventoryLevelStrategyHelper implements Warehous
     public function setSuccessor(WarehouseInventoryLevelStrategyHelperInterface $successor)
     {
         $this->successor = $successor;
+    }
+
+    /**
+     * Helper function which extracts an entity from an array based on a key.
+     * @param array $entities
+     * @param string $name
+     * @return null
+     */
+    protected function getProcessedEntity($entities, $name)
+    {
+        return isset($entities[$name]) ? $entities[$name] : null;
     }
 }
