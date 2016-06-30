@@ -1,9 +1,8 @@
 parent: default
-label:  First Theme
-description: First Theme.
+label: Custom theme
+description: Custom theme description.
+groups: [ commerce ]
 data:
     assets:
         styles:
-            inputs: ~
-            filters: ~
-            output: ~
+            output: 'css/layout/custom/styles.css'
