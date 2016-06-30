@@ -2,30 +2,33 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Twig;
 
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use OroB2B\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentMethodExtension extends \Twig_Extension
 {
     const PAYMENT_METHOD_EXTENSION_NAME = 'orob2b_payment_method';
 
-    /** @var  PaymentTransactionProvider */
+    /**
+     * @var  PaymentTransactionProvider
+     */
     protected $paymentTransactionProvider;
 
-    /** @var  PaymentMethodViewRegistry */
-    protected $paymentMethodViewRegistry;
+    /**
+     * @var PaymentMethodLabelFormatter
+     */
+    protected $paymentMethodLabelFormatter;
 
     /**
      * @param PaymentTransactionProvider $paymentTransactionProvider
-     * @param PaymentMethodViewRegistry $paymentMethodViewRegistry
+     * @param PaymentMethodLabelFormatter $paymentMethodLabelFormatter
      */
     public function __construct(
         PaymentTransactionProvider $paymentTransactionProvider,
-        PaymentMethodViewRegistry $paymentMethodViewRegistry
+        PaymentMethodLabelFormatter $paymentMethodLabelFormatter
     ) {
         $this->paymentTransactionProvider = $paymentTransactionProvider;
-        $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
+        $this->paymentMethodLabelFormatter = $paymentMethodLabelFormatter;
     }
 
     /**
@@ -43,7 +46,15 @@ class PaymentMethodExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('get_payment_methods', [$this, 'getPaymentMethods']),
-            new \Twig_SimpleFunction('get_payment_method_label', [$this, 'getPaymentMethodLabel']),
+            new \Twig_SimpleFunction(
+                'get_payment_method_label',
+                [$this->paymentMethodLabelFormatter, 'formatPaymentMethodLabel']
+            ),
+            new \Twig_SimpleFunction(
+                'get_payment_method_admin_label',
+                [$this->paymentMethodLabelFormatter, 'formatPaymentMethodAdminLabel'],
+                ['is_safe' => ['html']]
+            )
         ];
     }
 
@@ -56,27 +67,13 @@ class PaymentMethodExtension extends \Twig_Extension
         $paymentTransactions = $this->paymentTransactionProvider->getPaymentTransactions($entity);
         $paymentMethods = [];
         foreach ($paymentTransactions as $paymentTransaction) {
-            /** @var PaymentMethodViewInterface $paymentMethodView */
-            $paymentMethods[] = $this->getPaymentMethodLabel($paymentTransaction->getPaymentMethod(), false);
+            $paymentMethods[] = $this->paymentMethodLabelFormatter
+                ->formatPaymentMethodLabel(
+                    $paymentTransaction->getPaymentMethod(),
+                    false
+                );
         }
 
         return $paymentMethods;
-    }
-
-    /**
-     * @param string $paymentMethod
-     * @param bool $shortLabel
-     * @return array
-     */
-    public function getPaymentMethodLabel($paymentMethod, $shortLabel = true)
-    {
-        /** @var PaymentMethodViewInterface $paymentMethodView */
-        try {
-            $paymentMethodView = $this->paymentMethodViewRegistry->getPaymentMethodView($paymentMethod);
-
-            return $shortLabel? $paymentMethodView->getShortLabel() : $paymentMethodView->getLabel();
-        } catch (\InvalidArgumentException $e) {
-            return '';
-        }
     }
 }

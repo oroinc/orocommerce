@@ -23,17 +23,16 @@ layout:
             items:
                 account_user_address_edit_container:
                     blockType: container
-                account_user_address_edit_form_errors:
-                    blockType: block
-                    options:
-                        vars:
-                            form: { '@value': $data.orob2b_account_frontend_account_user_address_form.view }
                 account_user_address_edit_form_start:
                     blockType: form_start
                     options:
                         form: { '@value': $data.orob2b_account_frontend_account_user_address_form }
+                account_user_address_edit_form_errors:
+                    blockType: form_errors
+                    options:
+                        form: { '@value': $data.orob2b_account_frontend_account_user_address_form.view }
                 account_user_address_edit_form_fields:
-                    blockType: form
+                    blockType: form_fields
                     options:
                         form: { '@value': $data.orob2b_account_frontend_account_user_address_form }
                 account_user_address_edit_form_end:
@@ -47,8 +46,7 @@ layout:
                     options:
                         action: submit
                         text: orob2b.account.frontend.address.buttons.save
-                        vars:
-                            style: auto
+                        style: auto
                         attr:
                             'class': role-submit
                 account_user_address_edit_form_actions_cancel:
@@ -61,8 +59,8 @@ layout:
             tree:
                 content:
                     account_user_address_edit_container:
-                        account_user_address_edit_form_errors: ~
                         account_user_address_edit_form_start: ~
+                        account_user_address_edit_form_errors: ~
                         account_user_address_edit_form_fields: ~
                         account_user_address_edit_form_actions:
                             account_user_address_edit_form_actions_update: ~

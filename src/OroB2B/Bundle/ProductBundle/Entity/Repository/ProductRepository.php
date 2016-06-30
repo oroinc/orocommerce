@@ -173,16 +173,26 @@ class ProductRepository extends EntityRepository
 
     /**
      * @param array $products
+     * @param string|null $imageType
      * @return Product[]
      */
-    public function getProductsWithImage(array $products)
+    public function getProductsWithImage(array $products, $imageType = null)
     {
         $qb = $this->createQueryBuilder('p');
-        return $qb->select('partial p.{id, image}')
-            ->join('p.image', 'image')
+        $qb->select('p, images, imageFile')
+            ->join('p.images', 'images')
+            ->join('images.image', 'imageFile')
             ->where($qb->expr()->in('p', ':products'))
             ->setParameter('products', $products)
-            ->getQuery()
-            ->execute();
+            ->indexBy('p', 'p.id');
+
+        if ($imageType) {
+            $qb->addSelect('imageTypes')
+                ->join('images.types', 'imageTypes')
+                ->andWhere($qb->expr()->eq('imageTypes.type', ':imageType'))
+                ->setParameter('imageType', $imageType);
+        }
+
+        return $qb->getQuery()->execute();
     }
 }

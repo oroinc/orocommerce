@@ -11,11 +11,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- */
 abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
 {
     /** @var string */
@@ -122,20 +118,12 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         return [
             [
                 'submittedData' => [
-                    LoadWebsiteData::WEBSITE1 => [
+                    1 => [
                         'fallback' => 0,
                         'priceLists' => [
                             ['priceList' => 'price_list_1', 'priority' => 3, 'mergeAllowed' => false],
                             ['priceList' => 'price_list_2', 'priority' => 23, 'mergeAllowed' => true],
                             ['priceList' => 'price_list_3', 'priority' => 22, 'mergeAllowed' => true],
-                        ],
-                    ],
-                    LoadWebsiteData::WEBSITE2 => [
-                        'fallback' => 1,
-                        'priceLists' => [
-                            ['priceList' => 'price_list_1', 'priority' => 231, 'mergeAllowed' => false],
-                            ['priceList' => 'price_list_3', 'priority' => 7, 'mergeAllowed' => true],
-                            ['priceList' => 'price_list_2', 'priority' => 22, 'mergeAllowed' => false],
                         ],
                     ],
                 ],
@@ -143,27 +131,11 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                 'expectedData' => [
                     1 => [
                         'fallback' => 0,
-                        'priceLists' => [],
-                    ],
-                    LoadWebsiteData::WEBSITE1 => [
-                        'fallback' => 0,
                         'priceLists' => [
                             ['priceList' => 'price_list_2', 'priority' => 23, 'mergeAllowed' => true],
                             ['priceList' => 'price_list_3', 'priority' => 22, 'mergeAllowed' => true],
                             ['priceList' => 'price_list_1', 'priority' => 3, 'mergeAllowed' => false],
                         ],
-                    ],
-                    LoadWebsiteData::WEBSITE2 => [
-                        'fallback' => 1,
-                        'priceLists' => [
-                            ['priceList' => 'price_list_1', 'priority' => 231, 'mergeAllowed' => false],
-                            ['priceList' => 'price_list_2', 'priority' => 22, 'mergeAllowed' => false],
-                            ['priceList' => 'price_list_3', 'priority' => 7, 'mergeAllowed' => true],
-                        ],
-                    ],
-                    LoadWebsiteData::WEBSITE3 => [
-                        'fallback' => 0,
-                        'priceLists' => [],
                     ],
                 ],
             ],
@@ -209,22 +181,20 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
             'GET',
             $this->getViewUrl()
         );
+        
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        
         foreach ($expectedData as $websiteReference => $priceListsWithFallback) {
-            $website = $this->getWebsite($websiteReference);
-            $insideTab = $crawler->filter('div #website' . $website->getId());
-            $this->assertContains($website->getName(), $crawler->html());
-            $fallbackText = $insideTab->filter('p strong')->text();
-            if ($priceListsWithFallback['fallback']) {
-                $this->assertContains('only', $fallbackText);
-            } else {
-                $this->assertNotContains('only', $fallbackText);
-            };
+            $priceListSection = $crawler->filter('div #priceLists');
+            $fallbackText = $priceListSection->filter('p strong')->text();
+
+            $this->assertNotContains('only', $fallbackText);
+
             foreach ($priceListsWithFallback['priceLists'] as $priceListRelation) {
                 /** @var PriceList $priceList */
                 $priceList = $this->getReference($priceListRelation['priceList']);
-                $row = $insideTab->filter(sprintf('.price_list%s', $priceList->getId()));
+                $row = $priceListSection->filter(sprintf('.price_list%s', $priceList->getId()));
                 $mergeAllowedText = $row->filter('.price_list_merge_allowed')->text();
                 if ($priceListRelation['mergeAllowed']) {
                     $this->assertContains('Yes', $mergeAllowedText);
@@ -243,28 +213,28 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     public function testDelete()
     {
         $priceListsRelations = $this->getPriceListsByEntity();
-        $this->assertCount(6, $priceListsRelations);
-        $this->assertTrue($this->checkPriceListRelationExist($priceListsRelations, 'US', 'price_list_3'));
+        $this->assertCount(3, $priceListsRelations);
+        $this->assertTrue($this->checkPriceListRelationExist($priceListsRelations, 'price_list_3'));
         $form = $this->getUpdateForm();
         $this->assertTrue($form->has($this->formExtensionPath));
         //Test remove one price list
-        $path = sprintf('[%s][priceListCollection][1]', $this->getReference(LoadWebsiteData::WEBSITE1)->getId());
+        $path = sprintf('[%s][priceListCollection][1]', $this->getDefaultWebsite()->getId());
         $form->remove($this->formExtensionPath . $path);
         $this->client->submit($form);
         $priceListsRelations = $this->getPriceListsByEntity();
-        $this->assertCount(5, $priceListsRelations);
-        $this->assertFalse($this->checkPriceListRelationExist($priceListsRelations, 'US', 'price_list_3'));
+        $this->assertCount(2, $priceListsRelations);
+        $this->assertFalse($this->checkPriceListRelationExist($priceListsRelations, 'price_list_3'));
     }
 
     /**
      * @param BasePriceListRelation[] $priceListsRelations
-     * @param string $websiteReference
      * @param string $priceListReference
      * @return bool
      */
-    protected function checkPriceListRelationExist(array $priceListsRelations, $websiteReference, $priceListReference)
+    protected function checkPriceListRelationExist(array $priceListsRelations, $priceListReference)
     {
-        $website = $this->getWebsite($websiteReference);
+        $website = $this->getDefaultWebsite();
+        
         $priceList = $this->getReference($priceListReference);
         foreach ($priceListsRelations as $priceListRelation) {
             if ($priceListRelation->getWebsite()->getId() == $website->getId()
@@ -282,7 +252,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $form = $this->getUpdateForm();
         $formValues = $form->getValues();
         /** @var Website $website */
-        $website = $this->getReference('Canada');
+        $website = $this->getDefaultWebsite();
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
         $collectionElementPath1 = sprintf(
@@ -456,5 +426,16 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         preg_match_all('#/update/(.+?)\"#is', $crawler->html(), $arr);
 
         return max($arr[1]);
+    }
+
+    /**
+     * @return Website
+     */
+    protected function getDefaultWebsite()
+    {
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BWebsiteBundle:Website')
+            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->findOneBy(['name' => 'Default']);
     }
 }

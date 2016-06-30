@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
@@ -20,6 +21,20 @@ use OroB2B\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelHandler;
 
 class WarehouseInventoryLevelController extends Controller
 {
+    /**
+     * @Route("/", name="orob2b_warehouse_inventory_level_index")
+     * @Template
+     * @AclAncestor("orob2b_warehouse_inventory_level_index")
+     *
+     * @return array
+     */
+    public function indexAction()
+    {
+        return [
+            'entity_class' => $this->container->getParameter('orob2b_warehouse.entity.warehouse.class'),
+        ];
+    }
+
     /**
      * Edit product warehouse inventory levels
      *

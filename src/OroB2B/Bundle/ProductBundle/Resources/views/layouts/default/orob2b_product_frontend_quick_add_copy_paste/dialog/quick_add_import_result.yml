@@ -23,28 +23,24 @@ layout:
                 quick_add_import_validation_items_table_body:
                     blockType: container
                 quick_add_import_validation_total_items_count:
-                    blockType: text
+                    blockType: import_validation_items_count_text
                     options:
                         text: 'orob2b.product.frontend.quick_add.import_validation.total_items'
-                        vars:
-                            collection: { '@value': $data.collection }
+                        collection: { '@value': $data.collection }
                 quick_add_import_validation_valid_items_count:
-                    blockType: text
+                    blockType: import_validation_items_count_text
                     options:
                         text: 'orob2b.product.frontend.quick_add.import_validation.valid_items'
-                        vars:
-                            collection: { '@value': $data.collection }
+                        collection: { '@value': $data.collection }
                 quick_add_import_validation_invalid_items_count:
-                    blockType: text
+                    blockType: import_validation_items_count_text
                     options:
                         text: 'orob2b.product.frontend.quick_add.import_validation.invalid_items'
-                        vars:
-                            collection: { '@value': $data.collection }
+                        collection: { '@value': $data.collection }
                 quick_add_import_validation_invalid_items:
-                    blockType: block
+                    blockType: import_validation_items
                     options:
-                        vars:
-                            collection: { '@value': $data.collection }
+                        collection: { '@value': $data.collection }
                 quick_add_form:
                     blockType: container
                 quick_add_form_start:
@@ -53,7 +49,7 @@ layout:
                         form: { '@value': $data.orob2b_product_quick_add_form_provider }
                         form_route_name: 'orob2b_product_frontend_quick_add_validation_result'
                 quick_add_form_fields:
-                    blockType: form
+                    blockType: form_fields
                     options:
                         form: { '@value': $data.orob2b_product_quick_add_form_provider }
                 quick_add_form_end:
@@ -68,8 +64,7 @@ layout:
                         type: button
                         action: reset
                         text: Cancel
-                        vars:
-                            style: gray
+                        style: gray
             tree:
                 widget_content:
                     quick_add_import_validation:

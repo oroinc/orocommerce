@@ -22,7 +22,6 @@ define(function(require) {
             matchedPrices: {},
             currency: null,
             account: null,
-            website: null,
             subtotalValidationSelector: '[data-ftid=orob2b_order_type_subtotalValidation]',
             totalValidationSelector: '[data-ftid=orob2b_order_type_totalValidation]',
             subtotalType: null
@@ -61,8 +60,7 @@ define(function(require) {
                 tierPrices: this.options.tierPrices,
                 matchedPrices: this.options.matchedPrices,
                 currency: this.options.currency,
-                account: this.options.account,
-                website: this.options.website
+                account: this.options.account
             }));
         },
 
