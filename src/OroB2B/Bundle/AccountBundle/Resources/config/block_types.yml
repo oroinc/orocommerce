@@ -1,0 +1,40 @@
+services:
+    orob2b_account.layout.block_type.address_book:
+        class: OroB2B\Bundle\AccountBundle\Layout\Block\Type\AddressBookType
+        arguments:
+            - '@router'
+            - '@fragment.handler'
+        tags:
+             - { name: layout.block_type, alias: address_book }
+
+    orob2b_account.layout.block_type.account_user_awere_block:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{accountUser: {required: true}}]]
+            - [setName, ['account_user_awere_block']]
+        tags:
+             - { name: layout.block_type, alias: account_user_awere_block }
+
+    orob2b_account.layout.block_type.account_user_role_privileges:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{privileges: {required: true}}]]
+            - [setName, ['account_user_role_privileges']]
+        tags:
+             - { name: layout.block_type, alias: account_user_role_privileges }
+
+    orob2b_account.layout.block_type.account_user_role_users_datagrid:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{form: {required: true}}]]
+            - [setName, ['account_user_role_users_datagrid']]
+            - [setParent, ['datagrid']]
+        tags:
+             - { name: layout.block_type, alias: account_user_role_users_datagrid }
+
+    orob2b_account.layout.block_type.login_page:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setName, ['login_page']]
+        tags:
+             - { name: layout.block_type, alias: login_page }
