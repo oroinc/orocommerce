@@ -6,7 +6,6 @@ use Oro\Bundle\EntityExtendBundle\Event\ValueRenderEvent;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class OrderWarehouseBeforeRenderListener
 {
@@ -30,7 +29,7 @@ class OrderWarehouseBeforeRenderListener
      */
     public function onWarehouseOrderDisplay(ValueRenderEvent $event)
     {
-        if (!$event->getFieldValue() instanceof Warehouse
+        if ($event->getFieldConfigId()->getFieldName() != 'warehouse'
             || $event->getFieldConfigId()->getClassName() != Order::class
         ) {
             return;

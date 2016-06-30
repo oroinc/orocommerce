@@ -53,7 +53,6 @@ class OrderFormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->method('areMoreWarehouses')
             ->willReturn(true);
 
-
         $env = $this->getMockBuilder(\Twig_Environment::class)->getMock();
         $env->expects($this->once())
             ->method('render');

@@ -40,7 +40,6 @@ class OrderFormExtensionTest extends \PHPUnit_Framework_TestCase
                 $this->assertEquals('warehouse', $name);
             });
 
-
         $this->orderFormExtension->buildForm($builder, []);
     }
 

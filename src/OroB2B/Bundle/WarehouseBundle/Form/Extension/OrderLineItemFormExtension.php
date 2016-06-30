@@ -77,4 +77,3 @@ class OrderLineItemFormExtension extends AbstractTypeExtension
         }
     }
 }
-

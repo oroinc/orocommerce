@@ -34,7 +34,10 @@ class OrderLineItemFormExtensionTest extends \PHPUnit_Framework_TestCase
         $this->warehouseCounter = $this->getMockBuilder(WarehouseCounter::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->orderLineItemFormExtension = new OrderLineItemFormExtension($this->sectionProvider, $this->warehouseCounter);
+        $this->orderLineItemFormExtension = new OrderLineItemFormExtension(
+            $this->sectionProvider,
+            $this->warehouseCounter
+        );
     }
 
     public function testBuildForm()
