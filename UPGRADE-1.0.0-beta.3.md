@@ -80,3 +80,7 @@ PaymentBundle:
 --------------
 - Added short label for Payment Methods in order to show it on frontend tables.
 - Added transactions demo data for orders demo data.
+
+ShoppingListBundle:
+-------------------
+- `ShoppingListTotalManager` - removed fourth constructor argument $configManager
