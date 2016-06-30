@@ -24,28 +24,21 @@
 {% endblock %}
 
 {% block _product_shopping_lists_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    <button class="shopping-lists-button" type="button">
-        <i class="shopping-lists-button__icon"></i>
-        <span class="shopping-lists-button__text">In Shopping Lists (<span class="shopping-lists-button__count">2</span>)</span>
-    </button>
-    {{ UI.clientLink({
-        'label' : 'In Shopping Lists',
-        'aCss': 'shopping-lists-link',
-        'widget' : {
-            'type' : 'content',
-            'options' : {
-                'content': '#in-shopping-lists-template',
-                'dialogOptions': {
-                    'title': 'Basic Women’s Full Length Lab Coat',
-                    'modal': true,
-                    'resizable': false,
-                    'width': 580,
-                    'autoResize': true
-                }
-            }
-        }
-    }) }}
+    {% set attr = {
+        "data-page-component-module": "oroui/js/app/components/view-component",
+        "data-page-component-options": {
+            view: 'orob2bshoppinglist/js/app/views/base-shopping-lists-link-view'
+        }|json_encode}
+    %}
+    <div {{ block('block_attributes') }}>
+        <button type="button"
+                class="shopping-lists-button"
+                data-name="shopping-lists-button">
+            <i class="shopping-lists-button__icon"></i>
+            <span class="shopping-lists-button__text">In Shopping Lists (<span data-name="shopping-lists-length" class="shopping-lists-button__count"><%= length %></span>)</span>
+        </button>
+    </div>
+
     <div id="in-shopping-lists-template" style="display: none">
         <table class="shopping-lists-popup">
             <thead class="shopping-lists-popup__headline">
