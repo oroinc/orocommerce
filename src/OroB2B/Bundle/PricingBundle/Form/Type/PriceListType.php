@@ -46,13 +46,26 @@ class PriceListType extends AbstractType
                     'additional_currencies' => $priceList ? $priceList->getCurrencies() : [],
                 ]
             )
-            ->add('active', 'checkbox', ['label' => 'orob2b.pricing.pricelist.active.label'])
+            ->add(
+                'active',
+                'checkbox',
+                [
+                    'label' => 'orob2b.pricing.pricelist.active.label'
+                ]
+            )
+            ->add(
+                'productAssignmentRule',
+                'textarea',
+                [
+                    'label' => 'orob2b.pricing.pricelist.product_assignment_rule.label'
+                ]
+            )
             ->add(
                 'priceRules',
                 CollectionType::NAME,
                 [
                     'type' => PriceRuleType::NAME,
-                    'by_reference' => false
+                    'label' => false
                 ]
             );
     }

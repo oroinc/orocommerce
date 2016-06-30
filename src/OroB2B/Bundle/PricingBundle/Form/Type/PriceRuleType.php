@@ -18,30 +18,61 @@ class PriceRuleType extends AbstractType
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
+     *
+
+     price for qty 10 of each in USD = xxxxx
+    [19:35:33] Michael Bessolov: Price for quantity [____] [each|V] in [USD|v]
+    Calculate as;    [____________________]
+    Only when:    [_____________________]
+    Priority:     [_______]
+
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('rule', 'text', [])
-            ->add('ruleCondition', 'text', [])
+            ->add(
+                'rule',
+                'textarea',
+                [
+                    'label' => 'orob2b.pricing.pricerule.rule.label'
+                ]
+            )
+            ->add(
+                'ruleCondition',
+                'textarea',
+                [
+                    'label' => 'orob2b.pricing.pricerule.rule_condition.label'
+                ]
+            )
             ->add(
                 'currency',
                 CurrencySelectionType::NAME,
-                []
-            )->add(
+                [
+                    'label' => 'orob2b.pricing.pricerule.rule_condition.label'
+                ]
+            )
+            ->add(
                 'productUnit',
                 'entity',
                 [
                     'class' => ProductUnit::class,
-                    'label' => 'orob2b.pricing.unit.label'
+                    'label' => 'orob2b.pricing.pricerule.product_unit.label'
                 ]
-            )->add(
+            )
+            ->add(
                 'quantity',
                 'number',
                 [
-                    'label' => 'orob2b.pricing.quantity.label'
+                    'label' => 'orob2b.pricing.pricerule.quantity.label'
                 ]
-            )->add('priority', 'number', []);
+            )
+            ->add(
+                'priority',
+                'number',
+                [
+                    'label' => 'orob2b.pricing.pricerule.quantity.label'
+                ]
+            );
     }
 
     /**
