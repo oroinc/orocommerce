@@ -126,13 +126,13 @@ class FrontendProductDatagridListener
         $lineItemRepository = $em->getRepository('OroB2BShoppingListBundle:LineItem');
         /** @var LineItem[] $lineItems */
         $lineItems = $lineItemRepository->getProductItemsWithShoppingListNames(
-                array_map(
-                    function (ResultRecord $record) {
-                        return $record->getValue('id');
-                    },
-                    $records
-                ),
-                $accountUser
+            array_map(
+                function (ResultRecord $record) {
+                    return $record->getValue('id');
+                },
+                $records
+            ),
+            $accountUser
         );
 
 
@@ -141,7 +141,11 @@ class FrontendProductDatagridListener
         foreach ($lineItems as $lineItem) {
             $shoppingListId = $lineItem->getShoppingList()->getId();
             $productId = $lineItem->getProduct()->getId();
-            $groupedUnits[$productId][$shoppingListId][$lineItem->getProductUnitCode()] = $lineItem->getQuantity();
+            $groupedUnits[$productId][$shoppingListId][] =
+                [
+                    'unit' => $lineItem->getProductUnitCode(),
+                    'quantity' => $lineItem->getQuantity()
+                ];
             if (!isset($shoppingListLabels[$shoppingListId])) {
                 $shoppingListLabels[$shoppingListId] = $lineItem->getShoppingList()->getLabel();
             }
@@ -149,7 +153,6 @@ class FrontendProductDatagridListener
 
         $productShoppingLists = [];
         foreach ($groupedUnits as $productId => $productGroupedUnits) {
-
             /* Active shopping list goes first*/
             $activeShoppingListId = $shoppingList->getId();
             if (isset($productGroupedUnits[$activeShoppingListId])) {

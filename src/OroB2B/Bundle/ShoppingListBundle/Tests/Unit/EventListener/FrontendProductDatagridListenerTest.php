@@ -266,12 +266,15 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 [
                 'shopping_list_id' => 1,
                 'shopping_list_label' => 'Shopping List1',
-                'line_items' => ['unt1' => 1]
+                'line_items' => [['unit'=>'unt1','quantity' => 1]]
                 ],
                 [
                     'shopping_list_id' => 2,
                     'shopping_list_label' => 'Shopping List2',
-                    'line_items' => ['unt2' => 2, 'unt3' => 5]
+                    'line_items' => [
+                        ['unit'=>'unt2','quantity' => 2],
+                        ['unit'=>'unt3','quantity' => 5],
+                    ],
                 ],
             ],
             $recordOne->getValue('shopping_lists')
