@@ -7,7 +7,7 @@ use Oro\Component\Config\Common\ConfigObject;
 
 use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
-class CheckoutGridColumnFilter
+class CheckoutGridAccountUserNameListener
 {
     /**
      * @var AccountUserProvider

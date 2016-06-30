@@ -3,12 +3,12 @@
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
 use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
-use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridColumnFilter;
+use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridAccountUserNameListener;
 
-class CheckoutGridColumnFilterTest extends \PHPUnit_Framework_TestCase
+class CheckoutGridAccountUserNameListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var CheckoutGridColumnFilter
+     * @var CheckoutGridAccountUserNameListener
      */
     protected $testable;
 
@@ -58,7 +58,7 @@ class CheckoutGridColumnFilterTest extends \PHPUnit_Framework_TestCase
                        ->method('isGrantedViewLocal')
                        ->willReturn(false);
 
-        $this->testable = new CheckoutGridColumnFilter($this->provider);
+        $this->testable = new CheckoutGridAccountUserNameListener($this->provider);
         $this->testable->onBuildBefore($event);
     }
 }
