@@ -40,7 +40,7 @@ layout:
                     blockType: datagrid
                     options:
                         visible: { '@not_empty': $data.entity }
-                        grid_name: frontend-account-user-role-permission-grid
+                        grid_name: frontend-account-user-role-permission-readonly-grid
                         grid_parameters:
                             role: {'@value': $data.entity}
                         grid_render_parameters:

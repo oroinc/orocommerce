@@ -3,9 +3,24 @@ datagrid:
         extends: role-permission-grid
         acl_resource: orob2b_account_account_user_role_update
 
+    account-user-role-permission-readonly-grid:
+        extends: role-permission-grid
+        columns:
+            permissions:
+                frontend_type: action-permissions-readonly
+        actions:
+
     frontend-account-user-role-permission-grid:
         extends: role-permission-grid
         acl_resource: orob2b_account_frontend_account_user_role_update
+
+    frontend-account-user-role-permission-readonly-grid:
+        extends: role-permission-grid
+        acl_resource: orob2b_account_frontend_account_user_role_update
+        columns:
+            permissions:
+                frontend_type: action-permissions-readonly
+        actions:
 
     account-accounts-select-grid:
         acl_resource: orob2b_account_view

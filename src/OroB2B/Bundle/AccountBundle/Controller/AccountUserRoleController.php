@@ -54,7 +54,8 @@ class AccountUserRoleController extends Controller
             ],
             'capabilitySetOptions' => [
                 'data' => $this->getRolePrivilegeCapabilityProvider()->getCapabilities($role),
-                'tabIds' => $this->getRolePrivilegeCategoryProvider()->getTabList()
+                'tabIds' => $this->getRolePrivilegeCategoryProvider()->getTabList(),
+                'readonly' => true
             ]
         ];
     }
