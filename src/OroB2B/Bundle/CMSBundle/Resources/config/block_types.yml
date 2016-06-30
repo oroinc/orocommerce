@@ -11,6 +11,6 @@ services:
         parent: oro_layout.block_type.extension.abstract_configurable
         calls:
             - [setOptionsConfig, [{loginPage: ~}]]
-            - [setName, ['login_page']]
+            - [setExtendedType, ['login_page']]
         tags:
-            - { name: layout.block_type, alias: login_page }
+            - { name: layout.block_type_extension, alias: login_page }
