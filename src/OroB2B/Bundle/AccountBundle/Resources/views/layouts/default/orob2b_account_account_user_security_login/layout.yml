@@ -9,7 +9,7 @@ layout:
         - '@addTree':
             items:
                 login_page:
-                    blockType: container
+                    blockType: login_page
                     options:
                         class_prefix: 'create-account'
                 login_form:

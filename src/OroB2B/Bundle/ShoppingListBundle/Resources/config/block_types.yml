@@ -56,7 +56,7 @@ services:
         tags:
              - { name: layout.block_type, alias: add_to_shopping_list_form_button }
 
-    orob2b_shopping_list.layout.block_type.widget_content:
+    orob2b_shopping_list.layout.block_type.extension.widget_content:
         parent: oro_layout.block_type.extension.abstract_configurable
         calls:
             - [setOptionsConfig, [{savedId: ~, shoppingList: ~}]]

@@ -31,3 +31,10 @@ services:
             - [setParent, ['datagrid']]
         tags:
              - { name: layout.block_type, alias: account_user_role_users_datagrid }
+
+    orob2b_account.layout.block_type.login_page:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setName, ['login_page']]
+        tags:
+             - { name: layout.block_type, alias: login_page }
