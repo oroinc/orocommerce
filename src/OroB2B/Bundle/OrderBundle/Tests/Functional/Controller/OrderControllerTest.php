@@ -17,6 +17,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 
 /**
  * @dbIsolation
+ * @group CommunityEdition
  */
 class OrderControllerTest extends WebTestCase
 {
