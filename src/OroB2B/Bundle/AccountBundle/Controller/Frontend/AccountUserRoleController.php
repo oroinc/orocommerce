@@ -46,16 +46,6 @@ class AccountUserRoleController extends Controller
      */
     public function viewAction(AccountUserRole $role)
     {
-        $isGranted = (
-            $role->isPredefined()
-                ? $this->getSecurityFacade()->isGranted('orob2b_account_frontend_account_user_role_view')
-                : $this->getSecurityFacade()->isGranted('FRONTEND_ACCOUNT_ROLE_VIEW', $role)
-            ) && $role->isSelfManaged();
-
-        if (!$isGranted) {
-            throw $this->createAccessDeniedException();
-        }
-
         return [
             'data' => [
                 'entity' => $role
@@ -90,16 +80,6 @@ class AccountUserRoleController extends Controller
      */
     public function updateAction(AccountUserRole $role, Request $request)
     {
-        $isGranted = (
-            $role->isPredefined()
-                ? $this->getSecurityFacade()->isGranted('orob2b_account_frontend_account_user_role_create')
-                : $this->getSecurityFacade()->isGranted('FRONTEND_ACCOUNT_ROLE_UPDATE', $role)
-        ) && $role->isSelfManaged();
-
-        if (!$isGranted) {
-            throw $this->createAccessDeniedException();
-        }
-
         if ($role->isPredefined() && $request->isMethod(Request::METHOD_GET)) {
             $this->addFlash(
                 'warning',
