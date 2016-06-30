@@ -228,25 +228,32 @@ services:
             - '@translator'
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEntityEdit }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onAccountGroupView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEntityEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
 
-    orob2b_pricing.event_listener.web_site_form_view:
-        class: 'OroB2B\Bundle\PricingBundle\EventListener\WebsiteFormViewListener'
+    orob2b_pricing.event_listener.account_form_view:
+        class: 'OroB2B\Bundle\PricingBundle\EventListener\AccountFormViewListener'
         arguments:
             - '@request_stack'
-            - '@oro_entity.doctrine_helper'
             - '@translator'
-            - '%orob2b_website.entity.website.class%'
-            - '%orob2b_pricing.entity.price_list_to_website.class%'
+            - '@oro_entity.doctrine_helper'
+            - '@orob2b_website.website.provider'
         tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-edit, method: onWebsiteEdit }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-view, method: onWebsiteView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEntityEdit }
+
+    orob2b_pricing.event_listener.account_group_form_view:
+        class: 'OroB2B\Bundle\PricingBundle\EventListener\AccountGroupFormViewListener'
+        arguments:
+            - '@request_stack'
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@orob2b_website.website.provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onAccountGroupView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEntityEdit }
+
 
     orob2b_pricing.event_listener.datagrid:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\DatagridListener'
@@ -585,15 +592,6 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@property_accessor'
-
-    orob2b_pricing.entity_listener.website:
-        class: 'OroB2B\Bundle\PricingBundle\EventListener\WebsiteListener'
-        arguments:
-            - '@orob2b_pricing.price_list_with_priority_collection.handler'
-            - '@oro_api.doctrine_helper'
-            - '@orob2b_pricing.price_list_change_trigger_handler'
-        tags:
-            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_website_type, method: beforeFlush }
 
     orob2b_pricing.entity_listener.account_group:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\AccountGroupListener'
