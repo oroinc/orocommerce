@@ -1,0 +1,9 @@
+parent: default
+label:  First Theme
+description: First Theme.
+data:
+    assets:
+        styles:
+            inputs: ~
+            filters: ~
+            output: ~
