@@ -15,7 +15,6 @@ class ItemsCountColumnBuilder implements ColumnBuilderInterface
     private $baseCheckoutRepository;
 
     /**
-     * LineItemsCountColumnResolver constructor.
      * @param BaseCheckoutRepository $baseCheckoutRepository
      */
     public function __construct(BaseCheckoutRepository $baseCheckoutRepository)

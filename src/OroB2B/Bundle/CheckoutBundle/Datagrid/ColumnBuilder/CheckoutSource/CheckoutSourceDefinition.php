@@ -28,7 +28,6 @@ class CheckoutSourceDefinition
     private $linkable = false;
 
     /**
-     * CheckoutSourceDefinition constructor.
      * @param string  $label
      * @param boolean $linkable
      * @param null    $route

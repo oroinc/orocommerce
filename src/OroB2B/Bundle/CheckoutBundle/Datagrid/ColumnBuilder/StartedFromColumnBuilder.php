@@ -32,7 +32,6 @@ class StartedFromColumnBuilder implements ColumnBuilderInterface
     private $securityFacade;
 
     /**
-     * LineItemsCountColumnResolver constructor.
      * @param BaseCheckoutRepository $baseCheckoutRepository
      * @param TranslatorInterface    $translator
      * @param SecurityFacade         $securityFacade

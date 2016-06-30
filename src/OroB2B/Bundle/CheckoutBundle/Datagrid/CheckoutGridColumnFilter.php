@@ -15,7 +15,6 @@ class CheckoutGridColumnFilter
     private $accountUserProvider;
 
     /**
-     * CheckoutGridColumnFilter constructor.
      * @param AccountUserProvider $accountUserProvider
      */
     public function __construct(
