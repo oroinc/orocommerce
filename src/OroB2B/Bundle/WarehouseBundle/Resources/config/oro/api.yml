@@ -1,0 +1,16 @@
+oro_api:
+    entities:
+        OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel:
+            filters:
+                fields:
+                    product.sku:
+                        data_type: string
+                        allow_array: true
+                    warehouse.id:
+                        data_type: integer
+                        allow_array: true
+                    productUnitPrecision.unit.code:
+                        data_type: string
+                        allow_array: true
+            actions:
+                get_list: ~
