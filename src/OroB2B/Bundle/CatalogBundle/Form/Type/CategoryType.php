@@ -43,6 +43,8 @@ class CategoryType extends AbstractType
 
     /**
      * {@inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -126,17 +128,26 @@ class CategoryType extends AbstractType
             ->add(
                 'smallImage',
                 'oro_image',
-                ['label' => 'orob2b.catalog.category.small_image.label', 'required' => false]
+                [
+                    'label'    => 'orob2b.catalog.category.small_image.label',
+                    'required' => false
+                ]
             )
             ->add(
                 'largeImage',
                 'oro_image',
-                ['label' => 'orob2b.catalog.category.large_image.label', 'required' => false]
+                [
+                    'label'    => 'orob2b.catalog.category.large_image.label',
+                    'required' => false
+                ]
             )
             ->add(
                 'unitPrecision',
                 CategoryUnitPrecisionType::NAME,
-                ['label' => 'orob2b.catalog.category.unit.label', 'required' => false]
+                [
+                    'label' => 'orob2b.catalog.category.unit.label',
+                    'required' => false
+                ]
             );
     }
 

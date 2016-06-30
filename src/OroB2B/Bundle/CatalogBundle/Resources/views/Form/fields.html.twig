@@ -22,12 +22,18 @@
 
 {% block orob2b_catalog_category_unit_precision_widget %}
     <div class="control-group">
-        <div class="control-label wrap"><label>{{ 'orob2b.catalog.category.unit.label'|trans }}<em>&nbsp;</em></label></div>
+        <div class="control-label wrap"><label>{{ 'orob2b.catalog.category.unit.label'|trans }}&nbsp;</label></div>
         <div class="controls">
-            <table class="category-precision-holder" data-page-component-module="orob2bcatalog/js/app/components/category-unit-limitations-component">
+            <table
+                    class="category-precision-holder"
+                    data-page-component-module="oroui/js/app/components/view-component"
+                    data-page-component-options="{{ {
+                        view: 'orob2bcatalog/js/app/views/category-unit-limitations-view',
+                    }|json_encode }}"
+            >
                 <tr>
                     <td>{{ form_widget(form.unit, { 'attr': {'class': 'unit'}}) }}</td>
-                    <td><div class="control-label"><label>{{ 'orob2b.catalog.category.precision.label'|trans }}<em>&nbsp;</em></label></div></td>
+                    <td><div class="control-label"><label>{{ 'orob2b.catalog.category.precision.label'|trans }}&nbsp;</label></div></td>
                     <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}</td>
                 </tr>
                 <tr>

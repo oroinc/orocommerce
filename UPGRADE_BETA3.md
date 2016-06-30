@@ -33,9 +33,9 @@ CatalogBundle:
 - Entity `OroB2B\Bundle\CatalogBundle\Entity\Category` now uses an entity `Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue` for `titles`.
 - Added `OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision` in order to manage units and precisions for category. Demo Data Migrations changed also.
 - Added `OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecisionType` in order to fill unit and precision with values on category creation and update pages.
-- Modified `OroB2B\Bundle\CatalogBundle\Entity\Category` with property: `unitPrecision`.
-- Modified `OroB2B\Bundle\CatalogBundle\Form\Handler\CategoryHandler` with methods in order to update Category with `unitPrecision`.
-- Modified `OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType` with option `unitPrecision`.
+- Modified `OroB2B\Bundle\CatalogBundle\Entity\Category` added property: `unitPrecision`.
+- Modified `OroB2B\Bundle\CatalogBundle\Form\Handler\CategoryHandler` added methods in order to update Category with `unitPrecision`.
+- Modified `OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType` added option `unitPrecision`.
 
 MenuBundle:
 --------------
@@ -45,7 +45,7 @@ ProductBundle:
 --------------
 - Entity `OroB2B\Bundle\ProductBundle\Entity\Product` now uses an entity `Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue` for `names`, `desciptions` and `shorDescriptions`.
 - Replaced single product image with typed product image collection
-- Modified `OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider` with new option `categoryId` and with methods in order to set `categoryId`, get default product unit precision, create product unit precision.
+- Modified `OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider` added new option `categoryId` and with methods in order to set `categoryId`, get default product unit precision, create product unit precision.
 
 WebsiteBundle:
 --------------

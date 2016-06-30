@@ -138,7 +138,7 @@ class CategoryUnitPrecision implements ProductUnitHolderInterface
      */
     public function getProductUnit()
     {
-        return null;
+        return $this->getUnit();
     }
 
     /**
@@ -146,7 +146,11 @@ class CategoryUnitPrecision implements ProductUnitHolderInterface
      */
     public function getProductUnitCode()
     {
-        return $this->getUnit()->getCode();
+        if ($this->getUnit()) {
+            return $this->getUnit()->getCode();
+        } else {
+            return null;
+        }
     }
 
     /**

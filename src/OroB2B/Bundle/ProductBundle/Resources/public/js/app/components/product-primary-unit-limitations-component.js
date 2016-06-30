@@ -74,7 +74,7 @@ define(function (require) {
         /**
          * Handle select change
          *
-         * @param {jQuery.Event}  e
+         * @param {jQuery.Event} e
          */
         onSelectChange: function (e) {
             var select = $(e.target);

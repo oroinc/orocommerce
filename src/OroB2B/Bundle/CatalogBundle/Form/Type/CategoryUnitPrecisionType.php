@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class CategoryUnitPrecisionType extends AbstractType
 {

@@ -136,7 +136,6 @@ class OroB2BCatalogBundleInstaller implements
     }
 
     /**
-     *
      * @param Schema $schema
      */
     protected function createOroB2BCategoryUnitPrecisionTable(Schema $schema)
@@ -264,7 +263,6 @@ class OroB2BCatalogBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
-
     
     /**
      * Add orob2b_catalog_category_long_description foreign keys.
@@ -289,7 +287,6 @@ class OroB2BCatalogBundleInstaller implements
     }
 
     /**
-     *
      * @param Schema $schema
      */
     protected function addOroB2BCategoryUnitPrecisionForeignKeys(Schema $schema)

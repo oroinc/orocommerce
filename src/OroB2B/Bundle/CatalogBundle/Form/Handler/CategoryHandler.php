@@ -82,8 +82,12 @@ class CategoryHandler
      * @param Product[] $removeProducts
      * @param CategoryUnitPrecision|null $unitPrecision
      */
-    protected function onSuccess(Category $category, array $appendProducts, array $removeProducts, $unitPrecision)
-    {
+    protected function onSuccess(
+        Category $category,
+        array $appendProducts,
+        array $removeProducts,
+        CategoryUnitPrecision $unitPrecision = null
+    ) {
         $this->appendProducts($category, $appendProducts);
         $this->removeProducts($category, $removeProducts);
         if ($unitPrecision && !$unitPrecision->getUnit()) {

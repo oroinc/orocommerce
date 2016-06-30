@@ -13,9 +13,7 @@ class OroB2BCatalogBundle implements Migration
     const ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME = 'orob2b_category_unit_precision';
     const ORO_B2B_PRODUCT_UNIT_TABLE_NAME = 'orob2b_product_unit';
 
-
     /**
-     *
      * @param Schema $schema
      * @param QueryBag $queries
      */
@@ -28,7 +26,6 @@ class OroB2BCatalogBundle implements Migration
     }
 
     /**
-     *
      * @param Schema $schema
      */
     protected function createOroB2BCategoryUnitPrecisionTable(Schema $schema)
@@ -42,7 +39,6 @@ class OroB2BCatalogBundle implements Migration
     }
 
     /**
-     *
      * @param Schema $schema
      */
     protected function updateOroB2BCategoryTable(Schema $schema)
@@ -53,7 +49,6 @@ class OroB2BCatalogBundle implements Migration
     }
 
     /**
-     *
      * @param Schema $schema
      */
     protected function addOroB2BCategoryUnitPrecisionForeignKeys(Schema $schema)
@@ -68,7 +63,6 @@ class OroB2BCatalogBundle implements Migration
     }
 
     /**
-     *
      * @param Schema $schema
      */
     protected function addOroB2BCategoryForeignKeys(Schema $schema)

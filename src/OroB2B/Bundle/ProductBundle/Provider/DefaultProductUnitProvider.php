@@ -21,12 +21,12 @@ class DefaultProductUnitProvider
     private $configManager;
 
     /**
-     * @var  ManagerRegistry
+     * @var ManagerRegistry
      */
     protected $registry;
 
     /**
-     * @var  int
+     * @var int
      */
     protected $categoryId;
 

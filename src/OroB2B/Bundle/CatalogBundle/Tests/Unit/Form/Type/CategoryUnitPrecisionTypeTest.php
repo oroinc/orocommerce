@@ -6,17 +6,14 @@ use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
-
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
 use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
 {
@@ -27,36 +24,12 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    /**
-     * @var array
-     */
-    protected $units = ['item', 'kg'];
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var ProductUnitLabelFormatter
-     */
-    protected $productUnitLabelFormatter;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->translator
-            ->expects(static::any())
-            ->method('trans')
-            ->willReturnCallback(
-                function ($id, array $params) {
-                    return isset($params['{title}']) ? $id . ':' . $params['{title}'] : $id;
-                }
-            );
-        $this->productUnitLabelFormatter = new ProductUnitLabelFormatter($this->translator);
         $this->formType = new CategoryUnitPrecisionType();
         $this->formType->setDataClass(self::DATA_CLASS);
         parent::setUp();
@@ -67,15 +40,15 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType($this->prepareChoices());
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectionType::NAME => new ProductUnitSelectionType(
-                        $this->productUnitLabelFormatter,
-                        $this->translator
-                    ),
-                    'entity' => $entityType
+                    ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
+                        [
+                            'item' => (new ProductUnit())->setCode('item'),
+                            'kg' => (new ProductUnit())->setCode('kg')
+                        ]
+                    )
                 ],
                 [
                     'form' => [new IntegerExtension()]
@@ -158,20 +131,5 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals(CategoryUnitPrecisionType::NAME, $this->formType->getName());
-    }
-
-    /**
-     * @return array
-     */
-    protected function prepareChoices()
-    {
-        $choices = [];
-        foreach ($this->units as $unitCode) {
-            $unit = new ProductUnit();
-            $unit->setCode($unitCode);
-            $choices[$unitCode] = $unit;
-        }
-
-        return $choices;
     }
 }
