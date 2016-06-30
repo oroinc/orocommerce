@@ -34,7 +34,7 @@ class PriceListToProduct
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
      * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     **/
+     */
     protected $priceList;
 
     /**
@@ -49,7 +49,7 @@ class PriceListToProduct
      * @var bool
      *
      * @ORM\Column(name="isSystem", type="boolean")
-     * */
+     */
     protected $isManual = true;
 
     /**
