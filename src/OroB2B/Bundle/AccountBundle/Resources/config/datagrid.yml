@@ -1169,6 +1169,10 @@ datagrid:
                 type: twig
                 frontend_type: html
                 template: OroB2BAccountBundle:Address:Frontend/Datagrid/types.html.twig
+        actions:
+            show_map:
+                type:          map
+                icon:          map-marker
 
     frontend-account-account-address-grid:
         acl_resource: orob2b_account_frontend_account_view

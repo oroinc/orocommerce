@@ -1418,7 +1418,7 @@
 
             &:after,
             &:before {
-              color: $base-link-color;
+              color: inherit;
             }
           }
         }
