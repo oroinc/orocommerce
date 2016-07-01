@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
@@ -12,7 +13,18 @@ use OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 class LoadPriceListToAccountDemoData extends LoadBasePriceListRelationDemoData
 {
     /**
+     * @var EntityRepository
+     */
+    protected $accountRepository;
+
+    /**
+     * @var Account[]
+     */
+    protected $accounts = [];
+
+    /**
      * {@inheritdoc}
+     * @param EntityManager $manager
      */
     public function load(ObjectManager $manager)
     {
@@ -54,13 +66,30 @@ class LoadPriceListToAccountDemoData extends LoadBasePriceListRelationDemoData
      */
     protected function getAccountByName(EntityManager $manager, $name)
     {
-        $website = $manager->getRepository('OroB2BAccountBundle:Account')->findOneBy(['name' => $name]);
+        if (!array_key_exists($name, $this->accounts)) {
+            $account = $this->getAccountRepository($manager)->findOneBy(['name' => $name]);
 
-        if (!$website) {
-            throw new \LogicException(sprintf('There is no account with name "%s" .', $name));
+            if (!$account) {
+                throw new \LogicException(sprintf('There is no account with name "%s" .', $name));
+            }
+            $this->accounts[$name] = $account;
         }
 
-        return $website;
+
+        return $this->accounts[$name];
+    }
+
+    /**
+     * @param $manager
+     * @return EntityRepository
+     */
+    protected function getAccountRepository(EntityManager $manager)
+    {
+        if ($this->accountRepository === null) {
+            $this->accountRepository = $manager->getRepository('OroB2BAccountBundle:Account');
+        }
+
+        return $this->accountRepository;
     }
     
     /**
