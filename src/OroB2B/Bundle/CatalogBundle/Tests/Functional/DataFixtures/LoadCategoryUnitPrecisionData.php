@@ -6,7 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
+use OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
+use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 
 class LoadCategoryUnitPrecisionData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -38,7 +39,11 @@ class LoadCategoryUnitPrecisionData extends AbstractFixture implements Dependent
             if ($productUnitReference) {
                 $categoryUnitPrecision = new CategoryUnitPrecision();
                 $categoryUnitPrecision->setUnit($this->getReference($productUnitReference))->setPrecision(0);
-                $this->getReference($categoryReference)->setUnitPrecision($categoryUnitPrecision);
+
+                $defProductOptions = new CategoryDefaultProductOptions();
+                $defProductOptions->setUnitPrecision($categoryUnitPrecision);
+
+                $this->getReference($categoryReference)->setDefaultProductOptions($defProductOptions);
             }
         }
 

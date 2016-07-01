@@ -285,8 +285,8 @@ class CategoryControllerTest extends WebTestCase
         $form['orob2b_catalog_category[longDescriptions][values][default]'] = $longDescription;
         $form['orob2b_catalog_category[smallImage][file]'] = $smallImage;
         $form['orob2b_catalog_category[largeImage][file]'] = $largeImage;
-        $form['orob2b_catalog_category[unitPrecision][unit]'] = $unitPrecision['code'];
-        $form['orob2b_catalog_category[unitPrecision][precision]'] = $unitPrecision['precision'];
+        $form['orob2b_catalog_category[defaultProductOptions][unitPrecision][unit]'] = $unitPrecision['code'];
+        $form['orob2b_catalog_category[defaultProductOptions][unitPrecision][precision]'] = $unitPrecision['precision'];
 
         if ($parentId === $this->masterCatalog->getId()) {
             $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_1)->getId() . ', '
@@ -376,8 +376,12 @@ class CategoryControllerTest extends WebTestCase
         $parameters['orob2b_catalog_category']['shortDescriptions']['values']['default'] = $newShortDescription;
         $parameters['orob2b_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
         $parameters['orob2b_catalog_category']['largeImage']['emptyFile'] = true;
-        $parameters['orob2b_catalog_category']['unitPrecision']['unit'] = $newUnitPrecision['code'];
-        $parameters['orob2b_catalog_category']['unitPrecision']['precision'] = $newUnitPrecision['precision'];
+        $parameters['orob2b_catalog_category']['defaultProductOptions']['unitPrecision']['unit'] =
+            $newUnitPrecision['code']
+        ;
+        $parameters['orob2b_catalog_category']['defaultProductOptions']['unitPrecision']['precision'] =
+            $newUnitPrecision['precision']
+        ;
 
         $parentCategory = $crawler->filter('[name = "orob2b_catalog_category[parentCategory]"]')->attr('value');
         $parameters['orob2b_catalog_category']['parentCategory'] = $parentCategory;

@@ -11,7 +11,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
+use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 
 class CategoryTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -113,9 +113,9 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
         $builder->expects($this->at(8))
             ->method('add')
             ->with(
-                'unitPrecision',
-                CategoryUnitPrecisionType::NAME,
-                ['label' => 'orob2b.catalog.category.unit.label', 'required' => false]
+                'defaultProductOptions',
+                CategoryDefaultProductOptionsType::NAME,
+                ['required' => false]
             )->will($this->returnSelf());
 
         $this->type->buildForm($builder, []);

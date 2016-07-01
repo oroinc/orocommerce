@@ -2,12 +2,14 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
+use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
 use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
@@ -15,9 +17,9 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
-class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
+class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision';
+    const DATA_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions';
 
     /**
      * @var CategoryUnitPrecisionType
@@ -30,7 +32,7 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->formType = new CategoryUnitPrecisionType();
+        $this->formType = new CategoryDefaultProductOptionsType();
         $this->formType->setDataClass(self::DATA_CLASS);
         parent::setUp();
     }
@@ -40,9 +42,12 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $categoryUnitPrecisionType = new CategoryUnitPrecisionType();
+        $categoryUnitPrecisionType->setDataClass('OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision');
         return [
             new PreloadedExtension(
                 [
+                    CategoryUnitPrecisionType::NAME => $categoryUnitPrecisionType,
                     ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
                         [
                             'item' => (new ProductUnit())->setCode('item'),
@@ -59,22 +64,22 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param CategoryUnitPrecision $defaultData
+     * @param CategoryDefaultProductOptions $defaultData
      * @param array $expectedOptions
      * @param array|CategoryUnitPrecision $submittedData
-     * @param CategoryUnitPrecision $expectedData
+     * @param CategoryDefaultProductOptions $expectedData
      * @dataProvider submitProvider
      */
     public function testSubmit(
-        CategoryUnitPrecision $defaultData,
+        CategoryDefaultProductOptions $defaultData,
         array $expectedOptions,
         $submittedData,
-        CategoryUnitPrecision $expectedData
+        CategoryDefaultProductOptions $expectedData
     ) {
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
-        $this->assertFormConfig($expectedOptions['unit'], $form->get('unit')->getConfig());
+        $this->assertFormConfig($expectedOptions['unitPrecision'], $form->get('unitPrecision')->getConfig());
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -100,27 +105,28 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
     {
         return [
             'unit precision without value' => [
-                'defaultData'   => new CategoryUnitPrecision(),
+                'defaultData'   => new CategoryDefaultProductOptions(),
                 'expectedOptions' => [
-                    'unit' => [],
-                    'precision' => [],
+                    'unitPrecision' => [],
                 ],
                 'submittedData' => [],
-                'expectedData'  => new CategoryUnitPrecision()
+                'expectedData'  => new CategoryDefaultProductOptions(),
             ],
             'unit precision with value' => [
-                'defaultData'   => new CategoryUnitPrecision(),
+                'defaultData'   => new CategoryDefaultProductOptions(),
                 'expectedOptions' => [
-                    'unit' => [],
-                    'precision' => [],
+                    'unitPrecision' => [],
                 ],
                 'submittedData' => [
-                    'unit' => 'kg',
-                    'precision' => 5,
+                    'unitPrecision' => [
+                        'unit' => 'kg',
+                        'precision' => 5,
+                    ]
                 ],
-                'expectedData'  => (new CategoryUnitPrecision())
-                    ->setUnit((new ProductUnit())->setCode('kg'))
-                    ->setPrecision(5)
+                'expectedData'  => (new CategoryDefaultProductOptions())
+                    ->setUnitPrecision((new CategoryUnitPrecision())
+                        ->setUnit((new ProductUnit())->setCode('kg'))
+                        ->setPrecision(5))
             ]
         ];
     }
@@ -130,6 +136,6 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     public function testGetName()
     {
-        $this->assertEquals(CategoryUnitPrecisionType::NAME, $this->formType->getName());
+        $this->assertEquals(CategoryDefaultProductOptionsType::NAME, $this->formType->getName());
     }
 }

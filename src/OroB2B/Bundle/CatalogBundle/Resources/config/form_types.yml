@@ -7,6 +7,13 @@ services:
         tags:
             - { name: form.type, alias: orob2b_catalog_category }
 
+    orob2b_catalog.form.type.category_default_product_options:
+        class: 'OroB2B\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType'
+        calls:
+            - [setDataClass, ['%orob2b_catalog.entity.category_default_product_options.class%']]
+        tags:
+            - { name: form.type, alias: orob2b_catalog_category_default_product_options }
+
     orob2b_catalog.form.type.category_unit_precision:
         class: 'OroB2B\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType'
         calls:

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Entity;
+namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Model;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
+use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 
 class CategoryUnitPrecisionTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,7 +14,6 @@ class CategoryUnitPrecisionTest extends \PHPUnit_Framework_TestCase
     public function testProperties()
     {
         $properties = [
-            ['id', 1],
             ['unit', new ProductUnit()],
             ['precision', 2],
         ];

@@ -142,10 +142,9 @@ class CategoryType extends AbstractType
                 ]
             )
             ->add(
-                'unitPrecision',
-                CategoryUnitPrecisionType::NAME,
+                'defaultProductOptions',
+                CategoryDefaultProductOptionsType::NAME,
                 [
-                    'label' => 'orob2b.catalog.category.unit.label',
                     'required' => false
                 ]
             );

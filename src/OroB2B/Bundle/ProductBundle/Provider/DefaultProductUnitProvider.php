@@ -8,10 +8,10 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 
 class DefaultProductUnitProvider
 {
@@ -61,7 +61,9 @@ class DefaultProductUnitProvider
             $category = $categoryRepository->findOneById($this->categoryId);
             do {
                 /** @var CategoryUnitPrecision $categoryUnitPrecision */
-                $categoryUnitPrecision = $category->getUnitPrecision();
+                if ($category->getDefaultProductOptions()) {
+                    $categoryUnitPrecision = $category->getDefaultProductOptions()->getUnitPrecision();
+                }
 
                 if (null != $categoryUnitPrecision) {
                     return $this->createProductUnitPrecision(

@@ -1,4 +1,4 @@
-OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision:
+OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision:
     properties:
         precision:
             - NotBlank:

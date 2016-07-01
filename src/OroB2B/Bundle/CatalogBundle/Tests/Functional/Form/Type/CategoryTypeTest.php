@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Form\Type;
 
-use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
+use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Config\FileLocator;
@@ -96,7 +96,7 @@ class CategoryTypeTest extends WebTestCase
             'largeImage' => ['file' => $largeImage],
             'appendProducts' => implode(',', $this->getProductIds($appendedProducts)),
             'removeProducts' => implode(',', $this->getProductIds($removedProducts)),
-            'unitPrecision' => ['unit' => 'kg', 'precision' => 3],
+            'defaultProductOptions' => ['unitPrecision' => ['unit' => 'kg', 'precision' => 3]],
             '_token' => $this->tokenManager->getToken('category')->getValue(),
         ];
 
@@ -128,7 +128,7 @@ class CategoryTypeTest extends WebTestCase
         $this->assertEquals($defaultTitle, $category->getDefaultTitle()->getString());
         $this->assertEquals($defaultShortDescription, $category->getDefaultShortDescription()->getText());
         $this->assertEquals($defaultLongDescription, $category->getDefaultLongDescription()->getText());
-        $this->assertEquals($unitPrecision, $category->getUnitPrecision());
+        $this->assertEquals($unitPrecision, $category->getDefaultProductOptions()->getUnitPrecision());
 
         foreach ($localizations as $localization) {
             $this->assertLocalization($localization, $category);

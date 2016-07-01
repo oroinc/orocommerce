@@ -8,6 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
+use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\FrontendBundle\Test\Client;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -114,25 +115,36 @@ class ProductControllerTest extends WebTestCase
         $systemDefaultUnit = $configManager->get('orob2b_product.default_unit');
         $systemDefaultPrecision = $configManager->get('orob2b_product.default_unit_precision');
 
-        $categoryWithPrecision = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-        $categoryWithParentPrecision = $this->getReference(LoadCategoryData::THIRD_LEVEL1);
-        $categoryWithNoPrecision = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $reflectionClass =
+            new \ReflectionClass('OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData');
+        $constName = $reflectionClass->getConstant($category);
+        $categoryReference = $constName ? $this->getReference($constName) : null;
 
         $systemPrecision = [
             'unit' => $systemDefaultUnit,
             'precision' =>$systemDefaultPrecision
         ];
+        
+        /** @var CategoryUnitPrecision $unitPrecision */
+        $unitPrecision = $this->getReference(LoadCategoryData::SECOND_LEVEL1)
+            ->getDefaultProductOptions()
+            ->getUnitPrecision();
         $categoryPrecision = [
-            'unit' => $categoryWithPrecision->getUnitPrecision()->getUnit()->getCode(),
-            'precision' =>$categoryWithPrecision->getUnitPrecision()->getPrecision()
+            'unit' => $unitPrecision->getUnit()->getCode(),
+            'precision' => $unitPrecision->getPrecision()
+        ];
+        
+        $expectedUnitPrecisions = [
+            'systemPrecision' => $systemPrecision,
+            'categoryPrecision' => $categoryPrecision,
         ];
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_create'));
         $form = $crawler->selectButton('Continue')->form();
         $formValues = $form->getPhpValues();
         $formValues['input_action'] = 'orob2b_product_create';
-        if ($category) {
-            $formValues['orob2b_product_step_one']['category'] = $$category->getId();
+        if ($categoryReference) {
+            $formValues['orob2b_product_step_one']['category'] = $categoryReference->getId();
         }
 
         $this->client->followRedirects(true);
@@ -141,13 +153,15 @@ class ProductControllerTest extends WebTestCase
             $this->getUrl('orob2b_product_create'),
             $formValues
         );
-        
-        $expectedData = $$expected;
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $form = $crawler->selectButton('Save and Close')->form();
-        $this->assertDefaultProductUnit($form, $expectedData['unit'], $expectedData['precision']);
+        $this->assertDefaultProductUnit(
+            $form,
+            $expectedUnitPrecisions[$expected]['unit'],
+            $expectedUnitPrecisions[$expected]['precision']
+        );
     }
 
     /**
@@ -161,15 +175,15 @@ class ProductControllerTest extends WebTestCase
                 'expectedData'  => 'systemPrecision'
             ],
             'CategoryWithPrecision' => [
-                'category' => 'categoryWithPrecision',
+                'category' => 'SECOND_LEVEL1',
                 'expectedData'  => 'categoryPrecision'
             ],
             'CategoryWithParentPrecision' => [
-                'category' => 'categoryWithParentPrecision',
+                'category' => 'THIRD_LEVEL1',
                 'expectedData'  => 'categoryPrecision'
             ],
             'CategoryWithNoPrecision' => [
-                'category' => 'categoryWithNoPrecision',
+                'category' => 'FIRST_LEVEL',
                 'expectedData'  => 'systemPrecision'
             ],
         ];

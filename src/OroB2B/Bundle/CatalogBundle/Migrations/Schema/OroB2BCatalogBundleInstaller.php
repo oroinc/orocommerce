@@ -23,7 +23,7 @@ class OroB2BCatalogBundleInstaller implements
     const ORO_B2B_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME = 'orob2b_catalog_cat_long_desc';
     const ORO_B2B_CATALOG_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
     const ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME ='oro_fallback_localization_val';
-    const ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME = 'orob2b_category_unit_precision';
+    const ORO_B2B_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME = 'orob2b_category_def_prod_opts';
     const ORO_B2B_PRODUCT_UNIT_TABLE_NAME = 'orob2b_product_unit';
     const MAX_CATEGORY_IMAGE_SIZE_IN_MB = 10;
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
@@ -72,7 +72,7 @@ class OroB2BCatalogBundleInstaller implements
         $this->createOrob2BCategoryToProductTable($schema);
         $this->createOroB2BCatalogCategoryShortDescriptionTable($schema);
         $this->createOroB2BCatalogCategoryLongDescriptionTable($schema);
-        $this->createOroB2BCategoryUnitPrecisionTable($schema);
+        $this->createOroB2BCategoryDefaultProductOptionsTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BCatalogCategoryForeignKeys($schema);
@@ -80,7 +80,7 @@ class OroB2BCatalogBundleInstaller implements
         $this->addOrob2BCategoryToProductForeignKeys($schema);
         $this->addOroB2BCatalogCategoryShortDescriptionForeignKeys($schema);
         $this->addOroB2BCatalogCategoryLongDescriptionForeignKeys($schema);
-        $this->addOroB2BCategoryUnitPrecisionForeignKeys($schema);
+        $this->addOroB2BCategoryDefaultProductOptionsForeignKeys($schema);
         $this->addCategoryImageAssociation($schema, 'largeImage');
         $this->addCategoryImageAssociation($schema, 'smallImage');
     }
@@ -101,9 +101,9 @@ class OroB2BCatalogBundleInstaller implements
         $table->addColumn('tree_root', 'integer', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('unit_precision_id', 'integer', ['notnull' => false]);
+        $table->addColumn('default_product_options_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['unit_precision_id']);
+        $table->addUniqueIndex(['default_product_options_id']);
         $this->noteExtension->addNoteAssociation($schema, 'orob2b_catalog_category');
     }
 
@@ -138,14 +138,13 @@ class OroB2BCatalogBundleInstaller implements
     /**
      * @param Schema $schema
      */
-    protected function createOroB2BCategoryUnitPrecisionTable(Schema $schema)
+    protected function createOroB2BCategoryDefaultProductOptionsTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_B2B_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('unit_code', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('unit_precision', 'integer', ['notnull' => false]);
+        $table->addColumn('product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('product_unit_precision', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['unit_code'], 'IDX_D4D5D6E4FBD3D1C2');
     }
 
     /**
@@ -163,8 +162,8 @@ class OroB2BCatalogBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME),
-            ['unit_precision_id'],
+            $schema->getTable(self::ORO_B2B_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME),
+            ['default_product_options_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
@@ -289,12 +288,12 @@ class OroB2BCatalogBundleInstaller implements
     /**
      * @param Schema $schema
      */
-    protected function addOroB2BCategoryUnitPrecisionForeignKeys(Schema $schema)
+    protected function addOroB2BCategoryDefaultProductOptionsForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_CATEGORY_UNIT_PRECISION_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_B2B_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(self::ORO_B2B_PRODUCT_UNIT_TABLE_NAME),
-            ['unit_code'],
+            ['product_unit_code'],
             ['code'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

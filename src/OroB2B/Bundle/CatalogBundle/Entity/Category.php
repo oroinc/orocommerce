@@ -13,8 +13,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Component\Tree\Entity\TreeTrait;
 use OroB2B\Bundle\CatalogBundle\Model\ExtendCategory;
+use OroB2B\Component\Tree\Entity\TreeTrait;
 
 /**
  * @ORM\Table(name="orob2b_catalog_category")
@@ -220,10 +220,10 @@ class Category extends ExtendCategory
     protected $longDescriptions;
 
     /**
-     * @var CategoryUnitPrecision
+     * @var CategoryDefaultProductOptions
      *
-     * @ORM\OneToOne(targetEntity="CategoryUnitPrecision", cascade={"persist"})
-     * @ORM\JoinColumn(name="unit_precision_id", nullable=true, referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\OneToOne(targetEntity="CategoryDefaultProductOptions", cascade={"persist"})
+     * @ORM\JoinColumn(name="default_product_options_id", nullable=true, referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -232,7 +232,7 @@ class Category extends ExtendCategory
      *      }
      * )
      */
-    protected $unitPrecision;
+    protected $defaultProductOptions;
 
     /**
      * Constructor
@@ -564,23 +564,23 @@ class Category extends ExtendCategory
     }
 
     /**
-     * @return CategoryUnitPrecision
+     * @return CategoryDefaultProductOptions
      */
-    public function getUnitPrecision()
+    public function getDefaultProductOptions()
     {
-        return $this->unitPrecision;
+        return $this->defaultProductOptions;
     }
 
     /**
      * Set unitPrecision
      *
-     * @param CategoryUnitPrecision $unitPrecision
+     * @param CategoryDefaultProductOptions $defaultProductOptions
      *
      * @return Category
      */
-    public function setUnitPrecision(CategoryUnitPrecision $unitPrecision = null)
+    public function setDefaultProductOptions(CategoryDefaultProductOptions $defaultProductOptions = null)
     {
-        $this->unitPrecision = $unitPrecision;
+        $this->defaultProductOptions = $defaultProductOptions;
     
         return $this;
     }
