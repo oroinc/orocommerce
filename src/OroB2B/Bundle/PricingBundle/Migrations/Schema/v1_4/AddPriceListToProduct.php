@@ -19,6 +19,8 @@ class AddPriceListToProduct implements Migration
 
         /** Foreign keys generation **/
         $this->addOroB2BriceListToProductForeignKeys($schema);
+        
+        $queries->addPostQuery(new FillPriceListToProduct());
     }
 
     /**
