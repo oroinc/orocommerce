@@ -7,17 +7,15 @@ layout:
                 main_menu_shopping_lists_wrapper:
                     blockType: container
                 main_menu_shopping_lists_widget:
-                    blockType: container
+                    blockType: shopping_lists_awere_container
                     options:
-                        vars:
-                            shoppingLists: { '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
+                        shoppingLists: { '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
                 main_menu_shopping_lists_widget_content:
                     blockType: container
                 main_menu_shopping_lists_widget_content_item_container:
-                    blockType: container
+                    blockType: shopping_lists_awere_container
                     options:
-                        vars:
-                            shoppingLists: { '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
+                        shoppingLists: { '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
                 main_menu_shopping_lists_widget_content_item:
                     blockType: block
                 main_menu_shopping_lists_widget_content_new_item_btn:

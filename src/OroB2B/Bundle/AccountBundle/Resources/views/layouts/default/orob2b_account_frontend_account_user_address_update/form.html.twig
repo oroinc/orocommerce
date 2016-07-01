@@ -119,10 +119,11 @@
         {% set label = id|humanize %}
     {%- endif -%}
 
-    <div class="oro-checkbox">
-        <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %}>
-        <label for="{{ id }}">{{ label|block_text(translation_domain) }} </label>
-    </div>
+    <label class="oro-checkbox" for="{{ id }}">
+        <input class="oro-checkbox__input" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %}>
+        <span class="oro-checkbox__icon"></span>
+        <span class="oro-checkbox__text">{{ label|block_text(translation_domain) }} </span>
+    </label>
 
     {{- form_errors(form) -}}
 {%- endblock checkbox_widget -%}
@@ -150,3 +151,16 @@
 {% block orob2b_country_widget %}
     {{ form_widget(form, {'class_prefix': 'checkout'}) }}
 {% endblock %}
+
+{# TODO: remove due BB-3540 #}
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <div class="notification notification_xsm notification_error notification-radiused">
+            <ul>
+                {%- for error in errors -%}
+                    <li><i class="cf-attention cf--base-line"></i><span class="mml5-md">{{ error.message }}</span></li>
+                {%- endfor -%}
+            </ul>
+        </div>
+    {%- endif -%}
+{%- endblock form_errors -%}

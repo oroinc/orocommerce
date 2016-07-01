@@ -43,7 +43,14 @@ class CallbackHandler
         }
 
         $this->eventDispatcher->dispatch($event->getEventName(), $event);
+        if ($event->isPropagationStopped()) {
+            return $event->getResponse();
+        }
+
         $this->eventDispatcher->dispatch($event->getTypedEventName($paymentTransaction->getPaymentMethod()), $event);
+        if ($event->isPropagationStopped()) {
+            return $event->getResponse();
+        }
 
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 

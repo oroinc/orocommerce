@@ -36,30 +36,22 @@ layout:
             items:
                 quote_view_page:
                     blockType: container
-                quote_view_top:
-                    blockType: block
-                    options:
-                        vars:
-                            quote: { '@value': $data.entity }
                 quote_view_controls_list:
                     blockType: block
                     options:
                         visible: false
                 quote_view_information:
-                    blockType: container
+                    blockType: quote_view_information
                     options:
-                        vars:
-                            quote: { '@value': $data.entity }
+                        quote: { '@value': $data.entity }
                 quote_view_line_items:
-                    blockType: block
+                    blockType: quote_products_container
                     options:
-                        vars:
-                            quote: { '@value': $data.entity }
+                        quoteProducts: { '@value': $data.entity.quoteProducts }
                 quote_view_line_items_mobile:
-                    blockType: block
+                    blockType: quote_products_container
                     options:
-                        vars:
-                            quote: { '@value': $data.entity }
+                        quoteProducts: { '@value': $data.entity.quoteProducts }
                 quote_view_accept_button:
                     blockType: action_combined_buttons
                     options:
@@ -82,7 +74,6 @@ layout:
             tree:
                 content:
                     quote_view_page:
-                        quote_view_top: ~
                         quote_view_controls_list: ~
                         quote_view_information:
                             quote_shipping_address: ~
