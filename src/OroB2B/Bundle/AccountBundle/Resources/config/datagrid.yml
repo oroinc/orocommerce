@@ -1133,13 +1133,19 @@ datagrid:
                 select:
                     - address
                     - address.id as id
-                    - address.label as label
+                    - address.street as street
                     - address.city as city
                     - address.postalCode as zip
+                    - address.primary as isPrimary
+                    - address.label as label
+                    - address.street2 as street2
+                    - address.phone as phone
+                    - region.name as state
                     - country.name as countryName
                 join:
                     left:
                         - { join: address.country, alias: country}
+                        - { join: address.region, alias: region}
                 where:
                     and:
                         - IDENTITY(address.frontendOwner) = :frontend_owner_id
@@ -1148,19 +1154,25 @@ datagrid:
         properties:
             id: ~
         columns:
-            label:
-                label: orob2b.account.accountaddress.label.label
+            street:
+                label: orob2b.account.accountaddress.entity_label
             city:
                 label: orob2b.account.accountaddress.city.label
+            state:
+                label: orob2b.account.accountaddress.region.label
             zip:
-                label: orob2b.account.accountaddress.postal_code.label
+                label: orob2b.account.accountuseraddress.postal_code.label
             countryName:
                 label: orob2b.account.accountaddress.country.label
             types:
-                label: orob2b.account.accountaddress.types.label
+                label: orob2b.account.accountaddress.types.singular_label
                 type: twig
                 frontend_type: html
                 template: OroB2BAccountBundle:Address:Frontend/Datagrid/types.html.twig
+        actions:
+            show_map:
+                type:          map
+                icon:          map-marker
 
     frontend-account-account-address-grid:
         acl_resource: orob2b_account_frontend_account_view

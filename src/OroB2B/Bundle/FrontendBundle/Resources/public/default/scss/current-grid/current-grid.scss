@@ -1421,7 +1421,7 @@
         &:first-child {
           border: 0;
         }
-        
+
         a.action{
           position: relative;
 
@@ -1441,7 +1441,7 @@
 
             &:after,
             &:before {
-              color: $base-font-color-lightest;
+              color: inherit;
             }
           }
         }
