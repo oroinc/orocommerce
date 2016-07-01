@@ -11,6 +11,5 @@ config:
         'orob2baccount/js/app/views/account-role-view': 'bundles/orob2baccount/js/app/views/account-role-view.js'
         'orob2baccount/js/address-book': 'bundles/orob2baccount/js/address-book.js'
         'orob2baccount/js/app/components/frontend-account-address-book-component': 'bundles/orob2baccount/js/app/components/frontend-account-address-book-component.js'
-        'oro/datagrid/action/map-action': 'bundles/orob2baccount/js/app/datagrid/action/map-action.js'
     appmodules:
         - orob2baccount/js/app/modules/views-module

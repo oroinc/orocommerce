@@ -26,7 +26,6 @@ parameters:
     orob2b_account.entity.account_product_visibility_resolved.class: OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved
     orob2b_account.entity.account_group_product_visibility_resolved.class: OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved
     orob2b_account.entity.product_visibility_resolved.class: OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved
-    orob2b_account.extension.action.type.map.class: OroB2B\Bundle\AccountBundle\Extension\Action\Actions\MapAction
 
 services:
     orob2b_account.security.account_user_provider:
@@ -881,9 +880,3 @@ services:
         class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountAddressCountProvider'
         tags:
             - { name: layout.data_provider, alias: account_address_count }
-
-    orob2b_account.extension.action.type.map:
-        class: '%orob2b_account.extension.action.type.map.class%'
-        scope: prototype
-        tags:
-            - { name: oro_datagrid.extension.action.type, type: map }
