@@ -657,3 +657,8 @@ services:
             - '@oro_entity.orm.insert_from_select_query_executor'
         calls:
             - [setPriceListClass, ['%orob2b_pricing.entity.product_price.class%']]
+
+    orob2b_pricing.compiler.price_list_rule_compiler:
+        class: 'OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler'
+        arguments:
+            - '@doctrine'
