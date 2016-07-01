@@ -34,7 +34,9 @@
       max-width: 100%;
       box-sizing: content-box;
       display: inline-block;
-      cursor: pointer;
+      &.dropdown-toggle {
+        cursor: pointer;
+      }
     }
     &__item-wrapper--no-access {
       opacity: 0.4;
