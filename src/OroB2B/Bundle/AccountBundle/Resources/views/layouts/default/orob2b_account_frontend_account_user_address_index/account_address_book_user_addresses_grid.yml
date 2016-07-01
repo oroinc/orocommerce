@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'account_address_book_user_addresses.html.twig'
+            themes: 'account_address_book_user_addresses_grid.html.twig'
         - '@setOption':
               id: datagrid_toolbar_button_container
               optionName: visible
@@ -9,9 +9,9 @@ layout:
 
         - '@addTree':
             items:
-                account_address_book_user_addresses_head:
+                account_address_book_user_addresses_grid_head:
                     blockType: container
-                account_address_book_user_addresses_title:
+                account_address_book_user_addresses_grid_title:
                     blockType: text
                     options:
                         text: 'orob2b.account.frontend.account_user_address_book.account_user_addresses'
@@ -23,12 +23,12 @@ layout:
                             frontend_owner_id: {'@value': $data.entity.account.id}
             tree:
                 account_address_book_user_addresses:
-                    account_address_book_user_addresses_head:
-                        account_address_book_user_addresses_title: ~
+                    account_address_book_user_addresses_grid_head:
+                        account_address_book_user_addresses_grid_title: ~
                     account_address_book_user_addresses_grid: ~
 
         - '@add':
-            id: account_address_book_user_addresses_create_button
+            id: account_address_book_user_addresses_grid_create_button
             parentId: datagrid_toolbar_button_container
             blockType: link
             options:
@@ -39,4 +39,4 @@ layout:
     conditions:
         '@and':
             - '@acl': orob2b_account_frontend_account_user_address_view
-            #- '@gte': [$context.account_user_address_count, 8]
+            - '@gte': [$context.account_user_address_count, 8]

@@ -1,4 +1,4 @@
-{% block _account_address_book_addresses_head_widget %}
+{% block _account_address_book_addresses_grid_head_widget %}
     {% set attr = layout_attr_merge(attr, {
         '~class': " oro-grid__row"
     }) %}
@@ -7,7 +7,7 @@
     </div>
 {% endblock %}
 
-{% block _account_address_book_addresses_title_widget %}
+{% block _account_address_book_addresses_grid_title_widget %}
     {% set attr = layout_attr_merge(attr, {
         '~class': " oro-grid__column oro-grid__column-half"
     }) %}
@@ -21,7 +21,7 @@
     </div>
 {% endblock %}
 
-{% block _account_address_book_addresses_create_button_widget %}
+{% block _account_address_book_addresses_grid_create_button_widget %}
     {% set attr = layout_attr_merge(attr, {
         '~class': " btn btn_xsm btn-dark oq-group-btn"
     }) %}
