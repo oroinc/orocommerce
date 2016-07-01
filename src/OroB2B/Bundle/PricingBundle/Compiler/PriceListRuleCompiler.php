@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class PriceListRuleCompiler
 {
@@ -24,14 +25,14 @@ class PriceListRuleCompiler
 
     /**
      * @param PriceRule $rule
+     * @param Product $product
      * @return QueryBuilder
      */
-    public function compileRule(PriceRule $rule)
+    public function compileRule(PriceRule $rule, Product $product = null)
     {
         //TODO: build select query from PriceListToProduct
         //TODO: BB-3623
         $calculationRule = "2+2";
-        $conditionalRule = "product.id = 1";
 
         $qb = $this->registry
             ->getManagerForClass('OroB2BProductBundle:Product')
@@ -44,7 +45,15 @@ class PriceListRuleCompiler
             ->addSelect((string)$qb->expr()->literal($rule->getQuantity()));
 
         $qb->addSelect($calculationRule);
-        $qb->andWhere($conditionalRule);
+
+        if ($product) {
+            $qb->where('product = :product')
+                ->setParameter('product', $product);
+        }
+
+        $conditionalRule = "product.status = :status";
+        $qb->andWhere($conditionalRule)
+            ->setParameter('status', Product::STATUS_ENABLED);
 
         return $qb;
     }
