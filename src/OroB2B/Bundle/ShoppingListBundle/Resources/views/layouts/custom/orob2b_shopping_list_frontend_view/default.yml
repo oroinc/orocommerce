@@ -1,10 +1,12 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BShoppingListBundle:layouts:custom/default.html.twig'
+            themes: 'default.html.twig'
         - '@move':
             id: shopping_list_selector
             parentId: content
+            prepend: true
         - '@move':
             id: shopping_lists_sidebar_list
             parentId: content
+            prepend: true
