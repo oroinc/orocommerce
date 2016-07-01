@@ -76,6 +76,7 @@ class QuoteController extends Controller
     public function createAction(Request $request)
     {
         $quote = new Quote();
+        $quote->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
 
         if (!$request->get(ProductDataStorage::STORAGE_KEY, false)) {
             return $this->update($quote, $request);

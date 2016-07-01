@@ -2,7 +2,7 @@ layout:
     actions:
         - '@setOption':
             id: payment_methods
-            optionName: vars.views
+            optionName: views
             optionValue: {}
 
     conditions:

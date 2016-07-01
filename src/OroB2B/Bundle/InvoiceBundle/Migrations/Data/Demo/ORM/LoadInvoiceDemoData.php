@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Migrations\Data\Demo\ORM;
 
+use OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -14,7 +15,6 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-use OroB2B\Bundle\WebsiteBundle\Migrations\Data\Demo\ORM\LoadWebsiteDemoData;
 
 class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -53,7 +53,7 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
         $account = $manager->getRepository('OroB2BAccountBundle:Account')->findOneBy([]);
 
         $website = $manager->getRepository('OroB2BWebsiteBundle:Website')
-            ->findOneBy(['name' => LoadWebsiteDemoData::US]);
+            ->findOneBy(['name' => LoadWebsiteData::DEFAULT_WEBSITE_NAME]);
 
         while (($data = fgetcsv($handler)) !== false) {
             $row = array_combine($headers, array_values($data));
