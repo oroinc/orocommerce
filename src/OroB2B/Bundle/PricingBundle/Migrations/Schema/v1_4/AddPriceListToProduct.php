@@ -15,10 +15,10 @@ class AddPriceListToProduct implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BPriceListToProductTable($schema);
+        $this->createOroB2BriceListToProductTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BPriceListToProductForeignKeys($schema);
+        $this->addOroB2BriceListToProductForeignKeys($schema);
         
         $queries->addPostQuery(new FillPriceListToProduct());
     }
