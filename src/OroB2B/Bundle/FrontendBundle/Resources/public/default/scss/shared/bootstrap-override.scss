@@ -865,6 +865,11 @@
     @include radiused(0);
   }
 
+  &.badge_has-inline-sibling {
+    vertical-align: baseline;
+    margin-right: 5px;
+  }
+
   &.disabled {
     border-color: $base-footer-background-color;
     color: $base-font-color-lightest;

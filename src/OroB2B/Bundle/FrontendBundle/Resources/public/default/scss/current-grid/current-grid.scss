@@ -1347,7 +1347,6 @@
   }
 
   .grid-container {
-
     .table-bordered {
       th, td {
         border-left: 0;
@@ -1356,7 +1355,6 @@
     }
 
     .grid {
-
       thead {
         tr {
           th {
@@ -1406,33 +1404,11 @@
         }
       }
 
-      .launchers-list {
-        text-align: right;
-
-        white-space: nowrap;
-      }
-
       .launcher-item {
-        float:none;
-        padding: 0 0 0 10px;
-        display: inline-block;
-        border-left: 1px solid $base-font-color-lightest;
-
-        &:first-child {
-          border: 0;
-        }
-
         a.action{
           position: relative;
 
-          min-width: 12px;
-          min-height: 18px;
           padding-left: 18px;
-
-
-          &:hover, &:hover, &:active {
-            background: transparent;
-          }
 
           [class^='icon-'].hide-text{
             position: absolute;
@@ -1445,7 +1421,6 @@
             }
           }
         }
-
       }
     }
   }
@@ -1470,5 +1445,42 @@
 
   .nav-pills > li + li {
     margin: 0;
+  }
+}
+
+//Remove code below, when grid styles will be free of platform styles
+//'.oro-grid__row--has-child-grid' is used in account bundle on the address book page for addresses datagrid
+//It should remove this class too
+.oro-grid__row--has-child-grid {
+  .oro-datagrid {
+    .grid {
+      .launchers-list {
+        text-align: right;
+
+        white-space: nowrap;
+      }
+
+      .launcher-item {
+        float:none;
+        padding: 0 0 0 10px;
+        display: inline-block;
+        border-left: 1px solid $base-font-color-lightest;
+
+        &:first-child {
+          border: 0;
+        }
+
+        a.action{
+          min-width: 12px;
+          min-height: 18px;
+
+          color: $base-font-color-lightest;
+
+          &:hover, &:focus, &:active, &:visited {
+            background: transparent;
+          }
+        }
+      }
+    }
   }
 }

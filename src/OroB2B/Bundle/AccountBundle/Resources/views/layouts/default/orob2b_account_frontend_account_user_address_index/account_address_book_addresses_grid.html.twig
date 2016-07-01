@@ -13,7 +13,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         <h2 class="user-page-title">
-            <span class="badge badge_sm badge_circle badge_orange">
+            <span class="badge badge_sm badge_circle badge_orange badge_has-inline-sibling">
                 <i class="icon-map-marker"></i>
             </span>
             {{ block_widget(block) }}
@@ -32,7 +32,7 @@
 
 {% block _account_address_book_addresses_grid_widget %}
     {% set attr = layout_attr_merge(attr, {
-        '~class': " oro-grid__row"
+        '~class': " oro-grid__row oro-grid__row--has-twin-row oro-grid__row--has-child-grid"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
