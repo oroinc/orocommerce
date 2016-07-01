@@ -53,11 +53,10 @@ class FillPriceListToProduct implements MigrationQuery, ConnectionAwareInterface
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
         $query = 'INSERT INTO orob2b_price_list_to_product'
-            . ' (price_list_id, product_id, is_manual) '
-            . ' SELECT pl.id as price_list_id, pp.product_id, TRUE'
+            . ' (price_list_id, product_id, is_manual)'
+            . ' SELECT pp.price_list_id, pp.product_id, TRUE'
             . ' FROM orob2b_price_product pp'
-            . ' INNER JOIN orob2b_price_list pl ON pp.price_list_id=pl.id'
-            . ' GROUP BY pl.id, pp.product_id';
+            . ' GROUP BY pp.price_list_id, pp.product_id';
         $logger->info($query);
         if (!$dryRun) {
             $this->connection->executeQuery($query);
