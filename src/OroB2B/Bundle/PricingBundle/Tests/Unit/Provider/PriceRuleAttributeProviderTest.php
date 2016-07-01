@@ -66,6 +66,9 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedFields, $actualFields);
     }
 
+    /**
+     * @return array
+     */
     public function ruleAttributeDataProvider()
     {
         return [
@@ -186,5 +189,21 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
         $manager->method('getClassMetadata')->willReturn($metadata);
         $this->registry->method('getManagerForClass')->willReturn($manager);
+    }
+    
+    /**
+     * @expectedException \Exception
+     */
+    public function testGetAvailableConditionAttributesException()
+    {
+        $this->priceRuleAttributeProvider->getAvailableConditionAttributes('ClassName');
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testGetAvailableRuleAttributesException()
+    {
+        $this->priceRuleAttributeProvider->getAvailableRuleAttributes('ClassName');
     }
 }

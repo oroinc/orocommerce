@@ -22,6 +22,9 @@ class PriceRuleAttributeProviderTest extends WebTestCase
         $this->provider = $this->getContainer()->get('orob2b_pricing.provider.price_rule_attribute_provider');
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testGetAvailableRuleAttributes()
     {
         $fields = $this->provider->getAvailableRuleAttributes('OroB2BProductBundle:Product');
@@ -37,6 +40,9 @@ class PriceRuleAttributeProviderTest extends WebTestCase
         );
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testGetAvailableConditionAttributes()
     {
         $fields = $this->provider->getAvailableConditionAttributes('OroB2BProductBundle:Product');

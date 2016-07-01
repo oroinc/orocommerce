@@ -13,7 +13,7 @@ class PriceRuleAttributeProvider
     const FIELD_TYPE_NATIVE = 'native';
     const FIELD_TYPE_VIRTUAL = 'virtual';
 
-    const SUPPORTED_TYPES = ['integer' => true, 'float' => true, 'money' => true, 'decimal' => true];
+    static protected $supportedTypes = ['integer' => true, 'float' => true, 'money' => true, 'decimal' => true];
 
     /**
      * @var VirtualFieldProviderInterface
@@ -109,7 +109,7 @@ class PriceRuleAttributeProvider
             foreach ($this->getSupportedClasses() as $class) {
                 $fields = $this->getClassFields($class);
                 $fields = array_filter($fields, function ($field) {
-                    return !empty(PriceRuleAttributeProvider::SUPPORTED_TYPES[$field['data_type']]);
+                    return !empty(self::$supportedTypes[$field['data_type']]);
                 });
                 $this->availableRuleAttributes[$class] = $fields;
             }
