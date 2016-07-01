@@ -880,4 +880,3 @@ services:
         class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountAddressCountProvider'
         tags:
             - { name: layout.data_provider, alias: account_address_count }
-
