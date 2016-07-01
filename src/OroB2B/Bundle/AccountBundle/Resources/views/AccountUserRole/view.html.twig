@@ -43,14 +43,24 @@
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.account.sections.accountuserrole.users'|trans,
+        'title': 'orob2b.account.sections.accountuserrole.entity'|trans,
         'subblocks': [{
             'data': [
-                rolePermissionsGrid,
-                dataGrid.renderGrid(gridName, {role: entity.id}, { cssClass: 'inner-grid' })
+                rolePermissionsGrid
             ]
         }]
     }]) %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title' : 'orob2b.account.accountuser.entity_plural_label'|trans,
+        'subblocks': [{
+            'title' : null,
+            'useSpan': false,
+            'data' : [
+                dataGrid.renderGrid(gridName, {role: entity.id}, { cssClass: 'inner-grid' })
+            ]
+        }]
+    }] ) %}
 
     {% set id = 'account-account-user-role-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
