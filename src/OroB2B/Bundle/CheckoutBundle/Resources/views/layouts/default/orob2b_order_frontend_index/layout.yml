@@ -11,7 +11,7 @@ layout:
             prepend: true
             options:
                 text: 'orob2b.checkout.open_orders.label'
-                visible: { '@neq': [$data.orob2b_checkout_frontend_open_orders_separate_page_config_provider, true] }
+                visible: { '@neq': [$data.orob2b_order_separate_open_orders, true] }
 
         - '@add':
             id: checkouts
@@ -20,4 +20,4 @@ layout:
             blockType: datagrid
             options:
                 grid_name: frontend-checkouts-grid
-                visible: { '@neq': [$data.orob2b_checkout_frontend_open_orders_separate_page_config_provider, true] }
+                visible: { '@neq': [$data.orob2b_order_separate_open_orders, true] }

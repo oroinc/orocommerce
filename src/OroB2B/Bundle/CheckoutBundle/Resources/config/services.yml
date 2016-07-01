@@ -191,4 +191,4 @@ services:
         arguments:
             - '@oro_config.manager'
         tags:
-            - { name: layout.data_provider, alias: orob2b_checkout_frontend_open_orders_separate_page_config_provider }
+            - { name: layout.data_provider, alias: orob2b_order_separate_open_orders }

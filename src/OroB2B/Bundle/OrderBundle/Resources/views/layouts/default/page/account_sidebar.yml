@@ -14,6 +14,6 @@ layout:
             options:
                 route_name: orob2b_checkout_frontend_open_orders
                 text: orob2b.frontend.order.open_orders
-                visible: { '@value': $data.orob2b_checkout_frontend_open_orders_separate_page_config_provider }
+                visible: { '@value': $data.orob2b_order_separate_open_orders }
     conditions:
         '@acl': orob2b_order_frontend_view
