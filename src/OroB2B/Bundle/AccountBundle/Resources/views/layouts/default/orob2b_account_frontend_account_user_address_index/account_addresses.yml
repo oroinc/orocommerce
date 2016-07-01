@@ -5,39 +5,69 @@ layout:
 
         - '@addTree':
             items:
-                account_user_address_view_account_addresses:
+                line_wrapper:
                     blockType: container
                     options:
-                        vars:
-                            addresses: { '@value': $data.accountAddress }
-                account_user_address_view_account_addresses_item:
-                    blockType: container
-                page_wrapper:
-                    blockType: container
-                page_heading_text_and_icon:
+                        attr:
+                            class: 'line-wrapper'
+                account_address_book_addresses_list_heading_text_and_icon:
                     blockType: text
                     options:
                         text: {'@value': 'Company addresses'}
                         attr:
                             class: 'address-list-heading'
-                add_company_action:
+                account_address_book_addresses_list_add_company_action:
                     blockType: link
                     options:
-                        path: { '@value': '/app_dev.php/account/user/address/1/address-create' }
-#                       @todo replace hardcoded text with smth like:    text: orob2b.account.frontend.address.title.create
+                        visible: { '@acl': orob2b_account_frontend_account_address_create }
+                        route_name: orob2b_account_frontend_account_address_create
+                        route_parameters: { entityId: {'@value': $data.entity.account.id }}
                         text: 'orob2b.account.frontend.account_user_address_book.create.label'
                         vars:
                             style: auto
                         attr:
                             'class': 'btn btn_xsm btn-orange'
+                    options:
+                account_address_book_addresses_list:
+                    blockType: container
+                    options:
+                        class_prefix: 'address-list'
+                        vars:
+                            addresses: { '@value': $data.accountAddress }
+                account_address_book_addresses_list_item:
+                    blockType: container
+                account_address_book_addresses_list_item_address:
+                    blockType: container
+                account_address_book_addresses_list_item_label:
+                    blockType: container
+                account_address_book_addresses_list_item_actions:
+                    blockType: container
+                account_address_book_addresses_list_item_action_edit:
+                    blockType: button
+                    options:
+                        attr:
+                            type: button
+                account_address_book_addresses_list_item_action_delete:
+                    blockType: button
+                    options:
+                        attr:
+                            type: button
+                account_address_book_addresses_list_map:
+                    blockType: container
 
 
             tree:
                 account_user_address_view_page:
-                    page_wrapper:
-                        page_heading_text_and_icon: ~
-                        add_company_action: ~
-                    account_user_address_view_account_addresses:
-                        account_user_address_view_account_addresses_item: ~
+                    line_wrapper:
+                        account_address_book_addresses_list_heading_text_and_icon: ~
+                        account_address_book_addresses_list_add_company_action: ~
+                    account_address_book_addresses_list:
+                        account_address_book_addresses_list_item:
+                            account_address_book_addresses_list_item_address: ~
+                            account_address_book_addresses_list_item_label: ~
+                            account_address_book_addresses_list_item_actions:
+                                account_address_book_addresses_list_item_action_edit: ~
+                                account_address_book_addresses_list_item_action_delete: ~
+                    account_address_book_addresses_list_map: ~
     conditions:
         '@acl': orob2b_account_frontend_account_view
