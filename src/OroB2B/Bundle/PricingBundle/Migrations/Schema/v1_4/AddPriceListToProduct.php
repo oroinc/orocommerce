@@ -28,7 +28,7 @@ class AddPriceListToProduct implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BPriceListToProductTable(Schema $schema)
+    protected function createOroB2BriceListToProductTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list_to_product');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -37,8 +37,6 @@ class AddPriceListToProduct implements Migration
         $table->addColumn('is_manual', 'boolean', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['product_id', 'price_list_id'], 'orob2b_price_list_to_product_uidx');
-        $table->addIndex(['price_list_id'], 'IDX_1B3B7F785688DED7', []);
-        $table->addIndex(['product_id'], 'IDX_1B3B7F784584665A', []);
     }
 
     /**
@@ -46,7 +44,7 @@ class AddPriceListToProduct implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BPriceListToProductForeignKeys(Schema $schema)
+    protected function addOroB2BriceListToProductForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list_to_product');
         $table->addForeignKeyConstraint(
