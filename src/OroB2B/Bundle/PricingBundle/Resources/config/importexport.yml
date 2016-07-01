@@ -67,7 +67,6 @@ services:
         arguments:
             - '@oro_importexport.context_registry'
             - '@doctrine'
-            - '@orob2b_pricing.user_currency_manager'
 
     # Export template
     orocrm_contact.importexport.processor.export_template.product_price:

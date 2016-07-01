@@ -16,11 +16,6 @@ class AdditionalProductPricesIterator implements \Iterator
     protected $priceList;
 
     /**
-     * @var array
-     */
-    protected $currencies = [];
-
-    /**
      * @var \Iterator
      */
     protected $productIterator;
@@ -43,12 +38,10 @@ class AdditionalProductPricesIterator implements \Iterator
     /**
      * @param \Iterator $productIterator
      * @param PriceList $priceList
-     * @param array $currencies
      */
-    public function __construct(\Iterator $productIterator, PriceList $priceList, array $currencies)
+    public function __construct(\Iterator $productIterator, PriceList $priceList)
     {
         $this->priceList = $priceList;
-        $this->currencies = $currencies;
         $this->productIterator = $productIterator;
     }
 
@@ -144,7 +137,7 @@ class AdditionalProductPricesIterator implements \Iterator
     {
         $data = [];
         foreach ($product->getUnitPrecisions() as $unitPrecision) {
-            foreach ($this->currencies as $currency) {
+            foreach ($this->priceList->getCurrencies() as $currency) {
                 $data[] = $productPrice = (new ProductPrice())
                     ->setPriceList($this->priceList)
                     ->setProduct($product)

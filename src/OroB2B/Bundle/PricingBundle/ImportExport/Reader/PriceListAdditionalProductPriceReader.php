@@ -12,7 +12,6 @@ use Oro\Bundle\ImportExportBundle\Reader\IteratorBasedReader;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use OroB2B\Bundle\PricingBundle\ImportExport\Reader\Iterator\AdditionalProductPricesIterator;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class PriceListAdditionalProductPriceReader extends IteratorBasedReader
 {
@@ -27,24 +26,16 @@ class PriceListAdditionalProductPriceReader extends IteratorBasedReader
     protected $registry;
 
     /**
-     * @var UserCurrencyManager
-     */
-    protected $currencyManager;
-
-    /**
      * @param ContextRegistry $contextRegistry
      * @param ManagerRegistry $registry
-     * @param UserCurrencyManager $currencyManager
      */
     public function __construct(
         ContextRegistry $contextRegistry,
-        ManagerRegistry $registry,
-        UserCurrencyManager $currencyManager
+        ManagerRegistry $registry
     ) {
         parent::__construct($contextRegistry);
 
         $this->registry = $registry;
-        $this->currencyManager = $currencyManager;
     }
 
     /**
@@ -79,8 +70,7 @@ class PriceListAdditionalProductPriceReader extends IteratorBasedReader
 
             return new AdditionalProductPricesIterator(
                 $repository->getProductsWithoutPrices($priceList),
-                $priceList,
-                $this->currencyManager->getAvailableCurrencies()
+                $priceList
             );
         } else {
             return new \ArrayIterator();
