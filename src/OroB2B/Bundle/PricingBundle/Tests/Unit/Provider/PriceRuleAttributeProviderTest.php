@@ -46,52 +46,119 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetAvailableRuleAttributes()
+    /**
+     * @dataProvider ruleAttributeDataProvider
+     * @param array $fields
+     * @param array $virtualField
+     * @param array $expectedFields
+     * @throws \Exception
+     */
+    public function testGetAvailableRuleAttributes(array $fields, array $virtualField, array $expectedFields)
     {
-        $fields = ['field1', 'field2', 'field3', 'field4'];
-        $fieldTypes =  [
-            ['field1', 'integer'],
-            ['field2', 'money'],
-            ['field3', 'string'],
-            ['field4', 'float'],
-        ];
-        $this->mockManager($fields, $fieldTypes);
+
+        $this->mockManager($fields);
         $className = 'ClassName';
+        $this->virtualFieldProvider->method('getVirtualFields')->willReturn($virtualField);
+
         $this->priceRuleAttributeProvider->addSupportedClass($className);
         $actualFields = $this->priceRuleAttributeProvider->getAvailableRuleAttributes($className);
 
-        $expectFields = [
-            'field1' => ['name' => 'field1', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
-            'field2' => ['name' => 'field2', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
-            'field4' => ['name' => 'field4', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
-
-        ];
-        $this->assertEquals($expectFields, $actualFields);
+        $this->assertEquals($expectedFields, $actualFields);
     }
 
-    public function testGetAvailableConditionAttributes()
+    public function ruleAttributeDataProvider()
     {
-        $fields = ['field1', 'field2', 'field3', 'field4'];
-        $fieldTypes =  [
-            ['field1', 'integer'],
-            ['field2', 'money'],
-            ['field3', 'string'],
-            ['field4', 'float'],
+        return [
+            [
+                'fields' => [
+                    ['field1', 'integer'],
+                    ['field2', 'money'],
+                    ['field3', 'string'],
+                    ['field4', 'float'],
+                ],
+                'virtualField' => ['virtualField'],
+                'expectedFields' => [
+                    'field1' => [
+                        'name' => 'field1',
+                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                        'data_type' => 'integer',
+                    ],
+                    'field2' => [
+                        'name' => 'field2',
+                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                        'data_type' => 'money',
+                    ],
+                    'field4' => [
+                        'name' => 'field4',
+                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                        'data_type' => 'float',
+                    ],
+                ]
+            ]
         ];
-        $this->mockManager($fields, $fieldTypes);
+    }
+
+    /**
+     * @dataProvider conditionalAttributeDataProvider
+     * @param array $fields
+     * @param array $virtualField
+     * @param array $expectedFields
+     * @throws \Exception
+     */
+    public function testGetAvailableConditionAttributes(array $fields, array $virtualField, array $expectedFields)
+    {
+        $this->mockManager($fields);
         $className = 'ClassName';
-        $this->virtualFieldProvider->method('getVirtualFields')->willReturn(['virtualField']);
+        $this->virtualFieldProvider->method('getVirtualFields')->willReturn($virtualField);
 
         $this->priceRuleAttributeProvider->addSupportedClass($className);
         $actualFields = $this->priceRuleAttributeProvider->getAvailableConditionAttributes($className);
-        $expectFields = [
-            'field1' => ['name' => 'field1', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
-            'field2' => ['name' => 'field2', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
-            'field3' => ['name' => 'field3', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
-            'field4' => ['name' => 'field4', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE],
-            'virtualField' => ['name' => 'virtualField', 'type' => PriceRuleAttributeProvider::FIELD_TYPE_VIRTUAL],
+        $this->assertEquals($expectedFields, $actualFields);
+    }
+
+    /**
+     * @return array
+     */
+    public function conditionalAttributeDataProvider()
+    {
+        return [
+            [
+                'fields' => [
+                    ['field1', 'integer'],
+                    ['field2', 'money'],
+                    ['field3', 'string'],
+                    ['field4', 'float'],
+                ],
+                'virtualField' => ['virtualField'],
+                'expectedFields' => [
+                    'field1' => [
+                        'name' => 'field1',
+                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                        'data_type' => 'integer',
+                    ],
+                    'field2' => [
+                        'name' => 'field2',
+                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                        'data_type' => 'money',
+                    ],
+                    'field3' => [
+                        'name' => 'field3',
+                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                        'data_type' => 'string',
+                    ],
+                    'field4' => [
+                        'name' => 'field4',
+                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                        'data_type' => 'float',
+                    ],
+                    'virtualField' => [
+                        'name' => 'virtualField',
+                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_VIRTUAL,
+                        'data_type' => null,
+                    ],
+                ]
+            ]
         ];
-        $this->assertEquals($expectFields, $actualFields);
     }
 
     public function testAddAvailableClass()
@@ -103,12 +170,18 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->priceRuleAttributeProvider->isClassSupported('invalidClassName'));
     }
 
-    protected function mockManager(array $fields, array $fieldTypes)
+    /**
+     * @param array $fields
+     */
+    protected function mockManager(array $fields)
     {
+        $fieldsNames = array_map(function ($field) {
+            return $field[0];
+        }, $fields);
         $metadata = $this->getMock(ClassMetadata::class);
         $metadata->expects($this->once())->method('getFieldNames')
-            ->willReturn($fields);
-        $metadata->method('getTypeOfField')->willReturnMap($fieldTypes);
+            ->willReturn($fieldsNames);
+        $metadata->method('getTypeOfField')->willReturnMap($fields);
 
         $manager = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
         $manager->method('getClassMetadata')->willReturn($metadata);

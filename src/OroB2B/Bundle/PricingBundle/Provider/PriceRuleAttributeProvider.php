@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Provider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Oro\Bundle\EntityBundle\Provider\ChainVirtualFieldProvider;
 use Oro\Bundle\EntityBundle\Provider\VirtualFieldProviderInterface;
 
@@ -107,7 +108,7 @@ class PriceRuleAttributeProvider
 
             foreach ($this->getSupportedClasses() as $class) {
                 $fields = $this->getClassFields($class);
-                array_filter($fields, function ($field) {
+                $fields = array_filter($fields, function ($field) {
                     return !empty(PriceRuleAttributeProvider::SUPPORTED_TYPES[$field['data_type']]);
                 });
                 $this->availableRuleAttributes[$class] = $fields;
@@ -128,6 +129,7 @@ class PriceRuleAttributeProvider
     protected function getClassFields($class)
     {
         $fields = [];
+        /** @var ClassMetadata $metadata */
         $metadata = $this->registry
             ->getManagerForClass($class)
             ->getClassMetadata($class);

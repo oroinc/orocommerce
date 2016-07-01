@@ -30,7 +30,8 @@ class PriceRuleAttributeProviderTest extends WebTestCase
             [
                 'id' => [
                     'name' => 'id',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                    'data_type' => 'integer'
                 ]
             ]
         );
@@ -44,35 +45,43 @@ class PriceRuleAttributeProviderTest extends WebTestCase
             [
                 'id' => [
                     'name' => 'id',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                    'data_type' => 'integer',
                 ],
                 'sku' => [
                     'name' => 'sku',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                    'data_type' => 'string',
                 ],
                 'hasVariants' => [
                     'name' => 'hasVariants',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                    'data_type' => 'boolean',
                 ],
                 'status' => [
                     'name' => 'status',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                    'data_type' => 'string',
                 ],
                 'variantFields' => [
                     'name' => 'variantFields',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                    'data_type' => 'array',
                 ],
                 'createdAt' => [
                     'name' => 'createdAt',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                    'data_type' => 'datetime',
                 ],
                 'updatedAt' => [
                     'name' => 'updatedAt',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
+                    'data_type' => 'datetime',
                 ],
                 'owner_id' => [
                     'name' => 'owner_id',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_VIRTUAL
+                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_VIRTUAL,
+                    'data_type' => 'dictionary',
                 ],
             ]
         );
