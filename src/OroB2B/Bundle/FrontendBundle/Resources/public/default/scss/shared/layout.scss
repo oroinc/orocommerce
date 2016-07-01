@@ -114,12 +114,12 @@
   width: 100%;
 
   &__inner {
-    padding: 30px 0 20px;
+    padding-bottom: 20px;
 
     @include clearfix();
 
     @media (max-width: $screen-md) {
-      padding: 20px 0 10px;
+      padding-bottom: 10px;
     }
   }
 
@@ -135,10 +135,10 @@
     }
 
     .content__inner {
-      padding: 30px 0 0 20px;
+      padding-bottom: 20px;
 
       @media (max-width: $screen-md) {
-        padding: 20px 0 10px;
+        padding-bottom: 10px;
       }
     }
 

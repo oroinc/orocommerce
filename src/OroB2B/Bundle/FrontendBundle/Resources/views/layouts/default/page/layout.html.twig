@@ -124,7 +124,7 @@
         <% if (type === "error" || type === "warning") {
             iconClass = 'cf-attention';
         }%>
-        <div class="container-fluid alert mt1-md notification notification_<%= type %> notification_lg">
+        <div class="container-fluid alert notification notification_<%= type %> notification_lg">
             <span class="badge badge_sm_xs badge_<%= type %>"><i class="<%= iconClass %>"></i></span>
             <span class="fs16 ml1-sm"><%= message %></span>
             <i class="cf-clear" data-dismiss="alert"></i>
@@ -148,4 +148,23 @@
                 {% endif %}
             });
     </script>
+{% endblock %}
+
+{% block _sticky_panel_widget %}
+        <div{{ block('block_attributes') }}
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                'view': 'orob2bfrontend/default/js/app/views/sticky-panel-view'
+            }|json_encode }}"
+        >
+            {{ block_widget(block) }}
+        </div>
+{% endblock %}
+
+{% block _sticky_panel_content_widget %}
+    <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _sticky_element_notification_widget %}
+    <div {{ block('block_attributes') }}></div>
 {% endblock %}
