@@ -107,7 +107,7 @@ class PriceListToProduct
     }
 
     /**
-     * @param boolean $manual
+     * @param bool $manual
      * @return $this
      */
     public function setManual($manual)

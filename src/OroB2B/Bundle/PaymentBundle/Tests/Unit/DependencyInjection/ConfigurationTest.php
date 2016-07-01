@@ -132,10 +132,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => true,
                             'scope' => 'app'
                         ],
-                        'paypal_payments_pro_validate_cvv' => [
-                            'value' => true,
-                            'scope' => 'app'
-                        ],
                         'paypal_payments_pro_zero_amount_authorization' => [
                             'value' => false,
                             'scope' => 'app'
@@ -144,7 +140,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => false,
                             'scope' => 'app'
                         ],
-
                         'payflow_gateway_enabled' => [
                             'value' => false,
                             'scope' => 'app'
@@ -221,10 +216,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'scope' => 'app'
                         ],
                         'payflow_gateway_require_cvv' => [
-                            'value' => true,
-                            'scope' => 'app'
-                        ],
-                        'payflow_gateway_validate_cvv' => [
                             'value' => true,
                             'scope' => 'app'
                         ],

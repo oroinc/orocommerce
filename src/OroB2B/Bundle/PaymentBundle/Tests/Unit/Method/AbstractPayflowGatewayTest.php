@@ -24,6 +24,9 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
 {
     use ConfigTestTrait, EntityTrait;
 
+    const PROXY_HOST = '112.33.44.55';
+    const PROXY_PORT = 7777;
+
     /** @var Gateway|\PHPUnit_Framework_MockObject_MockObject */
     protected $gateway;
 
@@ -625,6 +628,142 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayNotHasKey('USER', $transaction->getRequest());
         $this->assertArrayNotHasKey('PWD', $transaction->getRequest());
         $this->assertArrayNotHasKey('PARTNER', $transaction->getRequest());
+    }
+
+    /**
+     * @param bool $useProxy
+     */
+    protected function configureProxyOptions($useProxy)
+    {
+        $this->configureConfig(
+            [
+                $this->getConfigPrefix() . 'use_proxy'  => $useProxy,
+                $this->getConfigPrefix() . 'proxy_host' => self::PROXY_HOST,
+                $this->getConfigPrefix() . 'proxy_port' => self::PROXY_PORT,
+            ]
+        );
+    }
+
+    public function testProxyAddressIsNotSetWhenUseProxyConfigurationIsDisabled()
+    {
+        $this->configureProxyOptions(false);
+
+        $this->gateway
+            ->expects($this->never())
+            ->method('setProxySettings');
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('request')
+            ->willReturn(new Response());
+
+        $transaction = new PaymentTransaction();
+        $transaction->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $this->method->execute($transaction->getAction(), $transaction);
+    }
+
+    public function testProxyAddressIsSetWhenUseProxyConfigurationIsEnabled()
+    {
+        $this->configureProxyOptions(true);
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('setProxySettings')
+            ->with(self::PROXY_HOST, self::PROXY_PORT);
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('request')
+            ->willReturn(new Response());
+
+        $transaction = new PaymentTransaction();
+        $transaction->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $this->method->execute($transaction->getAction(), $transaction);
+    }
+
+    public function testVerbosityOptionWithDebug()
+    {
+        $this->configureConfig(
+            [
+                $this->getConfigPrefix() . 'debug_mode' => true,
+            ]
+        );
+
+        $constraint = $this->arrayHasKey(Option\Verbosity::VERBOSITY);
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('request')
+            ->with($this->anything(), $constraint)
+            ->willReturn(new Response());
+
+        $transaction = new PaymentTransaction();
+        $transaction->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $this->method->execute($transaction->getAction(), $transaction);
+    }
+
+    public function testVerbosityOptionWithoutDebug()
+    {
+        $this->configureConfig(
+            [
+                $this->getConfigPrefix() . 'debug_mode' => false,
+            ]
+        );
+
+        $constraint = $this->logicalNot($this->arrayHasKey(Option\Verbosity::VERBOSITY));
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('request')
+            ->with($this->anything(), $constraint)
+            ->willReturn(new Response());
+
+        $transaction = new PaymentTransaction();
+        $transaction->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $this->method->execute($transaction->getAction(), $transaction);
+    }
+
+    /**
+     * @return array
+     */
+    public function sslVerificationEnabledDataProvider()
+    {
+        return [
+            [true],
+            [false],
+        ];
+    }
+
+    /**
+     * @dataProvider sslVerificationEnabledDataProvider
+     *
+     * @param bool $sslVerificationEnabled
+     */
+    public function testSslVerificationOptionValueIsPassedToPayFlow($sslVerificationEnabled)
+    {
+        $this->configureConfig(
+            [
+                $this->getConfigPrefix() . 'enable_ssl_verification' => $sslVerificationEnabled,
+            ]
+        );
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('setSslVerificationEnabled')
+            ->with($sslVerificationEnabled);
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('request')
+            ->willReturn(new Response());
+
+        $transaction = new PaymentTransaction();
+        $transaction->setAction(PaymentMethodInterface::AUTHORIZE);
+        $this->method->execute($transaction->getAction(), $transaction);
     }
 
     /**
