@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\PricingBundle\Provider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+
 use Oro\Bundle\EntityBundle\Provider\ChainVirtualFieldProvider;
 use Oro\Bundle\EntityBundle\Provider\VirtualFieldProviderInterface;
 
@@ -13,7 +13,15 @@ class PriceRuleAttributeProvider
     const FIELD_TYPE_NATIVE = 'native';
     const FIELD_TYPE_VIRTUAL = 'virtual';
 
-    static protected $supportedTypes = ['integer' => true, 'float' => true, 'money' => true, 'decimal' => true];
+    /**
+     * @var array
+     */
+    static protected $supportedTypes = [
+        'integer' => true,
+        'float' => true,
+        'money' => true,
+        'decimal' => true
+    ];
 
     /**
      * @var VirtualFieldProviderInterface
@@ -80,6 +88,10 @@ class PriceRuleAttributeProvider
         return $this->availableConditionAttributes[$className];
     }
 
+    /**
+     * @param $className
+     * @return bool
+     */
     public function isClassSupported($className)
     {
         return array_key_exists($className, $this->supportedClasses);
@@ -126,6 +138,10 @@ class PriceRuleAttributeProvider
         }
     }
 
+    /**
+     * @param $class
+     * @return array
+     */
     protected function getClassFields($class)
     {
         $fields = [];
