@@ -48,6 +48,10 @@ class WarehouseStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHel
             return null;
         }
 
+        if (!$existingWarehouse) {
+            return null;
+        }
+
         $newEntities['warehouse'] = $existingWarehouse;
 
         if ($this->successor) {
