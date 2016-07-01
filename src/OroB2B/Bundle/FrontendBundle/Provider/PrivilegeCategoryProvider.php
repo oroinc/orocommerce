@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\FrontendBundle\Provider;
 
 use Oro\Bundle\UserBundle\Model\PrivilegeCategory;
-use Oro\Bundle\UserBundle\Model\PrivilegeCategoryProviderInterface;
+use Oro\Bundle\UserBundle\Provider\PrivilegeCategoryProviderInterface;
 
 class PrivilegeCategoryProvider implements PrivilegeCategoryProviderInterface
 {
