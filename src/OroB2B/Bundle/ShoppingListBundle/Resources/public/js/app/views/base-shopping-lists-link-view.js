@@ -21,7 +21,7 @@ define(function(require) {
             options: {
                 content: '#in-shopping-lists-template',
                 dialogOptions: {
-                    'title': 'Basic Women’s Full Length Lab Coat',
+                    'title': '',
                     'modal': true,
                     'resizable': false,
                     'width': 580,
@@ -65,7 +65,13 @@ define(function(require) {
 
             this.initializeElements(options);
 
-            this.widgetOptions = $.extend(true, {}, this.widgetDefaultOptions, this.widgetOptions);
+            this.widgetOptions = $.extend(true, {}, this.widgetDefaultOptions, this.widgetOptions, {
+                options: {
+                    dialogOptions: {
+                        'title': this.model.get('name')
+                    }
+                }
+            });
 
             this.model.on('change:shopping_lists', this.updateShoppingLists, this);
 
