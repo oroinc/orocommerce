@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Connection;
-
 use Doctrine\DBAL\DBALException;
+
 use Psr\Log\LoggerInterface;
 
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
