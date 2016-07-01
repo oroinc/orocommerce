@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Compiler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\Query\Expr\Select;
 use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
@@ -14,6 +15,16 @@ class PriceListRuleCompiler
      * @var Registry
      */
     protected $registry;
+
+    protected $fieldsOrder = [
+        'product',
+        'priceList',
+        'productUnit',
+        'currency',
+        'quantity',
+        'productSku',
+        'value',
+    ];
 
     /**
      * @param Registry $registry
@@ -39,12 +50,7 @@ class PriceListRuleCompiler
             ->getRepository('OroB2BProductBundle:Product')
             ->createQueryBuilder('product');
 
-        $qb->select((string)$qb->expr()->literal($rule->getPriceList()->getId()))
-            ->addSelect((string)$qb->expr()->literal($rule->getProductUnit()->getCode()))
-            ->addSelect((string)$qb->expr()->literal($rule->getCurrency()))
-            ->addSelect((string)$qb->expr()->literal($rule->getQuantity()));
-
-        $qb->addSelect($calculationRule);
+        $this->modifySelectPart($qb, $rule, $calculationRule);
 
         if ($product) {
             $qb->where('product = :product')
@@ -56,5 +62,32 @@ class PriceListRuleCompiler
             ->setParameter('status', Product::STATUS_ENABLED);
 
         return $qb;
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param PriceRule $rule
+     * @param mixed|string|Select $calculationRule
+     */
+    protected function modifySelectPart(QueryBuilder $qb, PriceRule $rule, $calculationRule)
+    {
+        $fieldsMap = [
+            'product' => 'product.id',
+            'productSku' => 'product.productSku',
+            'priceList' => (string)$qb->expr()->literal($rule->getPriceList()->getId()),
+            'productUnit' => (string)$qb->expr()->literal($rule->getProductUnit()->getCode()),
+            'currency' => (string)$qb->expr()->literal($rule->getCurrency()),
+            'quantity' => (string)$qb->expr()->literal($rule->getQuantity()),
+            'value' => $calculationRule,
+        ];
+
+        foreach ($this->getFieldsOrder() as $fieldName) {
+            $qb->addSelect($fieldsMap[$fieldName]);
+        }
+    }
+
+    public function getFieldsOrder()
+    {
+        return $this->fieldsOrder;
     }
 }
