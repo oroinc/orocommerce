@@ -10,8 +10,15 @@ define(function(require) {
 
     BaseShoppingListsLinkView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
-            shoppingListsButton: '[data-name="shopping-lists-button"]',
-            shoppingListsLength: '[data-name="shopping-lists-length"]'
+            shoppingListsBillet: '[data-name="shopping-lists-billet"]',
+            shoppingListsLink: '[data-name="shopping-lists-link"]',
+            currentShoppingListBilletLabel: '[data-name="current-shopping-list-billet-label"]'
+        },
+
+        options: {
+            templates: {
+                shoppingListsBillet: ''
+            }
         },
 
         widgetOptions: null,
@@ -34,27 +41,35 @@ define(function(require) {
             shopping_lists: [
                 {
                     shopping_list_id: 0,
-                    shopping_list_lable: '',
+                    shopping_list_lable: 'Shopping List 1',
                     line_items: [
                         {
                             unit: 'item',
                             quantity: 5
+                        },
+                        {
+                            unit: 'set',
+                            quantity: 1
                         }
                     ]
                 },
                 {
                     shopping_list_id: 1,
-                    shopping_list_lable: '',
+                    shopping_list_lable: 'Shopping List 2',
                     line_items: [
                         {
                             unit: 'item',
                             quantity: 10
+                        },
+                        {
+                            unit: 'set',
+                            quantity: 1
                         }
                     ]
                 }
             ]
         },
-
+        
         initialize: function(options) {
             BaseShoppingListsLinkView.__super__.initialize.apply(this, arguments);
 
@@ -65,9 +80,11 @@ define(function(require) {
 
             this.initializeElements(options);
 
+            this.options.templates.shoppingListsBillet = _.template(options['billetTemplate']);
+
             this.widgetOptions = $.extend(true, {}, this.widgetDefaultOptions, this.widgetOptions);
 
-            this.model.on('change:shopping_lists', this.updateShoppingLists, this);
+            this.model.on('change:shopping_lists', this.updateShoppingListsBillet, this);
 
             this.render();
         },
@@ -91,17 +108,47 @@ define(function(require) {
             }, this);
         },
 
+        updateCurrentShoppingList: function() {
+            var currentShoppingListLineItems = this.model.get('current_shopping_list_line_items');
+
+            if (!currentShoppingListLineItems && !_.isObject(currentShoppingListLineItems)) {
+                return null;
+            }
+            if (_.isEmpty(currentShoppingListLineItems)) {
+                return null;
+            }
+
+            return currentShoppingListLineItems;
+        },
+
         updateShoppingLists: function() {
-            this.renderShoppingListsLength(this.model.get('shopping_lists'));
+            var shoppingLists = this.model.get('shopping_lists');
+
+            if (!shoppingLists && !_.isArray(shoppingLists)) {
+                return null;
+            }
+            if (_.isEmpty(shoppingLists)) {
+                return null;
+            }
+
+            return shoppingLists;
+        },
+
+        updateShoppingListsBillet: function() {
+            var billet = {};
+
+            billet.currentShoppingList = this.updateCurrentShoppingList();
+            billet.shoppingLists = this.updateShoppingLists();
+
+            this.renderShoppingListsBillet(billet);
         },
 
         render: function() {
-            this.updateShoppingLists();
-            this.renderShoppingListsButton();
+            this.updateShoppingListsBillet();
         },
 
         renderShoppingListsButton: function() {
-            this.delegateElementEvent('shoppingListsButton', 'click', _.bind(this.renderShoppingListsModal, this));
+            this.delegateElementEvent('shoppingListsLink', 'click', _.bind(this.renderShoppingListsModal, this));
         },
 
         renderShoppingListsModal: function() {
@@ -111,8 +158,10 @@ define(function(require) {
             this.widgetComponent.openWidget();
         },
 
-        renderShoppingListsLength: function(shoppingLists) {
-            this.getElement('shoppingListsLength').html(shoppingLists.length);
+        renderShoppingListsBillet: function(billet) {
+            this.getElement('shoppingListsBillet').empty();
+            this.getElement('shoppingListsBillet').html(this.options.templates.shoppingListsBillet({billet: billet}));
+            this.renderShoppingListsButton();
         }
     }));
 
