@@ -17,6 +17,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  *          )
  *      }
  * )
+ * @ORM\EntityListeners({ "OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListProductEntityListener" })
  */
 class PriceListToProduct
 {
