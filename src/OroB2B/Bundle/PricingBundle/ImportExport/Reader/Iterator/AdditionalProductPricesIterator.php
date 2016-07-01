@@ -2,23 +2,14 @@
 
 namespace OroB2B\Bundle\PricingBundle\ImportExport\Reader\Iterator;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class AdditionalProductPricesIterator implements \Iterator
 {
-    /**
-     * @var EntityManager
-     */
-    protected $manager;
-
     /**
      * @var PriceList
      */
@@ -40,9 +31,9 @@ class AdditionalProductPricesIterator implements \Iterator
     protected $additionalItemsIterator;
 
     /**
-     * @var mixed
+     * @var ProductPrice|null
      */
-    protected $current = null;
+    protected $current;
 
     /**
      * @var mixed
@@ -50,16 +41,15 @@ class AdditionalProductPricesIterator implements \Iterator
     protected $offset = -1;
 
     /**
-     * @param QueryBuilder $qb
+     * @param \Iterator $productIterator
      * @param PriceList $priceList
      * @param array $currencies
      */
-    public function __construct(QueryBuilder $qb, PriceList $priceList, array $currencies)
+    public function __construct(\Iterator $productIterator, PriceList $priceList, array $currencies)
     {
         $this->priceList = $priceList;
         $this->currencies = $currencies;
-        $this->productIterator = new BufferedQueryResultIterator($qb);
-        $this->manager = $qb->getEntityManager();
+        $this->productIterator = $productIterator;
     }
 
     /**

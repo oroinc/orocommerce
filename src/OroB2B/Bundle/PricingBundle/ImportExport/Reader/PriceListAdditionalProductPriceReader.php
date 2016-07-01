@@ -4,13 +4,13 @@ namespace OroB2B\Bundle\PricingBundle\ImportExport\Reader;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Context\ContextRegistry;
 use Oro\Bundle\ImportExportBundle\Reader\IteratorBasedReader;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use OroB2B\Bundle\PricingBundle\ImportExport\Reader\Iterator\AdditionalProductPricesIterator;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
@@ -71,34 +71,14 @@ class PriceListAdditionalProductPriceReader extends IteratorBasedReader
             /** @var EntityManager $em */
             $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListToProduct');
 
-            // TODO: move to repository method, cover with functional test
-            $qb = $em->createQueryBuilder();
-            $qb->select('p')
-                ->from('OroB2BProductBundle:Product', 'p')
-                ->join(
-                    'OroB2BPricingBundle:PriceListToProduct',
-                    'plp',
-                    Join::WITH,
-                    $qb->expr()->eq('plp.product', 'p')
-                )
-                ->leftJoin(
-                    'OroB2BPricingBundle:ProductPrice',
-                    'pp',
-                    Join::WITH,
-                    $qb->expr()->andX(
-                        $qb->expr()->eq('pp.product', 'plp.product'),
-                        $qb->expr()->eq('pp.priceList', 'plp.priceList')
-                    )
-                )
-                ->where($qb->expr()->isNull('pp.id'))
-                ->andWhere($qb->expr()->eq('plp.priceList', ':priceList'))
-                ->setParameter('priceList', $this->priceListId);
-
+            /** @var PriceListToProductRepository $repository */
+            $repository = $em->getRepository('OroB2BPricingBundle:PriceListToProduct');
+            
             /** @var PriceList $priceList */
             $priceList = $em->getReference('OroB2BPricingBundle:PriceList', $this->priceListId);
 
             return new AdditionalProductPricesIterator(
-                $qb,
+                $repository->getProductsWithoutPrices($priceList),
                 $priceList,
                 $this->currencyManager->getAvailableCurrencies()
             );
