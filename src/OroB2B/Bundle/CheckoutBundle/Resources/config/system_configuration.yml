@@ -1,14 +1,21 @@
 oro_system_configuration:
     groups:
+        orders_history:
+            title: orob2b.order.system_configuration.groups.orders_history.title
+            icon: icon-book
         orders_history_open_orders:
             title: orob2b.checkout.system_configuration.groups.open_orders.title
+
     fields:
         oro_b2b_checkout.frontend_open_orders_separate_page:
             data_type: boolean
-            type: oro_config_checkbox
+            type: choice
             priority: 10
             options:
                 label: orob2b.checkout.system_configuration.fields.frontend_open_orders_separate_page.title
+                choices:
+                    0: orob2b.checkout.system_configuration.fields.frontend_open_orders_separate_page.values.no.label
+                    1: orob2b.checkout.system_configuration.fields.frontend_open_orders_separate_page.values.yes.label
 
     tree:
         system_configuration:

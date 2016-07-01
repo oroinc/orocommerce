@@ -2,8 +2,6 @@ oro_system_configuration:
     groups:
         orders:
             title: orob2b.order.system_configuration.groups.orders.title
-        orders_history:
-            title: orob2b.order.system_configuration.groups.orders_history.title
     fields:
         oro_b2b_order.backend_product_visibility:
             data_type: array

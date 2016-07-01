@@ -19,17 +19,17 @@ class StartedFromColumnBuilder implements ColumnBuilderInterface
     /**
      * @var BaseCheckoutRepository
      */
-    private $baseCheckoutRepository;
+    protected $baseCheckoutRepository;
 
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    protected $translator;
 
     /**
      * @var SecurityFacade
      */
-    private $securityFacade;
+    protected $securityFacade;
 
     /**
      * @param BaseCheckoutRepository $baseCheckoutRepository
@@ -103,7 +103,7 @@ class StartedFromColumnBuilder implements ColumnBuilderInterface
      * @param $sourceEntity
      * @return bool
      */
-    private function hasCurrentUserRightToView($sourceEntity)
+    protected function hasCurrentUserRightToView($sourceEntity)
     {
         $isGranted = $this->securityFacade->isGranted('ACCOUNT_VIEW', $sourceEntity);
 

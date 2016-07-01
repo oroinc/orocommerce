@@ -15,7 +15,7 @@ class OpenOrdersSeparatePageConfigProvider extends AbstractServerRenderDataProvi
     /**
      * @var ConfigManager
      */
-    private $configManager;
+    protected $configManager;
 
     /**
      * OpenOrdersSeparatePageConfigProvider constructor.

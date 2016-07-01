@@ -12,7 +12,7 @@ class ItemsCountColumnBuilder implements ColumnBuilderInterface
     /**
      * @var BaseCheckoutRepository
      */
-    private $baseCheckoutRepository;
+    protected $baseCheckoutRepository;
 
     /**
      * @param BaseCheckoutRepository $baseCheckoutRepository
