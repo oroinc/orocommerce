@@ -1,10 +1,14 @@
 datagrid:
     account-user-role-permission-grid:
         extends: role-permission-grid
+        source:
+            type: account-role-permission-provider
         acl_resource: orob2b_account_account_user_role_update
 
     account-user-role-permission-readonly-grid:
         extends: role-permission-grid
+        source:
+            type: account-role-permission-provider
         columns:
             permissions:
                 frontend_type: action-permissions-readonly
@@ -12,10 +16,14 @@ datagrid:
 
     frontend-account-user-role-permission-grid:
         extends: role-permission-grid
+        source:
+            type: account-role-frontend-permission-provider
         acl_resource: orob2b_account_frontend_account_user_role_update
 
     frontend-account-user-role-permission-readonly-grid:
         extends: role-permission-grid
+        source:
+            type: account-role-frontend-permission-provider
         acl_resource: orob2b_account_frontend_account_user_role_update
         columns:
             permissions:

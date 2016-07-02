@@ -855,3 +855,25 @@ services:
             - '@translator'
         tags:
             - { name: layout.data_provider, alias: orob2b_account_fronted_account_user_role_options }
+
+    orob2b_account.datagrid.datasource.account_role_frontend_permission_datasource:
+        class: %oro_user.datagrid.datasource.role_permission_datasource.class%
+        arguments:
+            - '@translator'
+            - '@oro_security.acl.permission_manager'
+            - '@orob2b_account.form.handler.update_account_user_role_frontend='
+            - '@oro_user.provider.role_privilege_category_provider'
+            - '@oro_entity_config.config_manager'
+        tags:
+            - { name: oro_datagrid.datasource, type: account-role-frontend-permission-provider }
+
+    orob2b_account.datagrid.datasource.account_role_permission_datasource:
+        class: %oro_user.datagrid.datasource.role_permission_datasource.class%
+        arguments:
+            - '@translator'
+            - '@oro_security.acl.permission_manager'
+            - '@orob2b_account.form.handler.update_account_user_role='
+            - '@oro_user.provider.role_privilege_category_provider'
+            - '@oro_entity_config.config_manager'
+        tags:
+            - { name: oro_datagrid.datasource, type: account-role-permission-provider }
