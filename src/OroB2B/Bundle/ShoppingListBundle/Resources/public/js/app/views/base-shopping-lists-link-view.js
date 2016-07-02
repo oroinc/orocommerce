@@ -11,8 +11,7 @@ define(function(require) {
     BaseShoppingListsLinkView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
             shoppingListsBillet: '[data-name="shopping-lists-billet"]',
-            shoppingListsLink: '[data-name="shopping-lists-link"]',
-            currentShoppingListBilletLabel: '[data-name="current-shopping-list-billet-label"]'
+            shoppingListsLink: '[data-name="shopping-lists-link"]'
         },
 
         options: {
@@ -60,15 +59,13 @@ define(function(require) {
                         {
                             unit: 'item',
                             quantity: 10
-                        },
-                        {
-                            unit: 'set',
-                            quantity: 1
                         }
                     ]
                 }
             ]
         },
+
+        labels: [],
         
         initialize: function(options) {
             BaseShoppingListsLinkView.__super__.initialize.apply(this, arguments);
@@ -77,12 +74,11 @@ define(function(require) {
             if (!this.model) {
                 return;
             }
-
             this.initializeElements(options);
 
-            this.options.templates.shoppingListsBillet = _.template(options['billetTemplate']);
-
             this.widgetOptions = $.extend(true, {}, this.widgetDefaultOptions, this.widgetOptions);
+
+            this.options.templates.shoppingListsBillet = _.template(options['billetTemplate']);
 
             this.model.on('change:shopping_lists', this.updateShoppingListsBillet, this);
 
@@ -93,6 +89,11 @@ define(function(require) {
             delete this.modelAttr;
             this.disposeElements();
             BaseShoppingListsLinkView.__super__.dispose.apply(this, arguments);
+        },
+
+        render: function() {
+            this.updateShoppingListsBillet();
+            this.initShoppingListsPopupButton();
         },
 
         initModel: function(options) {
@@ -108,50 +109,47 @@ define(function(require) {
             }, this);
         },
 
-        updateCurrentShoppingList: function() {
-            var currentShoppingListLineItems = this.model.get('current_shopping_list_line_items');
+        setLabels: function(lineItems) {
+            this.labels = [];
 
-            if (!currentShoppingListLineItems && !_.isObject(currentShoppingListLineItems)) {
-                return null;
-            }
-            if (_.isEmpty(currentShoppingListLineItems)) {
-                return null;
-            }
+            _.each(lineItems, function(count, unit) {
+                var label = {};
+                var lineItemsLabel = '';
+                var currentShoppingListLabel = this.model.get('shopping_lists')[0].shopping_list_lable; // todo: be sure that the current shopping list is always the first shopping list
 
-            return currentShoppingListLineItems;
-        },
+                if (_.has(lineItems, unit)) {
+                    lineItemsLabel = _.__(
+                        'orob2b.product.product_unit.' + unit + '.value.short',
+                        {'count': count},
+                        count);
 
-        updateShoppingLists: function() {
-            var shoppingLists = this.model.get('shopping_lists');
+                    label.name =  _.__('orob2b.shoppinglist.billet.items_in_shopping_list')
+                        .replace('{{ lineItems }}', lineItemsLabel);
 
-            if (!shoppingLists && !_.isArray(shoppingLists)) {
-                return null;
-            }
-            if (_.isEmpty(shoppingLists)) {
-                return null;
-            }
+                    label.name = label.name.replace('{{ shoppingList }}', currentShoppingListLabel);
 
-            return shoppingLists;
+                    this.labels.push(label);
+                }
+            }, this);
         },
 
         updateShoppingListsBillet: function() {
             var billet = {};
 
-            billet.currentShoppingList = this.updateCurrentShoppingList();
-            billet.shoppingLists = this.updateShoppingLists();
+            this.setLabels(this.model.get('current_shopping_list_line_items'));
+
+            billet.currentLineItemsLabels = this.labels;
+            billet.currentShoppingList = this.model.get('current_shopping_list_line_items');
+            billet.shoppingLists = this.model.get('shopping_lists');
 
             this.renderShoppingListsBillet(billet);
         },
 
-        render: function() {
-            this.updateShoppingListsBillet();
+        initShoppingListsPopupButton: function() {
+            this.delegateElementEvent('shoppingListsLink', 'click', _.bind(this.renderShoppingListsPopup, this));
         },
 
-        renderShoppingListsButton: function() {
-            this.delegateElementEvent('shoppingListsLink', 'click', _.bind(this.renderShoppingListsModal, this));
-        },
-
-        renderShoppingListsModal: function() {
+        renderShoppingListsPopup: function() {
             if (!this.widgetComponent) {
                 this.widgetComponent = new WidgetComponent(this.widgetOptions);
             }
@@ -159,9 +157,7 @@ define(function(require) {
         },
 
         renderShoppingListsBillet: function(billet) {
-            this.getElement('shoppingListsBillet').empty();
             this.getElement('shoppingListsBillet').html(this.options.templates.shoppingListsBillet({billet: billet}));
-            this.renderShoppingListsButton();
         }
     }));
 

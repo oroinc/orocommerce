@@ -36,6 +36,14 @@
         text-decoration: underline;
     }
 
+    &__label {
+      margin-right: 5px;
+    }
+
+    &__edit-icon {
+      vertical-align: baseline;
+    }
+
     &__link {
         margin-left: 25px;
 

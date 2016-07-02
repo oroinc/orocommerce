@@ -32,13 +32,13 @@
                 <% if (billet.currentShoppingList === null) { %>
                     <div class="shopping-lists-billet__text">
                         <i class="shopping-lists-billet__icon"></i>
-                        In Shopping Lists (<span data-name="shopping-lists-count" class="shopping-lists-billet__count">2</span>)
+                        In Shopping Lists (<span class="shopping-lists-billet__count"><%= billet.shoppingLists.length %></span>)
                     </div>
                 <% } else { %>
-                    <% _.each(billet.currentShoppingList, function(label, key) { %>
+                    <% _.each(billet.currentLineItemsLabels, function(label) { %>
                         <div class="shopping-lists-billet__text">
-                            <span data-name="current-shopping-list-billet-label"><%= label %> <%= key %></span>
-                            <i class="cf-pencil"></i>
+                            <span class="shopping-lists-billet__label"><%= label.name %></span>
+                            <i class="cf-pencil shopping-lists-billet__edit-icon"></i>
                         </div>
                     <% }) %>
                 <% } %>
