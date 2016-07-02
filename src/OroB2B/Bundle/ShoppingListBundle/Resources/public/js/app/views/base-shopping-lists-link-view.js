@@ -136,6 +136,10 @@ define(function(require) {
         updateShoppingListsBillet: function() {
             var billet = {};
 
+            if (!this.model) {
+                return;
+            }
+
             this.setLabels(this.model.get('current_shopping_list_line_items'));
 
             billet.currentLineItemsLabels = this.labels;
