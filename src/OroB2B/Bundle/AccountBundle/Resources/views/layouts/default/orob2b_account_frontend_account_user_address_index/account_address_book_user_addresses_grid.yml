@@ -1,0 +1,42 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'account_address_book_user_addresses_grid.html.twig'
+        - '@setOption':
+              id: datagrid_toolbar_button_container
+              optionName: visible
+              optionValue: true
+
+        - '@addTree':
+            items:
+                account_address_book_user_addresses_grid_head:
+                    blockType: container
+                account_address_book_user_addresses_grid_title:
+                    blockType: text
+                    options:
+                        text: 'orob2b.account.frontend.account_user_address_book.account_user_addresses'
+                account_address_book_user_addresses_grid:
+                    blockType: datagrid
+                    options:
+                        grid_name: frontend-account-account-user-address-grid
+                        grid_parameters:
+                            frontend_owner_id: {'@value': $data.entity.account.id}
+            tree:
+                account_address_book_user_addresses:
+                    account_address_book_user_addresses_grid_head:
+                        account_address_book_user_addresses_grid_title: ~
+                    account_address_book_user_addresses_grid: ~
+
+        - '@add':
+            id: account_address_book_user_addresses_grid_create_button
+            parentId: datagrid_toolbar_button_container
+            blockType: link
+            options:
+                visible: { '@acl': orob2b_account_frontend_account_user_address_create }
+                route_name: orob2b_account_frontend_account_user_address_create
+                route_parameters: { entityId: {'@value': $data.entity.account.id }}
+                text: 'orob2b.account.address.add'
+    conditions:
+        '@and':
+            - '@acl': orob2b_account_frontend_account_user_address_view
+            - '@gte': [$context.account_user_address_count, 8]

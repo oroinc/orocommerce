@@ -1,0 +1,32 @@
+layout:
+    actions:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.account.frontend.account_user.address.label'
+
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue: 'orob2b.account.frontend.account_user.address.label'
+
+        - '@add':
+            id: account_sidebar
+            parentId: sidebar_left
+            blockType: container
+
+        - '@addTree':
+            items:
+                account_address_book_page:
+                    blockType: container
+                account_address_book_addresses:
+                    blockType: container
+                account_address_book_user_addresses:
+                    blockType: container
+            tree:
+                content:
+                    account_address_book_page:
+                        account_address_book_addresses: ~
+                        account_address_book_user_addresses: ~

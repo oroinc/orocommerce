@@ -20,6 +20,12 @@ $oro-grid-count: 12;
         margin-bottom: $offset-y-m;
       }
     }
+
+    &--has-twin-row {
+      &:not(:last-child) {
+        margin-bottom: 50px;
+      }
+    }
   }
 
   &__column {
