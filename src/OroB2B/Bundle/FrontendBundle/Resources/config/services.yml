@@ -108,3 +108,10 @@ services:
         tags:
             # Must be executed after all listeners to disable custom fields
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore, priority: -255 }
+
+    orob2b_frontend.listener.update_migration_namespaces:
+        class: 'OroB2B\Bundle\FrontendBundle\EventListener\UpdateMigrationNamespacesListener'
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.pre_up, method: preUp }
