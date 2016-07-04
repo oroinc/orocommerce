@@ -10,8 +10,14 @@ define(function(require) {
 
     BaseShoppingListsLinkView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
-            shoppingListsButton: '[data-name="shopping-lists-button"]',
-            shoppingListsLength: '[data-name="shopping-lists-length"]'
+            shoppingListsBillet: '[data-name="shopping-lists-billet"]',
+            shoppingListsLink: '[data-name="shopping-lists-link"]'
+        },
+
+        options: {
+            templates: {
+                shoppingListsBillet: ''
+            }
         },
 
         widgetOptions: null,
@@ -34,17 +40,22 @@ define(function(require) {
             shopping_lists: [
                 {
                     shopping_list_id: 0,
-                    shopping_list_lable: '',
+                    shopping_list_lable: 'Shopping List 1',
+                    is_current: true,
                     line_items: [
                         {
                             unit: 'item',
                             quantity: 5
+                        },
+                        {
+                            unit: 'set',
+                            quantity: 1
                         }
                     ]
                 },
                 {
                     shopping_list_id: 1,
-                    shopping_list_lable: '',
+                    shopping_list_lable: 'Shopping List 2',
                     line_items: [
                         {
                             unit: 'item',
@@ -54,7 +65,7 @@ define(function(require) {
                 }
             ]
         },
-
+        
         initialize: function(options) {
             BaseShoppingListsLinkView.__super__.initialize.apply(this, arguments);
 
@@ -62,7 +73,6 @@ define(function(require) {
             if (!this.model) {
                 return;
             }
-
             this.initializeElements(options);
 
             this.widgetOptions = $.extend(true, {}, this.widgetDefaultOptions, this.widgetOptions, {
@@ -73,7 +83,9 @@ define(function(require) {
                 }
             });
 
-            this.model.on('change:shopping_lists', this.updateShoppingLists, this);
+            this.options.templates.shoppingListsBillet = _.template(options['billetTemplate']);
+
+            this.model.on('change:shopping_lists', this.updateShoppingListsBillet, this);
 
             this.render();
         },
@@ -84,12 +96,16 @@ define(function(require) {
             BaseShoppingListsLinkView.__super__.dispose.apply(this, arguments);
         },
 
+        render: function() {
+            this.updateShoppingListsBillet();
+            this.initShoppingListsPopupButton();
+        },
+
         initModel: function(options) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
             if (options.productModel) {
                 this.model = options.productModel;
             }
-
             _.each(this.modelAttr, function(value, attribute) {
                 if (!this.model.has(attribute)) {
                     this.model.set(attribute, value);
@@ -97,28 +113,73 @@ define(function(require) {
             }, this);
         },
 
-        updateShoppingLists: function() {
-            this.renderShoppingListsLength(this.model.get('shopping_lists'));
+        setLabels: function(currentShoppingList) {
+            if (!currentShoppingList) {
+                return null;
+            }
+
+            var currentShoppingListLabel = currentShoppingList.shopping_list_lable;
+            var labels = [];
+
+            if (_.has(currentShoppingList, 'line_items')) {
+                _.each(currentShoppingList.line_items, function (lineItem) {
+                    var label = {};
+                    var lineItemsLabel = _.__(
+                        'orob2b.product.product_unit.' + lineItem.unit + '.value.short',
+                        {'count': lineItem.quantity},
+                        lineItem.quantity);
+
+                    label.name = _.__('orob2b.shoppinglist.billet.items_in_shopping_list')
+                        .replace('{{ lineItems }}', lineItemsLabel);
+
+                    label.name = label.name.replace('{{ shoppingList }}', currentShoppingListLabel);
+
+                    labels.push(label);
+                });
+            }
+
+            return labels;
         },
 
-        render: function() {
-            this.updateShoppingLists();
-            this.renderShoppingListsButton();
+        findCurrentShoppingList: function(shoppingLists) {
+            if (!shoppingLists || !_.isObject(shoppingLists)) {
+                return null;
+            }
+            return _.find(shoppingLists, function(list) {
+                return list.is_current;
+            }) || null;
         },
 
-        renderShoppingListsButton: function() {
-            this.delegateElementEvent('shoppingListsButton', 'click', _.bind(this.renderShoppingListsModal, this));
+        updateShoppingListsBillet: function() {
+            var billet = {};
+
+            if (!this.model) {
+                return;
+            }
+
+            var shoppingLists = this.model.get('shopping_lists');
+
+            billet.currentLineItemsLabels = this.setLabels(this.findCurrentShoppingList(shoppingLists));
+            billet.shoppingList = this.findCurrentShoppingList(shoppingLists);
+            billet.shoppingLists = shoppingLists;
+
+            this.renderShoppingListsBillet(billet);
         },
 
-        renderShoppingListsModal: function() {
+        initShoppingListsPopupButton: function() {
+            this.delegateElementEvent('shoppingListsLink', 'click', _.bind(this.renderShoppingListsPopup, this));
+        },
+
+        renderShoppingListsPopup: function() {
             if (!this.widgetComponent) {
                 this.widgetComponent = new WidgetComponent(this.widgetOptions);
             }
             this.widgetComponent.openWidget();
         },
 
-        renderShoppingListsLength: function(shoppingLists) {
-            this.getElement('shoppingListsLength').html(shoppingLists.length);
+        renderShoppingListsBillet: function(billet) {
+            this.getElement('shoppingListsBillet')
+                .html(this.options.templates.shoppingListsBillet({billet: billet}));
         }
     }));
 
