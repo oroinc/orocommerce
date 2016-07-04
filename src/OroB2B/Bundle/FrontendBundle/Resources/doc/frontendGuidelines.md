@@ -436,6 +436,40 @@ Exception are **pseudo elements** and **states**.
 }
 ```
 
+According to BEM methodology there are no elements of elements.
+It makes the elements be dependent on the block only. So, you can easily move them
+across the block when providing changes to the interface.
+
+##### Acceptable
+```scss
+.block {
+    ...
+
+    .block__some-element {
+        ...
+    }
+
+    .block__other-element {
+        ...
+    }
+}
+```
+
+##### Unacceptable
+```scss
+.block {
+    ...
+
+    .block__some-element {
+        ...
+
+        .block__some-element__other-element {
+            ...
+        }
+    }
+}
+```
+
 ### Group properties
 
 Are grouped in the following order:
