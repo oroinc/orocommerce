@@ -158,7 +158,7 @@ orob2b:
         grid:
             total.label: Total
             subtotal.label: Subtotal
-            checkout_link.label: Resume Check Out
+            checkout_link.label: Check Out
 
         workflow.condition:
             order_line_item_has_count.message: No products can be added to this order. Please create an RFQ to request price.
