@@ -20,19 +20,17 @@ layout:
                 product_view_page:
                     blockType: container
                 product_container:
-                    blockType: container
+                    blockType: product_view_container
                     options:
-                        vars:
-                            product: {'@value': $data.product}
+                        product: {'@value': $data.product}
                 product_title_mobile:
                     blockType: text
                     options:
                         text: {'@value': $data.product.defaultName}
                 product_image:
-                    blockType: block
+                    blockType: product_image
                     options:
-                        vars:
-                            product: {'@value': $data.product}
+                        product: {'@value': $data.product}
                 product_description_container:
                     blockType: container
                 product_title_container:

@@ -49,7 +49,6 @@
                 events: [
                     'line-items-totals:update',
                     'update:account',
-                    'update:website',
                     'update:currency'
                 ],
                 entityClassName: 'OroB2B\\Bundle\\InvoiceBundle\\Entity\\Invoice',
@@ -84,8 +83,7 @@
                 'view': 'orob2bfrontend/js/app/views/form-view',
                 selectors: {
                     currency: 'select[name$="[currency]"]',
-                    account: 'input[name$="[account]"]',
-                    website: 'select[name$="[website]"]'
+                    account: 'input[name$="[account]"]'
                 }
             }|json_encode }}">
             <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
@@ -96,7 +94,6 @@
                 {{ form_row(form.invoiceDate) }}
                 {{ form_row(form.paymentDueDate) }}
                 {{ form_row(form.poNumber) }}
-                {{ form_row(form.website) }}
                 {{ form_row(form.currency) }}
             </div>
         </div>

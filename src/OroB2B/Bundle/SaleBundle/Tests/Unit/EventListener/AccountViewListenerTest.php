@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\SaleBundle\EventListener\AccountViewListener;
@@ -30,6 +32,9 @@ class AccountViewListenerTest extends FormViewListenerTestCase
 
     /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject */
     protected $event;
+
+    /** @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $websiteProvider;
 
     protected function setUp()
     {
@@ -56,6 +61,12 @@ class AccountViewListenerTest extends FormViewListenerTestCase
             $this->doctrineHelper,
             $this->requestStack
         );
+
+        $this->websiteProvider = $this->getMockBuilder(WebsiteProviderInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $website = new Website();
+        $this->websiteProvider->method('getWebsites')->willReturn([$website]);
     }
 
     public function testOnAccountViewGetsIgnoredIfNoRequest()

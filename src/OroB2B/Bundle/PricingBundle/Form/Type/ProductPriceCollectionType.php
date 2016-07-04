@@ -67,15 +67,9 @@ class ProductPriceCollectionType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        /** @var PriceList[] $priceLists */
-        $priceLists = $this->registry->getRepository($this->priceListClass)->findAll();
-
-        $currencies = [];
-        foreach ($priceLists as $priceList) {
-            $currencies[$priceList->getId()] = $priceList->getCurrencies();
-        }
-
-        $view->vars['attr']['data-currencies'] = json_encode($currencies);
+        $view->vars['attr']['data-currencies'] = json_encode(
+            $this->registry->getRepository($this->priceListClass)->getCurrenciesIndexedByPricelistIds()
+        );
     }
 
     /**
