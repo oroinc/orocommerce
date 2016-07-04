@@ -18,7 +18,6 @@ class OrderWarehouseGridListener
 
     /**
      * @param WarehouseCounter $warehouseCounter
-     * @internal param DoctrineHelper $doctrineHelper
      */
     public function __construct(WarehouseCounter $warehouseCounter)
     {

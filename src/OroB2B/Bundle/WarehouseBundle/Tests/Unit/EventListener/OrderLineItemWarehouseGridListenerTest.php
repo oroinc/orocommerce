@@ -48,7 +48,6 @@ class OrderLineItemWarehouseGridListenerTest extends \PHPUnit_Framework_TestCase
         $config->expects($this->once())
             ->method('offsetSetByPath');
 
-
         $this->orderLineItemWarehouseGridListener->onBuildBefore($event);
     }
 

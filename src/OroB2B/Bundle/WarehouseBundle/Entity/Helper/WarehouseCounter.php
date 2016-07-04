@@ -26,6 +26,6 @@ class WarehouseCounter
      */
     public function areMoreWarehouses()
     {
-        return $this->doctrineHelper->getEntityRepository(Warehouse::class)->countWarehouses() > 1;
+        return $this->doctrineHelper->getEntityRepository(Warehouse::class)->countAll() > 1;
     }
 }

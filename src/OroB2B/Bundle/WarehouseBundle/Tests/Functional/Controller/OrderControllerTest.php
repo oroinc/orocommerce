@@ -6,6 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesWithOrders;
 
 /**
  * @dbIsolation
@@ -17,7 +18,7 @@ class OrderControllerTest extends WebTestCase
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesWithOrders',
+                LoadWarehousesWithOrders::class
             ]
         );
     }
