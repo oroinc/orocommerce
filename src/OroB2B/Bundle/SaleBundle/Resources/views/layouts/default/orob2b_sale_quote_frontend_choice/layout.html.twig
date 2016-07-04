@@ -4,7 +4,7 @@
     </div>
 {% endblock %}
 
-{% block _quot_choice_form_widget %}
+{% block _quote_choice_form_widget %}
     {% set componentOptions = {
         subtotalsRoute: 'orob2b_sale_quote_frontend_subtotals',
         quoteDemandId: quoteDemand.id,
@@ -29,12 +29,6 @@
             {{ block_widget(block) }}
         </div>
     </form>
-{% endblock %}
-
-{% block _quote_choice_back_button_widget %}
-    <div class="order-builder-clear-btn">
-        <a href="{{ path('orob2b_sale_quote_frontend_view', {id: quote.id}) }}"><i class="cf-left-open-mini"></i><span>Back to Quote</span></a>
-    </div>
 {% endblock %}
 
 {% block _quote_choice_submit_button_widget %}

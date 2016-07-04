@@ -58,7 +58,7 @@ class ProductStepOneTypeTest extends WebTestCase
     {
         return [
             'empty data' => [
-                'submitData' => [],
+                'submitData' => ['category' => null],
                 'isValid' => true,
             ],
             'invalid data' => [

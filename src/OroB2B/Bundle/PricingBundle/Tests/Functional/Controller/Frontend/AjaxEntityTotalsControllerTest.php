@@ -40,7 +40,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
         // set account user not default currency
-        $this->getContainer()->get('oro_config.global')
+        $this->getContainer()->get('oro_config.manager')
             ->set(Configuration::getConfigKeyByName(Configuration::ENABLED_CURRENCIES), ['EUR', 'USD']);
         $user = $this->getCurrentUser();
         $website = $this->getCurrentWebsite();

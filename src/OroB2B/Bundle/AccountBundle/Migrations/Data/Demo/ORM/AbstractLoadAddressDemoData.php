@@ -6,17 +6,17 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 
 use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
 
-abstract class AbstractLoadAddressDemoData extends AbstractFixture implements ContainerAwareInterface
+abstract class AbstractLoadAddressDemoData extends AbstractEntityReferenceFixture implements ContainerAwareInterface
 {
     /** @var ContainerInterface */
     protected $container;

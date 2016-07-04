@@ -60,4 +60,54 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
         $result = $this->handler->handle($event);
         $this->assertEquals(Response::HTTP_FORBIDDEN, $result->getStatusCode());
     }
+
+    public function testHandleEventFailedOnFirstDispatchNotSaved()
+    {
+        $event = new CallbackReturnEvent();
+        $transaction = new PaymentTransaction();
+        $transaction->setPaymentMethod('paymentMethod');
+        $event->setPaymentTransaction($transaction);
+
+        $this->paymentTransactionProvider->expects($this->never())->method('savePaymentTransaction');
+
+        $this->eventDispatcher->expects($this->once())->method('dispatch')
+            ->with(CallbackReturnEvent::NAME, $event)
+            ->willReturnCallback(
+                function ($name, CallbackReturnEvent $event) {
+                    $event->markFailed();
+                }
+            );
+
+        $result = $this->handler->handle($event);
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $result->getStatusCode());
+    }
+
+    public function testHandleEventFailedOnSecondDispatchNotSaved()
+    {
+        $event = new CallbackReturnEvent();
+        $transaction = new PaymentTransaction();
+        $transaction->setPaymentMethod('paymentMethod');
+        $event->setPaymentTransaction($transaction);
+
+        $this->paymentTransactionProvider->expects($this->never())->method('savePaymentTransaction');
+
+        $this->eventDispatcher->expects($this->at(0))->method('dispatch')
+            ->with(CallbackReturnEvent::NAME, $event)
+            ->willReturnCallback(
+                function ($name, CallbackReturnEvent $event) {
+                    $this->assertFalse($event->isPropagationStopped());
+                }
+            );
+
+        $this->eventDispatcher->expects($this->at(1))->method('dispatch')
+            ->with(CallbackReturnEvent::NAME . '.paymentMethod', $event)
+            ->willReturnCallback(
+                function ($name, CallbackReturnEvent $event) {
+                    $event->markFailed();
+                }
+            );
+
+        $result = $this->handler->handle($event);
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $result->getStatusCode());
+    }
 }
