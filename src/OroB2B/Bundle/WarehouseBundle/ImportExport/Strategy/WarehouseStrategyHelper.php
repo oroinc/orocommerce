@@ -23,7 +23,7 @@ class WarehouseStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHel
 
         $existingWarehouse = null;
         $importedWarehouse = $importedEntity->getWarehouse();
-        if ($this->countWarehouses() > 1) {
+        if ($this->countAll() > 1) {
             if (!$importedWarehouse && $this->isWarehouseRequired($importData)) {
                 $this->addError('orob2b.warehouse.import.error.warehouse_required');
 
@@ -34,11 +34,11 @@ class WarehouseStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHel
                 Warehouse::class,
                 ['name' => $importedWarehouse->getName()]
             );
-        } elseif ($this->countWarehouses() == 1) {
+        } elseif ($this->countAll() == 1) {
             $existingWarehouse = $this->getSingleWarehouse();
         }
 
-        if (!$existingWarehouse && $this->countWarehouses() < 1) {
+        if (!$existingWarehouse && $this->countAll() < 1) {
             $this->addError(
                 'orob2b.warehouse.import.error.warehouse_inexistent',
                 [],
@@ -70,7 +70,7 @@ class WarehouseStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHel
      */
     protected function isWarehouseRequired(array $importData)
     {
-        return $this->countWarehouses() > 1 && array_key_exists('quantity', $importData);
+        return $this->countAll() > 1 && array_key_exists('quantity', $importData);
     }
 
     /**
@@ -93,7 +93,7 @@ class WarehouseStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHel
      *
      * @return int|null
      */
-    protected function countWarehouses()
+    protected function countAll()
     {
         if ($this->warehouseCount !== null) {
             return $this->warehouseCount;
@@ -102,6 +102,6 @@ class WarehouseStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHel
         $manager = $this->databaseHelper->getRegistry()->getManagerForClass(Warehouse::class);
         $repository = $manager->getRepository(Warehouse::class);
 
-        return $this->warehouseCount = $repository->countWarehouses();
+        return $this->warehouseCount = $repository->countAll();
     }
 }

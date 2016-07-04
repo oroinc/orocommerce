@@ -96,7 +96,7 @@ class WarehouseInventoryLevelController extends Controller
         $noDataReason = '';
         if (0 === count($product->getUnitPrecisions())) {
             $noDataReason = 'orob2b.warehouse.warehouseinventorylevel.error.units';
-        } elseif (0 === count($this->getAvailableWarehouses())) {
+        } elseif (0 === $this->getAvailableWarehousesCount()) {
             $noDataReason = 'orob2b.warehouse.warehouseinventorylevel.error.warehouses';
         }
 
@@ -106,15 +106,15 @@ class WarehouseInventoryLevelController extends Controller
     }
 
     /**
-     * @return array|Warehouse[]
+     * @return integer
      */
-    private function getAvailableWarehouses()
+    private function getAvailableWarehousesCount()
     {
         $warehouseClass = $this->getParameter('orob2b_warehouse.entity.warehouse.class');
 
         return $this->getDoctrine()
             ->getManagerForClass($warehouseClass)
             ->getRepository($warehouseClass)
-            ->findAll();
+            ->countAll();
     }
 }

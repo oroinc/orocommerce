@@ -35,7 +35,8 @@ class LoadAccountAddressDemoData extends AbstractLoadAddressDemoData implements 
         $headers = fgetcsv($handler, 1000, ',');
 
         /** @var AccountUser[] $accountUsers */
-        $accountUsers = $manager->getRepository('OroB2BAccountBundle:AccountUser')->findAll();
+        $accountUsers = $this->getDemoAccountUsers();
+
         /** @var AccountUser[] $accountUserByEmail */
         $accountUserByEmail = [];
         foreach ($accountUsers as $accountUser) {
@@ -58,6 +59,19 @@ class LoadAccountAddressDemoData extends AbstractLoadAddressDemoData implements 
 
         fclose($handler);
         $manager->flush();
+    }
+
+    /**
+     * @return AccountUser[]
+     */
+    protected function getDemoAccountUsers()
+    {
+        $accountUsers = [];
+        foreach (LoadAccountUserDemoData::$accountUsersReferencesNames as $referenceName) {
+            $accountUsers[] = $this->getReference($referenceName);
+        }
+
+        return $accountUsers;
     }
 
     /**

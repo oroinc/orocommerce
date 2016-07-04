@@ -177,4 +177,25 @@ class AccountRepositoryTest extends WebTestCase
             ],
         ];
     }
+
+    public function testGetBatchIterator()
+    {
+        $results  = $this->repository->findAll();
+        $accounts = [];
+
+        foreach ($results as $account) {
+            $accounts[$account->getId()] = $account;
+        }
+
+        $accountsQuantity = count($accounts);
+        $accountsIterator = $this->repository->getBatchIterator();
+        $iteratorQuantity = 0;
+        foreach ($accountsIterator as $account) {
+            ++$iteratorQuantity;
+            unset($accounts[$account->getId()]);
+        }
+
+        $this->assertEquals($accountsQuantity, $iteratorQuantity);
+        $this->assertEmpty($accounts);
+    }
 }
