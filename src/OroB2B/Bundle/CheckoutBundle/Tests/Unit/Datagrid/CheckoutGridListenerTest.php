@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -73,11 +74,6 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     protected $baseCheckoutRepository;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $translator;
-
-    /**
      * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $securityFacade;
@@ -86,6 +82,11 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
      * @var CheckoutGridListener
      */
     protected $listener;
+
+    /**
+     * @var EntityNameResolver|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $entityNameResolver;
 
     protected function setUp()
     {
@@ -148,14 +149,6 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('find')
             ->willReturn(new Checkout());
 
-        $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->will($this->returnValue('Quote'));
-
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
@@ -168,15 +161,19 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getTotal')
             ->willReturn((new Subtotal())->setAmount(10));
 
+        $this->entityNameResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\Provider\EntityNameResolver')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->listener = new CheckoutGridListener(
             $this->configProvider,
             $this->fieldProvider,
             $this->doctrine,
             $this->currencyManager,
             $this->baseCheckoutRepository,
-            $this->translator,
             $this->securityFacade,
-            $this->totalProcessor
+            $this->totalProcessor,
+            $this->entityNameResolver
         );
 
         $this->listener->setCache($this->cache);
@@ -303,7 +300,8 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
-                'order' => 85
+                'order' => 85,
+                'renderable' => false
             ],
             'subtotal' => [
                 'label' => 'orob2b.checkout.grid.subtotal.label',
@@ -527,22 +525,30 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
         $records[] = $record;
 
-        $this->translator->expects($this->atLeastOnce())
-            ->method('trans')
-            ->will($this->returnValue('Quote'));
-
         $event->expects($this->atLeastOnce())->method('getRecords')->willReturn($records);
 
         $event->expects($this->atLeastOnce())
             ->method('getRecords')
             ->will($this->returnValue($records));
 
+        $this->entityNameResolver->expects($this->atLeastOnce())
+            ->method('getName')
+            ->will($this->returnCallback(function ($entity) use ($shoppingList, $quote) {
+                if ($entity == $shoppingList) {
+                    return $shoppingList->getLabel();
+                }
+
+                if ($entity == $quote) {
+                    return 'Quote';
+                }
+            }));
+
         $this->listener->onResultAfter($event);
 
         $foundShoppingList = false;
 
         foreach ($foundSources as $source) {
-            if ($source['startedFrom']['name'] == $shoppingList->getLabel()) {
+            if ($source['startedFrom']['label'] == $shoppingList->getLabel()) {
                 $foundShoppingList = true;
             }
         }
@@ -552,7 +558,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $foundQuote = false;
 
         foreach ($foundSources as $source) {
-            if (strstr($source['startedFrom']['name'], 'Quote')) {
+            if (strstr($source['startedFrom']['label'], 'Quote')) {
                 $foundQuote = true;
             }
         }

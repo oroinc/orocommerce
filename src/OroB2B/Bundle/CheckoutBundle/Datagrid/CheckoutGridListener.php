@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Cache\Cache;
 
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -26,7 +27,6 @@ use OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder\ColumnBuilderInterface;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Add total and subtotal fields to grid where root entity is checkout
@@ -82,14 +82,19 @@ class CheckoutGridListener
     protected $totalProcessor;
 
     /**
+     * @var EntityNameResolver
+     */
+    private $entityNameResolver;
+
+    /**
      * @param ConfigProvider $configProvider
      * @param EntityFieldProvider $fieldProvider
      * @param RegistryInterface $doctrine
      * @param UserCurrencyManager $currencyManager
      * @param BaseCheckoutRepository $baseCheckoutRepository
-     * @param TranslatorInterface $translator
      * @param SecurityFacade $securityFacade
      * @param TotalProcessorProvider $totalProcessor
+     * @param EntityNameResolver $entityNameResolver
      */
     public function __construct(
         ConfigProvider $configProvider,
@@ -97,18 +102,18 @@ class CheckoutGridListener
         RegistryInterface $doctrine,
         UserCurrencyManager $currencyManager,
         BaseCheckoutRepository $baseCheckoutRepository,
-        TranslatorInterface $translator,
         SecurityFacade $securityFacade,
-        TotalProcessorProvider $totalProcessor
+        TotalProcessorProvider $totalProcessor,
+        EntityNameResolver $entityNameResolver
     ) {
         $this->configProvider = $configProvider;
         $this->fieldProvider = $fieldProvider;
         $this->doctrine = $doctrine;
         $this->currencyManager = $currencyManager;
         $this->baseCheckoutRepository = $baseCheckoutRepository;
-        $this->translator = $translator;
         $this->securityFacade = $securityFacade;
         $this->totalProcessor = $totalProcessor;
+        $this->entityNameResolver = $entityNameResolver;
     }
 
     /**
@@ -215,7 +220,8 @@ class CheckoutGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
-                    'order' => 85
+                    'order' => 85,
+                    'renderable' => false
                 ];
             }
             if ($currencyFields) {
@@ -441,35 +447,23 @@ class CheckoutGridListener
                 continue;
             }
 
-            $source     = $sources[$id];
-            $sourceName = $routeName = null;
-
-            // @todo Refactor this: https://magecore.atlassian.net/browse/BB-3614
-            if ($source instanceof ShoppingList) {
-                $sourceName = $source->getLabel();
-                $routeName = 'orob2b_shopping_list_frontend_view';
-            }
+            $source = $sources[$id];
 
             if ($source instanceof QuoteDemand) {
                 $source = $source->getQuote();
             }
 
-            if ($source instanceof Quote) {
-                $sourceName = $this->translator->trans(
-                    'orob2b.frontend.sale.quote.title.label',
-                    [
-                        '%id%' => $source->getId()
-                    ]
-                );
-                $routeName = 'orob2b_sale_quote_frontend_view';
-            }
+            // simplify type checking in twig
+            $type = $source instanceof ShoppingList ? 'shopping_list' : 'quote';
+            $name = $this->entityNameResolver->getName($source);
+            $data = [
+                'linkable' => $this->hasCurrentUserRightToView($source),
+                'type'     => $type,
+                'label'    => $name,
+                'id'       => $source->getId()
+            ];
 
-            $record->addData(['startedFrom' => [
-                'name' => $sourceName,
-                'userCanView' => $this->hasCurrentUserRightToView($source),
-                'route' => $routeName,
-                'id' => $source->getId()
-            ]]);
+            $record->addData(['startedFrom' => $data]);
         }
     }
 

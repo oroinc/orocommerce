@@ -11,10 +11,10 @@ class BaseCheckoutRepository extends EntityRepository
      * whether originated from a quote, or a shopping list,
      * per Checkout.
      *
-     * @param array $ids
+     * @param array $checkoutIds
      * @return array
      */
-    public function countItemsPerCheckout(array $ids)
+    public function countItemsPerCheckout(array $checkoutIds)
     {
         $databaseResults = $this->createQueryBuilder('c')
             ->select('c.id as id')
@@ -26,7 +26,7 @@ class BaseCheckoutRepository extends EntityRepository
             ->leftJoin('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct', 'qp', 'WITH', 'qp.quote = qd.quote')
             ->groupBy('c.id')
             ->where('c.id in (:ids)')
-            ->setParameter('ids', $ids)
+            ->setParameter('ids', $checkoutIds)
             ->getQuery()
             ->getScalarResult();
         
@@ -36,10 +36,10 @@ class BaseCheckoutRepository extends EntityRepository
     /**
      * Returning the source information of the checkouts.
      *
-     * @param array $ids
+     * @param array $checkoutIds
      * @return array
      */
-    public function getSourcePerCheckout(array $ids)
+    public function getSourcePerCheckout(array $checkoutIds)
     {
         $databaseResults = $this->createQueryBuilder('c')
             ->select('c.id as id')
@@ -50,7 +50,7 @@ class BaseCheckoutRepository extends EntityRepository
             ->leftJoin('OroB2B\Bundle\SaleBundle\Entity\QuoteDemand', 'qd', 'WITH', 's.quoteDemand = qd')
             ->leftJoin('OroB2B\Bundle\SaleBundle\Entity\Quote', 'q', 'WITH', 'qd.quote = q')
             ->where('c.id in (:ids)')
-            ->setParameter('ids', $ids)
+            ->setParameter('ids', $checkoutIds)
             ->getQuery()
             ->getResult();
 

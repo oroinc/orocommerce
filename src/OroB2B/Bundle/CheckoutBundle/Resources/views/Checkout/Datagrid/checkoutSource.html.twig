@@ -1,9 +1,0 @@
-{% set source = record.getValue('startedFrom') %}
-
-{% if source is not null %}
-    {% if source.userCanView %}
-        <a href="{{ path(source.route, {'id': source.id}) }}">{{ source.name }}</a>
-    {% else %}
-        {{ source.name }}
-    {% endif %}
-{% endif %}
