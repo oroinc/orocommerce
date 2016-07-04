@@ -1,9 +1,11 @@
-.address-list {
+.address-list .map-address-list {
     float: left;
     width: 54%;
     padding-left: 0;
     margin-right: 5px;
+}
 
+.address-list {
     &__item {
         display: flex;
         justify-content: space-between;
@@ -59,5 +61,4 @@
             border-left: 1px solid $theme-gray-color-regular;
         }
     }
-
 }

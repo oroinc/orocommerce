@@ -38,3 +38,19 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block _account_address_book_user_addresses_grid_head_widget %}
+    {{ block('_account_address_book_addresses_grid_head_widget') }}
+{% endblock %}
+
+{% block _account_address_book_user_addresses_grid_title_widget %}
+    {{ block('_account_address_book_addresses_grid_title_widget') }}
+{% endblock %}
+
+{% block _account_address_book_user_addresses_grid_create_button_widget %}
+    {{ block('_account_address_book_addresses_grid_create_button_widget') }}
+{% endblock %}
+
+{% block _account_address_book_user_addresses_grid_widget %}
+    {{ block('_account_address_book_addresses_grid_widget') }}
+{% endblock %}

@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'account_address_book_addresses_grid.html.twig'
+            themes: 'address_book_grid.html.twig'
 
         - '@addTree':
             items:

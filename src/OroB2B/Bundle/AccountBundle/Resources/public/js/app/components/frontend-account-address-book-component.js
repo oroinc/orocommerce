@@ -19,18 +19,20 @@ define(function(require) {
             'addressCreateUrl': null,
             'addressUpdateRouteName': null,
             'currentAddresses': [],
-            'useFormDialog': false
+            'useFormDialog': false,
+            'template': ''
         },
 
         /**
          * @param {Object} options
          */
         initialize: function(options) {
-            this.options = _.defaults(options || {}, this.options);
+            options = _.defaults(options || {}, this.defaultOptions);
 
             /** @type oroaddress.AddressBook */
             var addressBook = new AddressBook({
-                el: '#address-book',
+                el: options._sourceElement.get(0),
+                template: options.template,
                 addressListUrl: options.addressListUrl,
                 addressCreateUrl: options.addressCreateUrl,
                 addressUpdateUrl: function() {
@@ -45,6 +47,7 @@ define(function(require) {
             });
 
             addressBook.getCollection().reset(JSON.parse(options.currentAddresses));
+            options._sourceElement.children('.view-loading').remove();
         }
     });
 

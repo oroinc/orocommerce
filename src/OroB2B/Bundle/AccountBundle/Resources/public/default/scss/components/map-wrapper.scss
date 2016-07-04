@@ -1,5 +1,11 @@
 // a wrapper for the map of addresses
-.address-list-map{
-    float: left;
-    width: 45%;
+.address-list {
+    .map-visual-frame {
+        float: left;
+        width: 45%;
+        height: 420px;
+    }
+    .map-visual {
+        height: 420px;
+    }
 }
