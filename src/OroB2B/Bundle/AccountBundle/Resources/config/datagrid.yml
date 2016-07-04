@@ -1202,7 +1202,7 @@ datagrid:
                 type:          delete
                 link:          delete_link
                 icon:          trash
-                acl_resource:  orob2b_account_delete
+                acl_resource:  orob2b_account_frontend_account_address_remove
 
     frontend-account-account-user-address-grid:
         acl_resource: orob2b_account_frontend_account_user_view
@@ -1232,4 +1232,4 @@ datagrid:
                 type:          delete
                 link:          delete_link
                 icon:          trash
-                acl_resource:  orob2b_account_account_user_delete
+                acl_resource:  orob2b_account_frontend_account_user_address_remove

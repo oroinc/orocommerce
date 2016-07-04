@@ -16,12 +16,12 @@ layout:
                     options:
                         visible: { '@acl': orob2b_account_frontend_account_address_create }
                         route_name: orob2b_account_frontend_account_address_create
-                        route_parameters: { entityId: {'@value': $data.entity.account.id }}
+                        route_parameters: { entityId: {'@value': $data.entity.id }}
                         text: 'orob2b.account.frontend.account_user_address_book.create.label'
                 account_address_book_addresses_list:
                     blockType: address_book
                     options:
-                        entity: { '@value': $data.entity }
+                        entity: { '@value': $data.entity.account }
                         addressListRouteName: 'orob2b_api_account_frontend_get_account_addresses'
                         addressCreateRouteName: 'orob2b_account_frontend_account_address_create'
                         addressUpdateRouteName: 'orob2b_account_frontend_account_address_update'
