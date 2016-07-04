@@ -14,8 +14,9 @@ oro_system_configuration:
             options:
                 label: orob2b.checkout.system_configuration.fields.frontend_open_orders_separate_page.title
                 choices:
-                    0: orob2b.checkout.system_configuration.fields.frontend_open_orders_separate_page.values.no.label
-                    1: orob2b.checkout.system_configuration.fields.frontend_open_orders_separate_page.values.yes.label
+                    choices:
+                       - No
+                       - Yes
 
     tree:
         system_configuration:
