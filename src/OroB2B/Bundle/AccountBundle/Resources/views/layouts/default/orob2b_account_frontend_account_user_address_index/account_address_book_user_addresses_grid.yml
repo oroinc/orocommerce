@@ -20,7 +20,7 @@ layout:
                     options:
                         grid_name: frontend-account-account-user-address-grid
                         grid_parameters:
-                            frontend_owner_id: {'@value': $data.entity.account.id}
+                            frontend_owner_id: {'@value': $data.entity.id}
             tree:
                 account_address_book_user_addresses:
                     account_address_book_user_addresses_grid_head:
@@ -34,7 +34,7 @@ layout:
             options:
                 visible: { '@acl': orob2b_account_frontend_account_user_address_create }
                 route_name: orob2b_account_frontend_account_user_address_create
-                route_parameters: { entityId: {'@value': $data.entity.account.id }}
+                route_parameters: { entityId: {'@value': $data.entity.id }}
                 text: 'orob2b.account.address.add'
     conditions:
         '@and':
