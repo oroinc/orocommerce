@@ -5,6 +5,12 @@ namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Cache\Cache;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -20,6 +26,7 @@ use OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder\ColumnBuilderInterface;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Add total and subtotal fields to grid where root entity is checkout
@@ -55,26 +62,53 @@ class CheckoutGridListener
     protected $currencyManager;
 
     /**
-     * @var ColumnBuilderInterface[]
+     * @var BaseCheckoutRepository
      */
-    protected $columnBuilders = [];
+    protected $baseCheckoutRepository;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @var SecurityFacade
+     */
+    protected $securityFacade;
+
+    /**
+     * @var TotalProcessorProvider
+     */
+    protected $totalProcessor;
 
     /**
      * @param ConfigProvider $configProvider
      * @param EntityFieldProvider $fieldProvider
      * @param RegistryInterface $doctrine
      * @param UserCurrencyManager $currencyManager
+     * @param BaseCheckoutRepository $baseCheckoutRepository
+     * @param TranslatorInterface $translator
+     * @param SecurityFacade $securityFacade
+     * @param TotalProcessorProvider $totalProcessor
      */
     public function __construct(
         ConfigProvider $configProvider,
         EntityFieldProvider $fieldProvider,
         RegistryInterface $doctrine,
-        UserCurrencyManager $currencyManager
+        UserCurrencyManager $currencyManager,
+        BaseCheckoutRepository $baseCheckoutRepository,
+        TranslatorInterface $translator,
+        SecurityFacade $securityFacade,
+        TotalProcessorProvider $totalProcessor
     ) {
         $this->configProvider = $configProvider;
         $this->fieldProvider = $fieldProvider;
         $this->doctrine = $doctrine;
         $this->currencyManager = $currencyManager;
+        $this->baseCheckoutRepository = $baseCheckoutRepository;
+        $this->translator = $translator;
+        $this->securityFacade = $securityFacade;
+        $this->totalProcessor = $totalProcessor;
     }
 
     /**
@@ -126,9 +160,9 @@ class CheckoutGridListener
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
 
-        foreach ($this->columnBuilders as $columnBuilder) {
-            $columnBuilder->buildColumn($records);
-        }
+        $this->buildItemsCountColumn($records);
+        $this->buildStartedFromColumn($records);
+        $this->buildTotalColumn($records);
     }
 
     /**
@@ -318,14 +352,6 @@ class CheckoutGridListener
     }
 
     /**
-     * @param ColumnBuilderInterface $columnBuilder
-     */
-    public function addColumnBuilder(ColumnBuilderInterface $columnBuilder)
-    {
-        $this->columnBuilders[] = $columnBuilder;
-    }
-
-    /**
      * @return OptionsResolver
      */
     protected function getMetadataOptionsResolver()
@@ -374,5 +400,112 @@ class CheckoutGridListener
                 );
             }
         }
+    }
+
+    /**
+     * @param ResultRecord[] $records
+     */
+    private function buildItemsCountColumn($records)
+    {
+        $ids = [];
+
+        foreach ($records as $record) {
+            $ids[] = $record->getValue('id');
+        }
+
+        $counts = $this->baseCheckoutRepository->countItemsPerCheckout($ids);
+
+        foreach ($records as $record) {
+            if (isset($counts[$record->getValue('id')])) {
+                $record->addData([ 'itemsCount' => $counts[$record->getValue('id')] ]);
+            }
+        }
+    }
+
+    /**
+     * @param ResultRecord[] $records
+     */
+    public function buildStartedFromColumn($records)
+    {
+        $ids = [];
+
+        foreach ($records as $record) {
+            $ids[] = $record->getValue('id');
+        }
+
+        $sources = $this->baseCheckoutRepository->getSourcePerCheckout($ids);
+
+        foreach ($records as $record) {
+            $id = $record->getValue('id');
+            if (!isset($sources[$id])) {
+                continue;
+            }
+
+            $source     = $sources[$id];
+            $sourceName = $routeName = null;
+
+            // @todo Refactor this: https://magecore.atlassian.net/browse/BB-3614
+            if ($source instanceof ShoppingList) {
+                $sourceName = $source->getLabel();
+                $routeName = 'orob2b_shopping_list_frontend_view';
+            }
+
+            if ($source instanceof QuoteDemand) {
+                $source = $source->getQuote();
+            }
+
+            if ($source instanceof Quote) {
+                $sourceName = $this->translator->trans(
+                    'orob2b.frontend.sale.quote.title.label',
+                    [
+                        '%id%' => $source->getId()
+                    ]
+                );
+                $routeName = 'orob2b_sale_quote_frontend_view';
+            }
+
+            $record->addData(['startedFrom' => [
+                'name' => $sourceName,
+                'userCanView' => $this->hasCurrentUserRightToView($source),
+                'route' => $routeName,
+                'id' => $source->getId()
+            ]]);
+        }
+    }
+
+    /**
+     * @param ResultRecord[] $records
+     */
+    public function buildTotalColumn($records)
+    {
+        $em = $this->baseCheckoutRepository;
+
+        // todo: Reduce db queries count
+        foreach ($records as $record) {
+            if (!$record->getValue('total')) {
+                $id = $record->getValue('id');
+                $ch = $em->find($id);
+
+                $sourceEntity = $ch->getSourceEntity();
+                $record->addData(
+                    [
+                        'total' => $this->totalProcessor
+                            ->getTotal($sourceEntity)
+                            ->getAmount()
+                    ]
+                );
+            }
+        }
+    }
+
+    /**
+     * @param $sourceEntity
+     * @return bool
+     */
+    protected function hasCurrentUserRightToView($sourceEntity)
+    {
+        $isGranted = $this->securityFacade->isGranted('ACCOUNT_VIEW', $sourceEntity);
+
+        return $isGranted === true || $isGranted === "true"; // isGranted may return "true" as string
     }
 }
