@@ -181,7 +181,7 @@ orob2b.account:
             disable: 'Disable'
             confirm: 'Confirm'
             send_confirmation: 'Resend Confirmation Email'
-            create: 'Create Account'
+            create: 'Create Account User'
             edit: 'Edit'
             delete: 'Delete'
 

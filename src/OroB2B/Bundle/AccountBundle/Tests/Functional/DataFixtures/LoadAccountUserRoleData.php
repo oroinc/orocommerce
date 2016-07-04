@@ -19,6 +19,7 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
     const ROLE_WITH_ACCOUNT = 'Role with account';
     const ROLE_WITH_WEBSITE = 'Role with website';
     const ROLE_EMPTY = 'Role without any additional attributes';
+    const ROLE_NOT_SELF_MANAGED = 'Role that is not self managed';
 
     /**
      * {@inheritdoc}
@@ -45,6 +46,7 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
         $this->loadRoleWithAccount($manager, self::ROLE_WITH_ACCOUNT, 'account.level_1');
         $this->loadRoleWithWebsite($manager, self::ROLE_WITH_WEBSITE, 'Canada');
         $this->loadEmptyRole($manager, self::ROLE_EMPTY);
+        $this->loadNotSelfManagedRole($manager, self::ROLE_NOT_SELF_MANAGED);
 
         $manager->flush();
     }
@@ -61,6 +63,7 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
         /** @var Website $website */
         $website = $this->getReference($websiteName);
         $entity->addWebsite($website);
+        $entity->setSelfManaged(true);
 
         $this->setReference($entity->getLabel(), $entity);
         $manager->persist($entity);
@@ -74,6 +77,7 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
     protected function loadRoleWithAccountUser(ObjectManager $manager, $roleLabel, $accountUser)
     {
         $entity = $this->loadEmptyRole($manager, $roleLabel);
+        $entity->setSelfManaged(true);
 
         /** @var AccountUser $accountUser */
         $accountUser = $this->getReference($accountUser);
@@ -95,6 +99,7 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
         /** @var Account $account */
         $account = $this->getReference($account);
         $entity->setAccount($account);
+        $entity->setSelfManaged(true);
 
         $this->setReference($entity->getLabel(), $entity);
         $manager->persist($entity);
@@ -111,6 +116,23 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
         $entity->setLabel($roleLabel);
         $entity->setOrganization($this->getDefaultOrganization($manager));
         $entity->setSelfManaged(true);
+        $this->setReference($entity->getLabel(), $entity);
+        $manager->persist($entity);
+
+        return $entity;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string $roleLabel
+     * @return AccountUserRole
+     */
+    protected function loadNotSelfManagedRole(ObjectManager $manager, $roleLabel)
+    {
+        $entity = new AccountUserRole();
+        $entity->setLabel($roleLabel);
+        $entity->setOrganization($this->getDefaultOrganization($manager));
+        $entity->setSelfManaged(false);
         $this->setReference($entity->getLabel(), $entity);
         $manager->persist($entity);
 
