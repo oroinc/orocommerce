@@ -409,7 +409,7 @@ class CheckoutGridListener
     /**
      * @param ResultRecord[] $records
      */
-    private function buildItemsCountColumn($records)
+    protected function buildItemsCountColumn($records)
     {
         $ids = [];
 
@@ -429,7 +429,7 @@ class CheckoutGridListener
     /**
      * @param ResultRecord[] $records
      */
-    public function buildStartedFromColumn($records)
+    protected function buildStartedFromColumn($records)
     {
         $ids = [];
 
@@ -468,7 +468,7 @@ class CheckoutGridListener
     /**
      * @param ResultRecord[] $records
      */
-    public function buildTotalColumn($records)
+    protected function buildTotalColumn($records)
     {
         $em = $this->baseCheckoutRepository;
 
