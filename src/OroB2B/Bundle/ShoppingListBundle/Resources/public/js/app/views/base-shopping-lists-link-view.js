@@ -11,12 +11,14 @@ define(function(require) {
     BaseShoppingListsLinkView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
             shoppingListsBillet: '[data-name="shopping-lists-billet"]',
+            shoppingListsPopup: '[data-name="shopping-lists-popup"]',
             shoppingListsLink: '[data-name="shopping-lists-link"]'
         },
 
         options: {
             templates: {
-                shoppingListsBillet: ''
+                shoppingListsBillet: '',
+                shoppingListsPopup: ''
             }
         },
 
@@ -84,6 +86,7 @@ define(function(require) {
             });
 
             this.options.templates.shoppingListsBillet = _.template(options['billetTemplate']);
+            this.options.templates.shoppingListsPopup = _.template(options['popupTemplate']);
 
             this.model.on('change:shopping_lists', this.updateShoppingListsBillet, this);
 
@@ -99,6 +102,7 @@ define(function(require) {
         render: function() {
             this.updateShoppingListsBillet();
             this.initShoppingListsPopupButton();
+            this.renderShoppingListsPopupContent();
         },
 
         initModel: function(options) {
@@ -180,6 +184,11 @@ define(function(require) {
         renderShoppingListsBillet: function(billet) {
             this.getElement('shoppingListsBillet')
                 .html(this.options.templates.shoppingListsBillet({billet: billet}));
+        },
+
+        renderShoppingListsPopupContent: function() {
+            this.getElement('shoppingListsPopup')
+                .html(this.options.templates.shoppingListsPopup());
         }
     }));
 
