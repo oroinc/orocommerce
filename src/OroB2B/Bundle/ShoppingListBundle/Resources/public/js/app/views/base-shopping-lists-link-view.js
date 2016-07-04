@@ -41,6 +41,7 @@ define(function(require) {
                 {
                     shopping_list_id: 0,
                     shopping_list_lable: 'Shopping List 1',
+                    is_current: true,
                     line_items: [
                         {
                             unit: 'item',
@@ -64,8 +65,6 @@ define(function(require) {
                 }
             ]
         },
-
-        labels: [],
         
         initialize: function(options) {
             BaseShoppingListsLinkView.__super__.initialize.apply(this, arguments);
@@ -101,7 +100,6 @@ define(function(require) {
             if (options.productModel) {
                 this.model = options.productModel;
             }
-
             _.each(this.modelAttr, function(value, attribute) {
                 if (!this.model.has(attribute)) {
                     this.model.set(attribute, value);
@@ -109,28 +107,41 @@ define(function(require) {
             }, this);
         },
 
-        setLabels: function(lineItems) {
-            this.labels = [];
+        setLabels: function(currentShoppingList) {
+            if (!currentShoppingList) {
+                return null;
+            }
 
-            _.each(lineItems, function(count, unit) {
-                var label = {};
-                var lineItemsLabel = '';
-                var currentShoppingListLabel = this.model.get('shopping_lists')[0].shopping_list_lable; // todo: be sure that the current shopping list is always the first shopping list
+            var currentShoppingListLabel = currentShoppingList.shopping_list_lable;
+            var labels = [];
 
-                if (_.has(lineItems, unit)) {
-                    lineItemsLabel = _.__(
-                        'orob2b.product.product_unit.' + unit + '.value.short',
-                        {'count': count},
-                        count);
+            if (_.has(currentShoppingList, 'line_items')) {
+                _.each(currentShoppingList.line_items, function (lineItem) {
+                    var label = {};
+                    var lineItemsLabel = _.__(
+                        'orob2b.product.product_unit.' + lineItem.unit + '.value.short',
+                        {'count': lineItem.quantity},
+                        lineItem.quantity);
 
-                    label.name =  _.__('orob2b.shoppinglist.billet.items_in_shopping_list')
+                    label.name = _.__('orob2b.shoppinglist.billet.items_in_shopping_list')
                         .replace('{{ lineItems }}', lineItemsLabel);
 
                     label.name = label.name.replace('{{ shoppingList }}', currentShoppingListLabel);
 
-                    this.labels.push(label);
-                }
-            }, this);
+                    labels.push(label);
+                });
+            }
+
+            return labels;
+        },
+
+        findCurrentShoppingList: function(shoppingLists) {
+            if (!shoppingLists || !_.isObject(shoppingLists)) {
+                return null;
+            }
+            return _.find(shoppingLists, function(list) {
+                return list.is_current;
+            }) || null;
         },
 
         updateShoppingListsBillet: function() {
@@ -140,11 +151,11 @@ define(function(require) {
                 return;
             }
 
-            this.setLabels(this.model.get('current_shopping_list_line_items'));
+            var shoppingLists = this.model.get('shopping_lists');
 
-            billet.currentLineItemsLabels = this.labels;
-            billet.currentShoppingList = this.model.get('current_shopping_list_line_items');
-            billet.shoppingLists = this.model.get('shopping_lists');
+            billet.currentLineItemsLabels = this.setLabels(this.findCurrentShoppingList(shoppingLists));
+            billet.shoppingList = this.findCurrentShoppingList(shoppingLists);
+            billet.shoppingLists = shoppingLists;
 
             this.renderShoppingListsBillet(billet);
         },
@@ -161,7 +172,8 @@ define(function(require) {
         },
 
         renderShoppingListsBillet: function(billet) {
-            this.getElement('shoppingListsBillet').html(this.options.templates.shoppingListsBillet({billet: billet}));
+            this.getElement('shoppingListsBillet')
+                .html(this.options.templates.shoppingListsBillet({billet: billet}));
         }
     }));
 

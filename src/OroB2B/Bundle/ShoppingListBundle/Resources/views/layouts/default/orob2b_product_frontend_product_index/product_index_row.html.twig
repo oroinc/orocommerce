@@ -29,18 +29,18 @@
             <% if (!_.isEmpty(billet.shoppingLists)) { %>
             <div class="shopping-lists-billet">
                 <i class="shopping-lists-billet__icon"></i>
-                <% if (billet.currentShoppingList === null) { %>
-                    <div class="shopping-lists-billet__text">
-                        <i class="shopping-lists-billet__icon"></i>
-                        In Shopping Lists (<span class="shopping-lists-billet__count"><%= billet.shoppingLists.length %></span>)
-                    </div>
-                <% } else { %>
+                <% if (billet.shoppingList && billet.shoppingList.is_current) { %>
                     <% _.each(billet.currentLineItemsLabels, function(label) { %>
                         <div class="shopping-lists-billet__text">
                             <span class="shopping-lists-billet__label"><%= label.name %></span>
                             <i class="cf-pencil shopping-lists-billet__edit-icon"></i>
                         </div>
                     <% }) %>
+                <% } else { %>
+                    <div class="shopping-lists-billet__text">
+                        <i class="shopping-lists-billet__icon"></i>
+                        In Shopping Lists (<span class="shopping-lists-billet__count"><%= billet.shoppingLists.length %></span>)
+                    </div>
                 <% } %>
                 <a class="shopping-lists-billet__link" data-name="shopping-lists-link">Add item to multiple lists</a>
             </div>
