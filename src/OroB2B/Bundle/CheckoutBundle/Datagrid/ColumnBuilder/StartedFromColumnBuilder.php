@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -22,28 +23,28 @@ class StartedFromColumnBuilder implements ColumnBuilderInterface
     protected $baseCheckoutRepository;
 
     /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * @var SecurityFacade
      */
     protected $securityFacade;
 
     /**
+     * @var EntityNameResolver
+     */
+    private $entityNameResolver;
+
+    /**
      * @param BaseCheckoutRepository $baseCheckoutRepository
-     * @param TranslatorInterface    $translator
      * @param SecurityFacade         $securityFacade
+     * @param EntityNameResolver     $entityNameResolver
      */
     public function __construct(
         BaseCheckoutRepository $baseCheckoutRepository,
-        TranslatorInterface $translator,
-        SecurityFacade $securityFacade
+        SecurityFacade $securityFacade,
+        EntityNameResolver $entityNameResolver
     ) {
         $this->baseCheckoutRepository = $baseCheckoutRepository;
-        $this->translator             = $translator;
         $this->securityFacade         = $securityFacade;
+        $this->entityNameResolver     = $entityNameResolver;
     }
 
     /**
@@ -65,37 +66,23 @@ class StartedFromColumnBuilder implements ColumnBuilderInterface
                 continue;
             }
 
-            $source     = $sources[$id];
-            $sourceName = $routeName = null;
-
-            // @todo Refactor this: https://magecore.atlassian.net/browse/BB-3614
-            if ($source instanceof ShoppingList) {
-                $sourceName = $source->getLabel();
-                $routeName = 'orob2b_shopping_list_frontend_view';
-            }
+            $source = $sources[$id];
 
             if ($source instanceof QuoteDemand) {
                 $source = $source->getQuote();
             }
 
-            if ($source instanceof Quote) {
-                $sourceName = $this->translator->trans(
-                    'orob2b.frontend.sale.quote.title.label',
-                    [
-                        '%id%' => $source->getId()
-                    ]
-                );
-                $routeName = 'orob2b_sale_quote_frontend_view';
-            }
+            // simplify type checking in twig
+            $type = $source instanceof ShoppingList ? 'shopping_list' : 'quote';
+            $name = $this->entityNameResolver->getName($source);
+            $data = [
+                'linkable' => $this->hasCurrentUserRightToView($source),
+                'type'     => $type,
+                'label'    => $name,
+                'id'       => $source->getId()
+            ];
 
-            $sourceResult = new CheckoutSourceDefinition(
-                $sourceName,
-                $this->hasCurrentUserRightToView($source),
-                $routeName,
-                ['id' => $source->getId()]
-            );
-
-            $record->addData(['startedFrom' => $sourceResult]);
+            $record->addData(['startedFrom' => $data]);
         }
     }
 

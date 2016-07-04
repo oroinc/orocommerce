@@ -30,7 +30,7 @@ datagrid:
                 label: orob2b.checkout.started_from.label
                 type: twig
                 frontend_type: html
-                template: OroB2BCheckoutBundle:Checkout:Datagrid/checkoutSource.html.twig
+                template: OroB2BCheckoutBundle:Checkout:Datagrid/startedFrom.html.twig
                 order: 10
             itemsCount:
                 label: orob2b.checkout.line_items_count.label

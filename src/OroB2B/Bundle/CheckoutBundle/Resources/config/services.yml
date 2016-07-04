@@ -147,8 +147,8 @@ services:
         class: OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder\StartedFromColumnBuilder
         arguments:
             - '@orob2b_checkout.repository.base_checkout'
-            - '@translator'
             - '@oro_security.security_facade'
+            - '@oro_entity.entity_name_resolver'
 
     orob2b_checkout.datagrid.column_builder.total:
         class: OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder\TotalColumnBuilder
