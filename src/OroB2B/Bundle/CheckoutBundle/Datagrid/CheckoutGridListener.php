@@ -7,11 +7,7 @@ use Doctrine\Common\Cache\Cache;
 
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -23,10 +19,12 @@ use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
-use OroB2B\Bundle\CheckoutBundle\Datagrid\ColumnBuilder\ColumnBuilderInterface;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
  * Add total and subtotal fields to grid where root entity is checkout
