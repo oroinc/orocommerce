@@ -169,6 +169,38 @@ class CheckoutGridListener
     }
 
     /**
+     * @param array $metadata
+     * @param string $entityName
+     * @return array
+     */
+    public function resolveMetadata(array $metadata, $entityName)
+    {
+        $metadata = $this->getMetadataOptionsResolver()->resolve($metadata);
+        $em = $this->doctrine->getManagerForClass($entityName);
+        $entityMetadata = $em->getClassMetadata($entityName);
+        $fieldsResolver = $this->getFieldsOptionsResolver();
+
+        if ($metadata['type'] === self::TYPE_ENTITY_FIELDS) {
+            $metadata['fields'] = $fieldsResolver->resolve($metadata['fields']);
+            $this->checkFieldsExists($metadata['fields'], $entityMetadata, $entityName);
+        }
+
+        if ($metadata['type'] === self::TYPE_JOIN_COLLECTION) {
+            if (!$entityMetadata->hasAssociation($metadata['join_field'])) {
+                throw new IncorrectEntityException(
+                    sprintf("Entity '%s' doesn't have association '%s'", $entityName, $metadata['join_field'])
+                );
+            }
+
+            $metadata['relation_fields'] = $fieldsResolver->resolve($metadata['relation_fields']);
+            $relationName = $entityMetadata->getAssociationTargetClass($metadata['join_field']);
+            $this->checkFieldsExists($metadata['relation_fields'], $em->getClassMetadata($relationName), $relationName);
+        }
+
+        return $metadata;
+    }
+
+    /**
      * @param DatagridConfiguration $config
      * @return array
      */
@@ -321,38 +353,6 @@ class CheckoutGridListener
             }
         }
         return [$totalFields, $subtotalFields, $currencyFields, $updates];
-    }
-
-    /**
-     * @param array $metadata
-     * @param string $entityName
-     * @return array
-     */
-    public function resolveMetadata(array $metadata, $entityName)
-    {
-        $metadata = $this->getMetadataOptionsResolver()->resolve($metadata);
-        $em = $this->doctrine->getManagerForClass($entityName);
-        $entityMetadata = $em->getClassMetadata($entityName);
-        $fieldsResolver = $this->getFieldsOptionsResolver();
-
-        if ($metadata['type'] === self::TYPE_ENTITY_FIELDS) {
-            $metadata['fields'] = $fieldsResolver->resolve($metadata['fields']);
-            $this->checkFieldsExists($metadata['fields'], $entityMetadata, $entityName);
-        }
-
-        if ($metadata['type'] === self::TYPE_JOIN_COLLECTION) {
-            if (!$entityMetadata->hasAssociation($metadata['join_field'])) {
-                throw new IncorrectEntityException(
-                    sprintf("Entity '%s' doesn't have association '%s'", $entityName, $metadata['join_field'])
-                );
-            }
-
-            $metadata['relation_fields'] = $fieldsResolver->resolve($metadata['relation_fields']);
-            $relationName = $entityMetadata->getAssociationTargetClass($metadata['join_field']);
-            $this->checkFieldsExists($metadata['relation_fields'], $em->getClassMetadata($relationName), $relationName);
-        }
-
-        return $metadata;
     }
 
     /**
