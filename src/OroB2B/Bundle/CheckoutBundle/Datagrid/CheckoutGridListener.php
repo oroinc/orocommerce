@@ -181,7 +181,8 @@ class CheckoutGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
-                    'order' => 85
+                    'order' => 85,
+                    'renderable' => false
                 ];
             }
             if ($currencyFields) {
