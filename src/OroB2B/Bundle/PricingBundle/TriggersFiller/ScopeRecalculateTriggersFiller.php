@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller;
+namespace OroB2B\Bundle\PricingBundle\TriggersFiller;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
