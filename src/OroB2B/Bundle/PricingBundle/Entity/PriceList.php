@@ -106,6 +106,13 @@ class PriceList extends BasePriceList
     protected $priceRules;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="assignment_rule", type="string", length=255)
+     */
+    protected $assignmentRule;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -280,5 +287,20 @@ class PriceList extends BasePriceList
         $this->active = $active;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAssignmentRule()
+    {
+        return $this->assignmentRule;
+    }
+    /**
+     * @param string $assignmentRule
+     */
+    public function setAssignmentRule($assignmentRule)
+    {
+        $this->assignmentRule = $assignmentRule;
     }
 }

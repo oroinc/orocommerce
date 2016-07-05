@@ -662,3 +662,8 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler'
         arguments:
             - '@doctrine'
+
+    orob2b_pricing.handler.price_rule_lexeme_handler:
+        class: 'OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler'
+        arguments:
+            - '@doctrine'
