@@ -43,11 +43,11 @@ class RoleManagementSecurityListener
             return;
         }
 
-        $role = $this->loadRole($routeParams['id']);
-
         $isGranted = true;
 
         if ($route == 'orob2b_account_frontend_account_user_role_view') {
+            $role = $this->loadRole($routeParams['id']);
+
             $isGranted = (
                 $role->isPredefined()
                     ? $this->securityFacade->isGranted('orob2b_account_frontend_account_user_role_view')
@@ -56,6 +56,8 @@ class RoleManagementSecurityListener
         }
 
         if ($route == 'orob2b_account_frontend_account_user_role_update') {
+            $role = $this->loadRole($routeParams['id']);
+
             $isGranted = (
                 $role->isPredefined()
                     ? $this->securityFacade->isGranted('orob2b_account_frontend_account_user_role_create')
