@@ -46,20 +46,17 @@ layout:
                     options:
                         visible: false
                 rfp_request_view_information:
-                    blockType: container
+                    blockType: rfp_request_information
                     options:
-                        vars:
-                            entity: { '@value': $data.entity }
+                        request: { '@value': $data.entity }
                 rfp_request_view_line_items:
-                    blockType: block
+                    blockType: rfp_request_line_items
                     options:
-                        vars:
-                            entity: { '@value': $data.entity }
+                        requestProducts: { '@value': $data.entity.requestProducts }
                 rfp_request_view_line_items_mobile:
-                    blockType: block
+                    blockType: rfp_request_line_items
                     options:
-                        vars:
-                            entity: { '@value': $data.entity }
+                        requestProducts: { '@value': $data.entity.requestProducts }
                 rfp_request_view_notes_container:
                     blockType: container
                     options:

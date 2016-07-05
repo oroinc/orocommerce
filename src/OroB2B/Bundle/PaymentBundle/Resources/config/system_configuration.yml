@@ -14,7 +14,7 @@ oro_system_configuration:
         paypal_payments_pro_integration:
             title: orob2b.payment.system_configuration.groups.integration.title
         paypal_payments_pro_settings:
-            title: orob2b.payment.system_configuration.groups.advansed_settings.title
+            title: orob2b.payment.system_configuration.groups.advanced_settings.title
 
         payflow_gateway:
             title: orob2b.payment.system_configuration.groups.payflow_gateway.title
@@ -23,7 +23,7 @@ oro_system_configuration:
         payflow_gateway_integration:
             title: orob2b.payment.system_configuration.groups.integration.title
         payflow_gateway_settings:
-            title: orob2b.payment.system_configuration.groups.advansed_settings.title
+            title: orob2b.payment.system_configuration.groups.advanced_settings.title
 
         payment_term:
             title: orob2b.payment.system_configuration.groups.payment_terms.title
@@ -221,13 +221,6 @@ oro_system_configuration:
             options:
                 label: orob2b.payment.system_configuration.fields.require_cvv.label
 
-        orob2b_payment.paypal_payments_pro_validate_cvv:
-            data_type: boolean
-            type: oro_config_checkbox
-            priority: 40
-            options:
-                label: orob2b.payment.system_configuration.fields.validate_cvv.label
-
         orob2b_payment.paypal_payments_pro_zero_amount_authorization:
             data_type: boolean
             type: oro_config_checkbox
@@ -417,13 +410,6 @@ oro_system_configuration:
             options:
                 label: orob2b.payment.system_configuration.fields.require_cvv.label
 
-        orob2b_payment.payflow_gateway_validate_cvv:
-            data_type: boolean
-            type: oro_config_checkbox
-            priority: 40
-            options:
-                label: orob2b.payment.system_configuration.fields.validate_cvv.label
-
         orob2b_payment.payflow_gateway_zero_amount_authorization:
             data_type: boolean
             type: oro_config_checkbox
@@ -566,7 +552,6 @@ oro_system_configuration:
                                             - orob2b_payment.paypal_payments_pro_debug_mode
                                             - orob2b_payment.paypal_payments_pro_enable_ssl_verification
                                             - orob2b_payment.paypal_payments_pro_require_cvv
-                                            - orob2b_payment.paypal_payments_pro_validate_cvv
                                             - orob2b_payment.paypal_payments_pro_zero_amount_authorization
                                             - orob2b_payment.paypal_payments_pro_authorization_for_required_amount
                             payflow_gateway:
@@ -601,7 +586,6 @@ oro_system_configuration:
                                             - orob2b_payment.payflow_gateway_debug_mode
                                             - orob2b_payment.payflow_gateway_enable_ssl_verification
                                             - orob2b_payment.payflow_gateway_require_cvv
-                                            - orob2b_payment.payflow_gateway_validate_cvv
                                             - orob2b_payment.payflow_gateway_zero_amount_authorization
                                             - orob2b_payment.payflow_gateway_authorization_for_required_amount
                             payment_term:

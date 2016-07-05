@@ -1054,7 +1054,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table = $schema->createTable('orob2b_price_rule_ch_trigger');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
-        $table->addColumn('price_list_id', 'integer', []);
+        $table->addColumn('price_rule_id', 'integer', []);
         $table->setPrimaryKey(['id']);
     }
 
@@ -1110,8 +1110,8 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_list'),
-            ['price_list_id'],
+            $schema->getTable('orob2b_price_rule'),
+            ['price_rule_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

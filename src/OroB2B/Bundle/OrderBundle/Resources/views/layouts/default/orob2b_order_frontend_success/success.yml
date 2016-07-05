@@ -6,13 +6,9 @@ layout:
             id: title
             optionName: value
             optionValue: 'orob2b.order.success.thank_you'
-        - '@addTree':
-            items:
-                success_order_container:
-                    blockType: block
-                    options:
-                        vars:
-                            order: { '@value': $data.order }
-            tree:
-                content:
-                    success_order_container: ~
+        - '@add':
+            id: success_order
+            parentId: content
+            blockType: success_order
+            options:
+                order: { '@value': $data.order }

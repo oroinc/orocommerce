@@ -22,8 +22,7 @@ define(function(require) {
             tierPricesRoute: '',
             matchedPricesRoute: '',
             currency: null,
-            account: null,
-            website: null
+            account: null
         },
 
         /**
@@ -38,8 +37,7 @@ define(function(require) {
                 tierPricesRoute: this.options.tierPricesRoute,
                 matchedPricesRoute: this.options.matchedPricesRoute,
                 currency: this.options.currency,
-                account: this.options.account,
-                website: this.options.website
+                account: this.options.account
             }));
 
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
