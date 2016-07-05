@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: wwsh
- * Date: 05.07.16
- * Time: 12:16
- */
 
 namespace OroB2B\Bundle\CheckoutBundle\Datagrid\Updater;
 
