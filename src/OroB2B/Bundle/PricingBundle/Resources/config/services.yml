@@ -662,3 +662,11 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler'
         arguments:
             - '@doctrine'
+
+    orob2b_pricing.builder.product_price_builder:
+        class: OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder
+        arguments:
+            - '@doctrine'
+            - '@orob2b_pricing.compiler.price_list_rule_compiler'
+            - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@orob2b_pricing.recalculate_triggers_filler.scope_recalculate_triggers_filler'

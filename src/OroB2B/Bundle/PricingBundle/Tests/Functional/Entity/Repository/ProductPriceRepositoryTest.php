@@ -4,11 +4,13 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\BaseProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -588,6 +590,38 @@ class ProductPriceRepositoryTest extends WebTestCase
         $targetPricesArray = array_map($priceToArrayCallback, $targetPrices);
 
         $this->assertSame($sourcePricesArray, $targetPricesArray);
+    }
+
+    public function testDeleteGeneratedPrices()
+    {
+        /** @var ProductPrice $productPrice */
+        $productPrice = $this->getReference('product_price.1');
+
+        $rule = new PriceRule();
+        $rule->setPriority(1);
+        $rule->setQuantity(1);
+        $rule->setPriceList($productPrice->getPriceList());
+        $rule->setCurrency('USD');
+
+        $registry = $this->getContainer()->get('doctrine');
+        /** @var $manager EntityManager */
+        $manager = $registry->getManagerForClass(PriceRule::class);
+        $manager->persist($rule);
+        $manager->flush($rule);
+
+        $productPrice->setPriceRule($rule);
+        $manager->flush($productPrice);
+
+        /** @var ProductPriceRepository $repository */
+        $repository = $manager->getRepository('OroB2BPricingBundle:ProductPrice');
+
+        $prices = $repository->findBy(['priceRule' => $rule]);
+        $this->assertNotEmpty($prices);
+
+        $repository->deleteGeneratedPrices($productPrice->getPriceList(), $productPrice->getProduct());
+
+        $prices = $repository->findBy(['priceRule' => $rule]);
+        $this->assertEmpty($prices);
     }
 
     /**

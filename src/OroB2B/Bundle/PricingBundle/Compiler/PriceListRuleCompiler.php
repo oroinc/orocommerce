@@ -19,11 +19,12 @@ class PriceListRuleCompiler
     protected $fieldsOrder = [
         'product',
         'priceList',
-        'productUnit',
+        'unit',
         'currency',
         'quantity',
         'productSku',
         'value',
+        'priceRule'
     ];
 
     /**
@@ -41,53 +42,78 @@ class PriceListRuleCompiler
      */
     public function compileRule(PriceRule $rule, Product $product = null)
     {
-        //TODO: build select query from PriceListToProduct
+        //TODO: build select query from PriceListToProduct from BB-3665
         //TODO: BB-3623
-        $calculationRule = "2+2";
 
         $qb = $this->registry
             ->getManagerForClass('OroB2BProductBundle:Product')
             ->getRepository('OroB2BProductBundle:Product')
             ->createQueryBuilder('product');
 
-        $this->modifySelectPart($qb, $rule, $calculationRule);
+        $this->modifySelectPart($qb, $rule);
 
         if ($product) {
             $qb->where('product = :product')
                 ->setParameter('product', $product);
         }
 
-        $conditionalRule = "product.status = :status";
-        $qb->andWhere($conditionalRule)
-            ->setParameter('status', Product::STATUS_ENABLED);
+        $qb->andWhere($rule->getRuleCondition());
+
+        $this->restrictByExistPrices($qb, $rule);
 
         return $qb;
-    }
-
-    /**
-     * @param QueryBuilder $qb
-     * @param PriceRule $rule
-     * @param mixed|string|Select $calculationRule
-     */
-    protected function modifySelectPart(QueryBuilder $qb, PriceRule $rule, $calculationRule)
-    {
-        $fieldsMap = [
-            'product' => 'product.id',
-            'productSku' => 'product.productSku',
-            'priceList' => (string)$qb->expr()->literal($rule->getPriceList()->getId()),
-            'productUnit' => (string)$qb->expr()->literal($rule->getProductUnit()->getCode()),
-            'currency' => (string)$qb->expr()->literal($rule->getCurrency()),
-            'quantity' => (string)$qb->expr()->literal($rule->getQuantity()),
-            'value' => $calculationRule,
-        ];
-
-        foreach ($this->getFieldsOrder() as $fieldName) {
-            $qb->addSelect($fieldsMap[$fieldName]);
-        }
     }
 
     public function getFieldsOrder()
     {
         return $this->fieldsOrder;
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param PriceRule $rule
+     */
+    protected function modifySelectPart(QueryBuilder $qb, PriceRule $rule)
+    {
+        $fieldsMap = [
+            'product' => 'product.id',
+            'productSku' => 'product.sku',
+            'priceList' => (string)$qb->expr()->literal($rule->getPriceList()->getId()),
+            'unit' => (string)$qb->expr()->literal($rule->getProductUnit()->getCode()),
+            'currency' => (string)$qb->expr()->literal($rule->getCurrency()),
+            'quantity' => (string)$qb->expr()->literal($rule->getQuantity()),
+            'value' => $rule->getRule(),
+            'priceRule' => (string)$qb->expr()->literal($rule->getId())
+        ];
+        $select = [];
+        foreach ($this->getFieldsOrder() as $fieldName) {
+            $select[] = $fieldsMap[$fieldName];
+        }
+        $qb->select($select);
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param PriceRule $rule
+     */
+    protected function restrictByExistPrices(QueryBuilder $qb, PriceRule $rule)
+    {
+        $subQb = $this->registry
+            ->getManagerForClass('OroB2BPricingBundle:ProductPrice')
+            ->getRepository('OroB2BPricingBundle:ProductPrice')
+            ->createQueryBuilder('productPriceOld');
+        $subQb->andWhere($subQb->expr()->eq('productPriceOld.priceList', ':priceListOld'))
+            ->andWhere($subQb->expr()->eq('productPriceOld.product', 'product'))
+            ->andWhere($subQb->expr()->eq('productPriceOld.unit', ':unitOld'))
+            ->andWhere($subQb->expr()->eq('productPriceOld.currency', ':currencyOld'))
+            ->andWhere($subQb->expr()->eq('productPriceOld.quantity', ':quantityOld'));
+
+        $qb->setParameter('priceListOld', $rule->getPriceList()->getId())
+            ->setParameter('unitOld', $rule->getProductUnit()->getCode())
+            ->setParameter('currencyOld', $rule->getCurrency())
+            ->setParameter('quantityOld', $rule->getQuantity());
+        $qb->andWhere(
+            $qb->expr()->not($qb->expr()->exists($subQb->getQuery()->getDQL()))
+        );
     }
 }

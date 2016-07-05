@@ -102,6 +102,7 @@ class PriceList extends BasePriceList
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
+     * @ORM\OrderBy({"priority" = "ASC"})
      **/
     protected $priceRules;
 
