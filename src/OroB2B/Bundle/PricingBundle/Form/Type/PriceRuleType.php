@@ -15,44 +15,43 @@ class PriceRuleType extends AbstractType
 {
     const NAME = 'orob2b_pricing_price_rule';
 
+    const RULE = 'rule';
+    const RULE_CONDITION = 'ruleCondition';
+    const CURRENCY = 'currency';
+    const PRODUCT_UNIT = 'productUnit';
+    const QUANTITY = 'quantity';
+    const PRIORITY = 'priority';
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
-     *
-
-     price for qty 10 of each in USD = xxxxx
-    [19:35:33] Michael Bessolov: Price for quantity [____] [each|V] in [USD|v]
-    Calculate as;    [____________________]
-    Only when:    [_____________________]
-    Priority:     [_______]
-
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add(
-                'rule',
+                self::RULE,
                 'textarea',
                 [
                     'label' => 'orob2b.pricing.pricerule.rule.label'
                 ]
             )
             ->add(
-                'ruleCondition',
+                self::RULE_CONDITION,
                 'textarea',
                 [
                     'label' => 'orob2b.pricing.pricerule.rule_condition.label'
                 ]
             )
             ->add(
-                'currency',
+                self::CURRENCY,
                 CurrencySelectionType::NAME,
                 [
                     'label' => 'orob2b.pricing.pricerule.rule_condition.label'
                 ]
             )
             ->add(
-                'productUnit',
+                self::PRODUCT_UNIT,
                 'entity',
                 [
                     'class' => ProductUnit::class,
@@ -60,17 +59,17 @@ class PriceRuleType extends AbstractType
                 ]
             )
             ->add(
-                'quantity',
+                self::QUANTITY,
                 'number',
                 [
                     'label' => 'orob2b.pricing.pricerule.quantity.label'
                 ]
             )
             ->add(
-                'priority',
+                self::PRIORITY,
                 'number',
                 [
-                    'label' => 'orob2b.pricing.pricerule.quantity.label'
+                    'label' => 'orob2b.pricing.pricerule.priority.label'
                 ]
             );
     }

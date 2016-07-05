@@ -65,7 +65,8 @@ class PriceListType extends AbstractType
                 CollectionType::NAME,
                 [
                     'type' => PriceRuleType::NAME,
-                    'label' => false
+                    'label' => false,
+                    'by_reference' => false,
                 ]
             );
     }
