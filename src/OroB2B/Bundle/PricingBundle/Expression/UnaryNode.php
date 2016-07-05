@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Expression;
 
-class UnaryNode implements NodeInterface, OperationAwareInterface
+class UnaryNode implements NodeInterface
 {
     /**
      * @var NodeInterface

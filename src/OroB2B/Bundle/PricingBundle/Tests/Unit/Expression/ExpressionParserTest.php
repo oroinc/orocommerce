@@ -20,8 +20,8 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
     public function testParseCondition()
     {
         $expression = "(PriceList.currency == 'USD' and Product.margin * 10% > 130*Product.category.minMargin)" .
-            " || Product.category == 1";
-
+            " || (Product.category == -Product.MSRP and not (Product.category matches 'cat'))";
+        
         $usedLexems = $this->expressionParser->getUsedLexems($expression);
     }
 }

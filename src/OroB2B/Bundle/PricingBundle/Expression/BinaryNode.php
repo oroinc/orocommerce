@@ -2,8 +2,33 @@
 
 namespace OroB2B\Bundle\PricingBundle\Expression;
 
-class BinaryNode implements NodeInterface, OperationAwareInterface
+class BinaryNode implements NodeInterface
 {
+    /**
+     * @var array
+     */
+    protected static $booleanOperations = [
+        'and' => true,
+        'or' => true,
+        '==' => true,
+        '!=' => true,
+        '>' => true,
+        '<' => true,
+        '<=' => true,
+        '>=' => true
+    ];
+
+    /**
+     * @var array
+     */
+    protected static $operationMapping = [
+        '===' => '==',
+        '!==' => '!=',
+        '&&' => 'and',
+        '||' => 'or',
+        'matches' => 'like'
+    ];
+
     /**
      * @var NodeInterface
      */
@@ -23,7 +48,7 @@ class BinaryNode implements NodeInterface, OperationAwareInterface
     {
         $this->left = $left;
         $this->right = $right;
-        $this->operation = $operation;
+        $this->setOperation($operation);
     }
 
     /**
@@ -43,18 +68,46 @@ class BinaryNode implements NodeInterface, OperationAwareInterface
     }
 
     /**
-     * @return string
-     */
-    public function getOperation()
-    {
-        return $this->operation;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getNodes()
     {
         return array_merge([$this], $this->left->getNodes(), $this->right->getNodes());
+    }
+
+    /**
+     * @param string $operation
+     */
+    protected function setOperation($operation)
+    {
+        if (array_key_exists($operation, self::$operationMapping)) {
+            $operation = self::$operationMapping[$operation];
+        }
+
+        $this->operation = $operation;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOperation()
+    {
+        return $this->getOperation();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBooleanOperation()
+    {
+        return !$this->isMathOperation();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMathOperation()
+    {
+        return empty(self::$booleanOperations[$this->getOperation()]);
     }
 }
