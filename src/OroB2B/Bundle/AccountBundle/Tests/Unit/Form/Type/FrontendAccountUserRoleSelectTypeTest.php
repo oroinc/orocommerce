@@ -102,8 +102,6 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
             ->with($this->isType('string'), $this->isInstanceOf('\Closure'))
             ->willReturnCallback(
                 function ($type, $closure) use ($qb) {
-                    var_dump($closure());
-                    exit;
                     $this->assertEquals('loader', $type);
                     $this->assertEquals(
                         $closure(),
