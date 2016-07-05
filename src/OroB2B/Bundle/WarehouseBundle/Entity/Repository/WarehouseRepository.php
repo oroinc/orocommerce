@@ -8,11 +8,10 @@ use Doctrine\ORM\NoResultException;
 
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 
-
 class WarehouseRepository extends EntityRepository
 {
     /**
-     * Returns the firtst warehouse in the system or null if there are no warehouses
+     * Returns the first warehouse in the system or null if there are no warehouses
      *
      * @return null|Warehouse
      */
@@ -25,7 +24,7 @@ class WarehouseRepository extends EntityRepository
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 
-    /**        
+    /**
      * Counts all entities in current repository.
      * @return integer
      */

@@ -28,9 +28,12 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
     {
         $this->initClient();
         $this->importProcessor = new ImportProcessor();
-        $this->importProcessor->setSerializer($this->getContainer()->get('oro_importexport.serializer'));
-        $this->importProcessor->setDataConverter($this->getContainer()
-            ->get('orob2b_warehouse.importexport.inventory_level_converter'));
+        $this->importProcessor->setSerializer(
+            $this->getContainer()->get('orob2b_warehouse.importexport.serializer.warehouse_inventory_level')
+        );
+        $this->importProcessor->setDataConverter(
+            $this->getContainer()->get('orob2b_warehouse.importexport.inventory_level_converter')
+        );
 
         $strategy = new WarehouseInventoryLevelStrategy(
             $this->getContainer()->get('event_dispatcher'),

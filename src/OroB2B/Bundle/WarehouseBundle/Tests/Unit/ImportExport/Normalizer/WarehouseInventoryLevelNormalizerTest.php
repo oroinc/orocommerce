@@ -6,18 +6,18 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use OroB2B\Bundle\WarehouseBundle\ImportExport\Normalizer\InventoryLevelNormalizer;
+use OroB2B\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelNormalizer;
 
-class InventoryLevelNormalizerTest extends \PHPUnit_Framework_TestCase
+class WarehouseInventoryLevelNormalizerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var InventoryLevelNormalizer
+     * @var WarehouseInventoryLevelNormalizer
      */
-    protected $inventoryLevelNormalizer;
+    protected $warehouseInventoryLevelNormalizer;
 
     protected function setUp()
     {
-        $this->inventoryLevelNormalizer = new InventoryLevelNormalizer();
+        $this->warehouseInventoryLevelNormalizer = new WarehouseInventoryLevelNormalizer();
     }
 
     /**
@@ -41,7 +41,7 @@ class InventoryLevelNormalizerTest extends \PHPUnit_Framework_TestCase
         $unitPrecision->setUnit($productUnit);
         $object->setProductUnitPrecision($unitPrecision);
 
-        $results = $this->inventoryLevelNormalizer->normalize($object);
+        $results = $this->warehouseInventoryLevelNormalizer->normalize($object);
         $this->assertArrayHasKey('warehouse', $results);
         $this->assertEquals('testCode', $results['productUnitPrecision']['unit']['code']);
         $this->assertEquals('testName', $results['warehouse']['name']);
@@ -58,7 +58,7 @@ class InventoryLevelNormalizerTest extends \PHPUnit_Framework_TestCase
     public function testNormalizeShouldIgnoreZeroQuantity()
     {
         $object = new WarehouseInventoryLevel();
-        $results = $this->inventoryLevelNormalizer->normalize($object);
+        $results = $this->warehouseInventoryLevelNormalizer->normalize($object);
         $this->assertNull($results['quantity']);
     }
 }

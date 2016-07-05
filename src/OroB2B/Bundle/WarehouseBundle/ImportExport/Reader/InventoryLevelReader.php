@@ -37,7 +37,7 @@ class InventoryLevelReader extends EntityReader
                 $queryBuilder->orderBy('_product.sku', 'ASC');
                 break;
             default:
-                throw new \LogicException(sprintf("Invalid entity name provided", $this->currentEntityName));
+                throw new \LogicException(sprintf("Invalid entity name provided: %s", $this->currentEntityName));
         }
 
         parent::setSourceQueryBuilder($queryBuilder);

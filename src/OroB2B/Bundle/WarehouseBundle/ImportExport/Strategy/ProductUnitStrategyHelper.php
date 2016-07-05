@@ -43,7 +43,7 @@ class ProductUnitStrategyHelper extends AbstractWarehouseInventoryLevelStrategyH
 
         $productUnit = $this->getProductUnit($productUnit);
 
-        $productUnitPrecision = $this->getPoductUnitPrecision($product, $productUnit);
+        $productUnitPrecision = $this->getProductUnitPrecision($product, $productUnit);
         $newEntities['productUnitPrecision'] = $productUnitPrecision;
 
         if ($this->successor) {
@@ -79,7 +79,7 @@ class ProductUnitStrategyHelper extends AbstractWarehouseInventoryLevelStrategyH
      * @param ProductUnit|null $productUnit
      * @return null|ProductUnitPrecision
      */
-    protected function getPoductUnitPrecision(Product $product, ProductUnit $productUnit = null)
+    protected function getProductUnitPrecision(Product $product, ProductUnit $productUnit = null)
     {
         if ($productUnit) {
             return $this->checkAndRetrieveEntity(

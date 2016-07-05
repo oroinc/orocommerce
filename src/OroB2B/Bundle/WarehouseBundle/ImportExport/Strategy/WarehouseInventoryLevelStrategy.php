@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
 
-use Oro\Bundle\ImportExportBundle\Strategy\Import\ConfigurableAddOrReplaceStrategy;
+use Oro\Bundle\ImportExportBundle\Strategy\Import\AbstractImportStrategy;
 
-class WarehouseInventoryLevelStrategy extends ConfigurableAddOrReplaceStrategy
+class WarehouseInventoryLevelStrategy extends AbstractImportStrategy
 {
     /** @var  WarehouseInventoryLevelStrategyHelperInterface $inventoryLevelStrategyHelper */
     protected $inventoryLevelStrategyHelper;
@@ -30,7 +30,8 @@ class WarehouseInventoryLevelStrategy extends ConfigurableAddOrReplaceStrategy
 
         return $entity;
     }
-        /**
+
+    /**
      * @inheritdoc
      */
     protected function processEntity(
