@@ -3,12 +3,13 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 
-class LoadPriceRules extends AbstractFixture
+class LoadPriceRules extends AbstractFixture implements DependentFixtureInterface
 {
     /**
      * @var array
@@ -47,6 +48,6 @@ class LoadPriceRules extends AbstractFixture
      */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists'];
+        return [LoadPriceLists::class];
     }
 }

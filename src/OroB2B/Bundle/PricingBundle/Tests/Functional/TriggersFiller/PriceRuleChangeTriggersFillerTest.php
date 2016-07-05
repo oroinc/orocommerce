@@ -6,19 +6,15 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
-use OroB2B\Bundle\PricingBundle\TriggersFiller\PriceRuleChangeTriggersFiller;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 
 /**
  * @dbIsolation
  */
 class PriceRuleChangeTriggersFillerTest extends WebTestCase
 {
-    /**
-     * @var PriceRuleChangeTriggersFiller
-     */
-    protected $filler;
-
     /**
      * {@inheritdoc}
      */
@@ -28,22 +24,10 @@ class PriceRuleChangeTriggersFillerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules'
+                LoadProductData::class,
+                LoadPriceRules::class
             ]
         );
-        
-        $this->filler = $this->getContainer()
-            ->get('orob2b_pricing.triggers_filler.price_rule_change_triggers_filler');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function tearDown()
-    {
-        unset($this->filler);
     }
 
     public function testCreateFillerWithProduct()
@@ -55,12 +39,14 @@ class PriceRuleChangeTriggersFillerTest extends WebTestCase
         $product = $this->getReference('product.1');
 
         // Check trigger is absent
-        $this->assertRuleTriggerNotExist($priceRule, $product);
+        $this->assertNull($this->getRuleTrigger($priceRule, $product));
 
-        $this->filler->createTrigger($priceRule, $product);
+        $this->getContainer()
+            ->get('orob2b_pricing.triggers_filler.price_rule_change_triggers_filler')
+            ->createTrigger($priceRule, $product);
 
         // Check trigger added
-        $this->assertRuleTriggerExist($priceRule, $product);
+        $this->assertNotNull($this->getRuleTrigger($priceRule, $product));
     }
 
     public function testCreateFillerWithoutProduct()
@@ -69,30 +55,14 @@ class PriceRuleChangeTriggersFillerTest extends WebTestCase
         $priceRule = $this->getReference('price_list_1_rule');
 
         // Check trigger is absent
-        $this->assertRuleTriggerNotExist($priceRule);
+        $this->assertNull($this->getRuleTrigger($priceRule));
 
-        $this->filler->createTrigger($priceRule);
+        $this->getContainer()
+            ->get('orob2b_pricing.triggers_filler.price_rule_change_triggers_filler')
+            ->createTrigger($priceRule);
 
         // Check trigger added
-        $this->assertRuleTriggerExist($priceRule);
-    }
-
-    /**
-     * @param PriceRule $priceRule
-     * @param Product|null $product
-     */
-    public function assertRuleTriggerExist(PriceRule $priceRule, $product = null)
-    {
-        $this->assertNotNull($this->getRuleTrigger($priceRule, $product));
-    }
-
-    /**
-     * @param PriceRule $priceRule
-     * @param Product|null $product
-     */
-    public function assertRuleTriggerNotExist(PriceRule $priceRule, $product = null)
-    {
-        $this->assertNull($this->getRuleTrigger($priceRule, $product));
+        $this->assertNotNull($this->getRuleTrigger($priceRule));
     }
 
     /**
@@ -100,7 +70,7 @@ class PriceRuleChangeTriggersFillerTest extends WebTestCase
      * @param Product|null $product
      * @return PriceRuleChangeTrigger|null
      */
-    protected function getRuleTrigger(PriceRule $priceRule, $product)
+    protected function getRuleTrigger(PriceRule $priceRule, $product = null)
     {
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroB2BPricingBundle:PriceRuleChangeTrigger')
