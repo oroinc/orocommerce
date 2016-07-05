@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\RecalculateTriggersFiller;
+namespace OroB2B\Bundle\PricingBundle\Tests\Functional\TriggersFiller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller;
+use OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
 
 /**
  * @dbIsolation
@@ -31,7 +31,7 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
             ]
         );
         $this->triggersFiller = $this->getContainer()
-            ->get('orob2b_pricing.recalculate_triggers_filler.scope_recalculate_triggers_filler');
+            ->get('orob2b_pricing.triggers_filler.scope_recalculate_triggers_filler');
 
         $this->clearTriggers();
     }
