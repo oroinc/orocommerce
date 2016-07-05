@@ -82,11 +82,9 @@
 
 {% block _account_address_book_addresses_list_template_item_actions_remove_widget %}
     {% set attr = layout_attr_merge(attr, {'~class': " address-list__button"}) %}
-    <% if (!primary) { %>
-        <button {{ block('block_attributes') }}>
-            <i class="cf-trash cf--no-offset"></i>
-        </button>
-    <% } %>
+    <button {{ block('block_attributes') }}>
+        <i class="cf-trash cf--no-offset"></i>
+    </button>
 {% endblock %}
 
 {% block _account_address_book_user_addresses_list_head_widget %}
