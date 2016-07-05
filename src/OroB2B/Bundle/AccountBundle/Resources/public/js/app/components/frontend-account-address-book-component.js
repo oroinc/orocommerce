@@ -42,6 +42,7 @@ define(function(require) {
                         {'id': address.get('id'), 'entityId': options.entityId}
                     );
                 },
+                allowToRemovePrimary: true,
                 addressMapOptions: {'phone': 'phone'},
                 useFormDialog: options.useFormDialog
             });
