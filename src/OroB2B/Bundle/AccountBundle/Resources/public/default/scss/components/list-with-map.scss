@@ -6,6 +6,12 @@
 }
 
 .address-list {
+    @include clearfix();
+
+    &:not(:first-child) {
+        margin-bottom: 50px;
+    }
+
     &__item {
         display: flex;
         justify-content: space-between;
