@@ -97,7 +97,8 @@ class AccountUserRoleRepository extends EntityRepository
 
     /**
      * @param OrganizationInterface $organization
-     * @param mixed $account
+     * @param mixed                 $account
+     * @param bool                  $onlySelfManaged
      * @return QueryBuilder
      */
     public function getAvailableRolesByAccountUserQueryBuilder(
@@ -124,10 +125,11 @@ class AccountUserRoleRepository extends EntityRepository
             $qb->where(
                 $qb->expr()->andX(
                     $expr,
-                    $qb->expr()->eq('accountUserRole.selfManaged', '1'),
+                    $qb->expr()->eq('accountUserRole.selfManaged', ':selfManaged'),
                     $qb->expr()->eq('accountUserRole.organization', ':organization')
                 )
             );
+            $qb->setParameter('selfManaged', true, \PDO::PARAM_BOOL);
         } else {
             $qb->where(
                 $qb->expr()->andX(
