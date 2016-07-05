@@ -229,7 +229,7 @@
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
     {% endif %}
-    <div class="price_rule">
+    <div class="price_rule"  data-content>
         <div class="price_rule__row clearfix">
             <span class="price_rule__title">Price for quantity: </span>
             <div class="price_rule__quantity">{{ form_widget(form.quantity) }}</div>
@@ -240,7 +240,7 @@
         </div>
         <div>{{ form_row(form.rule) }}</div>
         <div>{{ form_row(form.ruleCondition) }}</div>
-        <div>{{ form_row(form.priority) }}</div>
+        <div class="price_rule__priority">{{ form_row(form.priority) }}</div>
     </div>
     {% endspaceless %}
 {% endmacro %}
@@ -253,6 +253,11 @@
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
         <style>
+            {# temporary styles should be removed after new disign implemented #}
+            .price_rule {
+                margin-bottom: 50px !important;
+            }
+
             .price_rule textarea {
                 height: 60px;
                 width: 323px;
@@ -287,6 +292,10 @@
                 width: 90px;
             }
 
+            .price_rule__priority input{
+                width: 323px !important;
+            }
+
             .price_rules__add_btn{
                 margin-left: 170px;
             }
@@ -298,14 +307,11 @@
                 data-last-index="{{ form.children|length}}"
                 data-prototype-name="{{ prototype_name }}"
                 {% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}
-                data-content
             >
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ form_row(child) }}
+                            {{ _self.orob2b_pricing_price_rule_widget_prototype(child) }}
                         {% endfor %}
-                    {% elseif show_form_when_empty and prototype_html is defined %}
-                        {{ prototype_html|replace({(prototype_name): '0'})|raw }}
                     {% endif %}
             </div>
             <div class="price_rules__add_btn">

@@ -57,7 +57,8 @@ class PriceListType extends AbstractType
                 'productAssignmentRule',
                 'textarea',
                 [
-                    'label' => 'orob2b.pricing.pricelist.product_assignment_rule.label'
+                    'label' => 'orob2b.pricing.pricelist.product_assignment_rule.label',
+                    'required' => false
                 ]
             )
             ->add(
@@ -66,7 +67,9 @@ class PriceListType extends AbstractType
                 [
                     'type' => PriceRuleType::NAME,
                     'label' => false,
+                    'required' => false,
                     'by_reference' => false,
+                    'delete_empty' => true
                 ]
             );
     }

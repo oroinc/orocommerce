@@ -33,9 +33,7 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     CurrencySelectionType::NAME => new CurrencySelectionType($configManager, $localeSettings),
-                    'entity' => new EntityType([
-                        'item' => (new ProductUnit())->setCode('item')
-                    ])
+                    'entity' => new EntityType(['item' => (new ProductUnit())->setCode('item')])
                 ],
                 []
             )
