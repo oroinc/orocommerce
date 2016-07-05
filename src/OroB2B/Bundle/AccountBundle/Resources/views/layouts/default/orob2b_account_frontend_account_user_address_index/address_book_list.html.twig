@@ -69,19 +69,19 @@
 {% endblock %}
 
 {% block _account_address_book_addresses_list_template_item_actions_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': " address-list__actions"}) %}
+    {% set attr = layout_attr_merge(attr, {'~class': " address-list__actions actions"}) %}
     <nav {{ block('block_attributes') }}>{{ block_widget(block) }}</nav>
 {% endblock %}
 
 {% block _account_address_book_addresses_list_template_item_actions_edit_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': " address-list__button"}) %}
+    {% set attr = layout_attr_merge(attr, {'~class': " address-list__button item-edit-button"}) %}
     <button {{ block('block_attributes') }}>
         <i class="cf-pencil cf--no-offset"></i>
     </button>
 {% endblock %}
 
 {% block _account_address_book_addresses_list_template_item_actions_remove_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': " address-list__button"}) %}
+    {% set attr = layout_attr_merge(attr, {'~class': " address-list__button item-remove-button"}) %}
     <% if (!primary) { %>
         <button {{ block('block_attributes') }}>
             <i class="cf-trash cf--no-offset"></i>
