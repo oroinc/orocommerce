@@ -18,7 +18,7 @@ class PriceListToProductRepository extends EntityRepository
      */
     public function getProductsWithoutPricesQueryBuilder(PriceList $priceList)
     {
-        $qb = $this->_em->createQueryBuilder();
+        $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('p')
             ->from('OroB2BProductBundle:Product', 'p')
             ->join(

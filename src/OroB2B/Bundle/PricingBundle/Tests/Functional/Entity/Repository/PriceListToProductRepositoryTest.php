@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -46,6 +47,7 @@ class PriceListToProductRepositoryTest extends WebTestCase
             },
             iterator_to_array($this->repository->getProductsWithoutPrices($priceList))
         );
+
         // Check that 2 products does not have prices
         $expected = [
             $this->getReference('product.3')->getId(),
