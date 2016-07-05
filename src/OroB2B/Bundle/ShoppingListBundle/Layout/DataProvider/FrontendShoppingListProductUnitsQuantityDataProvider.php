@@ -4,11 +4,13 @@ namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServerRenderDataProvider
 {
@@ -23,13 +25,23 @@ class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServe
     protected $lineItemRepository;
 
     /**
+     * @var SecurityFacade
+     */
+    protected $securityFacade;
+
+    /**
      * @param ShoppingListManager $shoppingListManager
      * @param LineItemRepository $lineItemRepository
+     * @param SecurityFacade $securityFacade
      */
-    public function __construct(ShoppingListManager $shoppingListManager, LineItemRepository $lineItemRepository)
-    {
+    public function __construct(
+        ShoppingListManager $shoppingListManager,
+        LineItemRepository $lineItemRepository,
+        SecurityFacade $securityFacade
+    ) {
         $this->shoppingListManager = $shoppingListManager;
         $this->lineItemRepository = $lineItemRepository;
+        $this->securityFacade = $securityFacade;
     }
 
     /**
@@ -38,11 +50,13 @@ class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServe
     public function getData(ContextInterface $context)
     {
         $product = $context->data()->get('product');
-        if (!$product) {
+
+        if (null === $product) {
             return null;
         }
 
         $shoppingList = $this->shoppingListManager->getCurrent();
+
         if (!$shoppingList) {
             return null;
         }
@@ -57,13 +71,56 @@ class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServe
      */
     protected function getProductUnitsQuantity(ShoppingList $shoppingList, Product $product)
     {
-        $items = $this->lineItemRepository->getItemsByShoppingListAndProduct($shoppingList, $product);
-        $units = [];
-
-        foreach ($items as $item) {
-            $units[$item->getProductUnitCode()] = $item->getQuantity();
+        if (!$product) {
+            return null;
         }
 
-        return $units;
+        if (!$shoppingList) {
+            return null;
+        }
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->securityFacade->getLoggedUser();
+        $lineItems = $this->lineItemRepository
+            ->getOneProductItemsWithShoppingListNames($product, $accountUser);
+
+        $groupedUnits = [];
+        $shoppingListLabels = [];
+
+        if (!count($lineItems)) {
+            return [];
+        }
+
+        foreach ($lineItems as $lineItem) {
+            if (null === $itemShoppingList = $lineItem->getShoppingList()) {
+                continue;
+            }
+            $shoppingListId = $itemShoppingList->getId();
+            $groupedUnits[$shoppingListId][] =
+                [
+                    'unit' => $lineItem->getProductUnitCode(),
+                    'quantity' => $lineItem->getQuantity()
+                ];
+            if (!isset($shoppingListLabels[$shoppingListId])) {
+                $shoppingListLabels[$shoppingListId] = $lineItem->getShoppingList()->getLabel();
+            }
+        }
+
+        $shoppingListUnits = [];
+        $activeShoppingListId = $shoppingList->getId();
+        $shoppingListUnits[] = [
+            'shopping_list_id' => $activeShoppingListId ,
+            'shopping_list_label' => $shoppingListLabels[$activeShoppingListId],
+            'line_items' => $groupedUnits[$activeShoppingListId],
+        ];
+        unset($groupedUnits[$activeShoppingListId]);
+        foreach ($groupedUnits as $shoppingListId => $lineItems) {
+            $shoppingListUnits[] = [
+                'shopping_list_id' => $shoppingListId,
+                'shopping_list_label' => $shoppingListLabels[$shoppingListId],
+                'line_items' => $lineItems,
+            ];
+        }
+
+        return $shoppingListUnits;
     }
 }

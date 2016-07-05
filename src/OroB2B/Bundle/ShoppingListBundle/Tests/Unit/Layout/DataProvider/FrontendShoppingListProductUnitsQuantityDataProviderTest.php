@@ -11,6 +11,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityDataProvider;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,6 +26,11 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
     /** @var FrontendShoppingListProductUnitsQuantityDataProvider */
     protected $provider;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
+     */
+    protected $securityFacade;
+
     protected function setUp()
     {
         $this->shoppingListManager = $this
@@ -37,15 +43,25 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->provider = new FrontendShoppingListProductUnitsQuantityDataProvider(
             $this->shoppingListManager,
-            $this->lineItemRepository
+            $this->lineItemRepository,
+            $this->securityFacade
         );
     }
 
     protected function tearDown()
     {
-        unset($this->provider, $this->shoppingListManager, $this->lineItemRepository);
+        unset(
+            $this->provider,
+            $this->shoppingListManager,
+            $this->lineItemRepository,
+            $this->securityFacade
+        );
     }
 
     /**
@@ -63,16 +79,22 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
         array $expected = null
     ) {
         $context = new LayoutContext();
+        $accountUser = new AccountUser();
         $context->data()->set('product', null, $product);
 
-        $this->shoppingListManager->expects($product ? $this->once() : $this->never())
+        $this->shoppingListManager
+            ->expects($this->any())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
         $this->lineItemRepository->expects($product && $shoppingList ? $this->once() : $this->never())
-            ->method('getItemsByShoppingListAndProduct')
-            ->with($shoppingList, $product)
+            ->method('getOneProductItemsWithShoppingListNames')
+            ->with($product, $accountUser)
             ->willReturn($lineItems);
+
+        $this->securityFacade->expects($this->any())
+            ->method('getLoggedUser')
+            ->willReturn($accountUser);
 
         $this->assertEquals($expected, $this->provider->getData($context));
     }
@@ -82,10 +104,14 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
      */
     public function getDataDataProvider()
     {
+        /** @var  ShoppingList $activeShoppingList */
+        $activeShoppingList = $this->createShoppingList(1, 'ShoppingList 1');
+        /** @var  ShoppingList $otherShoppingList */
+        $otherShoppingList = $this->createShoppingList(2, 'ShoppingList 2');
         return [
             [
                 'product' => null,
-                'shoppingList' => null
+                'shoppingList' => null,
             ],
             [
                 'product' => new Product(),
@@ -99,9 +125,65 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
             ],
             [
                 'product' => new Product(),
-                'shoppingList' => new ShoppingList(),
-                'lineItems' => [$this->createLineItem('code1', 42), $this->createLineItem('code2', 100)],
-                'expected' => ['code1' => 42, 'code2' => 100]
+                'shoppingList' => $activeShoppingList,
+                'lineItems' => [
+                    $this->createLineItem('code1', 42, $activeShoppingList),
+                    $this->createLineItem('code2', 100, $activeShoppingList)
+                ],
+                'expected' => [
+                    [
+                        'shopping_list_id' => 1,
+                        'shopping_list_label' => 'ShoppingList 1',
+                        'line_items' => [
+                            ['unit' => 'code1', 'quantity' => 42],
+                            ['unit' => 'code2', 'quantity' => 100],
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'product' => new Product(),
+                'shoppingList' => $activeShoppingList,
+                'lineItems' => [
+                    $this->createLineItem('code1', 42, $activeShoppingList),
+                    $this->createLineItem('code2', 100, $activeShoppingList)
+                ],
+                'expected' => [
+                    [
+                        'shopping_list_id' => 1,
+                        'shopping_list_label' => 'ShoppingList 1',
+                        'line_items' => [
+                            ['unit' => 'code1', 'quantity' => 42],
+                            ['unit' => 'code2', 'quantity' => 100],
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'product' => new Product(),
+                'shoppingList' => $activeShoppingList,
+                'lineItems' => [
+                    $this->createLineItem('code3', 30, $otherShoppingList),
+                    $this->createLineItem('code1', 42, $activeShoppingList),
+                    $this->createLineItem('code2', 100, $activeShoppingList)
+                ],
+                'expected' => [
+                    [
+                        'shopping_list_id' => 1,
+                        'shopping_list_label' => 'ShoppingList 1',
+                        'line_items' => [
+                            ['unit' => 'code1', 'quantity' => 42],
+                            ['unit' => 'code2', 'quantity' => 100],
+                        ]
+                    ],
+                    [
+                        'shopping_list_id' => 2,
+                        'shopping_list_label' => 'ShoppingList 2',
+                        'line_items' => [
+                            ['unit' => 'code3', 'quantity' => 30],
+                        ]
+                    ]
+                ]
             ],
         ];
     }
@@ -109,9 +191,10 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
     /**
      * @param string $code
      * @param int $quantity
+     * @param ShoppingList $shoppingList
      * @return LineItem
      */
-    protected function createLineItem($code, $quantity)
+    protected function createLineItem($code, $quantity, $shoppingList)
     {
         return $this->getEntity(
             'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem',
@@ -120,9 +203,25 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                     'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
                     ['code' => $code]
                 ),
-                'quantity' => $quantity
+                'quantity' => $quantity,
+                'shoppingList' => $shoppingList
             ]
         );
+    }
+    
+    /**
+     * @param int $id
+     * @param string $label
+     * @return ShoppingList
+     */
+    protected function createShoppingList($id, $label)
+    {
+        $shoppingList = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $shoppingList->expects($this->any())->method('getId')->willReturn($id);
+        $shoppingList->expects($this->any())->method('getLabel')->willReturn($label);
+        return $shoppingList;
     }
 
     /**
