@@ -94,13 +94,21 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
     {
         /** @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+
+        $qb = new ORMQueryBuilderLoader($this->qb);
+
         $resolver->expects($this->once())
             ->method('setNormalizer')
             ->with($this->isType('string'), $this->isInstanceOf('\Closure'))
             ->willReturnCallback(
-                function ($type, $closure) {
+                function ($type, $closure) use ($qb) {
+                    var_dump($closure());
+                    exit;
                     $this->assertEquals('loader', $type);
-                    $this->assertEquals($closure(), new ORMQueryBuilderLoader($this->qb));
+                    $this->assertEquals(
+                        $closure(),
+                        $qb
+                    );
                 }
             );
         $this->formType->configureOptions($resolver);
