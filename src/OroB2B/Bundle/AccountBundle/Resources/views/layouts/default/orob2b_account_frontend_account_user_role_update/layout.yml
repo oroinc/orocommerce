@@ -25,10 +25,9 @@ layout:
                 account_user_role_edit_container:
                     blockType: container
                 account_user_role_edit_form_errors:
-                    blockType: block
+                    blockType: form_errors
                     options:
-                        vars:
-                            form: { '@value': $data.orob2b_account_frontend_account_user_role_form.view }
+                        form: { '@value': $data.orob2b_account_frontend_account_user_role_form.view }
                 account_user_role_edit_form_start:
                     blockType: form_start
                     options:
@@ -50,14 +49,13 @@ layout:
                         vars:
                             options: { '@value': $data.orob2b_account_fronted_account_user_role_options }
                 account_user_role_edit_form_users:
-                    blockType: datagrid
+                    blockType: account_user_role_users_datagrid
                     options:
                         grid_name: frontend-account-account-users-grid-update
                         grid_parameters:
                             role: {'@value': $data.entity.id}
                             account: {'@value': $data.entity.account}
-                        vars:
-                            form: { '@value': $data.orob2b_account_frontend_account_user_role_form.view }
+                        form: { '@value': $data.orob2b_account_frontend_account_user_role_form }
                 account_user_role_edit_form_end:
                     blockType: form_end
                     options:
@@ -69,8 +67,7 @@ layout:
                     options:
                         action: submit
                         text: orob2b.account.action.account_user_role.save_label
-                        vars:
-                            style: auto
+                        style: auto
                         attr:
                             'class': role-submit
                 account_user_role_edit_form_actions_cancel_top:
@@ -87,8 +84,7 @@ layout:
                     options:
                         action: submit
                         text: orob2b.account.action.account_user_role.save_label
-                        vars:
-                            style: auto
+                        style: auto
                         attr:
                             'class': role-submit
                 account_user_role_edit_form_actions_cancel_bottom:

@@ -218,39 +218,6 @@ datagrid:
             view:
                 acl_resource: orob2b_account_group_view
 
-    price-list-websites-grid:
-        extends:                base-price-list-relations-grid
-        source:
-            query:
-                select:
-                    - relatedEntity.url
-                from:
-                    - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
-                join:
-                    inner:
-                        - { join: %orob2b_pricing.entity.price_list_to_website.class%, alias: priceListToWebsite, conditionType: 'WITH', condition: 'priceListToWebsite.priceList = priceList'}
-                        - { join: priceListToWebsite.website, alias: relatedEntity }
-        columns:
-            name:
-                label:          orob2b.website.name.label
-            url:
-                label:          orob2b.website.url.label
-        properties:
-            view_link:
-                route:  orob2b_website_view
-        sorters:
-            columns:
-                url:
-                    data_name:  relatedEntity.url
-        filters:
-            columns:
-                url:
-                    type:       string
-                    data_name:  relatedEntity.url
-        actions:
-            view:
-                acl_resource: orob2b_website_view
-
     base-price-list-select-relations-grid:
         acl_resource:       orob2b_pricing_price_list_update
         source:

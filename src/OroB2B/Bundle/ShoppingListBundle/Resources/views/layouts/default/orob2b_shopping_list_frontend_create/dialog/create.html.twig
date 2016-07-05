@@ -17,17 +17,6 @@
     {{ parent() }}
 {% endblock %}
 
-{% block _form_errors_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " alert alert-error"
-    }) %}
-    {% if form.vars.errors|length > 0 %}
-        <div{{ block('block_attributes') }}>
-            {{ form_errors(form) }}
-        </div>
-    {% endif %}
-{% endblock %}
-
 {% block _form_comment_widget %}
     <i>
         {{ 'orob2b.shoppinglist.create_new_form.comment'|trans }}<br/>

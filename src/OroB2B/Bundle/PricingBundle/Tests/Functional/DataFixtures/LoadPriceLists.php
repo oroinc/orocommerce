@@ -12,7 +12,7 @@ class LoadPriceLists extends AbstractFixture
     /**
      * @var array
      */
-    protected $data = [
+    protected static $data = [
         [
             'name' => 'priceList1',
             'reference' => 'price_list_1',
@@ -64,7 +64,7 @@ class LoadPriceLists extends AbstractFixture
     {
         $now = new \DateTime();
 
-        foreach ($this->data as $priceListData) {
+        foreach (self::$data as $priceListData) {
             $priceList = new PriceList();
 
             $priceList
@@ -80,5 +80,13 @@ class LoadPriceLists extends AbstractFixture
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getPriceListData()
+    {
+        return self::$data;
     }
 }

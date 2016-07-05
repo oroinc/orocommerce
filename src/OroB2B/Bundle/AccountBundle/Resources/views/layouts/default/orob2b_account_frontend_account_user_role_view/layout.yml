@@ -18,11 +18,10 @@ layout:
                 account_user_role_view_container:
                     blockType: container
                 account_user_role_title:
-                    blockType: block
+                    blockType: text
                     options:
                         visible: { '@not_empty': $data.entity }
-                        vars:
-                            entity: { '@value': $data.entity }
+                        text: { '@value': $data.entity.label }
                 account_user_role_back_link:
                     blockType: link
                     options:

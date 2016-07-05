@@ -51,7 +51,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         array $expectedSubtotals,
         $shoppingListRef = LoadShoppingLists::SHOPPING_LIST_2
     ) {
-        $this->getContainer()->get('oro_config.global')
+        $this->getContainer()->get('oro_config.manager')
             ->set(Configuration::getConfigKeyByName(Configuration::ENABLED_CURRENCIES), ['EUR', 'USD']);
         /** @var Product $product */
         $product = $this->getReference($product);

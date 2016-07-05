@@ -74,7 +74,6 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
     }
 
     /**
-     * @param EntityManager $manager
      * @param string $code
      * @return Localization
      */
