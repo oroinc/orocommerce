@@ -15,4 +15,14 @@ class ExpressionParser
         $language = new ExpressionLanguage();
         $parsedExpression = $language->parse($expression, $this->allowedNames);
     }
+
+    /**
+     * @param $rule
+     * @return array
+     */
+    public function getUsedLexemes($rule)
+    {
+        //TODO: Parse lexems
+        return [$rule];
+    }
 }

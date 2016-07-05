@@ -663,7 +663,11 @@ services:
         arguments:
             - '@doctrine'
 
+    orob2b_pricing.model.expression_parser:
+        class: 'OroB2B\Bundle\PricingBundle\Model\ExpressionParser'
+
     orob2b_pricing.handler.price_rule_lexeme_handler:
         class: 'OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler'
         arguments:
             - '@doctrine'
+            - '@orob2b_pricing.model.expression_parser'
