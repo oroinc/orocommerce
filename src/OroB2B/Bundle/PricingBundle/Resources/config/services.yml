@@ -278,7 +278,7 @@ services:
             - '@doctrine'
             - '@event_dispatcher'
             - '@oro_entity.orm.insert_from_select_query_executor'
-            - '@orob2b_pricing.recalculate_triggers_filler.scope_recalculate_triggers_filler'
+            - '@orob2b_pricing.triggers_filler.scope_recalculate_triggers_filler'
 
     orob2b_pricing.event_listener.combined_price_list_queue:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener'
@@ -640,12 +640,17 @@ services:
             - '@orob2b_product.formatter.product_unit_label'
             - '@orob2b_product.formatter.product_unit_value'
 
-    orob2b_pricing.recalculate_triggers_filler.scope_recalculate_triggers_filler:
-        class: 'OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller'
+    orob2b_pricing.triggers_filler.scope_recalculate_triggers_filler:
+        class: 'OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller'
         arguments:
             - '@doctrine'
             - '@oro_config.global'
             - '@oro_entity.orm.insert_from_select_query_executor'
+
+    orob2b_pricing.triggers_filler.price_rule_change_triggers_filler:
+        class: 'OroB2B\Bundle\PricingBundle\TriggersFiller\PriceRuleChangeTriggersFiller'
+        arguments:
+            - '@doctrine'
 
     orob2b_pricing.duplicator.schedule:
         class: 'OroB2B\Bundle\PricingBundle\Duplicator\ScheduleDuplicator'
