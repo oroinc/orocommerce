@@ -317,7 +317,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         $result = $this->getJsonResponseContent($response, 200);
 
         foreach ($result['data'] as $row) {
-            if (!$row['selfManaged']) {
+            if (!isset($row['selfManaged']) || !$row['selfManaged']) {
                 $this->fail('Frontend Account User Role grid should not display not self managed roles.');
             }
         }
