@@ -328,7 +328,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
      */
     public function isSelfManaged()
     {
-        return $this->selfManaged;
+        return (bool)$this->selfManaged;
     }
 
     /**

@@ -15,6 +15,6 @@ class AddSelfManagedDataColumn implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_account_user_role');
-        $table->addColumn('self_managed', 'boolean', ['default' => false]);
+        $table->addColumn('self_managed', 'boolean', []);
     }
 }
