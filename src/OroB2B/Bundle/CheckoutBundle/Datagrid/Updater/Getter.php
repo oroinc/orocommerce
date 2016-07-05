@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Datagrid\Updater;
 
-use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -13,6 +12,7 @@ use Oro\Bundle\EntityBundle\Exception\IncorrectEntityException;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
+use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 
 class Getter
