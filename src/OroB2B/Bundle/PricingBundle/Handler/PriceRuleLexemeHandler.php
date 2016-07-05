@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Handler;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 
-use Oro\Component\PhpUtils\ArrayUtil;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
@@ -36,10 +36,11 @@ class PriceRuleLexemeHandler
     /**
      * @param PriceList $priceList
      */
-    public function addLexemes(PriceList $priceList)
+    public function updateLexemes(PriceList $priceList)
     {
         $assignmentRules = $this->parser->getUsedLexemes($priceList->getAssignmentRule());
         $priceRules = $priceList->getPriceRules();
+        /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceRuleLexeme');
         $existLexemes = $em->getRepository('OroB2BPricingBundle:PriceRuleLexeme')->getLexemesByRules($priceRules);
         $newLexemes = [];
@@ -47,13 +48,13 @@ class PriceRuleLexemeHandler
         foreach ($priceRules as $rule) {
             $conditionRules = $this->parser->getUsedLexemes($rule->getRuleCondition());
             $priceRules = $this->parser->getUsedLexemes($rule->getRule());
-            $uniqueLexemes = ArrayUtil::arrayMergeRecursiveDistinct($conditionRules, $priceRules);
-            $uniqueUsedLexemes = ArrayUtil::arrayMergeRecursiveDistinct(
-                $uniqueLexemes,
-                $assignmentRules
+            $uniqueLexemes = $this->mergeLexemes($conditionRules, $priceRules);
+            $uniqueUsedLexemes = $this->mergeLexemes($uniqueLexemes, $assignmentRules);
+            $newLexemes = array_merge($this->getNewLexemes($existLexemes, $uniqueUsedLexemes, $rule), $newLexemes);
+            $lexemesToRemove = array_merge(
+                $this->getLexemesToRemove($existLexemes, $uniqueUsedLexemes, $rule),
+                $lexemesToRemove
             );
-            $newLexemes[] = $this->getNewLexemes($existLexemes, $uniqueUsedLexemes, $rule);
-            $lexemesToRemove[] = $this->getLexemesToRemove($existLexemes, $uniqueUsedLexemes, $rule);
         }
         foreach ($newLexemes as $newLexeme) {
             $em->persist($newLexeme);
@@ -101,7 +102,9 @@ class PriceRuleLexemeHandler
     {
         $lexemesToRemove = [];
         foreach ($existLexemes as $existLexeme) {
-            if (!$this->checkExistInUsed($existLexeme, $uniqueUsedLexemes, $priceRule)) {
+            if ($existLexeme->getPriceRule()->getId() === $priceRule->getId() &&
+                !$this->checkExistInUsed($existLexeme, $uniqueUsedLexemes, $priceRule)
+            ) {
                 $lexemesToRemove[] = $existLexeme;
             }
         }
@@ -163,5 +166,28 @@ class PriceRuleLexemeHandler
         }
 
         return false;
+    }
+
+    /**
+     * @param array $lexemes1
+     * @param array $lexemes2
+     * @return array
+     */
+    protected function mergeLexemes(array $lexemes1, array $lexemes2)
+    {
+        $classes = array_unique(array_merge(array_keys($lexemes1), array_keys($lexemes2)));
+        $result = [];
+        foreach ($classes as $class) {
+            $fields = [];
+            if (array_key_exists($class, $lexemes1)) {
+                $fields = $lexemes1[$class];
+            }
+            if (array_key_exists($class, $lexemes2)) {
+                $fields = array_merge($lexemes2[$class], $fields);
+            }
+            $result[$class] = array_unique($fields);
+        }
+
+        return $result;
     }
 }

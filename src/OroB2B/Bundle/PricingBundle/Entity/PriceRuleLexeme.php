@@ -51,10 +51,13 @@ class PriceRuleLexeme
 
     /**
      * @param PriceRule $priceRule
+     * @return $this
      */
     public function setPriceRule($priceRule)
     {
         $this->priceRule = $priceRule;
+
+        return $this;
     }
 
     /**
