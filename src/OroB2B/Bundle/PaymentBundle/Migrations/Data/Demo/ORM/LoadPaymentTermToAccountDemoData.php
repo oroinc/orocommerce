@@ -10,11 +10,14 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use OroB2B\Bundle\PaymentBundle\Migrations\PaymentTermDemoMigrationTrait;
 
 class LoadPaymentTermToAccountDemoData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
+    use PaymentTermDemoMigrationTrait;
+
     /** @var ContainerInterface */
     protected $container;
 
@@ -47,13 +50,10 @@ class LoadPaymentTermToAccountDemoData extends AbstractFixture implements
         /** @var \OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository $accountRepository */
         $accountRepository = $doctrine->getRepository('OroB2BAccountBundle:Account');
 
-        /** @var \OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository $paymentTermRepository */
-        $paymentTermRepository = $doctrine->getRepository('OroB2BPaymentBundle:PaymentTerm');
+        $paymentTermsAll  = $this->getLoadedPaymentTerms();
+        $accountsIterator = $accountRepository->getBatchIterator();
 
-        $paymentTermsAll = $paymentTermRepository->findAll();
-        $accountsAll = $accountRepository->findAll();
-
-        foreach ($accountsAll as $account) {
+        foreach ($accountsIterator as $account) {
             /** @var PaymentTerm $paymentTerm */
             $paymentTerm = $paymentTermsAll[array_rand($paymentTermsAll)];
             $paymentTerm->addAccount($account);

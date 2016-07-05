@@ -74,7 +74,7 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
         }
 
         if ($force) {
-            $container->get('orob2b_pricing.recalculate_triggers_filler.scope_recalculate_triggers_filler')
+            $container->get('orob2b_pricing.triggers_filler.scope_recalculate_triggers_filler')
                 ->fillTriggersForRecalculate($websiteIds, $accountGroupIds, $accountIds);
         }
 

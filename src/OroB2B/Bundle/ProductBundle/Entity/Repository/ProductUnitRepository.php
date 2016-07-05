@@ -147,4 +147,23 @@ class ProductUnitRepository extends EntityRepository
         /** @var Product $product */
         return $this->getProductUnitsQueryBuilder($product);
     }
+
+    /**
+     * @return array
+     */
+    public function getAllUnitCodes()
+    {
+        $results = $this->createQueryBuilder('unit')
+            ->select('unit.code')
+            ->orderBy('unit.code')
+            ->getQuery()
+            ->getScalarResult();
+
+        $codes = [];
+        foreach ($results as $result) {
+            $codes[] = $result['code'];
+        }
+
+        return $codes;
+    }
 }

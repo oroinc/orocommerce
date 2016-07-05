@@ -13,16 +13,12 @@ layout:
                 no_shopping_lists:
                     blockType: block
                     options:
-                        vars:
-                            shoppingList:
-                                '@value': $data.entity
+                        visible: { '@empty': $data.entity }
                 shopping_list_title:
-                    blockType: block
+                    blockType: shopping_list_awere_block
                     options:
                         visible: { '@not_empty': $data.entity }
-                        vars:
-                            shoppingList:
-                                '@value': $data.entity
+                        shoppingList: { '@value': $data.entity }
                 shopping_list_top_actions:
                     blockType: action_line_buttons
                     options:
@@ -32,55 +28,43 @@ layout:
                         entity:
                             '@value': $data.entity
                 shopping_list_options:
-                    blockType: block
+                    blockType: shopping_list_awere_block
                     options:
                         visible: { '@not_empty': $data.entity }
-                        vars:
-                            shoppingList:
-                                '@value': $data.entity
+                        shoppingList: { '@value': $data.entity }
                 shopping_list_line_items:
                     blockType: container
                 shopping_list_line_items_list:
-                    blockType: block
+                    blockType: shopping_list_line_items_list
                     options:
                         visible:
-                          '@not_empty': $data.entity
-                        vars:
-                            shoppingList:
-                                '@value': $data.entity
-                            productsMatchedPrice:
-                                '@value': $data.orob2b_shopping_list_products_matched_price
-                            productsAllPrices:
-                                '@value': $data.orob2b_shopping_list_products_all_prices
-                            productsUnits:
-                                '@value': $data.orob2b_shopping_list_products_units
+                          '@and':
+                            - '@not_empty': $data.entity
+                            - '@has_elements': $data.entity.lineItems
+                        shoppingList: { '@value': $data.entity }
+                        productsMatchedPrice: { '@value': $data.orob2b_shopping_list_products_matched_price }
+                        productsAllPrices: { '@value': $data.orob2b_shopping_list_products_all_prices }
+                        productsUnits: { '@value': $data.orob2b_shopping_list_products_units }
                 shopping_list_line_items_empty:
                     blockType: block
                     options:
                         visible: { '@not_empty': $data.entity }
-                        vars:
-                            shoppingList:
-                                '@value': $data.entity
+                        hidden: { '@has_elements': $data.entity.lineItems }
                 shopping_list_checkout_container:
                     blockType: container
                 shopping_list_button_container:
                     blockType: container
                 shopping_list_delete_button:
-                    blockType: block
+                    blockType: shopping_list_awere_block
                     options:
                         visible: { '@not_empty': $data.entity }
-                        vars:
-                            shoppingList:
-                                '@value': $data.entity
+                        shoppingList: { '@value': $data.entity}
                 shopping_list_totals:
-                    blockType: block
+                    blockType: shopping_list_totals
                     options:
                         visible: { '@not_empty': $data.entity }
-                        vars:
-                            shoppingList:
-                                '@value': $data.entity
-                            totals:
-                                '@value': $data.totals
+                        shoppingList: { '@value': $data.entity }
+                        totals: { '@value': $data.totals }
                 shopping_list_combined_button:
                     blockType: action_combined_buttons
                     options:

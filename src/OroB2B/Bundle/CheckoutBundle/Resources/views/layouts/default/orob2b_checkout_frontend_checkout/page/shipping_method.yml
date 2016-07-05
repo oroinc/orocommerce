@@ -4,10 +4,8 @@ layout:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/shipping_method.html.twig'
         - '@setOption':
             id: checkout_information
-            optionName: vars
-            optionValue:
-                workflowStep: { '@value': $data.workflowStep }
-                stepOrder: 3
+            optionName: stepOrder
+            optionValue: 3
         - '@addTree':
             items:
                 checkout_form_buttons:

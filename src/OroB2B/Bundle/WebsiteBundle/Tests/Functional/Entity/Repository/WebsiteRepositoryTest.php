@@ -58,6 +58,23 @@ class WebsiteRepositoryTest extends WebTestCase
     }
 
     /**
+     * @dataProvider getAllWebsitesProvider
+     *
+     * @param array $expectedWebsiteNames
+     */
+    public function testBatchIterator(array $expectedWebsiteNames)
+    {
+        $websitesIterator = $this->getRepository()->getBatchIterator();
+
+        $websiteNames = [];
+        foreach ($websitesIterator as $website) {
+            $websiteNames[] = $website->getName();
+        }
+
+        $this->assertEquals($expectedWebsiteNames, $websiteNames);
+    }
+
+    /**
      * @return WebsiteRepository
      */
     protected function getRepository()
