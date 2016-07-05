@@ -25,6 +25,11 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
     use UserUtilityTrait;
 
     /**
+     * @var string
+     */
+    const ENUM_CODE_INVENTORY_STATUS = 'prod_inventory_status';
+
+    /**
      * @var ContainerInterface
      */
     protected $container;
@@ -61,7 +66,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
-        $inventoryStatuses = $this->getAllEnumValuesByCode($manager, 'prod_inventory_status');
+        $outOfStockStatus = $this->getOutOfStockInventoryStatus($manager);
 
         $allImageTypes = $this->getImageTypes();
 
@@ -95,7 +100,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->setSku($row['sku'])
-                ->setInventoryStatus($inventoryStatuses[1])
+                ->setInventoryStatus($outOfStockStatus)
                 ->setStatus(Product::STATUS_ENABLED)
                 ->addName($name)
                 ->addDescription($description)
@@ -128,14 +133,17 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
 
     /**
      * @param ObjectManager $manager
-     * @param string $enumCode
-     * @return AbstractEnumValue[]
+     * @return AbstractEnumValue
+     *
+     * @throws \InvalidArgumentException
      */
-    protected function getAllEnumValuesByCode(ObjectManager $manager, $enumCode)
+    protected function getOutOfStockInventoryStatus(ObjectManager $manager)
     {
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName($enumCode);
+        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName(self::ENUM_CODE_INVENTORY_STATUS);
 
-        return $manager->getRepository($inventoryStatusClassName)->findAll();
+        return $manager->getRepository($inventoryStatusClassName)->findOneBy([
+            'id' => Product::INVENTORY_STATUS_OUT_OF_STOCK
+        ]);
     }
 
     /**

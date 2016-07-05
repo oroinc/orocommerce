@@ -5,37 +5,32 @@ namespace OroB2B\Bundle\RFPBundle\Migrations\Data\Demo\ORM;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
+use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 
-class LoadRequestDemoData extends AbstractFixture implements
-    FixtureInterface,
-    ContainerAwareInterface,
-    DependentFixtureInterface
+class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
+    DependentFixtureInterface,
+    ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
     /**
      * @var array
      */
     protected $requests = [];
 
     /**
-     * {@inheritdoc}
+     * @var ContainerInterface
      */
+    protected $container = [];
+
+    /** {@inheritdoc} */
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
@@ -58,8 +53,7 @@ class LoadRequestDemoData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $statuses = $manager->getRepository('OroB2BRFPBundle:RequestStatus')->findAll();
-
+        $statuses     = $this->getObjectReferences($manager, 'OroB2BRFPBundle:RequestStatus');
         $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
 
         $accountUsers = $this->getAccountUsers($manager);
