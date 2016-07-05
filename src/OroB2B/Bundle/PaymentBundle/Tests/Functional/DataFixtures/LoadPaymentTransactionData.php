@@ -18,6 +18,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
     const PAYFLOW_AUTHORIZE_TRANSACTION = 'payflow_transaction';
     const PAYFLOW_VALIDATE_TRANSACTION = 'payflow_validate_transaction';
     const PAYFLOW_AUTHORIZE_ACTIVE_TRANSACTION = 'payflow_authorize_active_transaction';
+    const PAYFLOW_AUTHORIZE_TRANSACTION_IP_FILTER = 'payflow_authorize_transaction_ip_filter';
 
     /** {@inheritdoc} */
     public function getDependencies()
@@ -64,6 +65,19 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'entityIdentifier' => 1,
             'active' => true,
             'successful' => true,
+            'paymentMethod' => PayflowGateway::TYPE,
+            'entityClass' => 'OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm',
+            'frontendOwner' => LoadAccountUserData::EMAIL,
+            'response' => [
+                'SECURETOKEN' => 'SECURETOKEN',
+                'SECURETOKENID' => 'SECURETOKENID',
+            ],
+        ],
+        self::PAYFLOW_AUTHORIZE_TRANSACTION_IP_FILTER => [
+            'amount' => '1000.00',
+            'currency' => 'USD',
+            'action' => PaymentMethodInterface::AUTHORIZE,
+            'entityIdentifier' => 1,
             'paymentMethod' => PayflowGateway::TYPE,
             'entityClass' => 'OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm',
             'frontendOwner' => LoadAccountUserData::EMAIL,
