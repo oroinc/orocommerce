@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -62,15 +61,10 @@ class ShoppingListTotalManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMockBuilder(ManagerRegistry::class)->disableOriginalConstructor()->getMock();
 
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $config */
-        $config = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
-        $config->method('get')->willReturn([self::EUR, self::USD, self::CAD]);
-
         $this->totalManager = new ShoppingListTotalManager(
             $this->registry,
             $this->subtotalProvider,
-            $this->currencyManager,
-            $config
+            $this->currencyManager
         );
     }
 
@@ -119,6 +113,9 @@ class ShoppingListTotalManagerTest extends \PHPUnit_Framework_TestCase
         $shoppingList = new ShoppingList();
         $totalUSD = new ShoppingListTotal($shoppingList, self::USD);
         $totalEUR = new ShoppingListTotal($shoppingList, self::EUR);
+        $this->currencyManager->expects($this->any())
+            ->method('getAvailableCurrencies')
+            ->willReturn([self::EUR, self::USD, self::CAD]);
 
         $repository = $this->getMock(ObjectRepository::class);
         $repository->expects($this->once())

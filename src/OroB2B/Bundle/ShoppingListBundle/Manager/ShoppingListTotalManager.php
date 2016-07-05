@@ -5,9 +5,6 @@ namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -36,26 +33,18 @@ class ShoppingListTotalManager
     protected $em;
 
     /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
-    /**
      * @param ManagerRegistry $managerRegistry
      * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
      * @param UserCurrencyManager $currencyManager
-     * @param ConfigManager $configManager
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider,
-        UserCurrencyManager $currencyManager,
-        ConfigManager $configManager
+        UserCurrencyManager $currencyManager
     ) {
         $this->registry = $managerRegistry;
         $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
         $this->currencyManager = $currencyManager;
-        $this->configManager = $configManager;
     }
 
     /**
@@ -103,8 +92,7 @@ class ShoppingListTotalManager
     {
         /** @var ShoppingListTotal[] $totals */
         $totals = $this->getTotalRepository()->findBy(['shoppingList' => $shoppingList]);
-        $enabledCurrencies = $this->configManager
-            ->get(Configuration::getConfigKeyByName(Configuration::ENABLED_CURRENCIES), []);
+        $enabledCurrencies = $this->currencyManager->getAvailableCurrencies();
 
         foreach ($totals as $total) {
             $subtotal = $this->lineItemNotPricedSubtotalProvider

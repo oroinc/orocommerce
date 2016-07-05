@@ -16,6 +16,11 @@ class WebsiteManager
     protected $managerRegistry;
 
     /**
+     * @var Website
+     */
+    protected $currentWebsite;
+
+    /**
      * @param ManagerRegistry $managerRegistry
      */
     public function __construct(ManagerRegistry $managerRegistry)
@@ -28,10 +33,14 @@ class WebsiteManager
      */
     public function getCurrentWebsite()
     {
-        return $this->getEntityManager()->getRepository('OroB2BWebsiteBundle:Website')->findOneBy(
-            [],
-            ['id' => Criteria::ASC]
-        );
+        if (!$this->currentWebsite) {
+            $this->currentWebsite = $this->getEntityManager()->getRepository('OroB2BWebsiteBundle:Website')->findOneBy(
+                [],
+                ['id' => Criteria::ASC]
+            );
+        }
+
+        return $this->currentWebsite;
     }
 
     /**
