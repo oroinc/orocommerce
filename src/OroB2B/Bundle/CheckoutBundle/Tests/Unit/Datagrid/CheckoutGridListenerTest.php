@@ -2,15 +2,15 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
-use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache\Cache as DoctrineCache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
-use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\CheckoutBundle\Datagrid\Updater\Cache;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -19,9 +19,12 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 
+use OroB2B\Bundle\CheckoutBundle\Datagrid\Updater\Getter;
+use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -33,20 +36,6 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 {
     const ENTITY_1 = 'Entity1';
     const ENTITY_2 = 'Entity2';
-    /**
-     * @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $configProvider;
-
-    /**
-     * @var EntityFieldProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $fieldProvider;
-
-    /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $doctrine;
 
     /**
      * @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -57,6 +46,11 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
      * @var Cache|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $cache;
+
+    /**
+     * @var Getter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $getter;
 
     /**
      * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
@@ -90,93 +84,86 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->configProvider = $this->getMockBuilder(ConfigProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->fieldProvider = $this->getMockBuilder(EntityFieldProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrine = $this->getMockBuilder(RegistryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->em = $this->getMock(EntityManagerInterface::class);
 
         $metadata = $this->getMockBuilder(ClassMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+                         ->disableOriginalConstructor()
+                         ->getMock();
 
         $metadata->method('hasField')
-            ->will($this->returnValueMap(
-                [
-                    ['currency', true],
-                    ['subtotal', true],
-                    ['total', true],
-                ]
-            ));
+                 ->will($this->returnValueMap(
+                     [
+                         ['currency', true],
+                         ['subtotal', true],
+                         ['total', true],
+                     ]
+                 ));
 
         $metadata->method('hasAssociation')
-            ->will($this->returnValueMap(
-                [
-                    ['totals', true]
-                ]
-            ));
+                 ->will($this->returnValueMap(
+                     [
+                         ['totals', true]
+                     ]
+                 ));
 
         $this->em->method('getClassMetadata')->willReturn($metadata);
 
-        $this->doctrine->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($this->em);
-
         $this->currencyManager = $this->getMockBuilder(UserCurrencyManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+                                      ->disableOriginalConstructor()
+                                      ->getMock();
 
         $this->currencyManager->expects($this->any())->method('getUserCurrency')->willReturn('USD');
 
-        $this->cache = $this->getMock(Cache::class);
+        $doctrineCache = $this->getMockBuilder(DoctrineCache::class)
+                              ->disableOriginalConstructor()
+                              ->getMock();
+
+        $doctrineCache->method('contains')
+                      ->willReturn(false);
+
+        $this->cache = new Cache($doctrineCache);
 
         $this->baseCheckoutRepository = $this->getMockBuilder(
-            'OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository'
+            BaseCheckoutRepository::class
         )
-            ->setMethods(['find', 'countItemsPerCheckout', 'getSourcePerCheckout'])
-            ->disableOriginalConstructor()
-            ->getMock();
+                                             ->setMethods(['find', 'countItemsPerCheckout', 'getSourcePerCheckout'])
+                                             ->disableOriginalConstructor()
+                                             ->getMock();
 
         $this->baseCheckoutRepository->expects($this->any())
-            ->method('find')
-            ->willReturn(new Checkout());
+                                     ->method('find')
+                                     ->willReturn(new Checkout());
 
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
+                                     ->disableOriginalConstructor()
+                                     ->getMock();
 
         $this->totalProcessor = $this->getMockBuilder(TotalProcessorProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+                                     ->disableOriginalConstructor()
+                                     ->getMock();
 
         $this->totalProcessor->expects($this->any())
-            ->method('getTotal')
-            ->willReturn((new Subtotal())->setAmount(10));
+                             ->method('getTotal')
+                             ->willReturn((new Subtotal())->setAmount(10));
 
-        $this->entityNameResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\Provider\EntityNameResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->entityNameResolver = $this->getMockBuilder(EntityNameResolver::class)
+                                         ->disableOriginalConstructor()
+                                         ->getMock();
+
+        $this->getter = $this->getMockBuilder(Getter::class)
+                             ->disableOriginalConstructor()
+                             ->getMock();
 
         $this->listener = new CheckoutGridListener(
-            $this->configProvider,
-            $this->fieldProvider,
-            $this->doctrine,
             $this->currencyManager,
             $this->baseCheckoutRepository,
             $this->securityFacade,
             $this->totalProcessor,
-            $this->entityNameResolver
+            $this->entityNameResolver,
+            $this->cache,
+            $this->getter
         );
 
-        $this->listener->setCache($this->cache);
     }
 
     public function testGetMetadataNoRelations()
@@ -184,7 +171,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $configuration = $this->getGridConfiguration();
         /** @var DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $event = new BuildBefore($datagrid, $configuration);
+        $event    = new BuildBefore($datagrid, $configuration);
         $this->listener->onBuildBefore($event);
 
         $expectedSelects = ['rootAlias.id as id'];
@@ -200,25 +187,10 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetMetadataNoTotalFields()
     {
-        $relationsMetadata = [['related_entity_name' => self::ENTITY_1, 'name' => 'relationOne']];
-        $this->fieldProvider->expects($this->once())
-            ->method('getRelations')
-            ->with('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource')
-            ->willReturn($relationsMetadata);
-
-        $config = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\ConfigInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->configProvider->expects($this->once())
-            ->method('getConfig')
-            ->with(self::ENTITY_1)
-            ->willReturn($config);
-
         $configuration = $this->getGridConfiguration();
         /** @var DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $event = new BuildBefore($datagrid, $configuration);
+        $event    = new BuildBefore($datagrid, $configuration);
         $this->listener->onBuildBefore($event);
 
         $expectedSelects = ['rootAlias.id as id'];
@@ -237,191 +209,65 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testWithValidMetadata()
     {
-        $this->cache->expects($this->any())
-            ->method('contains')
-            ->willReturn(false);
-
-        $relationsMetadata = [
-            ['related_entity_name' => self::ENTITY_1, 'name' => 'relationOne'],
-            ['related_entity_name' => self::ENTITY_2, 'name' => 'relationTwo'],
-        ];
-        $this->fieldProvider->expects($this->once())
-            ->method('getRelations')
-            ->with('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource')
-            ->willReturn($relationsMetadata);
-
-        $configValue1 = [
-            'type' => 'entity_fields',
-            'fields' => [
-                'total' => 'total',
-                'subtotal' => 'subtotal',
-                'currency' => 'currency'
-            ]
+        $data = [
+            'bindParameters' => [
+                'user_currency' => 'user_currency'
+            ],
+            'selects'        => [],
+            'sorters'        => [],
+            'columns'        => [],
+            'filters'        => [],
+            'joins'          => [],
         ];
 
-        $configValue2 = [
-            'type' => 'join_collection',
-            'join_field' => 'totals',
-            'relation_fields' => [
-                'total' => 'total',
-                'subtotal' => 'subtotal',
-                'currency' => 'currency'
-            ]
-        ];
+        $this->getter->expects($this->once())
+                     ->method('getUpdates')
+                     ->willReturn(
+                         $data
+                     );
 
-        $this->configProvider
-            ->method('getConfig')
-            ->will($this->returnValueMap([
-                [self::ENTITY_1, null, $this->getEntityConfig($configValue1)],
-                [self::ENTITY_2, null, $this->getEntityConfig($configValue2)]
-            ]));
+        $config = $this->getGridConfiguration();
 
-        $configuration = $this->getGridConfiguration();
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $parametersBag = $this->getMockBuilder(ParameterBag::class)->disableOriginalConstructor()->getMock();
-        $parametersBag->expects($this->once())
+        $event = $this->getMockBuilder(BuildBefore::class)
+                      ->disableOriginalConstructor()
+                      ->getMock();
+
+        $event->method('getConfig')
+              ->willReturn($config);
+
+        $parameters = $this->getMockBuilder(ParameterBag::class)
+                           ->getMock();
+
+        $parameters->expects($this->once())
             ->method('set')
             ->with(CheckoutGridListener::USER_CURRENCY_PARAMETER, 'USD');
-        $datagrid->expects($this->once())->method('getParameters')->willReturn($parametersBag);
-        $event = new BuildBefore($datagrid, $configuration);
+
+        $datagrid = $this->getMockBuilder(DatagridInterface::class)
+                         ->getMock();
+
+        $datagrid->method('getParameters')
+                 ->willReturn($parameters);
+
+        $event->expects($this->once())
+              ->method('getDatagrid')
+              ->willReturn($datagrid);
+
         $this->listener->onBuildBefore($event);
-
-        $expectedSelects = [
-            'rootAlias.id as id',
-            'COALESCE(_relationOne.subtotal,_relationTwo_totals.subtotal) as subtotal',
-            'COALESCE(_relationOne.total) as total',
-            'COALESCE(_relationOne.currency,_relationTwo_totals.currency) as currency'
-        ];
-        $expectedColumns = [
-            'id' => ['label' => 'id'],
-            'total' => [
-                'label' => 'orob2b.checkout.grid.total.label',
-                'type' => 'twig',
-                'frontend_type' => 'html',
-                'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
-                'order' => 85,
-                'renderable' => false
-            ],
-            'subtotal' => [
-                'label' => 'orob2b.checkout.grid.subtotal.label',
-                'type' => 'twig',
-                'frontend_type' => 'html',
-                'template' => 'OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig',
-                'order' => 25
-            ]
-        ];
-        $expectedFilters = [
-            'id' => ['data_name' => 'id'],
-            'subtotal' => [
-                'type' => 'number',
-                'data_name' => 'subtotal'
-            ]
-        ];
-        $expectedSorters = [
-            'id' => ['data_name' => 'id'],
-            'subtotal' => ['data_name' => 'subtotal']
-        ];
-        $expectedBindParameters = ['user_currency'];
-        $expectedJoins = [
-            ['join' => 'rootAlias.source', 'alias' => '_source'],
-            ['join' => '_source.relationOne', 'alias' => '_relationOne'],
-            ['join' => '_source.relationTwo', 'alias' => '_relationTwo'],
-            [
-                'join' => '_relationTwo.totals',
-                'alias' => '_relationTwo_totals',
-                'conditionType' => 'WITH',
-                'condition' => '_relationTwo_totals.currency = :user_currency'
-            ],
-        ];
-
-        $this->assertEquals($expectedSelects, $configuration->offsetGetByPath('[source][query][select]'));
-        $this->assertEquals($expectedColumns, $configuration->offsetGetByPath('[columns]'));
-        $this->assertEquals($expectedFilters, $configuration->offsetGetByPath('[filters][columns]'));
-        $this->assertEquals($expectedSorters, $configuration->offsetGetByPath('[sorters][columns]'));
-        $this->assertEquals($expectedJoins, $configuration->offsetGetByPath('[source][query][join][left]'));
-        $this->assertEquals($expectedBindParameters, $configuration->offsetGetByPath('[source]')['bind_parameters']);
     }
 
-    public function testCachedData()
+    /**
+     * @return DatagridConfiguration
+     */
+    protected function getGridConfiguration()
     {
-        $updates = [
-            'selects' => [
-                'COALESCE(_relationOne.total) as total'
-            ],
-            'columns' => [
-                'total' => [
-                    'label' => 'orob2b.checkout.grid.total.label'
-                ]
-            ],
-            'filters' => [
-                'total' => [
-                    'type' => 'number',
-                    'data_name' => 'total'
-                ]
-            ],
-            'sorters' => [
-                'total' => ['data_name' => 'total']
-            ],
-            'joins' => [
-                ['join' => 'rootAlias.source', 'alias' => '_source'],
-                ['join' => '_source.relationOne', 'alias' => '_relationOne']
-            ],
-            'bindParameters' => ['user_currency']
-        ];
-        $this->cache->expects($this->once())
-            ->method('contains')
-            ->willReturn(true);
-        $this->cache->expects($this->once())
-            ->method('fetch')
-            ->with('test')
-            ->willReturn($updates);
+        $configuration = DatagridConfiguration::createNamed('test', []);
+        $configuration->offsetAddToArrayByPath('[source][query][from]', [['alias' => 'rootAlias']]);
+        $configuration->offsetSetByPath('[source][query][select]', ['rootAlias.id as id']);
+        $configuration->offsetSetByPath('[columns]', ['id' => ['label' => 'id']]);
+        $configuration->offsetSetByPath('[filters][columns]', ['id' => ['data_name' => 'id']]);
+        $configuration->offsetSetByPath('[sorters][columns]', ['id' => ['data_name' => 'id']]);
 
-        $configuration = $this->getGridConfiguration();
-
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $parametersBag = $this->getMockBuilder(ParameterBag::class)->disableOriginalConstructor()->getMock();
-        $parametersBag->expects($this->once())
-            ->method('set')
-            ->with(CheckoutGridListener::USER_CURRENCY_PARAMETER, 'USD');
-        $datagrid->expects($this->once())->method('getParameters')->willReturn($parametersBag);
-        $event = new BuildBefore($datagrid, $configuration);
-        $this->listener->onBuildBefore($event);
-
-        $expectedSelects = [
-            'rootAlias.id as id',
-            'COALESCE(_relationOne.total) as total',
-        ];
-        $expectedColumns = [
-            'id' => ['label' => 'id'],
-            'total' => [
-                'label' => 'orob2b.checkout.grid.total.label'
-            ]
-        ];
-        $expectedFilters = [
-            'id' => ['data_name' => 'id'],
-            'total' => [
-                'type' => 'number',
-                'data_name' => 'total'
-            ]
-        ];
-        $expectedSorters = [
-            'id' => ['data_name' => 'id'],
-            'total' => ['data_name' => 'total']
-        ];
-        $expectedJoins = [
-            ['join' => 'rootAlias.source', 'alias' => '_source'],
-            ['join' => '_source.relationOne', 'alias' => '_relationOne']
-        ];
-        $expectedBindParameters = ['user_currency'];
-
-        $this->assertEquals($expectedSelects, $configuration->offsetGetByPath('[source][query][select]'));
-        $this->assertEquals($expectedColumns, $configuration->offsetGetByPath('[columns]'));
-        $this->assertEquals($expectedFilters, $configuration->offsetGetByPath('[filters][columns]'));
-        $this->assertEquals($expectedSorters, $configuration->offsetGetByPath('[sorters][columns]'));
-        $this->assertEquals($expectedJoins, $configuration->offsetGetByPath('[source][query][join][left]'));
-        $this->assertEquals($expectedBindParameters, $configuration->offsetGetByPath('[source]')['bind_parameters']);
+        return $configuration;
     }
 
     public function testOnResultAfter()
@@ -440,12 +286,12 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $data = array_combine(range(1, 10), range(1, 10));
 
         $this->baseCheckoutRepository->expects($this->atLeastOnce())
-            ->method('countItemsPerCheckout')
-            ->will($this->returnValue($data));
+                                     ->method('countItemsPerCheckout')
+                                     ->will($this->returnValue($data));
 
         $records = [];
 
-        for ($i=1; $i<=10; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             $record = $this->getMock(
                 'Oro\Bundle\DataGridBundle\Datasource\ResultRecord',
                 ['getValue', 'addData'],
@@ -453,11 +299,11 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             );
 
             $record->expects($this->atLeastOnce())
-                ->method('getValue')
-                ->will($this->returnValue($i));
+                   ->method('getValue')
+                   ->will($this->returnValue($i));
 
             $record->expects($this->atLeastOnce())
-                ->method('addData');
+                   ->method('addData');
 
             $records[] = $record;
         }
@@ -465,8 +311,8 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $event->expects($this->atLeastOnce())->method('getRecords')->willReturn($records);
 
         $event->expects($this->atLeastOnce())
-            ->method('getRecords')
-            ->will($this->returnValue($records));
+              ->method('getRecords')
+              ->will($this->returnValue($records));
 
         $this->listener->onResultAfter($event);
     }
@@ -482,58 +328,58 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $quote = new Quote();
 
         $this->baseCheckoutRepository->expects($this->atLeastOnce())
-            ->method('getSourcePerCheckout')
-            ->will($this->returnValue([
-                3 => $shoppingList,
-                2 => $quote
-            ]));
+                                     ->method('getSourcePerCheckout')
+                                     ->will($this->returnValue([
+                                                                   3 => $shoppingList,
+                                                                   2 => $quote
+                                                               ]));
 
-        $records = [ ];
+        $records = [];
 
-        $foundSources = [ ];
+        $foundSources = [];
 
         $record = $this->getMockBuilder('\StdClass')
-            ->setMethods([ 'getValue', 'addData' ])
-            ->getMock();
+                       ->setMethods(['getValue', 'addData'])
+                       ->getMock();
 
         $record->expects($this->atLeastOnce())
-            ->method('getValue')
-            ->will($this->returnValue(3));
+               ->method('getValue')
+               ->will($this->returnValue(3));
 
         $record->expects($this->atLeastOnce())
-            ->method('addData')
-            ->will($this->returnCallback(function ($value) use (& $foundSources) {
-                $foundSources[] = $value;
-            }));
+               ->method('addData')
+               ->will($this->returnCallback(function ($value) use (& $foundSources) {
+                   $foundSources[] = $value;
+               }));
 
         $records[] = $record;
 
         $record = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\ResultRecord')
-            ->disableOriginalConstructor()
-            ->setMethods([ 'getValue', 'addData' ])
-            ->getMock();
+                       ->disableOriginalConstructor()
+                       ->setMethods(['getValue', 'addData'])
+                       ->getMock();
 
         $record->expects($this->atLeastOnce())
-            ->method('getValue')
-            ->will($this->returnValue(2));
+               ->method('getValue')
+               ->will($this->returnValue(2));
 
         $record->expects($this->atLeastOnce())
-            ->method('addData')
-            ->will($this->returnCallback(function ($value) use (& $foundSources) {
-                $foundSources[] = $value;
-            }));
+               ->method('addData')
+               ->will($this->returnCallback(function ($value) use (& $foundSources) {
+                   $foundSources[] = $value;
+               }));
 
         $records[] = $record;
 
         $event->expects($this->atLeastOnce())->method('getRecords')->willReturn($records);
 
         $event->expects($this->atLeastOnce())
-            ->method('getRecords')
-            ->will($this->returnValue($records));
+              ->method('getRecords')
+              ->will($this->returnValue($records));
 
         $this->entityNameResolver->expects($this->atLeastOnce())
-            ->method('getName')
-            ->will($this->returnCallback(function ($entity) use ($shoppingList, $quote) {
+             ->method('getName')
+             ->will($this->returnCallback(function ($entity) use ($shoppingList, $quote) {
                 if ($entity == $shoppingList) {
                     return $shoppingList->getLabel();
                 }
@@ -541,7 +387,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                 if ($entity == $quote) {
                     return 'Quote';
                 }
-            }));
+             }));
 
         $this->listener->onResultAfter($event);
 
@@ -572,13 +418,13 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
 
         $this->totalProcessor->expects($this->once())
-            ->method('getTotal')
-            ->willReturn((new Subtotal())->setAmount(10));
+                             ->method('getTotal')
+                             ->willReturn((new Subtotal())->setAmount(10));
 
         $this->baseCheckoutRepository->expects($this->once())
-            ->method('find')
-            ->with(2)
-            ->willReturn(new Checkout());
+                                     ->method('find')
+                                     ->with(2)
+                                     ->willReturn(new Checkout());
 
         $record1 = new ResultRecord(['id' => 1, 'total' => 10]);
         $record2 = new ResultRecord(['id' => 2]);
@@ -588,8 +434,8 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $event->expects($this->atLeastOnce())->method('getRecords')->willReturn($records);
 
         $event->expects($this->atLeastOnce())
-            ->method('getRecords')
-            ->will($this->returnValue($records));
+              ->method('getRecords')
+              ->will($this->returnValue($records));
 
         $this->listener->onResultAfter($event);
 
@@ -606,41 +452,5 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $configId = $this->getMock('Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface');
 
         return new Config($configId, $parameters);
-    }
-
-    /**
-     * @param array $configValue
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getEntityConfig($configValue)
-    {
-        $config1 = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\ConfigInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $config1->expects($this->once())
-            ->method('has')
-            ->willReturn('true');
-        $config1->expects($this->once())
-            ->method('get')
-            ->with('totals_mapping')
-            ->willReturn($configValue);
-
-        return $config1;
-    }
-
-    /**
-     * @return DatagridConfiguration
-     */
-    protected function getGridConfiguration()
-    {
-        $configuration = DatagridConfiguration::createNamed('test', []);
-        $configuration->offsetAddToArrayByPath('[source][query][from]', [['alias' => 'rootAlias']]);
-        $configuration->offsetSetByPath('[source][query][select]', ['rootAlias.id as id']);
-        $configuration->offsetSetByPath('[columns]', ['id' => ['label' => 'id']]);
-        $configuration->offsetSetByPath('[filters][columns]', ['id' => ['data_name' => 'id']]);
-        $configuration->offsetSetByPath('[sorters][columns]', ['id' => ['data_name' => 'id']]);
-
-        return $configuration;
     }
 }
