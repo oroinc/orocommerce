@@ -20,6 +20,7 @@ layout:
                         grid_render_parameters:
                             themeOptions:
                                 toolbarTemplateSelector: '#template-account-address-book-addresses-grid-toolbar'
+                                cellActionsHideCount: 4
             tree:
                 account_address_book_addresses:
                     account_address_book_addresses_grid_head:

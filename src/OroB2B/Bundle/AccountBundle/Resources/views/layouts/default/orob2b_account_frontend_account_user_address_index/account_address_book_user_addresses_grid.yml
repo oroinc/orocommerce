@@ -21,6 +21,9 @@ layout:
                         grid_name: frontend-account-account-user-address-grid
                         grid_parameters:
                             frontend_owner_id: {'@value': $data.entity.id}
+                        grid_render_parameters:
+                            themeOptions:
+                                cellActionsHideCount: 4
             tree:
                 account_address_book_user_addresses:
                     account_address_book_user_addresses_grid_head:
