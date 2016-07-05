@@ -1,5 +1,29 @@
-{# {% block _shopping_lists_sidebar_list_widget %}
-    <div class="orders-list">
-        orders-list
+{% block _shopping_list_view_container_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ "shopping-list-wrapper"}) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
     </div>
-{% endblock _shopping_lists_sidebar_list_widget %} #}
+{% endblock %}
+
+{% block _shopping_list_view_tabs_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ "shopping-list-tabs"}) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_view_tabs_new_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {{ UI.clientLink({
+        'aCss': 'shopping-list-create',
+        'iCss': 'cf-add_circle',
+        'widget' : {
+            'type' : 'shopping-list-create',
+            'options': {
+                'createOnly': true
+            }
+        }
+    }) }}
+{% endblock %}

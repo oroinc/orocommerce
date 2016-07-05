@@ -1,12 +1,80 @@
 .orders-list {
+    display: flex;
+    width: 100%;
+    margin-top: -30px !important;
+    padding-right: 37px;
+
+    border-bottom: 1px solid $base-font-color-lightest;
+    border-radius: 0 3px 0;
+    background: #ededed;
+
     &__item {
-        display: inline-block;
         width: 20%;
 
         border-bottom: 0;
+        background: $theme-lightest-gray-color;
+
+        &:first-child {
+            margin-left: 1px;
+
+            border-top: 0;
+        }
+
+        &:first-child .orders-list__link {
+            border-radius: 3px 0 0
+        }
     }
 
-    &__item:first-child {
-        border-top: 0;
+    &__link {
+        margin-left: -1px;
+        padding: 16px 7px 12px;
+
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+
+        border: 1px solid $theme-lighter-gray-color;
+        border-bottom: none;
+
+        &--current,
+        &:hover {
+            margin-bottom: -1px;
+
+            border: 1px solid $base-font-color-lightest;
+            border-bottom: 1px solid $base-white-color;
+            background: $base-white-color;
+        }
+    }
+
+    &__item-indicator,
+    &__content {
+        display: inline-block;;
+
+        vertical-align: baseline;;
+    }
+
+    &__item-indicator {
+        position: static;
+
+        min-width: 26px;
+    }
+
+    &__content {
+        max-width: calc(100% - 36px);
+        margin-left: 10px;
+    }
+
+    &__title {
+        display: inline-block;
+        max-width: 100%;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: text-bottom;
+    }
+
+    &__desc {
+        display: none;
     }
 }

@@ -452,13 +452,13 @@
         <ul {{ block('block_attributes') }}>
             {% for shoppingList in shoppingLists %}
                 <li class="orders-list__item">
-                    <a href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}" class="orders-list__item__link {% if shoppingList.id == selectedShoppingList.id %} current {% endif %}">
+                    <a href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}" class="orders-list__link {% if shoppingList.id == selectedShoppingList.id %} orders-list__link--current {% endif %}">
                         <span class='badge badge_sm badge_orange badge_circled-corners orders-list__item-indicator'><i class="cf-basket"></i></span>
-                        <div class="orders-list__item__content">
-                            <h3 class="orders-list__item__title text-uppercase {% if shoppingList.id == selectedShoppingList.id %}current-title{% endif %}">{{ shoppingList.label }}</h3>
+                        <div class="orders-list__content">
+                            <h3 class="orders-list__title text-uppercase {% if shoppingList.id == selectedShoppingList.id %}current-title{% endif %}">{{ shoppingList.label }}</h3>
                             {% set itemsCount = shoppingList.lineItems.count %}
                             {% if itemsCount %}
-                                <div class="orders-list__item__desc">
+                                <div class="orders-list__desc">
                                     <span class="mr1-md"><strong>{{ shoppingList.lineItems.count }}</strong> {{ 'orob2b.shoppinglist.items.label'|transchoice(itemsCount) }}</span>
                                 </div>
                             {% endif %}
@@ -470,4 +470,3 @@
         <!-- END ORDERS TABS LIST -->
     </div>
 {% endblock _shopping_lists_sidebar_list_widget %}
-

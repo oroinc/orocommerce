@@ -42,39 +42,40 @@
     &:first-child {
       border-top: 1px solid $theme-lighter-gray-color;
     }
+  }
 
-    &__link {
-      position: relative;
-      display: block;
+  &__link {
+    position: relative;
+    display: block;
 
-      padding: 15px 10px 15px 40px;
-      border-left: 6px solid transparent;
+    padding: 15px 10px 15px 40px;
+    border-left: 6px solid transparent;
 
+    color: $base-font-color;
+    text-decoration: none;
+
+    &--current,
+    &:hover {
+      border-left: 6px solid $theme-lighter-gray-color;
+
+      background: $theme-lightest-gray-color;
       color: $base-font-color;
       text-decoration: none;
-
-      &.current, &:hover {
-        border-left: 6px solid $theme-lighter-gray-color;
-
-        background: $theme-lightest-gray-color;
-        color: $base-font-color;
-        text-decoration: none;
-      }
-
-      &:focus, &:active {
-        color: $base-font-color;
-        text-decoration: none;
-      }
     }
 
-    &__title {
-      font-size: $base-font-size;
-      line-height: 1.3;
+    &:focus, &:active {
+      color: $base-font-color;
+      text-decoration: none;
     }
+  }
 
-    &__desc {
-      font-size: 13px;
-    }
+  &__title {
+    font-size: $base-font-size;
+    line-height: 1.3;
+  }
+
+  &__desc {
+    font-size: 13px;
   }
 
   &__item-indicator {
