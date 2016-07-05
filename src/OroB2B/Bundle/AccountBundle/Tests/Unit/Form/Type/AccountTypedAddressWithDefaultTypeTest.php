@@ -163,12 +163,12 @@ class AccountTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
      */
     protected function createRepositoryMock(array $entityModels = [])
     {
-        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+        $repo = $this->getMockBuilder('Oro\Bundle\AddressBundle\Entity\Repository\AddressTypeRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
         $repo->expects($this->any())
-            ->method('findAll')
+            ->method('getBatchIterator')
             ->will($this->returnValue($entityModels));
 
         $repo->expects($this->any())

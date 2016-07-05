@@ -9,3 +9,7 @@ services:
         arguments:
             - '%orob2b_warehouse.entity.warehouse_inventory_level.class%'
             - "@doctrine.orm.entity_manager"
+
+    orob2b_warehouse.entity.helper.warehouse_counter:
+        class: 'OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter'
+        arguments: ["@oro_entity.doctrine_helper"]

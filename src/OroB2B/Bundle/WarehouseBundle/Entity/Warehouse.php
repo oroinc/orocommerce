@@ -22,7 +22,7 @@ use OroB2B\Bundle\WarehouseBundle\Model\ExtendWarehouse;
  *          @ORM\Index(name="idx_orob2b_warehouse_updated_at", columns={"updated_at"})
  *      }
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      routeName="orob2b_warehouse_index",
