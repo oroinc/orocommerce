@@ -4,21 +4,25 @@ data:
             main:
                 label: orob2b.product.productimage.type.main.label
                 dimensions:
-                    - { width: 1000, height: 1000 }
-                    - { width: 400, height: 400 }
+                    - product_original
+                    - product_large
                 max_number: 1
             listing:
                 label: orob2b.product.productimage.type.listing.label
                 dimensions:
-                    - { width: 400, height: 400 }
-                    - { width: 60, height: 60 }
+                    - product_large
+                    - product_small
                 max_number: 1
             additional:
                 label: orob2b.product.productimage.type.additional.label
                 dimensions:
-                    - { width: 1000, height: 1000 }
-                    - { width: 400, height: 400 }
+                    - product_original
+                    - product_large
                 max_number: ~
+        dimensions:
+            product_original: { width: ~, height: ~ }
+            product_large: { width: 378, height: 378 }
+            product_small: { width: 56, height: 56 }
 
     assets:
         styles:
