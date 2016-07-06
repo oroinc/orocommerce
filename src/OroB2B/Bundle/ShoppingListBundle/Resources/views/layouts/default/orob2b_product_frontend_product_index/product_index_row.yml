@@ -18,6 +18,13 @@ layout:
             # parentId: line_item_form
             # siblingId: line_item_form_start
             # prepend: true
+        - '@add':
+            id: product_shopping_lists_popup
+            blockType: block
+            parentId: product_grid_row_secondary_content_first_container
+            # parentId: line_item_form
+            # siblingId: line_item_form_start
+            # prepend: true
 
     conditions:
         '@and':

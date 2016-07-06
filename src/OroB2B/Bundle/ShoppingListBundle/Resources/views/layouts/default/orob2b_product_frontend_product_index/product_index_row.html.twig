@@ -35,7 +35,7 @@
                             <span class="shopping-lists-billet__label"><%= label.name %></span>
                             <i class="cf-pencil shopping-lists-billet__edit-icon"></i>
                         </div>
-                    <% }) %>
+                    <% }); %>
                 <% } else { %>
                     <div class="shopping-lists-billet__text">
                         <i class="shopping-lists-billet__icon"></i>
@@ -48,9 +48,23 @@
         {% endspaceless %}
     {% endset %}
 
+    {% set attr = {
+        "data-page-component-module": "oroui/js/app/components/view-component",
+        "data-page-component-options": {
+            view: 'orob2bshoppinglist/js/app/views/base-shopping-lists-link-view',
+            billetTemplate: shopping_billet
+        }|json_encode}
+    %}
+    <div {{ block('block_attributes') }}>
+        <div data-name="shopping-lists-billet"></div>
+    </div>
+{% endblock %}
+
+{% block _product_shopping_lists_popup_widget %}
     {% set shopping_popup %}
         {% spaceless %}
-            <div id="in-shopping-lists-template" style="display: none">
+            <% if (!_.isEmpty(popup.shoppingLists)) { %>
+            <div id="in-shopping-lists-template" style="display: none;">
                 <table class="shopping-lists-popup">
                     <thead class="shopping-lists-popup__headline">
                     <tr class="shopping-lists-popup__item">
@@ -67,31 +81,44 @@
                     </tr>
                     </tfoot>
                     <tbody class="shopping-lists-popup__content">
+                    <% _.each(popup.shoppingLists, function(list) { %>
                     <tr class="shopping-lists-popup__item">
                         <td class="shopping-lists-popup__list">
-                            <a class="shopping-lists-popup__link" href="#">Shopping List 1</a>
+                            <a class="shopping-lists-popup__link" href="<%= list.shopping_list_url %>"><%= list.shopping_list_lable %></a>
                         </td>
                         <td class="shopping-lists-popup__quantity">
+                            <% if (!_.isEmpty(list.line_items)) { %>
+                            <% var ListLineItems = list.line_items; %>
+                            <% _.each(ListLineItems, function(lineItem, i) { %>
                             <div class="shopping-lists-units">
-                                <span class="shopping-lists-units__number">14</span>
+                                <% if (true) { %>
+                                <span class="shopping-lists-units__number"><%= lineItem.quantity %></span>
                                 <span class="shopping-lists-units__separate">/</span>
-                                <span class="shopping-lists-units__measurements">Boxes</span>
+                                <span class="shopping-lists-units___measurement"><%= lineItem.unit %></span>
+                                <% if (i === 0) { %>
                                 <div class="shopping-lists-units__actions">
                                     <ul class="actions-menu-row">
                                         <li class="actions-menu-row__item actions-menu-row__item--edit">
-                                            <button class="actions-menu-row__button" type="button" title="Edit">
+                                            <button class="actions-menu-row__button"
+                                                    type="button" title="Edit"
+                                                    data-name="shopping-list-edit">
                                                 <i class="actions-menu-row__icon cf-pencil"></i>
                                             </button>
                                         </li>
                                         <li class="actions-menu-row__item actions-menu-row__item--separate">|</li>
                                         <li class="actions-menu-row__item actions-menu-row__item--remove">
-                                            <button class="actions-menu-row__button" type="button" title="Remove">
+                                            <button class="actions-menu-row__button" type="button"
+                                                    title="Remove"
+                                                    data-name="shopping-list-remove">
                                                 <i class="actions-menu-row__icon cf-trash"></i>
                                             </button>
                                         </li>
                                     </ul>
                                 </div>
-                                <!-- <ul class="shopping-lists-modify shopping-lists-modify--hidden"> -->
+                                <% } %>
+                                <% } %>
+
+                                <% if (false) { %>
                                 <ul class="shopping-lists-modify">
                                     <li class="shopping-lists-modify__text">
                                         <input class="shopping-lists-modify__input input input_xs" type="text" value="14" name="number">
@@ -103,152 +130,49 @@
                                             <option value="Pallet">Pallet</option>
                                         </select>
                                     </li>
+                                    <% if (i === 0) { %>
                                     <li class="shopping-lists-modify__badges">
-                                            <span class="shopping-lists-modify__edit">
-                                                <button class="shopping-lists-modify__button badge badge_sm badge_orange badge_circled-corners" type="button" title="Done">
-                                                    <i class="shopping-lists-modify__icon cf-check"></i>
-                                                </button>
-                                            </span>
-                                            <span class="shopping-lists-modify__edit">
-                                                <button class="shopping-lists-modify__button badge badge_sm badge_l-dark badge_circled-corners" type="button" title="Done">
-                                                    <i class="shopping-lists-modify__icon cf-clear"></i>
-                                                </button>
-                                            </span>
+                                        <span class="shopping-lists-modify__edit">
+                                            <button class="shopping-lists-modify__button badge badge_sm badge_orange badge_circled-corners"
+                                                    type="button"
+                                                    title="Done"
+                                                    data-name="shopping-list-accept">
+                                                <i class="shopping-lists-modify__icon cf-check"></i>
+                                            </button>
+                                        </span>
+                                        <span class="shopping-lists-modify__edit">
+                                            <button class="shopping-lists-modify__button badge badge_sm badge_l-dark badge_circled-corners"
+                                                    type="button"
+                                                    title="Done"
+                                                    data-name="shopping-list-decline">
+                                                <i class="shopping-lists-modify__icon cf-clear"></i>
+                                            </button>
+                                        </span>
                                     </li>
+                                    <% } %>
                                 </ul>
+                                <% } %>
                             </div>
+                            <% }); %>
+                            <% } %>
                         </td>
                     </tr>
-                    <tr class="shopping-lists-popup__item">
-                        <td class="shopping-lists-popup__list">
-                            <a class="shopping-lists-popup__link" href="#">Shopping List 2</a>
-                        </td>
-                        <td class="shopping-lists-popup__quantity">
-                            <div class="shopping-lists-units">
-                                <span class="shopping-lists-units__number">10</span>
-                                <span class="shopping-lists-units__separate">/</span>
-                                <span class="shopping-lists-units__measurements">Units</span>
-                                <div class="shopping-lists-units__actions">
-                                    <ul class="actions-menu-row">
-                                        <li class="actions-menu-row__item actions-menu-row__item--edit">
-                                            <button class="actions-menu-row__button" type="button" title="Edit">
-                                                <i class="actions-menu-row__icon cf-pencil"></i>
-                                            </button>
-                                        </li>
-                                        <li class="actions-menu-row__item actions-menu-row__item--separate">|</li>
-                                        <li class="actions-menu-row__item actions-menu-row__item--remove">
-                                            <button class="actions-menu-row__button" type="button" title="Remove">
-                                                <i class="actions-menu-row__icon cf-trash"></i>
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="shopping-lists-units">
-                                <span class="shopping-lists-units__number">3</span>
-                                <span class="shopping-lists-units__separate">/</span>
-                                <span class="shopping-lists-units__measurements">Boxes</span>
-                                <div class="shopping-lists-units__actions">
-                                    <ul class="actions-menu-row">
-                                        <li class="actions-menu-row__item actions-menu-row__item--edit">
-                                            <button class="actions-menu-row__button" type="button" title="Edit">
-                                                <i class="actions-menu-row__icon cf-pencil"></i>
-                                            </button>
-                                        </li>
-                                        <li class="actions-menu-row__item actions-menu-row__item--separate">|</li>
-                                        <li class="actions-menu-row__item actions-menu-row__item--remove">
-                                            <button class="actions-menu-row__button" type="button" title="Remove">
-                                                <i class="actions-menu-row__icon cf-trash"></i>
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="shopping-lists-popup__item">
-                        <td class="shopping-lists-popup__list">
-                            <a class="shopping-lists-popup__link" href="#">Shopping List 3</a>
-                        </td>
-                        <td class="shopping-lists-popup__quantity">
-                            <div class="shopping-lists-units">
-                                <span class="shopping-lists-units__number">10</span>
-                                <span class="shopping-lists-units__separate">/</span>
-                                <span class="shopping-lists-units___measurement">Units</span>
-                                <div class="shopping-lists-units__actions">
-                                    <ul class="actions-menu-row">
-                                        <li class="actions-menu-row__item actions-menu-row__item--edit">
-                                            <button class="actions-menu-row__button" type="button" title="Edit">
-                                                <i class="actions-menu-row__icon cf-pencil"></i>
-                                            </button>
-                                        </li>
-                                        <li class="actions-menu-row__item actions-menu-row__item--separate">|</li>
-                                        <li class="actions-menu-row__item actions-menu-row__item--remove">
-                                            <button class="actions-menu-row__button" type="button" title="Remove">
-                                                <i class="actions-menu-row__icon cf-trash"></i>
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="shopping-lists-units">
-                                <span class="shopping-lists-units__number">3</span>
-                                <span class="shopping-lists-units__separate">/</span>
-                                <span class="shopping-lists-units___measurement">Boxes</span>
-                                <div class="shopping-lists-units__actions">
-                                    <ul class="actions-menu-row">
-                                        <li class="actions-menu-row__item actions-menu-row__item--edit">
-                                            <button class="actions-menu-row__button" type="button" title="Edit">
-                                                <i class="actions-menu-row__icon cf-pencil"></i>
-                                            </button>
-                                        </li>
-                                        <li class="actions-menu-row__item actions-menu-row__item--separate">|</li>
-                                        <li class="actions-menu-row__item actions-menu-row__item--remove">
-                                            <button class="actions-menu-row__button" type="button" title="Remove">
-                                                <i class="actions-menu-row__icon cf-trash"></i>
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="shopping-lists-units">
-                                <span class="shopping-lists-units__number">1</span>
-                                <span class="shopping-lists-units__separate">/</span>
-                                <span class="shopping-lists-units___measurement">Pallet</span>
-                                <div class="shopping-lists-units__actions">
-                                    <ul class="actions-menu-row">
-                                        <li class="actions-menu-row__item actions-menu-row__item--edit">
-                                            <button class="actions-menu-row__button" type="button" title="Edit">
-                                                <i class="actions-menu-row__icon cf-pencil"></i>
-                                            </button>
-                                        </li>
-                                        <li class="actions-menu-row__item actions-menu-row__item--separate">|</li>
-                                        <li class="actions-menu-row__item actions-menu-row__item--remove">
-                                            <button class="actions-menu-row__button" type="button" title="Remove">
-                                                <i class="actions-menu-row__icon cf-trash"></i>
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
+                    <% }); %>
                     </tbody>
                 </table>
             </div>
+            <% } %>
         {% endspaceless %}
     {% endset %}
 
     {% set attr = {
         "data-page-component-module": "oroui/js/app/components/view-component",
         "data-page-component-options": {
-            view: 'orob2bshoppinglist/js/app/views/base-shopping-lists-link-view',
-            billetTemplate: shopping_billet,
+            view: 'orob2bshoppinglist/js/app/views/base-shopping-lists-popup-view',
             popupTemplate: shopping_popup
         }|json_encode}
     %}
     <div {{ block('block_attributes') }}>
-        <div data-name="shopping-lists-billet"></div>
         <div data-name="shopping-lists-popup"></div>
     </div>
 {% endblock %}
