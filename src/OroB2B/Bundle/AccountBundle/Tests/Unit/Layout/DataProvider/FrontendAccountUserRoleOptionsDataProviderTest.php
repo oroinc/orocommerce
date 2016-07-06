@@ -46,6 +46,13 @@ class FrontendAccountUserRoleOptionsDataProviderTest extends \PHPUnit_Framework_
             ->getMock();
 
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($label) {
+                    return 'translated_' . $label;
+                }
+            );
 
         $this->provider = new FrontendAccountUserRoleOptionsDataProvider(
             $this->capabilityProvider,
@@ -77,14 +84,6 @@ class FrontendAccountUserRoleOptionsDataProviderTest extends \PHPUnit_Framework_
         $this->categoryProvider->expects($this->once())
             ->method('getTabList')
             ->willReturn(['tab_list_data']);
-
-        $this->translator->expects($this->exactly(2))
-            ->method('trans')
-            ->willReturnCallback(
-                function ($label) {
-                    return 'translated_' . $label;
-                }
-            );
 
         $context = $this->getLayoutContext();
 
