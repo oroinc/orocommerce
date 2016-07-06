@@ -1,25 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\UnitProvider;
+namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Provider;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use OroB2B\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
-class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
+class CategoryDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var DefaultProductUnitProvider
+     * @var CategoryDefaultProductUnitProvider
      */
     protected $defaultProductUnitProvider;
-
-    /**
-     * @var array
-     */
-    protected $systemPrecision = ['code'=>'kg', 'precision'=>3];
 
     /**
      * @var array
@@ -32,30 +27,9 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $map = [
-            ['orob2b_product.default_unit', false, false, $this->systemPrecision['code']],
-            ['orob2b_product.default_unit_precision', false, false, $this->systemPrecision['precision']]
-        ];
-        $configManager->expects($this->any())
-            ->method('get')
-            ->will($this->returnValueMap($map));
-
-        $productUnitRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productUnit = new ProductUnit();
-        $productUnit->setCode($this->systemPrecision['code']);
-
-        $productUnitRepository->expects($this->any())
-            ->method('findOneBy')
-            ->will($this->returnValue($productUnit));
-
 
         $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $mapRepository = [
-            ['OroB2BProductBundle:ProductUnit', $productUnitRepository],
             ['OroB2BCatalogBundle:Category', $this->createMockCategoryRepository()]
         ];
         $manager->expects($this->any())
@@ -64,14 +38,13 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
 
         $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $mapManager = [
-            ['OroB2BProductBundle:ProductUnit', $manager],
             ['OroB2BCatalogBundle:Category', $manager]
         ];
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
             ->will($this->returnValueMap($mapManager));
 
-        $this->defaultProductUnitProvider = new DefaultProductUnitProvider($configManager, $managerRegistry);
+        $this->defaultProductUnitProvider = new CategoryDefaultProductUnitProvider($configManager, $managerRegistry);
     }
 
     /**
@@ -81,9 +54,8 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDefaultProductUnit($categoryId, $expectedData)
     {
-        if (null != $categoryId) {
-            $this->defaultProductUnitProvider->setCategoryId($categoryId);
-        }
+        $this->defaultProductUnitProvider->setCategoryId($categoryId);
+
         $expectedUnitPrecision = $this->createProductUnitPrecision(
             $expectedData['code'],
             $expectedData['precision']
@@ -101,7 +73,7 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     private function createMockCategoryRepository()
     {
         $category1UnitPrecision = $this
-            ->getMockBuilder('OroB2B\Bundle\CategoryBundle\Entity\Repository\CategoryUnitPrecision')
+            ->getMockBuilder('OroB2B\Bundle\CategoryBundle\Model\CategoryUnitPrecision')
             ->setMethods(['getUnit', 'getPrecision'])
             ->getMock();
         
@@ -148,14 +120,23 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function createMockCategory($categoryUnitPrecision, $parent)
     {
+        $defaultProductOptions =  $this
+            ->getMockBuilder('OroB2B\Bundle\CategoryBundle\Entity\CategoryDefaultProductOptions')
+            ->setMethods(['getUnitPrecision'])
+            ->getMock();
+
+        $defaultProductOptions->expects($this->any())
+            ->method('getUnitPrecision')
+            ->willReturn($categoryUnitPrecision);
+        
         $category =  $this
-            ->getMockBuilder('OroB2B\Bundle\CategoryBundle\Entity\Repository\Category')
-            ->setMethods(['getUnitPrecision', 'getParentCategory'])
+            ->getMockBuilder('OroB2B\Bundle\CategoryBundle\Entity\Category')
+            ->setMethods(['getDefaultProductOptions', 'getParentCategory'])
             ->getMock();
 
         $category->expects($this->any())
-            ->method('getUnitPrecision')
-            ->willReturn($categoryUnitPrecision);
+            ->method('getDefaultProductOptions')
+            ->willReturn($defaultProductOptions);
 
         $category->expects($this->any())
             ->method('getParentCategory')
@@ -171,6 +152,9 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function createProductUnitPrecision($code, $precision)
     {
+        if (!$code || !$precision) {
+            return null;
+        }
         $productUnit = new ProductUnit();
         $productUnit->setCode($code);
         $productUnitPrecision = new ProductUnitPrecision();
@@ -185,7 +169,7 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
         return [
             'noCategory' => [
                 'categoryId' => null,
-                'expectedData' => $this->systemPrecision
+                'expectedData' => null
             ],
             'CategoryWithPrecision' => [
                 'categoryId' => 1,
@@ -197,7 +181,7 @@ class DefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ],
             'CategoryWithNoPrecision' => [
                 'categoryId' => 3,
-                'expectedData' => $this->systemPrecision
+                'expectedData' => null
             ],
         ];
     }

@@ -94,3 +94,12 @@ services:
         class: 'OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler'
         arguments:
             - "@request_stack"
+
+    orob2b_catalog.provider.default_product_unit_provider.category:
+        class: 'OroB2B\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider'
+        public: true
+        arguments:
+            - "@oro_config.manager"
+            - "@doctrine"
+        tags:
+            - {name: orob2b_product.default_product_unit_provider, priority: 10}

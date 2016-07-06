@@ -37,6 +37,8 @@ services:
 
     orob2b_catalog.form.extension.product_step_one_type:
         class: 'OroB2B\Bundle\CatalogBundle\Form\Extension\ProductStepOneFormExtension'
+        arguments:
+            - "@orob2b_catalog.provider.default_product_unit_provider.category"
         public: true
         tags:
             - { name: form.type_extension, alias: orob2b_product_step_one }

@@ -22,6 +22,8 @@ class OroB2BProductExtensionTest extends ExtensionTestCase
             'orob2b_product.service.quantity_rounding',
             'orob2b_product.form.type.product_step_one',
             'orob2b_product.service.product_create_step_one_handler',
+            'orob2b_product.provider.default_product_unit_provider.chain',
+            'orob2b_product.provider.default_product_unit_provider.system',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
