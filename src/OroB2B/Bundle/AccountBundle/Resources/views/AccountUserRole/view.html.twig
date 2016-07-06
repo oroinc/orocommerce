@@ -17,6 +17,20 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {% set selfManagedProperty = '' %}
+    {% if not entity.systemOnly %}
+        {% set selfManagedPropertyValue = '' %}
+        {% if entity.selfManaged %}
+            {% set selfManagedPropertyValue = 'orob2b.account.accountuserrole.self_managed.value.true.label'|trans %}
+        {% else %}
+            {% set selfManagedPropertyValue = 'orob2b.account.accountuserrole.self_managed.value.false.label'|trans %}
+        {% endif %}
+        {% set selfManagedProperty = UI.renderProperty('orob2b.account.accountuserrole.self_managed.label'|trans, selfManagedPropertyValue) %}
+    {% else %}
+        {% set systemOnlyPropertyValue = 'orob2b.account.accountuserrole.system_only.value.true.label'|trans %}
+        {% set selfManagedProperty = UI.renderProperty('orob2b.account.accountuserrole.system_only.label'|trans, systemOnlyPropertyValue) %}
+    {% endif %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.account.sections.general'|trans,
@@ -25,13 +39,7 @@
                 {'data' : [
                     UI.renderProperty('orob2b.account.accountuserrole.label.label'|trans, entity.label),
                     UI.renderProperty('orob2b.account.accountuserrole.account.label'|trans, entity.account),
-                    UI.renderProperty(
-                        'orob2b.account.accountuserrole.self_managed.label'|trans,
-                        entity.selfManaged ?
-                            'orob2b.account.accountuserrole.self_managed.value.true.label'|trans
-                            :
-                            'orob2b.account.accountuserrole.self_managed.value.false.label'|trans
-                    )
+                    selfManagedProperty
                 ]}
             ]
         }

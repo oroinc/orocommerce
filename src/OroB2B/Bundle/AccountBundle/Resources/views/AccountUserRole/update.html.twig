@@ -78,23 +78,27 @@
         </div>
     {% endset %}
 
+    {% set fields = [
+            form_row(form.label),
+            accountSelector,
+        ]
+    %}
+
+    {% if not entity.systemOnly %}
+        {% set fields = fields|merge([form_row(form.selfManaged)]) %}
+    {% endif %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.account.sections.general'|trans,
             'class': 'active',
             'subblocks': [
                 {
-                    'data': [
-                        form_row(form.label),
-                        accountSelector,
-                        form_row(form.selfManaged),
-                    ]
+                    'data': fields
                 }
             ]
         }
     ] %}
-
-
 
     {% for name, config in form.vars.privilegeConfig %}
         {% set dataBlocks = dataBlocks|merge([{

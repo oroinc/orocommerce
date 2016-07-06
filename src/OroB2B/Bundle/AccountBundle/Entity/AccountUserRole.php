@@ -147,6 +147,13 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     protected $selfManaged = false;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", name="system_only")
+     */
+    protected $systemOnly = false;
+
+    /**
      * @param string|null $role
      */
     public function __construct($role = null)
@@ -337,5 +344,21 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     public function setSelfManaged($selfManaged)
     {
         $this->selfManaged = $selfManaged;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSystemOnly()
+    {
+        return (bool)$this->systemOnly;
+    }
+
+    /**
+     * @param boolean $systemOnly
+     */
+    public function setSystemOnly($systemOnly)
+    {
+        $this->systemOnly = $systemOnly;
     }
 }

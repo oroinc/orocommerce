@@ -46,6 +46,7 @@ class LoadAccountUserRoles extends AbstractRolesData
             $manager->persist($role);
 
             $role->setSelfManaged(isset($roleConfigData['self_managed']) ? $roleConfigData['self_managed'] : false);
+            $role->setSystemOnly(isset($roleConfigData['system_only']) ? $roleConfigData['system_only'] : false);
 
             if (!$aclManager->isAclEnabled()) {
                 continue;
