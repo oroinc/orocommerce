@@ -38,7 +38,7 @@ class PriceRuleLexemeHandler
      */
     public function updateLexemes(PriceList $priceList)
     {
-        $assignmentRules = $this->parser->getUsedLexemes($priceList->getAssignmentRule());
+        $assignmentRules = $this->parser->getUsedLexemes($priceList->getProductAssignmentRule());
         $priceRules = $priceList->getPriceRules();
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceRuleLexeme');

@@ -310,19 +310,4 @@ class PriceList extends BasePriceList
 
         return $this;
     }
-
-    /**
-     * @return string
-     */
-    public function getAssignmentRule()
-    {
-        return $this->assignmentRule;
-    }
-    /**
-     * @param string $assignmentRule
-     */
-    public function setAssignmentRule($assignmentRule)
-    {
-        $this->assignmentRule = $assignmentRule;
-    }
 }

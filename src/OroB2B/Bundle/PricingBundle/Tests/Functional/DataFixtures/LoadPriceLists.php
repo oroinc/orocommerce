@@ -80,7 +80,7 @@ class LoadPriceLists extends AbstractFixture
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now)
                 ->setActive($priceListData['active'])
-                ->setAssignmentRule($priceListData['assignmentRule']);
+                ->setProductAssignmentRule($priceListData['assignmentRule']);
 
             $manager->persist($priceList);
             $this->setReference($priceListData['reference'], $priceList);

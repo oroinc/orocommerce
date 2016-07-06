@@ -59,7 +59,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
         $priceRule2->setRule($condition3);
         $priceRule2->setRuleCondition($condition4);
         $priceList = new PriceList();
-        $priceList->setAssignmentRule($condition1);
+        $priceList->setProductAssignmentRule($condition1);
         $priceList->addPriceRule($priceRule1);
         $priceList->addPriceRule($priceRule2);
 
