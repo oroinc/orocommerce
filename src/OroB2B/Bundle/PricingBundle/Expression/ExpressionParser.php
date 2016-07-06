@@ -80,7 +80,7 @@ class ExpressionParser
 
     /**
      * @param string|Expression $expression
-     * @return ParsedExpression
+     * @return array
      */
     public function getUsedLexemes($expression)
     {
