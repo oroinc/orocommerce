@@ -1,3 +1,8 @@
 .shopping-list-tabs {
     position: relative;
+
+    .orders-sidebar,
+    .orders-list {
+        margin-top: 0 !important;
+    }
 }
