@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\Api;
 
-use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\Yaml\Parser;
-
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
@@ -16,11 +13,6 @@ use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAn
 class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
 {
     const ARRAY_DELIMITER = ',';
-
-    /**
-     * @var array
-     */
-    protected $expectations;
 
     /**
      * {@inheritdoc}
@@ -41,6 +33,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
      * @param array $params
      * @param array $filters
      * @param int $expectedCount
+     * @param array $expectedContent
      *
      * @dataProvider cgetParamsAndExpectation
      */
@@ -49,7 +42,8 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         $expectedStatusCode,
         array $params,
         array $filters,
-        $expectedCount
+        $expectedCount,
+        array $expectedContent = null
     ) {
         $entityType = $this->getEntityType($entityClass);
 
@@ -70,6 +64,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         $this->assertApiResponseStatusCodeEquals($response, $expectedStatusCode, $entityType, 'get list');
         $content = json_decode($response->getContent(), true);
         $this->assertCount($expectedCount, $content['data']);
+        if ($expectedContent ) {
+            $this->assertIsContained($expectedContent, $content['data']);
+        }
     }
 
     /**
@@ -80,7 +77,6 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
     public function cgetParamsAndExpectation()
     {
         return [
-
             'filter by Product' => [
                 'entityClass' => WarehouseInventoryLevel::class,
                 'statusCode' => 200,
@@ -92,7 +88,27 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                         'references' => ['product.1']
                     ],
                 ],
-                'expectedCount' => 2
+                'expectedCount' => 2,
+                'expectedContent' => [
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 10,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'liter',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 99,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'bottle',
+                        ],
+                    ],
+                ],
             ],
             'filter by Products' => [
                 'entityClass' => WarehouseInventoryLevel::class,
@@ -105,7 +121,63 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                         'references' => ['product.1', 'product.2']
                     ],
                 ],
-                'expectedCount' => 6
+                'expectedCount' => 6,
+                'expectedContent' => [
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 10,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'liter',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 99,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'bottle',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 12.345,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'liter',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 98,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'bottle',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 42,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'box',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 98.765,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'Second Warehouse',
+                            'unit' => 'box',
+                        ],
+                    ],
+                ],
             ],
             'filter by Products and Warehouse' => [
                 'entityClass' => WarehouseInventoryLevel::class,
@@ -123,7 +195,18 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                         'references' => [LoadWarehousesAndInventoryLevels::WAREHOUSE2]
                     ],
                 ],
-                'expectedCount' => 1
+                'expectedCount' => 1,
+                'expectedContent' => [
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 98.765,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'Second Warehouse',
+                            'unit' => 'box',
+                        ],
+                    ],
+                ],
             ],
             'filter by Products and Unit' => [
                 'entityClass' => WarehouseInventoryLevel::class,
@@ -141,7 +224,27 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                         'references' => ['product_unit.bottle']
                     ],
                 ],
-                'expectedCount' => 2
+                'expectedCount' => 2,
+                'expectedContent' => [
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 99,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'bottle',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 98,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'bottle',
+                        ],
+                    ],
+                ],
             ],
             'filter by Products and Units' => [
                 'entityClass' => WarehouseInventoryLevel::class,
@@ -159,7 +262,45 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                         'references' => ['product_unit.bottle', 'product_unit.liter']
                     ],
                 ],
-                'expectedCount' => 4
+                'expectedCount' => 4,
+                'expectedContent' => [
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 10,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'liter',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 99,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'bottle',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 12.345,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'liter',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 98,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'bottle',
+                        ],
+                    ],
+                ],
             ],
             'filter by Products, Warehouse and Unit' => [
                 'entityClass' => WarehouseInventoryLevel::class,
@@ -182,7 +323,27 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                         'references' => ['product_unit.liter']
                     ],
                 ],
-                'expectedCount' => 2
+                'expectedCount' => 2,
+                'expectedContent' => [
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 10,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'liter',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 12.345,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'liter',
+                        ],
+                    ],
+                ],
             ],
             'filter by Products, Warehouse and Units' => [
                 'entityClass' => WarehouseInventoryLevel::class,
@@ -205,7 +366,45 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                         'references' => ['product_unit.liter', 'product_unit.bottle']
                     ],
                 ],
-                'expectedCount' => 4
+                'expectedCount' => 4,
+                'expectedContent' => [
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 10,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'liter',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 99,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'bottle',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 12.345,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'liter',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 98,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'bottle',
+                        ],
+                    ],
+                ],
             ],
             'filter by Products, Warehouses and Units' => [
                 'entityClass' => WarehouseInventoryLevel::class,
@@ -231,8 +430,72 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                         'references' => ['product_unit.liter', 'product_unit.bottle', 'product_unit.box']
                     ],
                 ],
-                'expectedCount' => 6
+                'expectedCount' => 5,
+                'expectedContent' => [
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 10,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'liter',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 99,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'bottle',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 12.345,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'liter',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 98,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'bottle',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 42,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'box',
+                        ],
+                    ],
+                ],
             ],
         ];
+    }
+
+    /**
+     * @param array $expected
+     * @param array $content
+     */
+    protected function assertIsContained(array $expected, array $content)
+    {
+        foreach ($expected as $key => $value )
+        {
+            $this->assertArrayHasKey($key, $content);
+            if (is_array($value)) {
+                $this->assertIsContained($value, $content[$key]);
+            } else {
+                $this->assertEquals($value, $content[$key]);
+            }
+        }
     }
 }

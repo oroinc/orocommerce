@@ -1,6 +1,14 @@
 oro_api:
     entities:
+        OroB2B\Bundle\WarehouseBundle\Entity\Warehouse: ~
         OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel:
+            fields:
+                productSku:
+                    property_path: product.sku
+                warehouseName:
+                    property_path: warehouse.name
+                unit:
+                    property_path: productUnitPrecision.unit.code
             filters:
                 fields:
                     product.sku:
