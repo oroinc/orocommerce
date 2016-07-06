@@ -19,7 +19,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['USD', 'EUR', 'AUD', 'CAD'],
             'active' => true,
-            'assignmentRule' =>'assignment_rule_1'
+            'assignmentRule' => null,
         ],
         [
             'name' => 'priceList2',
@@ -27,7 +27,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['USD'],
             'active' => true,
-            'assignmentRule' =>'assignment_rule_2'
+            'assignmentRule' => 'assignment_rule_2',
         ],
         [
             'name' => 'priceList3',
@@ -35,7 +35,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['CAD'],
             'active' => true,
-            'assignmentRule' =>'assignment_rule_3'
+            'assignmentRule' => null,
         ],
         [
             'name' => 'priceList4',
@@ -43,7 +43,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['GBP'],
             'active' => true,
-            'assignmentRule' =>'assignment_rule_4'
+            'assignmentRule' => 'assignment_rule_4',
         ],
         [
             'name' => 'priceList5',
@@ -51,7 +51,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['GBP', 'EUR'],
             'active' => true,
-            'assignmentRule' =>'assignment_rule_5'
+            'assignmentRule' => 'assignment_rule_5',
         ],
         [
             'name' => 'priceList6',
@@ -59,7 +59,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['USD'],
             'active' => false,
-            'assignmentRule' =>'assignment_rule_6'
+            'assignmentRule' => null,
         ],
     ];
 

@@ -7,9 +7,9 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
+use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
@@ -92,7 +92,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2BPricingBundle:PriceRuleLexeme')
             ->willReturn($em);
         $em->expects($this->exactly(1))->method('remove');
-        $em->expects($this->exactly(15))->method('persist');
+        $em->expects($this->exactly(18))->method('persist');
         $em->expects($this->once())->method('flush');
         $this->priceRuleLexemeHandler->updateLexemes($priceList);
     }
@@ -111,7 +111,13 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
         );
         $lexeme2 = $this->getEntity(
             PriceRuleLexeme::class,
-            ['id' => 2, 'className' => 'class2', 'fieldName' => 'field4', 'priceRule' => $rule2]
+            [
+                'id' => 2,
+                'className' => 'class2',
+                'fieldName' => 'field4',
+                'priceRule' => null,
+                'priceList' => new PriceList(),
+            ]
         );
         $lexeme3 = $this->getEntity(
             PriceRuleLexeme::class,

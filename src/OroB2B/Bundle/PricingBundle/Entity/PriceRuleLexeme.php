@@ -42,6 +42,14 @@ class PriceRuleLexeme
     protected $priceRule;
 
     /**
+     * @var PriceList
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList", inversedBy="priceRules")
+     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     **/
+    protected $priceList;
+
+    /**
      * @return int
      */
     public function getId()
@@ -104,5 +112,24 @@ class PriceRuleLexeme
     public function getFieldName()
     {
         return $this->fieldName;
+    }
+
+    /**
+     * @return PriceList
+     */
+    public function getPriceList()
+    {
+        return $this->priceList;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return $this
+     */
+    public function setPriceList($priceList)
+    {
+        $this->priceList = $priceList;
+
+        return $this;
     }
 }
