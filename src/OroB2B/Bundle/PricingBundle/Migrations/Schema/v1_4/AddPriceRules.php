@@ -25,6 +25,7 @@ class AddPriceRules implements Migration
         $this->addOroB2BPriceRuleLexemeForeignKeys($schema);
 
         $this->updateProductPriceTable($schema);
+        $this->updatePriceListTable($schema);
     }
 
     /**
@@ -140,7 +141,7 @@ class AddPriceRules implements Migration
      */
     protected function updateProductPriceTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_price_product');
+        $table = $schema->getTable('orob2b_price_product');
         $table->addColumn('price_rule_id', 'integer', ['notnull' => false]);
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_rule'),
@@ -148,5 +149,14 @@ class AddPriceRules implements Migration
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function updatePriceListTable(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list');
+        $table->addColumn('product_assignment_rule', 'string', ['notnull' => false, 'length' => 255]);
     }
 }
