@@ -674,4 +674,4 @@ services:
             - '@doctrine'
             - '@orob2b_pricing.compiler.price_list_rule_compiler'
             - '@oro_entity.orm.insert_from_select_query_executor'
-            - '@orob2b_pricing.recalculate_triggers_filler.scope_recalculate_triggers_filler'
+            - '@orob2b_pricing.triggers_filler.scope_recalculate_triggers_filler'
