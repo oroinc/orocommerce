@@ -46,6 +46,7 @@ class LoadPriceAttributePriceListDemoData extends AbstractFixture implements Con
 
             $priceAttribute = new PriceAttributePriceList();
             $priceAttribute->setName($row['name'])
+                ->setFieldName($row['fieldName'])
                 ->setCurrencies($currencies);
 
             $manager->persist($priceAttribute);

@@ -590,7 +590,7 @@ datagrid:
             name:
                 label:         orob2b.pricing.priceattributepricelist.name.label
             fieldName:
-                label:         orob2b.pricing.priceattributepricelist.fieldName.label
+                label:         orob2b.pricing.priceattributepricelist.field_name.label
             currencies:
                 label:         orob2b.pricing.priceattributepricelist.currencies.label
                 type:          twig

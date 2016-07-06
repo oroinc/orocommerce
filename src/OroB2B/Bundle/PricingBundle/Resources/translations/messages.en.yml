@@ -47,7 +47,7 @@ orob2b.pricing:
         entity_label: Price Attribute
         entity_plural_label: Price Attributes
         name.label: Price Attribute
-        fieldName.label: Field Name
+        field_name.label: Field Name
         id.label: Id
         currencies.label: Currencies
 

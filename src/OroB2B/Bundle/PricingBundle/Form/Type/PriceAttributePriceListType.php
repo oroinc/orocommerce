@@ -41,7 +41,7 @@ class PriceAttributePriceListType extends AbstractType
             ->add(
                 'fieldName',
                 'text',
-                ['required' => true, 'label' => 'orob2b.pricing.priceattributepricelist.fieldName.label']
+                ['required' => true, 'label' => 'orob2b.pricing.priceattributepricelist.field_name.label']
             )
             ->add(
                 'currencies',
