@@ -38,12 +38,8 @@
 /*Bootstrap override styles*/
 @import 'shared/bootstrap-override.scss';
 
-/*Bootstrap datepicker override styles*/
-@import 'shared/datepicker-override.scss';
+/*jQuery UI datepicker override styles*/
 @import 'shared/ui-datepicker-override.scss';
-
-/*Old Browsers Fallbacks*/
-@import 'shared/_fallbacks.scss';
 
 @import 'shared/forms.scss';
 

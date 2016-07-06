@@ -19,6 +19,9 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
     /** @var ContainerInterface */
     protected $container;
 
+    /** @var array */
+    public static $accountUsersReferencesNames = [];
+
     /**
      * {@inheritdoc}
      */
@@ -50,8 +53,7 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
-        $organizations = $manager->getRepository('OroOrganizationBundle:Organization')->findAll();
-        $organization = reset($organizations);
+        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
 
         $storageManager = $userManager->getStorageManager();
 
@@ -91,7 +93,9 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
 
             $userManager->updateUser($accountUser, false);
 
-            $this->addReference(self::ACCOUNT_USERS_REFERENCE_PREFIX . $row['email'], $accountUser);
+            $referenceName = self::ACCOUNT_USERS_REFERENCE_PREFIX . $row['email'];
+            $this->addReference($referenceName, $accountUser);
+            self::$accountUsersReferencesNames[] = $referenceName;
         }
 
         fclose($handler);

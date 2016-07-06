@@ -24,6 +24,7 @@ class OroB2BShoppingListExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('listeners.yml');
         $loader->load('mass_action.yml');
+        $loader->load('block_types.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }

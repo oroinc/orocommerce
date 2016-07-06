@@ -385,6 +385,7 @@ workflows:
                                   - [[keep], [propertyName, [country]]]
                                   - [[keep], [propertyName, [region]]]
                                   - [[keep], [propertyName, [organization]]]
+                                  - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
             continue_to_shipping_method_definition:
                 pre_conditions:
@@ -422,6 +423,7 @@ workflows:
                                   - [[keep], [propertyName, [country]]]
                                   - [[keep], [propertyName, [region]]]
                                   - [[keep], [propertyName, [organization]]]
+                                  - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
             continue_to_payment_definition:
                 pre_conditions:

@@ -10,11 +10,14 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use OroB2B\Bundle\PaymentBundle\Migrations\PaymentTermDemoMigrationTrait;
 
 class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
+    use PaymentTermDemoMigrationTrait;
+
     /** @var ContainerInterface */
     protected $container;
 
@@ -44,12 +47,11 @@ class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
     {
         $doctrine = $this->container->get('doctrine');
         $accountGroupRepository = $doctrine->getRepository('OroB2BAccountBundle:AccountGroup');
-        $paymentTermRepository = $doctrine->getRepository('OroB2BPaymentBundle:PaymentTerm');
 
-        $paymentTermsAll = $paymentTermRepository->findAll();
-        $accountGroupsAll = $accountGroupRepository->findAll();
+        $paymentTermsAll       = $this->getLoadedPaymentTerms();
+        $accountGroupsIterator = $accountGroupRepository->getBatchIterator();
 
-        foreach ($accountGroupsAll as $accountGroup) {
+        foreach ($accountGroupsIterator as $accountGroup) {
             /** @var PaymentTerm $paymentTerm */
             $paymentTerm = $paymentTermsAll[array_rand($paymentTermsAll)];
             $paymentTerm->addAccountGroup($accountGroup);
