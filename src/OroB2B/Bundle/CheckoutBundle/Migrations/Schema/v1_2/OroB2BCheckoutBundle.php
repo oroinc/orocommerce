@@ -26,6 +26,8 @@ class OroB2BCheckoutBundle implements Migration, OrderedMigrationInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->removeWorkflowFields($schema->getTable('orob2b_checkout'));
+        $this->removeWorkflowFields(
+            $schema->getTable('orob2b_checkout')
+        );
     }
 }
