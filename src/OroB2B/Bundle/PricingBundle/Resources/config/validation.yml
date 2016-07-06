@@ -12,6 +12,12 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
         schedules:
             - OroB2B\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection: ~
             - Valid: ~
+        priceRules:
+            - Valid: ~
+        productAssignmentRule:
+            - Length:
+                max: 255
+
 
 OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
     constraints:
@@ -31,6 +37,36 @@ OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule:
             chain:
                 activeAt: 'Active At'
                 deactivateAt: 'Deactivate At'
+
+OroB2B\Bundle\PricingBundle\Entity\PriceRule:
+    properties:
+        currency:
+            - NotBlank: ~
+            - Currency: ~
+        quantity:
+            - NotBlank:
+                message: 'orob2b.pricing.validators.product_price.quantity.blank'
+            - Type:
+                type: integer
+            - Range:
+                min: 0
+        productUnit:
+            - NotBlank:
+                message: 'orob2b.product.productunit.invalid'
+        ruleCondition:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        rule:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        priority:
+            - NotBlank: ~
+            - Type:
+                type: integer
+            - Range:
+                min: 0
 
 OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
     properties:
