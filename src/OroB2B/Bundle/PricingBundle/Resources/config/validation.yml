@@ -29,7 +29,7 @@ OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
             - Regex:
                 pattern: '/^[a-zA-Z0-9_]+$/'
                 htmlPattern: '/^[a-zA-Z0-9_]+$/'
-                message: 'not valid'
+                message: 'orob2b.pricing.validators.price_attrirute_price_list.fieldName.message'
             - NotBlank: ~
             - Valid: ~
         currencies:
