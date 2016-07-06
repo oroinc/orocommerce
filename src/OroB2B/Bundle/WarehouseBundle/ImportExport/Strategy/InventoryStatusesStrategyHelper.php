@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
 
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
@@ -12,7 +13,7 @@ class InventoryStatusesStrategyHelper extends AbstractWarehouseInventoryLevelStr
     protected $inventoryStatusCache = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function process(
         WarehouseInventoryLevel $importedEntity,
@@ -49,7 +50,7 @@ class InventoryStatusesStrategyHelper extends AbstractWarehouseInventoryLevelStr
             $existingProduct->setInventoryStatus($inventoryStatus);
         }
 
-        if (empty($importedEntity->getQuantity())) {
+        if ($importedEntity->getQuantity() === null) {
             return $existingProduct;
         }
         

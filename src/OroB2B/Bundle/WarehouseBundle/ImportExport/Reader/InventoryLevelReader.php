@@ -16,7 +16,7 @@ class InventoryLevelReader extends EntityReader
     protected $currentEntityName;
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     public function setSourceEntityName($entityName, Organization $organization = null)
     {

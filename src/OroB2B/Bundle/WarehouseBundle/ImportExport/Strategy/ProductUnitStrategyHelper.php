@@ -15,11 +15,8 @@ class ProductUnitStrategyHelper extends AbstractWarehouseInventoryLevelStrategyH
     /** @var array $requiredUnitCache */
     protected $requiredUnitCache = [];
 
-    /** @var null|integer $warehouseCount  */
-    protected $warehouseCount = null;
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function process(
         WarehouseInventoryLevel $importedEntity,

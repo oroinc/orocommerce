@@ -11,7 +11,7 @@ use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 class WarehouseInventoryLevelStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHelper
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function process(
         WarehouseInventoryLevel $importedEntity,

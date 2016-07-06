@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
 
 use Oro\Bundle\ImportExportBundle\Strategy\Import\AbstractImportStrategy;
+use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class WarehouseInventoryLevelStrategy extends AbstractImportStrategy
 {
@@ -20,7 +21,7 @@ class WarehouseInventoryLevelStrategy extends AbstractImportStrategy
             return null;
         }
 
-        if (!$entity = $this->processEntity($entity, true, true, $this->context->getValue('itemData'))) {
+        if (!$entity = $this->processEntity($entity, $this->context->getValue('itemData'))) {
             return null;
         }
 
@@ -32,15 +33,13 @@ class WarehouseInventoryLevelStrategy extends AbstractImportStrategy
     }
 
     /**
-     * @inheritdoc
+     * @param WarehouseInventoryLevel $entity
+     * @param null|array $itemData
+     * @return mixed
      */
     protected function processEntity(
         $entity,
-        $isFullData = false,
-        $isPersistNew = false,
-        $itemData = null,
-        array $searchContext = array(),
-        $entityIsRelation = false
+        $itemData = null
     ) {
         $entity = $this->inventoryLevelStrategyHelper->process($entity, $itemData);
 

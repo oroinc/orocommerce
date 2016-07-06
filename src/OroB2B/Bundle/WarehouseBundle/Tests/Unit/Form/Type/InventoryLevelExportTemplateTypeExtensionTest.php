@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Oro\Bundle\ImportExportBundle\Form\Type\ExportTemplateType;
 
 use OroB2B\Bundle\WarehouseBundle\Form\Type\InventoryLevelExportTemplateTypeExtension;
+use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,7 +28,10 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_T
         $builder->expects($this->once())
             ->method('addEventListener');
 
-        $this->inventoryLevelExportTemplateTypeExtension->buildForm($builder, []);
+        $this->inventoryLevelExportTemplateTypeExtension->buildForm(
+            $builder,
+            ['entityName' => WarehouseInventoryLevel::class]
+        );
     }
 
     public function testBuildFormShouldRemoveDefaultChild()
@@ -38,29 +42,40 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_T
             ->method('remove')
             ->with(ExportTemplateType::CHILD_PROCESSOR_ALIAS);
 
-        $this->inventoryLevelExportTemplateTypeExtension->buildForm($builder, []);
+        $this->inventoryLevelExportTemplateTypeExtension->buildForm(
+            $builder,
+            ['entityName' => WarehouseInventoryLevel::class]
+        );
     }
 
     public function testBuildFormShouldCreateCorrectChoices()
     {
+        $processorAliases = [
+            'orob2b_product.inventory_status_only_export_template',
+            'orob2b_warehouse.inventory_level_export_template'
+        ];
+
         $builder = $this->getBuilderMock();
         $phpunitTestCase = $this;
 
         $builder->expects($this->once())
             ->method('add')
-            ->will($this->returnCallback(function ($name, $type, $options) use ($phpunitTestCase) {
-                $choices = $options['choices'][0];
+            ->will($this->returnCallback(function ($name, $type, $options) use ($phpunitTestCase, $processorAliases) {
+                $choices = $options['choices'];
                 $phpunitTestCase->assertArrayHasKey(
-                    InventoryLevelExportTemplateTypeExtension::$processorAliases[0],
+                    $processorAliases[0],
                     $choices
                 );
                 $phpunitTestCase->assertArrayHasKey(
-                    InventoryLevelExportTemplateTypeExtension::$processorAliases[1],
+                    $processorAliases[1],
                     $choices
                 );
             }));
 
-        $this->inventoryLevelExportTemplateTypeExtension->buildForm($builder, []);
+        $this->inventoryLevelExportTemplateTypeExtension->buildForm(
+            $builder,
+            ['entityName' => WarehouseInventoryLevel::class]
+        );
     }
 
     /**

@@ -73,7 +73,7 @@ abstract class AbstractWarehouseInventoryLevelStrategyHelper implements Warehous
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getErrors($deep = false)
     {
@@ -83,7 +83,7 @@ abstract class AbstractWarehouseInventoryLevelStrategyHelper implements Warehous
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setSuccessor(WarehouseInventoryLevelStrategyHelperInterface $successor)
     {

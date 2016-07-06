@@ -23,15 +23,12 @@ services:
             - '@oro_importexport.strategy.import.helper'
             - '@oro_importexport.field.field_helper'
             - '@oro_importexport.field.database_helper'
-            - '@oro_entity.entity_class_name_provider'
-            - '@translator'
-            - '@oro_importexport.strategy.new_entities_helper'
         calls:
              - [setInventoryLevelStrategyHelper, ["@orob2b_warehouse.importexport.strategy_helper.inventory_statuses"]]
 
     #Serializer
     orob2b_warehouse.importexport.serializer.warehouse_inventory_level:
-        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelSerializer'
+        class: 'Oro\Bundle\ImportExportBundle\Serializer\Serializer'
         arguments:
           - ['@orob2b_warehouse.importexport.normalizer.warehouse_inventory_level']
           - ['@oro_importexport.serializer.dummy_encoder']

@@ -16,6 +16,9 @@ use OroB2B\Bundle\WarehouseBundle\ImportExport\DataConverter\InventoryLevelDataC
 
 class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, NormalizerInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function supportsNormalization($data, $format = null, array $context = array())
     {
         return $data instanceof WarehouseInventoryLevel;
@@ -97,7 +100,9 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
         }
 
         if (array_key_exists('quantity', $data)) {
-            $inventoryLevel->setQuantity($data['quantity']);
+            $inventoryLevel->setQuantity($data['quantity'] ?: 0);
+        } else {
+            $inventoryLevel->setQuantity(null);
         }
 
         if (isset($data['warehouse'])) {
@@ -122,7 +127,7 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function supportsDenormalization($data, $type, $format = null, array $context = array())
     {

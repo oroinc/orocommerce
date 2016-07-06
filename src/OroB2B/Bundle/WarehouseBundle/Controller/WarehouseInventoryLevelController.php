@@ -31,8 +31,7 @@ class WarehouseInventoryLevelController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_warehouse.entity.warehouse_inventory_level.class'),
-            'gridName' => 'issues-grid'
+            'entity_class' => $this->container->getParameter('orob2b_warehouse.entity.warehouse_inventory_level.class')
         ];
     }
 

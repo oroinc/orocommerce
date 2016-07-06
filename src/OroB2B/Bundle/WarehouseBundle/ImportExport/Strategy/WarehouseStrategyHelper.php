@@ -11,7 +11,7 @@ class WarehouseStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHel
     protected $warehouseCount = null;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function process(
         WarehouseInventoryLevel $importedEntity,

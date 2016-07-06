@@ -7,7 +7,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\ImportExport\Normalizer\InventoryStatusNormalizer;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\ImportExport\Stub\ProductStub;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
 
 class InventoryStatusNormalizerTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,7 +39,7 @@ class InventoryStatusNormalizerTest extends \PHPUnit_Framework_TestCase
 
     public function testNormalize()
     {
-        $object = $this->getMock(ProductStub::class);
+        $object = $this->getMock(StubProduct::class);
         $localizedFallbackValue = new LocalizedFallbackValue();
         $localizedFallbackValue->setString('testName');
         $object->expects($this->once())

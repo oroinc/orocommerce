@@ -10,15 +10,11 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\ImportExportBundle\Form\Type\ExportTemplateType;
 
+use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+
 class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
 {
     const NAME = 'orob2b_inventory_level_export_template_type_extension';
-
-    /** @var string[] */
-    public static $processorAliases = [
-        'orob2b_product.inventory_status_only_export_template',
-        'orob2b_warehouse.inventory_level_export_template'
-    ];
 
     /**
      * {@inheritdoc}
@@ -41,7 +37,12 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $processorAliases = self::$processorAliases;
+        if (!(isset($options['entityName']) && $options['entityName'] == WarehouseInventoryLevel::class)) {
+            return;
+        }
+
+        $processorAliases = $this->getProcessorAliases();
+
         $defaultChoice = reset($processorAliases);
         $builder->remove(ExportTemplateType::CHILD_PROCESSOR_ALIAS);
 
@@ -49,10 +50,8 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
             'detailLevel',
             'choice',
             [
-                'label' => false,
-                'choices' => [
-                    $this->getExportDetailLevelsByProcessorAliases($processorAliases)
-                ],
+                'label' => 'orob2b.warehouse.export.popup.options.label',
+                'choices' => $processorAliases,
                 'choices_as_values' => false,
                 'choice_translation_domain' => true,
                 'mapped' => false,
@@ -72,26 +71,11 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
         });
     }
 
-    /**
-     * @param array $processorAliases
-     * @return array
-     */
-    protected function getExportDetailLevelsByProcessorAliases($processorAliases)
+    protected function getProcessorAliases()
     {
-        $choices = [];
-        foreach ($processorAliases as $alias) {
-            $choices[$alias] = $this->getTranslationLabel($alias);
-        }
-
-        return $choices;
-    }
-
-    /**
-     * @param string $label
-     * @return string
-     */
-    protected function getTranslationLabel($label)
-    {
-        return 'orob2b.warehouse.export.inventory_status.' . $label;
+        return [
+            'orob2b_product.inventory_status_only_export_template' => 'orob2b.warehouse.export.inventory_status_only',
+            'orob2b_warehouse.inventory_level_export_template' => 'orob2b.warehouse.export.detailed_inventory_levels',
+        ];
     }
 }
