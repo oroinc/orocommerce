@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\PricingBundle\Compiler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\Query\Expr\Select;
 use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
@@ -16,6 +15,9 @@ class PriceListRuleCompiler
      */
     protected $registry;
 
+    /**
+     * @var array
+     */
     protected $fieldsOrder = [
         'product',
         'priceList',
@@ -64,6 +66,9 @@ class PriceListRuleCompiler
         return $qb;
     }
 
+    /**
+     * @return array
+     */
     public function getFieldsOrder()
     {
         return $this->fieldsOrder;
