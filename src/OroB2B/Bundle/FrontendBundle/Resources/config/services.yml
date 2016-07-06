@@ -108,8 +108,3 @@ services:
         tags:
             # Must be executed after all listeners to disable custom fields
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore, priority: -255 }
-
-    orocrm_sales.provider.privilege_category_provider:
-        class: 'OroB2B\Bundle\FrontendBundle\Provider\PrivilegeCategoryProvider'
-        tags:
-            - { name: oro_user.privilege_category}
