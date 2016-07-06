@@ -60,3 +60,20 @@ orob2b:
                 unit_required: The Unit must be specified
                 not_found_entity: The specified %entity% has not been found in the system
                 general_error: General error:
+
+        datagrid:
+            order:
+                label: Warehouse
+            order_line_item:
+                label: Warehouse
+
+        form:
+            order:
+                label: Warehouse
+
+    order:
+        orderlineitem:
+            warehouse:
+                label: Warehouse
+        warehouse:
+            label: Warehouse

@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional;
 
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
 use OroB2B\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
