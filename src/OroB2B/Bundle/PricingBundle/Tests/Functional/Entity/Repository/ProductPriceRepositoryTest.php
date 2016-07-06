@@ -16,11 +16,11 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 
 /**
  * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductPriceRepositoryTest extends WebTestCase
 {
@@ -622,7 +622,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $rule = new PriceRule();
         $rule->setPriority(1);
         $rule->setQuantity(1);
-        $rule->setPriceList($productPrice->getPriceList());
+        $rule->setPriceList($priceList);
         $rule->setCurrency('USD');
 
         $manager->persist($rule);
@@ -637,7 +637,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $prices = $repository->findBy(['priceRule' => $rule]);
         $this->assertNotEmpty($prices);
 
-        $repository->deleteGeneratedPrices($productPrice->getPriceList(), $productPrice->getProduct());
+        $repository->deleteGeneratedPrices($priceList, $productPrice->getProduct());
 
         $prices = $repository->findBy(['priceRule' => $rule]);
         $this->assertEmpty($prices);
