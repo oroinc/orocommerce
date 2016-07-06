@@ -39,6 +39,11 @@ class PriceAttributePriceListType extends AbstractType
         $builder
             ->add('name', 'text', ['required' => true, 'label' => 'orob2b.pricing.pricelist.name.label'])
             ->add(
+                'fieldName',
+                'text',
+                ['required' => true, 'label' => 'orob2b.pricing.priceattributepricelist.fieldName.label']
+            )
+            ->add(
                 'currencies',
                 CurrencySelectionType::NAME,
                 [

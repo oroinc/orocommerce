@@ -589,6 +589,8 @@ datagrid:
         columns:
             name:
                 label:         orob2b.pricing.priceattributepricelist.name.label
+            fieldName:
+                label:         orob2b.pricing.priceattributepricelist.fieldName.label
             currencies:
                 label:         orob2b.pricing.priceattributepricelist.currencies.label
                 type:          twig
@@ -615,6 +617,8 @@ datagrid:
             columns:
                 name:
                     data_name: priceAttributepriceList.name
+                fieldName:
+                    data_name: priceAttributepriceList.fieldName
                 createdAt:
                     data_name: priceAttributepriceList.createdAt
                 updatedAt:
@@ -626,6 +630,9 @@ datagrid:
                 name:
                     type:      string
                     data_name: priceAttributepriceList.name
+                fieldName:
+                    type:      string
+                    data_name: priceAttributepriceList.fieldName
                 createdAt:
                     type:      datetime
                     data_name: priceAttributepriceList.createdAt

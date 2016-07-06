@@ -25,8 +25,13 @@ OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
     properties:
         name:
             - NotBlank: ~
-            - Length:
-                max: 255
+        fieldName:
+            - Regex:
+                pattern: '/^[a-zA-Z0-9_]+$/'
+                htmlPattern: '/^[a-zA-Z0-9_]+$/'
+                message: 'not valid'
+            - NotBlank: ~
+            - Valid: ~
         currencies:
             - NotBlank: ~
             - Valid: ~
