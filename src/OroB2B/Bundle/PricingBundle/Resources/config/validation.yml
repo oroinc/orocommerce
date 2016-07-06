@@ -18,7 +18,6 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
             - Length:
                 max: 255
 
-
 OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
     constraints:
         - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
