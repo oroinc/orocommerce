@@ -11,16 +11,10 @@ define(function(require) {
     BaseShoppingListsLinkView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
             shoppingListsBillet: '[data-name="shopping-lists-billet"]',
-            shoppingListsPopup: '[data-name="shopping-lists-popup"]',
             shoppingListsLink: '[data-name="shopping-lists-link"]'
         },
 
-        options: {
-            templates: {
-                shoppingListsBillet: '',
-                shoppingListsPopup: ''
-            }
-        },
+        template: '',
 
         widgetOptions: null,
         widgetComponent: null,
@@ -42,7 +36,7 @@ define(function(require) {
             shopping_lists: [
                 {
                     shopping_list_id: 0,
-                    shopping_list_lable: 'Shopping List 1',
+                    shopping_list_label: 'Shopping List 1',
                     is_current: true,
                     line_items: [
                         {
@@ -57,7 +51,7 @@ define(function(require) {
                 },
                 {
                     shopping_list_id: 1,
-                    shopping_list_lable: 'Shopping List 2',
+                    shopping_list_label: 'Shopping List 2',
                     line_items: [
                         {
                             unit: 'item',
@@ -67,7 +61,7 @@ define(function(require) {
                 }
             ]
         },
-        
+
         initialize: function(options) {
             BaseShoppingListsLinkView.__super__.initialize.apply(this, arguments);
 
@@ -77,6 +71,8 @@ define(function(require) {
             }
             this.initializeElements(options);
 
+            this.template = _.template(options['billetTemplate']);
+
             this.widgetOptions = $.extend(true, {}, this.widgetDefaultOptions, this.widgetOptions, {
                 options: {
                     dialogOptions: {
@@ -84,9 +80,6 @@ define(function(require) {
                     }
                 }
             });
-
-            this.options.templates.shoppingListsBillet = _.template(options['billetTemplate']);
-            this.options.templates.shoppingListsPopup = _.template(options['popupTemplate']);
 
             this.model.on('change:shopping_lists', this.updateShoppingListsBillet, this);
 
@@ -102,7 +95,6 @@ define(function(require) {
         render: function() {
             this.updateShoppingListsBillet();
             this.initShoppingListsPopupButton();
-            this.renderShoppingListsPopupContent();
         },
 
         initModel: function(options) {
@@ -150,17 +142,16 @@ define(function(require) {
                 return null;
             }
             return _.find(shoppingLists, function(list) {
-                return list.is_current;
-            }) || null;
+                    return list.is_current;
+                }) || null;
         },
 
         updateShoppingListsBillet: function() {
-            var billet = {};
-
             if (!this.model) {
                 return;
             }
 
+            var billet = {};
             var shoppingLists = this.model.get('shopping_lists');
 
             billet.currentLineItemsLabels = this.setLabels(this.findCurrentShoppingList(shoppingLists));
@@ -183,12 +174,7 @@ define(function(require) {
 
         renderShoppingListsBillet: function(billet) {
             this.getElement('shoppingListsBillet')
-                .html(this.options.templates.shoppingListsBillet({billet: billet}));
-        },
-
-        renderShoppingListsPopupContent: function() {
-            this.getElement('shoppingListsPopup')
-                .html(this.options.templates.shoppingListsPopup());
+                .html(this.template({billet: billet}));
         }
     }));
 
