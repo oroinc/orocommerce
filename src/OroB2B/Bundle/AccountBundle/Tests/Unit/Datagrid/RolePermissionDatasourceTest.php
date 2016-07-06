@@ -8,26 +8,13 @@ use OroB2B\Bundle\AccountBundle\Datagrid\RolePermissionDatasource;
 
 class RolePermissionDatasourceTest extends RolePermissionDatasourceTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function getDatasource()
+    public function testGetResults()
     {
-        return new RolePermissionDatasource(
-            $this->translator,
-            $this->permissionManager,
-            $this->aclRoleHandler,
-            $this->categoryProvider,
-            $this->configEntityManager,
-            $this->roleTranslationPrefixResolver
-        );
-    }
-    
-    /**
-     * {@inheritdoc}
-     */
-    protected function assertResults(array $results, $identity)
-    {
+        $datasource = $this->getDatasource();
+        $identity = 'entity:OroB2B\Bundle\AccountBundle\Entity\Account';
+
+        $results = $this->retrieveResultsFromPermissionsDatasource($datasource, $identity);
+
         $this->assertCount(2, $results);
 
         /** @var ResultRecord $record1 */
@@ -43,5 +30,20 @@ class RolePermissionDatasourceTest extends RolePermissionDatasourceTestCase
         $this->assertInstanceOf(ResultRecord::class, $record2);
         $this->assertEquals($identity . 'User', $record2->getValue('identity'));
         $this->assertEmpty($record2->getValue('permissions'));
+    }
+
+    /**
+     * @return RolePermissionDatasource
+     */
+    protected function getDatasource()
+    {
+        return new RolePermissionDatasource(
+            $this->translator,
+            $this->permissionManager,
+            $this->aclRoleHandler,
+            $this->categoryProvider,
+            $this->configEntityManager,
+            $this->roleTranslationPrefixResolver
+        );
     }
 }

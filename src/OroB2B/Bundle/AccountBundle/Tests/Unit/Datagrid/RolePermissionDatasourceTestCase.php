@@ -8,7 +8,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Acl\Permission\PermissionManager;
@@ -43,16 +43,30 @@ abstract class RolePermissionDatasourceTestCase extends \PHPUnit_Framework_TestC
     /** @var RoleTranslationPrefixResolver|\PHPUnit_Framework_MockObject_MockObject */
     protected $roleTranslationPrefixResolver;
 
-    /** @var RolePermissionDatasource|\PHPUnit_Framework_MockObject_MockObject */
-    protected $datasource;
-
     protected function setUp()
     {
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($value) {
+                    return $value . '_translated';
+                }
+            );
 
         $this->permissionManager = $this->getMockBuilder('Oro\Bundle\SecurityBundle\Acl\Permission\PermissionManager')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->permissionManager->expects($this->any())
+            ->method('getPermissionByName')
+            ->willReturnCallback(
+                function ($name) {
+                    $permission = new Permission();
+                    $permission->setLabel($name . 'Label');
+
+                    return $permission;
+                }
+            );
 
         $this->aclRoleHandler = $this->getMockBuilder('Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler')
             ->disableOriginalConstructor()
@@ -61,6 +75,7 @@ abstract class RolePermissionDatasourceTestCase extends \PHPUnit_Framework_TestC
         $this->categoryProvider = $this->getMockBuilder('Oro\Bundle\UserBundle\Provider\RolePrivilegeCategoryProvider')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->categoryProvider->expects($this->any())->method('getPermissionCategories')->willReturn([]);
 
         $this->configEntityManager = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
@@ -70,25 +85,19 @@ abstract class RolePermissionDatasourceTestCase extends \PHPUnit_Framework_TestC
             ->getMockBuilder('OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver')
             ->disableOriginalConstructor()
             ->getMock();
-        
-        $this->datasource = $this->getDatasource();
+        $this->roleTranslationPrefixResolver->expects($this->any())->method('getPrefix')->willReturn('prefix.key.');
     }
 
     /**
-     * @return RolePermissionDatasource
+     * @param RolePermissionDatasource $datasource
+     * @param string $identity
+     * @return array|ResultRecordInterface[]
      */
-    abstract protected function getDatasource();
-
-    public function testGetResults()
+    protected function retrieveResultsFromPermissionsDatasource(RolePermissionDatasource $datasource, $identity)
     {
         $role = new Role();
-        $permissionName = 'TEST';
-        $privilegeName = 'Account';
-        $prefix = 'prefix.key.';
-
-        $identity = 'entity:OroB2B\Bundle\AccountBundle\Entity\Account';
         
-        $this->datasource->process($this->getDatagrid($role), []);
+        $datasource->process($this->getDatagrid($role), []);
         
         $this->aclRoleHandler->expects($this->once())
             ->method('getAllPrivileges')
@@ -104,8 +113,8 @@ abstract class RolePermissionDatasourceTestCase extends \PHPUnit_Framework_TestC
                         [
                             $this->getAclPrivilege(
                                 $identity,
-                                $privilegeName,
-                                new AclPermission($permissionName, AccessLevel::GLOBAL_LEVEL)
+                                'TEST',
+                                new AclPermission('TEST', AccessLevel::GLOBAL_LEVEL)
                             ),
                             $this->getAclPrivilege(
                                 $identity . 'User',
@@ -116,39 +125,9 @@ abstract class RolePermissionDatasourceTestCase extends \PHPUnit_Framework_TestC
                     )
                 ]
             );
-
-        $this->categoryProvider->expects($this->once())->method('getPermissionCategories')->willReturn([]);
-
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->willReturnCallback(
-                function ($value) {
-                    return $value . '_translated';
-                }
-            );
         
-        $this->permissionManager->expects($this->exactly(2))
-            ->method('getPermissionByName')
-            ->willReturnCallback(
-                function ($name) {
-                    $permission = new Permission();
-                    $permission->setLabel($name . 'Label');
-
-                    return $permission;
-                }
-            );
-
-        $this->roleTranslationPrefixResolver->expects($this->any())->method('getPrefix')->willReturn($prefix);
-
-        $this->assertResults($this->datasource->getResults(), $identity);
-
+        return $datasource->getResults();
     }
-
-    /**
-     * @param array $results
-     * @param string $identity
-     */
-    abstract protected function assertResults(array $results, $identity);
 
     /**
      * @param string $id
