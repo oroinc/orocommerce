@@ -57,4 +57,12 @@ class EntityStub implements LineItemsAwareInterface, CurrencyAwareInterface
 
         return $this;
     }
+
+    /**
+     * @return float
+     */
+    public function getSubtotal()
+    {
+        return 12345.0;
+    }
 }

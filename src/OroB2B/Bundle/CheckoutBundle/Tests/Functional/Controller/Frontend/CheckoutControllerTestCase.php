@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
 use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
