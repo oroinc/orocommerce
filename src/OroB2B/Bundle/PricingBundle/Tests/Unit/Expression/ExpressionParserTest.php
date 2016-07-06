@@ -77,20 +77,20 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider lexemExpressionsDataProvider
+     * @dataProvider lexemeExpressionsDataProvider
      * @param string $expression
      * @param array $expected
      */
-    public function testGetUsedLexems($expression, array $expected)
+    public function testGetUsedLexemes($expression, array $expected)
     {
-        $this->assertEquals($expected, $this->expressionParser->getUsedLexems($expression));
+        $this->assertEquals($expected, $this->expressionParser->getUsedLexemes($expression));
 
     }
 
     /**
      * @return array
      */
-    public function lexemExpressionsDataProvider()
+    public function lexemeExpressionsDataProvider()
     {
         return [
             [

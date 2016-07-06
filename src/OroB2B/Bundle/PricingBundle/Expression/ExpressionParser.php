@@ -82,31 +82,31 @@ class ExpressionParser
      * @param string|Expression $expression
      * @return ParsedExpression
      */
-    public function getUsedLexems($expression)
+    public function getUsedLexemes($expression)
     {
-        $usedLexems = [];
+        $usedLexemes = [];
         $rootNode = $this->parse($expression);
         foreach ($rootNode->getNodes() as $node) {
             if ($node instanceof NameNode) {
                 $class = $node->getContainer();
-                if (!array_key_exists($class, $usedLexems)) {
-                    $usedLexems[$class] = [];
+                if (!array_key_exists($class, $usedLexemes)) {
+                    $usedLexemes[$class] = [];
                 }
-                if (!in_array($node->getField(), $usedLexems[$class], true)) {
-                    $usedLexems[$class][] = $node->getField();
+                if (!in_array($node->getField(), $usedLexemes[$class], true)) {
+                    $usedLexemes[$class][] = $node->getField();
                 }
             } elseif ($node instanceof RelationNode) {
                 $class = $node->getContainer() . '::' . $node->getField();
-                if (!array_key_exists($class, $usedLexems)) {
-                    $usedLexems[$class] = [];
+                if (!array_key_exists($class, $usedLexemes)) {
+                    $usedLexemes[$class] = [];
                 }
-                if (!in_array($node->getRelationField(), $usedLexems[$class], true)) {
-                    $usedLexems[$class][] = $node->getRelationField();
+                if (!in_array($node->getRelationField(), $usedLexemes[$class], true)) {
+                    $usedLexemes[$class][] = $node->getRelationField();
                 }
             }
         }
         
-        return $usedLexems;
+        return $usedLexemes;
     }
 
     /**
