@@ -21,6 +21,7 @@ class PriceListTest extends \PHPUnit_Framework_TestCase
             [
                 ['default', false],
                 ['active', true],
+                ['productAssignmentRule', 'test rule'],
             ]
         );
     }

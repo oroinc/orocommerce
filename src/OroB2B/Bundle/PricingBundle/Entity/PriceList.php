@@ -94,6 +94,12 @@ class PriceList extends BasePriceList
     protected $containSchedule = false;
 
     /**
+     * @var string
+     * @ORM\Column(name="product_assignment_rule", type="string", length=255, nullable=true)
+     */
+    protected $productAssignmentRule;
+
+    /**
      * @var Collection|PriceRule[]
      *
      * @ORM\OneToMany(
@@ -245,6 +251,22 @@ class PriceList extends BasePriceList
         $this->priceRules->removeElement($priceRule);
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProductAssignmentRule()
+    {
+        return $this->productAssignmentRule;
+    }
+
+    /**
+     * @param string $productAssignmentRule
+     */
+    public function setProductAssignmentRule($productAssignmentRule)
+    {
+        $this->productAssignmentRule = $productAssignmentRule;
     }
 
     /**
