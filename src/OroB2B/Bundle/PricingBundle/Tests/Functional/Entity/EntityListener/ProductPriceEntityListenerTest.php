@@ -69,18 +69,19 @@ class ProductPriceEntityListenerTest extends AbstractChangedProductPriceTest
         $em->flush();
 
         $queries = $queryTracker->getExecutedQueries();
-        $this->assertCount(3, $queries);
+        $this->assertCount(4, $queries);
 
         foreach ($queries as $query) {
             $this->assertRegExp('/^INSERT INTO/', $query);
         }
 
-        $actual = $this->getProductPriceChangeTriggerRepository()->findBy([
+        // assert that needed triggers where created
+        $actualChangeTriggers = $this->getProductPriceChangeTriggerRepository()->findBy([
             'product' => $this->testProduct,
             'priceList' => $this->testPriceList,
         ]);
+        $this->assertCount(1, $actualChangeTriggers);
 
-        $this->assertCount(1, $actual);
         $queryTracker->stop();
     }
 

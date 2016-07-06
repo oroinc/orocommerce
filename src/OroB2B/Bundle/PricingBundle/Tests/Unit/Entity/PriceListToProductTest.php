@@ -14,10 +14,8 @@ class PriceListToProductTest extends \PHPUnit_Framework_TestCase
 
     public function testAccessors()
     {
-        $this->assertPropertyAccessors(new PriceListToProduct(), [
+        $this->assertPropertyAccessors(new PriceListToProduct(new PriceList(), new Product()), [
             ['id', 42],
-            ['priceList', new PriceList()],
-            ['product', new Product()],
             ['manual', 1]
         ]);
     }

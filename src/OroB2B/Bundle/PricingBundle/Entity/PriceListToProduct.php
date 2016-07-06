@@ -2,7 +2,10 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Mapping as ORM;
+
+use Oro\Bundle\B2BEntityBundle\Storage\ObjectIdentifierAwareInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -19,7 +22,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  * )
  * @ORM\EntityListeners({ "OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListProductEntityListener" })
  */
-class PriceListToProduct
+class PriceListToProduct implements ObjectIdentifierAwareInterface
 {
     /**
      * @var integer
@@ -54,6 +57,16 @@ class PriceListToProduct
     protected $manual = true;
 
     /**
+     * @param PriceList $priceList
+     * @param Product $product
+     */
+    public function __construct(PriceList $priceList, Product $product)
+    {
+        $this->priceList = $priceList;
+        $this->product = $product;
+    }
+
+    /**
      * @return int
      */
     public function getId()
@@ -70,33 +83,11 @@ class PriceListToProduct
     }
 
     /**
-     * @param PriceList $priceList
-     * @return $this
-     */
-    public function setPriceList($priceList)
-    {
-        $this->priceList = $priceList;
-
-        return $this;
-    }
-
-    /**
      * @return Product
      */
     public function getProduct()
     {
         return $this->product;
-    }
-
-    /**
-     * @param Product $product
-     * @return $this
-     */
-    public function setProduct($product)
-    {
-        $this->product = $product;
-
-        return $this;
     }
 
     /**
@@ -116,5 +107,17 @@ class PriceListToProduct
         $this->manual = $manual;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getObjectIdentifier()
+    {
+        if (!$this->product->getId() || !$this->priceList->getId()) {
+            throw new \InvalidArgumentException('Product id and priceList id, required for identifier generation');
+        }
+
+        return ClassUtils::getClass($this) . '_' . $this->product->getId() . '_' . $this->priceList->getId();
     }
 }

@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
@@ -16,6 +16,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
 use OroB2B\Bundle\PricingBundle\Event\ProductPriceChange;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
 
 class ProductPriceEntityListener
 {
@@ -53,6 +54,7 @@ class ProductPriceEntityListener
     public function prePersist(ProductPrice $productPrice, LifecycleEventArgs $event)
     {
         $this->handleChanges($productPrice, $event);
+        $this->addPriceListToProductRelation($productPrice, $event->getEntityManager());
     }
 
     /**
@@ -70,6 +72,12 @@ class ProductPriceEntityListener
      */
     public function preUpdate(ProductPrice $productPrice, PreUpdateEventArgs $event)
     {
+        $entityManager = $event->getEntityManager();
+        $changeSet = $entityManager->getUnitOfWork()->getEntityChangeSet($productPrice);
+        if ($this->isProductChanged($changeSet) || $this->isPriceListChanged($changeSet)) {
+            $this->addPriceListToProductRelation($productPrice, $entityManager);
+        }
+
         $this->handleChanges($productPrice, $event);
     }
 
@@ -84,7 +92,7 @@ class ProductPriceEntityListener
         $em = $event->getEntityManager();
         if (null === $trigger
             || $this->extraActionsStorage->isScheduledForInsert($trigger)
-            || $this->getRepository($em)->isCreated($trigger)
+            || $this->getRepository($em)->isExisting($trigger)
         ) {
             return;
         }
@@ -111,15 +119,55 @@ class ProductPriceEntityListener
     }
 
     /**
-     * @param EntityManager $em
+     * @param EntityManagerInterface $em
      * @return ProductPriceChangeTriggerRepository
      */
-    protected function getRepository(EntityManager $em)
+    protected function getRepository(EntityManagerInterface $em)
     {
         if (!$this->repository) {
             $this->repository = $em->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
         }
 
         return $this->repository;
+    }
+
+    /**
+     * @param array $changeSet
+     * @return bool
+     */
+    protected function isProductChanged(array $changeSet)
+    {
+        return array_key_exists('product', $changeSet) && $changeSet['product'][0] !== $changeSet['product'][1];
+    }
+
+    /**
+     * @param array $changeSet
+     * @return bool
+     */
+    protected function isPriceListChanged(array $changeSet)
+    {
+        return array_key_exists('priceList', $changeSet) && $changeSet['priceList'][0] !== $changeSet['priceList'][1];
+    }
+
+    /**
+     * @param ProductPrice $productPrice
+     * @param EntityManagerInterface $entityManager
+     */
+    protected function addPriceListToProductRelation(ProductPrice $productPrice, EntityManagerInterface $entityManager)
+    {
+        /** @var PriceList $priceList */
+        $priceList = $productPrice->getPriceList();
+        $product = $productPrice->getProduct();
+
+        $relation = $entityManager->getRepository('OroB2BPricingBundle:PriceListToProduct')
+            ->findOneBy([
+                'product' => $product,
+                'priceList' => $priceList
+            ]);
+
+        if (null === $relation) {
+            $relation = new PriceListToProduct($priceList, $product);
+            $this->extraActionsStorage->scheduleForExtraInsert($relation);
+        }
     }
 }

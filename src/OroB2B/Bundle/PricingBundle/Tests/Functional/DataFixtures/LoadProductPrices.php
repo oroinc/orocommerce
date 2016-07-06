@@ -12,6 +12,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 
 class LoadProductPrices extends AbstractFixture implements DependentFixtureInterface
 {
@@ -204,8 +205,8 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists'
+            LoadProductUnitPrecisions::class,
+            LoadPriceLists::class
         ];
     }
 }
