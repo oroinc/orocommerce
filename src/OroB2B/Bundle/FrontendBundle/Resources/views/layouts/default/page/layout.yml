@@ -13,14 +13,8 @@ layout:
                     blockType: container
                 sticky_panel:
                     blockType: container
-                    options:
-                        attr:
-                            class: 'sticky-panel'
                 sticky_panel_content:
                     blockType: container
-                    options:
-                        attr:
-                            class: 'sticky-panel__content'
                 notification:
                     blockType: block
                 main:
@@ -55,9 +49,6 @@ layout:
             id: sticky_element_notification
             parentId: sticky_panel_content
             blockType: block
-            options:
-                attr:
-                    id: sticky-element-notification
         - '@setOption':
             id: title
             optionName: separator
@@ -66,9 +57,3 @@ layout:
             id: title
             optionName: reverse
             optionValue: true
-        - '@setOption':
-            id: notification
-            optionName: attr.data-sticky
-            optionValue:
-                placeholder: sticky-element-notification
-                toggleClass: notification-flash--medium

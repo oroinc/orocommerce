@@ -1,155 +1,225 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var StickyPanel;
+    var StickyPanelView;
     var BaseView = require('oroui/js/app/views/base/view');
+    var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
     var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
 
-    StickyPanel = BaseView.extend({
+    StickyPanelView = BaseView.extend({
+        autoRender: true,
+
         options: {
-            eventNameSpace: '.stikypanel',
-            placeholderClass: 'moved-to-sticky'
+            placeholderClass: 'moved-to-sticky',
+            elementClass: 'in-sticky',
+            scrollTimeout: 25,
+            layoutTimeout: 40
+        },
+
+        $document: null,
+
+        elements: null,
+
+        scrollState: null,
+
+        viewPort: null,
+
+        /**
+         * @inheritDoc
+         */
+        initialize: function(options) {
+            this.options = _.extend({}, this.options, options || {});
+            StickyPanelView.__super__.initialize.apply(this, arguments);
+
+            this.$document = $(document);
+            this.elements = [];
+            this.scrollState = {
+                directionClass: '',
+                position: 0
+            };
+            this.viewPort = {
+                top: 0,
+                bottom: 0
+            };
         },
 
         /**
          * @inheritDoc
          */
-        initialize: function(params) {
-            this.options = _.extend({}, this.options, params || {});
-            this.$elements = null;
-            this.currentState = null;
-            this.currentPosition = 0;
+        delegateEvents: function() {
+            StickyPanelView.__super__.delegateEvents.apply(this, arguments);
 
-            StickyPanel.__super__.initialize.apply(this, arguments);
-            this.render();
+            this.$document.on(
+                'scroll' + this.eventNamespace(),
+                _.debounce(_.bind(this.onScroll, this), this.options.scrollTimeout)
+            );
 
-            mediator.trigger('sticky-panel:init');
-        },
-
-        render: function() {
-            this.$document = $(document);
-            this.$elements = $('[data-sticky]');
-
-            this.attachEvents();
+            mediator.on('layout:reposition',  _.debounce(this.onScroll, this.options.layoutTimeout), this);
+            mediator.on('layout:adjustHeight',  _.debounce(this.onScroll, this.options.layoutTimeout), this);
 
             return this;
         },
 
-        attachEvents: function() {
-            this.$document.on('scroll' + this.options.eventNameSpace, _.debounce(_.bind(this.onScroll, this), 25));
-            mediator.on('layout:reposition',  _.debounce(_.bind(this.onScroll, this), 40));
-            mediator.on('layout:adjustHeight',  _.debounce(_.bind(this.onScroll, this), 40));
+        /**
+         * @inheritDoc
+         */
+        undelegateEvents: function() {
+            this.$document.off(this.eventNamespace());
+            mediator.off(null, null, this);
+
+            return StickyPanelView.__super__.undelegateEvents.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        render: function() {
+            this.collectElements();
+            return this;
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            _.each(this.elements, function($element) {
+                if ($element.hasClass(this.options.elementClass)) {
+                    this.toggleElementState($element, false);
+                }
+            }, this);
+
+            this.undelegateEvents();
+
+            _.each(['$document', '$elements', 'scrollState', 'viewPort'], function(key) {
+                delete this[key];
+            }, this);
+
+            return StickyPanelView.__super__.dispose.apply(this, arguments);
+        },
+
+        collectElements: function() {
+            this.elements = $('[data-sticky]').get();
+            var $placeholder = this.$el.children();
+
+            _.each(this.elements, function(element, i) {
+                var $element = $(element);
+                this.elements[i] = $element;
+
+                var $elementPlaceholder = this.createPlaceholder()
+                    .data('stickyElement', $element);
+
+                var options = _.defaults($element.data('sticky') || {}, {
+                    $elementPlaceholder: $elementPlaceholder,
+                    placeholderId: '',
+                    toggleClass: ''
+                });
+                options.$placeholder = options.placeholderId ? $('#' + options.placeholderId) : $placeholder;
+                options.toggleClass += ' ' + this.options.elementClass;
+
+                $element.data('sticky', options);
+            }, this);
+
+            if (this.elements.length) {
+                this.delegateEvents();
+            } else {
+                this.undelegateEvents();
+            }
+        },
+
+        createPlaceholder: function() {
+            return $('<div/>').addClass(this.options.placeholderClass);
         },
 
         onScroll: function() {
-            var self = this;
-            this.scrollTo();
+            this.updateScrollState();
+            this.updateViewPort();
 
-            if (!this.$elements.length) {
-                return ;
+            var contentChanged = false;
+            for (var i = 0, iMax = this.elements.length; i < iMax; i++) {
+                var $element = this.elements[i];
+
+                if ($element.hasClass(this.options.elementClass)) {
+                    if (this.inViewPort($element.data('sticky').$elementPlaceholder, $element) || $element.is(':empty')) {
+                        contentChanged = true;
+                        this.toggleElementState($element, false);
+                    }
+                } else if (!$element.is(':empty') && !this.inViewPort($element)) {
+                    contentChanged = true;
+                    this.toggleElementState($element, true);
+                }
+
+                if (contentChanged) {
+                    break;
+                }
             }
 
-            $.each(this.$elements, function() {
-                var $element = $(this);
-                var params = {
-                    height: $element.outerHeight(),
-                    margin: $element.css('margin') || 0
-                };
-                var placeholder = self.createPlaceholder(params);
-                var $currentPlaceholder = $element.data('currentPlaceholder');
-
-                if (!self.inViewPort($element)) {
-                    $element.data('currentPlaceholder', placeholder);
-                    placeholder.data('currentElement', $element);
-                    self.toggleState($element, placeholder, true);
-                }
-
-                if ($currentPlaceholder && self.inViewPort($currentPlaceholder)) {
-                    var $currentElement = $currentPlaceholder.data('currentElement');
-
-                    self.toggleState($currentElement, $currentPlaceholder, false);
-                }
-            });
-
-            this.hasChildren();
+            if (contentChanged) {
+                this.$el.toggleClass('has-content', this.$el.find('.' + this.options.elementClass).length > 0);
+                this.onScroll();
+            }
         },
 
-        createPlaceholder: function(obj) {
-            return $('<div/>')
-                    .addClass(this.options.placeholderClass)
-                    .css({
-                        'height': obj.height,
-                        'margin': obj.margin
-                    });
+        updateViewPort: function() {
+            this.viewPort.top = $(window).scrollTop() + this.$el.height();
+            this.viewPort.bottom = this.viewPort.top + $(window).height();
         },
 
-        scrollTo: function() {
-            var state = this.currentPosition > this.$document.scrollTop() ? 'scroll-up' : 'scroll-down';
-
-            this.$el.removeClass(this.currentState);
-            this.$el.addClass(state);
-            this.currentState = state;
-            this.currentPosition = this.$document.scrollTop();
-            mediator.trigger('sticky-panel:scrollTo', state);
-            return state;
-        },
-
-        inViewPort: function($element) {
-            var windowTop = $(window).scrollTop();
-            var windowBottom = windowTop + $(window).height();
+        inViewPort: function($element, $elementInSticky) {
             var elementTop = $element.offset().top;
             var elementBottom = elementTop + $element.height();
+            var elementInStickyHeight = $elementInSticky ? $elementInSticky.height() : 0;
 
-            return ((elementBottom <= windowBottom) && (elementTop >= windowTop));
+            return (
+                (elementBottom <= this.viewPort.bottom) &&
+                (elementTop >= this.viewPort.top - elementInStickyHeight)
+            );
         },
 
-        hasChildren: function() {
-            var hasChildren =  !!_.size(this.$elements.filter(function() {
-                return $(this).closest('.sticky-panel').length;
-            }));
+        updateScrollState: function() {
+            var position = this.$document.scrollTop();
+            var directionClass = this.scrollState.position > position ? 'scroll-up' : 'scroll-down';
 
-            this.$el.toggleClass('has-content', hasChildren);
+            if (this.scrollState.directionClass !== directionClass) {
+                this.$el.removeClass(this.scrollState.directionClass)
+                    .addClass(directionClass);
 
-            return hasChildren;
-        },
-
-        toggleState: function($element, placeholder, state) {
-            if (!$element) {
-                return ;
+                this.scrollState.directionClass = directionClass;
             }
+
+            this.scrollState.position = position;
+        },
+
+        toggleElementState: function($element, state) {
             var options = $element.data('sticky');
-            var $container = this.$el.children();
-
-            if (_.isObject(options)) {
-                $container = options.placeholder ? $('#' + options.placeholder) : $container;
-
-                $element.toggleClass(options.toggleClass, state);
-            }
 
             if (state) {
-                if ($element.is(':empty')) {
-                    return ;
-                }
-
-                $element.after(placeholder);
-                $container.append($element);
+                this.updateElementPlaceholder($element);
+                $element.addClass(options.toggleClass);
+                $element.after(options.$elementPlaceholder);
+                options.$placeholder.append($element);
             } else {
-                placeholder.before($element);
-                placeholder.remove();
+                $element.removeClass(options.toggleClass);
+                options.$elementPlaceholder.before($element)
+                    .remove();
             }
 
-            mediator.trigger('sticky-panel:toggle-state', {element: $element, state: state});
+            mediator.trigger('sticky-panel:toggle-state', {$element: $element, state: state});
         },
 
-        dispose: function() {
-            this.$elements = null;
-            this.currentState = null;
-            this.currentPosition = 0;
-            this.$document.off(this.options.eventNameSpace);
+        updateElementPlaceholder: function($element) {
+            $element.data('sticky').$elementPlaceholder.css({
+                display: $element.css('display'),
+                width: $element.outerWidth(),
+                height: $element.outerHeight(),
+                margin: $element.css('margin') || 0
+            });
         }
     });
 
-    return StickyPanel;
+    return StickyPanelView;
 });
