@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
 use OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
