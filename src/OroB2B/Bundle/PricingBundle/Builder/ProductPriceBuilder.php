@@ -77,9 +77,9 @@ class ProductPriceBuilder
     {
         $this->applyRule($rule, $product);
         if ($product === null) {
-            $this->triggersFiller->createTriggerByPriceListProduct($rule->getPriceList(), $product);
-        } else {
             $this->triggersFiller->fillTriggersByPriceList($rule->getPriceList());
+        } else {
+            $this->triggersFiller->createTriggerByPriceListProduct($rule->getPriceList(), $product);
         }
     }
 
