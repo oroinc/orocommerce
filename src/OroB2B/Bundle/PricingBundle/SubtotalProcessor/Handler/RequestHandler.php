@@ -78,6 +78,8 @@ class RequestHandler
             $entity = $event->getEntity();
         }
 
+        $this->totalProvider->enableRecalculation();
+
         $total = $this->totalProvider->getTotal($entity)->toArray();
         $subtotals = $this->totalProvider->getSubtotals($entity)->getValues();
 
