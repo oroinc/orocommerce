@@ -97,9 +97,14 @@ class ScopeRecalculateTriggersFiller
         $em->flush();
     }
 
+    /**
+     * @param PriceList $priceList
+     * @param Product $product
+     */
     public function createTriggerByPriceListProduct(PriceList $priceList, Product $product)
     {
         $trigger = new ProductPriceChangeTrigger($priceList, $product);
+        
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass(ProductPriceChangeTrigger::class);
         $em->persist($trigger);
@@ -112,8 +117,10 @@ class ScopeRecalculateTriggersFiller
     protected function createConfigTriggers(EntityManager $em)
     {
         $this->clearAllExistingTriggers();
+        
         $priceListChangeTrigger = new PriceListChangeTrigger();
         $priceListChangeTrigger->setForce(true);
+        
         $em->persist($priceListChangeTrigger);
     }
 

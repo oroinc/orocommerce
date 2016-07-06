@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Builder;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
@@ -102,10 +103,7 @@ class ProductPriceBuilder
      */
     protected function getProductPriceRepository()
     {
-        if ($this->productPriceRepository === null) {
-            $this->productPriceRepository = $this->registry->getRepository('OroB2BPricingBundle:ProductPrice');
-        }
-
-        return $this->productPriceRepository;
+        return $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPrice')
+            ->getRepository('OroB2BPricingBundle:ProductPrice');
     }
 }
