@@ -92,7 +92,7 @@ class BinaryNode implements NodeInterface
      */
     public function getOperation()
     {
-        return $this->getOperation();
+        return $this->operation;
     }
 
     /**
