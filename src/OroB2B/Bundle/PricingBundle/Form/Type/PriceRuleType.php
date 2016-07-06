@@ -67,7 +67,7 @@ class PriceRuleType extends AbstractType
             )
             ->add(
                 self::PRIORITY,
-                'number',
+                'integer',
                 [
                     'label' => 'orob2b.pricing.pricerule.priority.label'
                 ]
