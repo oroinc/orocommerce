@@ -88,8 +88,10 @@ class ProductPriceType extends AbstractType
     public function onPreSubmit(FormEvent $event)
     {
         $submittedData = $event->getData();
-        /** @var ProductPrice $productPrice */
         $productPrice = $event->getForm()->getData();
+        if (!$productPrice instanceof ProductPrice) {
+            return;
+        }
         $oldPrice = $productPrice->getPrice();
         if ($submittedData['quantity'] != $productPrice->getQuantity()
             || $submittedData['unit'] != $productPrice->getUnit()->getCode()
