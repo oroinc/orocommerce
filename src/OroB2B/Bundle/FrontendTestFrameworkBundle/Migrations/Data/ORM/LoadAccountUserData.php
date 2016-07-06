@@ -1,9 +1,10 @@
 <?php
 
-namespace Oro\Component\Testing\Fixtures;
+namespace Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -14,7 +15,7 @@ use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 
-class LoadAccountUserData extends AbstractFixture implements ContainerAwareInterface
+class LoadAccountUserData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     const AUTH_USER = 'account_user@example.com';
     const AUTH_PW = 'account_user';
@@ -30,6 +31,12 @@ class LoadAccountUserData extends AbstractFixture implements ContainerAwareInter
         $this->container = $container;
     }
 
+    /** {@inheritdoc} */
+    public function getDependencies()
+    {
+        return ['Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\LoadUserData'];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -37,9 +44,6 @@ class LoadAccountUserData extends AbstractFixture implements ContainerAwareInter
     {
         /** @var BaseUserManager $userManager */
         $userManager = $this->container->get('orob2b_account_user.manager');
-        if ($userManager->getRepository()->findBy(['username' => self::AUTH_USER])) {
-            return;
-        }
 
         $organization = $manager
             ->getRepository('OroOrganizationBundle:Organization')
