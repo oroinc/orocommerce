@@ -685,3 +685,9 @@ services:
             - [addExpressionMapping, ['PriceList.price.currency', 'PriceList.currency']]
             - [addExpressionMapping, ['PriceList.price.value', 'PriceList.value']]
             - [addExpressionMapping, ['PriceList.price', 'PriceList.value']]
+
+    orob2b_pricing.hander.price_rule_lexeme_handler:
+        class: 'OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler'
+        arguments:
+            - '@doctrine'
+            - '@orob2b_pricing.expression.parser'

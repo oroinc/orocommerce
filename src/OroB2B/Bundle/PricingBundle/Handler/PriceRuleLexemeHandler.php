@@ -6,10 +6,10 @@ use Doctrine\ORM\EntityManager;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
+use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
-use OroB2B\Bundle\PricingBundle\Model\ExpressionParser;
 
 class PriceRuleLexemeHandler
 {
