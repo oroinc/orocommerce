@@ -199,7 +199,7 @@ class PriceRule
 
     /**
      * @param PriceList $priceList
-     * @return ProductPrice
+     * @return $this
      */
     public function setPriceList(PriceList $priceList)
     {
