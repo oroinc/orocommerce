@@ -7,12 +7,12 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
-use OroB2B\Bundle\PricingBundle\Model\ExpressionParser;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
 
@@ -40,7 +40,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->parser = $this->getMock(ExpressionParser::class);
+        $this->parser = $this->getMockBuilder(ExpressionParser::class)->disableOriginalConstructor()->getMock();
         $this->priceRuleLexemeHandler = new PriceRuleLexemeHandler($this->registry, $this->parser);
     }
 
@@ -64,10 +64,10 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
         $priceList->addPriceRule($priceRule2);
 
         $map = [
-            [$condition1, ['class1' => ['field1', 'field2'], 'class2' => ['field3']]],
+            [$condition1, ['class1' => ['field1', null], 'class2' => [null]]],
             [$condition2, ['class1' => ['field3', 'field2'], 'class3' => ['field3', 'field6']]],
-            [$condition3, ['class2' => ['field5', 'field1'], 'class3' => ['field3', 'field1']]],
-            [$condition4, ['class1' => ['field5', 'field1'], 'class2' => ['field3', 'field1']]],
+            [$condition3, ['class2' => ['field5', null], 'class3' => ['field3', 'field1']]],
+            [$condition4, ['class1' => [null, 'field1'], 'class2' => ['field3', 'field1']]],
         ];
         $this->parser->expects($this->any())
             ->method('getUsedLexemes')
@@ -107,7 +107,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
         $rule3 = $this->getEntity(PriceRule::class, ['id' => 3]);
         $lexeme1 = $this->getEntity(
             PriceRuleLexeme::class,
-            ['id' => 1, 'className' => 'class1', 'fieldName' => 'field5', 'priceRule' => $rule1]
+            ['id' => 1, 'className' => 'class1', 'fieldName' => null, 'priceRule' => $rule1]
         );
         $lexeme2 = $this->getEntity(
             PriceRuleLexeme::class,
