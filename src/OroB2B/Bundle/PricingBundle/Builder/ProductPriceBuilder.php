@@ -76,8 +76,11 @@ class ProductPriceBuilder
     public function buildByRule(PriceRule $rule, Product $product = null)
     {
         $this->applyRule($rule, $product);
-        //TODO: create ProductPriceChangeTrigger, maybe modify $triggersFiller for this
-        $this->triggersFiller->fillTriggersByPriceList($rule->getPriceList());
+        if ($product === null) {
+            $this->triggersFiller->createTriggerByPriceListProduct($rule->getPriceList(), $product);
+        } else {
+            $this->triggersFiller->fillTriggersByPriceList($rule->getPriceList());
+        }
     }
 
     /**
