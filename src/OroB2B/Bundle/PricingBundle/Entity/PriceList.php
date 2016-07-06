@@ -112,13 +112,6 @@ class PriceList extends BasePriceList
     protected $priceRules;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="assignment_rule", type="string", length=255)
-     */
-    protected $assignmentRule;
-
-    /**
      * {@inheritdoc}
      */
     public function __construct()

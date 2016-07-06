@@ -37,8 +37,8 @@ class LoadPriceListData extends AbstractFixture implements ContainerAwareInterfa
         $priceList
             ->setDefault(true)
             ->setCurrencies(['USD', 'EUR'])
-            ->setName(self::DEFAULT_PRICE_LIST_NAME);
-
+            ->setName(self::DEFAULT_PRICE_LIST_NAME)
+            ->setProductAssignmentRule('defaultRule');
         $manager->persist($priceList);
         $manager->flush();
 
