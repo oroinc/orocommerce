@@ -159,7 +159,7 @@ orob2b:
             total.label: Total
             subtotal.label: Subtotal
             checkout_link.label: Check Out
-            delete.label: Delete Checkout
+            delete.label: Delete Open Order
 
         workflow.condition:
             order_line_item_has_count.message: No products can be added to this order. Please create an RFQ to request price.
