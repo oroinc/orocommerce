@@ -9,7 +9,7 @@ use OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller;
+use OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductPriceBuilder

@@ -669,7 +669,7 @@ services:
             - '@doctrine'
 
     orob2b_pricing.builder.product_price_builder:
-        class: OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder
+        class: 'OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder'
         arguments:
             - '@doctrine'
             - '@orob2b_pricing.compiler.price_list_rule_compiler'
