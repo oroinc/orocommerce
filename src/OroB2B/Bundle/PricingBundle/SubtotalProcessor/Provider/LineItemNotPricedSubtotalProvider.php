@@ -116,16 +116,17 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         }
         $subtotalAmount = 0.0;
         $subtotal = $this->createSubtotal();
-        $productsPriceCriteria =
-                    $this->prepareProductsPriceCriteria($entity, $currency);
-        $priceList = $this->priceListTreeHandler->getPriceList($entity->getAccount(), $entity->getWebsite());
-        $price = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList);
-        foreach ($price as $identifier => $priceEntity) {
-            $priceValue = $priceEntity->getValue();
-            $subtotalAmount += $priceValue * $productsPriceCriteria[$identifier]->getQuantity();
-            $subtotal->setVisible(true);
-        }
 
+        $productsPriceCriterias = $this->prepareProductsPriceCriterias($entity, $currency);
+        if ($productsPriceCriterias) {
+            $priceList = $this->priceListTreeHandler->getPriceList($entity->getAccount(), $entity->getWebsite());
+            $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriterias, $priceList);
+            foreach ($prices as $identifier => $price) {
+                $priceValue = $price->getValue();
+                $subtotalAmount += $priceValue * $productsPriceCriterias[$identifier]->getQuantity();
+                $subtotal->setVisible(true);
+            }
+        }
         $subtotal->setAmount($this->rounding->round($subtotalAmount));
         $subtotal->setCurrency($currency);
 
@@ -137,9 +138,9 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
      * @param string $currency
      * @return ProductPriceCriteria[]
      */
-    protected function prepareProductsPriceCriteria($entity, $currency)
+    protected function prepareProductsPriceCriterias($entity, $currency)
     {
-        $productsPriceCriteria = [];
+        $productsPriceCriterias = [];
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof ProductHolderInterface
                 && $lineItem instanceof ProductUnitHolderInterface
@@ -147,7 +148,6 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
             ) {
                 $productId = $lineItem->getProduct()->getId();
                 $productUnitCode = $lineItem->getProductUnit()->getCode();
-
                 if ($productId && $productUnitCode) {
                     /** @var Product $product */
                     $product = $this->getEntityReference($this->productClass, $productId);
@@ -155,12 +155,12 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
                     $unit = $this->getEntityReference($this->productUnitClass, $productUnitCode);
                     $quantity = (float)$lineItem->getQuantity();
                     $criteria = new ProductPriceCriteria($product, $unit, $quantity, $currency);
-                    $productsPriceCriteria[$criteria->getIdentifier()] = $criteria;
+                    $productsPriceCriterias[$criteria->getIdentifier()] = $criteria;
                 }
             }
         }
 
-        return $productsPriceCriteria;
+        return $productsPriceCriterias;
     }
 
     /**
