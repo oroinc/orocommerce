@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Expression;
 
-class NameNode implements NodeInterface
+class RelationNode implements NodeInterface
 {
     /**
      * @var string
@@ -10,18 +10,25 @@ class NameNode implements NodeInterface
     protected $container;
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $field;
 
     /**
-     * @param string $container
-     * @param string|null $field
+     * @var string
      */
-    public function __construct($container, $field = null)
+    protected $relationField;
+
+    /**
+     * @param string $container
+     * @param string $field
+     * @param string $relationField
+     */
+    public function __construct($container, $field, $relationField)
     {
         $this->container = $container;
         $this->field = $field;
+        $this->relationField = $relationField;
     }
 
     /**
@@ -38,6 +45,14 @@ class NameNode implements NodeInterface
     public function getField()
     {
         return $this->field;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRelationField()
+    {
+        return $this->relationField;
     }
 
     /**

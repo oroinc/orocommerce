@@ -11,27 +11,22 @@ class ExpressionParser
     /**
      * @var array
      */
-    protected $namesMapping = [
-        'Category' => 'OroB2B\Bundle\CatalogBundle\Entity\Category',
-        'Product' => 'OroB2B\Bundle\ProductBundle\Entity\Product',
-        'PriceList' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList',
-    ];
+    protected $namesMapping = [];
 
     /**
      * @var array
      */
-    protected $expressionMappings = [
-        '%' => '/100',
-        'product.category' => 'Category',
-        'PriceList.price.currency' => 'PriceList.currency',
-        'PriceList.price.value' => 'PriceList.value',
-        'PriceList.price' => 'PriceList.value',
-    ];
+    protected $expressionMappings = ['%' => '/100'];
 
     /**
      * @var ExpressionLanguageConverter
      */
     protected $converter;
+
+    /**
+     * @var array
+     */
+    protected $expressionCache = [];
 
     /**
      * @param ExpressionLanguageConverter $converter
@@ -61,18 +56,26 @@ class ExpressionParser
 
     /**
      * @param string|Expression $expression
-     * @return ParsedExpression
+     * @return NodeInterface
      */
     public function parse($expression)
     {
+        $cacheKey = md5($expression);
+        if (array_key_exists($cacheKey, $this->expressionCache)) {
+            return $this->expressionCache[$cacheKey];
+        }
+
         foreach ($this->expressionMappings as $search => $replace) {
             $expression = str_ireplace($search, $replace, $expression);
         }
 
         $language = new ExpressionLanguage();
-        $parsedExpression = $language->parse($expression, $this->getSupportedNames());
+        $parsedLanguageExpression = $language->parse($expression, $this->getSupportedNames());
         
-        return $this->converter->convert($parsedExpression);
+        $nodes = $this->converter->convert($parsedLanguageExpression, $this->namesMapping);
+        $this->expressionCache[$cacheKey] = $nodes;
+
+        return $nodes;
     }
 
     /**
@@ -85,12 +88,20 @@ class ExpressionParser
         $rootNode = $this->parse($expression);
         foreach ($rootNode->getNodes() as $node) {
             if ($node instanceof NameNode) {
-                $class = $this->namesMapping[$node->getContainer()];
+                $class = $node->getContainer();
                 if (!array_key_exists($class, $usedLexems)) {
                     $usedLexems[$class] = [];
                 }
                 if (!in_array($node->getField(), $usedLexems[$class], true)) {
                     $usedLexems[$class][] = $node->getField();
+                }
+            } elseif ($node instanceof RelationNode) {
+                $class = $node->getContainer() . '::' . $node->getField();
+                if (!array_key_exists($class, $usedLexems)) {
+                    $usedLexems[$class] = [];
+                }
+                if (!in_array($node->getRelationField(), $usedLexems[$class], true)) {
+                    $usedLexems[$class][] = $node->getRelationField();
                 }
             }
         }
@@ -101,7 +112,7 @@ class ExpressionParser
     /**
      * @return array
      */
-    protected function getSupportedNames()
+    public function getSupportedNames()
     {
         return array_keys($this->namesMapping);
     }

@@ -9,33 +9,44 @@ class ExpressionLanguageConverter
 {
     /**
      * @param ParsedExpression $expression
-     * @return BinaryNode|NameNode|ValueNode
+     * @param array $namesMapping
+     * @return NodeInterface
      */
-    public function convert(ParsedExpression $expression)
+    public function convert(ParsedExpression $expression, array $namesMapping = [])
     {
-        return $this->convertExpressionLanguageNode($expression->getNodes());
+        return $this->convertExpressionLanguageNode($expression->getNodes(), $namesMapping);
     }
 
     /**
      * @param Node\Node $node
+     * @param array $namesMapping
      * @return BinaryNode|NameNode|ValueNode
      */
-    protected function convertExpressionLanguageNode(Node\Node $node)
+    protected function convertExpressionLanguageNode(Node\Node $node, array $namesMapping = [])
     {
         if ($node instanceof Node\BinaryNode) {
             return new BinaryNode(
-                $this->convertExpressionLanguageNode($node->nodes['left']),
-                $this->convertExpressionLanguageNode($node->nodes['right']),
+                $this->convertExpressionLanguageNode($node->nodes['left'], $namesMapping),
+                $this->convertExpressionLanguageNode($node->nodes['right'], $namesMapping),
                 $node->attributes['operator']
             );
         } elseif ($node instanceof Node\GetAttrNode) {
-            return new NameNode(
-                $this->getNameNodeValue($node->nodes['node']),
-                $this->getConstantNodeValue($node->nodes['attribute'])
-            );
+            $rootNameNode = $node->nodes['node'];
+            if ($rootNameNode instanceof Node\GetAttrNode) {
+                return new RelationNode(
+                    $this->getNameNodeValue($rootNameNode->nodes['node'], $namesMapping),
+                    $this->getConstantNodeValue($rootNameNode->nodes['attribute']),
+                    $this->getConstantNodeValue($node->nodes['attribute'])
+                );
+            } else {
+                return new NameNode(
+                    $this->getNameNodeValue($rootNameNode, $namesMapping),
+                    $this->getConstantNodeValue($node->nodes['attribute'])
+                );
+            }
         } elseif ($node instanceof Node\NameNode) {
             return new NameNode(
-                $this->getNameNodeValue($node)
+                $this->getNameNodeValue($node, $namesMapping)
             );
         } elseif ($node instanceof Node\ConstantNode) {
             return new ValueNode(
@@ -43,7 +54,7 @@ class ExpressionLanguageConverter
             );
         } elseif ($node instanceof Node\UnaryNode) {
             return new UnaryNode(
-                $this->convertExpressionLanguageNode($node->nodes['node']),
+                $this->convertExpressionLanguageNode($node->nodes['node'], $namesMapping),
                 $node->attributes['operator']
             );
         }
@@ -62,10 +73,17 @@ class ExpressionLanguageConverter
 
     /**
      * @param Node\Node $node
+     * @param array $namesMapping
      * @return string
      */
-    protected function getNameNodeValue(Node\Node $node)
+    protected function getNameNodeValue(Node\Node $node, array $namesMapping = [])
     {
-        return $node->attributes['name'];
+        $name = $node->attributes['name'];
+
+        if (array_key_exists($name, $namesMapping)) {
+            $name = $namesMapping[$name];
+        }
+
+        return $name;
     }
 }

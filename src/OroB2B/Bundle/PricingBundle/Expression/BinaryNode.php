@@ -88,7 +88,7 @@ class BinaryNode implements NodeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getOperation()
     {
