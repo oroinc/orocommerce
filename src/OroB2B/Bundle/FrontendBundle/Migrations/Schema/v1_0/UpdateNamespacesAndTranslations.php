@@ -14,6 +14,6 @@ class UpdateNamespacesAndTranslations implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-
+        $queries->addPreQuery(new UpdateNamespacesAndTranslationsQuery());
     }
 }
