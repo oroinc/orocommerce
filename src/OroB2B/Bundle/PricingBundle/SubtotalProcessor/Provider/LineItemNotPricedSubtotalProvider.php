@@ -123,7 +123,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
             $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriterias, $priceList);
             foreach ($prices as $identifier => $price) {
                 $priceValue = $price->getValue();
-                $subtotalAmount += $priceValue * $productsPriceCriterias[$identifier]->getQuantity();
+                $subtotalAmount += (float) $priceValue * $productsPriceCriterias[$identifier]->getQuantity();
                 $subtotal->setVisible(true);
             }
         }
