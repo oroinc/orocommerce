@@ -84,7 +84,7 @@ class AccountAddressController extends Controller
     {
         $this->prepareEntities($account, $accountAddress, $request);
 
-        $form = $this->get('orob2b_account.provider.fronted_account_address_form')->getForm($accountAddress);
+        $form = $this->get('orob2b_account.provider.frontend_account_address_form')->getForm($accountAddress);
 
         $manager = $this->getDoctrine()->getManagerForClass(
             $this->container->getParameter('orob2b_account.entity.account_address.class')

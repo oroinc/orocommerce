@@ -39,6 +39,21 @@ class AccountUserAddressControllerTest extends WebTestCase
         $this->currentUser = $this->getCurrentUser();
     }
 
+    public function testIndex()
+    {
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_frontend_account_user_address_index')
+        );
+
+        $addCompanyAddressLink = $crawler->selectLink('Add Company Address')->link();
+        $addUserAddressLink = $crawler->selectLink('Add Address')->link();
+        $this->assertNotEmpty($addCompanyAddressLink);
+        $this->assertNotEmpty($addUserAddressLink);
+        $addressLists = $crawler->filter('.address-list');
+        $this->assertCount(2, $addressLists);
+    }
+
     public function testCreate()
     {
         $crawler = $this->client->request(
