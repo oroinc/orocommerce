@@ -1,7 +1,7 @@
 orob2b:
     checkout:
-        entity_label: Checkout
-        entity_plural_label: Checkouts
+        entity_label: Open Order
+        entity_plural_label: Open Orders
         id.label: Id
         owner.label: Owner
         account.label: Global Address Book
