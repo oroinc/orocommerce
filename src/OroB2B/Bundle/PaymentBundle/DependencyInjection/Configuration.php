@@ -7,9 +7,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguration;
 
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Currency;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class Configuration implements ConfigurationInterface
 {
@@ -34,7 +35,6 @@ class Configuration implements ConfigurationInterface
     const PAYPAL_PAYMENTS_PRO_DEBUG_MODE_KEY = 'paypal_payments_pro_debug_mode';
     const PAYPAL_PAYMENTS_PRO_ENABLE_SSL_VERIFICATION_KEY = 'paypal_payments_pro_enable_ssl_verification';
     const PAYPAL_PAYMENTS_PRO_REQUIRE_CVV_KEY = 'paypal_payments_pro_require_cvv';
-    const PAYPAL_PAYMENTS_PRO_VALIDATE_CVV_KEY = 'paypal_payments_pro_validate_cvv';
     const PAYPAL_PAYMENTS_PRO_ZERO_AMOUNT_AUTHORIZATION_KEY = 'paypal_payments_pro_zero_amount_authorization';
     const PAYPAL_PAYMENTS_PRO_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY =
         'paypal_payments_pro_authorization_for_required_amount';
@@ -59,7 +59,6 @@ class Configuration implements ConfigurationInterface
     const PAYFLOW_GATEWAY_DEBUG_MODE_KEY = 'payflow_gateway_debug_mode';
     const PAYFLOW_GATEWAY_ENABLE_SSL_VERIFICATION_KEY = 'payflow_gateway_enable_ssl_verification';
     const PAYFLOW_GATEWAY_REQUIRE_CVV_KEY = 'payflow_gateway_require_cvv';
-    const PAYFLOW_GATEWAY_VALIDATE_CVV_KEY = 'payflow_gateway_validate_cvv';
     const PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY = 'payflow_gateway_zero_amount_authorization';
     const PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'payflow_gateway_authorization_for_required_amount';
     const PAYFLOW_GATEWAY_ALLOWED_CURRENCIES = 'payflow_gateway_allowed_currencies';
@@ -94,14 +93,14 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
 
         $rootNode = $treeBuilder->root(OroB2BPaymentExtension::ALIAS);
-
+        $paymentCurrencies = array_intersect(CurrencyConfiguration::$defaultCurrencies, Currency::$currencies);
         SettingsBuilder::append(
             $rootNode,
             [
                 // General
                 self::MERCHANT_COUNTRY_KEY => [
                     'type' => 'text',
-                    'value' => ''
+                    'value' => '',
                 ],
 
                 // PayPal Payments Pro
@@ -181,10 +180,6 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => true
                 ],
-                self::PAYPAL_PAYMENTS_PRO_VALIDATE_CVV_KEY => [
-                    'type' => 'boolean',
-                    'value' => true
-                ],
                 self::PAYPAL_PAYMENTS_PRO_ZERO_AMOUNT_AUTHORIZATION_KEY => [
                     'type' => 'boolean',
                     'value' => false
@@ -195,7 +190,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES => [
                     'type' => 'array',
-                    'value' => Currency::$currencies
+                    'value' => $paymentCurrencies,
                 ],
 
                 // Payflow Gateway
@@ -275,10 +270,6 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => true
                 ],
-                self::PAYFLOW_GATEWAY_VALIDATE_CVV_KEY => [
-                    'type' => 'boolean',
-                    'value' => true
-                ],
                 self::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY => [
                     'type' => 'boolean',
                     'value' => false
@@ -289,7 +280,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYFLOW_GATEWAY_ALLOWED_CURRENCIES => [
                     'type' => 'array',
-                    'value' => Currency::$currencies
+                    'value' => $paymentCurrencies,
                 ],
                 // Payment Term
                 self::PAYMENT_TERM_ENABLED_KEY => [
@@ -318,7 +309,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYMENT_TERM_ALLOWED_CURRENCIES => [
                     'type' => 'array',
-                    'value' => Currency::$currencies
+                    'value' => $paymentCurrencies,
                 ],
             ]
         );
@@ -332,6 +323,6 @@ class Configuration implements ConfigurationInterface
      */
     public static function getFullConfigKey($key)
     {
-        return OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
+        return OroB2BPaymentExtension::ALIAS.ConfigManager::SECTION_MODEL_SEPARATOR.$key;
     }
 }

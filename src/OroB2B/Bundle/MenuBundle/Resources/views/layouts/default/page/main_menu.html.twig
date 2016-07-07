@@ -1,6 +1,6 @@
 {% block _main_menu_container_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " top-nav hidden-sm hidden-xs"
+        class: attr.class|default('') ~ " top-nav"
     }) %}
     <nav {{ block('block_attributes') }}>
         <div class="container-fluid">
@@ -13,8 +13,8 @@
 
 {% block _main_menu_widget %}
     {% for child in item.children -%}
-        <li class="top-nav__list__item">
-            <a href="{{ app.request.getUriForPath(child.uri) }}" class="top-nav__list__item__link">
+        <li class="top-nav__item">
+            <a href="{{ app.request.getUriForPath(child.uri) }}" class="top-nav__link">
                 <span>{{ child.label }} </span>
             </a>
         </li>
@@ -23,14 +23,14 @@
 
 {% block _main_menu_widgets_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " clearfix"
+        class: attr.class|default('') ~ " top-nav__list top-nav__list--nested"
     }) %}
     <li><ul {{ block('block_attributes') }}>{{ block_widget(block) }}</ul></li>
 {% endblock %}
 
 {% block _main_menu_messages_widget_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg"
+        class: attr.class|default('') ~ " top-nav__item top-nav__item--nested"
     }) %}
     <li {{ block('block_attributes') }}>
         <button class="messages-widget__trigger" data-oro-mpa-trigger>

@@ -4,8 +4,9 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Currency;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
+
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguraton;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -131,10 +132,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => true,
                             'scope' => 'app'
                         ],
-                        'paypal_payments_pro_validate_cvv' => [
-                            'value' => true,
-                            'scope' => 'app'
-                        ],
                         'paypal_payments_pro_zero_amount_authorization' => [
                             'value' => false,
                             'scope' => 'app'
@@ -143,7 +140,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => false,
                             'scope' => 'app'
                         ],
-
                         'payflow_gateway_enabled' => [
                             'value' => false,
                             'scope' => 'app'
@@ -223,10 +219,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => true,
                             'scope' => 'app'
                         ],
-                        'payflow_gateway_validate_cvv' => [
-                            'value' => true,
-                            'scope' => 'app'
-                        ],
                         'payflow_gateway_zero_amount_authorization' => [
                             'value' => false,
                             'scope' => 'app'
@@ -252,15 +244,15 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'scope' => 'app'
                         ],
                         'paypal_payments_pro_allowed_currencies' => [
-                            'value' => Currency::$currencies,
+                            'value' => CurrencyConfiguraton::$defaultCurrencies,
                             'scope' => 'app'
                         ],
                         'payflow_gateway_allowed_currencies' => [
-                            'value' => Currency::$currencies,
+                            'value' => CurrencyConfiguraton::$defaultCurrencies,
                             'scope' => 'app'
                         ],
                         'payment_term_allowed_currencies' => [
-                            'value' =>  Currency::$currencies,
+                            'value' =>  CurrencyConfiguraton::$defaultCurrencies,
                             'scope' => 'app'
                         ],
                         'payment_term_allowed_countries' => [

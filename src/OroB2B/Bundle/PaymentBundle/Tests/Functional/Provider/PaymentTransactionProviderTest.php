@@ -24,15 +24,14 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData',
-                'Oro\Bundle\TestFrameworkBundle\Fixtures\LoadUserData',
+                'OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData'
             ]
         );
 
         $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
 
         $this->getContainer()->get('security.token_storage')
-            ->setToken(new UsernamePasswordToken($this->getReference('default_user'), 'password', 'key'));
+            ->setToken(new UsernamePasswordToken(self::USER_NAME, self::AUTH_PW, 'user'));
 
         $this->assertNotEmpty(
             $paymentTransactionProvider->getActiveAuthorizePaymentTransaction(

@@ -1,37 +1,7 @@
-account,priceList,website,priority,mergeAllowed
-Company A,Default Price List,Default,100,1
-Company A,Wholesale Price List,Default,200,1
-Company A,Wholesale Price List,US,100,1
-Company A,Default Price List,US,200,0
-Company A,Wholesale Price List,Australia,100,1
-Company A,Partner C Custom Price List,Australia,200,1
-Company A,Wholesale Price List,Canada,100,1
-Company A,Default Price List,Canada,200,1
-Company A,Partner C Custom Price List,Mexico,100,0
-Company A,Wholesale Price List,Mexico,200,1
-Company A,Wholesale Price List,Europe,100,1
-Company A,Partner C Custom Price List,Europe,200,1
-Wholesaler B,Wholesale Price List,Default,100,1
-Wholesaler B,Default Price List,Default,200,1
-Wholesaler B,Partner C Custom Price List,US,100,0
-Wholesaler B,Wholesale Price List,US,200,1
-Wholesaler B,Default Price List,Australia,100,1
-Wholesaler B,Wholesale Price List,Australia,200,1
-Wholesaler B,Partner C Custom Price List,Mexico,100,0
-Wholesaler B,Wholesale Price List,Mexico,200,1
-Wholesaler B,Default Price List,Canada,100,1
-Wholesaler B,Partner C Custom Price List,Canada,200,1
-Wholesaler B,Wholesale Price List,Europe,100,1
-Wholesaler B,Partner C Custom Price List,Europe,200,0
-Partner C,Default Price List,Default,100,1
-Partner C,Partner C Custom Price List,Default,200,0
-Partner C,Wholesale Price List,US,100,1
-Partner C,Partner C Custom Price List,US,200,1
-Partner C,Default Price List,Australia,100,1
-Partner C,Wholesale Price List,Australia,200,1
-Partner C,Partner C Custom Price List,Mexico,100,1
-Partner C,Wholesale Price List,Mexico,200,0
-Partner C,Default Price List,Canada,100,1
-Partner C,Partner C Custom Price List,Canada,200,1
-Partner C,Wholesale Price List,Europe,100,1
-Partner C,Partner C Custom Price List,Europe,200,0
+account,priceList,priority,mergeAllowed
+Company A,Default Price List,100,1
+Company A,Wholesale Price List,200,1
+Wholesaler B,Wholesale Price List,100,1
+Wholesaler B,Default Price List,200,1
+Partner C,Default Price List,100,1
+Partner C,Partner C Custom Price List,200,0

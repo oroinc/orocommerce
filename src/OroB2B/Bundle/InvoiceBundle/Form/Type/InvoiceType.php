@@ -20,11 +20,6 @@ class InvoiceType extends AbstractType
     /**
      * @var string
      */
-    protected $websiteClass = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
-
-    /**
-     * @var string
-     */
     protected $dataClass;
 
     /**
@@ -87,14 +82,6 @@ class InvoiceType extends AbstractType
                 'required' => false
             ])
             ->add(
-                'website',
-                'entity',
-                [
-                    'class' => $this->websiteClass,
-                    'label' => 'orob2b.invoice.website.label'
-                ]
-            )
-            ->add(
                 'currency',
                 CurrencySelectionType::NAME,
                 [
@@ -133,13 +120,5 @@ class InvoiceType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * @param string $websiteClass
-     */
-    public function setWebsiteClass($websiteClass)
-    {
-        $this->websiteClass = $websiteClass;
     }
 }
