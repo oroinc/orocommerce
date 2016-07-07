@@ -7,6 +7,8 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
+use OroB2B\Bundle\FrontendBundle\Migrations\Schema\v1_0\UpdateNamespacesAndTranslationsQuery;
+
 class OroB2BFrontendBundleInstaller implements Installation
 {
     /**
@@ -22,6 +24,7 @@ class OroB2BFrontendBundleInstaller implements Installation
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        // nothing to do
+        // TODO: remove this call after stable release
+        $queries->addPreQuery(new UpdateNamespacesAndTranslationsQuery());
     }
 }
