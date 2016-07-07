@@ -33,6 +33,8 @@ layout:
                     blockType: block
                 account_address_book_addresses_list_template_item_label:
                     blockType: block
+                account_address_book_addresses_list_template_item_type:
+                    blockType: block
                 account_address_book_addresses_list_template_item_actions:
                     blockType: container
                 account_address_book_addresses_list_template_item_actions_edit:
@@ -52,6 +54,7 @@ layout:
                         account_address_book_addresses_list_template_item:
                             account_address_book_addresses_list_template_item_address: ~
                             account_address_book_addresses_list_template_item_label: ~
+                            account_address_book_addresses_list_template_item_type: ~
                             account_address_book_addresses_list_template_item_actions:
                                 account_address_book_addresses_list_template_item_actions_edit: ~
                                 account_address_book_addresses_list_template_item_actions_remove: ~

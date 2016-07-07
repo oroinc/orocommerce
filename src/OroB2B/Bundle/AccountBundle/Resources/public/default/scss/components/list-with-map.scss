@@ -36,9 +36,9 @@
         text-align: center;
 
         // reset default styles
-        background: transparent;
         border: 0;
         border-radius: 0;
+        background: transparent;
         color: $theme-gray-color-regular;
 
         &:hover {
@@ -48,13 +48,30 @@
     }
 
     &__address {
-        width: 65%;
+        width: 52%;
+
+        + .address-list__type {
+           width: 37%;
+        }
     }
 
     &__label {
         width: 22%;
+
+        font-size: 13px;
         text-align: center;
         text-transform: capitalize;
+    }
+
+    &__type {
+        width: 15%;
+        padding: 4px 0 0 5px;
+
+        font-size: 10px;
+        line-height: 1.2;
+        text-align: right;
+
+        color: $theme-light-gray-color;
     }
 
     &__actions {

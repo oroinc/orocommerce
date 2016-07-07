@@ -68,6 +68,15 @@
     <% } %>
 {% endblock %}
 
+{% block _account_address_book_addresses_list_template_item_type_widget %}
+    {% set attr = layout_attr_merge(attr, {'~class': " address-list__type"}) %}
+    <div {{ block('block_attributes') }}>
+        <% _.each(types, function(type) { %>
+        <div><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('orob2b.account.address.default_type', {type_name: _.escape(type.label)}) : _.escape(type.label) %></div>
+        <% }) %>
+    </div>
+{% endblock %}
+
 {% block _account_address_book_addresses_list_template_item_actions_widget %}
     {% set attr = layout_attr_merge(attr, {'~class': " address-list__actions actions"}) %}
     <nav {{ block('block_attributes') }}>{{ block_widget(block) }}</nav>
@@ -129,6 +138,10 @@
 
 {% block _account_address_book_user_addresses_list_template_item_label_widget %}
     {{ block('_account_address_book_addresses_list_template_item_label_widget') }}
+{% endblock %}
+
+{% block _account_address_book_user_addresses_list_template_item_type_widget %}
+    {{ block('_account_address_book_addresses_list_template_item_type_widget') }}
 {% endblock %}
 
 {% block _account_address_book_user_addresses_list_template_item_actions_widget %}
