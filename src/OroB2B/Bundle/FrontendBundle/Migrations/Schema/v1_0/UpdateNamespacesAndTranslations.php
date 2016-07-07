@@ -7,7 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BFallbackBundle implements Migration
+class UpdateNamespacesAndTranslations implements Migration
 {
     /**
      * {@inheritdoc}
