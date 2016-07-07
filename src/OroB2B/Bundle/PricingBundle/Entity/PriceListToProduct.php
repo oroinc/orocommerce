@@ -2,11 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity;
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Mapping as ORM;
-
-use Oro\Bundle\B2BEntityBundle\Storage\ObjectIdentifierAwareInterface;
-
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -22,7 +18,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  * )
  * @ORM\EntityListeners({ "OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListProductEntityListener" })
  */
-class PriceListToProduct implements ObjectIdentifierAwareInterface
+class PriceListToProduct
 {
     /**
      * @var integer
@@ -118,17 +114,5 @@ class PriceListToProduct implements ObjectIdentifierAwareInterface
         $this->manual = $manual;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getObjectIdentifier()
-    {
-        if (!$this->product || !$this->priceList || !$this->product->getId() || !$this->priceList->getId()) {
-            throw new \InvalidArgumentException('Product id and priceList id, required for identifier generation');
-        }
-
-        return ClassUtils::getClass($this) . '_' . $this->product->getId() . '_' . $this->priceList->getId();
     }
 }

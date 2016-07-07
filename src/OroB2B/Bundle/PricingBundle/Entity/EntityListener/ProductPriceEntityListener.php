@@ -169,8 +169,27 @@ class ProductPriceEntityListener
             $relation = new PriceListToProduct();
             $relation->setPriceList($priceList)
                 ->setProduct($product);
-
-            $this->extraActionsStorage->scheduleForExtraInsert($relation);
+            if (!$this->isPriceListToProductScheduled($relation)) {
+                $this->extraActionsStorage->scheduleForExtraInsert($relation);
+            }
         }
+    }
+
+    /**
+     * @param PriceListToProduct $priceListToProduct
+     * @return bool
+     */
+    protected function isPriceListToProductScheduled(PriceListToProduct $priceListToProduct)
+    {
+        foreach ($this->extraActionsStorage->getScheduledForInsert() as $scheduled) {
+            if ($scheduled instanceof PriceListToProduct
+                && $scheduled->getProduct() === $priceListToProduct->getProduct()
+                && $scheduled->getPriceList() === $priceListToProduct->getPriceList()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
