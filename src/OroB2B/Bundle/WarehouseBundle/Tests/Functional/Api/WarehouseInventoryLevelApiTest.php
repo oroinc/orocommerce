@@ -22,7 +22,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         parent::setUp();
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels',
+                LoadWarehousesAndInventoryLevels::class,
             ]
         );
     }
