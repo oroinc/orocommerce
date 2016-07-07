@@ -1,4 +1,7 @@
 oro_system_configuration:
+    groups:
+        orders:
+            title: orob2b.order.system_configuration.groups.orders.title
     fields:
         oro_b2b_order.backend_product_visibility:
             data_type: array
@@ -10,7 +13,6 @@ oro_system_configuration:
             type: orob2b_product_inventory_status_select
             options:
                 label: orob2b.order.system_configuration.fields.frontend_product_visibility.title
-
     tree:
         system_configuration:
             commerce:

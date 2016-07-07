@@ -1,7 +1,7 @@
 orob2b:
     checkout:
-        entity_label: Checkout
-        entity_plural_label: Checkouts
+        entity_label: Open Order
+        entity_plural_label: Open Orders
         id.label: Id
         owner.label: Owner
         account.label: Global Address Book
@@ -30,9 +30,11 @@ orob2b:
         created_at.label: Started At
         updated_at.label: Last Updated
         shipping_cost.label: Shipping
-        pending_orders.label: Pending Orders
+        open_orders.label: Open Orders
         ordered_by.label: Ordered By
         checkout_type.label: Checkout Type
+        line_items_count.label: Items
+        started_from.label: Started From
 
         basecheckout:
             entity_label: Base Checkout
@@ -59,7 +61,7 @@ orob2b:
             created_at.label: Started At
             updated_at.label: Last Updated
             shipping_cost.label: Shipping
-            pending_orders.label: Pending Orders
+            open_orders.label: Open Orders
             ordered_by.label: Ordered By
             checkout_type.label: Checkout Type
 
@@ -156,7 +158,15 @@ orob2b:
         grid:
             total.label: Total
             subtotal.label: Subtotal
+            checkout_link.label: Check Out
+            delete.label: Delete Open Order
 
         workflow.condition:
             order_line_item_has_count.message: No products can be added to this order. Please create an RFQ to request price.
         order.line_items.line_item_has_no_price.message: Some products have not been added to this order. Please create an RFQ to request price.
+
+        system_configuration:
+            fields:
+                frontend_open_orders_separate_page.title: 'Show open orders on a separate page'
+            groups:
+                open_orders.title: 'Open Orders'

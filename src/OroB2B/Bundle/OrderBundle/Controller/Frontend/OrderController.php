@@ -43,6 +43,8 @@ class OrderController extends AbstractOrderController
         ];
     }
 
+
+
     /**
      * @Route("/view/{id}", name="orob2b_order_frontend_view", requirements={"id"="\d+"})
      * @AclAncestor("orob2b_order_frontend_view")

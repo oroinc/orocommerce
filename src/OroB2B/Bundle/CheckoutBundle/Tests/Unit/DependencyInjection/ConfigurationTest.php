@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\DependencyInjection;
+namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\OrderBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\CheckoutBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,6 +27,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $configuration = new Configuration();
         $processor = new Processor();
+
         $this->assertEquals($expected, $processor->processConfiguration($configuration, $configs));
     }
 
@@ -41,21 +41,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'configs'  => [[]],
                 'expected' => [
                     'settings' => [
-                        'resolved' => true,
-                        'backend_product_visibility' => [
-                            'value' => [
-                                Product::INVENTORY_STATUS_IN_STOCK,
-                                Product::INVENTORY_STATUS_OUT_OF_STOCK
-                            ],
+                        'frontend_open_orders_separate_page' => [
+                            'value' => false,
                             'scope' => 'app'
                         ],
-                        'frontend_product_visibility' => [
-                            'value' => [
-                                Product::INVENTORY_STATUS_IN_STOCK,
-                                Product::INVENTORY_STATUS_OUT_OF_STOCK
-                            ],
-                            'scope' => 'app'
-                        ]
+                        'resolved' => true
                     ]
                 ]
             ]

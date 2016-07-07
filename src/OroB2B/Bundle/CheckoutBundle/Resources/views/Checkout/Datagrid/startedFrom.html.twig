@@ -1,0 +1,13 @@
+{% set data = record.getValue('startedFrom') %}
+
+{% if data is not null %}
+    {% if data.linkable %}
+        {% if data.type == 'shopping_list' %}
+            <a href="{{ path('orob2b_shopping_list_frontend_view', {id: data.id}) }}">{{ data.label }}</a>
+        {% else %}
+            <a href="{{ path('orob2b_sale_quote_frontend_view', {id: data.id}) }}">{{ data.label }}</a>
+        {% endif %}
+    {% else %}
+        {{ data.label }}
+    {% endif %}
+{% endif %}
