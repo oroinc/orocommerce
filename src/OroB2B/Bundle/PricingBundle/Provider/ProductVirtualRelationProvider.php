@@ -105,7 +105,7 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
 
         return [
             'label' => $label,
-            'relation_type' => 'ManyToMany',
+            'relation_type' => 'OneToMany',
             'related_entity_name' => PriceAttributeProductPrice::class,
             'target_join_alias' => $priceAlias,
             'query' => [
@@ -115,20 +115,13 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
                             'join' => PriceAttributeProductPrice::class,
                             'alias' => $priceAlias,
                             'conditionType' => Join::WITH,
-                            'condition' => sprintf(
-                                '('. $priceAlias .'.product = entity.%s)',
-                                $this->doctrineHelper->getSingleEntityIdentifierFieldName($className)
-                            )
+                            'condition' => '('. $priceAlias .'.product = entity)'
                         ],
                         [
                             'join' => PriceAttributePriceList::class,
                             'alias' => $priceAttributeAlias,
                             'conditionType' => Join::WITH,
-                            'condition' => sprintf(
-                                '('. $priceAlias .'.priceList = '. $priceAttributeAlias .'.%s)',
-                                $this->doctrineHelper
-                                    ->getSingleEntityIdentifierFieldName(PriceAttributePriceList::class)
-                            )
+                            'condition' => '('. $priceAlias .'.priceList = '. $priceAttributeAlias .')'
                         ]
                     ]
                 ]

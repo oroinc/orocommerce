@@ -120,7 +120,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: oro_entity.virtual_relation_provider, priority: 0 }
+            - { name: oro_entity.virtual_relation_provider, priority: 150 }
 
     orob2b_pricing.resolver.combined_product_price_resolver:
         class: 'OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver'
