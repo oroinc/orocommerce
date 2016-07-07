@@ -134,6 +134,7 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                     [
                         'shopping_list_id' => 1,
                         'shopping_list_label' => 'ShoppingList 1',
+                        'is_current' => true,
                         'line_items' => [
                             ['unit' => 'code1', 'quantity' => 42],
                             ['unit' => 'code2', 'quantity' => 100],
@@ -146,31 +147,14 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                 'shoppingList' => $activeShoppingList,
                 'lineItems' => [
                     $this->createLineItem('code1', 42, $activeShoppingList),
-                    $this->createLineItem('code2', 100, $activeShoppingList)
-                ],
-                'expected' => [
-                    [
-                        'shopping_list_id' => 1,
-                        'shopping_list_label' => 'ShoppingList 1',
-                        'line_items' => [
-                            ['unit' => 'code1', 'quantity' => 42],
-                            ['unit' => 'code2', 'quantity' => 100],
-                        ]
-                    ]
-                ]
-            ],
-            [
-                'product' => new Product(),
-                'shoppingList' => $activeShoppingList,
-                'lineItems' => [
+                    $this->createLineItem('code2', 100, $activeShoppingList),
                     $this->createLineItem('code3', 30, $otherShoppingList),
-                    $this->createLineItem('code1', 42, $activeShoppingList),
-                    $this->createLineItem('code2', 100, $activeShoppingList)
                 ],
                 'expected' => [
                     [
                         'shopping_list_id' => 1,
                         'shopping_list_label' => 'ShoppingList 1',
+                        'is_current' => true,
                         'line_items' => [
                             ['unit' => 'code1', 'quantity' => 42],
                             ['unit' => 'code2', 'quantity' => 100],
@@ -179,6 +163,7 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                     [
                         'shopping_list_id' => 2,
                         'shopping_list_label' => 'ShoppingList 2',
+                        'is_current' => false,
                         'line_items' => [
                             ['unit' => 'code3', 'quantity' => 30],
                         ]

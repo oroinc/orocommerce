@@ -159,6 +159,7 @@ class FrontendProductDatagridListener
                 $productShoppingLists[$productId][] = [
                     'shopping_list_id' => $activeShoppingListId,
                     'shopping_list_label' => $shoppingListLabels[$activeShoppingListId],
+                    'is_current' => true,
                     'line_items' => $groupedUnits[$productId][$activeShoppingListId],
                 ];
                 unset($productGroupedUnits[$activeShoppingListId]);
@@ -168,6 +169,7 @@ class FrontendProductDatagridListener
                 $productShoppingLists[$productId][] = [
                     'shopping_list_id' => $shoppingListId,
                     'shopping_list_label' => $shoppingListLabels[$shoppingListId],
+                    'is_current' => false,
                     'line_items' => $lineItems,
                 ];
             }

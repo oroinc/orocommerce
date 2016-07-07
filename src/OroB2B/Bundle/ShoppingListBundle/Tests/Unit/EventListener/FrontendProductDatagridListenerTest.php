@@ -195,15 +195,6 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $recordTwo = new ResultRecord(['id' => 2]);
         $records = [$recordOne, $recordTwo];
 
-        $shoppingListRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $shoppingListRepository->expects($this->once())
-            ->method('findAvailableForAccountUser')
-            ->with($user)
-            ->willReturn($shoppingList);
-
         /** @var Product $productOne */
         $productOne = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
         $lineItemRepository = $this->getMockBuilder('LineItemRepository')
@@ -211,6 +202,15 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                     ->getMock();
         $shoppingList1 = $this->createShoppingList(1, 'Shopping List1');
         $shoppingList2 = $this->createShoppingList(2, 'Shopping List2');
+
+        $shoppingListRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $shoppingListRepository->expects($this->once())
+            ->method('findAvailableForAccountUser')
+            ->with($user)
+            ->willReturn($shoppingList1);
 
         $lineItemRepository->expects($this->once())
             ->method('getProductItemsWithShoppingListNames')
@@ -264,13 +264,15 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             [
                 [
-                'shopping_list_id' => 1,
-                'shopping_list_label' => 'Shopping List1',
-                'line_items' => [['unit'=>'unt1','quantity' => 1]]
+                    'shopping_list_id' => 1,
+                    'shopping_list_label' => 'Shopping List1',
+                    'is_current' => true,
+                    'line_items' => [['unit'=>'unt1','quantity' => 1]]
                 ],
                 [
                     'shopping_list_id' => 2,
                     'shopping_list_label' => 'Shopping List2',
+                    'is_current' => false,
                     'line_items' => [
                         ['unit'=>'unt2','quantity' => 2],
                         ['unit'=>'unt3','quantity' => 5],

@@ -110,6 +110,7 @@ class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServe
         $shoppingListUnits[] = [
             'shopping_list_id' => $activeShoppingListId ,
             'shopping_list_label' => $shoppingListLabels[$activeShoppingListId],
+            'is_current' => true,
             'line_items' => $groupedUnits[$activeShoppingListId],
         ];
         unset($groupedUnits[$activeShoppingListId]);
@@ -117,6 +118,7 @@ class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServe
             $shoppingListUnits[] = [
                 'shopping_list_id' => $shoppingListId,
                 'shopping_list_label' => $shoppingListLabels[$shoppingListId],
+                'is_current' => false,
                 'line_items' => $lineItems,
             ];
         }
