@@ -1,0 +1,9 @@
+{% if record.getValue('nonPublic') %}
+    {{ 'N/A'|trans }}
+{% else %}
+    {% if record.getValue('selfManaged') %}
+        {{ 'Yes'|trans }}
+    {% else %}
+        {{ 'No'|trans }}
+    {% endif %}
+{% endif %}

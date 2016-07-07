@@ -149,9 +149,9 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @var boolean
      *
-     * @ORM\Column(type="boolean", name="system_only")
+     * @ORM\Column(type="boolean", name="non_public")
      */
-    protected $systemOnly = false;
+    protected $nonPublic = false;
 
     /**
      * @param string|null $role
@@ -349,16 +349,16 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @return boolean
      */
-    public function isSystemOnly()
+    public function isNonPublic()
     {
-        return (bool)$this->systemOnly;
+        return $this->nonPublic;
     }
 
     /**
-     * @param boolean $systemOnly
+     * @param boolean $nonPublic
      */
-    public function setSystemOnly($systemOnly)
+    public function setNonPublic($nonPublic)
     {
-        $this->systemOnly = $systemOnly;
+        $this->nonPublic = $nonPublic;
     }
 }

@@ -18,7 +18,7 @@
 
 {% block content_data %}
     {% set selfManagedProperty = '' %}
-    {% if not entity.systemOnly %}
+    {% if not entity.nonPublic %}
         {% set selfManagedPropertyValue = '' %}
         {% if entity.selfManaged %}
             {% set selfManagedPropertyValue = 'orob2b.account.accountuserrole.self_managed.value.true.label'|trans %}
@@ -27,8 +27,7 @@
         {% endif %}
         {% set selfManagedProperty = UI.renderProperty('orob2b.account.accountuserrole.self_managed.label'|trans, selfManagedPropertyValue) %}
     {% else %}
-        {% set systemOnlyPropertyValue = 'orob2b.account.accountuserrole.system_only.value.true.label'|trans %}
-        {% set selfManagedProperty = UI.renderProperty('orob2b.account.accountuserrole.system_only.label'|trans, systemOnlyPropertyValue) %}
+        {% set selfManagedProperty = UI.renderProperty('orob2b.account.accountuserrole.self_managed.label'|trans, 'N/A'|trans) %}
     {% endif %}
 
     {% set dataBlocks = [

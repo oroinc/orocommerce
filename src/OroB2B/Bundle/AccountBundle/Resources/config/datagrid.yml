@@ -442,6 +442,7 @@ datagrid:
                     - role.role
                     - role.label
                     - role.selfManaged
+                    - role.nonPublic
                     - (CASE WHEN role.account IS NOT NULL THEN false ELSE true END) as isRolePredefined
                 from:
                     - { table: %orob2b_account.entity.account_user_role.class%, alias: role }
@@ -461,8 +462,12 @@ datagrid:
                 data_name: isRolePredefined
                 template: OroB2BAccountBundle:AccountUserRole:Datagrid/Property/isRolePredifined.html.twig
             selfManaged:
+                type: twig
                 label: orob2b.account.accountuserrole.self_managed.label
-                frontend_type: boolean
+                frontend_type: html
+                data_name: selfManaged
+                template: OroB2BAccountBundle:AccountUserRole:Datagrid/Property/selfManaged.html.twig
+
         sorters:
             columns:
                 label:
@@ -506,9 +511,6 @@ datagrid:
         columns:
             account_name:
                 label: orob2b.account.accountuserrole.account.label
-            selfManaged:
-                label: orob2b.account.accountuserrole.self_managed.label
-                frontend_type: boolean
         sorters:
             columns:
                 account_name:
