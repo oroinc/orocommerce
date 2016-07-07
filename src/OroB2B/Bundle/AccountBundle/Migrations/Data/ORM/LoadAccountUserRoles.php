@@ -48,8 +48,7 @@ class LoadAccountUserRoles extends AbstractRolesData
             $role->setOrganization($organization);
             $manager->persist($role);
 
-            $role->setSelfManaged(isset($roleConfigData['self_managed']) ? $roleConfigData['self_managed'] : false);
-            $role->setNonPublic(isset($roleConfigData['non_public']) ? $roleConfigData['non_public'] : false);
+            $this->setUpSelfManagedData($role, $roleConfigData);
 
             if (!$aclManager->isAclEnabled()) {
                 continue;
@@ -111,5 +110,15 @@ class LoadAccountUserRoles extends AbstractRolesData
         }
 
         return $this->websites;
+    }
+
+    /**
+     * @param AccountUserRole $role
+     * @param $roleConfigData
+     */
+    private function setUpSelfManagedData(AccountUserRole $role, $roleConfigData)
+    {
+        $role->setSelfManaged(isset($roleConfigData['self_managed']) ? $roleConfigData['self_managed'] : false);
+        $role->setNonPublic(isset($roleConfigData['non_public']) ? $roleConfigData['non_public'] : false);
     }
 }

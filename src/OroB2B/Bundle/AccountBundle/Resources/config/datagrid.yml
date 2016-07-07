@@ -461,12 +461,7 @@ datagrid:
                 frontend_type: html
                 data_name: isRolePredefined
                 template: OroB2BAccountBundle:AccountUserRole:Datagrid/Property/isRolePredifined.html.twig
-            selfManaged:
-                type: twig
-                label: orob2b.account.accountuserrole.self_managed.label
-                frontend_type: html
-                data_name: selfManaged
-                template: OroB2BAccountBundle:AccountUserRole:Datagrid/Property/selfManaged.html.twig
+
 
         sorters:
             columns:
@@ -511,6 +506,12 @@ datagrid:
         columns:
             account_name:
                 label: orob2b.account.accountuserrole.account.label
+            selfManaged:
+                type: twig
+                label: orob2b.account.accountuserrole.self_managed.label
+                frontend_type: html
+                data_name: selfManaged
+                template: OroB2BAccountBundle:AccountUserRole:Datagrid/Property/selfManaged.html.twig
         sorters:
             columns:
                 account_name:
@@ -528,21 +529,11 @@ datagrid:
                 acl_resource:  orob2b_account_account_user_role_view
 
     frontend-account-account-user-roles-grid:
-        options:
-            entityHint: role
-            entity_pagination: true
+        acl_resource: orob2b_account_frontend_account_user_role_index
+        extends: basic-account-account-user-roles-grid
         source:
-            type: orm
             skip_acl_apply: true
             query:
-                select:
-                    - role.id
-                    - role.role
-                    - role.label
-                    - role.selfManaged
-                    - (CASE WHEN role.account IS NOT NULL THEN false ELSE true END) as isRolePredefined
-                from:
-                    - { table: %orob2b_account.entity.account_user_role.class%, alias: role }
                 where:
                     and:
                         - role.selfManaged = true
@@ -563,36 +554,6 @@ datagrid:
                 route: orob2b_api_frontend_account_delete_accountuserrole
                 params:
                     - id
-        columns:
-            label:
-                label: orob2b.account.accountuserrole.role.label
-            isRolePredefined:
-                type: twig
-                label: orob2b.account.accountuserrole.type.label
-                frontend_type: html
-                data_name: isRolePredefined
-                template: OroB2BAccountBundle:AccountUserRole:Datagrid/Property/isRolePredifined.html.twig
-        sorters:
-            columns:
-                label:
-                    data_name: role.label
-                isRolePredefined:
-                    data_name: isRolePredefined
-            default:
-                label: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
-        filters:
-            columns:
-                label:
-                    type: string
-                    data_name: role.label
-                isRolePredefined:
-                    type: choice
-                    data_name: CAST(isRolePredefined as int)
-                    options:
-                        field_options:
-                            choices:
-                                true:  orob2b.account.accountuserrole.type.predefined.label
-                                false: orob2b.account.accountuserrole.type.customizable.label
         actions:
             view:
                 acl_resource:  orob2b_account_frontend_account_user_role_view
