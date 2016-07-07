@@ -97,6 +97,39 @@ class LineItemSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(142.0, $subtotal->getAmount());
     }
 
+    public function testGetCachedSubtotal()
+    {
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with(LineItemSubtotalProvider::NAME . '.label')
+            ->willReturn('test');
+
+        $entityMock = $this->getMockBuilder(
+            'OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\SubtotalEntityStub'
+        )
+            ->getMock();
+
+        $entityMock->expects($this->once())
+            ->method('getSubtotal')
+            ->willReturn(123456.0);
+
+        $entityMock
+            ->method('getCurrency')
+            ->willReturn('USD');
+
+        $entityMock->expects($this->never())
+            ->method('getLineItems');
+
+        $subtotal = $this->provider->getCachedSubtotal($entityMock);
+
+        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
+        $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
+        $this->assertEquals('test', $subtotal->getLabel());
+        $this->assertEquals($entityMock->getCurrency(), $subtotal->getCurrency());
+        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertEquals(123456.0, $subtotal->getAmount());
+    }
+
     public function testGetName()
     {
         $this->assertEquals(LineItemSubtotalProvider::NAME, $this->provider->getName());
