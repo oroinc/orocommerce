@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\EventListener;
+namespace Oro\Bundle\FrontendBundle\EventListener;
 
 use Doctrine\DBAL\Connection;
 
@@ -19,11 +19,18 @@ class UpdateMigrationNamespacesListener
     protected $connection;
 
     /**
-     * @param Connection $connection
+     * @var bool
      */
-    public function __construct(Connection $connection)
+    protected $applicationInstalled;
+
+    /**
+     * @param Connection $connection
+     * @param bool $applicationInstalled
+     */
+    public function __construct(Connection $connection, $applicationInstalled)
     {
         $this->connection = $connection;
+        $this->applicationInstalled = $applicationInstalled;
     }
 
     /**
@@ -31,6 +38,10 @@ class UpdateMigrationNamespacesListener
      */
     public function preUp(PreMigrationEvent $event)
     {
+        if (!$this->applicationInstalled) {
+            return;
+        }
+
         $migrations = $event->getData("SELECT id, bundle FROM oro_migrations WHERE bundle LIKE 'OroB2B%'");
         foreach ($migrations as $migration) {
             $id = $migration['id'];

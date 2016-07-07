@@ -113,5 +113,6 @@ services:
         class: 'OroB2B\Bundle\FrontendBundle\EventListener\UpdateMigrationNamespacesListener'
         arguments:
             - '@doctrine.dbal.default_connection'
+            - '%installed%'
         tags:
             - { name: kernel.event_listener, event: oro_migration.pre_up, method: preUp }
