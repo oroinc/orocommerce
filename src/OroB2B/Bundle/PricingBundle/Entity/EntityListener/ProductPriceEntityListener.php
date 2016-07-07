@@ -166,7 +166,10 @@ class ProductPriceEntityListener
             ]);
 
         if (null === $relation) {
-            $relation = new PriceListToProduct($priceList, $product);
+            $relation = new PriceListToProduct();
+            $relation->setPriceList($priceList)
+                ->setProduct($product);
+
             $this->extraActionsStorage->scheduleForExtraInsert($relation);
         }
     }

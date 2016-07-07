@@ -57,16 +57,6 @@ class PriceListToProduct implements ObjectIdentifierAwareInterface
     protected $manual = true;
 
     /**
-     * @param PriceList $priceList
-     * @param Product $product
-     */
-    public function __construct(PriceList $priceList, Product $product)
-    {
-        $this->priceList = $priceList;
-        $this->product = $product;
-    }
-
-    /**
      * @return int
      */
     public function getId()
@@ -83,11 +73,32 @@ class PriceListToProduct implements ObjectIdentifierAwareInterface
     }
 
     /**
+     * @param PriceList $priceList
+     * @return $this
+     */
+    public function setPriceList(PriceList $priceList)
+    {
+        $this->priceList = $priceList;
+
+        return $this;
+    }
+    /**
      * @return Product
      */
     public function getProduct()
     {
         return $this->product;
+    }
+
+    /**
+     * @param Product $product
+     * @return $this
+     */
+    public function setProduct(Product $product)
+    {
+        $this->product = $product;
+
+        return $this;
     }
 
     /**
@@ -114,7 +125,7 @@ class PriceListToProduct implements ObjectIdentifierAwareInterface
      */
     public function getObjectIdentifier()
     {
-        if (!$this->product->getId() || !$this->priceList->getId()) {
+        if (!$this->product || !$this->priceList || !$this->product->getId() || !$this->priceList->getId()) {
             throw new \InvalidArgumentException('Product id and priceList id, required for identifier generation');
         }
 
