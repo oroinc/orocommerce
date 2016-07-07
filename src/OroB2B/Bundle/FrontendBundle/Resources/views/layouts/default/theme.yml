@@ -9,9 +9,6 @@ data:
             inputs:
                 - 'bundles/orob2bfrontend/default/vendors/bootstrap/css/bootstrap.min.css'
                 - 'bundles/orob2bfrontend/default/vendors/fontawesome/css/font-awesome.min.css'
-                - 'bundles/orob2bfrontend/default/css/slick/slick.css'
-                - 'bundles/orob2bfrontend/default/css/slick/slick-theme.css'
-                - 'bundles/orob2bfrontend/default/css/bootstrap-datepicker.min.css'
                 - 'bundles/orob2bfrontend/default/scss/styles.scss'
             filters: ['cssrewrite', 'cssmin']
             output: 'css/layout/default/styles.css'

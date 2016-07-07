@@ -37,19 +37,6 @@
             }
         });
         require({
-            paths: {
-                lodash: 'orob2bfrontend/default/js/vendors/lodash.min',
-                raty: 'orob2bfrontend/default/js/vendors/jquery.raty',
-                slick: 'orob2bfrontend/default/js/vendors/slick.min',
-                perfectScrollbar: 'orob2bfrontend/default/js/vendors/perfect-scrollbar.jquery.min',
-                fastclick: 'orob2bfrontend/default/js/vendors/fastclick',
-                elevatezoom: 'orob2bfrontend/default/vendors/elevatezoom/jquery.elevatezoom'
-            },
-            shim: {
-                raty: {deps: ['jquery']}
-            }
-        });
-        require({
             appmodules: (requirejs.s.contexts._.config.appmodules || []).concat([
                 'orob2bfrontend/default/js/app/modules/input-widgets',
                 'orob2bfrontend/default/js/app/modules/action-manager',
@@ -87,7 +74,7 @@
     {% endfor %}
     {% set hasSidebarLeft = blocks.sidebar_left is defined and visibleSidebarChildren|length > 0 %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " content" ~ (hasSidebarLeft ? " content_has-sidebar")
+        class: attr.class|default('') ~ " content" ~ (hasSidebarLeft ? " content--has-sidebar")
     }) %}
     <div{{ block('block_attributes') }}>
         <div class="content__container">

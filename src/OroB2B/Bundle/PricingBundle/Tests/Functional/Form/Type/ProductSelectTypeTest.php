@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Form\Type;
 
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractProductSelectTypeTest;
 use OroB2B\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener;

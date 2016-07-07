@@ -4,7 +4,9 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\DataProvider\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
@@ -12,6 +14,8 @@ use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
 use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
 class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
@@ -32,6 +36,11 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      * @var UserCurrencyManager
      */
     protected $currencyManager;
+
+    /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $configManager;
 
     protected function setUp()
     {
@@ -55,10 +64,14 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
                 }
                 return $result;
             }));
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->checkoutLineItemsManager = new CheckoutLineItemsManager(
             $this->checkoutLineItemsConverter,
-            $this->currencyManager
+            $this->currencyManager,
+            $this->configManager
         );
     }
 
@@ -83,11 +96,16 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDataEntitySupported($withDataProvider, $isEntitySupported)
     {
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_b2b_order.frontend_product_visibility')
+            ->willReturn(['in_stock']);
+
         $entity = new \stdClass();
         $data = [];
         if ($withDataProvider) {
             if ($isEntitySupported) {
-                $data = [$this->getProductDataWithPrice()];
+                $data = [$this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD'))];
             }
             $provider = $this->getProvider($entity, $data, $isEntitySupported);
 
@@ -99,27 +117,6 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return array
-     */
-    public function getDataEntitySupportedDataProvider()
-    {
-        return [
-            'without data providers' => [
-                'withDataProvider' => false,
-                'isEntitySupported' => false
-            ],
-            'not supported entity' => [
-                'withDataProvider' => true,
-                'isEntitySupported' => false
-            ],
-            'supported entity' => [
-                'withDataProvider' => true,
-                'isEntitySupported' => true
-            ]
-        ];
-    }
-
-    /**
      * @dataProvider getDataDataProvider
      * @param array $providerData
      * @param bool $disablePriceFilter
@@ -127,6 +124,11 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetData(array $providerData, $disablePriceFilter, array $expectedData)
     {
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_b2b_order.frontend_product_visibility')
+            ->willReturn(['in_stock']);
+
         $entity = new \stdClass();
 
         $this->checkoutLineItemsManager->addProvider($this->getProvider($entity, $providerData));
@@ -141,56 +143,76 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function getDataDataProvider()
     {
-        $productWithPrice = $this->getProductDataWithPrice();
-        $productWithoutPrice = $this->getProductDataWithoutPrice();
-        $productWithAnotherCurrency = $this->getProductDataWithoutPrice();
-        $productWithAnotherCurrency['price'] = Price::create('2', 'CAD');
-        
         return [
             [
-                'providerData' => [$productWithPrice, $productWithoutPrice, $productWithAnotherCurrency],
+                'providerData' => [
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(0, 'USD')),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', null),
+                    $this->getLineItemData('PRO', 'out_of_stock', 10, 'litre', null),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                    $this->getLineItemData('PRO', null, 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
+                ],
                 'disablePriceFilter' => false,
-                'expectedData' => [$productWithPrice],
+                'expectedData' => [
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(0, 'USD')),
+                ],
             ],
             [
-                'providerData' => [$productWithPrice, $productWithoutPrice, $productWithAnotherCurrency],
+                'providerData' => [
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', null),
+                    $this->getLineItemData('PRO', 'out_of_stock', 10, 'litre', null),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                    $this->getLineItemData('PRO', null, 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
+                ],
                 'disablePriceFilter' => true,
-                'expectedData' => [$productWithPrice, $productWithoutPrice, $productWithAnotherCurrency],
+                'expectedData' => [
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', null),
+                    $this->getLineItemData('PRO', 'out_of_stock', 10, 'litre', null),
+                    $this->getLineItemData('PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                    $this->getLineItemData('PRO', null, 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData('PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
+                ],
             ],
         ];
     }
 
     /**
+     * @param string|null $productSku
+     * @param string|null $inventoryStatus
+     * @param string $unit
+     * @param float $qty
+     * @param Price|null $price
      * @return array
      */
-    protected function getProductDataWithPrice()
+    protected function getLineItemData($productSku, $inventoryStatus, $qty, $unit, Price $price = null)
     {
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['sku' => 'PRO']);
-        $productUnitLitre = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'litre']);
-        return [
-            'product' => $product,
-            'productSku' => $product->getSku(),
-            'quantity' => 10,
-            'productUnit' => $productUnitLitre,
-            'productUnitCode' => $productUnitLitre->getCode(),
-            'price' => Price::create('1', 'USD')
-        ];
-    }
+        $product = null;
+        if ($productSku) {
+            $product = new StubProduct();
+            $product->setSku($productSku);
 
-    /**
-     * @return array
-     */
-    protected function getProductDataWithoutPrice()
-    {
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['sku' => 'PRO2']);
-        $productUnitEa = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'each']);
+            if ($inventoryStatus) {
+                $inventoryStatus = new StubEnumValue($inventoryStatus, $inventoryStatus);
+                $product->setInventoryStatus($inventoryStatus);
+            }
+        }
+
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($unit);
+
         return [
             'product' => $product,
             'productSku' => $product->getSku(),
-            'quantity' => 5,
-            'productUnit' => $productUnitEa,
-            'productUnitCode' => $productUnitEa->getCode(),
-            'price' => null
+            'quantity' => $qty,
+            'productUnit' => $productUnit,
+            'productUnitCode' => $productUnit->getCode(),
+            'price' => $price
         ];
     }
 

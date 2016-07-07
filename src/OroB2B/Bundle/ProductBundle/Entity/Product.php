@@ -60,6 +60,8 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Product extends ExtendProduct implements OrganizationAwareInterface, \JsonSerializable
 {
@@ -620,13 +622,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     /**
      * Remove unitPrecisions
      *
-     * @param ProductUnitPrecision $unitPrecisions
+     * @param ProductUnitPrecision $unitPrecision
      * @return Product
      */
-    public function removeUnitPrecision(ProductUnitPrecision $unitPrecisions)
+    public function removeUnitPrecision(ProductUnitPrecision $unitPrecision)
     {
-        if ($this->unitPrecisions->contains($unitPrecisions)) {
-            $this->unitPrecisions->removeElement($unitPrecisions);
+        if ($this->unitPrecisions->contains($unitPrecision)) {
+            $this->unitPrecisions->removeElement($unitPrecision);
         }
 
         return $this;
@@ -673,6 +675,22 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
         foreach ($this->unitPrecisions as $unitPrecision) {
             $result[] = $unitPrecision->getUnit()->getCode();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get available units
+     *
+     * @return ProductUnit[]
+     */
+    public function getAvailableUnits()
+    {
+        $result = [];
+
+        foreach ($this->unitPrecisions as $unitPrecision) {
+            $result[] = $unitPrecision->getUnit();
         }
 
         return $result;

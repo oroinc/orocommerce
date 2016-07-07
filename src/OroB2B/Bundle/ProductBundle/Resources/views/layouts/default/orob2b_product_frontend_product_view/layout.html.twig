@@ -31,9 +31,26 @@
                         {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
                         <img src="{{ Image.url(productImage, 'product_large') }}"
                              alt="{{ product.defaultName }}"
-                             data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
                              width="378"
-                             height="378"/>
+                             height="378"
+                             {% if productImage %}
+                                 data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
+                                 {% set options = {
+                                    widgetModule: 'orob2bproduct/js/vendors/elevatezoom/jquery-elevatezoom',
+                                    widgetName: 'elevateZoom',
+                                    scrollZoom: true,
+                                    zoomWindowWidth: 630,
+                                    zoomWindowHeight: 376,
+                                    borderSize: 1,
+                                    borderColour: '#ebebeb',
+                                    lensBorderColour: '#7d7d7d',
+                                    lensColour: '#000',
+                                    lensOpacity: 0.22
+                                 }|json_encode() %}
+                                 data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                                 data-page-component-options="{{ options }}"
+                             {% endif %}
+                            />
                     </div>
                     {% for productImage in product.imagesByType('additional') %}
                         <img src="{{ Image.url(productImage.image, 'product_small') }}"

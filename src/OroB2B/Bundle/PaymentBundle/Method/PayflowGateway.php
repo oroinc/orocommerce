@@ -54,6 +54,11 @@ class PayflowGateway implements PaymentMethodInterface
         }
 
         $this->gateway->setTestMode($this->isTestMode());
+        $this->gateway->setSslVerificationEnabled($this->isSslVerificationEnabled());
+
+        if ($this->isUseProxyEnabled()) {
+            $this->gateway->setProxySettings($this->getProxyHost(), $this->getProxyPort());
+        }
 
         return $this->{$action}($paymentTransaction) ?: [];
     }
@@ -73,7 +78,7 @@ class PayflowGateway implements PaymentMethodInterface
         $response = $this->gateway
             ->request(
                 Option\Transaction::AUTHORIZATION,
-                array_replace($this->getCredentials(), (array)$paymentTransaction->getRequest())
+                $this->combineOptions((array)$paymentTransaction->getRequest())
             );
 
         $paymentTransaction
@@ -109,7 +114,7 @@ class PayflowGateway implements PaymentMethodInterface
         $response = $this->gateway
             ->request(
                 Option\Transaction::SALE,
-                array_replace($this->getCredentials(), (array)$paymentTransaction->getRequest())
+                $this->combineOptions((array)$paymentTransaction->getRequest())
             );
 
         $paymentTransaction
@@ -159,7 +164,7 @@ class PayflowGateway implements PaymentMethodInterface
         unset($options[Option\Currency::CURRENCY]);
 
         $response = $this->gateway
-            ->request(Option\Transaction::DELAYED_CAPTURE, array_replace($this->getCredentials(), $options));
+            ->request(Option\Transaction::DELAYED_CAPTURE, $this->combineOptions($options));
 
         $paymentTransaction
             ->setRequest($options)
@@ -310,6 +315,29 @@ class PayflowGateway implements PaymentMethodInterface
     }
 
     /**
+     * @return array
+     */
+    protected function getVerbosityOption()
+    {
+        $option = [];
+        if ($this->isDebugModeEnabled()) {
+            $option = [
+                Option\Verbosity::VERBOSITY => Option\Verbosity::HIGH,
+            ];
+        }
+
+        return $option;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isDebugModeEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_DEBUG_MODE_KEY);
+    }
+
+    /**
      * @return bool
      */
     protected function isTestMode()
@@ -318,11 +346,43 @@ class PayflowGateway implements PaymentMethodInterface
     }
 
     /**
+     * @return bool
+     */
+    protected function isUseProxyEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_USE_PROXY_KEY);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getProxyHost()
+    {
+        return (string)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PROXY_HOST_KEY);
+    }
+
+    /**
+     * @return int
+     */
+    protected function getProxyPort()
+    {
+        return (int)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PROXY_PORT_KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isSslVerificationEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ENABLE_SSL_VERIFICATION_KEY);
+    }
+
+    /**
      * @return string
      */
     protected function getPurchaseAction()
     {
-        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PAYMENT_ACTION_KEY);
+        return (string)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PAYMENT_ACTION_KEY);
     }
 
     /** {@inheritdoc} */
@@ -332,11 +392,11 @@ class PayflowGateway implements PaymentMethodInterface
     }
 
     /**
-     * @return bool
+     * @return array
      */
     protected function getAllowedCountries()
     {
-        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_SELECTED_COUNTRIES_KEY);
+        return (array)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_SELECTED_COUNTRIES_KEY);
     }
 
     /**
@@ -414,6 +474,19 @@ class PayflowGateway implements PaymentMethodInterface
      */
     protected function getAllowedCurrencies()
     {
-        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CURRENCIES);
+        return (array)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CURRENCIES);
+    }
+
+    /**
+     * @param array $options
+     * @return array
+     */
+    protected function combineOptions(array $options = [])
+    {
+        return array_replace(
+            $this->getCredentials(),
+            $options,
+            $this->getVerbosityOption()
+        );
     }
 }

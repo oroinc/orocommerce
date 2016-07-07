@@ -25,9 +25,9 @@ use OroB2B\Bundle\WebsiteBundle\Model\ExtendWebsite;
  * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository")
  * @Config(
- *      routeName="orob2b_website_index",
- *      routeView="orob2b_website_view",
- *      routeUpdate="orob2b_website_update",
+ *      routeName="oro_websitepro_index",
+ *      routeView="oro_websitepro_view",
+ *      routeUpdate="oro_websitepro_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"

@@ -13,6 +13,7 @@ define(function(require) {
 
         elements: {
             price: '[data-name="price"]',
+            unit: '[data-name="unit"]',
             priceValue: '[data-name="price-value"]',
             priceNotFound: '[data-name="price-not-found"]',
             pricesHint: '[data-name="prices-hint"]',
@@ -143,6 +144,8 @@ define(function(require) {
                 this.getElement('price').addClass('hidden');
                 this.getElement('priceNotFound').removeClass('hidden');
             } else {
+                this.getElement('unit').html(this.model.get('product_units')[price.unit]);
+
                 price = NumberFormatter.formatCurrency(price.price, price.currency);
                 this.getElement('priceValue').html(price);
 

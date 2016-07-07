@@ -206,12 +206,8 @@ class QuoteToOrderConverter
         $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
         $total = $this->totalProvider->getTotal($order);
 
-        if ($subtotal) {
-            $order->setSubtotal($subtotal->getAmount());
-        }
-        if ($total) {
-            $order->setTotal($total->getAmount());
-        }
+        $order->setSubtotal($subtotal->getAmount());
+        $order->setTotal($total->getAmount());
     }
 
     /**

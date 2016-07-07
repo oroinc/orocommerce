@@ -42,4 +42,10 @@ class PayPalPaymentsProView extends PayflowGatewayView
     {
         return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ZERO_AMOUNT_AUTHORIZATION_KEY);
     }
+
+    /** {@inheritdoc} */
+    protected function isRequireCvvEntryEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_REQUIRE_CVV_KEY);
+    }
 }
