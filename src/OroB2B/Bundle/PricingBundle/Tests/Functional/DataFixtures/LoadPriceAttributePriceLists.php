@@ -15,31 +15,37 @@ class LoadPriceAttributePriceLists extends AbstractFixture
     protected $data = [
         [
             'name' => 'priceAttributePriceList1',
+            'fieldName' => 'price_attribute_price_list_1',
             'reference' => 'price_attribute_price_list_1',
             'currencies' => ['USD', 'EUR', 'AUD', 'CAD'],
         ],
         [
             'name' => 'priceAttributePriceList2',
+            'fieldName' => 'price_attribute_price_list_2',
             'reference' => 'price_attribute_price_list_2',
             'currencies' => ['USD'],
         ],
         [
             'name' => 'priceAttributePriceList3',
+            'fieldName' => 'price_attribute_price_list_3',
             'reference' => 'price_attribute_price_list_3',
             'currencies' => ['CAD'],
         ],
         [
             'name' => 'priceAttributePriceList4',
+            'fieldName' => 'price_attribute_price_list_4',
             'reference' => 'price_attribute_price_list_4',
             'currencies' => ['GBP'],
         ],
         [
             'name' => 'priceAttributePriceList5',
+            'fieldName' => 'price_attribute_price_list_5',
             'reference' => 'price_attribute_price_list_5',
             'currencies' => ['GBP', 'EUR'],
         ],
         [
             'name' => 'priceAttributePriceList6',
+            'fieldName' => 'price_attribute_price_list_6',
             'reference' => 'price_attribute_price_list_6',
             'currencies' => ['USD'],
         ],
@@ -57,6 +63,7 @@ class LoadPriceAttributePriceLists extends AbstractFixture
 
             $priceAttributePriceList
                 ->setName($priceAttributePriceListData['name'])
+                ->setFieldName($priceAttributePriceListData['fieldName'])
                 ->setCurrencies($priceAttributePriceListData['currencies'])
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now);

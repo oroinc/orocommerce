@@ -6,6 +6,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -150,6 +152,26 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
             ],
 
         ];
+    }
+
+    public function testCreateTriggerByPriceListProduct()
+    {
+        $repository = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BPricingBundle:ProductPriceChangeTrigger')
+            ->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_1');
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+
+        $triggers = $repository->findBy(['priceList' => $priceList, 'product' => $product]);
+        $this->assertEmpty($triggers);
+
+        $this->triggersFiller->createTriggerByPriceListProduct($priceList, $product);
+
+        $triggers = $repository->findBy(['priceList' => $priceList, 'product' => $product]);
+        $this->assertCount(1, $triggers);
     }
 
     /**
