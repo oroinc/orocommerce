@@ -3,13 +3,7 @@ oro_api:
         OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision: ~
         OroB2B\Bundle\ProductBundle\Entity\Product:
             fields:
-                inventory_status: ~
                 sku: ~
-            sorters:
-                exclusion_policy: all
-                fields:
-                    id:
-                        exclude: false
             actions:
                 get: ~
                 get_list: ~

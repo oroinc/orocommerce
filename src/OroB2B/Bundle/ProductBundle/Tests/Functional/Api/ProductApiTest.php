@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Api;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
 
 /**
  * @dbIsolation
@@ -26,7 +27,7 @@ class ProductApiTest extends RestJsonApiTestCase
         parent::setUp();
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels',
+                LoadWarehousesAndInventoryLevels::class,
             ]
         );
     }
@@ -68,7 +69,7 @@ class ProductApiTest extends RestJsonApiTestCase
         $this->assertApiResponseStatusCodeEquals($response, $expectedStatusCode, $entityType, 'get list');
         $content = json_decode($response->getContent(), true);
         $this->assertCount($expectedCount, $content['data']);
-        if ($expectedContent ) {
+        if ($expectedContent) {
             $this->assertIsContained($expectedContent, $content['data']);
         }
     }
@@ -163,8 +164,7 @@ class ProductApiTest extends RestJsonApiTestCase
      */
     protected function assertIsContained(array $expected, array $content)
     {
-        foreach ($expected as $key => $value )
-        {
+        foreach ($expected as $key => $value) {
             $this->assertArrayHasKey($key, $content);
             if (is_array($value)) {
                 $this->assertIsContained($value, $content[$key]);

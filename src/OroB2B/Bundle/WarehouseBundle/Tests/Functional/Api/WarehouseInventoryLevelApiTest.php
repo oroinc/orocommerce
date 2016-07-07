@@ -64,7 +64,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         $this->assertApiResponseStatusCodeEquals($response, $expectedStatusCode, $entityType, 'get list');
         $content = json_decode($response->getContent(), true);
         $this->assertCount($expectedCount, $content['data']);
-        if ($expectedContent ) {
+        if ($expectedContent) {
             $this->assertIsContained($expectedContent, $content['data']);
         }
     }
@@ -488,8 +488,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
      */
     protected function assertIsContained(array $expected, array $content)
     {
-        foreach ($expected as $key => $value )
-        {
+        foreach ($expected as $key => $value) {
             $this->assertArrayHasKey($key, $content);
             if (is_array($value)) {
                 $this->assertIsContained($value, $content[$key]);
