@@ -22,7 +22,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
 
     public function testParse()
     {
-        $expression = "(PriceList.currency == 'USD' and Product.margin * 10% > 130*Product.category.minMargin)" .
+        $expression = "(PriceList.currency == 'USD' and Product.margin * 10 > 130*Product.category.minMargin)" .
             " || (Product.category == -Product.MSRP and not (Product.MSRP.currency matches 'U'))";
 
         $expected = new Expression\BinaryNode(
@@ -34,13 +34,9 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
                 ),
                 new Expression\BinaryNode(
                     new Expression\BinaryNode(
-                        new Expression\BinaryNode(
-                            new Expression\NameNode('p', 'margin'),
-                            new Expression\ValueNode(10),
-                            '*'
-                        ),
-                        new Expression\ValueNode(100),
-                        '/'
+                        new Expression\NameNode('p', 'margin'),
+                        new Expression\ValueNode(10),
+                        '*'
                     ),
                     new Expression\BinaryNode(
                         new Expression\ValueNode(130),
@@ -94,7 +90,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                "(PriceList.currency == 'USD' and Product.margin * 10% > 130*Product.category.minMargin)" .
+                "(PriceList.currency == 'USD' and Product.margin * 10 > 130*Product.category.minMargin)" .
                 " || (Product.category == -Product.someValue and not (Product.MSRP.currency matches 'U'))",
                 [
                     'pl' => ['currency'],
