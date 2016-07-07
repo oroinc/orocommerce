@@ -23,7 +23,7 @@
             border-top: 1px solid $theme-gray-color;
         }
 
-        &--active {
+        &--primary {
             background-color: $base-footer-background-color;
         }
     }
@@ -68,7 +68,7 @@
         padding: 4px 0 0 5px;
 
         font-size: 10px;
-        line-height: 1.2;
+        line-height: 1.3;
         text-align: right;
 
         color: $theme-light-gray-color;

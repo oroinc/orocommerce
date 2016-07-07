@@ -43,6 +43,7 @@ define(function(require) {
                     );
                 },
                 allowToRemovePrimary: true,
+                confirmation: true,
                 addressMapOptions: {'phone': 'phone'},
                 useFormDialog: options.useFormDialog
             });

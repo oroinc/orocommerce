@@ -45,7 +45,7 @@
 {% endblock %}
 
 {% block _account_address_book_addresses_list_template_item_widget %}
-    <% var appendClass = primary ? 'address-list__item--active' : '' %>
+    <% var appendClass = primary ? 'address-list__item--primary' : '' %>
     {% set attr = layout_attr_merge(attr, {
         '~class': " address-list__item <%= appendClass %>"
     }) %}
