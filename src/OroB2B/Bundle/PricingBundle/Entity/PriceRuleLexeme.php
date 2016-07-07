@@ -37,7 +37,7 @@ class PriceRuleLexeme
      * @var PriceRule
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceRule", inversedBy="lexemes")
-     * @ORM\JoinColumn(name="price_rule_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="price_rule_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      **/
     protected $priceRule;
 
@@ -61,7 +61,7 @@ class PriceRuleLexeme
      * @param PriceRule $priceRule
      * @return $this
      */
-    public function setPriceRule($priceRule)
+    public function setPriceRule(PriceRule $priceRule = null)
     {
         $this->priceRule = $priceRule;
 
@@ -126,7 +126,7 @@ class PriceRuleLexeme
      * @param PriceList $priceList
      * @return $this
      */
-    public function setPriceList($priceList)
+    public function setPriceList(PriceList $priceList = null)
     {
         $this->priceList = $priceList;
 
