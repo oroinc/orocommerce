@@ -115,6 +115,13 @@ services:
             - [addSupportedClass, ['OroB2BPricingBundle:ProductPrice']]
             - [addSupportedClass, ['OroB2BCatalogBundle:Category']]
 
+    orob2b_pricing.provider.product_virtual_relation_provider.config:
+        class: 'OroB2B\Bundle\PricingBundle\Provider\ProductVirtualRelationProvider'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: oro_entity.virtual_relation_provider, priority: 0 }
+
     orob2b_pricing.resolver.combined_product_price_resolver:
         class: 'OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver'
         arguments:

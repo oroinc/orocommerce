@@ -65,6 +65,22 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
         ];
     }
 
+    public function testGetFieldNames()
+    {
+        $actual = $this->getRepository()->getFieldNames();
+        $this->assertEquals(
+            [
+                'priceAttributePriceList1' => 'price_attribute_price_list_1',
+                'priceAttributePriceList2' => 'price_attribute_price_list_2',
+                'priceAttributePriceList3' => 'price_attribute_price_list_3',
+                'priceAttributePriceList4' => 'price_attribute_price_list_4',
+                'priceAttributePriceList5' => 'price_attribute_price_list_5',
+                'priceAttributePriceList6' => 'price_attribute_price_list_6'
+            ],
+            $actual
+        );
+    }
+
     /**
      * @param array $attributeCurrency
      * @param array $expectedAttributeCurrencies
