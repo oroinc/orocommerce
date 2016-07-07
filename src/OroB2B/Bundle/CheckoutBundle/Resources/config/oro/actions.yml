@@ -7,6 +7,7 @@ operations:
         applications: [frontend]
         for_all_datagrids: false
         for_all_entities: false
+        label: orob2b.checkout.grid.delete.label
         preconditions:
             '@not_blank': $.data
         datagrids:
