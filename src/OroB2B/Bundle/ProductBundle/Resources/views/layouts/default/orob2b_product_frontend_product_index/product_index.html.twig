@@ -26,14 +26,14 @@
         <div class="buttons-inline-group inline">
             {% set row_view = constant('OroB2B\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_TILES') %}
             <a href="{{ path('orob2b_product_frontend_product_index', {'frontend-products-grid': {(row_view_key): row_view}}) }}"
-                class="btn btn_transparent btn_bordered btn_squared {% if current_view == row_view %}current{% endif %}" data-catalog-view-trigger="gallery-view">
+                class="btn btn_transparent btn_bordered btn_squared {% if current_row_view == row_view %}current{% endif %}" data-catalog-view-trigger="gallery-view">
                 <span class="catalog-view-option">
                     <i class="cf-apps cf--large"></i>
                 </span>
             </a>
             {% set row_view = constant('OroB2B\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_GRID') %}
             <a href="{{ path('orob2b_product_frontend_product_index', {'frontend-products-grid': {(row_view_key): row_view}}) }}"
-                class="btn btn_transparent btn_bordered btn_squared {% if current_view == row_view %}current{% endif %}"
+                class="btn btn_transparent btn_bordered btn_squared {% if current_row_view == row_view %}current{% endif %}"
                 data-catalog-view-trigger="list-view">
                 <span class="catalog-view-option">
                   <i class="cf-view_list cf--large"></i>
@@ -41,7 +41,7 @@
             </a>
             {% set row_view = constant('OroB2B\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_LIST') %}
             <a href="{{ path('orob2b_product_frontend_product_index', {'frontend-products-grid': {(row_view_key): row_view}}) }}"
-                class="btn btn_transparent btn_bordered btn_squared {% if current_view == row_view %}current{% endif %}" data-catalog-view-trigger="no-image-view">
+                class="btn btn_transparent btn_bordered btn_squared {% if current_row_view == row_view %}current{% endif %}" data-catalog-view-trigger="no-image-view">
                 <span class="catalog-view-option">
                   <i class="cf-view_headline cf--large"></i>
                 </span>

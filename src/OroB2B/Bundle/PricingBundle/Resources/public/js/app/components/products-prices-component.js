@@ -15,14 +15,12 @@ define(function(require) {
         options: {
             account: null,
             currency: null,
-            website: null,
             tierPrices: null,
             tierPricesRoute: '',
             matchedPrices: {},
             matchedPricesRoute: '',
             requestKeys: {
                 ACCOUNT: 'account_id',
-                WEBSITE: 'websiteId',
                 CURRENCY: 'currency'
             }
         },
@@ -43,6 +41,7 @@ define(function(require) {
         },
 
         initPricesListeners: function() {
+            mediator.on('pricing:load:prices', this.reloadPrices, this);
             mediator.on('pricing:get:products-tier-prices', this.getProductsTierPrices, this);
             mediator.on('pricing:load:products-tier-prices', this.loadProductsTierPrices, this);
 
@@ -53,7 +52,6 @@ define(function(require) {
         initFieldsListeners: function() {
             mediator.on('update:currency', this.setCurrency, this);
             mediator.on('update:account', this.setAccount, this);
-            mediator.on('update:website', this.setWebsite, this);
         },
 
         /**
@@ -76,15 +74,20 @@ define(function(require) {
         /**
          * @param {Array} products
          * @param {Function} callback
+         * @param {Object} context
          */
         loadProductsTierPrices: function(products, callback) {
+            var context =  {
+                requestAttributes: {}
+            };
+            mediator.trigger('pricing:refresh:products-tier-prices:before', context);
             this.joinSubrequests(this.loadProductsTierPrices, products, callback, _.bind(function(products, callback) {
                 var params = {
                     product_ids: products
                 };
                 params[this.options.requestKeys.CURRENCY] = this.getCurrency();
                 params[this.options.requestKeys.ACCOUNT] = this.getAccount();
-                params[this.options.requestKeys.WEBSITE] = this.getWebsite();
+                params = _.extend({}, params, context.requestAttributes || {});
 
                 $.get(routing.generate(this.options.tierPricesRoute, params), callback);
             }, this));
@@ -93,15 +96,20 @@ define(function(require) {
         /**
          * @param {Array} items
          * @param {Function} callback
+         * @param {Object} context
          */
         loadLineItemsMatchedPrices: function(items, callback) {
+            var context =  {
+                requestAttributes: {}
+            };
+            mediator.trigger('pricing:refresh:line-items-matched-prices:before', context);
             this.joinSubrequests(this.loadLineItemsMatchedPrices, items, callback, _.bind(function(items, callback) {
                 var params = {
                     items: items
                 };
                 params[this.options.requestKeys.CURRENCY] = this.getCurrency();
                 params[this.options.requestKeys.ACCOUNT] = this.getAccount();
-                params[this.options.requestKeys.WEBSITE] = this.getWebsite();
+                params = _.extend({}, params, context.requestAttributes || {});
 
                 $.ajax({
                     url: routing.generate(this.options.matchedPricesRoute, params),
@@ -185,15 +193,6 @@ define(function(require) {
             this.reloadPrices();
         },
 
-        getWebsite: function() {
-            return this.options.website;
-        },
-
-        setWebsite: function(val) {
-            this.options.website = val;
-            this.reloadPrices();
-        },
-
         /**
          * @inheritDoc
          */
@@ -210,7 +209,6 @@ define(function(require) {
 
             mediator.off('update:currency', this.setCurrency, this);
             mediator.off('update:account', this.setAccount, this);
-            mediator.off('update:website', this.setWebsite, this);
 
             ProductsPricesComponent.__super__.dispose.call(this);
         }

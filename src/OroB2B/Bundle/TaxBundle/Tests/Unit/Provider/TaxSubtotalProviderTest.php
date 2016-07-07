@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Provider;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
@@ -64,55 +65,49 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(TaxSubtotalProvider::NAME, $this->provider->getName());
     }
 
-    /**
-     * @param bool $editMode
-     * @dataProvider getSubtotalProvider
-     */
-    public function testGetSubtotal($editMode)
+    public function testGetSubtotal()
     {
-        $total = new ResultElement();
-        $total
-            ->setCurrency('USD')
-            ->offsetSet(ResultElement::TAX_AMOUNT, '150');
-
-        $tax = new Result();
-        $tax->offsetSet(Result::TOTAL, $total);
+        $total = $this->createTotalResultElement(150, 'USD');
+        $tax   = $this->createTaxResultWithTotal($total);
 
         $this->taxManager->expects($this->once())
-            ->method($editMode ? 'getTax' : 'loadTax')
+            ->method('getTax')
             ->willReturn($tax);
-
-        $this->provider->setEditMode($editMode);
 
         $subtotal = $this->provider->getSubtotal(new Order());
 
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
-        $this->assertEquals(TaxSubtotalProvider::TYPE, $subtotal->getType());
-        $this->assertEquals('Orob2b.tax.subtotals.' . TaxSubtotalProvider::TYPE, $subtotal->getLabel());
-        $this->assertEquals($total->getCurrency(), $subtotal->getCurrency());
-        $this->assertEquals($total->getTaxAmount(), $subtotal->getAmount());
-        $this->assertTrue($subtotal->isVisible());
+        $this->assertSubtotal($subtotal, $total);
     }
 
-    /**
-     * @return array
-     */
-    public function getSubtotalProvider()
+    public function testGetCachedSubtotal()
     {
-        return [
-            [
-                'editMode' => false,
-            ],
-            [
-                'editMode' => true,
-            ],
-        ];
+        $total = $this->createTotalResultElement(150, 'USD');
+        $tax   = $this->createTaxResultWithTotal($total);
+
+        $this->taxManager->expects($this->once())
+            ->method('loadTax')
+            ->willReturn($tax);
+
+        $subtotal = $this->provider->getCachedSubtotal(new Order());
+
+        $this->assertSubtotal($subtotal, $total);
+    }
+
+    public function testGetCachedSubtotalEmptyIfTaxationDisabled()
+    {
+        $this->taxManager->expects($this->once())
+            ->method('loadTax')
+            ->willThrowException(new TaxationDisabledException());
+
+        $subtotal = $this->provider->getCachedSubtotal(new Order());
+
+        $this->assertEmpty($subtotal->getAmount());
     }
 
     public function testGetSubtotalWithException()
     {
         $this->taxManager->expects($this->once())
-            ->method('loadTax')
+            ->method('getTax')
             ->willThrowException(new TaxationDisabledException());
 
         $subtotal = $this->provider->getSubtotal(new Order());
@@ -128,12 +123,44 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->provider->isSupported(new \stdClass()));
     }
 
-    public function testEditMode()
+    /**
+     * @param Subtotal $subtotal
+     * @param ResultElement $total
+     */
+    protected function assertSubtotal(Subtotal $subtotal, ResultElement $total)
     {
-        $this->assertFalse($this->provider->isEditMode());
-        $this->provider->setEditMode(true);
-        $this->assertTrue($this->provider->isEditMode());
-        $this->provider->setEditMode(false);
-        $this->assertFalse($this->provider->isEditMode());
+        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
+        $this->assertEquals(TaxSubtotalProvider::TYPE, $subtotal->getType());
+        $this->assertEquals('Orob2b.tax.subtotals.' . TaxSubtotalProvider::TYPE, $subtotal->getLabel());
+        $this->assertEquals($total->getCurrency(), $subtotal->getCurrency());
+        $this->assertEquals($total->getTaxAmount(), $subtotal->getAmount());
+        $this->assertTrue($subtotal->isVisible());
+    }
+
+    /**
+     * @param int $amount
+     * @param string $currency
+     * @return ResultElement
+     */
+    protected function createTotalResultElement($amount, $currency)
+    {
+        $total = new ResultElement();
+        $total
+            ->setCurrency($currency)
+            ->offsetSet(ResultElement::TAX_AMOUNT, $amount);
+
+        return $total;
+    }
+
+    /**
+     * @param ResultElement $total
+     * @return Result
+     */
+    protected function createTaxResultWithTotal(ResultElement $total)
+    {
+        $tax = new Result();
+        $tax->offsetSet(Result::TOTAL, $total);
+
+        return $tax;
     }
 }
