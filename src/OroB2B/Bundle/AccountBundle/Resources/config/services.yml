@@ -862,11 +862,3 @@ services:
         factory:  ["@oro_entity.doctrine_helper", getEntityRepository]
         arguments:
             - 'OroB2B\Bundle\AccountBundle\Entity\AccountUserRole'
-
-    orob2b_account.event_listener.role_management_security_listener:
-        class: 'OroB2B\Bundle\AccountBundle\EventListener\RoleManagementSecurityListener'
-        arguments:
-            - "@oro_security.security_facade"
-            - "@orob2b_account.repository.account_user_role"
-        tags:
-            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }

@@ -461,8 +461,6 @@ datagrid:
                 frontend_type: html
                 data_name: isRolePredefined
                 template: OroB2BAccountBundle:AccountUserRole:Datagrid/Property/isRolePredifined.html.twig
-
-
         sorters:
             columns:
                 label:
