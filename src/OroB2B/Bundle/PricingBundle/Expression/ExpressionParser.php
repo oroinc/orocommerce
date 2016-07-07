@@ -16,7 +16,7 @@ class ExpressionParser
     /**
      * @var array
      */
-    protected $expressionMappings = ['%' => '/100'];
+    protected $expressionMappings = [];
 
     /**
      * @var ExpressionLanguageConverter

@@ -18,12 +18,19 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
             - Length:
                 max: 255
 
-
 OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
     constraints:
         - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
     properties:
         name:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        fieldName:
+            - Regex:
+                pattern: '/^[a-zA-Z0-9_]+$/'
+                htmlPattern: '/^[a-zA-Z0-9_]+$/'
+                message: 'orob2b.pricing.validators.price_attrirute_price_list.fieldName.message'
             - NotBlank: ~
             - Length:
                 max: 255

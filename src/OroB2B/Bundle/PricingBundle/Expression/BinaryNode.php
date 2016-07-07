@@ -43,7 +43,12 @@ class BinaryNode implements NodeInterface
      * @var string
      */
     protected $operation;
-    
+
+    /**
+     * @param NodeInterface $left
+     * @param NodeInterface $right
+     * @param string $operation
+     */
     public function __construct(NodeInterface $left, NodeInterface $right, $operation)
     {
         $this->left = $left;

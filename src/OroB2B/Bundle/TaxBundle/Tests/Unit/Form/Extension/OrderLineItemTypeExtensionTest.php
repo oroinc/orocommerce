@@ -10,10 +10,10 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\TaxBundle\Form\Extension\OrderLineItemTypeExtension;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-use OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
 
 class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,9 +30,9 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
     protected $taxManager;
 
     /**
-     * @var TaxSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $taxSubtotalProvider;
+    protected $totalProvider;
 
     /**
      * @var OrderLineItemTypeExtension
@@ -53,7 +53,9 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->taxSubtotalProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider')
+        $this->totalProvider = $this->getMockBuilder(
+            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'
+        )
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -62,7 +64,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension = new OrderLineItemTypeExtension(
             $this->taxationSettingsProvider,
             $this->taxManager,
-            $this->taxSubtotalProvider,
+            $this->totalProvider,
             $this->sectionProvider,
             OrderLineItemType::NAME
         );
@@ -88,7 +90,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->never())->method($this->anything());
 
-        $this->taxSubtotalProvider->expects($this->once())->method('setEditMode')->with(true);
+        $this->totalProvider->expects($this->once())->method('enableRecalculation');
 
         $this->extension->buildForm($builder, []);
     }

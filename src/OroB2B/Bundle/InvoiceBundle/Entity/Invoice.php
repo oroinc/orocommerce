@@ -17,6 +17,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -61,7 +62,8 @@ class Invoice extends ExtendInvoice implements
     OrganizationAwareInterface,
     CurrencyAwareInterface,
     LineItemsAwareInterface,
-    DatesAwareInterface
+    DatesAwareInterface,
+    SubtotalAwareInterface
 {
     use DatesAwareTrait;
     use AuditableUserAwareTrait;
@@ -325,7 +327,7 @@ class Invoice extends ExtendInvoice implements
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getSubtotal()
     {
