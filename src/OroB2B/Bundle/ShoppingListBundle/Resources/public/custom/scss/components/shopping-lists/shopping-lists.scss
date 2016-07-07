@@ -1,37 +1,38 @@
-.orders-list {
-    overflow-y: hidden;
-    overflow-x: auto;
+.shopping-lists {
     width: 100%;
-    width: calc(100% - 37px);
     margin-bottom: 0;
 
     font-size: 0;
     white-space: nowrap;
 
-    box-shadow: inset 0 -1px 0 0 $base-font-color-lightest;
-    border-radius: 3px 0 0;
-    border-left: 1px solid $base-font-color-lightest;
+    border-radius: 3px 3px 0 0;
+    border-top: 1px solid $theme-lighter-gray-color;
+    border-bottom: 1px solid $base-font-color-lightest;
     background: $theme-lightest-gray-color;
 
     &__item {
         display: inline-block;
         width: 20%;
+        margin-top: -1px;
 
         font-size: 14px;
         vertical-align: top;
 
         border-bottom: 0;
-        background: $theme-lightest-gray-color;
 
         &:first-child {
             border-top: 0;
         }
 
-        &:first-child .orders-list__link {
+        &:first-child .shopping-lists__link {
             margin-left: 0;
 
             border-radius: 3px 0 0;
             border-left: 0;
+        }
+
+        &:last-child .shopping-lists__link {
+            border-radius: 0 3px 0 0;
         }
     }
 
@@ -40,18 +41,21 @@
         padding: 16px 15px 12px;
 
         text-align: center;
-        white-space: nowrap;
-        overflow: hidden;
 
-        border: 1px solid $theme-lighter-gray-color;
-        border-bottom: 1px solid $base-font-color-lightest;
+        border-left: 0;
+        box-shadow: inset 1px 0 0 0 $theme-lighter-gray-color,
+                    inset 0 1px 0 0 $theme-lighter-gray-color,
+                    inset -1px 0 0 0 $theme-lighter-gray-color,
+                    0 1px 0 0 $base-font-color-lightest;
+        background: $theme-lightest-gray-color;
 
         &--current,
         &:hover {
-            margin-bottom: -1px;
-
-            border: 1px solid $base-font-color-lightest;
-            border-bottom: 1px solid $base-white-color;
+            border-left: 0;
+            box-shadow: inset 1px 0 0 0 $base-font-color-lightest,
+                        inset 0 1px 0 0 $base-font-color-lightest,
+                        inset -1px 0 0 0 $base-font-color-lightest,
+                        0 1px 0 0 $base-white-color;
             background: $base-white-color;
         }
     }

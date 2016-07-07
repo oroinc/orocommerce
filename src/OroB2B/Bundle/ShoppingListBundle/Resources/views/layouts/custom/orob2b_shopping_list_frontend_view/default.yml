@@ -13,10 +13,6 @@ layout:
                     shopping_list_view_tabs:
                         shopping_list_view_tabs_new: ~
         - '@move':
-            id: shopping_list_selector
-            parentId: shopping_list_view_tabs
-            prepend: true
-        - '@move':
             id: shopping_lists_sidebar_list
             parentId: shopping_list_view_tabs
             prepend: true
