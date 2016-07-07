@@ -15,6 +15,6 @@ class AddSystemOnlyDataColumn implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_account_user_role');
-        $table->addColumn('non_public', 'boolean', []);
+        $table->addColumn('non_public', 'boolean', ['notnull' => false]);
     }
 }

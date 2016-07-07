@@ -416,8 +416,8 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('role', 'string', ['length' => 255]);
         $table->addColumn('label', 'string', ['length' => 255]);
-        $table->addColumn('self_managed', 'boolean', []);
-        $table->addColumn('non_public', 'boolean', []);
+        $table->addColumn('self_managed', 'boolean', ['notnull' => false]);
+        $table->addColumn('non_public', 'boolean', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['role']);
         $table->addUniqueIndex(['account_id', 'label'], 'orob2b_account_user_role_account_id_label_idx');
