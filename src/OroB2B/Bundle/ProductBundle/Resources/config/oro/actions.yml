@@ -35,9 +35,11 @@ operations:
     UPDATE:
         exclude_datagrids:
             - products-select-grid
+            - frontend-products-grid
     DELETE:
         exclude_datagrids:
             - products-select-grid
+            - frontend-products-grid
 
 action_groups:
     orob2b_product_duplicate:
