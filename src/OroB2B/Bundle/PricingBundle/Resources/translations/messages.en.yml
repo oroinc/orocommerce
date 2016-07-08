@@ -1,5 +1,7 @@
 orob2b.pricing:
     priceattributeproductprice:
+        entity_label: Price Attribute Product Price
+        entity_plural_label: Price Attribute Product Prices
         id.label: Id
         currency.label: Currency
         product_sku.label: Product SKU
@@ -8,6 +10,7 @@ orob2b.pricing:
         price_list.label: Price List
         product.label: Product
         unit.label: Unit
+        prices.label: Prices
 
     priceAttribute:
         unit.label: Unit
