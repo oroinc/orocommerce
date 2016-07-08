@@ -446,19 +446,19 @@
                 },
                 'data-dropdown-trigger': true
             }|merge(attr|merge({
-            class: attr.class|default('') ~ " shopping-lists mt1-md"
+            class: attr.class|default('') ~ " shopping-list mt1-md"
         })) %}
         <!-- START ORDERS TABS LIST -->
         <ul {{ block('block_attributes') }}>
             {% for shoppingList in shoppingLists %}
-                <li class="shopping-lists__item">
-                    <a href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}" class="shopping-lists__link {% if shoppingList.id == selectedShoppingList.id %} shopping-lists__link--current {% endif %}">
-                        <span class='badge badge_sm badge_orange badge_circled-corners shopping-lists__item-indicator'><i class="cf-basket"></i></span>
-                        <div class="shopping-lists__content">
-                            <h3 class="shopping-lists__title text-uppercase {% if shoppingList.id == selectedShoppingList.id %}current-title{% endif %}">{{ shoppingList.label }}</h3>
+                <li class="shopping-list__item">
+                    <a href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}" class="shopping-list__link {% if shoppingList.id == selectedShoppingList.id %} shopping-list__link--current {% endif %}">
+                        <span class='badge badge_sm badge_orange badge_circled-corners shopping-list__item-indicator'><i class="cf-basket"></i></span>
+                        <div class="shopping-list__content">
+                            <h3 class="shopping-list__title text-uppercase {% if shoppingList.id == selectedShoppingList.id %}current-title{% endif %}">{{ shoppingList.label }}</h3>
                             {% set itemsCount = shoppingList.lineItems.count %}
                             {% if itemsCount %}
-                                <div class="shopping-lists__desc">
+                                <div class="shopping-list__desc">
                                     <span class="mr1-md"><strong>{{ shoppingList.lineItems.count }}</strong> {{ 'orob2b.shoppinglist.items.label'|transchoice(itemsCount) }}</span>
                                 </div>
                             {% endif %}

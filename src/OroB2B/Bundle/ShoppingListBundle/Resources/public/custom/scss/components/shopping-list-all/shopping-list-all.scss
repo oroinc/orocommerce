@@ -1,0 +1,54 @@
+.shopping-list-all {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    width: 37px;
+    height: 100%;
+
+    text-align: center;
+
+    border-radius: 0 3px 0 0;
+    border-top: 1px solid $theme-lighter-gray-color;
+    border-right: 1px solid $theme-lighter-gray-color;
+    border-bottom: 1px solid $base-font-color-lightest;
+    background: #ededed;
+
+    &__handle {
+        height: 100%;
+        margin: 0;
+    }
+
+    &__icon {
+        margin: 15px 0 0 0;
+
+        font-size: 20px;
+
+        color: #707070;
+    }
+
+    &__dropdown {
+        position: absolute;
+        top: 100%;
+        right: 50%;
+        z-index: 9;
+
+        margin: -5px -25px 0;
+
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .3);
+        border-radius: 2px;
+        border: 1px solid #ebebeb;
+        background: #fff;
+
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity .2s, visibility .2s;
+    }
+}
+
+.shopping-list-helper:checked + .shopping-list-all .shopping-list-all__dropdown {
+    visibility: inherit;
+    opacity: 1;
+
+    transition: opacity .2s;
+}

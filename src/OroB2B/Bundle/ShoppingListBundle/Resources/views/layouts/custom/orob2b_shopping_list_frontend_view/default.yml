@@ -6,12 +6,12 @@ layout:
             items:
                 shopping_list_view_tabs:
                     blockType: container
-                shopping_list_view_tabs_new:
+                shopping_list_view_tabs_all:
                     blockType: block
             tree:
                 content:
                     shopping_list_view_tabs:
-                        shopping_list_view_tabs_new: ~
+                        shopping_list_view_tabs_all: ~
         - '@move':
             id: shopping_lists_sidebar_list
             parentId: shopping_list_view_tabs
