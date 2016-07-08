@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\EventListener;
+namespace OroB2B\Bundle\FrontendBundle\CacheWarmer;
 
-use Symfony\Component\Console\Event\ConsoleEvent;
+use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 
-use Oro\Bundle\InstallerBundle\Command\PlatformUpdateCommand;
-
 /**
  * Change namespace in all loaded migrations, fixtures and entity config data
+ * It can't be done in migrations because cache warmup requires existing entities in entity config, see BAP-11101
  *
- * TODO: remove this listener after stable release
+ * TODO: remove this warmer after stable release
  */
-class UpdateNamespacesListener
+class UpdateNamespacesWarmer implements CacheWarmerInterface
 {
     /**
      * @var Connection
@@ -37,17 +36,10 @@ class UpdateNamespacesListener
     }
 
     /**
-     * Update all information related to namespaces in DB
-     * It can't be done in migrations because cache warmup requires existing entities in entity config
-     *
-     * @param ConsoleEvent $event
+     * {@inheritdoc}
      */
-    public function onConsoleCommand(ConsoleEvent $event)
+    public function warmUp($cacheDir)
     {
-        if (!$event->getCommand() instanceof PlatformUpdateCommand) {
-            return;
-        }
-
         if (!$this->applicationInstalled) {
             return;
         }
@@ -67,6 +59,14 @@ class UpdateNamespacesListener
             $this->connection->rollBack();
             throw $e;
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isOptional()
+    {
+        return false;
     }
 
     /**

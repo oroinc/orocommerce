@@ -110,9 +110,9 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore, priority: -255 }
 
     orob2b_frontend.listener.update_migration_namespaces:
-        class: 'OroB2B\Bundle\FrontendBundle\EventListener\UpdateNamespacesListener'
+        class: 'OroB2B\Bundle\FrontendBundle\CacheWarmer\UpdateNamespacesWarmer'
         arguments:
             - '@doctrine.dbal.default_connection'
             - '%installed%'
         tags:
-            - { name: kernel.event_listener, event: console.command, name: onConsoleCommand }
+            - { name: kernel.cache_warmer, priority: 35 }
