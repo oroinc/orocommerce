@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
  * @ORM\Table(
@@ -15,6 +16,17 @@ use Doctrine\ORM\Mapping as ORM;
  *      }
  * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository")
+ * @Config(
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-usd"
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"="commerce"
+ *          }
+ *      }
+ * )
  */
 class PriceAttributeProductPrice extends BaseProductPrice
 {

@@ -50,6 +50,7 @@ orob2b.pricing:
         field_name.label: Field Name
         id.label: Id
         currencies.label: Currencies
+        prices.label: Price Attribute Product Prices
 
     pricerule:
         entity_label: Price Calculation Rule

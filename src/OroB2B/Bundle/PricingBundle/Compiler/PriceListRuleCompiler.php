@@ -2,26 +2,32 @@
 
 namespace OroB2B\Bundle\PricingBundle\Compiler;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
+use OroB2B\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter;
+use OroB2B\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class PriceListRuleCompiler
 {
     /**
-     * @var Registry
-     */
-    protected $registry;
-
-    /**
      * @var ExpressionParser
      */
     protected $expressionParser;
+
+    /**
+     * @var NodeToQueryDesignerConverter
+     */
+    protected $nodeConverter;
+
+    /**
+     * @var PriceListExpressionQueryConverter
+     */
+    protected $queryConverter;
 
     /**
      * @var array
@@ -34,17 +40,22 @@ class PriceListRuleCompiler
         'quantity',
         'productSku',
         'value',
-        'priceRule'
+        'priceRule',
     ];
 
     /**
-     * @param Registry $registry
      * @param ExpressionParser $parser
+     * @param NodeToQueryDesignerConverter $nodeConverter
+     * @param PriceListExpressionQueryConverter $queryConverter
      */
-    public function __construct(Registry $registry, ExpressionParser $parser)
-    {
-        $this->registry = $registry;
+    public function __construct(
+        ExpressionParser $parser,
+        NodeToQueryDesignerConverter $nodeConverter,
+        PriceListExpressionQueryConverter $queryConverter
+    ) {
         $this->expressionParser = $parser;
+        $this->nodeConverter = $nodeConverter;
+        $this->queryConverter = $queryConverter;
     }
 
     /**
@@ -54,26 +65,40 @@ class PriceListRuleCompiler
      */
     public function compileRule(PriceRule $rule, Product $product = null)
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListToProduct');
-        $qb = $em->createQueryBuilder();
-        $qb->from('OroB2BPricingBundle:PriceListToProduct', 'priceListToProduct')
-            ->join('priceListToProduct.product', 'product')
-            ->where($qb->expr()->eq('priceListToProduct.priceList', ':priceList'))
+        $qb = $this->createQueryBuilder($rule);
+        $rootAlias = reset($qb->getRootAliases());
+
+        $qb
+            ->join(
+                'OroB2BPricingBundle:PriceListToProduct',
+                'priceListToProduct',
+                Join::WITH,
+                $qb->expr()->eq('priceListToProduct.product', $rootAlias)
+            )
+            ->andWhere($qb->expr()->eq('priceListToProduct.priceList', ':priceList'))
             ->setParameter('priceList', $rule->getPriceList());
 
-        $this->modifySelectPart($qb, $rule);
+        $this->modifySelectPart($qb, $rule, $rootAlias);
 
         if ($product) {
-            $qb->andWhere($qb->expr()->eq('priceListToProduct.product', ':product'))
+            $qb->andWhere($qb->expr()->eq($rootAlias, ':product'))
                 ->setParameter('product', $product);
         }
-
-        $qb->andWhere($rule->getRuleCondition());
-
-        $this->restrictByExistPrices($qb, $rule);
+        $this->restrictByExistPrices($qb, $rule, $rootAlias);
 
         return $qb;
+    }
+
+    /**
+     * @param PriceRule $rule
+     * @return QueryBuilder
+     */
+    protected function createQueryBuilder(PriceRule $rule)
+    {
+        $expression = sprintf('%s and (%s) > 0', $rule->getRuleCondition(), $rule->getRule());
+        $node = $this->expressionParser->parse($expression);
+        $source = $this->nodeConverter->convert($node);
+        return $this->queryConverter->convert($source);
     }
 
     /**
@@ -87,18 +112,18 @@ class PriceListRuleCompiler
     /**
      * @param QueryBuilder $qb
      * @param PriceRule $rule
+     * @param string $rootAlias
      */
-    protected function modifySelectPart(QueryBuilder $qb, PriceRule $rule)
+    protected function modifySelectPart(QueryBuilder $qb, PriceRule $rule, $rootAlias)
     {
         $fieldsMap = [
-            'product' => 'product.id',
-            'productSku' => 'product.sku',
+            'product' => $rootAlias . '.id',
+            'productSku' => $rootAlias . '.sku',
             'priceList' => (string)$qb->expr()->literal($rule->getPriceList()->getId()),
             'unit' => (string)$qb->expr()->literal($rule->getProductUnit()->getCode()),
             'currency' => (string)$qb->expr()->literal($rule->getCurrency()),
             'quantity' => (string)$qb->expr()->literal($rule->getQuantity()),
-            'value' => $rule->getRule(),
-            'priceRule' => (string)$qb->expr()->literal($rule->getId())
+            'priceRule' => (string)$qb->expr()->literal($rule->getId()),
         ];
         $select = [];
         $qb->select();
@@ -111,17 +136,19 @@ class PriceListRuleCompiler
     /**
      * @param QueryBuilder $qb
      * @param PriceRule $rule
+     * @param string $rootAlias
      */
-    protected function restrictByExistPrices(QueryBuilder $qb, PriceRule $rule)
+    protected function restrictByExistPrices(QueryBuilder $qb, PriceRule $rule, $rootAlias)
     {
         /** @var EntityManagerInterface $em */
-        $em = $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPrice');
+        $em = $qb->getEntityManager();
         $subQb = $em->createQueryBuilder()
-            ->from('OroB2BPricingBundle:ProductPrice', 'productPriceOld');
+            ->from('OroB2BPricingBundle:ProductPrice', 'productPriceOld')
+            ->select('productPriceOld');
         $subQb->where(
             $subQb->expr()->andX(
+                $subQb->expr()->eq('productPriceOld.product', $rootAlias),
                 $subQb->expr()->eq('productPriceOld.priceList', ':priceListOld'),
-                $subQb->expr()->eq('productPriceOld.product', 'product'),
                 $subQb->expr()->eq('productPriceOld.unit', ':unitOld'),
                 $subQb->expr()->eq('productPriceOld.currency', ':currencyOld'),
                 $subQb->expr()->eq('productPriceOld.quantity', ':quantityOld'),
@@ -141,73 +168,5 @@ class PriceListRuleCompiler
                 )
             )
         );
-    }
-
-    /**
-     * @param PriceRule $rule
-     * @param QueryBuilder $qb
-     */
-    protected function addPriceSelect(PriceRule $rule, QueryBuilder $qb)
-    {
-        $ruleTree = $this->expressionParser->parse($rule->getRule());
-
-        $this->addMissedJoins($rule, $qb);
-    }
-
-    /**
-     * @param PriceRule $rule
-     * @param QueryBuilder $qb
-     * @return array
-     */
-    protected function addMissedJoins(PriceRule $rule, QueryBuilder $qb)
-    {
-        $knownMappings = [
-            'OroB2B\Bundle\ProductBundle\Entity\Product' => 'product'
-        ];
-        $usedLexemes = $this->expressionParser->getUsedLexemes($rule->getRule());
-        foreach ($usedLexemes as $className => $fields) {
-            $relation = null;
-            if (strpos($className, '::') !== false) {
-                list($className, $relation) = explode('::', $className);
-            }
-
-            if ($className === 'OroB2B\Bundle\CatalogBundle\Entity\Category') {
-                $knownMappings[$className] = 'category';
-
-                $qb->leftJoin(
-                    'OroB2BCatalogBundle:Category',
-                    'category',
-                    Join::WITH,
-                    'product MEMBER OF category.products'
-                );
-            } elseif ($className === 'OroB2B\Bundle\PricingBundle\Entity\PriceList') {
-                // TODO: Fix join to price list. Relation from rule to base price list must be used instead
-                $priceListId = $rule->getPriceList()->getId();
-                $alias = 'priceList' . $priceListId;
-                $knownMappings[$className . '_' . $priceListId] = $alias;
-
-                // TODO: Clarify which unit, quantity and currency restriction should be applied
-                $qb->leftJoin(
-                    'OroB2B\Bundle\PricingBundle\Entity\ProductPrice',
-                    $alias,
-                    Join::WITH,
-                    $qb->expr()->andX(
-                        $qb->expr()->eq($alias . '.product', 'product'),
-                        $qb->expr()->eq($alias . '.priceList', $priceListId)
-                    )
-                );
-            } else {
-                throw new \InvalidArgumentException(sprintf('Class "%s" is not supported', $className));
-            }
-
-            if ($relation) {
-                $classMetadata = $this->registry->getManagerForClass($className)
-                    ->getClassMetadata($className);
-
-//                $classMetadata->get
-            }
-        }
-
-        return $knownMappings;
     }
 }

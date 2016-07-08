@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Controller;
 
+use OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -108,6 +109,14 @@ class PriceListController extends Controller
     protected function update(PriceList $priceList)
     {
         $form = $this->createForm(PriceListType::NAME, $priceList);
+
+        if ($priceList->getPriceRules()->count() > 0) {
+            /** @var PriceListRuleCompiler $compiler */
+            $compiler = $this->get('orob2b_pricing.compiler.price_list_rule_compiler');
+            foreach ($priceList->getPriceRules() as $priceRule) {
+                $qb = $compiler->compileRule($priceRule);
+            }
+        }
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $priceList,

@@ -48,14 +48,14 @@ class PriceRule
     /**
      * @var string
      *
-     * @ORM\Column(name="rule_condition", type="string", length=255, nullable=true)
+     * @ORM\Column(name="rule_condition", type="text", nullable=true)
      */
     protected $ruleCondition;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="rule", type="string", length=255, nullable=true)
+     * @ORM\Column(name="rule", type="text", nullable=false)
      */
     protected $rule;
 
