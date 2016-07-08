@@ -7,6 +7,8 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+
 /**
  * Change namespace in all loaded migrations, fixtures and entity config data
  * It can't be done in migrations because cache warmup requires existing entities in entity config, see BAP-11101
@@ -18,7 +20,12 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
     /**
      * @var Connection
      */
-    protected $connection;
+    protected $defaultConnection;
+
+    /**
+     * @var ConfigManager
+     */
+    protected $configManager;
 
     /**
      * @var bool
@@ -26,12 +33,14 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
     protected $applicationInstalled;
 
     /**
-     * @param Connection $connection
-     * @param bool $applicationInstalled
+     * @param Connection $defaultConnection
+     * @param ConfigManager $configManager
+     * @param $applicationInstalled
      */
-    public function __construct(Connection $connection, $applicationInstalled)
+    public function __construct(Connection $defaultConnection, ConfigManager $configManager, $applicationInstalled)
     {
-        $this->connection = $connection;
+        $this->defaultConnection = $defaultConnection;
+        $this->configManager = $configManager;
         $this->applicationInstalled = $applicationInstalled;
     }
 
@@ -48,17 +57,24 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
             return; // all data already was migrated
         }
 
-        $this->connection->beginTransaction();
+        $configConnection = $this->configManager->getEntityManager()->getConnection();
+
+        $this->defaultConnection->beginTransaction();
+        $configConnection->beginTransaction();
         try {
             $this->updateMigrationTables();
             $this->updateEntityConfigTable();
             $this->updateEntityConfigFieldTable();
             $this->updateEntityConfigIndexValueTable();
-            $this->connection->commit();
+            $this->defaultConnection->commit();
+            $configConnection->commit();
         } catch (\Exception $e) {
-            $this->connection->rollBack();
+            $this->defaultConnection->rollBack();
+            $configConnection->rollBack();
             throw $e;
         }
+
+        $this->configManager->clear();
     }
 
     /**
@@ -74,27 +90,29 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
      */
     protected function isUpdateRequired()
     {
-        $id = $this->connection->fetchColumn("SELECT id FROM oro_migrations WHERE bundle LIKE 'OroB2B%' LIMIT 1");
+        $id = $this->defaultConnection->fetchColumn(
+            "SELECT id FROM oro_migrations WHERE bundle LIKE 'OroB2B%' LIMIT 1"
+        );
 
         return !empty($id);
     }
 
     protected function updateMigrationTables()
     {
-        $migrations = $this->connection->fetchAll(
+        $migrations = $this->defaultConnection->fetchAll(
             "SELECT id, bundle FROM oro_migrations WHERE bundle LIKE 'OroB2B%'"
         );
         foreach ($migrations as $migration) {
             $id = $migration['id'];
             $bundle = $migration['bundle'];
             $bundle = preg_replace('/^OroB2B/', 'Oro', $bundle, 1);
-            $this->connection->executeQuery(
+            $this->defaultConnection->executeQuery(
                 'UPDATE oro_migrations SET bundle = ? WHERE id = ?',
                 [$bundle, $id]
             );
         }
 
-        $fixtures = $this->connection->fetchAll(
+        $fixtures = $this->defaultConnection->fetchAll(
             "SELECT id, class_name FROM oro_migrations_data WHERE class_name LIKE 'OroB2B%'"
         );
         foreach ($fixtures as $fixture) {
@@ -102,7 +120,7 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
             $className = $fixture['class_name'];
             $className = $this->replaceStringValue($className);
 
-            $this->connection->executeQuery(
+            $this->defaultConnection->executeQuery(
                 'UPDATE oro_migrations_data SET class_name = ? WHERE id = ?',
                 [$className, $id]
             );
@@ -111,49 +129,55 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
 
     protected function updateEntityConfigTable()
     {
-        $entities = $this->connection->fetchAll('SELECT id, class_name, data FROM oro_entity_config');
+        $configConnection = $this->configManager->getEntityManager()->getConnection();
+
+        $entities = $configConnection->fetchAll('SELECT id, class_name, data FROM oro_entity_config');
         foreach ($entities as $entity) {
             $id = $entity['id'];
             $originalClassName = $entity['class_name'];
             $originalData = $entity['data'];
-            $originalData = $originalData ? $this->connection->convertToPHPValue($originalData, Type::TARRAY) : [];
+            $originalData = $originalData ? $configConnection->convertToPHPValue($originalData, Type::TARRAY) : [];
 
             $className = $this->replaceStringValue($originalClassName);
             $data = $this->replaceArrayValue($originalData);
 
             if ($className !== $originalClassName || $data !== $originalData) {
-                $data = $this->connection->convertToDatabaseValue($data, Type::TARRAY);
+                $data = $configConnection->convertToDatabaseValue($data, Type::TARRAY);
 
                 $sql = 'UPDATE oro_entity_config SET class_name = ?, data = ? WHERE id = ?';
                 $parameters = [$className, $data, $id];
-                $this->connection->executeUpdate($sql, $parameters);
+                $configConnection->executeUpdate($sql, $parameters);
             }
         }
     }
 
     protected function updateEntityConfigFieldTable()
     {
-        $fields = $this->connection->fetchAll('SELECT id, data FROM oro_entity_config_field');
+        $configConnection = $this->configManager->getEntityManager()->getConnection();
+
+        $fields = $configConnection->fetchAll('SELECT id, data FROM oro_entity_config_field');
         foreach ($fields as $field) {
             $id = $field['id'];
             $originalData = $field['data'];
-            $originalData = $originalData ? $this->connection->convertToPHPValue($originalData, Type::TARRAY) : [];
+            $originalData = $originalData ? $configConnection->convertToPHPValue($originalData, Type::TARRAY) : [];
 
             $data = $this->replaceArrayValue($originalData);
 
             if ($data !== $originalData) {
-                $data = $this->connection->convertToDatabaseValue($data, Type::TARRAY);
+                $data = $configConnection->convertToDatabaseValue($data, Type::TARRAY);
 
                 $sql = 'UPDATE oro_entity_config_field SET data = ? WHERE id = ?';
                 $parameters = [$data, $id];
-                $this->connection->executeUpdate($sql, $parameters);
+                $configConnection->executeUpdate($sql, $parameters);
             }
         }
     }
 
     protected function updateEntityConfigIndexValueTable()
     {
-        $indexValues = $this->connection->fetchAll(
+        $configConnection = $this->configManager->getEntityManager()->getConnection();
+
+        $indexValues = $configConnection->fetchAll(
             "SELECT id, value FROM oro_entity_config_index_value WHERE code = 'module_name'"
         );
         foreach ($indexValues as $indexValue) {
@@ -165,7 +189,7 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
             if ($value !== $originalValue) {
                 $sql = 'UPDATE oro_entity_config_index_value SET value = ? WHERE id = ?';
                 $parameters = [$value, $id];
-                $this->connection->executeUpdate($sql, $parameters);
+                $configConnection->executeUpdate($sql, $parameters);
             }
         }
     }
