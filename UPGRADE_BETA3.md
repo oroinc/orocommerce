@@ -72,3 +72,11 @@ PaymentBundle:
 ShoppingListBundle:
 -------------------
 - `ShoppingListTotalManager` - removed fourth constructor argument $configManager
+
+FrontendBundle and FrontendTestFrameworkBundle:
+-----------------------------------------------
+- Introduced `FrontendTestFrameworkBundle`
+- `OroB2B\Bundle\FrontendBundle\DependencyInjection\Test\Client` moved to `Oro\Bundle\FrontendTestFrameworkBundle\Test\Client`
+- `OroB2B\Bundle\FrontendBundle\DependencyInjection\CompilerPass\TestClientPass` removed, parameter is passed in `FrontendTestFrameworkBundle/Resources/config/services.yml` 
+- `Oro\Component\Testing\Fixtures\LoadAccountUserData` moved to `Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData`
+- No need to load fixtures after test environment setup using `doctrine:fixture:load`

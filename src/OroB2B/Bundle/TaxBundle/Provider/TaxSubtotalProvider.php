@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\TaxBundle\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use OroB2B\Bundle\TaxBundle\Exception\TaxationDisabledException;
@@ -11,7 +12,7 @@ use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 
-class TaxSubtotalProvider implements SubtotalProviderInterface
+class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterface
 {
     const TYPE = 'tax';
     const NAME = 'orob2b_tax.subtotal_tax';
@@ -30,11 +31,6 @@ class TaxSubtotalProvider implements SubtotalProviderInterface
      * @var TaxFactory
      */
     protected $taxFactory;
-
-    /**
-     * @var bool
-     */
-    protected $editMode = false;
 
     /**
      * @param TranslatorInterface $translator
@@ -61,58 +57,65 @@ class TaxSubtotalProvider implements SubtotalProviderInterface
      */
     public function getSubtotal($entity)
     {
-        $subtotal = new Subtotal();
-
-        $subtotal->setType(self::TYPE);
-        $label = 'orob2b.tax.subtotals.' . self::TYPE;
-        $subtotal->setLabel($this->translator->trans($label));
+        $subtotal = $this->createSubtotal();
 
         try {
-            $tax = $this->getTax($entity);
-
-            $subtotal->setAmount($tax->getTotal()->getTaxAmount());
-            $subtotal->setCurrency($tax->getTotal()->getCurrency());
-            $subtotal->setVisible(true);
-            $subtotal->setData($tax->getArrayCopy());
+            $tax = $this->taxManager->getTax($entity);
+            $this->fillSubtotal($subtotal, $tax);
         } catch (TaxationDisabledException $e) {
-            $subtotal->setVisible(false);
         }
 
         return $subtotal;
     }
 
     /**
-     * @param object $entity
-     * @return Result
+     * {@inheritdoc}
      */
-    protected function getTax($entity)
+    public function getCachedSubtotal($entity)
     {
-        if ($this->editMode) {
-            return $this->taxManager->getTax($entity);
+        $subtotal = $this->createSubtotal();
+        try {
+            $tax = $this->taxManager->loadTax($entity);
+            $this->fillSubtotal($subtotal, $tax);
+        } catch (TaxationDisabledException $e) {
         }
 
-        return $this->taxManager->loadTax($entity);
+        return $subtotal;
+    }
+
+    /**
+     * @return Subtotal
+     */
+    protected function createSubtotal()
+    {
+        $subtotal = new Subtotal();
+
+        $subtotal->setType(self::TYPE);
+        $label = 'orob2b.tax.subtotals.' . self::TYPE;
+        $subtotal->setLabel($this->translator->trans($label));
+        $subtotal->setVisible(false);
+
+        return $subtotal;
+    }
+
+    /**
+     * @param Subtotal $subtotal
+     * @param Result $tax
+     * @return Subtotal
+     */
+    protected function fillSubtotal(Subtotal $subtotal, Result $tax)
+    {
+        $subtotal->setAmount($tax->getTotal()->getTaxAmount());
+        $subtotal->setCurrency($tax->getTotal()->getCurrency());
+        $subtotal->setVisible(true);
+        $subtotal->setData($tax->getArrayCopy());
+
+        return $subtotal;
     }
 
     /** {@inheritdoc} */
     public function isSupported($entity)
     {
         return $this->taxFactory->supports($entity);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEditMode()
-    {
-        return $this->editMode;
-    }
-
-    /**
-     * @param bool $editMode
-     */
-    public function setEditMode($editMode)
-    {
-        $this->editMode = (bool)$editMode;
     }
 }

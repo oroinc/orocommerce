@@ -28,3 +28,12 @@
     }
   }
 }
+
+div.checkout__form__select--exp-month {
+
+  .select2-container {
+    &.input_block {
+      width: 100%;
+    }
+  }
+}
