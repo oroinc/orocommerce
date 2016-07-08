@@ -1,48 +1,72 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Migrations\Schema\v1_0;
+namespace OroB2B\Bundle\FrontendBundle\EventListener;
 
-use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Event\ConsoleEvent;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 
-use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
-use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
+use Oro\Bundle\InstallerBundle\Command\PlatformUpdateCommand;
 
-class UpdateNamespacesAndTranslationsQuery extends ParametrizedMigrationQuery
+/**
+ * Change namespace in all loaded migrations, fixtures and entity config data
+ *
+ * TODO: remove this listener after stable release
+ */
+class UpdateNamespacesListener
 {
     /**
-     * {@inheritdoc}
+     * @var Connection
      */
-    public function getDescription()
-    {
-        $logger = new ArrayLogger();
-        $this->updateEntityConfig($logger, true);
+    protected $connection;
 
-        return $logger->getMessages();
+    /**
+     * @var bool
+     */
+    protected $applicationInstalled;
+
+    /**
+     * @param Connection $connection
+     * @param bool $applicationInstalled
+     */
+    public function __construct(Connection $connection, $applicationInstalled)
+    {
+        $this->connection = $connection;
+        $this->applicationInstalled = $applicationInstalled;
     }
 
     /**
-     * {@inheritdoc}
+     * Update all information related to namespaces in DB
+     * It can't be done in migrations because cache warmup requires existing entities in entity config
+     *
+     * @param ConsoleEvent $event
      */
-    public function execute(LoggerInterface $logger)
+    public function onConsoleCommand(ConsoleEvent $event)
     {
-        $this->updateEntityConfig($logger);
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
-     */
-    protected function updateEntityConfig(LoggerInterface $logger, $dryRun = false)
-    {
-        if (!$this->isUpdateRequired()) {
+        if (!$event->getCommand() instanceof PlatformUpdateCommand) {
             return;
         }
 
-        $this->updateEntityConfigTable($logger, $dryRun);
-        $this->updateEntityConfigFieldTable($logger, $dryRun);
-        $this->updateEntityConfigIndexValueTable($logger, $dryRun);
+        if (!$this->applicationInstalled) {
+            return;
+        }
+
+        if (!$this->isUpdateRequired()) {
+            return; // all data already was migrated
+        }
+
+        $this->connection->beginTransaction();
+        try {
+            $this->updateMigrationTables();
+            $this->updateEntityConfigTable();
+            $this->updateEntityConfigFieldTable();
+            $this->updateEntityConfigIndexValueTable();
+            $this->connection->commit();
+        } catch (\Exception $e) {
+            $this->connection->rollBack();
+            throw $e;
+        }
     }
 
     /**
@@ -50,18 +74,42 @@ class UpdateNamespacesAndTranslationsQuery extends ParametrizedMigrationQuery
      */
     protected function isUpdateRequired()
     {
-        $id = $this->connection->fetchColumn(
-            "SELECT id FROM oro_entity_config WHERE class_name LIKE 'OroB2B%' LIMIT 1"
-        );
+        $id = $this->connection->fetchColumn("SELECT id FROM oro_migrations WHERE bundle LIKE 'OroB2B%' LIMIT 1");
 
         return !empty($id);
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
-     */
-    protected function updateEntityConfigTable(LoggerInterface $logger, $dryRun)
+    protected function updateMigrationTables()
+    {
+        $migrations = $this->connection->fetchAll(
+            "SELECT id, bundle FROM oro_migrations WHERE bundle LIKE 'OroB2B%'"
+        );
+        foreach ($migrations as $migration) {
+            $id = $migration['id'];
+            $bundle = $migration['bundle'];
+            $bundle = preg_replace('/^OroB2B/', 'Oro', $bundle, 1);
+            $this->connection->executeQuery(
+                'UPDATE oro_migrations SET bundle = ? WHERE id = ?',
+                [$bundle, $id]
+            );
+        }
+
+        $fixtures = $this->connection->fetchAll(
+            "SELECT id, class_name FROM oro_migrations_data WHERE class_name LIKE 'OroB2B%'"
+        );
+        foreach ($fixtures as $fixture) {
+            $id = $fixture['id'];
+            $className = $fixture['class_name'];
+            $className = $this->replaceStringValue($className);
+
+            $this->connection->executeQuery(
+                'UPDATE oro_migrations_data SET class_name = ? WHERE id = ?',
+                [$className, $id]
+            );
+        }
+    }
+
+    protected function updateEntityConfigTable()
     {
         $entities = $this->connection->fetchAll('SELECT id, class_name, data FROM oro_entity_config');
         foreach ($entities as $entity) {
@@ -78,20 +126,12 @@ class UpdateNamespacesAndTranslationsQuery extends ParametrizedMigrationQuery
 
                 $sql = 'UPDATE oro_entity_config SET class_name = ?, data = ? WHERE id = ?';
                 $parameters = [$className, $data, $id];
-
-                $this->logQuery($logger, $sql, $parameters);
-                if (!$dryRun) {
-                    $this->connection->executeUpdate($sql, $parameters);
-                }
+                $this->connection->executeUpdate($sql, $parameters);
             }
         }
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
-     */
-    protected function updateEntityConfigFieldTable(LoggerInterface $logger, $dryRun)
+    protected function updateEntityConfigFieldTable()
     {
         $fields = $this->connection->fetchAll('SELECT id, data FROM oro_entity_config_field');
         foreach ($fields as $field) {
@@ -106,20 +146,12 @@ class UpdateNamespacesAndTranslationsQuery extends ParametrizedMigrationQuery
 
                 $sql = 'UPDATE oro_entity_config_field SET data = ? WHERE id = ?';
                 $parameters = [$data, $id];
-
-                $this->logQuery($logger, $sql, $parameters);
-                if (!$dryRun) {
-                    $this->connection->executeUpdate($sql, $parameters);
-                }
+                $this->connection->executeUpdate($sql, $parameters);
             }
         }
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
-     */
-    protected function updateEntityConfigIndexValueTable(LoggerInterface $logger, $dryRun)
+    protected function updateEntityConfigIndexValueTable()
     {
         $indexValues = $this->connection->fetchAll(
             "SELECT id, value FROM oro_entity_config_index_value WHERE code = 'module_name'"
@@ -133,11 +165,7 @@ class UpdateNamespacesAndTranslationsQuery extends ParametrizedMigrationQuery
             if ($value !== $originalValue) {
                 $sql = 'UPDATE oro_entity_config_index_value SET value = ? WHERE id = ?';
                 $parameters = [$value, $id];
-
-                $this->logQuery($logger, $sql, $parameters);
-                if (!$dryRun) {
-                    $this->connection->executeUpdate($sql, $parameters);
-                }
+                $this->connection->executeUpdate($sql, $parameters);
             }
         }
     }
