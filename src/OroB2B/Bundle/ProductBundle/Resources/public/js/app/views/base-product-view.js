@@ -30,7 +30,20 @@ define(function(require) {
             this.initLayout({
                 productModel: this.model
             });
+
+            this.model.on('change:unit', _.debounce(function(model, value) {
+                this.getElement('unit')
+                    .val(value)
+                    .trigger('change')
+            }, 50), this);
+
+            this.model.on('change:quantity', _.debounce(function(model, value) {
+                this.getElement('quantity')
+                    .inputWidget('val', value)
+                    .trigger('change')
+            }, 50), this);
         },
+
 
         initModel: function(options) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
