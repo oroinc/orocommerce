@@ -1,0 +1,17 @@
+.tab-collection {
+  li {
+    > a {
+      padding-right: 7px;
+    }
+    > a:after {
+      visibility: hidden;
+      content: '*';
+      margin-left: 1px;
+    }
+    &.changed {
+      > a:after{
+        visibility: visible;
+      }
+    }
+  }
+}
