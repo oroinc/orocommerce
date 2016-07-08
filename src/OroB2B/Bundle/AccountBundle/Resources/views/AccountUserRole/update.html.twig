@@ -32,16 +32,18 @@
     {{ parent() }}
 
     {{ UI.cancelButton(path('orob2b_account_account_user_role_index')) }}
-    {% set html = UI.buttonType({'type': 'button', 'class': 'btn-success role-submit', 'label': 'Save and Close'|trans}) %}
+    {% set html = UI.saveAndCloseButton({
+        'type': 'button',
+        'class': 'btn-success role-submit',
+        'route': 'orob2b_account_account_user_role_view',
+        'params': {'id': '$id'}
+    }) %}
     {% if entity.id or resource_granted('orob2b_account_account_user_role_update') %}
         {# button attribute 'action' is avoided because of there is unacceptable submit binding on .action-button in init-layout.js #}
-        {% set html = html ~ UI.buttonType({
-            'type': 'button',
+        {% set html = html ~ UI.saveAndStayButton({
             'class': 'btn-success main-group role-submit',
-            'label': 'Save'|trans,
-            'data': {
-                'action': 'save_and_stay'
-            }
+            'route': 'orob2b_account_account_user_role_update',
+            'params': {'id': '$id'}
         }) %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -100,33 +102,31 @@
         }
     ] %}
 
-    {% for name, config in form.vars.privilegeConfig %}
-        {% set dataBlocks = dataBlocks|merge([{
-            'title': config.label|trans,
-            'subblocks': [
-                {
-                    'title': '',
-                    'useSpan': false,
-                    'data': [
-                        form_widget(form.children[name])
-                    ]
-                }
-            ]
-        }]) %}
-    {% endfor %}
+    {% set rolePermissionsGrid %}
+        <div {{ UI.renderPageComponentAttributes({
+            module: 'orouser/js/components/role/entity-category-tabs-component',
+            options: tabsOptions
+        }) }}></div>
+        {{ dataGrid.renderGrid('account-user-role-permission-grid', {role: entity}, { cssClass: 'inner-permissions-grid' }) }}
+        <div {{ UI.renderPageComponentAttributes({
+            module: 'orouser/js/components/role/capability-set-component',
+            options: capabilitySetOptions
+        }) }}></div>
+    {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title' : 'orob2b.account.accountuser.entity_plural_label'|trans,
-        'subblocks': [{
-            'title' : null,
-            'useSpan': false,
-            'data' : [
-                form_widget(form.appendUsers, {'id': 'roleAppendUsers'}),
-                form_widget(form.removeUsers, {'id': 'roleRemoveUsers'}),
-                dataGrid.renderGrid('account-account-users-grid-update', {role: entity.id, account: entity.account.id|default(null)}, { cssClass: 'inner-grid' })
-            ]
-        }]
-    }] ) %}
+        'title': form.vars.privilegeConfig['entity'].label|trans,
+        'subblocks': [
+            {
+                'title': '',
+                'useSpan': false,
+                'data': [
+                    rolePermissionsGrid
+                ]
+            }
+        ]
+    }])
+    %}
 
     {% set data = {
         'formErrors': form_errors(form),
