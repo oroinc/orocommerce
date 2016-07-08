@@ -42,10 +42,12 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
     public function getVirtualRelationQuery($className, $fieldName)
     {
         $relations = $this->getVirtualRelations($className);
+        
+        if (array_key_exists($fieldName, $relations)) {
+            return $relations[$fieldName]['query'];
+        }
 
-        return isset($relations[$fieldName])
-            ? $relations[$fieldName]['query']
-            : [];
+        return [];
     }
     
     /**
@@ -58,7 +60,7 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
         if ($className == Product::class) {
             $productAttributeFieldNames = $this->getProductAttributesFieldNames();
             foreach ($productAttributeFieldNames as $label => $fieldName) {
-                $relations[$fieldName] = $this->getRelationDefinition($className, $label, $fieldName);
+                $relations[$fieldName] = $this->getRelationDefinition($label, $fieldName);
             }
         }
 
@@ -93,19 +95,18 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
     }
 
     /**
-     * @param string $className
      * @param string $label
      * @param string $fieldName
      * @return array
      */
-    protected function getRelationDefinition($className, $label, $fieldName)
+    protected function getRelationDefinition($label, $fieldName)
     {
         $priceAlias = $fieldName.'Price';
         $priceAttributeAlias = $fieldName.'PriceAttribute';
 
         return [
             'label' => $label,
-            'relation_type' => 'OneToMany',
+            'relation_type' => 'manyToOne',
             'related_entity_name' => PriceAttributeProductPrice::class,
             'target_join_alias' => $priceAlias,
             'query' => [

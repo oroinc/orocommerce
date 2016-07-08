@@ -1,4 +1,14 @@
 orob2b.pricing:
+    priceattributeproductprice:
+        id.label: Id
+        currency.label: Currency
+        product_sku.label: Product SKU
+        quantity.label: Quantity
+        value.label: Value
+        price_list.label: Price List
+        product.label: Product
+        unit.label: Unit
+
     priceAttribute:
         unit.label: Unit
         withoutPrice: N/A

@@ -129,7 +129,7 @@ class ProductVirtualRelationProviderTest extends \PHPUnit_Framework_TestCase
                 [
                     'msrp' => [
                         'label' => 'MSRP',
-                        'relation_type' => 'OneToMany',
+                        'relation_type' => 'manyToOne',
                         'related_entity_name' => 'OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
                         'target_join_alias' => 'msrpPrice',
                         'query' => [
@@ -153,7 +153,7 @@ class ProductVirtualRelationProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     'map' => [
                         'label' => 'MAP',
-                        'relation_type' => 'OneToMany',
+                        'relation_type' => 'manyToOne',
                         'related_entity_name' => 'OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
                         'target_join_alias' => 'mapPrice',
                         'query' => [
