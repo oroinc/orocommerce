@@ -42,10 +42,11 @@ define(function(require) {
                         {'id': address.get('id'), 'entityId': options.entityId}
                     );
                 },
+                addressMapOptions: {'phone': 'phone'},
+                useFormDialog: options.useFormDialog,
                 allowToRemovePrimary: true,
                 confirmation: true,
-                addressMapOptions: {'phone': 'phone'},
-                useFormDialog: options.useFormDialog
+                confirmationComponent: 'orob2bfrontend/js/app/components/delete-confirmation'
             });
 
             addressBook.getCollection().reset(JSON.parse(options.currentAddresses));
