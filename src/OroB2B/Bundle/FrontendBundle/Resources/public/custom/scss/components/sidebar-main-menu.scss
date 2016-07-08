@@ -1,0 +1,36 @@
+.top-nav {
+    position: relative;
+    max-height: none;
+    border-bottom: 1px solid $theme-lighter-gray-color;
+
+    @media (max-width: $screen-sm) {
+        display: none;
+    }
+
+    .container-fluid {
+        position: relative;
+    }
+
+    &__list {
+        @include list-normalize();
+        display: initial;
+        @include clearfix();
+    }
+
+    &__item {
+        display: block;
+        min-height: 49px;
+        flex-grow: 1;
+    }
+
+    &__link,
+    .top-nav__list__item__link { //todo: find usage in backend
+        display: block;
+        //min-height: 49px;
+        //padding: 14px 0;
+        text-align: left;
+    }
+
+
+
+}

@@ -5,7 +5,7 @@
 
     {% for category in categories -%}
         {% set hasSublist = category.childCategories is not empty %}
-        <li class="top-nav__item {{ hasSublist ? "top-nav__item--ancestor": "" }}" {{ hasSublist ? "data-dropdown-trigger": "" }}>
+        <li  data-ilya="true@@" class="top-nav__item {{ hasSublist ? "top-nav__item--ancestor": "" }}" {{ hasSublist ? "data-dropdown-trigger": "" }}>
             {% do block|merge_context({'category': category}) %}
             {{ block('container_widget') }}
         </li>

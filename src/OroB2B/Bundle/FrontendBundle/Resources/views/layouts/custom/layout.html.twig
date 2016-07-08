@@ -1,0 +1,106 @@
+{% extends 'OroLayoutBundle:Layout:div_layout.html.twig' %}
+
+{% block datagrid_widget %}
+    {% set grid_render_parameters = {
+        viewLoading: true
+    }|merge(grid_render_parameters) %}
+    {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+    {{ dataGrid.renderGrid(grid_full_name, grid_parameters, grid_render_parameters) }}
+{% endblock %}
+
+{% block block_attributes_underscore %}
+    {% import 'OroB2BFrontendBundle:layouts/default:utils.html.twig' as utils %}
+    {{ utils.underscoreRaw(block('block_attributes_base')) }}
+{%- endblock %}
+
+{% block form_start_widget %}
+    {% if attr.id is not defined %}
+        {% set attr = attr|merge({
+            id: form.vars.id
+        }) %}
+    {% endif %}
+    {{ parent() }}
+{% endblock %}
+
+{% block form_end_widget %}
+    {{ parent() }}
+    {{ oro_form_js_validation(form, js_validation_options|default({})) }}
+{% endblock %}
+
+{#Action Buttons#}
+
+{% block action_line_buttons_widget %}
+    {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
+    <ul{{ block('block_attributes') }}>
+        {% for action in actions %}
+            <li>
+                <a {{ _layout.get_action_attributes(action, entityClass, entityId) }}>
+                    {% if action.icon is not empty %}
+                        <i class="{{ action.icon }} {{ action.buttonOptions.iCss|default('') }}"></i>
+                    {% endif %}
+                    {{ action.label|trim }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block action_combined_buttons_widget %}
+    {% set actionsCount = actions|length %}
+    {% if actionsCount > 0 %}
+        {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
+        {% set hasVariants = actionsCount > 1 %}
+        {% set additionalCss = "btn" %}
+        {% if block.parent.vars.id == 'datagrid_toolbar_button_container' %}
+            {% set additionalCss = additionalCss ~ " btn_xsm btn-dark btn-block oq-group-btn" %}
+        {% else %}
+            {% set additionalCss = additionalCss ~ " theme-btn btn-orange" %}
+        {% endif %}
+        {% if hasVariants %}
+            {% set additionalCss = additionalCss ~ " btn_has-dropdown btn_has-dropdown_xlg" %}
+        {% endif %}
+        {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
+        <div{{ block('block_attributes') }}>
+            {% set action = actions|first %}
+            {% set primaryButtonCss = 'direct-link ' ~ action.buttonOptions.class|default('') ~ " "  ~ params.buttonOptions.aCss|default('') %}
+            <a {{ _layout.get_action_attributes(action, entityClass, entityId, primaryButtonCss) }}>
+                {{ action.label|trim }}
+            </a>
+
+            {% if hasVariants %}
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <i class="cf-arrow_drop_down"></i>
+            </a>
+
+            <ul class="dropdown-menu">
+                {% for action in actions|slice(1) %}
+                <li>
+                    <a {{ _layout.get_action_attributes(action, entityClass, entityId, '') }}>
+                        {{ action.label|trim }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block button_widget %}
+    {% if style|default('') == 'auto' %}
+        {% if action == 'submit' %}
+            {% set style = 'orange' %}
+        {% else %}
+            {% set style = action == 'reset' ? 'dark' : 'gray' %}
+        {% endif %}
+    {% endif %}
+    {% if style is not defined %}
+        {% set add_class = '' %}
+    {% else %}
+        {% set add_class = ' btn theme-btn btn-' ~ style %}
+    {% endif %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ add_class
+    }) %}
+    {{ parent() }}
+{% endblock %}

@@ -1,0 +1,34 @@
+layout:
+    actions:
+        # moving main_menu into a separate container...
+        - '@move':
+            id: main_menu
+            parentId: main_menu_container_new
+#            siblingId: account_sidebar
+            prepend: true
+        # ... then moving that container to sidebar
+        - '@move':
+            id: main_menu_container_new
+            parentId: sidebar_left
+            siblingId: account_sidebar
+            prepend: false
+
+        # moving main_menu into a separate container...
+        - '@move':
+            id: main_menu_container
+            parentId: main_menu_container_categories
+#            siblingId: account_sidebar
+            prepend: true
+        # ... then moving that container to sidebar
+        - '@move':
+            id: main_menu_container_categories
+            parentId: sidebar_left
+            siblingId: account_sidebar
+            prepend: false
+
+        - '@move':
+            id: main_menu_shopping_lists_wrapper
+            parentId: top_nav_menu_container
+#            siblingId: account_sidebar
+            prepend: true
+

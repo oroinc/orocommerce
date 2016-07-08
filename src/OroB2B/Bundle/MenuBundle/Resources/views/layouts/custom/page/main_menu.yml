@@ -1,0 +1,18 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroB2BMenuBundle:layouts:custom/page/main_menu.html.twig'
+        - '@addTree':
+            items:
+                main_menu_container_new:
+                    blockType: container
+                main_menu_container_categories:
+                    blockType: container
+            tree:
+                header:
+                    main_menu_container_new: ~
+                    main_menu_container_categories: ~
+#                    main_menu_container: # тут категории товаров
+#                        main_menu: ~      # тут contact + about
+#                        main_menu_widgets:
+                            #main_menu_messages_widget: ~
