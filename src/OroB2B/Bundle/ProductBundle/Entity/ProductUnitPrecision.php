@@ -107,6 +107,11 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      */
     protected $sell;
 
+    public function __clone()
+    {
+        $this->id = null;
+    }
+
     /**
      * @return int
      */

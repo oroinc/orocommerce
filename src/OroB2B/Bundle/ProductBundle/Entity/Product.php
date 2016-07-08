@@ -648,7 +648,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * Get unitPrecisions by unit code
      *
      * @param string $unitCode
-     * @return ProductUnitPrecision
+     * @return ProductUnitPrecision|null
      */
     public function getUnitPrecision($unitCode)
     {
@@ -997,11 +997,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function setPrimaryUnitPrecision($primaryUnitPrecision)
     {
-        $primaryUnitPrecision->setConversionRate(1.0)->setSell(true);
-        $this->primaryUnitPrecision = $primaryUnitPrecision;
         if ($primaryUnitPrecision) {
+            $primaryUnitPrecision->setConversionRate(1.0)->setSell(true);
             $this->addUnitPrecision($primaryUnitPrecision);
+            $this->primaryUnitPrecision = $this->getUnitPrecision($primaryUnitPrecision->getProductUnitCode());
+        } else {
+            $this->primaryUnitPrecision = $primaryUnitPrecision;
         }
+
         return $this;
     }
 
