@@ -6,7 +6,10 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -20,8 +23,7 @@ class PriceListProductEntityListenerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListsToProducts',
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+            LoadProductPrices::class
         ]);
     }
 
@@ -29,10 +31,15 @@ class PriceListProductEntityListenerTest extends WebTestCase
     {
         $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceListToProduct');
 
-        /** @var PriceListToProduct $priceListToProduct */
-        $priceListToProduct = $this->getReference('price_list_1_product_1');
-        $priceList = $priceListToProduct->getPriceList();
-        $product = $priceListToProduct->getProduct();
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $priceListToProduct = $em->getRepository('OroB2BPricingBundle:PriceListToProduct')
+            ->findOneBy([
+                'product' => $product,
+                'priceList' => $priceList
+            ]);
 
         // Check prices for this relation
         $this->assertPricesCount($priceList, $product, 4);
