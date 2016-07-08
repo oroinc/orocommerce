@@ -95,7 +95,7 @@ class PriceList extends BasePriceList
 
     /**
      * @var string
-     * @ORM\Column(name="product_assignment_rule", type="string", length=255, nullable=true)
+     * @ORM\Column(name="product_assignment_rule", type="text", nullable=true)
      */
     protected $productAssignmentRule;
 

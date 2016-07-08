@@ -675,6 +675,7 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler'
         arguments:
             - '@doctrine'
+            - '@orob2b_pricing.expression.parser'
 
     orob2b_pricing.builder.product_price_builder:
         class: 'OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder'

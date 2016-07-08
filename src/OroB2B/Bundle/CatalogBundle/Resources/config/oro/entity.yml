@@ -1,11 +1,11 @@
 oro_entity:
     virtual_relations:
-        OroCRM\Bundle\CampaignBundle\Entity\Campaign:
-            trackingEvent:
-                relation_type: oneToMany
-                related_entity_name: Oro\Bundle\TrackingBundle\Entity\TrackingEvent
-                label: oro.tracking.trackingevent.entity_label
+        OroB2B\Bundle\ProductBundle\Entity\Product:
+            category:
+                relation_type: manyToOne
+                related_entity_name: OroB2B\Bundle\CatalogBundle\Entity\Category
+                label: orob2b.catalog.category.entity_label
                 query:
                     join:
                         left:
-                            - { join: 'Oro\Bundle\TrackingBundle\Entity\TrackingEvent', alias: trackingEvent, conditionType: 'WITH', condition: 'trackingEvent.code = entity.code' }
+                            - { join: 'OroB2B\Bundle\CatalogBundle\Entity\Category', alias: category, conditionType: 'WITH', condition: 'entity MEMBER OF category.products' }

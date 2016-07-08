@@ -14,9 +14,6 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
             - Valid: ~
         priceRules:
             - Valid: ~
-        productAssignmentRule:
-            - Length:
-                max: 255
 
 OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
     constraints:

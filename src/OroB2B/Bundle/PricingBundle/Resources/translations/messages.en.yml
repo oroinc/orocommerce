@@ -84,7 +84,7 @@ orob2b.pricing:
         product.label: Product
         product_sku.label: Product SKU
         product_name.label: Product name
-        price_list.label: Proce List
+        price_list.label: Price List
         currency.label: Currency
         quantity.label: Quantity
         value.label: Value

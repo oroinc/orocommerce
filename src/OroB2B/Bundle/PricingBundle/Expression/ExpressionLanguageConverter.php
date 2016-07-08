@@ -20,7 +20,7 @@ class ExpressionLanguageConverter
     /**
      * @param Node\Node $node
      * @param array $namesMapping
-     * @return BinaryNode|NameNode|ValueNode
+     * @return NodeInterface
      */
     protected function convertExpressionLanguageNode(Node\Node $node, array $namesMapping = [])
     {
