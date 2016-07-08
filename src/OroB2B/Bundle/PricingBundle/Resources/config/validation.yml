@@ -17,6 +17,7 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
         productAssignmentRule:
             - Length:
                 max: 255
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\DefinedConditionAttributes: ~
 
 OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
     constraints:
@@ -64,10 +65,12 @@ OroB2B\Bundle\PricingBundle\Entity\PriceRule:
             - NotBlank: ~
             - Length:
                 max: 255
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\DefinedConditionAttributes: ~
         rule:
             - NotBlank: ~
             - Length:
                 max: 255
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\DefinedRuleAttributes: ~
         priority:
             - NotBlank: ~
             - Type:

@@ -149,7 +149,7 @@ class PriceRuleAttributeProvider
         $metadata = $this->registry
             ->getManagerForClass($class)
             ->getClassMetadata($class);
-
+        $names = $metadata->getAssociationNames();
         foreach ($metadata->getFieldNames() as $fieldName) {
             $dataType = $metadata->getTypeOfField($fieldName);
             $field = ['name' => $fieldName, 'type' => self::FIELD_TYPE_NATIVE, 'data_type' => $dataType];
