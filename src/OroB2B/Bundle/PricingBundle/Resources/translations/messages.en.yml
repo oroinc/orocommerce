@@ -10,7 +10,6 @@ orob2b.pricing:
         price_list.label: Price List
         product.label: Product
         unit.label: Unit
-        prices.label: Prices
 
     priceAttribute:
         unit.label: Unit
@@ -63,6 +62,7 @@ orob2b.pricing:
         field_name.label: Field Name
         id.label: Id
         currencies.label: Currencies
+        prices.label: Prices
 
     pricerule:
         entity_label: Price Calculation Rule
