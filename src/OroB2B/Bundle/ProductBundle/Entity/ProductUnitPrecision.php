@@ -256,7 +256,11 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      */
     public function getProductUnitCode()
     {
-        return $this->getUnit()->getCode();
+        if ($unit = $this->getUnit()) {
+            return $unit->getCode();
+        } else {
+            return null;
+        }
     }
 
     /**
