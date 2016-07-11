@@ -109,7 +109,7 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider'
         arguments:
             - '@doctrine'
-            - '@oro_query_designer.virtual_field_provider'
+            - '@oro_entity.entity_field_provider'
         calls:
             - [addSupportedClass, ['%orob2b_product.entity.product.class%']]
             - [addSupportedClass, ['%orob2b_pricing.entity.product_price.class%']]
