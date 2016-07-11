@@ -54,11 +54,11 @@ class CategoryDefaultProductOptions
      */
     public function getUnitPrecision()
     {
-        if ($this->unitPrecision) {
-            if ($this->unit !== $this->unitPrecision->getUnit() ||
-                $this->precision !== $this->unitPrecision->getPrecision()) {
+        if ($this->unitPrecision &&
+           ($this->unit !== $this->unitPrecision->getUnit() ||
+            $this->precision !== $this->unitPrecision->getPrecision())) {
                 $this->loadUnitPrecision();
-            }
+
         }
         return $this->unitPrecision;
     }
@@ -106,6 +106,6 @@ class CategoryDefaultProductOptions
      */
     public function __toString()
     {
-        return (string) 'defaultProductOptions_' . $this->getId();
+        return (string)$this->getId();
     }
 }

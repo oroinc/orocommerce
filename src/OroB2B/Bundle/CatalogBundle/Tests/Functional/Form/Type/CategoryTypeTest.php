@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Form\Type;
 
-use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Config\FileLocator;
@@ -17,6 +16,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
+use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**

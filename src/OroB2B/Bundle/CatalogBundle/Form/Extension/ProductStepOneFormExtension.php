@@ -18,7 +18,10 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
      * @var CategoryDefaultProductUnitProvider
      */
     protected $defaultProductUnitProvider;
-    
+
+    /**
+     * @param CategoryDefaultProductUnitProvider $defaultProductUnitProvider
+     */
     public function __construct(CategoryDefaultProductUnitProvider $defaultProductUnitProvider)
     {
         $this->defaultProductUnitProvider = $defaultProductUnitProvider;
@@ -64,7 +67,7 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
         $category = $form->get('category')->getData();
 
         if ($category instanceof Category) {
-            $this->defaultProductUnitProvider->setCategoryId($category->getId());
+            $this->defaultProductUnitProvider->setCategory($category);
         }
     }
 }

@@ -3,7 +3,6 @@ define(function(require) {
 
     var CategoryUnitLimitationsView,
         BaseView = require('oroui/js/app/views/base/view'),
-        $ = require('jquery'),
         _ = require('underscore');
 
     CategoryUnitLimitationsView = BaseView.extend({
@@ -39,6 +38,19 @@ define(function(require) {
             } else {
                 this.$input.attr('disabled', false);
             }
+        },
+
+        /**
+         * {@inheritDoc}
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$select.off('change'+ this.eventNamespace());
+
+            CategoryUnitLimitationsView.__super__.dispose.call(this);
         }
     });
 

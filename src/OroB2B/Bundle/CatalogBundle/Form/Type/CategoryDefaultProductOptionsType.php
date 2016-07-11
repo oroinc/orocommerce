@@ -6,8 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-
 class CategoryDefaultProductOptionsType extends AbstractType
 {
     const NAME = 'orob2b_catalog_category_default_product_options';

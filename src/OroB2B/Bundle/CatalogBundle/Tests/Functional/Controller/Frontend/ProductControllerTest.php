@@ -83,22 +83,21 @@ class ProductControllerTest extends WebTestCase
         ];
     }
 
-
     public function testSidebarAction()
     {
-        $categoryId = 2;
+        $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
                 static::SIDEBAR_ROUTE,
-                [RequestProductHandler::CATEGORY_ID_KEY => $categoryId]
+                [RequestProductHandler::CATEGORY_ID_KEY => $secondLevelCategory->getId()]
             ),
             ['_widgetContainer' => 'widget']
         );
         $json = $crawler->filterXPath('//*[@data-page-component-options]')->attr('data-page-component-options');
         $this->assertJson($json);
         $arr = json_decode($json, true);
-        $this->assertEquals($arr['defaultCategoryId'], $categoryId);
+        $this->assertEquals($arr['defaultCategoryId'], $secondLevelCategory->getId());
         $this->assertCount(8, $arr['data']);
     }
 }

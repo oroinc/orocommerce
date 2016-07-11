@@ -40,7 +40,6 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
  * )
  * @ORM\HasLifecycleCallbacks()
  *
- * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class Category extends ExtendCategory

@@ -11,16 +11,16 @@ use OroB2B\Bundle\ProductBundle\Provider\AbstractDefaultProductUnitProvider;
 class CategoryDefaultProductUnitProvider extends AbstractDefaultProductUnitProvider
 {
     /**
-     * @var int
+     * @var Category
      */
-    protected $categoryId;
+    protected $category;
 
     /**
-     * @param int $categoryId
+     * @param Category $category
      */
-    public function setCategoryId($categoryId)
+    public function setCategory(Category $category = null)
     {
-        $this->categoryId = $categoryId;
+        $this->category = $category;
     }
 
     /**
@@ -28,28 +28,24 @@ class CategoryDefaultProductUnitProvider extends AbstractDefaultProductUnitProvi
      */
     public function getDefaultProductUnitPrecision()
     {
-        if (!$this->categoryId) {
+        if (!$this->category) {
             return null;
         } else {
-            /** @var CategoryRepository $categoryRepository */
-            $categoryRepository = $this->getRepository('OroB2BCatalogBundle:Category');
-            /** @var Category $category */
-            $category = $categoryRepository->findOneById($this->categoryId);
             do {
                 /** @var CategoryUnitPrecision $categoryUnitPrecision */
                 $categoryUnitPrecision = null;
-                if ($category->getDefaultProductOptions()) {
-                    $categoryUnitPrecision = $category->getDefaultProductOptions()->getUnitPrecision();
+                if ($this->category->getDefaultProductOptions()) {
+                    $categoryUnitPrecision = $this->category->getDefaultProductOptions()->getUnitPrecision();
                 }
 
-                if (null != $categoryUnitPrecision && null != $categoryUnitPrecision->getUnit()) {
+                if (null !== $categoryUnitPrecision && null !== $categoryUnitPrecision->getUnit()) {
                     return $this->createProductUnitPrecision(
                         $categoryUnitPrecision->getUnit(),
                         $categoryUnitPrecision->getPrecision()
                     );
                 }
-                $category = $category->getParentCategory();
-            } while (null != $category);
+                $this->category = $this->category->getParentCategory();
+            } while (null !== $this->category);
         }
         return null;
     }

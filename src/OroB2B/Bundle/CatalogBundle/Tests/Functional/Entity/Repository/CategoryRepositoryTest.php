@@ -105,6 +105,6 @@ class CategoryRepositoryTest extends WebTestCase
                 return $category;
             }
         }
-        return false;
+        return null;
     }
 }

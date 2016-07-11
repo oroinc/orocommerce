@@ -115,14 +115,11 @@ class ProductControllerTest extends WebTestCase
         $systemDefaultUnit = $configManager->get('orob2b_product.default_unit');
         $systemDefaultPrecision = $configManager->get('orob2b_product.default_unit_precision');
 
-        $reflectionClass =
-            new \ReflectionClass('OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData');
-        $constName = $reflectionClass->getConstant($category);
-        $categoryReference = $constName ? $this->getReference($constName) : null;
+        $categoryReference = $category ? $this->getReference($category) : null;
 
         $systemPrecision = [
             'unit' => $systemDefaultUnit,
-            'precision' =>$systemDefaultPrecision
+            'precision' => $systemDefaultPrecision
         ];
         
         /** @var CategoryUnitPrecision $unitPrecision */
@@ -175,15 +172,15 @@ class ProductControllerTest extends WebTestCase
                 'expectedData'  => 'systemPrecision'
             ],
             'CategoryWithPrecision' => [
-                'category' => 'SECOND_LEVEL1',
+                'category' => LoadCategoryData::SECOND_LEVEL1,
                 'expectedData'  => 'categoryPrecision'
             ],
             'CategoryWithParentPrecision' => [
-                'category' => 'THIRD_LEVEL1',
+                'category' => LoadCategoryData::THIRD_LEVEL1,
                 'expectedData'  => 'categoryPrecision'
             ],
             'CategoryWithNoPrecision' => [
-                'category' => 'FIRST_LEVEL',
+                'category' => LoadCategoryData::FIRST_LEVEL,
                 'expectedData'  => 'systemPrecision'
             ],
         ];

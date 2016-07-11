@@ -11,7 +11,6 @@ use OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class CategoryTest extends \PHPUnit_Framework_TestCase

@@ -15,10 +15,7 @@ class LoadCategoryUnitPrecisionData extends AbstractFixture implements Dependent
      * @var array
      */
     protected static $relations = [
-        LoadCategoryData::FIRST_LEVEL => null,
         LoadCategoryData::SECOND_LEVEL1 => 'product_unit.box',
-        LoadCategoryData::THIRD_LEVEL1 => null,
-        LoadCategoryData::FOURTH_LEVEL1 => null,
     ];
 
     /** {@inheritdoc} */
@@ -36,15 +33,13 @@ class LoadCategoryUnitPrecisionData extends AbstractFixture implements Dependent
     public function load(ObjectManager $manager)
     {
         foreach (self::$relations as $categoryReference => $productUnitReference) {
-            if ($productUnitReference) {
-                $categoryUnitPrecision = new CategoryUnitPrecision();
-                $categoryUnitPrecision->setUnit($this->getReference($productUnitReference))->setPrecision(0);
+            $categoryUnitPrecision = new CategoryUnitPrecision();
+            $categoryUnitPrecision->setUnit($this->getReference($productUnitReference))->setPrecision(0);
 
-                $defProductOptions = new CategoryDefaultProductOptions();
-                $defProductOptions->setUnitPrecision($categoryUnitPrecision);
+            $defProductOptions = new CategoryDefaultProductOptions();
+            $defProductOptions->setUnitPrecision($categoryUnitPrecision);
 
-                $this->getReference($categoryReference)->setDefaultProductOptions($defProductOptions);
-            }
+            $this->getReference($categoryReference)->setDefaultProductOptions($defProductOptions);
         }
 
         $manager->flush();

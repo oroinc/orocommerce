@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\CatalogBundle\Tests\Selenium\Pages;
 use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPage;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class Categories extends AbstractPage
