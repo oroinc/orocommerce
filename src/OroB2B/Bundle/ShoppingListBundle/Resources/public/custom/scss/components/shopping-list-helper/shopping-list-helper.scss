@@ -6,7 +6,7 @@
         transition: opacity .2s;
     }
 
-    &:checked + .shopping-list-paranja {
+    &:checked + .shopping-list-overlay {
         display: none;
     }
 }
