@@ -440,24 +440,19 @@ class ProductControllerTest extends WebTestCase
     {
         $product = $this->getProductDataBySku(self::UPDATED_SKU);
         $id = $product->getId();
-        $localization = $this->getLocalization();
-        $localizedName = $this->getLocalizedName($product, $localization);
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
+        $formValues = $form->getPhpValues();
 
-        $form['orob2b_product[primaryUnitPrecision][unit]'] = self::SECOND_UNIT_CODE;
-        $form['orob2b_product[primaryUnitPrecision][precision]'] = self::SECOND_UNIT_PRECISION;
+        $additionalUnit = array_pop($formValues['orob2b_product']['additionalUnitPrecisions']);
+        $formValues['orob2b_product']['additionalUnitPrecisions'][] = $formValues['orob2b_product']['primaryUnitPrecision'];
 
-        $form['orob2b_product[additionalUnitPrecisions][0][unit]'] = self::FIRST_UNIT_CODE;
-        $form['orob2b_product[additionalUnitPrecisions][0][precision]'] = self::FIRST_UNIT_PRECISION;
-        $form['orob2b_product[additionalUnitPrecisions][1][unit]'] = self::THIRD_UNIT_CODE;
-        $form['orob2b_product[additionalUnitPrecisions][1][precision]'] = self::THIRD_UNIT_PRECISION;
+        $formValues['orob2b_product']['primaryUnitPrecision'] = $additionalUnit;
 
-        $this->client->followRedirects(true);
 
-        $this->client->submit($form);
+        $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -490,8 +485,8 @@ class ProductControllerTest extends WebTestCase
             ]
         ];
         $expectedUnitPrecisions = [
-            ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION],
             ['unit' => self::FIRST_UNIT_FULL_NAME, 'precision' => self::FIRST_UNIT_PRECISION],
+            ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION],
             ['unit' => self::THIRD_UNIT_FULL_NAME, 'precision' => self::THIRD_UNIT_PRECISION],
         ];
         $this->assertEquals(
