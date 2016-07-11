@@ -14,10 +14,14 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
 {
-    /** @var DoctrineHelper */
+    /**
+     * @var DoctrineHelper
+     */
     protected $doctrineHelper;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $virtualFields = [];
 
     /**
@@ -42,14 +46,14 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
     public function getVirtualRelationQuery($className, $fieldName)
     {
         $relations = $this->getVirtualRelations($className);
-        
+
         if (array_key_exists($fieldName, $relations)) {
             return $relations[$fieldName]['query'];
         }
 
         return [];
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -72,7 +76,7 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
      */
     public function getTargetJoinAlias($className, $fieldName, $selectFieldName = null)
     {
-        return $fieldName.'Price';
+        return $fieldName . 'Price';
     }
 
     /**
@@ -91,6 +95,7 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
     {
         /** @var PriceAttributePriceListRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(PriceAttributePriceList::class);
+
         return $repository->getFieldNames();
     }
 
@@ -101,8 +106,8 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
      */
     protected function getRelationDefinition($label, $fieldName)
     {
-        $priceAlias = $fieldName.'Price';
-        $priceAttributeAlias = $fieldName.'PriceAttribute';
+        $priceAlias = $fieldName . 'Price';
+        $priceAttributeAlias = $fieldName . 'PriceAttribute';
 
         return [
             'label' => $label,
@@ -116,17 +121,17 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
                             'join' => PriceAttributeProductPrice::class,
                             'alias' => $priceAlias,
                             'conditionType' => Join::WITH,
-                            'condition' => '('. $priceAlias .'.product = entity)'
+                            'condition' => '(' . $priceAlias . '.product = entity)',
                         ],
                         [
                             'join' => PriceAttributePriceList::class,
                             'alias' => $priceAttributeAlias,
                             'conditionType' => Join::WITH,
-                            'condition' => '('. $priceAlias .'.priceList = '. $priceAttributeAlias .')'
-                        ]
-                    ]
-                ]
-            ]
+                            'condition' => '(' . $priceAlias . '.priceList = ' . $priceAttributeAlias . ')',
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }
