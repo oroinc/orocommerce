@@ -63,9 +63,9 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
         $configConnection->beginTransaction();
         try {
             $this->updateMigrationTables();
+            $this->updateAclClassesTable();
             $this->updateEntityConfigTable();
-            $this->updateEntityConfigFieldTable();
-            $this->updateEntityConfigIndexValueTable();
+            $this->updateEntityConfigFieldTables();
             $this->defaultConnection->commit();
             $configConnection->commit();
         } catch (\Exception $e) {
@@ -127,6 +127,22 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
         }
     }
 
+    protected function updateAclClassesTable()
+    {
+        $classes = $this->defaultConnection->fetchAll(
+            "SELECT id, bundle FROM acl_classes WHERE class_type LIKE 'OroB2B%'"
+        );
+        foreach ($classes as $class) {
+            $id = $class['id'];
+            $classType = $class['bundle'];
+            $classType = preg_replace('/^OroB2B/', 'Oro', $classType, 1);
+            $this->defaultConnection->executeQuery(
+                'UPDATE acl_classes SET class_type = ? WHERE id = ?',
+                [$classType, $id]
+            );
+        }
+    }
+
     protected function updateEntityConfigTable()
     {
         $configConnection = $this->configManager->getEntityManager()->getConnection();
@@ -151,7 +167,7 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
         }
     }
 
-    protected function updateEntityConfigFieldTable()
+    protected function updateEntityConfigFieldTables()
     {
         $configConnection = $this->configManager->getEntityManager()->getConnection();
 
@@ -171,11 +187,6 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
                 $configConnection->executeUpdate($sql, $parameters);
             }
         }
-    }
-
-    protected function updateEntityConfigIndexValueTable()
-    {
-        $configConnection = $this->configManager->getEntityManager()->getConnection();
 
         $indexValues = $configConnection->fetchAll(
             "SELECT id, value FROM oro_entity_config_index_value WHERE code = 'module_name'"

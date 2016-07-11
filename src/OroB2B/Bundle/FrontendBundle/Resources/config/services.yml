@@ -113,6 +113,7 @@ services:
         class: 'OroB2B\Bundle\FrontendBundle\CacheWarmer\UpdateNamespacesWarmer'
         arguments:
             - '@doctrine.dbal.default_connection'
+            - '@oro_entity_config.config_manager'
             - '%installed%'
         tags:
             - { name: kernel.cache_warmer, priority: 35 }
