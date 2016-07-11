@@ -33,4 +33,22 @@ class PriceAttributePriceListRepository extends EntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * @return array
+     */
+    public function getFieldNames()
+    {
+        $fieldNames = [];
+        $qb = $this->createQueryBuilder('price_attribute_price_list')
+            ->select('price_attribute_price_list.name, price_attribute_price_list.fieldName');
+        
+        $result = $qb->getQuery()->getArrayResult();
+        
+        foreach ($result as $item) {
+            $fieldNames[$item['name']] = $item['fieldName'];
+        }
+        
+        return $fieldNames;
+    }
 }
