@@ -46,7 +46,7 @@ class PriceListRuleCompiler
         'quantity',
         'productSku',
         'value',
-        'priceRule',
+        'priceRule'
     ];
 
     /**
@@ -127,7 +127,7 @@ class PriceListRuleCompiler
                 $this->expressionParser->parse($rule->getRule()),
                 $qb->expr(),
                 $params,
-                $this->queryConverter->getTableAliasByColumn() // TODO: use another method
+                $this->queryConverter->getTableAliasByColumn()
             )
         ];
         $select = [];

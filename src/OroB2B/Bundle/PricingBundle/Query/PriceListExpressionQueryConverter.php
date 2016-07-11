@@ -89,8 +89,11 @@ class PriceListExpressionQueryConverter extends GroupingOrmQueryConverter
     protected function saveTableAliases($tableAliases)
     {
         foreach ($this->definition['columns'] as $column) {
-            $columnName = $column['name'];
-            $this->tableAliasByColumn[$columnName] = $this->getTableAliasForColumn($columnName);
+            if (array_key_exists('table_identifier', $column)) {
+                $columnName = $column['name'];
+                $tableIdentifier = $column['table_identifier'];
+                $this->tableAliasByColumn[$tableIdentifier] = $this->getTableAliasForColumn($columnName);
+            }
         }
     }
 

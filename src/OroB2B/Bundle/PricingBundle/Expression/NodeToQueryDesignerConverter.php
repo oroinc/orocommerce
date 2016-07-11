@@ -43,26 +43,38 @@ class NodeToQueryDesignerConverter
             if ($subNode instanceof NameNode) {
                 if ($subNode->getContainer() === $source->getEntity()) {
                     if (empty($addedColumns[$subNode->getField()])) {
-                        $definition['columns'][] = ['name' => $subNode->getField()];
+                        $definition['columns'][] = [
+                            'name' => $subNode->getField(),
+                            'table_identifier' => $subNode->getContainer()
+                        ];
                         $addedColumns[$subNode->getField()] = true;
                     }
                 } elseif ($subNode->getContainer() === Category::class) {
                     $field = $subNode->getField() ? : 'id';
                     $path = sprintf('%1$s::products+%1$s::%2$s', Category::class, $field);
                     if (empty($addedColumns[$path])) {
-                        $definition['columns'][] = ['name' => $path];
+                        $definition['columns'][] = [
+                            'name' => $path,
+                            'table_identifier' => $subNode->getContainer()
+                        ];
                         $addedColumns[$path] = true;
                     }
                 } elseif ($subNode->getContainer() === ProductPrice::class) {
                     $path = sprintf('%1$s::product+%1$s::%2$s', ProductPrice::class, $subNode->getField());
                     if (empty($addedColumns[$path])) {
-                        $definition['columns'][] = ['name' => $path];
+                        $definition['columns'][] = [
+                            'name' => $path,
+                            'table_identifier' => $subNode->getContainer()
+                        ];
                         $addedColumns[$path] = true;
                     }
                 }
             } elseif ($subNode instanceof RelationNode) {
                 $path = '';
-                $definition['columns'][] = ['name' => $path];
+                $definition['columns'][] = [
+                    'name' => $path,
+                    'table_identifier' => $subNode->getContainer() . '::' . $subNode->getField()
+                ];
             }
         }
 
