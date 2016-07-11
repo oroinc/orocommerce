@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Integration;
+namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\ImportExport;
 
 use Doctrine\Common\Inflector\Inflector;
 
-use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\ImportExportBundle\Processor\ImportProcessor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -48,8 +47,10 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
         $warehouseInventoryLevelHelper = $this->createStrategyHelper(WarehouseInventoryLevelStrategyHelper::class);
         $productUnitHelper = $this->createStrategyHelper(
             ProductUnitStrategyHelper::class,
-            $warehouseInventoryLevelHelper
+            $warehouseInventoryLevelHelper,
+            true
         );
+
         $warehouseHelper = $this->createStrategyHelper(WarehouseStrategyHelper::class, $productUnitHelper);
         $inventoryStatusHelper = $this->createStrategyHelper(InventoryStatusesStrategyHelper::class, $warehouseHelper);
 
@@ -59,44 +60,28 @@ abstract class BaseWarehouseInventoryLevelImportTestCase extends WebTestCase
         $this->importProcessor->setEntityName(WarehouseInventoryLevel::class);
     }
 
-    protected function createStrategyHelper($class, $successor = null)
+    protected function createStrategyHelper($class, $successor = null, $transformer = false)
     {
-        /** @var WarehouseInventoryLevelStrategyHelperInterface $helper */
-        $helper = new $class(
-            $this->getContainer()->get('oro_importexport.field.database_helper'),
-            $this->getContainer()->get('translator')
-        );
+        if ($transformer) {
+            /** @var WarehouseInventoryLevelStrategyHelperInterface $helper */
+            $helper = new $class(
+                $this->getContainer()->get('oro_importexport.field.database_helper'),
+                $this->getContainer()->get('translator'),
+                $this->getContainer()->get('orob2b_warehouse.transformer.inventory_product_unit')
+            );
+        } else {
+            /** @var WarehouseInventoryLevelStrategyHelperInterface $helper */
+            $helper = new $class(
+                $this->getContainer()->get('oro_importexport.field.database_helper'),
+                $this->getContainer()->get('translator')
+            );
+        }
 
         if ($successor) {
             $helper->setSuccessor($successor);
         }
 
         return $helper;
-    }
-
-    /**
-     * @param $expectedClass
-     * @param $item
-     *
-     * @dataProvider processDataProvider
-     */
-    public function testProcess(array $fieldsMapping = [], array $testData = [])
-    {
-        $context = new Context([]);
-        $this->importProcessor->setImportExportContext($context);
-
-        foreach ($testData as $dataSet) {
-            $context->setValue('itemData', $dataSet['data']);
-            $entity = $this->importProcessor->process($dataSet['data']);
-
-            $this->assertInstanceOf($dataSet['class'], $entity);
-            $this->assertTrue($this->assertFields(
-                $entity,
-                $dataSet['data'],
-                $fieldsMapping,
-                isset($dataSet['options']) ? $dataSet['options'] : []
-            ));
-        }
     }
 
     /**

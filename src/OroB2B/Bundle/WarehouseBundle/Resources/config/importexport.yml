@@ -86,6 +86,7 @@ services:
         arguments:
             - "@oro_importexport.field.database_helper"
             - "@translator"
+            - "@orob2b_warehouse.transformer.inventory_product_unit"
         calls:
              - [setSuccessor, ["@orob2b_warehouse.importexport.strategy_helper.warehouse_inventory_level"]]
 
@@ -105,3 +106,9 @@ services:
             - "@translator"
         calls:
              - [setSuccessor, ["@orob2b_warehouse.importexport.strategy_helper.warehouse"]]
+
+    #Transformer
+    orob2b_warehouse.transformer.inventory_product_unit:
+        class: 'OroB2B\Bundle\WarehouseBundle\Model\Data\ProductUnitTransformer'
+        arguments:
+            - "@orob2b_product.provider.product_units_provider"

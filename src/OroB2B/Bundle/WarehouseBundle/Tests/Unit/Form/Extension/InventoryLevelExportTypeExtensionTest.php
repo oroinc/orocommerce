@@ -1,24 +1,24 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Oro\Bundle\ImportExportBundle\Form\Type\ExportTemplateType;
+use Oro\Bundle\ImportExportBundle\Form\Type\ExportType;
 
-use OroB2B\Bundle\WarehouseBundle\Form\Type\InventoryLevelExportTemplateTypeExtension;
+use OroB2B\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTypeExtension;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
-class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_TestCase
+class InventoryLevelExportTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var InventoryLevelExportTemplateTypeExtension
+     * @var InventoryLevelExportTypeExtension
      */
-    protected $inventoryLevelExportTemplateTypeExtension;
+    protected $inventoryLevelExportTypeExtension;
 
     protected function setUp()
     {
-        $this->inventoryLevelExportTemplateTypeExtension = new InventoryLevelExportTemplateTypeExtension();
+        $this->inventoryLevelExportTypeExtension = new InventoryLevelExportTypeExtension();
     }
 
     public function testBuildFormShouldaddEventListener()
@@ -28,7 +28,7 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_T
         $builder->expects($this->once())
             ->method('addEventListener');
 
-        $this->inventoryLevelExportTemplateTypeExtension->buildForm(
+        $this->inventoryLevelExportTypeExtension->buildForm(
             $builder,
             ['entityName' => WarehouseInventoryLevel::class]
         );
@@ -40,9 +40,9 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_T
 
         $builder->expects($this->once())
             ->method('remove')
-            ->with(ExportTemplateType::CHILD_PROCESSOR_ALIAS);
+            ->with(ExportType::CHILD_PROCESSOR_ALIAS);
 
-        $this->inventoryLevelExportTemplateTypeExtension->buildForm(
+        $this->inventoryLevelExportTypeExtension->buildForm(
             $builder,
             ['entityName' => WarehouseInventoryLevel::class]
         );
@@ -51,8 +51,8 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_T
     public function testBuildFormShouldCreateCorrectChoices()
     {
         $processorAliases = [
-            'orob2b_product.inventory_status_only_export_template',
-            'orob2b_warehouse.inventory_level_export_template'
+            'orob2b_product.export_inventory_status_only',
+            'orob2b_warehouse.detailed_inventory_levels'
         ];
 
         $builder = $this->getBuilderMock();
@@ -72,7 +72,7 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_T
                 );
             }));
 
-        $this->inventoryLevelExportTemplateTypeExtension->buildForm(
+        $this->inventoryLevelExportTypeExtension->buildForm(
             $builder,
             ['entityName' => WarehouseInventoryLevel::class]
         );

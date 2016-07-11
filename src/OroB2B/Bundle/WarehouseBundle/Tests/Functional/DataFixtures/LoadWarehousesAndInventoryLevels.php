@@ -10,6 +10,7 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
@@ -26,7 +27,7 @@ class LoadWarehousesAndInventoryLevels extends AbstractFixture implements Depend
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+            LoadProductUnitPrecisions::class
         ];
     }
 

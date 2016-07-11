@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Integration\DataFixtures;
+namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -12,7 +12,7 @@ use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels as BaseFixture;
 
-class LoadWarehousesAndInventoryLevels extends BaseFixture
+class LoadSingleWarehousesAndInventoryLevels extends BaseFixture
 {
     /**
      * {@inheritdoc}

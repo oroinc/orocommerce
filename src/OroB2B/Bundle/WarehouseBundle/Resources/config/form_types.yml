@@ -15,11 +15,11 @@ services:
             - { name: form.type, alias: orob2b_warehouse_inventory_level_grid }
 
     orob2b_warehouse.form.type.extension.warehouse_inventory_status_export:
-        class: OroB2B\Bundle\WarehouseBundle\Form\Type\InventoryLevelExportTypeExtension
+        class: OroB2B\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTypeExtension
         tags:
             - { name: form.type_extension, alias: oro_importexport_export }
 
     orob2b_warehouse.form.type.extension.warehouse_inventory_level_export_template:
-        class: OroB2B\Bundle\WarehouseBundle\Form\Type\InventoryLevelExportTemplateTypeExtension
+        class: OroB2B\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension
         tags:
             - { name: form.type_extension, alias: oro_importexport_export_template }

@@ -99,11 +99,7 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
             $productEntity->setInventoryStatus($productData['inventoryStatus']);
         }
 
-        if (array_key_exists('quantity', $data)) {
-            $inventoryLevel->setQuantity($data['quantity'] ?: 0);
-        } else {
-            $inventoryLevel->setQuantity(null);
-        }
+        $this->determineQuantity($inventoryLevel, $data);
 
         if (isset($data['warehouse'])) {
             $warehouse = new Warehouse();
@@ -124,6 +120,19 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
         $inventoryLevel->setProductUnitPrecision($productUnitPrecision);
 
         return $inventoryLevel;
+    }
+
+    /**
+     * @param WarehouseInventoryLevel $inventoryLevel
+     * @param array $data
+     */
+    protected function determineQuantity(WarehouseInventoryLevel $inventoryLevel, array $data)
+    {
+        if (array_key_exists('quantity', $data)) {
+            $inventoryLevel->setQuantity($data['quantity'] ?: 0);
+        } else {
+            $inventoryLevel->setQuantity(null);
+        }
     }
 
     /**

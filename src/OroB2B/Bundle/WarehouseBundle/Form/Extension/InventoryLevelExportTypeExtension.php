@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Form\Type;
+namespace OroB2B\Bundle\WarehouseBundle\Form\Extension;
 
 use Oro\Bundle\ImportExportBundle\Form\Type\ExportType;
 

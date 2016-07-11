@@ -68,6 +68,36 @@ orob2b:
                 full: '{0} none|{1} {{ count }} set|]1,Inf]{{ count }} sets'
                 short: '{0} none|{1} {{ count }} set|]1,Inf]{{ count }} sets'
 
+        product_unit.liter:
+            label:
+                full: liter
+                full_plural: liters
+                short: liter
+                short_plural: liters
+            value:
+                full: '{0} none|{1} %count% liter|]1,Inf] %count% liters'
+                short: '{0} none|{1} %count% liter|]1,Inf] %count% liters'
+
+        product_unit.box:
+            label:
+                full: box
+                full_plural: boxes
+                short: box
+                short_plural: boxes
+            value:
+                full: '{0} none|{1} %count% box|]1,Inf] %count% boxes'
+                short: '{0} none|{1} %count% box|]1,Inf] %count% boxes'
+
+        product_unit.bottle:
+            label:
+                full: bottle
+                full_plural: bottles
+                short: bottle
+                short_plural: bottles
+            value:
+                full: '{0} none|{1} %count% bottle|]1,Inf] %count% bottles'
+                short: '{0} none|{1} %count% bottle|]1,Inf] %count% bottles'
+
         validation:
             unit:
                 required: Unit is required

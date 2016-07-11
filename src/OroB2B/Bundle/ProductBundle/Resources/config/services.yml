@@ -209,7 +209,6 @@ services:
 
     orob2b_product.provider.product_units_provider:
         class: 'OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider'
-        public: false
         arguments:
             - "@doctrine"
             - "@orob2b_product.formatter.product_unit_label"

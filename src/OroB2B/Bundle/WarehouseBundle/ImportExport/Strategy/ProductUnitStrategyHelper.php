@@ -2,18 +2,37 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Doctrine\Common\Inflector\Inflector;
+
+use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use OroB2B\Bundle\WarehouseBundle\Model\Data\ProductUnitTransformer;
 
 class ProductUnitStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHelper
 {
     /** @var array $requiredUnitCache */
     protected $requiredUnitCache = [];
+
+    protected $productUnitTransformer;
+
+    /**
+     * ProductUnitStrategyHelper constructor.
+     * @param DatabaseHelper $databaseHelper
+     * @param TranslatorInterface $translator
+     * @param ProductUnitTransformer $productUnitTransformer
+     */
+    public function __construct(DatabaseHelper $databaseHelper, TranslatorInterface $translator, ProductUnitTransformer $productUnitTransformer)
+    {
+        $this->productUnitTransformer = $productUnitTransformer;
+        parent::__construct($databaseHelper, $translator);
+    }
 
     /**
      * {@inheritdoc}
@@ -59,9 +78,10 @@ class ProductUnitStrategyHelper extends AbstractWarehouseInventoryLevelStrategyH
     protected function getProductUnit(ProductUnit $productUnit = null)
     {
         if ($productUnit && !empty($productUnit->getCode())) {
+            $code = $this->productUnitTransformer->transformToProductUnit($productUnit->getCode());
             $productUnit = $this->checkAndRetrieveEntity(
                 ProductUnit::class,
-                ['code' => Inflector::singularize($productUnit->getCode())]
+                ['code' => $code]
             );
         }
 
