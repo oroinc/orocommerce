@@ -122,9 +122,11 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
             $priceList = $this->priceListTreeHandler->getPriceList($entity->getAccount(), $entity->getWebsite());
             $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriterias, $priceList);
             foreach ($prices as $identifier => $price) {
-                $priceValue = $price->getValue();
-                $subtotalAmount += (float) $priceValue * $productsPriceCriterias[$identifier]->getQuantity();
-                $subtotal->setVisible(true);
+                if ($price) {
+                    $priceValue = $price->getValue();
+                    $subtotalAmount += (float) $priceValue * $productsPriceCriterias[$identifier]->getQuantity();
+                    $subtotal->setVisible(true);
+                }
             }
         }
         $subtotal->setAmount($this->rounding->round($subtotalAmount));
