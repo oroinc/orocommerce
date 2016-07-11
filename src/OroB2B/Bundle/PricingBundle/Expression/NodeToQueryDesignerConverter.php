@@ -61,7 +61,7 @@ class NodeToQueryDesignerConverter
                     }
                 }
             } elseif ($subNode instanceof RelationNode) {
-
+                $path = '';
                 $definition['columns'][] = ['name' => $path];
             }
         }

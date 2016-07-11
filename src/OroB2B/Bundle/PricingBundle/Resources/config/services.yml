@@ -684,6 +684,7 @@ services:
             - '@orob2b_pricing.expression.parser'
             - '@orob2b_pricing.expression.node_to_query_designer_converter'
             - '@orob2b_pricing.query.price_list_expression_query_converter'
+            - '@orob2b_pricing.expression.query_expression_builder'
 
     orob2b_pricing.builder.product_price_builder:
         class: 'OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder'
@@ -713,15 +714,20 @@ services:
 
     orob2b_pricing.expression.node_to_query_designer_converter:
         class: 'OroB2B\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter'
+        public: false
         arguments:
             - '@oro_query_designer.entity_field_provider'
 
+    orob2b_pricing.expression.query_expression_builder:
+        class: 'OroB2B\Bundle\PricingBundle\Expression\QueryExpressionBuilder'
+        public: false
+
     orob2b_pricing.query.price_list_expression_query_converter:
         class: 'OroB2B\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter'
+        public: false
         arguments:
             - '@oro_query_designer.query_designer.manager'
             - '@oro_entity.virtual_field_provider.chain'
             - '@doctrine'
-            - '@oro_query_designer.query_designer.restriction_builder'
         calls:
             - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]

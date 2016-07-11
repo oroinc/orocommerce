@@ -24,6 +24,9 @@ class BinaryNode implements NodeInterface
     protected static $operationMapping = [
         '===' => '==',
         '!==' => '!=',
+        '<>' => '!=',
+        '=<' => '<=',
+        '=>' => '>=',
         '&&' => 'and',
         '||' => 'or',
         'matches' => 'like'

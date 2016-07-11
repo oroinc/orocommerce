@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
 use OroB2B\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter;
+use OroB2B\Bundle\PricingBundle\Expression\QueryExpressionBuilder;
 use OroB2B\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -30,6 +31,11 @@ class PriceListRuleCompiler
     protected $queryConverter;
 
     /**
+     * @var QueryExpressionBuilder
+     */
+    protected $expressionBuilder;
+
+    /**
      * @var array
      */
     protected $fieldsOrder = [
@@ -47,15 +53,18 @@ class PriceListRuleCompiler
      * @param ExpressionParser $parser
      * @param NodeToQueryDesignerConverter $nodeConverter
      * @param PriceListExpressionQueryConverter $queryConverter
+     * @param QueryExpressionBuilder $expressionBuilder
      */
     public function __construct(
         ExpressionParser $parser,
         NodeToQueryDesignerConverter $nodeConverter,
-        PriceListExpressionQueryConverter $queryConverter
+        PriceListExpressionQueryConverter $queryConverter,
+        QueryExpressionBuilder $expressionBuilder
     ) {
         $this->expressionParser = $parser;
         $this->nodeConverter = $nodeConverter;
         $this->queryConverter = $queryConverter;
+        $this->expressionBuilder = $expressionBuilder;
     }
 
     /**
@@ -66,25 +75,13 @@ class PriceListRuleCompiler
     public function compileRule(PriceRule $rule, Product $product = null)
     {
         $qb = $this->createQueryBuilder($rule);
+
         $rootAlias = reset($qb->getRootAliases());
 
-        $qb
-            ->join(
-                'OroB2BPricingBundle:PriceListToProduct',
-                'priceListToProduct',
-                Join::WITH,
-                $qb->expr()->eq('priceListToProduct.product', $rootAlias)
-            )
-            ->andWhere($qb->expr()->eq('priceListToProduct.priceList', ':priceList'))
-            ->setParameter('priceList', $rule->getPriceList());
-
         $this->modifySelectPart($qb, $rule, $rootAlias);
-
-        if ($product) {
-            $qb->andWhere($qb->expr()->eq($rootAlias, ':product'))
-                ->setParameter('product', $product);
-        }
-        $this->restrictByExistPrices($qb, $rule, $rootAlias);
+        $this->restrictByAssignedProducts($rule, $qb, $rootAlias);
+        $this->restrictByManualPrices($qb, $rule, $rootAlias);
+        $this->restrictByGivenProduct($qb, $rootAlias, $product);
 
         return $qb;
     }
@@ -98,6 +95,7 @@ class PriceListRuleCompiler
         $expression = sprintf('%s and (%s) > 0', $rule->getRuleCondition(), $rule->getRule());
         $node = $this->expressionParser->parse($expression);
         $source = $this->nodeConverter->convert($node);
+
         return $this->queryConverter->convert($source);
     }
 
@@ -116,6 +114,7 @@ class PriceListRuleCompiler
      */
     protected function modifySelectPart(QueryBuilder $qb, PriceRule $rule, $rootAlias)
     {
+        $params = [];
         $fieldsMap = [
             'product' => $rootAlias . '.id',
             'productSku' => $rootAlias . '.sku',
@@ -124,6 +123,12 @@ class PriceListRuleCompiler
             'currency' => (string)$qb->expr()->literal($rule->getCurrency()),
             'quantity' => (string)$qb->expr()->literal($rule->getQuantity()),
             'priceRule' => (string)$qb->expr()->literal($rule->getId()),
+            'rule' => (string)$this->expressionBuilder->convert(
+                $this->expressionParser->parse($rule->getRule()),
+                $qb->expr(),
+                $params,
+                $this->queryConverter->getTableAliasByColumn() // TODO: use another method
+            )
         ];
         $select = [];
         $qb->select();
@@ -131,14 +136,20 @@ class PriceListRuleCompiler
             $select[] = $fieldsMap[$fieldName];
         }
         $qb->select($select);
+
+        foreach ($params as $key => $value) {
+            $qb->setParameter($key, $value);
+        }
     }
 
     /**
+     * Manually entered prices should not be rewritten by generator.
+     *
      * @param QueryBuilder $qb
      * @param PriceRule $rule
      * @param string $rootAlias
      */
-    protected function restrictByExistPrices(QueryBuilder $qb, PriceRule $rule, $rootAlias)
+    protected function restrictByManualPrices(QueryBuilder $qb, PriceRule $rule, $rootAlias)
     {
         /** @var EntityManagerInterface $em */
         $em = $qb->getEntityManager();
@@ -168,5 +179,36 @@ class PriceListRuleCompiler
                 )
             )
         );
+    }
+
+    /**
+     * @param PriceRule $rule
+     * @param QueryBuilder $qb
+     * @param string $rootAlias
+     */
+    protected function restrictByAssignedProducts(PriceRule $rule, QueryBuilder $qb, $rootAlias)
+    {
+        $qb
+            ->join(
+                'OroB2BPricingBundle:PriceListToProduct',
+                'priceListToProduct',
+                Join::WITH,
+                $qb->expr()->eq('priceListToProduct.product', $rootAlias)
+            )
+            ->andWhere($qb->expr()->eq('priceListToProduct.priceList', ':priceList'))
+            ->setParameter('priceList', $rule->getPriceList());
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param $rootAlias
+     * @param Product $product
+     */
+    protected function restrictByGivenProduct(QueryBuilder $qb, $rootAlias, Product $product = null)
+    {
+        if ($product) {
+            $qb->andWhere($qb->expr()->eq($rootAlias, ':product'))
+                ->setParameter('product', $product);
+        }
     }
 }
