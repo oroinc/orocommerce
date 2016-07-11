@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Layout\DataProvider;
 
 use Oro\Component\Layout\LayoutContext;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider;

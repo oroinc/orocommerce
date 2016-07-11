@@ -192,19 +192,18 @@ class ProductPriceRepository extends EntityRepository
         }
 
         $qb = $this->_em->createQueryBuilder();
-        $qb->select('product.id, unit.code, price.quantity, price.value, price.currency')
+        $qb->select('product.id, IDENTITY(price.unit) as code, price.quantity, price.value, price.currency')
             ->from($this->_entityName, 'price')
             ->innerJoin('price.product', 'product')
-            ->innerJoin('price.unit', 'unit')
             ->where(
                 $qb->expr()->eq('IDENTITY(price.priceList)', ':priceListId'),
                 $qb->expr()->in('product', ':productIds'),
-                $qb->expr()->in('unit', ':productUnitCodes')
+                $qb->expr()->in('IDENTITY(price.unit)', ':productUnitCodes')
             )
             ->setParameter('priceListId', $priceListId)
             ->setParameter('productIds', $productIds)
             ->setParameter('productUnitCodes', $productUnitCodes)
-            ->addOrderBy('price.unit')
+            ->addOrderBy('IDENTITY(price.unit)')
             ->addOrderBy('price.quantity');
 
         if ($currencies) {

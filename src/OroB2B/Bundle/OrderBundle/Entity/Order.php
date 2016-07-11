@@ -22,6 +22,7 @@ use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -73,7 +74,8 @@ class Order extends ExtendOrder implements
     LineItemsAwareInterface,
     ShippingAwareInterface,
     CurrencyAwareInterface,
-    DiscountAwareInterface
+    DiscountAwareInterface,
+    SubtotalAwareInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendAccountUserAwareTrait;
@@ -540,9 +542,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * Get subtotal
-     *
-     * @return float
+     * {@inheritdoc}
      */
     public function getSubtotal()
     {

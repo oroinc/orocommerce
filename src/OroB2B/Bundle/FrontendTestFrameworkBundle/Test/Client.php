@@ -1,9 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Test;
+namespace Oro\Bundle\FrontendTestFrameworkBundle\Test;
 
 use Symfony\Component\DomCrawler\Crawler;
-
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\Client as BaseClient;
