@@ -12,7 +12,41 @@ layout:
                 header:
                     main_menu_container_new: ~
                     main_menu_container_categories: ~
-#                    main_menu_container: # тут категории товаров
-#                        main_menu: ~      # тут contact + about
-#                        main_menu_widgets:
-                            #main_menu_messages_widget: ~
+
+        # moving main menu items into a separate container...
+        - '@move':
+            id: main_menu
+            parentId: main_menu_container_new
+            prepend: true
+        # ... then moving the container to sidebar
+        - '@move':
+            id: main_menu_container_new
+            parentId: sidebar_left
+            siblingId: account_sidebar
+            prepend: false
+
+        # moving main menu categories into a separate container...
+        - '@move':
+            id: categories_main_menu
+            parentId: main_menu_container_categories
+            prepend: true
+        # ... then moving the container to sidebar
+        - '@move':
+            id: main_menu_container_categories
+            parentId: sidebar_left
+            siblingId: account_sidebar
+            prepend: false
+
+        # move shopping lists to sidebar
+        - '@move':
+            id: main_menu_shopping_lists_wrapper
+            parentId: main_menu_container_categories
+            prepend: false
+
+        # remove empty block: 'nav.top-nav'
+        - '@remove':
+            id: main_menu_container
+
+    conditions:
+            '@and':
+                - '@neq': [ $context.logged_user, null ]

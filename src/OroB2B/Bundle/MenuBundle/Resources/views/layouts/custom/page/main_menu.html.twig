@@ -1,23 +1,20 @@
+{# main menu: items #}
 {% block _main_menu_container_new_widget %}
     {% set attr = layout_attr_merge(attr, {'~class': " account-sidebar"}) %}
-    <div {{ block('block_attributes') }}>{{ block_widget(block, {attr: attr}) }}</div>
-{% endblock %}
-{% block _main_menu_container_categories_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': " account-sidebar"}) %}
-    <div {{ block('block_attributes') }}>{{ block_widget(block, {attr: attr}) }}</div>
+    <div {{ block('block_attributes') }}>
+        <ul class="top-nav__list">
+            {{ block_widget(block, {attr: attr}) }}
+        </ul>
+    </div>
 {% endblock %}
 
-{# it overrides this id in 'default' theme #}
-{% block _main_menu_container_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " top-nav"
-    }) %}
-    <nav {{ block('block_attributes') }}>
-        <div class="container-fluid">
-            <ul class="top-nav__list">
-                {{ block_widget(block) }}
-            </ul>
-        </div>
-    </nav>
+{# main menu: product categories #}
+{% block _main_menu_container_categories_widget %}
+    {% set attr = layout_attr_merge(attr, {'~class': " account-sidebar"}) %}
+    <div {{ block('block_attributes') }}>
+        <ul class="top-nav__list">
+            {{ block_widget(block, {attr: attr}) }}
+        </ul>
+    </div>
 {% endblock %}
 
