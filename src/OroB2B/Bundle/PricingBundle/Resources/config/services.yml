@@ -678,13 +678,22 @@ services:
         calls:
             - [setPriceListClass, ['%orob2b_pricing.entity.product_price.class%']]
 
-    orob2b_pricing.compiler.price_list_rule_compiler:
-        class: 'OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler'
+    orob2b_pricing.compiler.abstract_rule_compiler:
+        class: 'OroB2B\Bundle\PricingBundle\Compiler\AbstractRuleCompiler'
+        abstract: true
         arguments:
             - '@orob2b_pricing.expression.parser'
             - '@orob2b_pricing.expression.node_to_query_designer_converter'
             - '@orob2b_pricing.query.price_list_expression_query_converter'
             - '@orob2b_pricing.expression.query_expression_builder'
+
+    orob2b_pricing.compiler.price_list_rule_compiler:
+        class: 'OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler'
+        parent: orob2b_pricing.compiler.abstract_rule_compiler
+
+    orob2b_pricing.compiler.product_assignment_rule_compiler:
+        class: 'OroB2B\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler'
+        parent: orob2b_pricing.compiler.abstract_rule_compiler
 
     orob2b_pricing.builder.product_price_builder:
         class: 'OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder'
@@ -716,7 +725,7 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter'
         public: false
         arguments:
-            - '@oro_query_designer.entity_field_provider'
+            - '@orob2b_pricing.provider.price_rule_attribute_provider'
 
     orob2b_pricing.expression.query_expression_builder:
         class: 'OroB2B\Bundle\PricingBundle\Expression\QueryExpressionBuilder'

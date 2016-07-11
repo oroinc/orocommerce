@@ -2,27 +2,28 @@
 
 namespace OroB2B\Bundle\PricingBundle\Expression;
 
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Model\PriceListQueryDesigner;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class NodeToQueryDesignerConverter
 {
     /**
-     * @var EntityFieldProvider
+     * @var PriceRuleAttributeProvider
      */
-    protected $fieldProvider;
+    protected $attributeProvider;
 
     /**
-     * @param EntityFieldProvider $fieldProvider
+     * @param PriceRuleAttributeProvider $attributeProvider
      */
-    public function __construct(EntityFieldProvider $fieldProvider)
+    public function __construct(PriceRuleAttributeProvider $attributeProvider)
     {
-        $this->fieldProvider = $fieldProvider;
+        $this->attributeProvider = $attributeProvider;
     }
 
     /**
@@ -33,10 +34,9 @@ class NodeToQueryDesignerConverter
     {
         $source = new PriceListQueryDesigner();
         $source->setEntity(Product::class);
-        $fields = $this->fieldProvider->getFields($source->getEntity(), true, true, false, true, true, false);
 
         $definition = [
-            'columns' => []
+            'columns' => [],
         ];
         $addedColumns = [];
         foreach ($node->getNodes() as $subNode) {
@@ -45,17 +45,17 @@ class NodeToQueryDesignerConverter
                     if (empty($addedColumns[$subNode->getField()])) {
                         $definition['columns'][] = [
                             'name' => $subNode->getField(),
-                            'table_identifier' => $subNode->getContainer()
+                            'table_identifier' => $subNode->getContainer(),
                         ];
                         $addedColumns[$subNode->getField()] = true;
                     }
                 } elseif ($subNode->getContainer() === Category::class) {
-                    $field = $subNode->getField() ? : 'id';
+                    $field = $subNode->getField() ?: 'id';
                     $path = sprintf('%1$s::products+%1$s::%2$s', Category::class, $field);
                     if (empty($addedColumns[$path])) {
                         $definition['columns'][] = [
                             'name' => $path,
-                            'table_identifier' => $subNode->getContainer()
+                            'table_identifier' => $subNode->getContainer(),
                         ];
                         $addedColumns[$path] = true;
                     }
@@ -64,17 +64,43 @@ class NodeToQueryDesignerConverter
                     if (empty($addedColumns[$path])) {
                         $definition['columns'][] = [
                             'name' => $path,
-                            'table_identifier' => $subNode->getContainer()
+                            'table_identifier' => $subNode->getContainer(),
                         ];
                         $addedColumns[$path] = true;
                     }
+                } else {
+                    throw new \InvalidArgumentException(
+                        sprintf('Unsupported field %s::%s', $subNode->getContainer(), $subNode->getField())
+                    );
                 }
             } elseif ($subNode instanceof RelationNode) {
-                $path = '';
-                $definition['columns'][] = [
-                    'name' => $path,
-                    'table_identifier' => $subNode->getContainer() . '::' . $subNode->getField()
-                ];
+                $tableIdentifier = $subNode->getContainer() . '::' . $subNode->getField();
+
+                $resolvedContainer = $this->attributeProvider->getRealClassName($tableIdentifier);
+                if ($resolvedContainer === PriceAttributeProductPrice::class) {
+                    $path = sprintf(
+                        '%s+%s::%s',
+                        $subNode->getField(),
+                        PriceAttributeProductPrice::class,
+                        $subNode->getRelationField()
+                    );
+                    if (empty($addedColumns[$path])) {
+                        $definition['columns'][] = [
+                            'name' => $path,
+                            'table_identifier' => $tableIdentifier,
+                        ];
+                        $addedColumns[$path] = true;
+                    }
+                } else {
+                    throw new \InvalidArgumentException(
+                        sprintf(
+                            'Unsupported field %s::%s::%s',
+                            $subNode->getContainer(),
+                            $subNode->getField(),
+                            $subNode->getRelationField()
+                        )
+                    );
+                }
             }
         }
 

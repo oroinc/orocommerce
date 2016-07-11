@@ -7,34 +7,10 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
-use OroB2B\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter;
-use OroB2B\Bundle\PricingBundle\Expression\QueryExpressionBuilder;
-use OroB2B\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class PriceListRuleCompiler
+class PriceListRuleCompiler extends AbstractRuleCompiler
 {
-    /**
-     * @var ExpressionParser
-     */
-    protected $expressionParser;
-
-    /**
-     * @var NodeToQueryDesignerConverter
-     */
-    protected $nodeConverter;
-
-    /**
-     * @var PriceListExpressionQueryConverter
-     */
-    protected $queryConverter;
-
-    /**
-     * @var QueryExpressionBuilder
-     */
-    protected $expressionBuilder;
-
     /**
      * @var array
      */
@@ -45,40 +21,23 @@ class PriceListRuleCompiler
         'currency',
         'quantity',
         'productSku',
-        'value',
-        'priceRule'
+        'priceRule',
+        'value'
     ];
-
-    /**
-     * @param ExpressionParser $parser
-     * @param NodeToQueryDesignerConverter $nodeConverter
-     * @param PriceListExpressionQueryConverter $queryConverter
-     * @param QueryExpressionBuilder $expressionBuilder
-     */
-    public function __construct(
-        ExpressionParser $parser,
-        NodeToQueryDesignerConverter $nodeConverter,
-        PriceListExpressionQueryConverter $queryConverter,
-        QueryExpressionBuilder $expressionBuilder
-    ) {
-        $this->expressionParser = $parser;
-        $this->nodeConverter = $nodeConverter;
-        $this->queryConverter = $queryConverter;
-        $this->expressionBuilder = $expressionBuilder;
-    }
 
     /**
      * @param PriceRule $rule
      * @param Product $product
      * @return QueryBuilder
      */
-    public function compileRule(PriceRule $rule, Product $product = null)
+    public function compile(PriceRule $rule, Product $product = null)
     {
         $qb = $this->createQueryBuilder($rule);
-
-        $rootAlias = reset($qb->getRootAliases());
+        $aliases = $qb->getRootAliases();
+        $rootAlias = reset($aliases);
 
         $this->modifySelectPart($qb, $rule, $rootAlias);
+        $this->applyRuleConditions($qb, $rule);
         $this->restrictByAssignedProducts($rule, $qb, $rootAlias);
         $this->restrictByManualPrices($qb, $rule, $rootAlias);
         $this->restrictByGivenProduct($qb, $rootAlias, $product);
@@ -100,7 +59,7 @@ class PriceListRuleCompiler
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getFieldsOrder()
     {
@@ -115,31 +74,43 @@ class PriceListRuleCompiler
     protected function modifySelectPart(QueryBuilder $qb, PriceRule $rule, $rootAlias)
     {
         $params = [];
-        $fieldsMap = [
-            'product' => $rootAlias . '.id',
-            'productSku' => $rootAlias . '.sku',
-            'priceList' => (string)$qb->expr()->literal($rule->getPriceList()->getId()),
-            'unit' => (string)$qb->expr()->literal($rule->getProductUnit()->getCode()),
-            'currency' => (string)$qb->expr()->literal($rule->getCurrency()),
-            'quantity' => (string)$qb->expr()->literal($rule->getQuantity()),
-            'priceRule' => (string)$qb->expr()->literal($rule->getId()),
-            'rule' => (string)$this->expressionBuilder->convert(
-                $this->expressionParser->parse($rule->getRule()),
+        $this->addSelectInOrder(
+            $qb,
+            [
+                'product' => $rootAlias . '.id',
+                'productSku' => $rootAlias . '.sku',
+                'priceList' => (string)$qb->expr()->literal($rule->getPriceList()->getId()),
+                'unit' => (string)$qb->expr()->literal($rule->getProductUnit()->getCode()),
+                'currency' => (string)$qb->expr()->literal($rule->getCurrency()),
+                'quantity' => (string)$qb->expr()->literal($rule->getQuantity()),
+                'priceRule' => (string)$qb->expr()->literal($rule->getId()),
+                'value' => (string)$this->expressionBuilder->convert(
+                    $this->expressionParser->parse($rule->getRule()),
+                    $qb->expr(),
+                    $params,
+                    $this->queryConverter->getTableAliasByColumn()
+                )
+            ]
+        );
+        $this->applyParameters($qb, $params);
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param PriceRule $rule
+     */
+    protected function applyRuleConditions(QueryBuilder $qb, PriceRule $rule)
+    {
+        $params = [];
+        $qb->andWhere(
+            $this->expressionBuilder->convert(
+                $this->expressionParser->parse($rule->getRuleCondition()),
                 $qb->expr(),
                 $params,
                 $this->queryConverter->getTableAliasByColumn()
             )
-        ];
-        $select = [];
-        $qb->select();
-        foreach ($this->getFieldsOrder() as $fieldName) {
-            $select[] = $fieldsMap[$fieldName];
-        }
-        $qb->select($select);
-
-        foreach ($params as $key => $value) {
-            $qb->setParameter($key, $value);
-        }
+        );
+        $this->applyParameters($qb, $params);
     }
 
     /**
@@ -153,32 +124,31 @@ class PriceListRuleCompiler
     {
         /** @var EntityManagerInterface $em */
         $em = $qb->getEntityManager();
-        $subQb = $em->createQueryBuilder()
-            ->from('OroB2BPricingBundle:ProductPrice', 'productPriceOld')
-            ->select('productPriceOld');
-        $subQb->where(
-            $subQb->expr()->andX(
-                $subQb->expr()->eq('productPriceOld.product', $rootAlias),
-                $subQb->expr()->eq('productPriceOld.priceList', ':priceListOld'),
-                $subQb->expr()->eq('productPriceOld.unit', ':unitOld'),
-                $subQb->expr()->eq('productPriceOld.currency', ':currencyOld'),
-                $subQb->expr()->eq('productPriceOld.quantity', ':quantityOld'),
-                $subQb->expr()->isNull('productPriceOld.priceRule')
-            )
-        );
+        $subQb = $em->createQueryBuilder();
+        $subQb->from('OroB2BPricingBundle:ProductPrice', 'productPriceOld')
+            ->select('productPriceOld')
+            ->where(
+                $subQb->expr()->andX(
+                    $subQb->expr()->eq('productPriceOld.product', $rootAlias),
+                    $subQb->expr()->eq('productPriceOld.priceList', ':priceListOld'),
+                    $subQb->expr()->eq('productPriceOld.unit', ':unitOld'),
+                    $subQb->expr()->eq('productPriceOld.currency', ':currencyOld'),
+                    $subQb->expr()->eq('productPriceOld.quantity', ':quantityOld'),
+                    $subQb->expr()->isNull('productPriceOld.priceRule')
+                )
+            );
 
         $qb->setParameter('priceListOld', $rule->getPriceList()->getId())
             ->setParameter('unitOld', $rule->getProductUnit()->getCode())
             ->setParameter('currencyOld', $rule->getCurrency())
-            ->setParameter('quantityOld', $rule->getQuantity());
-
-        $qb->andWhere(
-            $qb->expr()->not(
-                $qb->expr()->exists(
-                    $subQb->getQuery()->getDQL()
+            ->setParameter('quantityOld', $rule->getQuantity())
+            ->andWhere(
+                $qb->expr()->not(
+                    $qb->expr()->exists(
+                        $subQb->getQuery()->getDQL()
+                    )
                 )
-            )
-        );
+            );
     }
 
     /**
@@ -201,7 +171,7 @@ class PriceListRuleCompiler
 
     /**
      * @param QueryBuilder $qb
-     * @param $rootAlias
+     * @param string $rootAlias
      * @param Product $product
      */
     protected function restrictByGivenProduct(QueryBuilder $qb, $rootAlias, Product $product = null)

@@ -110,11 +110,15 @@ class PriceListController extends Controller
     {
         $form = $this->createForm(PriceListType::NAME, $priceList);
 
+        if ($priceList->getProductAssignmentRule()) {
+            $compiler = $this->get('orob2b_pricing.compiler.product_assignment_rule_compiler');
+            $qb = $compiler->compile($priceList);
+        }
         if ($priceList->getPriceRules()->count() > 0) {
             /** @var PriceListRuleCompiler $compiler */
             $compiler = $this->get('orob2b_pricing.compiler.price_list_rule_compiler');
             foreach ($priceList->getPriceRules() as $priceRule) {
-                $qb = $compiler->compileRule($priceRule);
+                $qb = $compiler->compile($priceRule);
             }
         }
 

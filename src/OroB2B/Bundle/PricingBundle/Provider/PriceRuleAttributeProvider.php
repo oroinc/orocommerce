@@ -50,7 +50,7 @@ class PriceRuleAttributeProvider
     /**
      * @var array
      */
-    protected $fieldsCache;
+    protected $fieldsCache = [];
 
     /**
      * @param Registry $registry
