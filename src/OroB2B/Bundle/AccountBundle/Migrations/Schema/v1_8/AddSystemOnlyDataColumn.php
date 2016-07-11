@@ -13,8 +13,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class AddSystemOnlyDataColumn implements Migration, ContainerAwareInterface
 {
-    use LoadRolesDataTrait;
-
     /**
      * @var ContainerInterface
      */
@@ -36,17 +34,11 @@ class AddSystemOnlyDataColumn implements Migration, ContainerAwareInterface
      */
     public function updateAccountUserRoles(QueryBag $queries)
     {
-        $roleData = $this->loadRolesData();
+        $anonymousRoleName = 'IS_AUTHENTICATED_ANONYMOUSLY';
 
-        foreach ($roleData as $roleName => $roleConfigData) {
-            if (isset($roleConfigData['non_public']) && $roleConfigData['non_public']) {
-                $queries->addPostQuery(
-                    'update orob2b_account_user_role set non_public = true where label = \''
-                    .$roleConfigData['label']
-                    .'\''
-                );
-            }
-        }
+        $queries->addPostQuery(
+            "update orob2b_account_user_role set self_managed = true where role = '$anonymousRoleName'"
+        );
     }
 
     /**

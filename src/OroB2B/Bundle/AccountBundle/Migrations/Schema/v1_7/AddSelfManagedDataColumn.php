@@ -14,8 +14,6 @@ use OroB2B\Bundle\AccountBundle\Migrations\Schema\LoadRolesDataTrait;
 
 class AddSelfManagedDataColumn implements Migration, ContainerAwareInterface
 {
-    use LoadRolesDataTrait;
-
     /**
      * @var ContainerInterface
      */
@@ -37,17 +35,11 @@ class AddSelfManagedDataColumn implements Migration, ContainerAwareInterface
      */
     public function updateAccountUserRoles(QueryBag $queries)
     {
-        $roleData = $this->loadRolesData();
+        $anonymousRoleName = 'IS_AUTHENTICATED_ANONYMOUSLY';
 
-        foreach ($roleData as $roleName => $roleConfigData) {
-            if (isset($roleConfigData['self_managed']) && $roleConfigData['self_managed']) {
-                $queries->addPostQuery(
-                    'update orob2b_account_user_role set self_managed = true where label = \''
-                    .$roleConfigData['label']
-                    .'\''
-                );
-            }
-        }
+        $queries->addPostQuery(
+            "update orob2b_account_user_role set self_managed = true where role <> '$anonymousRoleName'"
+        );
     }
 
     /**
