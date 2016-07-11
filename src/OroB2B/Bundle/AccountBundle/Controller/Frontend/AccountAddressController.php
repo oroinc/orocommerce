@@ -22,7 +22,7 @@ class AccountAddressController extends Controller
 {
     /**
      * @Route(
-     *     "/{entityId}/address/create",
+     *     "/{entityId}/create",
      *     name="orob2b_account_frontend_account_address_create",
      *     requirements={"entityId":"\d+"}
      * )
@@ -48,7 +48,7 @@ class AccountAddressController extends Controller
 
     /**
      * @Route(
-     *     "/{entityId}/address/update/{id}",
+     *     "/{entityId}/update/{id}",
      *     name="orob2b_account_frontend_account_address_update",
      *     requirements={"entityId":"\d+", "id":"\d+"}
      * )
