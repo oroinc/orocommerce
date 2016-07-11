@@ -5,8 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Provider;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
-use Oro\Bundle\EntityBundle\Provider\ChainVirtualFieldProvider;
-use Oro\Bundle\EntityBundle\Provider\VirtualFieldProviderInterface;
+use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 
 class PriceRuleAttributeProvider
 {
@@ -24,9 +23,9 @@ class PriceRuleAttributeProvider
     ];
 
     /**
-     * @var VirtualFieldProviderInterface
+     * @var EntityFieldProvider
      */
-    protected $virtualFieldProvider;
+    protected $entityFieldProvider;
 
     /**
      * @var Registry
@@ -49,13 +48,18 @@ class PriceRuleAttributeProvider
     protected $availableConditionAttributes;
 
     /**
-     * @param Registry $registry
-     * @param ChainVirtualFieldProvider $virtualFieldProvider
+     * @var array
      */
-    public function __construct(Registry $registry, ChainVirtualFieldProvider $virtualFieldProvider)
+    protected $fieldsCache;
+
+    /**
+     * @param Registry $registry
+     * @param EntityFieldProvider $entityFieldProvider
+     */
+    public function __construct(Registry $registry, EntityFieldProvider $entityFieldProvider)
     {
         $this->registry = $registry;
-        $this->virtualFieldProvider = $virtualFieldProvider;
+        $this->entityFieldProvider = $entityFieldProvider;
     }
 
     /**
@@ -86,6 +90,29 @@ class PriceRuleAttributeProvider
         $this->ensureConditionAttributes();
 
         return $this->availableConditionAttributes[$className];
+    }
+
+    /**
+     * @param $className
+     * @return string
+     */
+    public function getRealClassName($className)
+    {
+        list($realClassName, $fieldName) = explode("::", $className);
+        if (!empty($fieldName)) {
+            if (!array_key_exists($realClassName, $this->fieldsCache)) {
+                $this->fieldsCache[$realClassName] = $this->entityFieldProvider->getFields($realClassName, true, true);
+            }
+            $fields = $this->fieldsCache[$realClassName];
+            foreach ($fields as $field) {
+                if ($field['name'] === $fieldName) {
+                    $realClassName = $field['related_entity_name'];
+                    break;
+                }
+            }
+        }
+
+        return $realClassName;
     }
 
     /**
@@ -156,9 +183,9 @@ class PriceRuleAttributeProvider
             $fields[$fieldName] = $field;
         }
 
-        $virtualFields = $this->virtualFieldProvider->getVirtualFields($class);
+        $virtualFields = $this->entityFieldProvider->getVirtualFields($class);
         foreach ($virtualFields as $fieldName) {
-            $fieldQuery = $this->virtualFieldProvider->getVirtualFieldQuery($class, $fieldName);
+            $fieldQuery = $this->entityFieldProvider->getVirtualFieldQuery($class, $fieldName);
             $dataType = $fieldQuery['select']['return_type'];
             $field = ['name' => $fieldName, 'type' => self::FIELD_TYPE_VIRTUAL, 'data_type' => $dataType];
             $fields[$fieldName] = $field;
