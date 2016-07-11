@@ -9,7 +9,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -215,8 +214,6 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
                 ->setPrice($price)
                 ->setProduct($product);
 
-            $this->addRelation($manager, $priceList, $product);
-
             $manager->persist($productPrice);
             $this->setReference($data['reference'], $productPrice);
         }
@@ -233,22 +230,5 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             LoadProductUnitPrecisions::class,
             LoadPriceLists::class
         ];
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param PriceList $priceList
-     * @param Product $product
-     */
-    protected function addRelation(ObjectManager $manager, PriceList $priceList, Product $product)
-    {
-        if (empty($this->loadedRelations[$priceList->getId()][$product->getId()])) {
-            $relation = new PriceListToProduct();
-            $relation->setPriceList($priceList)
-                ->setProduct($product)
-                ->setManual(true);
-            $manager->persist($relation);
-            $this->loadedRelations[$priceList->getId()][$product->getId()] = true;
-        }
     }
 }
