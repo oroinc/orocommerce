@@ -2,16 +2,10 @@
 
 namespace OroB2B\Bundle\PricingBundle\Provider;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 
 class PriceRuleAttributeProvider
 {
-    const FIELD_TYPE_NATIVE = 'native';
-    const FIELD_TYPE_VIRTUAL = 'virtual';
-
     /**
      * @var array
      */
@@ -19,18 +13,13 @@ class PriceRuleAttributeProvider
         'integer' => true,
         'float' => true,
         'money' => true,
-        'decimal' => true
+        'decimal' => true,
     ];
 
     /**
      * @var EntityFieldProvider
      */
     protected $entityFieldProvider;
-
-    /**
-     * @var Registry
-     */
-    protected $registry;
 
     /**
      * @var array
@@ -40,25 +29,23 @@ class PriceRuleAttributeProvider
     /**
      * @var array
      */
-    protected $availableRuleAttributes;
+    protected $availableRuleAttributes = [];
 
     /**
      * @var array
      */
-    protected $availableConditionAttributes;
+    protected $availableConditionAttributes = [];
 
     /**
      * @var array
      */
-    protected $fieldsCache;
+    protected $fieldsCache = [];
 
     /**
-     * @param Registry $registry
      * @param EntityFieldProvider $entityFieldProvider
      */
-    public function __construct(Registry $registry, EntityFieldProvider $entityFieldProvider)
+    public function __construct(EntityFieldProvider $entityFieldProvider)
     {
-        $this->registry = $registry;
         $this->entityFieldProvider = $entityFieldProvider;
     }
 
@@ -69,10 +56,11 @@ class PriceRuleAttributeProvider
      */
     public function getAvailableRuleAttributes($className)
     {
+        $realClassName = $this->getRealClassName($className);
         if (!$this->isClassSupported($className)) {
             throw new \Exception('Class does not supported');
         }
-        $this->ensureRuleAttributes();
+        $this->ensureRuleAttributes($realClassName);
 
         return $this->availableRuleAttributes[$className];
     }
@@ -84,10 +72,11 @@ class PriceRuleAttributeProvider
      */
     public function getAvailableConditionAttributes($className)
     {
+        $realClassName = $this->getRealClassName($className);
         if (!$this->isClassSupported($className)) {
             throw new \Exception('Class does not supported');
         }
-        $this->ensureConditionAttributes();
+        $this->ensureConditionAttributes($realClassName);
 
         return $this->availableConditionAttributes[$className];
     }
@@ -98,8 +87,10 @@ class PriceRuleAttributeProvider
      */
     public function getRealClassName($className)
     {
-        list($realClassName, $fieldName) = explode("::", $className);
-        if (!empty($fieldName)) {
+        $classNameInfo = explode("::", $className);
+        $realClassName = $classNameInfo[0];
+        if (!count($classNameInfo) > 1) {
+            $fieldName = $classNameInfo[1];
             if (!array_key_exists($realClassName, $this->fieldsCache)) {
                 $this->fieldsCache[$realClassName] = $this->entityFieldProvider->getFields($realClassName, true, true);
             }
@@ -140,57 +131,37 @@ class PriceRuleAttributeProvider
         $this->supportedClasses[$class] = true;
     }
 
-    protected function ensureRuleAttributes()
+    /**
+     * @param string $className
+     */
+    protected function ensureRuleAttributes($className)
     {
-        if ($this->availableRuleAttributes === null) {
-            $this->availableRuleAttributes = [];
-
-            foreach ($this->getSupportedClasses() as $class) {
-                $fields = $this->getClassFields($class);
-                $fields = array_filter($fields, function ($field) {
-                    return !empty(self::$supportedTypes[$field['data_type']]);
-                });
-                $this->availableRuleAttributes[$class] = $fields;
+        if (!array_key_exists($className, $this->availableRuleAttributes)) {
+            if (!array_key_exists($className, $this->fieldsCache)) {
+                $this->fieldsCache[$className] = $this->entityFieldProvider->getFields($className, true, true);
             }
-        }
-    }
-
-    protected function ensureConditionAttributes()
-    {
-        if ($this->availableConditionAttributes === null) {
-            $this->availableConditionAttributes = [];
-            foreach ($this->getSupportedClasses() as $class) {
-                $this->availableConditionAttributes[$class] = $this->getClassFields($class);
+            $this->availableRuleAttributes[$className] = [];
+            foreach ($this->fieldsCache[$className] as $field) {
+                if (array_key_exists($field['type'], self::$supportedTypes)) {
+                    $this->availableRuleAttributes[$className][] = $field['name'];
+                }
             }
         }
     }
 
     /**
-     * @param $class
-     * @return array
+     * @param string $classNames
      */
-    protected function getClassFields($class)
+    protected function ensureConditionAttributes($classNames)
     {
-        $fields = [];
-        /** @var ClassMetadata $metadata */
-        $metadata = $this->registry
-            ->getManagerForClass($class)
-            ->getClassMetadata($class);
-        $names = $metadata->getAssociationNames();
-        foreach ($metadata->getFieldNames() as $fieldName) {
-            $dataType = $metadata->getTypeOfField($fieldName);
-            $field = ['name' => $fieldName, 'type' => self::FIELD_TYPE_NATIVE, 'data_type' => $dataType];
-            $fields[$fieldName] = $field;
+        if (!array_key_exists($classNames, $this->availableConditionAttributes)) {
+            if (!array_key_exists($classNames, $this->fieldsCache)) {
+                $this->fieldsCache[$classNames] = $this->entityFieldProvider->getFields($classNames, true, true);
+            }
+            $this->availableConditionAttributes[$classNames] = [];
+            foreach ($this->fieldsCache[$classNames] as $field) {
+                $this->availableConditionAttributes[$classNames][] = $field['name'];
+            }
         }
-
-        $virtualFields = $this->entityFieldProvider->getVirtualFields($class);
-        foreach ($virtualFields as $fieldName) {
-            $fieldQuery = $this->entityFieldProvider->getVirtualFieldQuery($class, $fieldName);
-            $dataType = $fieldQuery['select']['return_type'];
-            $field = ['name' => $fieldName, 'type' => self::FIELD_TYPE_VIRTUAL, 'data_type' => $dataType];
-            $fields[$fieldName] = $field;
-        }
-
-        return $fields;
     }
 }

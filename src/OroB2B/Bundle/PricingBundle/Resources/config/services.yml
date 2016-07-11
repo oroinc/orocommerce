@@ -108,7 +108,6 @@ services:
     orob2b_pricing.provider.price_rule_attribute_provider:
         class: 'OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider'
         arguments:
-            - '@doctrine'
             - '@oro_entity.entity_field_provider'
         calls:
             - [addSupportedClass, ['%orob2b_product.entity.product.class%']]

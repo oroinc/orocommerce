@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Provider;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
@@ -27,17 +28,8 @@ class PriceRuleAttributeProviderTest extends WebTestCase
      */
     public function testGetAvailableRuleAttributes()
     {
-        $fields = $this->provider->getAvailableRuleAttributes('OroB2BProductBundle:Product');
-        $this->assertEquals(
-            $fields,
-            [
-                'id' => [
-                    'name' => 'id',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                    'data_type' => 'integer'
-                ]
-            ]
-        );
+        $fields = $this->provider->getAvailableRuleAttributes(Product::class);
+        $this->assertEquals($fields, ['id']);
     }
 
     /**
@@ -45,50 +37,30 @@ class PriceRuleAttributeProviderTest extends WebTestCase
      */
     public function testGetAvailableConditionAttributes()
     {
-        $fields = $this->provider->getAvailableConditionAttributes('OroB2BProductBundle:Product');
+        $fields = $this->provider->getAvailableConditionAttributes(Product::class);
         $this->assertEquals(
             $fields,
             [
-                'id' => [
-                    'name' => 'id',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                    'data_type' => 'integer',
-                ],
-                'sku' => [
-                    'name' => 'sku',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                    'data_type' => 'string',
-                ],
-                'hasVariants' => [
-                    'name' => 'hasVariants',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                    'data_type' => 'boolean',
-                ],
-                'status' => [
-                    'name' => 'status',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                    'data_type' => 'string',
-                ],
-                'variantFields' => [
-                    'name' => 'variantFields',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                    'data_type' => 'array',
-                ],
-                'createdAt' => [
-                    'name' => 'createdAt',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                    'data_type' => 'datetime',
-                ],
-                'updatedAt' => [
-                    'name' => 'updatedAt',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                    'data_type' => 'datetime',
-                ],
-                'owner_id' => [
-                    'name' => 'owner_id',
-                    'type' => PriceRuleAttributeProvider::FIELD_TYPE_VIRTUAL,
-                    'data_type' => 'dictionary',
-                ],
+                'createdAt',
+                'hasVariants',
+                'id',
+                'sku',
+                'status',
+                'updatedAt',
+                'variantFields',
+                'descriptions',
+                'images',
+                'inventory_status',
+                'metaDescriptions',
+                'metaKeywords',
+                'metaTitles',
+                'names',
+                'organization',
+                'owner',
+                'variantLinks',
+                'shortDescriptions',
+                'primaryUnitPrecision',
+                'unitPrecisions',
             ]
         );
     }
