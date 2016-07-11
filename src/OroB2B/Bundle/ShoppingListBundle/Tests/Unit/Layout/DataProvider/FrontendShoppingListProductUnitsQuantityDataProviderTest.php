@@ -109,21 +109,21 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
         /** @var  ShoppingList $otherShoppingList */
         $otherShoppingList = $this->createShoppingList(2, 'ShoppingList 2');
         return [
-            [
+            'no_product_no_shopping_list' => [
                 'product' => null,
                 'shoppingList' => null,
             ],
-            [
+            'no_shopping_list' => [
                 'product' => new Product(),
                 'shoppingList' => null
             ],
-            [
+            'no_prices' => [
                 'product' => new Product(),
                 'shoppingList' => new ShoppingList(),
                 'lineItems' => [],
                 'expected' => []
             ],
-            [
+            'single_shopping_list' => [
                 'product' => new Product(),
                 'shoppingList' => $activeShoppingList,
                 'lineItems' => [
@@ -142,7 +142,7 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                     ]
                 ]
             ],
-            [
+            'a_few_shopping_lists' => [
                 'product' => new Product(),
                 'shoppingList' => $activeShoppingList,
                 'lineItems' => [
