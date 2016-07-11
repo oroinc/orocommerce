@@ -1,3 +1,17 @@
+{% extends 'OroB2BShoppingListBundle:layouts/default:orob2b_shopping_list_frontend_view/view.html.twig' %}
+
+{% block _shopping_list_view_tabs_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {% set attr = attr|merge({class: attr.class|default('') ~ "shopping-list-tabs"}) %}
+
+    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
+        module: 'orob2bshoppinglist/js/app/components/shoppinglist-view-component'
+    }) }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _shopping_list_view_container_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ "shopping-list-wrapper"}) %}
 
@@ -6,59 +20,29 @@
     </div>
 {% endblock %}
 
-{% block _shopping_list_view_tabs_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ "shopping-list-tabs"}) %}
+{% block _shopping_lists_sidebar_list_widget %}
+    {{ parent() }}
 
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _shopping_list_view_tabs_all_widget %}
-    <input class="shopping-list-helper" type="checkbox" id="shopping-list-all" hidden="hidden">
-    <div class="shopping-list-all">
-        <label class="shopping-list-all__handle" for="shopping-list-all">
-            <i class="shopping-list-all__icon cf-add_circle"></i>
-        </label>
-        <span class="shopping-list-all__dropdown">
-            <ul class="shopping-list-links">
-                <li class="shopping-list-links__item shopping-list-links__item--current">
-                    <a class="shopping-list-links__link" href="#">
-                        <i class="shopping-list-links__icon cf-check"></i>
-                        <span class="shopping-list-links__text">Order #1</span>
-                    </a>
-                </li>
-                <li class="shopping-list-links__item">
-                    <a class="shopping-list-links__link" href="#">
-                        <i class="shopping-list-links__icon cf-check"></i>
-                        <span class="shopping-list-links__text">Order #2</span>
-                    </a>
-                </li>
-                <li class="shopping-list-links__item">
-                    <a class="shopping-list-links__link" href="#">
-                        <i class="shopping-list-links__icon cf-check"></i>
-                        <span class="shopping-list-links__text">Order #3</span>
-                    </a>
-                </li>
-                <li class="shopping-list-links__item">
-                    <a class="shopping-list-links__link" href="#">
-                        <i class="shopping-list-links__icon cf-check"></i>
-                        <span class="shopping-list-links__text">Order #4</span>
-                    </a>
-                </li>
-                <li class="shopping-list-links__item">
-                    <a class="shopping-list-links__link" href="#">
-                        <i class="shopping-list-links__icon cf-check"></i>
-                        <span class="shopping-list-links__text">Order #5</span>
-                    </a>
-                </li>
-                <li class="shopping-list-links__item">
-                    <a class="shopping-list-links__link" href="#">
-                        <i class="shopping-list-links__icon cf-check"></i>
-                        <span class="shopping-list-links__text">Order #6</span>
-                    </a>
-                </li>
-            </ul>
-        </span>
-    </div>
-{% endblock %}
+    {% if shoppingLists | length >= 6 %}
+        <input class="shopping-list-helper" type="radio" id="shopping-list-more" name="dropdowns" hidden="hidden">
+        <div class="shopping-list-more">
+            <label class="shopping-list-more__handle" for="shopping-list-more">
+                <i class="shopping-list-more__icon cf-add_circle"></i>
+            </label>
+            <span class="shopping-list-more__dropdown">
+                <ul class="shopping-list-links">
+                    {% for shoppingList in shoppingLists %}
+                        <li class="shopping-list-links__item {% if shoppingList.id == selectedShoppingList.id %} shopping-list-links__item--current {% endif %}">
+                            <a class="shopping-list-links__link" href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}">
+                                <i class="shopping-list-links__icon cf-check"></i>
+                                <span class="shopping-list-links__text">{{ shoppingList.label }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </span>
+        </div>
+        <input class="shopping-list-helper" type="radio" id="shopping-list-paranja" name="dropdowns" checked="checked" hidden="hidden">
+        <label class="shopping-list-paranja" for="shopping-list-paranja"></label>
+    {% endif %}
+{% endblock _shopping_lists_sidebar_list_widget %}

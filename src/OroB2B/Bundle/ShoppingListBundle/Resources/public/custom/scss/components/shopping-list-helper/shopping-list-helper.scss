@@ -1,0 +1,12 @@
+.shopping-list-helper {
+    &:checked + .shopping-list-more .shopping-list-more__dropdown {
+        visibility: inherit;
+        opacity: 1;
+
+        transition: opacity .2s;
+    }
+
+    &:checked + .shopping-list-paranja {
+        display: none;
+    }
+}

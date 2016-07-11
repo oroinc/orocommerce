@@ -1,4 +1,4 @@
-.shopping-list-all {
+.shopping-list-more {
     position: absolute;
     top: 0;
     right: 0;
@@ -44,11 +44,4 @@
         opacity: 0;
         transition: opacity .2s, visibility .2s;
     }
-}
-
-.shopping-list-helper:checked + .shopping-list-all .shopping-list-all__dropdown {
-    visibility: inherit;
-    opacity: 1;
-
-    transition: opacity .2s;
 }
