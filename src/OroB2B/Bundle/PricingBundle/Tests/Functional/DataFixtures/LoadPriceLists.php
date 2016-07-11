@@ -9,13 +9,19 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class LoadPriceLists extends AbstractFixture
 {
+    const PRICE_LIST_1 = 'price_list_1';
+    const PRICE_LIST_2 = 'price_list_2';
+    const PRICE_LIST_3 = 'price_list_3';
+    const PRICE_LIST_4 = 'price_list_4';
+    const PRICE_LIST_5 = 'price_list_5';
+    const PRICE_LIST_6 = 'price_list_6';
     /**
      * @var array
      */
     protected static $data = [
         [
             'name' => 'priceList1',
-            'reference' => 'price_list_1',
+            'reference' => self::PRICE_LIST_1,
             'default' => false,
             'currencies' => ['USD', 'EUR', 'AUD', 'CAD'],
             'active' => true,
@@ -23,7 +29,7 @@ class LoadPriceLists extends AbstractFixture
         ],
         [
             'name' => 'priceList2',
-            'reference' => 'price_list_2',
+            'reference' => self::PRICE_LIST_2,
             'default' => false,
             'currencies' => ['USD'],
             'active' => true,
@@ -31,7 +37,7 @@ class LoadPriceLists extends AbstractFixture
         ],
         [
             'name' => 'priceList3',
-            'reference' => 'price_list_3',
+            'reference' => self::PRICE_LIST_3,
             'default' => false,
             'currencies' => ['CAD'],
             'active' => true,
@@ -39,7 +45,7 @@ class LoadPriceLists extends AbstractFixture
         ],
         [
             'name' => 'priceList4',
-            'reference' => 'price_list_4',
+            'reference' => self::PRICE_LIST_4,
             'default' => false,
             'currencies' => ['GBP'],
             'active' => true,
@@ -47,7 +53,7 @@ class LoadPriceLists extends AbstractFixture
         ],
         [
             'name' => 'priceList5',
-            'reference' => 'price_list_5',
+            'reference' => self::PRICE_LIST_5,
             'default' => false,
             'currencies' => ['GBP', 'EUR'],
             'active' => true,
@@ -55,7 +61,7 @@ class LoadPriceLists extends AbstractFixture
         ],
         [
             'name' => 'priceList6',
-            'reference' => 'price_list_6',
+            'reference' => self::PRICE_LIST_6,
             'default' => false,
             'currencies' => ['USD'],
             'active' => false,

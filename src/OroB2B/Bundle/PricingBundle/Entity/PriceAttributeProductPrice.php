@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+
 /**
  * @ORM\Table(
  *      name="orob2b_price_attribute_price",
@@ -15,6 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      }
  * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository")
+ * @Config()
  */
 class PriceAttributeProductPrice extends BaseProductPrice
 {
