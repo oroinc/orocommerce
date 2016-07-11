@@ -16,6 +16,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 
+use OroB2B\Bundle\ProductBundle\Entity\ProductImageType;
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use OroB2B\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
@@ -239,7 +240,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $products = [];
+        $images = [];
         foreach ($productWithImages as $index => $productId) {
             $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product', ['getId', 'getImages']);
             $product->expects($this->any())
@@ -247,30 +248,22 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($productId);
 
             $image = $this->getMock('Oro\Bundle\AttachmentBundle\Entity\File');
-
-            $productImage = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\ProductImage', ['getImage']);
-            $productImage->expects($this->any())
-                ->method('getImage')
-                ->willReturn($image);
-
-            $product->expects($this->once())
-                ->method('getImages')
-                ->willReturn(new ArrayCollection([$productImage]));
-            $products[$productId] = $product;
+            $images[$productId] = $image;
 
             $this->attachmentManager->expects($this->at($index))
                 ->method('getFilteredImageUrl')
                 ->with(
                     $image,
-                    FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER
+                    ProductImageType::PRODUCT_IMAGE_FILTER
                 )
                 ->willReturn($productId);
         }
 
         $productRepository->expects($this->once())
-            ->method('getProductsWithImage')
-            ->with($ids, FrontendProductDatagridListener::PRODUCT_IMAGE_TYPE)
-            ->willReturn($products);
+            ->method('getImagesFilesByProductIds')
+            ->with($ids)
+            ->willReturn($images);
+
         $productUnitRepository->expects($this->once())
             ->method('getProductsUnits')
             ->with($ids)

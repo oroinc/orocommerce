@@ -59,7 +59,7 @@ class CategoryRepository extends NestedTreeRepository
         $includeNode = false
     ) {
         return $this->getChildrenQueryBuilder($node, $direct, $sortByField, $direction, $includeNode)
-            ->addSelect('title, partial child.{id}')
+            ->select('partial node.{id}, title, partial child.{id}')
             ->leftJoin('node.titles', 'title')
             ->leftJoin('node.childCategories', 'child')
             ->getQuery()

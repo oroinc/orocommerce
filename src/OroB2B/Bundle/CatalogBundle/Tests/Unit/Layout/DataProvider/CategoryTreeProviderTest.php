@@ -2,10 +2,13 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Component\Layout\LayoutContext;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\CatalogBundle\Layout\DataProvider\CategoryTreeProvider as CategoryTreeDataProvider;
 use OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 
@@ -17,14 +20,22 @@ class CategoryTreeProviderTest extends \PHPUnit_Framework_TestCase
     /** @var CategoryTreeDataProvider */
     protected $provider;
 
+    /** @var  ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    protected $doctrine;
+
     public function setUp()
     {
         $this->categoryTreeProvider = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->provider = new CategoryTreeDataProvider(
-            $this->categoryTreeProvider
+            $this->categoryTreeProvider,
+            $this->doctrine
         );
     }
 
@@ -41,20 +52,22 @@ class CategoryTreeProviderTest extends \PHPUnit_Framework_TestCase
         $rootCategory->setLevel(0);
         $rootCategory->addChildCategory($mainCategory);
 
-        $categories = [$rootCategory, $mainCategory, $childCategory];
-        $expected = [
-            'all' => $categories,
-            'main' => [$mainCategory],
-        ];
-
         $user = new AccountUser();
 
-        $this->categoryTreeProvider->expects($this->at(0))
-            ->method('getCategories')
-            ->with($user, null, null)
-            ->willReturn($categories);
+        /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject $repo */
+        $repo = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->categoryTreeProvider->expects($this->at(1))
+        $this->doctrine->expects($this->atLeastOnce())->method('getRepository')
+            ->willReturn($repo);
+
+        $repo
+            ->expects($this->once())
+            ->method('getMasterCatalogRoot')
+            ->willReturn($rootCategory);
+        
+        $this->categoryTreeProvider->expects($this->once())
             ->method('getCategories')
             ->with($user, $rootCategory, null)
             ->willReturn([$mainCategory]);
@@ -63,6 +76,6 @@ class CategoryTreeProviderTest extends \PHPUnit_Framework_TestCase
         $context->set('logged_user', $user);
         $actual = $this->provider->getData($context);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals([$mainCategory], $actual);
     }
 }

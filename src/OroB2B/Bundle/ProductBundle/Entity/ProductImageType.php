@@ -10,6 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ProductImageType
 {
+    const COLUMN_PRODUCT_UNITS = 'product_units';
+    const PRODUCT_IMAGE_FILTER = 'product_large';
+    const PRODUCT_IMAGE_TYPE = 'listing';
+
     /**
      * @var integer
      * @ORM\Id

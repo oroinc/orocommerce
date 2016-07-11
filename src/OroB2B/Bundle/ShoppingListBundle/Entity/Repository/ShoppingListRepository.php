@@ -92,7 +92,7 @@ class ShoppingListRepository extends EntityRepository
     public function findByUser(AccountUser $accountUser, array $sortCriteria = [])
     {
         $qb = $this->createQueryBuilder('list')
-            ->select('list, partial items.{id}')
+            ->select('partial list.{id}, partial items.{id}')
             ->leftJoin('list.lineItems', 'items')
             ->where('list.accountUser = :accountUser')
             ->setParameter('accountUser', $accountUser);

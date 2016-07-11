@@ -9,7 +9,7 @@ layout:
                     siblingId: ~
                     prepend: true
                     options:
-                        categories: { '@value': $data.category_tree.main }
+                        categories: { '@value': $data.category_tree }
                         max_size: 4
                 categories_main_menu_first_level_item:
                     blockType: container
