@@ -56,16 +56,18 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
 
         $url = $this->container->get('oro_config.manager')->get('oro_ui.application_url');
 
-        /** @var Localization $localization */
-        $localization = $this->getReference('default_localization');
+        //todo fix localization reference retrieval if changed BB-3367
+        ///** @var Localization $localization */
+        //$localization = $this->getReference('default_localization');
+        
 
         $website = new Website();
         $website
             ->setName(self::DEFAULT_WEBSITE_NAME)
             ->setOrganization($organization)
             ->setOwner($businessUnit)
-            ->setUrl($url)
-            ->addLocalization($localization);
+            ->setUrl($url);
+            //->addLocalization($localization); //todo add localization direct to configuration impl in BB-3367
 
         $manager->persist($website);
         /** @var EntityManager $manager */

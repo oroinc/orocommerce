@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableBusinessUnitAwareTrait;
 
@@ -54,14 +53,6 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
 {
     use DatesAwareTrait;
     use AuditableBusinessUnitAwareTrait;
-
-    /**
-     * @var Collection|Localization[]
-     *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\LocaleBundle\Entity\Localization")
-     * @ORM\JoinTable(name="orob2b_websites_localizations")
-     */
-    protected $localizations;
 
     /**
      * @var Collection|Website[]
@@ -130,7 +121,6 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
 
         $this->inversedWebsites = new ArrayCollection();
         $this->relatedWebsites = new ArrayCollection();
-        $this->localizations = new ArrayCollection();
     }
 
     /**
@@ -243,62 +233,6 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * Get website localizations
-     *
-     * @return ArrayCollection|Localization[]
-     */
-    public function getLocalizations()
-    {
-        return $this->localizations;
-    }
-
-    /**
-     * Reset website localizations
-     *
-     * @param ArrayCollection|Localization[] $localizations
-     *
-     * @return Website
-     */
-    public function resetLocalizations($localizations)
-    {
-        $this->localizations->clear();
-
-        foreach ($localizations as $localization) {
-            $this->addLocalization($localization);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Localization $localization
-     *
-     * @return Website
-     */
-    public function addLocalization(Localization $localization)
-    {
-        if (!$this->localizations->contains($localization)) {
-            $this->localizations->add($localization);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Localization $localization
-     *
-     * @return Website
-     */
-    public function removeLocalization(Localization $localization)
-    {
-        if ($this->localizations->contains($localization)) {
-            $this->localizations->removeElement($localization);
-        }
-
-        return $this;
     }
 
     /**

@@ -53,16 +53,17 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
         foreach ($this->webSites as $webSite) {
             $site = new Website();
 
-            $siteLocalizations = [];
-            foreach ($webSite['localizations'] as $localizationCode) {
-                $siteLocalizations[] = $this->getLocalization($localizationCode);
-            }
+            //todo fix to direct configuration modifications in scope of BB-3367
+            //$siteLocalizations = [];
+            //foreach ($webSite['localizations'] as $localizationCode) {
+            //    $siteLocalizations[] = $this->getLocalization($localizationCode);
+            //}
 
             $site->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->setName($webSite['name'])
-                ->setUrl($webSite['url'])
-                ->resetLocalizations($siteLocalizations);
+                //->resetLocalizations($siteLocalizations); //todo use direct configuration reset determined by  BB-3367
+                ->setUrl($webSite['url']);
 
             $this->setReference($site->getName(), $site);
 
