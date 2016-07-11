@@ -144,7 +144,10 @@ define(function(require) {
                 var $element = this.elements[i];
 
                 if ($element.hasClass(this.options.elementClass)) {
-                    if (this.inViewPort($element.data('sticky').$elementPlaceholder, $element) || $element.is(':empty')) {
+                    if (this.inViewPort(
+                        $element.data('sticky').$elementPlaceholder, $element) ||
+                        $element.is(':empty')
+                    ) {
                         contentChanged = true;
                         this.toggleElementState($element, false);
                     }
