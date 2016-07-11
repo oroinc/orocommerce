@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
@@ -20,10 +21,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-usd"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce"
  *          }
  *      }
  * )

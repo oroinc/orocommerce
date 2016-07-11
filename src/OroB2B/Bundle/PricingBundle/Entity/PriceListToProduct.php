@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -73,13 +72,12 @@ class PriceListToProduct
      * @param PriceList $priceList
      * @return $this
      */
-    public function setPriceList($priceList)
+    public function setPriceList(PriceList $priceList)
     {
         $this->priceList = $priceList;
 
         return $this;
     }
-
     /**
      * @return Product
      */
@@ -92,7 +90,7 @@ class PriceListToProduct
      * @param Product $product
      * @return $this
      */
-    public function setProduct($product)
+    public function setProduct(Product $product)
     {
         $this->product = $product;
 

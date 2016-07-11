@@ -36,6 +36,18 @@ layout:
                     blockType: form_fields
                     options:
                         form: { '@value': $data.orob2b_account_frontend_account_user_role_form }
+                        vars:
+                            entity: {'@value': $data.entity}
+                account_user_role_edit_form_privileges:
+                    blockType: datagrid
+                    options:
+                        grid_name: frontend-account-user-role-permission-grid
+                        grid_parameters:
+                            role: {'@value': $data.entity}
+                        grid_render_parameters:
+                            cssClass: 'inner-permissions-grid'
+                        vars:
+                            options: { '@value': $data.orob2b_account_fronted_account_user_role_options }
                 account_user_role_edit_form_users:
                     blockType: account_user_role_users_datagrid
                     options:
@@ -91,6 +103,7 @@ layout:
                             account_user_role_edit_form_actions_update_top: ~
                             account_user_role_edit_form_actions_cancel_top: ~
                         account_user_role_edit_form_fields: ~
+                        account_user_role_edit_form_privileges: ~
                         account_user_role_edit_form_users: ~
                         account_user_role_edit_form_actions_bottom:
                             account_user_role_edit_form_actions_update_bottom: ~
