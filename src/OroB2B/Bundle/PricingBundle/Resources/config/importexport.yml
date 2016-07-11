@@ -61,6 +61,13 @@ services:
         parent: oro_importexport.reader.entity
         class: 'OroB2B\Bundle\PricingBundle\ImportExport\Reader\PriceListProductPricesReader'
 
+    orob2b_pricing.importexport.reader.price_list_additional_product_prices:
+        public: false
+        class: 'OroB2B\Bundle\PricingBundle\ImportExport\Reader\PriceListAdditionalProductPriceReader'
+        arguments:
+            - '@oro_importexport.context_registry'
+            - '@doctrine'
+
     # Export template
     orocrm_contact.importexport.processor.export_template.product_price:
         public: false

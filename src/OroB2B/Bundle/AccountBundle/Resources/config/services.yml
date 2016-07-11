@@ -542,16 +542,6 @@ services:
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata }
 
-    orob2b_account.helper.account_user_role_privileges:
-        class: 'OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper'
-        arguments:
-            - "@orob2b_account.form.handler.update_account_user_role="
-
-    orob2b_account.helper.account_user_role_privileges.frontend:
-        class: 'OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper'
-        arguments:
-            - "@orob2b_account.form.handler.update_account_user_role_frontend="
-
     orob2b_account.visibility.resolver.category_visibility_resolver:
         class: 'OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver'
         arguments:
@@ -815,13 +805,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onRequest }
 
-    orob2b_account.provider.frontend_account_user_role_privileges:
-        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRolePrivilegesDataProvider'
-        arguments:
-            - '@orob2b_account.helper.account_user_role_privileges.frontend'
-        tags:
-            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_role_privileges }
-
     orob2b_account.provider.frontend_account_user_role_form:
         class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleFormDataProvider'
         arguments:
@@ -855,3 +838,36 @@ services:
         arguments:
             - '@oro_config.global'
             - '@oro_entity.doctrine_helper'
+
+    orob2b_account.provider.fronted_account_user_role_tabs_options:
+        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleOptionsDataProvider'
+        arguments:
+            - '@oro_user.provider.role_privilege_capability_provider'
+            - '@oro_user.provider.role_privilege_category_provider'
+            - '@translator'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_fronted_account_user_role_options }
+
+    orob2b_account.datagrid.datasource.account_role_frontend_permission_datasource:
+        class: 'OroB2B\Bundle\AccountBundle\Datagrid\RolePermissionDatasource'
+        arguments:
+            - '@translator'
+            - '@oro_security.acl.permission_manager'
+            - '@orob2b_account.form.handler.update_account_user_role_frontend='
+            - '@oro_user.provider.role_privilege_category_provider'
+            - '@oro_entity_config.config_manager'
+            - '@orob2b_account.acl.resolver.role_translation_prefix'
+        tags:
+            - { name: oro_datagrid.datasource, type: account-role-frontend-permission-provider }
+
+    orob2b_account.datagrid.datasource.account_role_permission_datasource:
+        class: 'OroB2B\Bundle\AccountBundle\Datagrid\RolePermissionDatasource'
+        arguments:
+            - '@translator'
+            - '@oro_security.acl.permission_manager'
+            - '@orob2b_account.form.handler.update_account_user_role='
+            - '@oro_user.provider.role_privilege_category_provider'
+            - '@oro_entity_config.config_manager'
+            - '@orob2b_account.acl.resolver.role_translation_prefix'
+        tags:
+            - { name: oro_datagrid.datasource, type: account-role-permission-provider }
