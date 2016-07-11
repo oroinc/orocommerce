@@ -1,3 +1,7 @@
+orob2b:
+    privilege:
+        category.commerce.label: 'Commerce'
+
 orob2b_frontend:
     widget_form_component:
         save_flash_success: Saved successfully

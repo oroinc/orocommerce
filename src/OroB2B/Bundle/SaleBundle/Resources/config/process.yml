@@ -3,7 +3,7 @@ definitions:
         label:   'Expire old Quotes'
         enabled: true
         order:   50
-        entity:  OroB2B\Bundle\RFPBundle\Entity\Request
+        entity:  OroB2B\Bundle\SaleBundle\Entity\Quote
         actions_configuration:
             - '@create_datetime':
                 attribute: $.date
