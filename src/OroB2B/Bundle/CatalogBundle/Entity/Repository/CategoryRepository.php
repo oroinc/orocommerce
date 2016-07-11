@@ -23,6 +23,8 @@ class CategoryRepository extends NestedTreeRepository
     {
         if (!$this->masterCatalog) {
             $this->masterCatalog = $this->createQueryBuilder('category')
+                ->addSelect('titles')
+                ->leftJoin('category.titles', 'titles')
                 ->andWhere('category.parentCategory IS NULL')
                 ->orderBy('category.id', 'ASC')
                 ->setMaxResults(1)
