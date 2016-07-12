@@ -186,7 +186,7 @@ class FrontendProductDatagridListener
             return;
         }
 
-        $productImages = $this->getProductRepository()->getImagesFilesByProductIds($productIds);
+        $productImages = $this->getProductRepository()->getListingImagesFilesByProductIds($productIds);
 
         foreach ($records as $record) {
             $imageUrl = null;

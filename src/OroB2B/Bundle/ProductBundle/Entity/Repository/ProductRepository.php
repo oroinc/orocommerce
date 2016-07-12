@@ -178,7 +178,7 @@ class ProductRepository extends EntityRepository
      * @param array $productIds
      * @return File[]
      */
-    public function getImagesFilesByProductIds(array $productIds)
+    public function getListingImagesFilesByProductIds(array $productIds)
     {
         $qb = $this->_em->createQueryBuilder()
             ->select('imageFile as image, IDENTITY(pi.product) as product_id')

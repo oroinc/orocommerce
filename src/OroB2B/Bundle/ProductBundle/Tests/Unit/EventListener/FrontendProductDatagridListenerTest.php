@@ -260,7 +260,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         }
 
         $productRepository->expects($this->once())
-            ->method('getImagesFilesByProductIds')
+            ->method('getListingImagesFilesByProductIds')
             ->with($ids)
             ->willReturn($images);
 
