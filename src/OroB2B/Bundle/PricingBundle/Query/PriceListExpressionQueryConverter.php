@@ -92,7 +92,13 @@ class PriceListExpressionQueryConverter extends GroupingOrmQueryConverter
             if (array_key_exists('table_identifier', $column)) {
                 $columnName = $column['name'];
                 $tableIdentifier = $column['table_identifier'];
-                $this->tableAliasByColumn[$tableIdentifier] = $this->getTableAliasForColumn($columnName);
+
+                if (array_key_exists($columnName, $this->virtualColumnExpressions)) {
+                    $exprColumn = explode('.', $this->virtualColumnExpressions[$columnName]);
+                    $this->tableAliasByColumn[$tableIdentifier] = $exprColumn[0];
+                } else {
+                    $this->tableAliasByColumn[$tableIdentifier] = $this->getTableAliasForColumn($columnName);
+                }
             }
         }
     }
