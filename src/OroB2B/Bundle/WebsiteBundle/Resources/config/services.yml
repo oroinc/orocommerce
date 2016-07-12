@@ -28,6 +28,12 @@ services:
         arguments:
             - "@doctrine"
 
+    orob2b_website.user_localization_manager:
+        class: 'OroB2B\Bundle\WebsiteBundle\Manager\UserLocalizationManager'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_locale.provider.localization'
+
     orob2b_website.model.action.assign_current_website:
         class: 'OroB2B\Bundle\WebsiteBundle\Model\Action\AssignCurrentWebsite'
         public: false

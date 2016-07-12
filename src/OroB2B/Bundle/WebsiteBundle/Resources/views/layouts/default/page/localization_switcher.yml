@@ -1,0 +1,9 @@
+layout:
+    actions:
+        - '@add':
+            id: localization_switcher
+            parentId: top_nav_menu_container
+            siblingId: top_nav
+            blockType: localization_switcher
+            options:
+                data: {'@value': $data.orob2b_website_localizations}
