@@ -16,41 +16,20 @@ class LoadPriceRuleLexemes extends AbstractFixture implements DependentFixtureIn
      */
     protected $data = [
         [
-            'reference'=> 'lexeme_1',
-            'priceRule' => 'price_rule_1',
-            'className' => 'class1',
-            'fieldName' => 'field1',
+            'reference' => 'price_list_1_lexeme_1',
+            'priceList' => 'price_list_1',
+            'priceRule' => 'price_list_1_price_rule_1',
+            'className' => 'OroB2B\Bundle\CatalogBundle\Entity\Category',
+            'fieldName' => 'id',
         ],
         [
-            'reference'=> 'lexeme_2',
-            'priceRule' => 'price_rule_2',
-            'className' => 'class1',
-            'fieldName' => 'field1',
-        ],
-        [
-            'reference'=> 'lexeme_3',
-            'priceRule' => 'price_rule_3',
-            'className' => 'class1',
-            'fieldName' => 'field1',
-        ],
-        [
-            'reference'=> 'lexeme_4',
-            'priceRule' => 'price_rule_4',
-            'className' => 'class1',
-            'fieldName' => 'field1',
-        ],
-        [
-            'reference'=> 'lexeme_5',
-            'priceRule' => 'price_rule_5',
-            'className' => 'class1',
-            'fieldName' => 'field1',
-        ],
-        [
-            'reference'=> 'lexeme_6',
-            'priceRule' => 'price_rule_6',
-            'className' => 'class1',
-            'fieldName' => 'field1',
-        ],
+            'reference' => 'price_list_1_lexeme_2',
+            'priceList' => 'price_list_1',
+            'priceRule' => 'price_list_1_price_rule_1',
+            'className' => 'OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+            'fieldName' => 'value',
+            'reference_entity' => 'price_attribute_price_list_1'
+        ]
     ];
 
     /**
@@ -65,7 +44,12 @@ class LoadPriceRuleLexemes extends AbstractFixture implements DependentFixtureIn
             $lexemeEntity
                 ->setClassName($lexeme['className'])
                 ->setFieldName($lexeme['fieldName'])
+                ->setPriceList($this->getReference($lexeme['priceList']))
                 ->setPriceRule($priceRule);
+
+            if (isset($lexeme['reference_entity'])) {
+                $lexemeEntity->setRelationId($this->getReference('price_list_1_price_rule_1')->getId());
+            }
 
             $manager->persist($lexemeEntity);
             $this->setReference($lexeme['reference'], $lexemeEntity);

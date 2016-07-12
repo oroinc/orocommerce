@@ -8,6 +8,7 @@ use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\EventListener\PriceListListener;
@@ -39,6 +40,11 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
     protected $triggerHandler;
 
     /**
+     * @var PriceRuleLexemeHandler|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $priceRuleLexemeHandler;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -47,16 +53,41 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder')
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->triggerHandler = $this
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new PriceListListener($this->builder, $this->triggerHandler);
+        $this->priceRuleLexemeHandler = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new PriceListListener(
+            $this->builder,
+            $this->triggerHandler,
+            $this->priceRuleLexemeHandler
+        );
+
         $this->priceList = $this->createPriceList();
 
         // Need call this event first, to set initial state
         $this->listener->beforeSubmit($this->createFormProcessEvent($this->priceList));
+    }
+
+    public function testPostSubmit()
+    {
+        /** @var FormInterface $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $event = new AfterFormProcessEvent($form, $this->priceList);
+
+        $this->priceRuleLexemeHandler->expects($this->once())
+            ->method('updateLexemes')
+            ->with($this->priceList);
+
+        $this->listener->onPostSubmit($event);
     }
 
     public function testWithoutChanges()

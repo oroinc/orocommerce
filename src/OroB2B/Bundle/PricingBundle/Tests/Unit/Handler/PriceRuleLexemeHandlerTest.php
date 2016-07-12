@@ -2,19 +2,19 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Handler;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
+use Oro\Component\Testing\Unit\EntityTrait;
+
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
 
 class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,95 +35,120 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected $priceRuleLexemeHandler;
 
+    /**
+     * @var PriceRuleAttributeProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $priceRuleProvider;
+
     protected function setUp()
     {
         $this->registry = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->parser = $this->getMockBuilder(ExpressionParser::class)->disableOriginalConstructor()->getMock();
-        $this->priceRuleLexemeHandler = new PriceRuleLexemeHandler($this->registry, $this->parser);
+
+        $this->parser = $this->getMockBuilder(ExpressionParser::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->priceRuleProvider = $this->getMockBuilder(PriceRuleAttributeProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->priceRuleLexemeHandler = new PriceRuleLexemeHandler(
+            $this->registry,
+            $this->parser,
+            $this->priceRuleProvider
+        );
     }
 
     public function testUpdateLexemes()
     {
-        $condition1 = 'condition1';
-        $condition2 = 'condition2';
-        $condition3 = 'condition3';
-        $condition4 = 'condition4';
-        /** @var PriceRule $priceRule1 */
-        $priceRule1 = $this->getEntity(PriceRule::class, ['id' => 1]);
-        /** @var PriceRule $priceRule2 */
-        $priceRule2 = $this->getEntity(PriceRule::class, ['id' => 2]);
-        $priceRule1->setRule($condition2);
-        $priceRule1->setRuleCondition($condition4);
-        $priceRule2->setRule($condition3);
-        $priceRule2->setRuleCondition($condition4);
-        $priceList = new PriceList();
-        $priceList->setProductAssignmentRule($condition1);
-        $priceList->addPriceRule($priceRule1);
-        $priceList->addPriceRule($priceRule2);
+        $assignmentRule = 'Category.id == 2';
+        
+        $rule = 'Product.msrp.value + 10';
+        $ruleCondition = 'Product.sku == test';
 
-        $map = [
-            [$condition1, ['class1' => ['field1', null], 'class2' => [null]]],
-            [$condition2, ['class1' => ['field3', 'field2'], 'class3' => ['field3', 'field6']]],
-            [$condition3, ['class2' => ['field5', null], 'class3' => ['field3', 'field1']]],
-            [$condition4, ['class1' => [null, 'field1'], 'class2' => ['field3', 'field1']]],
-        ];
+        /** @var PriceRule $priceRule */
+        $priceRule = $this->getEntity(PriceRule::class, ['id' => 1]);
+
+        $priceRule->setRule($rule);
+        $priceRule->setRuleCondition($ruleCondition);
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+        $priceList->setProductAssignmentRule($assignmentRule);
+        $priceList->addPriceRule($priceRule);
+
         $this->parser->expects($this->any())
             ->method('getUsedLexemes')
-            ->will($this->returnValueMap($map));
-        /** @var \PHPUnit_Framework_MockObject_MockObject|PriceRuleLexemeRepository $repo */
-        $repo = $this->getMockBuilder(PriceRuleLexemeRepository::class)
+            ->willReturnMap([
+                [$assignmentRule, ['OroB2B\Bundle\ProductBundle\Entity\Category' => ['id']]],
+                [$rule, ['OroB2B\Bundle\ProductBundle\Entity\Product::msrp' => ['value']]],
+                [$ruleCondition, ['OroB2B\Bundle\ProductBundle\Entity\Product' => ['sku']]]
+            ]);
+
+        $this->priceRuleProvider->expects($this->any())
+            ->method('getRealClassName')
+            ->willReturnMap([
+                ['OroB2B\Bundle\ProductBundle\Entity\Category', 'OroB2B\Bundle\ProductBundle\Entity\Category'],
+                [
+                    'OroB2B\Bundle\ProductBundle\Entity\Product::msrp',
+                    'OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice'
+                ],
+                ['OroB2B\Bundle\ProductBundle\Entity\Product', 'OroB2B\Bundle\ProductBundle\Entity\Product']
+            ]);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|PriceRuleLexemeRepository $lexemeRepository */
+        $lexemeRepository = $this->getMockBuilder(PriceRuleLexemeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
-            ->method('getLexemesByRules')
-            ->with(new ArrayCollection([$priceRule1, $priceRule2]))
-            ->willReturn($this->getExistLexemes());
-        $em = $this->getMockBuilder(EntityManager::class)
+
+        $lexemeRepository->expects($this->once())
+            ->method('deleteByPriceList')
+            ->with($priceList);
+
+        $lexemeEntityManager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->once())
+
+        $lexemeEntityManager->expects($this->once())
             ->method('getRepository')
             ->with('OroB2BPricingBundle:PriceRuleLexeme')
-            ->willReturn($repo);
-        $this->registry->expects($this->once())
+            ->willReturn($lexemeRepository);
+
+
+        $msrpId = '42';
+        $msrpPriceAttribute = $this->getEntity(PriceAttributePriceList::class, ['id' => $msrpId]);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|PriceRuleLexemeRepository $priceAttributeRepository */
+        $priceAttributeRepository = $this->getMockBuilder(PriceRuleLexemeRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $priceAttributeRepository->expects($this->any())
+            ->method('findOneBy')
+            ->with(['fieldName' => 'msrp'])
+            ->willReturn($msrpPriceAttribute);
+
+        $priceAttributeEntityManager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $priceAttributeEntityManager->expects($this->any())
+            ->method('getRepository')
+            ->with('OroB2BPricingBundle:PriceAttributePriceList')
+            ->willReturn($priceAttributeRepository);
+
+        $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2BPricingBundle:PriceRuleLexeme')
-            ->willReturn($em);
-        $em->expects($this->exactly(1))->method('remove');
-        $em->expects($this->exactly(18))->method('persist');
-        $em->expects($this->once())->method('flush');
+            ->willReturnMap([
+                ['OroB2BPricingBundle:PriceRuleLexeme', $lexemeEntityManager],
+                ['OroB2BPricingBundle:PriceAttributePriceList', $priceAttributeEntityManager],
+            ]);
+
+        $lexemeEntityManager->expects($this->any())->method('persist');
+        $lexemeEntityManager->expects($this->once())->method('flush');
+
         $this->priceRuleLexemeHandler->updateLexemes($priceList);
-    }
-
-    /**
-     * @return PriceRuleLexeme[]
-     */
-    protected function getExistLexemes()
-    {
-        $rule1 = $this->getEntity(PriceRule::class, ['id' => 1]);
-        $rule2 = $this->getEntity(PriceRule::class, ['id' => 2]);
-        $rule3 = $this->getEntity(PriceRule::class, ['id' => 3]);
-        $lexeme1 = $this->getEntity(
-            PriceRuleLexeme::class,
-            ['id' => 1, 'className' => 'class1', 'fieldName' => null, 'priceRule' => $rule1]
-        );
-        $lexeme2 = $this->getEntity(
-            PriceRuleLexeme::class,
-            [
-                'id' => 2,
-                'className' => 'class2',
-                'fieldName' => 'field4',
-                'priceRule' => null,
-                'priceList' => new PriceList(),
-            ]
-        );
-        $lexeme3 = $this->getEntity(
-            PriceRuleLexeme::class,
-            ['id' => 3, 'className' => 'class3', 'fieldName' => 'field4', 'priceRule' => $rule3]
-        );
-
-        return [$lexeme1, $lexeme2, $lexeme3];
     }
 }

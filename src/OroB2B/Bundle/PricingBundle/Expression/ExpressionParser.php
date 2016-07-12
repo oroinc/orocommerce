@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\PricingBundle\Expression;
 
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\ExpressionLanguage\ParsedExpression;
 
 class ExpressionParser
 {

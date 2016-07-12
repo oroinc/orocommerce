@@ -2,14 +2,15 @@
 
 namespace OroB2B\Bundle\PricingBundle\Handler;
 
-use Doctrine\ORM\EntityManager;
-
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
 
 class PriceRuleLexemeHandler
 {
@@ -24,13 +25,23 @@ class PriceRuleLexemeHandler
     protected $parser;
 
     /**
+     * @var PriceRuleAttributeProvider
+     */
+    protected $priceRuleProvider;
+
+    /**
      * @param ManagerRegistry $registry
      * @param ExpressionParser $parser
+     * @param PriceRuleAttributeProvider $priceRuleProvider
      */
-    public function __construct(ManagerRegistry $registry, ExpressionParser $parser)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        ExpressionParser $parser,
+        PriceRuleAttributeProvider $priceRuleProvider
+    ) {
         $this->registry = $registry;
         $this->parser = $parser;
+        $this->priceRuleProvider = $priceRuleProvider;
     }
 
     /**
@@ -38,175 +49,79 @@ class PriceRuleLexemeHandler
      */
     public function updateLexemes(PriceList $priceList)
     {
-        $priceRules = $priceList->getPriceRules();
-        /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceRuleLexeme');
-        $existLexemes = $em->getRepository('OroB2BPricingBundle:PriceRuleLexeme')->getLexemesByRules($priceRules);
         $assignmentRule = $priceList->getProductAssignmentRule();
-        $newLexemes = [];
-        $lexemesToRemove = [];
+
+        $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceRuleLexeme');
+
+        // Remove all lexemes for priceList if price list exist
+        if ($priceList->getId()) {
+            $em->getRepository('OroB2BPricingBundle:PriceRuleLexeme')->deleteByPriceList($priceList);
+        }
+
+        //Anew add lexemes for priceList
+        $priceRules = $priceList->getPriceRules();
+
+        $lexemes = [];
+
         if ($assignmentRule) {
-            $assignmentRules = $this->parser->getUsedLexemes($assignmentRule);
-            $newLexemes = $this->getNewLexemes($existLexemes, $assignmentRules, null, $priceList);
-            $lexemesToRemove = $this->getLexemesToRemove($existLexemes, $assignmentRules, null, $priceList);
+            $assignmentRuleLexemes = $this->parser->getUsedLexemes($assignmentRule);
+            $lexemes = $this->prepareLexemes($assignmentRuleLexemes, $priceList, null);
         }
 
         foreach ($priceRules as $rule) {
             $conditionRules = $this->parser->getUsedLexemes($rule->getRuleCondition());
             $priceRules = $this->parser->getUsedLexemes($rule->getRule());
             $uniqueLexemes = $this->mergeLexemes($conditionRules, $priceRules);
-            $newLexemes = array_merge($this->getNewLexemes($existLexemes, $uniqueLexemes, $rule), $newLexemes);
-            $lexemesToRemove = array_merge(
-                $this->getLexemesToRemove($existLexemes, $uniqueLexemes, $rule),
-                $lexemesToRemove
-            );
+            $lexemes = array_merge($this->prepareLexemes($uniqueLexemes, $priceList, $rule), $lexemes);
         }
-        foreach ($newLexemes as $newLexeme) {
-            $em->persist($newLexeme);
+
+        foreach ($lexemes as $lexeme) {
+            $em->persist($lexeme);
         }
-        foreach ($lexemesToRemove as $lexemeToRemove) {
-            $em->remove($lexemeToRemove);
-        }
+
         $em->flush();
     }
-
+    
     /**
-     * @param PriceRuleLexeme[] $existLexemes
-     * @param array $uniqueUsedLexemes
+     * @param array $lexemes
      *  [
      *     <className> => [<fieldName1>,<fieldName2>..],
      * ]
+     * @param PriceList $priceList
      * @param PriceRule|null $priceRule
-     * @param PriceList|null $priceList
      * @return PriceRuleLexeme[]
      */
-    protected function getNewLexemes(
-        $existLexemes,
-        $uniqueUsedLexemes,
-        PriceRule $priceRule = null,
-        PriceList $priceList = null
-    ) {
-        $newLexemes = [];
-        foreach ($uniqueUsedLexemes as $class => $fieldNames) {
+    protected function prepareLexemes($lexemes, PriceList $priceList, PriceRule $priceRule = null)
+    {
+        $lexemeEntities = [];
+        foreach ($lexemes as $class => $fieldNames) {
+            $realClassName = $this->priceRuleProvider->getRealClassName($class);
             foreach ($fieldNames as $fieldName) {
-                if (!$this->checkLexemeExistInDatabase($existLexemes, $class, $fieldName, $priceRule, $priceList)) {
-                    $lexeme = new PriceRuleLexeme();
-                    $lexeme->setPriceRule($priceRule);
-                    $lexeme->setClassName($class);
-                    $lexeme->setFieldName($fieldName);
-                    $lexeme->setPriceList($priceList);
-                    $newLexemes[] = $lexeme;
+                $lexeme = new PriceRuleLexeme();
+                $lexeme->setPriceRule($priceRule);
+                $lexeme->setClassName($realClassName);
+                $lexeme->setFieldName($fieldName);
+                $lexeme->setPriceList($priceList);
+
+                if ($realClassName ===  PriceAttributeProductPrice::class) {
+                    $classPath = explode("::", $class);
+                    $fieldName = end($classPath);
+
+                    /** @var PriceAttributePriceList $relation */
+                    $relation = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceAttributePriceList')
+                        ->getRepository('OroB2BPricingBundle:PriceAttributePriceList')
+                        ->findOneBy(['fieldName' => $fieldName]);
+
+                    $lexeme->setRelationId($relation->getId());
+                } elseif ($realClassName ===  PriceList::class) {
+                    //@TODO set relation for base price list BB-3372
                 }
+
+                $lexemeEntities[] = $lexeme;
             }
         }
 
-        return $newLexemes;
-    }
-
-    /**
-     * @param PriceRuleLexeme[] $existLexemes
-     * @param array $uniqueUsedLexemes
-     * @param PriceRule $priceRule
-     * @param PriceList|null $priceList
-     * @return PriceRuleLexeme[]
-     */
-    protected function getLexemesToRemove(
-        $existLexemes,
-        $uniqueUsedLexemes,
-        PriceRule $priceRule = null,
-        PriceList $priceList = null
-    ) {
-        $lexemesToRemove = [];
-        foreach ($existLexemes as $existLexeme) {
-            if ($this->checkPriceRuleInLexeme($existLexeme, $priceRule)
-                && $this->checkPriceListInLexeme($existLexeme, $priceList)
-                && !$this->checkExistInUsed(
-                    $existLexeme,
-                    $uniqueUsedLexemes,
-                    $priceRule,
-                    $priceList
-                )
-            ) {
-                $lexemesToRemove[] = $existLexeme;
-            }
-        }
-
-        return $lexemesToRemove;
-    }
-
-    /**
-     * @param PriceRuleLexeme[] $existLexemes
-     * @param string $class
-     * @param string $fieldName
-     * @param PriceRule $priceRule
-     * @param PriceList|null $priceList
-     * @return bool
-     */
-    protected function checkLexemeExistInDatabase(
-        $existLexemes,
-        $class,
-        $fieldName,
-        PriceRule $priceRule = null,
-        PriceList $priceList = null
-    ) {
-        foreach ($existLexemes as $existLexeme) {
-            if ($this->checkEquals($existLexeme, $class, $fieldName, $priceRule, $priceList)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param PriceRuleLexeme $existLexeme
-     * @param array $uniqueUsedLexemes
-     * @param PriceRule|null $priceRule
-     * @param PriceList|null $priceList
-     * @return bool
-     */
-    protected function checkExistInUsed(
-        $existLexeme,
-        $uniqueUsedLexemes,
-        PriceRule $priceRule = null,
-        PriceList $priceList = null
-    ) {
-
-        foreach ($uniqueUsedLexemes as $class => $fieldNames) {
-            foreach ($fieldNames as $fieldName) {
-                if ($this->checkEquals($existLexeme, $class, $fieldName, $priceRule, $priceList)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param PriceRuleLexeme $lexeme
-     * @param string $class
-     * @param string $field
-     * @param PriceRule|null $priceRule
-     * @param PriceList|null $priceList
-     * @return bool
-     */
-    protected function checkEquals(
-        PriceRuleLexeme $lexeme,
-        $class,
-        $field,
-        PriceRule $priceRule = null,
-        PriceList $priceList = null
-    ) {
-        if ($lexeme->getClassName() === $class
-            && $lexeme->getFieldName() === $field
-            && $this->checkPriceRuleInLexeme($lexeme, $priceRule)
-            && $this->checkPriceListInLexeme($lexeme, $priceList)
-        ) {
-            return true;
-        }
-
-        return false;
+        return $lexemeEntities;
     }
 
     /**
@@ -230,43 +145,5 @@ class PriceRuleLexemeHandler
         }
 
         return $result;
-    }
-
-    /**
-     * @param PriceRuleLexeme $lexeme
-     * @param PriceList|null $priceList
-     * @return bool
-     */
-    protected function checkPriceListInLexeme(PriceRuleLexeme $lexeme, PriceList $priceList = null)
-    {
-        $priceListFromLexeme = $lexeme->getPriceList();
-        if ($priceListFromLexeme && $priceList) {
-            $priceListEquals = $priceListFromLexeme->getId() === $priceList->getId();
-
-            return $priceListEquals;
-        } else {
-            $priceListEquals = $priceListFromLexeme === $priceList;
-
-            return $priceListEquals;
-        }
-    }
-
-    /**
-     * @param PriceRuleLexeme $lexeme
-     * @param PriceRule|null $priceRule
-     * @return bool
-     */
-    protected function checkPriceRuleInLexeme(PriceRuleLexeme $lexeme, PriceRule $priceRule = null)
-    {
-        $priceRuleFromLexeme = $lexeme->getPriceRule();
-        if ($priceRuleFromLexeme && $priceRule) {
-            $priceRuleEquals = $priceRuleFromLexeme->getId() === $priceRule->getId();
-
-            return $priceRuleEquals;
-        } else {
-            $priceListEquals = $priceRuleFromLexeme === $priceRule;
-
-            return $priceListEquals;
-        }
     }
 }

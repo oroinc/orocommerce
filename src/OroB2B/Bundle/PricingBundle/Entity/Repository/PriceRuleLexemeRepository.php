@@ -4,22 +4,21 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceRuleLexemeRepository extends EntityRepository
 {
     /**
-     * @param PriceRule[] $rules
-     * @return PriceRuleLexeme[]
+     * @param PriceList $priceList
      */
-    public function getLexemesByRules($rules)
+    public function deleteByPriceList(PriceList $priceList)
     {
         $qb = $this->createQueryBuilder('lexeme');
 
-        return $qb->where($qb->expr()->in('lexeme.priceRule', ':rules'))
-            ->setParameter('rules', $rules)
-            ->getQuery()
-            ->getResult();
+        $qb->delete()
+            ->where($qb->expr()->in('lexeme.priceList', ':priceList'))
+            ->setParameter('priceList', $priceList);
+        
+        $qb->getQuery()->execute();
     }
 }
