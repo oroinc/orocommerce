@@ -2,13 +2,16 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\ImportExport;
 
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\File\File;
+
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
-use Symfony\Component\Form\Form;
 
 /**
  * @dbIsolation
@@ -161,7 +164,7 @@ class ImportExportTest extends WebTestCase
     /**
      * @dataProvider getExportTestInput
      */
-    public function testExport($exportChoice, $expectedHeader)
+    public function testExportInfluencedByProcessorChoice($exportChoice, $expectedHeader)
     {
         $crawler = $this->client->request(
             'GET',
@@ -177,7 +180,9 @@ class ImportExportTest extends WebTestCase
         $this->assertArrayHasKey('success', $response);
         $this->assertTrue($response['success']);
 
-        $this->assertFile($response['url'], $expectedHeader);
+        $file = $this->downloadFile($response['url']);
+        $this->assertFileHeader($file, $expectedHeader);
+        $this->assertFileContent($file, count($expectedHeader), $this->getExpectedRowsForExport($expectedHeader));
     }
 
     public function getExportTestInput()
@@ -213,7 +218,8 @@ class ImportExportTest extends WebTestCase
         $this->assertArrayHasKey('url', $response);
         $this->assertContains('.csv', $response['url']);
 
-        $this->assertFile($response['url'], $expectedHeader);
+        $file = $this->downloadFile($response['url']);
+        $this->assertFileHeader($file, $expectedHeader);
     }
 
     public function getExportTemplateTestInput()
@@ -224,17 +230,37 @@ class ImportExportTest extends WebTestCase
         ];
     }
 
-    protected function assertFile($url, $expectedHeader)
+    protected function downloadFile($url)
     {
         $this->client->request('GET', $url);
 
         /** @var File $csvFile */
         $csvFile = $this->client->getResponse()->getFile();
         $handle = fopen($csvFile->getRealPath(), "r");
-        $this->assertNotFalse($handle);
-        $header = fgetcsv($handle);
 
+        return $handle;
+    }
+
+    protected function assertFileHeader($csvFile, $expectedHeader)
+    {
+        $this->assertNotFalse($csvFile);
+        $header = fgetcsv($csvFile);
         $this->assertEquals($expectedHeader, $header);
+    }
+
+    protected function assertFileContent($file, $numberOfColumns, $numberOfRows)
+    {
+        $row = fgetcsv($file);
+        $rows = [];
+        while ($row) {
+            $this->assertEquals(count($row), $numberOfColumns);
+            $rows[] = $row;
+            $row = fgetcsv($file);
+        }
+
+        $this->assertEquals($numberOfRows, count($rows));
+
+        return $rows;
     }
 
     protected function getDefaultRequestParameters()
@@ -245,5 +271,22 @@ class ImportExportTest extends WebTestCase
             'entity' => WarehouseInventoryLevel::class,
             'processorAlias' => 'orob2b_warehouse_detailed_inventory_levels'
         ];
+    }
+
+    protected function getExpectedRowsForExport($header)
+    {
+        if ($header == $this->inventoryStatusOnlyHeader) {
+            return count(
+                $this->client->getContainer()->get('oro_entity.doctrine_helper')
+                    ->getEntityRepository(Product::class)
+                    ->findAll()
+            );
+        }
+
+        return count(
+            $this->client->getContainer()->get('oro_entity.doctrine_helper')
+                ->getEntityRepository(WarehouseInventoryLevel::class)
+                ->findAll()
+        );
     }
 }
