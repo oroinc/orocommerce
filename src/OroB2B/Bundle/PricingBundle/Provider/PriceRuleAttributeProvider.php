@@ -73,12 +73,12 @@ class PriceRuleAttributeProvider
     public function getAvailableConditionAttributes($className)
     {
         $realClassName = $this->getRealClassName($className);
-        if (!$this->isClassSupported($className)) {
+        if (!$this->isClassSupported($realClassName)) {
             throw new \Exception('Class does not supported');
         }
         $this->ensureConditionAttributes($realClassName);
 
-        return $this->availableConditionAttributes[$className];
+        return $this->availableConditionAttributes[$realClassName];
     }
 
     /**

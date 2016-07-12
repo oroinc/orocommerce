@@ -40,7 +40,7 @@ abstract class AbstractDefinedAttributesValidator extends ConstraintValidator
             $lexemesInfo = $this->parser->getUsedLexemes($value);
             foreach ($lexemesInfo as $class => $lexemes) {
                 $supportedFields = $this->getSupportedAttributes($class);
-                $unsupportedFields = array_diff($lexemes, array_keys($supportedFields));
+                $unsupportedFields = array_diff($lexemes, $supportedFields);
                 if (!empty($unsupportedFields)) {
                     throw new \Exception('Unsupported fields used');
                 }

@@ -9,7 +9,7 @@ class DefinedRuleAttributes extends Constraint
     /**
      * @var string
      */
-    public $message = 'orob2b.pricing.validators.product_price.know_lexemes.message';
+    public $message = 'orob2b.pricing.validators.product_price.unknown_lexemes.message';
 
     /**
      * {@inheritdoc}
