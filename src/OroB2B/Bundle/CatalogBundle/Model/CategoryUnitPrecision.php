@@ -80,9 +80,17 @@ class CategoryUnitPrecision implements ProductUnitHolderInterface
     /**
      * {@inheritdoc}
      */
-    public function getProductHolder()
+    public function getProduct()
     {
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return $this;
     }
 
     /**

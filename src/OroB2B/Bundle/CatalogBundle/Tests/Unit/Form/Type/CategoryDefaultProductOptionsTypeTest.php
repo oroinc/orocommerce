@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
+use OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
 use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
@@ -131,9 +131,6 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * Test getName
-     */
     public function testGetName()
     {
         $this->assertEquals(CategoryDefaultProductOptionsType::NAME, $this->formType->getName());

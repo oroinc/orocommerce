@@ -3,12 +3,11 @@
 namespace OroB2B\Bundle\CatalogBundle\Provider;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Provider\AbstractDefaultProductUnitProvider;
+use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
-class CategoryDefaultProductUnitProvider extends AbstractDefaultProductUnitProvider
+class CategoryDefaultProductUnitProvider implements DefaultProductUnitProviderInterface
 {
     /**
      * @var Category
@@ -39,10 +38,10 @@ class CategoryDefaultProductUnitProvider extends AbstractDefaultProductUnitProvi
                 }
 
                 if (null !== $categoryUnitPrecision && null !== $categoryUnitPrecision->getUnit()) {
-                    return $this->createProductUnitPrecision(
-                        $categoryUnitPrecision->getUnit(),
-                        $categoryUnitPrecision->getPrecision()
-                    );
+                    $productUnitPrecision = new ProductUnitPrecision();
+                    return $productUnitPrecision
+                        ->setUnit($categoryUnitPrecision->getUnit())
+                        ->setPrecision($categoryUnitPrecision->getPrecision());
                 }
                 $this->category = $this->category->getParentCategory();
             } while (null !== $this->category);

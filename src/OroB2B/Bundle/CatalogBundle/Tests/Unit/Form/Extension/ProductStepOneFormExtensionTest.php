@@ -9,17 +9,18 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
+use Oro\Component\Testing\Unit\EntityTrait;
+
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Form\Extension\ProductFormExtension;
 use OroB2B\Bundle\CatalogBundle\Form\Extension\ProductStepOneFormExtension;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- */
 class ProductStepOneFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -115,8 +116,8 @@ class ProductStepOneFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($category);
 
         $this->defaultProductUnitProvider->expects($this->once())
-            ->method('setCategoryId')
-            ->with($category->getId());
+            ->method('setCategory')
+            ->with($category);
 
         $this->extension->onPostSubmit($event);
     }
@@ -147,24 +148,6 @@ class ProductStepOneFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createCategory($id = null)
     {
-        return $this->createEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', $id);
-    }
-
-    /**
-     * @param          $class string
-     * @param int|null $id
-     *
-     * @return object
-     */
-    protected function createEntity($class, $id = null)
-    {
-        $entity = new $class();
-        if ($id) {
-            $reflection = new \ReflectionProperty($class, 'id');
-            $reflection->setAccessible(true);
-            $reflection->setValue($entity, $id);
-        }
-
-        return $entity;
+        return $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', ['id' => $id]);
     }
 }

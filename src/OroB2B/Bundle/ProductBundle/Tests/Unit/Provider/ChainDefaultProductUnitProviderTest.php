@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
+use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
 class ChainDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -13,9 +14,14 @@ class ChainDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     protected $chainProvider;
 
     /**
-     * @var array
+     * @var DefaultProductUnitProviderInterface
      */
-    protected $providers = [];
+    protected $highPriorityProvider;
+
+    /**
+     * @var DefaultProductUnitProviderInterface
+     */
+    protected $lowPriorityProvider;
 
     /**
      * @var ProductUnitPrecision
@@ -27,30 +33,28 @@ class ChainDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
         $this->chainProvider = new ChainDefaultProductUnitProvider();
         $this->unitPrecision = new ProductUnitPrecision();
 
-        $highPriorityProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\AbstractDefaultProductUnitProvider')
+        $this->highPriorityProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface')
             ->disableOriginalConstructor()
             ->setMockClassName('HighPriorityProvider')
             ->getMock();
-        $lowPriorityProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\AbstractDefaultProductUnitProvider')
+        $this->lowPriorityProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface')
             ->disableOriginalConstructor()
             ->setMockClassName('LowPriorityProvider')
             ->getMock();
 
-        $this->chainProvider->addProvider($highPriorityProvider);
-        $this->chainProvider->addProvider($lowPriorityProvider);
-
-        $this->providers = [$highPriorityProvider, $lowPriorityProvider];
+        $this->chainProvider->addProvider($this->highPriorityProvider);
+        $this->chainProvider->addProvider($this->lowPriorityProvider);
     }
 
     public function testGetDefaultProductUnitPrecisionByHighPriorityProvider()
     {
-        $this->providers[0]
+        $this->highPriorityProvider
             ->expects($this->once())
             ->method('getDefaultProductUnitPrecision')
             ->will($this->returnValue($this->unitPrecision));
-        $this->providers[1]
+        $this->lowPriorityProvider
             ->expects($this->never())
             ->method('getDefaultProductUnitPrecision');
 
@@ -59,11 +63,11 @@ class ChainDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDefaultProductUnitPrecisionByLowPriorityProvider()
     {
-        $this->providers[0]
+        $this->highPriorityProvider
             ->expects($this->once())
             ->method('getDefaultProductUnitPrecision')
             ->will($this->returnValue(null));
-        $this->providers[1]
+        $this->lowPriorityProvider
             ->expects($this->once())
             ->method('getDefaultProductUnitPrecision')
             ->will($this->returnValue($this->unitPrecision));
@@ -73,11 +77,11 @@ class ChainDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDefaultProductUnitPrecisionNone()
     {
-        $this->providers[0]
+        $this->highPriorityProvider
             ->expects($this->once())
             ->method('getDefaultProductUnitPrecision')
             ->will($this->returnValue(null));
-        $this->providers[1]
+        $this->lowPriorityProvider
             ->expects($this->once())
             ->method('getDefaultProductUnitPrecision')
             ->will($this->returnValue(null));

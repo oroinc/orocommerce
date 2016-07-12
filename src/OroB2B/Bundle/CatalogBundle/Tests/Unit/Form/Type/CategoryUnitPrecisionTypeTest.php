@@ -10,9 +10,9 @@ use Symfony\Component\Validator\Validation;
 
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
 use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
@@ -125,9 +125,6 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * Test getName
-     */
     public function testGetName()
     {
         $this->assertEquals(CategoryUnitPrecisionType::NAME, $this->formType->getName());

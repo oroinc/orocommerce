@@ -41,6 +41,7 @@ class DefaultProductUnitProvidersCompilerPass implements CompilerPassInterface
             $resolverDef->addMethodCall('addProvider', [$provider]);
         }
     }
+    
     /**
      * {@inheritdoc}
      */

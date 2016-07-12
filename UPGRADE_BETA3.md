@@ -31,11 +31,15 @@ FallbackBundle:
 CatalogBundle:
 --------------
 - Entity `OroB2B\Bundle\CatalogBundle\Entity\Category` now uses an entity `Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue` for `titles`.
-- Added `OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecision` in order to manage units and precisions for category. Demo Data Migrations changed also.
-- Added `OroB2B\Bundle\CatalogBundle\Entity\CategoryUnitPrecisionType` in order to fill unit and precision with values on category creation and update pages.
-- Modified `OroB2B\Bundle\CatalogBundle\Entity\Category` added property: `unitPrecision`.
+- Added `OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions` in order to manage default product options for category. Demo Data Migrations changed also.
+- Added `OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision` in order to manage units and precisions for category.
+- Added `OroB2B\Bundle\CatalogBundle\Form\CategoryDefaultProductOptionsType` in order to fill default product options with values on category creation and update pages.
+- Added `OroB2B\Bundle\CatalogBundle\Form\CategoryUnitPrecisionType` in order to fill unit and precision with values on category creation and update pages.
+- Modified `OroB2B\Bundle\CatalogBundle\Entity\Category` added property: `defaultProductOptions`.
 - Modified `OroB2B\Bundle\CatalogBundle\Form\Handler\CategoryHandler` added methods in order to update Category with `unitPrecision`.
-- Modified `OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType` added option `unitPrecision`.
+- Modified `OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType` added option `defaultProductOptions`.
+- Added `OroB2B\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider` as tagged service with name name 'orob2b_product.default_product_unit_provider' and priority '10'
+  in order to work with `OroB2B\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider` see `ProductBundle`
 
 MenuBundle:
 --------------
@@ -45,7 +49,10 @@ ProductBundle:
 --------------
 - Entity `OroB2B\Bundle\ProductBundle\Entity\Product` now uses an entity `Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue` for `names`, `desciptions` and `shorDescriptions`.
 - Replaced single product image with typed product image collection
-- Modified `OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider` added new option `categoryId` and with methods in order to set `categoryId`, get default product unit precision, create product unit precision.
+- Changed approach of selecting default unitPrecision for product:
+  1. `OroB2B\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider` was created as chain provider service which is working with tagged services with name 'orob2b_product.default_product_unit_provider' and priority.
+     Service with higher priority number will be processed earlier
+  2. `OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider` was renamed as `OroB2B\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider` and tagged with name 'orob2b_product.default_product_unit_provider' and priority '0' (lowest)
 
 WebsiteBundle:
 --------------

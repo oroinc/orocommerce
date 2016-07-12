@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Provider;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use OroB2B\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -19,32 +19,35 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var array
      */
-    protected $categoryPrecision = ['code'=>'set', 'precision'=>2];
+    protected $categoryPrecision = ['code' => 'set', 'precision' => 2];
+
+    /**
+     * @var array
+     */
+    protected $categories;
 
     public function setUp()
     {
-        $configManager = $this
-            ->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($this->categoryPrecision['code']);
 
-        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $mapRepository = [
-            ['OroB2BCatalogBundle:Category', $this->createMockCategoryRepository()]
+        $category1UnitPrecision = new CategoryUnitPrecision();
+        $category1UnitPrecision
+            ->setUnit($productUnit)
+            ->setPrecision($this->categoryPrecision['precision']);
+
+        $category1 = $this->createCategory($category1UnitPrecision, null);
+        $category2 = $this->createCategory(null, $category1);
+        $category3 = $this->createCategory(null, null);
+
+        $this->categories = [
+            0 => null,
+            1 => $category1,
+            2 => $category2,
+            3 => $category3,
         ];
-        $manager->expects($this->any())
-            ->method('getRepository')
-            ->will($this->returnValueMap($mapRepository));
 
-        $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $mapManager = [
-            ['OroB2BCatalogBundle:Category', $manager]
-        ];
-        $managerRegistry->expects($this->any())
-            ->method('getManagerForClass')
-            ->will($this->returnValueMap($mapManager));
-
-        $this->defaultProductUnitProvider = new CategoryDefaultProductUnitProvider($configManager, $managerRegistry);
+        $this->defaultProductUnitProvider = new CategoryDefaultProductUnitProvider();
     }
 
     /**
@@ -54,7 +57,7 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDefaultProductUnit($categoryId, $expectedData)
     {
-        $this->defaultProductUnitProvider->setCategoryId($categoryId);
+        $this->defaultProductUnitProvider->setCategory($this->categories[$categoryId]);
 
         $expectedUnitPrecision = $this->createProductUnitPrecision(
             $expectedData['code'],
@@ -67,80 +70,18 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return  CategoryRepository
-     *
-     */
-    private function createMockCategoryRepository()
-    {
-        $category1UnitPrecision = $this
-            ->getMockBuilder('OroB2B\Bundle\CategoryBundle\Model\CategoryUnitPrecision')
-            ->setMethods(['getUnit', 'getPrecision'])
-            ->getMock();
-        
-        $productUnit = new ProductUnit();
-        $productUnit->setCode($this->categoryPrecision['code']);
-        
-        $category1UnitPrecision->expects($this->any())
-            ->method('getUnit')
-            ->will($this->returnValue($productUnit));
-        
-        $category1UnitPrecision->expects($this->any())
-            ->method('getPrecision')
-            ->will($this->returnValue($this->categoryPrecision['precision']));
-
-
-        $category1 = $this->createMockCategory($category1UnitPrecision, null);
-        $category2 = $this->createMockCategory(null, $category1);
-        $category3 = $this->createMockCategory(null, null);
-
-
-        $mapCategory = [
-            [1, $category1],
-            [2, $category2],
-            [3, $category3],
-        ];
-
-        $categoryRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\CategoryBundle\Entity\Repository\CategoryRepository')
-            ->setMethods(['findOneById'])
-            ->getMock();
-
-        $categoryRepository->expects($this->any())
-            ->method('findOneById')
-            ->will($this->returnValueMap($mapCategory));
-
-        return $categoryRepository;
-    }
-
-    /**
      * @param CategoryUnitPrecision $categoryUnitPrecision,
      * @param Category $parent
      * @return  Category
-     *
      */
-    private function createMockCategory($categoryUnitPrecision, $parent)
+    private function createCategory($categoryUnitPrecision, $parent)
     {
-        $defaultProductOptions =  $this
-            ->getMockBuilder('OroB2B\Bundle\CategoryBundle\Entity\CategoryDefaultProductOptions')
-            ->setMethods(['getUnitPrecision'])
-            ->getMock();
-
-        $defaultProductOptions->expects($this->any())
-            ->method('getUnitPrecision')
-            ->willReturn($categoryUnitPrecision);
+        $defaultProductOptions =  new CategoryDefaultProductOptions();
+        $defaultProductOptions->setUnitPrecision($categoryUnitPrecision);
         
-        $category =  $this
-            ->getMockBuilder('OroB2B\Bundle\CategoryBundle\Entity\Category')
-            ->setMethods(['getDefaultProductOptions', 'getParentCategory'])
-            ->getMock();
-
-        $category->expects($this->any())
-            ->method('getDefaultProductOptions')
-            ->willReturn($defaultProductOptions);
-
-        $category->expects($this->any())
-            ->method('getParentCategory')
-            ->willReturn($parent);
+        $category =  new Category();
+        $category->setDefaultProductOptions($defaultProductOptions);
+        $category->setParentCategory($parent);
 
         return $category;
     }
@@ -168,7 +109,7 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'noCategory' => [
-                'categoryId' => null,
+                'categoryId' => 0,
                 'expectedData' => null
             ],
             'CategoryWithPrecision' => [
