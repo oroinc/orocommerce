@@ -15,8 +15,7 @@ class LoadEntityId implements ProcessorInterface
     {
         /** @var SingleItemContext $context */
 
-        $entityId = $context->getId();
-        if (null !== $entityId) {
+        if (null !== $context->getId()) {
             return;
         }
 
