@@ -36,6 +36,9 @@ abstract class AbstractDefinedAttributesValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
+        if ($value === null || $value === '') {
+            return;
+        }
         try {
             $lexemesInfo = $this->parser->getUsedLexemes($value);
             foreach ($lexemesInfo as $class => $lexemes) {

@@ -79,9 +79,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetUsedLexemes($expression, array $expected)
     {
-        $usedLexemes = $this->expressionParser->getUsedLexemes($expression);
-        $usedLexemes = $this->expressionParser->parse($expression);
-        $this->assertEquals($expected, $usedLexemes);
+        $this->assertEquals($expected, $this->expressionParser->getUsedLexemes($expression));
 
     }
 

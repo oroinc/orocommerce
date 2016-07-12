@@ -2,35 +2,22 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\EntityBundle\Provider\ChainVirtualFieldProvider;
-
+use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
 
 class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $registry;
 
     /**
-     * @var ChainVirtualFieldProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityFieldProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $virtualFieldProvider;
+    protected $entityFieldProvider;
 
     /**
      * @var PriceRuleAttributeProvider
      */
     protected $priceRuleAttributeProvider;
 
-    /**
-     * @var ClassMetadata
-     */
-    protected $metadata;
 
     protected function setUp()
     {
@@ -38,27 +25,22 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-
-        $this->virtualFieldProvider = $this->getMock(ChainVirtualFieldProvider::class);
-        $this->priceRuleAttributeProvider = new PriceRuleAttributeProvider(
-            $this->registry,
-            $this->virtualFieldProvider
-        );
+        $this->entityFieldProvider = $this->getMockBuilder(EntityFieldProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->priceRuleAttributeProvider = new PriceRuleAttributeProvider($this->entityFieldProvider);
     }
 
     /**
      * @dataProvider ruleAttributeDataProvider
      * @param array $fields
-     * @param array $virtualField
      * @param array $expectedFields
      * @throws \Exception
      */
-    public function testGetAvailableRuleAttributes(array $fields, array $virtualField, array $expectedFields)
+    public function testGetAvailableRuleAttributes(array $fields, array $expectedFields)
     {
-
-        $this->mockManager($fields);
         $className = 'ClassName';
-        $this->virtualFieldProvider->method('getVirtualFields')->willReturn($virtualField);
+        $this->entityFieldProvider->method('getFields')->willReturn($fields);
 
         $this->priceRuleAttributeProvider->addSupportedClass($className);
         $actualFields = $this->priceRuleAttributeProvider->getAvailableRuleAttributes($className);
@@ -74,28 +56,16 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'fields' => [
-                    ['field1', 'integer'],
-                    ['field2', 'money'],
-                    ['field3', 'string'],
-                    ['field4', 'float'],
+                    ['name' => 'field1', 'type' => 'integer'],
+                    ['name' => 'field2', 'type' => 'money'],
+                    ['name' => 'field3', 'type' => 'string'],
+                    ['name' => 'field4', 'type' => 'float'],
+                    ['name' => 'virtualField', 'type' => 'string'],
                 ],
-                'virtualField' => ['virtualField'],
                 'expectedFields' => [
-                    'field1' => [
-                        'name' => 'field1',
-                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                        'data_type' => 'integer',
-                    ],
-                    'field2' => [
-                        'name' => 'field2',
-                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                        'data_type' => 'money',
-                    ],
-                    'field4' => [
-                        'name' => 'field4',
-                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                        'data_type' => 'float',
-                    ],
+                    'field1',
+                    'field2',
+                    'field4',
                 ]
             ]
         ];
@@ -104,15 +74,13 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider conditionalAttributeDataProvider
      * @param array $fields
-     * @param array $virtualField
      * @param array $expectedFields
      * @throws \Exception
      */
-    public function testGetAvailableConditionAttributes(array $fields, array $virtualField, array $expectedFields)
+    public function testGetAvailableConditionAttributes(array $fields, array $expectedFields)
     {
-        $this->mockManager($fields);
         $className = 'ClassName';
-        $this->virtualFieldProvider->method('getVirtualFields')->willReturn($virtualField);
+        $this->entityFieldProvider->method('getFields')->willReturn($fields);
 
         $this->priceRuleAttributeProvider->addSupportedClass($className);
         $actualFields = $this->priceRuleAttributeProvider->getAvailableConditionAttributes($className);
@@ -127,38 +95,18 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'fields' => [
-                    ['field1', 'integer'],
-                    ['field2', 'money'],
-                    ['field3', 'string'],
-                    ['field4', 'float'],
+                    ['name' => 'field1', 'type' => 'integer'],
+                    ['name' => 'field2', 'type' => 'money'],
+                    ['name' => 'field3', 'type' => 'string'],
+                    ['name' => 'field4', 'type' => 'float'],
+                    ['name' => 'virtualField', 'type' => 'string'],
                 ],
-                'virtualField' => ['virtualField'],
                 'expectedFields' => [
-                    'field1' => [
-                        'name' => 'field1',
-                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                        'data_type' => 'integer',
-                    ],
-                    'field2' => [
-                        'name' => 'field2',
-                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                        'data_type' => 'money',
-                    ],
-                    'field3' => [
-                        'name' => 'field3',
-                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                        'data_type' => 'string',
-                    ],
-                    'field4' => [
-                        'name' => 'field4',
-                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_NATIVE,
-                        'data_type' => 'float',
-                    ],
-                    'virtualField' => [
-                        'name' => 'virtualField',
-                        'type' => PriceRuleAttributeProvider::FIELD_TYPE_VIRTUAL,
-                        'data_type' => null,
-                    ],
+                    'field1',
+                    'field2',
+                    'field3',
+                    'field4',
+                    'virtualField',
                 ]
             ]
         ];
@@ -171,24 +119,6 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['ClassName'], $this->priceRuleAttributeProvider->getSupportedClasses());
         $this->assertTrue($this->priceRuleAttributeProvider->isClassSupported($class));
         $this->assertFalse($this->priceRuleAttributeProvider->isClassSupported('invalidClassName'));
-    }
-
-    /**
-     * @param array $fields
-     */
-    protected function mockManager(array $fields)
-    {
-        $fieldsNames = array_map(function ($field) {
-            return $field[0];
-        }, $fields);
-        $metadata = $this->getMock(ClassMetadata::class);
-        $metadata->expects($this->once())->method('getFieldNames')
-            ->willReturn($fieldsNames);
-        $metadata->method('getTypeOfField')->willReturnMap($fields);
-
-        $manager = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
-        $manager->method('getClassMetadata')->willReturn($metadata);
-        $this->registry->method('getManagerForClass')->willReturn($manager);
     }
     
     /**

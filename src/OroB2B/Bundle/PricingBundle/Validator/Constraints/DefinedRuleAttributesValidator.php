@@ -9,6 +9,6 @@ class DefinedRuleAttributesValidator extends AbstractDefinedAttributesValidator
      */
     protected function getSupportedAttributes($className)
     {
-        return $this->attributeProvider->getAvailableConditionAttributes($className);
+        return $this->attributeProvider->getAvailableRuleAttributes($className);
     }
 }
