@@ -447,7 +447,8 @@ class ProductControllerTest extends WebTestCase
         $formValues = $form->getPhpValues();
 
         $additionalUnit = array_pop($formValues['orob2b_product']['additionalUnitPrecisions']);
-        $formValues['orob2b_product']['additionalUnitPrecisions'][] = $formValues['orob2b_product']['primaryUnitPrecision'];
+        $formValues['orob2b_product']['additionalUnitPrecisions'][] =
+            $formValues['orob2b_product']['primaryUnitPrecision'];
 
         $formValues['orob2b_product']['primaryUnitPrecision'] = $additionalUnit;
 
