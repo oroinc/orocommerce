@@ -49,7 +49,7 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
     /**
      * {@inheritdoc}
      */
-    public function getFieldsOrder()
+    public function getOrderedFields()
     {
         return $this->fieldsOrder;
     }

@@ -67,7 +67,7 @@ abstract class AbstractRuleCompiler
     protected function addSelectInOrder(QueryBuilder $qb, array $fieldsMap)
     {
         $select = [];
-        foreach ($this->getFieldsOrder() as $fieldName) {
+        foreach ($this->getOrderedFields() as $fieldName) {
             $select[] = $fieldsMap[$fieldName];
         }
         $qb->select($select);
@@ -76,5 +76,5 @@ abstract class AbstractRuleCompiler
     /**
      * @return array
      */
-    abstract public function getFieldsOrder();
+    abstract public function getOrderedFields();
 }

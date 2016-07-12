@@ -93,7 +93,7 @@ class ProductPriceBuilder
         $qb = $this->ruleCompiler->compile($rule, $product);
         $this->queryHelper->execute(
             'OroB2BPricingBundle:ProductPrice',
-            $this->ruleCompiler->getFieldsOrder(),
+            $this->ruleCompiler->getOrderedFields(),
             $qb
         );
     }
