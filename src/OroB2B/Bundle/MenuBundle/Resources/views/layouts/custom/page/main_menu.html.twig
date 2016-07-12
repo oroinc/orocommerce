@@ -2,7 +2,7 @@
 {% block _main_menu_container_new_widget %}
     {% set attr = layout_attr_merge(attr, {'~class': " account-sidebar"}) %}
     <div {{ block('block_attributes') }}>
-        <ul class="top-nav__list">
+        <ul class="top-nav__list main-menu-container">
             {{ block_widget(block, {attr: attr}) }}
         </ul>
     </div>
@@ -25,9 +25,7 @@
                 <span class="collapse-view__trigger collapse-view__trigger--icon" data-collapse-trigger>
                     <i class="collapse-view__trigger-icon cf-play cf--gray" data-toggle="collapse"></i>
                 </span>
-                <span class="hidden-when-collapsed">
-                    {{ 'orob2b.catalog.category.categories.label'|trans }}
-                </span>
+                {{ 'orob2b.catalog.category.categories.label'|trans }}
             </a>
 
             <ul class="top-nav__list navigation-widget__list_nested nested-list_expanded hidden-when-collapsed" data-collapse-container>

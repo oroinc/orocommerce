@@ -128,10 +128,11 @@
     min-height: 49px;
     padding: 14px 0;
 
-    color: $base-font-color-lighter;
+    color: inherit;
     line-height: 1.5;
     text-transform: uppercase;
     text-align: left;
+    font-weight: 700;
 
     @media (max-width: 1069px) {
       font-size: 13px;
@@ -270,6 +271,9 @@
 }
 
 .nested-list__trigger {
+    font-weight: 700;
+    color: inherit;
+
     &:focus,
     &:hover {
         text-decoration: none;
