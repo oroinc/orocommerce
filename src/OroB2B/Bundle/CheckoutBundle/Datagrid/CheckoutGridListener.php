@@ -180,9 +180,14 @@ class CheckoutGridListener
                 $source = $source->getQuote();
             }
 
+            $type = null;
             // simplify type checking in twig
-            $type = $source instanceof ShoppingList ? 'shopping_list' : null;
-            $type = null === $type && $source instanceof Quote ? 'quote' : $type;
+            if ($source instanceof ShoppingList) {
+                $type = 'shopping_list';
+            }
+            if ($source instanceof Quote) {
+                $type = 'quote';
+            }
 
             $name = $this->entityNameResolver->getName($source);
             $data = [
