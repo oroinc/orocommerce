@@ -50,7 +50,8 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         foreach ($filters as $filter) {
             $filterValue = '';
             foreach ($filter['references'] as $value) {
-                $filterValue .= $this->getReference($value)->$filter['method']() . self::ARRAY_DELIMITER;
+                $method = $filter['method'];
+                $filterValue .= $this->getReference($value)->$method() . self::ARRAY_DELIMITER;
             }
             $params['filter'][$filter['key']] = substr($filterValue, 0, -1);
         }

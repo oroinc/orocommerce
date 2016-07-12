@@ -372,3 +372,24 @@ services:
             - "@form.factory"
         tags:
             - { name: layout.data_provider, alias: orob2b_product_line_item_form }
+
+    orob2b_product.api.processor.update_product.build_query:
+        class: 'OroB2B\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery'
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.criteria_connector'
+        tags:
+            - { name: oro.api.processor, action: update, group: build_query, priority: -95, class: '%orob2b_product.entity.product.class%'}
+
+    orob2b_product.api.processor.product_id.normalize_input:
+        class: 'OroB2B\Bundle\ProductBundle\Api\Processor\NormalizeProductId'
+        arguments:
+            - '@oro_api.value_normalizer'
+            - '@oro_api.rest.entity_id_transformer'
+        tags:
+            - { name: oro.api.processor, action: update, group: normalize_input, priority: -105, class: '%orob2b_product.entity.product.class%'}
+
+    orob2b_product.api.processor.entity_id.load_data:
+            class: 'OroB2B\Bundle\ProductBundle\Api\Processor\LoadEntityId'
+            tags:
+                - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%orob2b_product.entity.product.class%'}

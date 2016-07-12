@@ -2,9 +2,12 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Api;
 
+use Symfony\Component\HttpFoundation\Response;
+
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
 
 /**
@@ -55,7 +58,8 @@ class ProductApiTest extends RestJsonApiTestCase
         foreach ($filters as $filter) {
             $filterValue = '';
             foreach ($filter['references'] as $value) {
-                $filterValue .= $this->getReference($value)->$filter['method']() . self::ARRAY_DELIMITER;
+                $method = $filter['method'];
+                $filterValue .= $this->getReference($value)->$method() . self::ARRAY_DELIMITER;
             }
             $params['filter'][$filter['key']] = substr($filterValue, 0, -1);
         }
@@ -156,6 +160,41 @@ class ProductApiTest extends RestJsonApiTestCase
                 ],
             ],
         ];
+    }
+
+    public function testUpdateEntity()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $this->assertEquals('in_stock', $product->getInventoryStatus()->getId());
+
+        $entityType = $this->getEntityType(Product::class);
+        $data = [
+            'data' => [
+                'type' => $entityType,
+                'id' => LoadProductData::PRODUCT_1,
+                'relationships' => [
+                    'inventory_status' => [
+                        'data' => [
+                            'type' => 'prodinventorystatuses',
+                            'id' => 'out_of_stock',
+                        ],
+                    ],
+                ],
+            ]
+        ];
+        $response = $this->request(
+            'PATCH',
+            $this->getUrl(
+                'oro_rest_api_patch',
+                ['entity' => $entityType, 'id' => LoadProductData::PRODUCT_1]
+            ),
+            $data
+        );
+
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+        $result = self::jsonToArray($response->getContent());
+        self::assertEquals('out_of_stock', $result['data']['relationships']['inventory_status']['data']['id']);
     }
 
     /**

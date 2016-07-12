@@ -5,5 +5,5 @@ oro_api:
             fields:
                 sku: ~
             actions:
-                get: ~
                 get_list: ~
+                update: ~
