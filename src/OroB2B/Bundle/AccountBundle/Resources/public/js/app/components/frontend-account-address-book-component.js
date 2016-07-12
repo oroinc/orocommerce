@@ -8,6 +8,7 @@ define(function(require) {
     var _ = require('underscore');
     var routing = require('routing');
     var AddressBook = require('orob2baccount/js/address-book');
+    var deleteConfirmation = require('orob2bfrontend/js/app/components/delete-confirmation');
 
     AccountAddressBook = BaseComponent.extend({
         /**
@@ -45,8 +46,8 @@ define(function(require) {
                 addressMapOptions: {'phone': 'phone'},
                 useFormDialog: options.useFormDialog,
                 allowToRemovePrimary: true,
-                confirmation: true,
-                confirmationComponent: 'orob2bfrontend/js/app/components/delete-confirmation'
+                confirmRemove: true,
+                confirmRemoveComponent: deleteConfirmation
             });
 
             addressBook.getCollection().reset(JSON.parse(options.currentAddresses));

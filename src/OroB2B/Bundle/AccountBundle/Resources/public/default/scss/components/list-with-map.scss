@@ -22,10 +22,6 @@
         &:first-of-type {
             border-top: 1px solid $theme-gray-color;
         }
-
-        &--primary {
-            background-color: $base-footer-background-color;
-        }
     }
 
     &__button {

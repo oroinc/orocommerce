@@ -172,12 +172,6 @@
 .map-address-list {
   .list-item {
     &.map-item {
-      &:not(.active) {
-        .address-list__item--primary {
-          background-color: transparent;
-        }
-      }
-
       &.active {
         .address-list__item {
           background-color: #f5f5f5;
