@@ -8,6 +8,7 @@ Our guide is divided into the following sections:
 * [Naming conventions](#naming-conventions)
 * [HTML coding standards](#html-coding-standards)
 * [CSS coding standards](#css-coding-standards)
+* [The main mixins and functions](#the-main-mixins-and-functions)
 * [Best practices](#best-practices)
 
 ## Naming conventions
@@ -146,6 +147,8 @@ Last - attributes with JSON content.
 6. Use: **{}, :, ;**.
 7. Put a space before the opening brace **{** in rule declarations.
 8. Put closing braces **}** of rule declarations on a new line.
+9. Each component is written in a separate file.
+10. Don't write vendors prefixes.
 
 #### Comments
 
@@ -436,6 +439,40 @@ Exception are **pseudo elements** and **states**.
 }
 ```
 
+According to BEM methodology there are no elements of elements.
+It makes the elements be dependent on the block only. So, you can easily move them
+across the block when providing changes to the interface.
+
+##### Acceptable
+```scss
+.block {
+    ...
+
+    .block__some-element {
+        ...
+    }
+
+    .block__other-element {
+        ...
+    }
+}
+```
+
+##### Unacceptable
+```scss
+.block {
+    ...
+
+    .block__some-element {
+        ...
+
+        .block__some-element__other-element {
+            // STOP!
+        }
+    }
+}
+```
+
 ### Group properties
 
 Are grouped in the following order:
@@ -486,7 +523,7 @@ $element-line-height: 1.2;
 
     // mixins
     // grouping @includes at the end makes it easier to read the entire selector.
-    @include clearfix();
+    @include clearfix;
 }
 ```
 
@@ -572,6 +609,98 @@ Use the logical number of modifiers for the element.
 </div>
 ```
 
+## The main mixins and functions
+
+Helper to clear inner floats.
+
+```scss
+@mixin clearfix {
+    &:after {
+        content: '';
+
+        display: block;
+
+        clear: both;
+    }
+}
+
+// use
+.block {
+    @include clearfix;
+}
+```
+
+Helper for the positioning of pseudo-elements.
+
+```scss
+@mixin after {
+    content: '';
+
+    position: absolute;
+
+    display: block;
+}
+
+// use
+.block {
+    //...
+
+    &:after {
+        @include after;
+    }
+}
+```
+
+Helper function for organizing z-index
+
+```scss
+@function z($layer) {
+    $layers: (
+        'base': 1,
+        'fixed': 50,
+        'dropdown': 100,
+        'popup': 150,
+        'hidden': -1
+    );
+
+    $z-index: map-get($layers, $layer);
+    @return $z-index;
+}
+
+// use
+.dialog {
+    //...
+
+    z-index: z('popup') + 1;
+
+    &-overley {
+        //...
+
+        z-index: z('popup');
+    }
+}
+```
+
+Helper mixin for organizing @media rules
+
+````scss
+@mixin breakpoint($type) {
+    $breakpoints: (
+        'large': '(max-width: ' + #{$breakpoint-large} + ')',
+        'tablet': '(max-width: ' + #{$breakpoint-tablet} + ')',
+        'mobile': '(max-width: ' + #{$breakpoint-mobile} + ')'
+    );
+
+    @media #{map-get($breakpoints, $type)} {
+        @content;
+    }
+}
+// use
+
+@include breakpoint('tablet') {
+    // styles for tablet version
+}
+````
 
 ## Best practices
 
