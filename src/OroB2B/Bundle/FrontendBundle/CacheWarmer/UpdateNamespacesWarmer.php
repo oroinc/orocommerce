@@ -130,11 +130,11 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
     protected function updateAclClassesTable()
     {
         $classes = $this->defaultConnection->fetchAll(
-            "SELECT id, bundle FROM acl_classes WHERE class_type LIKE 'OroB2B%'"
+            "SELECT id, class_type FROM acl_classes WHERE class_type LIKE 'OroB2B%'"
         );
         foreach ($classes as $class) {
             $id = $class['id'];
-            $classType = $class['bundle'];
+            $classType = $class['class_type'];
             $classType = preg_replace('/^OroB2B/', 'Oro', $classType, 1);
             $this->defaultConnection->executeQuery(
                 'UPDATE acl_classes SET class_type = ? WHERE id = ?',
