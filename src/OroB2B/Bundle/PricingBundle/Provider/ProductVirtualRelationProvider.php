@@ -25,6 +25,11 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
     protected $virtualFields = [];
 
     /**
+     * @var array
+     */
+    protected $productAttributes = [];
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(DoctrineHelper $doctrineHelper)
@@ -62,9 +67,9 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
         $relations = [];
 
         if ($className == Product::class) {
-            $productAttributeFieldNames = $this->getProductAttributesFieldNames();
-            foreach ($productAttributeFieldNames as $label => $fieldName) {
-                $relations[$fieldName] = $this->getRelationDefinition($label, $fieldName);
+            $productAttributeFieldNames = $this->getProductAttributes();
+            foreach ($productAttributeFieldNames as $attribute) {
+                $relations[$attribute['fieldName']] = $this->getRelationDefinition($attribute);
             }
         }
 
@@ -85,32 +90,40 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
      */
     protected function isProductAttributeField($fieldName)
     {
-        return in_array($fieldName, $this->getProductAttributesFieldNames(), true);
+        $priceAttributeFieldNames = array_map(
+            function ($item) {
+                return $item['fieldName'];
+            },
+            $productAttributeFieldNames = $this->getProductAttributes()
+        );
+        return in_array($fieldName, $priceAttributeFieldNames, true);
     }
 
     /**
      * @return array
      */
-    protected function getProductAttributesFieldNames()
+    protected function getProductAttributes()
     {
-        /** @var PriceAttributePriceListRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository(PriceAttributePriceList::class);
+        if (!$this->productAttributes) {
+            /** @var PriceAttributePriceListRepository $repository */
+            $repository = $this->doctrineHelper->getEntityRepository(PriceAttributePriceList::class);
 
-        return $repository->getFieldNames();
+            $this->productAttributes = $repository->getFieldNames();
+        }
+
+        return $this->productAttributes;
     }
 
     /**
-     * @param string $label
-     * @param string $fieldName
+     * @param array $attribute
      * @return array
      */
-    protected function getRelationDefinition($label, $fieldName)
+    protected function getRelationDefinition(array $attribute)
     {
-        $priceAlias = $fieldName . 'Price';
-        $priceAttributeAlias = $fieldName . 'PriceAttribute';
+        $priceAlias = $attribute['fieldName'] . 'Price';
 
         return [
-            'label' => $label,
+            'label' => $attribute['name'],
             'relation_type' => 'manyToOne',
             'related_entity_name' => PriceAttributeProductPrice::class,
             'target_join_alias' => $priceAlias,
@@ -121,14 +134,13 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
                             'join' => PriceAttributeProductPrice::class,
                             'alias' => $priceAlias,
                             'conditionType' => Join::WITH,
-                            'condition' => '(' . $priceAlias . '.product = entity)',
-                        ],
-                        [
-                            'join' => PriceAttributePriceList::class,
-                            'alias' => $priceAttributeAlias,
-                            'conditionType' => Join::WITH,
-                            'condition' => '(' . $priceAlias . '.priceList = ' . $priceAttributeAlias . ')',
-                        ],
+                            'condition' => sprintf(
+                                '(%s.product = entity and %s.priceList = %d)',
+                                $priceAlias,
+                                $priceAlias,
+                                $attribute['id']
+                            )
+                        ]
                     ],
                 ],
             ],
