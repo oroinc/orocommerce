@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Datagrid\Updater;
+namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,7 +15,7 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 
-class Getter
+class CheckoutGridHelper
 {
     const TYPE_JOIN_COLLECTION = 'join_collection';
     const TYPE_ENTITY_FIELDS   = 'entity_fields';

@@ -17,7 +17,7 @@ class OpenOrdersController extends Controller
      * @Acl(
      *      id="orob2b_order_frontend_view",
      *      type="entity",
-     *      class="OroB2BOrderBundle:Order",
+     *      class="OroB2BCheckoutBundle:Checkout",
      *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )

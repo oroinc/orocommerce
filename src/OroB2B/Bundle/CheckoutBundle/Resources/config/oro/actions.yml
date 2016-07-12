@@ -2,7 +2,7 @@ operations:
     UPDATE:
         exclude_datagrids:
             - frontend-checkouts-grid
-    orob2b_order_delete_order:
+    orob2b_checkout_delete_order:
         extends: DELETE
         applications: [frontend]
         for_all_datagrids: false

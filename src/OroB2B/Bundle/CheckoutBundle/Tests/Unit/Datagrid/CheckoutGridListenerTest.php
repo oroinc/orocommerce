@@ -2,11 +2,10 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
-use Doctrine\Common\Cache\Cache as DoctrineCache;
+use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
-use OroB2B\Bundle\CheckoutBundle\Datagrid\Updater\Cache;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -21,7 +20,7 @@ use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 
-use OroB2B\Bundle\CheckoutBundle\Datagrid\Updater\Getter;
+use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
 use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -48,9 +47,9 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     protected $cache;
 
     /**
-     * @var Getter|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutGridHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $getter;
+    protected $checkoutGridHelper;
 
     /**
      * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
@@ -114,14 +113,12 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->currencyManager->expects($this->any())->method('getUserCurrency')->willReturn('USD');
 
-        $doctrineCache = $this->getMockBuilder(DoctrineCache::class)
+        $this->cache = $this->getMockBuilder(Cache::class)
                               ->disableOriginalConstructor()
                               ->getMock();
 
-        $doctrineCache->method('contains')
+        $this->cache->method('contains')
                       ->willReturn(false);
-
-        $this->cache = new Cache($doctrineCache);
 
         $this->baseCheckoutRepository = $this->getMockBuilder(
             BaseCheckoutRepository::class
@@ -150,9 +147,9 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                                          ->disableOriginalConstructor()
                                          ->getMock();
 
-        $this->getter = $this->getMockBuilder(Getter::class)
-                             ->disableOriginalConstructor()
-                             ->getMock();
+        $this->checkoutGridHelper = $this->getMockBuilder(CheckoutGridHelper::class)
+                                         ->disableOriginalConstructor()
+                                         ->getMock();
 
         $this->listener = new CheckoutGridListener(
             $this->currencyManager,
@@ -161,7 +158,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             $this->totalProcessor,
             $this->entityNameResolver,
             $this->cache,
-            $this->getter
+            $this->checkoutGridHelper
         );
 
     }
@@ -220,11 +217,9 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             'joins'          => [],
         ];
 
-        $this->getter->expects($this->once())
-                     ->method('getUpdates')
-                     ->willReturn(
-                         $data
-                     );
+        $this->checkoutGridHelper->expects($this->once())
+                                 ->method('getUpdates')
+                                 ->willReturn($data);
 
         $config = $this->getGridConfiguration();
 

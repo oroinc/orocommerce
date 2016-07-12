@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Datagrid\Updater;
+namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
-use OroB2B\Bundle\CheckoutBundle\Datagrid\Updater\Getter;
+use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -13,7 +13,7 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
-class GetterTest extends \PHPUnit_Framework_TestCase
+class CheckoutGridHelperTest extends \PHPUnit_Framework_TestCase
 {
     const ENTITY_1 = 'Entity1';
     const ENTITY_2 = 'Entity2';
@@ -122,7 +122,7 @@ class GetterTest extends \PHPUnit_Framework_TestCase
                                              [self::ENTITY_2, null, $this->getEntityConfig($configValue2)]
                                          ]));
 
-        $testable = new Getter(
+        $testable = new CheckoutGridHelper(
             $this->doctrine,
             $this->fieldProvider,
             $this->configProvider

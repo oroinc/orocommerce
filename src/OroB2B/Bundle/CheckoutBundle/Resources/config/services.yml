@@ -139,17 +139,13 @@ services:
         arguments:
             - '%orob2b_checkout.entity.base_checkout.class%'
 
-    orob2b_checkout.datagrid.checkout_grid_cache:
-        class: OroB2B\Bundle\CheckoutBundle\Datagrid\Updater\Cache
-        arguments:
-            - '@orob2b_checkout.grid_totals_metadata.cache'
-
-    orob2b_checkout.datagrid.checkout_grid_update_getter:
-        class: OroB2B\Bundle\CheckoutBundle\Datagrid\Updater\Getter
+    orob2b_checkout.datagrid.checkout_grid_helper:
+        class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper
         arguments:
             - '@doctrine'
             - '@oro_query_designer.entity_field_provider'
             - '@oro_entity_config.provider.entity'
+
     orob2b_checkout.datagrid.checkout_grid_listener:
         class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener
         arguments:
@@ -158,8 +154,8 @@ services:
             - '@oro_security.security_facade'
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
             - '@oro_entity.entity_name_resolver'
-            - '@orob2b_checkout.datagrid.checkout_grid_cache'
-            - '@orob2b_checkout.datagrid.checkout_grid_update_getter'
+            - '@orob2b_checkout.grid_totals_metadata.cache'
+            - '@orob2b_checkout.datagrid.checkout_grid_helper'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
@@ -183,4 +179,4 @@ services:
         arguments:
             - '@oro_config.manager'
         tags:
-            - { name: layout.data_provider, alias: orob2b_order_separate_open_orders }
+            - { name: layout.data_provider, alias: orob2b_checkout_separate_open_orders }

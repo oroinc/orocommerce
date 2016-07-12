@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 
+use Doctrine\Common\Cache\Cache;
+
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
@@ -10,12 +12,12 @@ use Oro\Bundle\EntityBundle\Exception\IncorrectEntityException;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
-use OroB2B\Bundle\CheckoutBundle\Datagrid\Updater\Getter;
-use OroB2B\Bundle\CheckoutBundle\Datagrid\Updater\Cache;
+use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -52,9 +54,9 @@ class CheckoutGridListener
     protected $totalProcessor;
 
     /**
-     * @var Getter
+     * @var CheckoutGridHelper
      */
-    protected $gridUpdateGetter;
+    protected $checkoutGridHelper;
 
     /**
      * @var EntityNameResolver
@@ -68,7 +70,8 @@ class CheckoutGridListener
      * @param TotalProcessorProvider $totalProcessor
      * @param EntityNameResolver     $entityNameResolver
      * @param Cache                  $cache
-     * @param Getter                 $getter
+     * @param CheckoutGridHelper     $checkoutGridHelper
+     * @internal param Getter $getter
      */
     public function __construct(
         UserCurrencyManager $currencyManager,
@@ -77,7 +80,7 @@ class CheckoutGridListener
         TotalProcessorProvider $totalProcessor,
         EntityNameResolver $entityNameResolver,
         Cache $cache,
-        Getter $getter
+        CheckoutGridHelper $checkoutGridHelper
     ) {
         $this->currencyManager        = $currencyManager;
         $this->baseCheckoutRepository = $baseCheckoutRepository;
@@ -85,7 +88,7 @@ class CheckoutGridListener
         $this->totalProcessor         = $totalProcessor;
         $this->entityNameResolver     = $entityNameResolver;
         $this->cache                  = $cache;
-        $this->gridUpdateGetter       = $getter;
+        $this->checkoutGridHelper     = $checkoutGridHelper;
     }
 
     /**
@@ -93,17 +96,15 @@ class CheckoutGridListener
      */
     public function onBuildBefore(BuildBefore $event)
     {
-        $config       = $event->getConfig();
-        $cacheKeyName = $config->getName();
+        $config = $event->getConfig();
+        $key    = $config->getName();
 
-        $readCallback = function () use ($config) {
-            return $this->gridUpdateGetter->getUpdates($config);
-        };
-
-        $updates = $this->cache->read(
-            $cacheKeyName,
-            $readCallback
-        );
+        if ($this->cache->contains($key)) {
+            $updates = $this->cache->fetch($key);
+        } else {
+            $updates = $this->checkoutGridHelper->getUpdates($config);
+            $this->cache->save($key, $updates);
+        }
 
         if ($updates) {
             $config->offsetAddToArrayByPath('[source][query][select]', $updates['selects']);
@@ -180,13 +181,15 @@ class CheckoutGridListener
             }
 
             // simplify type checking in twig
-            $type = $source instanceof ShoppingList ? 'shopping_list' : 'quote';
+            $type = $source instanceof ShoppingList ? 'shopping_list' : null;
+            $type = null === $type && $source instanceof Quote ? 'quote' : null;
+
             $name = $this->entityNameResolver->getName($source);
             $data = [
-                'linkable' => $this->hasCurrentUserRightToView($source),
-                'type'     => $type,
-                'label'    => $name,
-                'id'       => $source->getId()
+                'entity' => $source,
+                'type'   => $type,
+                'label'  => $name,
+                'id'     => $source->getId()
             ];
 
             $record->addData(['startedFrom' => $data]);
@@ -216,16 +219,5 @@ class CheckoutGridListener
                 );
             }
         }
-    }
-
-    /**
-     * @param $sourceEntity
-     * @return bool
-     */
-    protected function hasCurrentUserRightToView($sourceEntity)
-    {
-        $isGranted = $this->securityFacade->isGranted('ACCOUNT_VIEW', $sourceEntity);
-
-        return $isGranted === true || $isGranted === "true"; // isGranted may return "true" as string
     }
 }

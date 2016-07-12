@@ -35,6 +35,7 @@ orob2b:
         checkout_type.label: Checkout Type
         line_items_count.label: Items
         started_from.label: Started From
+        order_history.label: Order History
 
         basecheckout:
             entity_label: Base Checkout
@@ -61,7 +62,6 @@ orob2b:
             created_at.label: Started At
             updated_at.label: Last Updated
             shipping_cost.label: Shipping
-            open_orders.label: Open Orders
             ordered_by.label: Ordered By
             checkout_type.label: Checkout Type
 
@@ -159,7 +159,7 @@ orob2b:
             total.label: Total
             subtotal.label: Subtotal
             checkout_link.label: Check Out
-            delete.label: Delete Open Order
+            delete.label: Delete
 
         workflow.condition:
             order_line_item_has_count.message: No products can be added to this order. Please create an RFQ to request price.
