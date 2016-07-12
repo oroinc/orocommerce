@@ -1,5 +1,9 @@
 .notification-flash {
-  margin-bottom: -20px;
+  padding: 15px 0 10px;
+
+  @media (max-width: $screen-md) {
+    padding: 10px 0 5px;
+  }
 
   .notification.notification_lg  {
     width: auto;
@@ -10,6 +14,10 @@
     padding-right: 48px;
 
     line-height: 20px;
+
+    &:not(:first-child) {
+      margin-top: 10px;
+    }
   }
 
   .badge {
@@ -28,9 +36,10 @@
     cursor: pointer;
   }
 
-  &:empty {
-    display: none;
-    margin-bottom: 0;
+  &--medium {
+    .notification.notification_lg {
+
+    }
   }
 }
 

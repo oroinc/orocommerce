@@ -89,7 +89,7 @@ class PriceRuleAttributeProvider
     {
         $classNameInfo = explode("::", $className);
         $realClassName = $classNameInfo[0];
-        if (!count($classNameInfo) > 1) {
+        if (count($classNameInfo) > 1) {
             $fieldName = $classNameInfo[1];
             if (!array_key_exists($realClassName, $this->fieldsCache)) {
                 $this->fieldsCache[$realClassName] = $this->entityFieldProvider->getFields($realClassName, true, true);
