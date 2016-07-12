@@ -623,6 +623,11 @@ Helper to clear inner floats.
         clear: both;
     }
 }
+
+// use
+.block {
+    @include clearfix;
+}
 ```
 
 Helper for the positioning of pseudo-elements.
@@ -634,6 +639,15 @@ Helper for the positioning of pseudo-elements.
     position: absolute;
 
     display: block;
+}
+
+// use
+.block {
+    //...
+
+    &:after {
+        @include after;
+    }
 }
 ```
 
@@ -657,12 +671,12 @@ Helper function for organizing z-index
 .dialog {
     //...
 
-    z-index: z('popup');
+    z-index: z('popup') + 1;
 
     &-overley {
         //...
 
-        z-index: z('popup') + 1;
+        z-index: z('popup');
     }
 }
 ```
