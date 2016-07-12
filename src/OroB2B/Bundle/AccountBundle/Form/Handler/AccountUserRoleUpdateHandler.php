@@ -56,7 +56,7 @@ class AccountUserRoleUpdateHandler extends AbstractAccountUserRoleHandler
     /**
      * {@inheritdoc}
      */
-    protected function processPrivileges(AbstractRole $role)
+    protected function processPrivileges(AbstractRole $role, $className = null)
     {
         $this->startFrontendProviderEmulation();
         parent::processPrivileges($role);
