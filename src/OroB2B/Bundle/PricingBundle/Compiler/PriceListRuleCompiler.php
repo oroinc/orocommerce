@@ -6,7 +6,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use OroB2B\Bundle\PricingBundle\Expression\NodeInterface;
+use OroB2B\Bundle\PricingBundle\Expression\RelationNode;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class PriceListRuleCompiler extends AbstractRuleCompiler
@@ -22,8 +28,35 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         'quantity',
         'productSku',
         'priceRule',
-        'value'
+        'value',
     ];
+
+    /**
+     * @var array
+     */
+    protected $requiredPriceConditions = [
+        'currency' => true,
+        'quantity' => true,
+        'unit' => true,
+    ];
+
+    /**
+     * @var PriceRuleAttributeProvider
+     */
+    protected $attributeProvider;
+
+    /**
+     * @var array
+     */
+    protected $usedPriceRelations = [];
+
+    /**
+     * @param PriceRuleAttributeProvider $attributeProvider
+     */
+    public function setAttributeProvider($attributeProvider)
+    {
+        $this->attributeProvider = $attributeProvider;
+    }
 
     /**
      * @param PriceRule $rule
@@ -53,6 +86,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     {
         $expression = sprintf('%s and (%s) > 0', $rule->getRuleCondition(), $rule->getRule());
         $node = $this->expressionParser->parse($expression);
+        $this->saveUsedPriceRelations($node);
         $source = $this->nodeConverter->convert($node);
 
         return $this->queryConverter->convert($source);
@@ -89,7 +123,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
                     $qb->expr(),
                     $params,
                     $this->queryConverter->getTableAliasByColumn()
-                )
+                ),
             ]
         );
         $this->applyParameters($qb, $params);
@@ -101,10 +135,16 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     protected function applyRuleConditions(QueryBuilder $qb, PriceRule $rule)
     {
+        $additionalConditions = $this->getAdditionalConditions($rule);
+        $condition = $rule->getRuleCondition();
+        if ($additionalConditions) {
+            $condition = sprintf('(%s) and (%s)', $condition, $additionalConditions);
+        }
+
         $params = [];
         $qb->andWhere(
             $this->expressionBuilder->convert(
-                $this->expressionParser->parse($rule->getRuleCondition()),
+                $this->expressionParser->parse($condition),
                 $qb->expr(),
                 $params,
                 $this->queryConverter->getTableAliasByColumn()
@@ -125,23 +165,24 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         /** @var EntityManagerInterface $em */
         $em = $qb->getEntityManager();
         $subQb = $em->createQueryBuilder();
-        $subQb->from('OroB2BPricingBundle:ProductPrice', 'productPriceOld')
-            ->select('productPriceOld')
+        $subQb->from(ProductPrice::class, 'productPriceManual')
+            ->select('productPriceManual')
             ->where(
                 $subQb->expr()->andX(
-                    $subQb->expr()->eq('productPriceOld.product', $rootAlias),
-                    $subQb->expr()->eq('productPriceOld.priceList', ':priceListOld'),
-                    $subQb->expr()->eq('productPriceOld.unit', ':unitOld'),
-                    $subQb->expr()->eq('productPriceOld.currency', ':currencyOld'),
-                    $subQb->expr()->eq('productPriceOld.quantity', ':quantityOld'),
-                    $subQb->expr()->isNull('productPriceOld.priceRule')
+                    $subQb->expr()->eq('productPriceManual.product', $rootAlias),
+                    $subQb->expr()->eq('productPriceManual.priceList', ':priceListManual'),
+                    $subQb->expr()->eq('productPriceManual.unit', ':unitManual'),
+                    $subQb->expr()->eq('productPriceManual.currency', ':currencyManual'),
+                    $subQb->expr()->eq('productPriceManual.quantity', ':quantityManual'),
+                    $subQb->expr()->neq('productPriceManual.priceRule', ':priceRuleManual')
                 )
             );
 
-        $qb->setParameter('priceListOld', $rule->getPriceList()->getId())
-            ->setParameter('unitOld', $rule->getProductUnit()->getCode())
-            ->setParameter('currencyOld', $rule->getCurrency())
-            ->setParameter('quantityOld', $rule->getQuantity())
+        $qb->setParameter('priceListManual', $rule->getPriceList()->getId())
+            ->setParameter('unitManual', $rule->getProductUnit()->getCode())
+            ->setParameter('currencyManual', $rule->getCurrency())
+            ->setParameter('quantityManual', $rule->getQuantity())
+            ->setParameter('priceRuleManual', $rule)
             ->andWhere(
                 $qb->expr()->not(
                     $qb->expr()->exists(
@@ -160,7 +201,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     {
         $qb
             ->join(
-                'OroB2BPricingBundle:PriceListToProduct',
+                PriceListToProduct::class,
                 'priceListToProduct',
                 Join::WITH,
                 $qb->expr()->eq('priceListToProduct.product', $rootAlias)
@@ -180,5 +221,99 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             $qb->andWhere($qb->expr()->eq($rootAlias, ':product'))
                 ->setParameter('product', $product);
         }
+    }
+
+    /**
+     * @param NodeInterface $node
+     */
+    protected function saveUsedPriceRelations(NodeInterface $node)
+    {
+        foreach ($node->getNodes() as $subNode) {
+            if ($subNode instanceof RelationNode) {
+                $classAlias = $subNode->getRelationAlias();
+                $realClass = $this->attributeProvider->getRealClassName($classAlias);
+                if ($realClass === PriceAttributeProductPrice::class) {
+                    $this->usedPriceRelations[$classAlias] = $this->requiredPriceConditions;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param PriceRule $rule
+     * @return string
+     */
+    protected function getAdditionalConditions(PriceRule $rule)
+    {
+        $parsedCondition = $this->expressionParser->parse($rule->getRuleCondition());
+        $reverseNameMapping = $this->expressionParser->getReverseNameMapping();
+        foreach ($parsedCondition->getNodes() as $node) {
+            if ($node instanceof RelationNode) {
+                $relationAlias = $node->getRelationAlias();
+                if (!empty($this->usedPriceRelations[$relationAlias][$node->getRelationField()])) {
+                    $this->usedPriceRelations[$relationAlias][$node->getRelationField()] = false;
+                }
+            }
+
+        }
+
+        $generatedConditions = [];
+        foreach ($this->usedPriceRelations as $alias => $relationFields) {
+            list($root, $field) = explode('::', $alias);
+            $root = $reverseNameMapping[$root];
+
+            foreach ($relationFields as $relationField => $requiredField) {
+                if ($requiredField) {
+                    $generatedConditions[] = $this->getAdditionalCondition($rule, $root, $field, $relationField);
+                }
+            }
+        }
+
+        return implode(' and ', $generatedConditions);
+    }
+
+    /**
+     * @param PriceRule $rule
+     * @param string $root
+     * @param string $field
+     * @param string $relationField
+     * @return null|string
+     */
+    protected function getAdditionalCondition(PriceRule $rule, $root, $field, $relationField)
+    {
+        $additionalCondition = null;
+        switch ($relationField) {
+            case 'currency':
+                $additionalCondition = sprintf(
+                    "%s.%s.%s == '%s'",
+                    $root,
+                    $field,
+                    $relationField,
+                    $rule->getCurrency()
+                );
+                break;
+
+            case 'unit':
+                $additionalCondition = sprintf(
+                    "%s.%s.%s == '%s'",
+                    $root,
+                    $field,
+                    $relationField,
+                    $rule->getProductUnit()->getCode()
+                );
+                break;
+
+            case 'quantity':
+                $additionalCondition = sprintf(
+                    '%s.%s.%s == %f',
+                    $root,
+                    $field,
+                    $relationField,
+                    $rule->getQuantity()
+                );
+                break;
+        }
+
+        return $additionalCondition;
     }
 }

@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Controller;
 
-use OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 

@@ -1,6 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Expression\Executor;
+namespace OroB2B\Bundle\PricingBundle\Builder;
+
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
@@ -8,8 +10,13 @@ use OroB2B\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
 
-class ProductAssignmentRuleExecutor
+class PriceListProductAssignmentBuilder
 {
+    /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
     /**
      * @var InsertFromSelectQueryExecutor
      */
@@ -21,13 +28,16 @@ class ProductAssignmentRuleExecutor
     protected $ruleCompiler;
 
     /**
+     * @param ManagerRegistry $registry
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param ProductAssignmentRuleCompiler $ruleCompiler
      */
     public function __construct(
+        ManagerRegistry $registry,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
         ProductAssignmentRuleCompiler $ruleCompiler
     ) {
+        $this->registry = $registry;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->ruleCompiler = $ruleCompiler;
     }
@@ -35,8 +45,9 @@ class ProductAssignmentRuleExecutor
     /**
      * @param PriceList $priceList
      */
-    public function execute(PriceList $priceList)
+    public function buildByPriceList(PriceList $priceList)
     {
+        $this->clearGenerated($priceList);
         if ($priceList->getProductAssignmentRule()) {
             $this->insertFromSelectQueryExecutor->execute(
                 PriceListToProduct::class,
@@ -44,5 +55,15 @@ class ProductAssignmentRuleExecutor
                 $this->ruleCompiler->compile($priceList)
             );
         }
+    }
+
+    /**
+     * @param PriceList $priceList
+     */
+    protected function clearGenerated(PriceList $priceList)
+    {
+        $this->registry->getManagerForClass(PriceListToProduct::class)
+            ->getRepository(PriceListToProduct::class)
+            ->deleteGeneratedRelations($priceList);
     }
 }

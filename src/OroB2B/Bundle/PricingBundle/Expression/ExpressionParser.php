@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\PricingBundle\Expression;
 
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\ExpressionLanguage\ParsedExpression;
 
 class ExpressionParser
 {
@@ -96,7 +95,7 @@ class ExpressionParser
                     $usedLexemes[$class][] = $node->getField();
                 }
             } elseif ($node instanceof RelationNode) {
-                $class = $node->getContainer() . '::' . $node->getField();
+                $class = $node->getRelationAlias();
                 if (!array_key_exists($class, $usedLexemes)) {
                     $usedLexemes[$class] = [];
                 }
@@ -115,5 +114,21 @@ class ExpressionParser
     public function getSupportedNames()
     {
         return array_keys($this->namesMapping);
+    }
+
+    /**
+     * @return array
+     */
+    public function getReverseNameMapping()
+    {
+        return array_flip($this->namesMapping);
+    }
+
+    /**
+     * @return array
+     */
+    public function getNamesMapping()
+    {
+        return $this->namesMapping;
     }
 }

@@ -14,7 +14,8 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
      */
     protected $fieldsOrder = [
         'product',
-        'priceList'
+        'priceList',
+        'manual'
     ];
 
     /**
@@ -30,6 +31,7 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
         $this->modifySelectPart($qb, $priceList, $rootAlias);
         $this->applyRuleConditions($qb, $priceList);
         $this->restrictByManualPrices($qb, $priceList, $rootAlias);
+        $qb->addGroupBy($rootAlias . '.id');
 
         return $qb;
     }
@@ -65,7 +67,8 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
             $qb,
             [
                 'product' => $rootAlias . '.id',
-                'priceList' => (string)$qb->expr()->literal($priceList->getId())
+                'priceList' => (string)$qb->expr()->literal($priceList->getId()),
+                'manual' => 'CAST(0 as boolean)'
             ]
         );
     }

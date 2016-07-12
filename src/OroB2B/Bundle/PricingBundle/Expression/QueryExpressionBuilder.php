@@ -128,7 +128,7 @@ class QueryExpressionBuilder
     protected function convertRelationNode(RelationNode $node, array $aliasMapping)
     {
         $container = $node->getContainer() . '.' . $node->getField();
-        $aliasKey = $node->getContainer() . '::' . $node->getField();
+        $aliasKey = $node->getRelationAlias();
         if (array_key_exists($aliasKey, $aliasMapping)) {
             $container = $aliasMapping[$aliasKey];
         }
