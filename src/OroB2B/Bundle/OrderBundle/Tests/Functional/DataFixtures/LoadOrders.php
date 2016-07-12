@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Collections\Criteria;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
@@ -15,6 +16,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserDa
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadOrders extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -54,6 +56,11 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var Website
+     */
+    protected $defaultWebsite;
 
     /**
      * {@inheritDoc}
@@ -108,7 +115,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $this->getReference($orderData['paymentTerm']);
 
-        $website = $this->container->get('orob2b_website.manager')->getCurrentWebsite();
+        $website = $this->getDefaultWebsite();
 
         $order = new Order();
         $order
@@ -129,5 +136,21 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         $this->addReference($name, $order);
 
         return $order;
+    }
+
+    /**
+     * @return Website
+     */
+    protected function getDefaultWebsite()
+    {
+        if (!$this->defaultWebsite) {
+            $this->defaultWebsite = $this->container->get('doctrine')->getRepository('OroB2BWebsiteBundle:Website')
+                ->findOneBy(
+                    [],
+                    ['id' => Criteria::ASC]
+                );
+        }
+
+        return $this->defaultWebsite;
     }
 }
