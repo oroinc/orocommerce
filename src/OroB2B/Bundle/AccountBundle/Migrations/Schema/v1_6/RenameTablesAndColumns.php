@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-use OroB2B\Bundle\FrontendBundle\Migration\RemoveExtendRelationQuery;
+use OroB2B\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
 class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
 {
@@ -31,10 +31,11 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'oro_rel_26535370a6adb604a9b8e1',
             'oro_rel_26535370a6adb604aeb863'
         );
-        $queries->addQuery(new RemoveExtendRelationQuery(
-            'Oro\Bundle\EmailBundle\Entity\Email',
-            'Oro\Bundle\AccountBundle\Entity\AccountUser',
+        $queries->addQuery(new UpdateExtendRelationQuery(
+            'OroB2B\Bundle\EmailBundle\Entity\Email',
+            'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
             'account_user_489123cf',
+            'account_user_795f990e',
             RelationType::MANY_TO_MANY
         ));
 
@@ -45,10 +46,11 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'oro_rel_46a29d19a6adb604a9b8e1',
             'oro_rel_46a29d19a6adb604aeb863'
         );
-        $queries->addQuery(new RemoveExtendRelationQuery(
-            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
-            'Oro\Bundle\AccountBundle\Entity\AccountUser',
+        $queries->addQuery(new UpdateExtendRelationQuery(
+            'OroB2B\Bundle\CalendarBundle\Entity\CalendarEvent',
+            'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
             'account_user_489123cf',
+            'account_user_795f990e',
             RelationType::MANY_TO_MANY
         ));
     }

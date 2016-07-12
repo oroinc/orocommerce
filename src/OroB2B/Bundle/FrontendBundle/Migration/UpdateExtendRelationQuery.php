@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 
-class RemoveExtendRelationQuery extends ParametrizedMigrationQuery
+class UpdateExtendRelationQuery extends ParametrizedMigrationQuery
 {
     /**
      * @var string
@@ -24,7 +24,12 @@ class RemoveExtendRelationQuery extends ParametrizedMigrationQuery
     /**
      * @var string
      */
-    private $relationName;
+    private $relationFrom;
+
+    /**
+     * @var string
+     */
+    private $relationTo;
 
     /**
      * @var string
@@ -34,14 +39,16 @@ class RemoveExtendRelationQuery extends ParametrizedMigrationQuery
     /**
      * @param string $entityFrom
      * @param string $entityTo
-     * @param string $relationName
+     * @param string $relationFrom
+     * @param string $relationTo
      * @param string $relationType
      */
-    public function __construct($entityFrom, $entityTo, $relationName, $relationType)
+    public function __construct($entityFrom, $entityTo, $relationFrom, $relationTo, $relationType)
     {
         $this->entityFrom = $entityFrom;
         $this->entityTo = $entityTo;
-        $this->relationName = $relationName;
+        $this->relationFrom = $relationFrom;
+        $this->relationTo = $relationTo;
         $this->relationType = $relationType;
     }
 
@@ -71,7 +78,7 @@ class RemoveExtendRelationQuery extends ParametrizedMigrationQuery
     protected function processQueries(LoggerInterface $logger, $dryRun = false)
     {
         $row = $this->connection->fetchAssoc(
-            'SELECT id, data from oro_entity_config WHERE class_name = ? LIMIT 1'
+            'SELECT id, data FROM oro_entity_config WHERE class_name = ? LIMIT 1',
             [$this->entityFrom]
         );
         if ($row) {
@@ -80,18 +87,28 @@ class RemoveExtendRelationQuery extends ParametrizedMigrationQuery
             $originalData = $originalData ? $this->connection->convertToPHPValue($originalData, Type::TARRAY) : [];
 
             $data = $originalData;
-            $fullRelation = implode(
+            $fullRelationFrom = implode(
                 '|',
-                [$this->relationType, $this->entityFrom, $this->entityTo, $this->relationName]
+                [$this->relationType, $this->entityFrom, $this->entityTo, $this->relationFrom]
             );
-            if (isset($data['extend']['relation'][$fullRelation])) {
-                unset($data['extend']['relation'][$fullRelation]);
+            $fullRelationTo = implode(
+                '|',
+                [$this->relationType, $this->entityFrom, $this->entityTo, $this->relationTo]
+            );
+            if (isset($data['extend']['relation'][$fullRelationFrom])) {
+                $data['extend']['relation'][$fullRelationTo] =
+                    $data['extend']['relation'][$fullRelationFrom];
+                unset($data['extend']['relation'][$fullRelationFrom]);
             }
-            if (isset($data['extend']['schema']['relation'][$this->relationName])) {
-                unset($data['extend']['schema']['relation'][$this->relationName]);
+            if (isset($data['extend']['schema']['relation'][$this->relationFrom])) {
+                $data['extend']['schema']['relation'][$this->relationTo] =
+                    $data['extend']['schema']['relation'][$this->relationFrom];
+                unset($data['extend']['schema']['relation'][$this->relationFrom]);
             }
-            if (isset($data['extend']['schema']['addremove'][$this->relationName])) {
-                unset($data['extend']['schema']['addremove'][$this->relationName]);
+            if (isset($data['extend']['schema']['addremove'][$this->relationFrom])) {
+                $data['extend']['schema']['addremove'][$this->relationTo] =
+                    $data['extend']['schema']['addremove'][$this->relationFrom];
+                unset($data['extend']['schema']['addremove'][$this->relationFrom]);
             }
 
             if ($data !== $originalData) {
