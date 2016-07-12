@@ -254,7 +254,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ->method('getFilteredImageUrl')
                 ->with(
                     $image,
-                    ProductImageType::PRODUCT_IMAGE_FILTER
+                    FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER
                 )
                 ->willReturn($productId);
         }

@@ -14,13 +14,15 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
-use OroB2B\Bundle\ProductBundle\Entity\ProductImageType;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class FrontendProductDatagridListener
 {
+    const COLUMN_PRODUCT_UNITS = 'product_units';
+    const PRODUCT_IMAGE_FILTER = 'product_large';
+
     /**
      * @var DataGridThemeHelper
      */
@@ -68,7 +70,7 @@ class FrontendProductDatagridListener
 
         $config->offsetAddToArrayByPath(
             '[properties]',
-            [ProductImageType::COLUMN_PRODUCT_UNITS => [
+            [self::COLUMN_PRODUCT_UNITS => [
                 'type' => 'field',
                 'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY]
             ]
@@ -193,7 +195,7 @@ class FrontendProductDatagridListener
             if (isset($productImages[$productId])) {
                 $imageUrl = $this->attachmentManager->getFilteredImageUrl(
                     $productImages[$productId],
-                    ProductImageType::PRODUCT_IMAGE_FILTER
+                    self::PRODUCT_IMAGE_FILTER
                 );
                 $record->addData(['image' => $imageUrl]);
             }
@@ -216,7 +218,7 @@ class FrontendProductDatagridListener
                     $units[$unitCode] = $this->unitFormatter->format($unitCode);
                 }
             }
-            $record->addData([ProductImageType::COLUMN_PRODUCT_UNITS => $units]);
+            $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);
         }
     }
 

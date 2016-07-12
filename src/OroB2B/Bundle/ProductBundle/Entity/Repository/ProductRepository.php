@@ -195,7 +195,7 @@ class ProductRepository extends EntityRepository
 
         $qb->join('pi.types', 'imageTypes')
             ->andWhere($qb->expr()->eq('imageTypes.type', ':imageType'))
-            ->setParameter('imageType', ProductImageType::PRODUCT_IMAGE_TYPE);
+            ->setParameter('imageType', ProductImageType::TYPE_LISTING);
 
         $productImages = $qb->getQuery()->execute();
         $images = [];
