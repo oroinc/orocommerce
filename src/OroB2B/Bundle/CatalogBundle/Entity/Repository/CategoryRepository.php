@@ -12,16 +12,26 @@ use OroB2B\Component\Tree\Entity\Repository\NestedTreeRepository;
 class CategoryRepository extends NestedTreeRepository
 {
     /**
+     * @var Category
+     */
+    private $masterCatalog;
+
+    /**
      * @return Category
      */
     public function getMasterCatalogRoot()
     {
-        return $this->createQueryBuilder('category')
-            ->andWhere('category.parentCategory IS NULL')
-            ->orderBy('category.id', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
+        if (!$this->masterCatalog) {
+            $this->masterCatalog = $this->createQueryBuilder('category')
+                ->addSelect('titles')
+                ->leftJoin('category.titles', 'titles')
+                ->andWhere('category.parentCategory IS NULL')
+                ->orderBy('category.id', 'ASC')
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getSingleResult();
+        }
+        return $this->masterCatalog;
     }
 
     /**

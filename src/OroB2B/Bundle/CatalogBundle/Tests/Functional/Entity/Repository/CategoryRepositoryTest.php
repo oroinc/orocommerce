@@ -87,7 +87,7 @@ class CategoryRepositoryTest extends WebTestCase
 
         $actualCategory = $this->repository->findOneByDefaultTitle($expectedTitle);
         $this->assertInstanceOf('OroB2B\Bundle\CatalogBundle\Entity\Category', $actualCategory);
-        $this->assertEquals($expectedCategory, $actualCategory);
+        $this->assertEquals($expectedCategory->getId(), $actualCategory->getId());
         $this->assertEquals($expectedTitle, $actualCategory->getDefaultTitle()->getString());
 
         $this->assertNull($this->repository->findOneByDefaultTitle('Not existing category'));
