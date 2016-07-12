@@ -48,5 +48,4 @@ class AddSystemOnlyDataColumn implements Migration, ContainerAwareInterface
     {
         $this->container = $container;
     }
-
 }
