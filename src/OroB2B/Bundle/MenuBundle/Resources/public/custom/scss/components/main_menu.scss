@@ -268,3 +268,10 @@
     }
   }
 }
+
+.nested-list__trigger {
+    &:focus,
+    &:hover {
+        text-decoration: none;
+    }
+}

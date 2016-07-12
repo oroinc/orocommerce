@@ -1,0 +1,18 @@
+// *** Nested list has not implemented yet!!!
+.navigation-widget__list_nested {
+  @include list-normalize();
+
+  > li {
+    margin: 0;
+
+    > a {
+      color: $base-font-color-light;
+      font-weight: 400;
+      text-transform: uppercase;
+
+      &:hover, &:focus {
+        text-decoration: none;
+      }
+    }
+  }
+}
