@@ -13,7 +13,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
+use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
 class ProductType extends AbstractType
 {
@@ -25,14 +25,14 @@ class ProductType extends AbstractType
     protected $dataClass;
 
     /**
-     * @var  DefaultProductUnitProvider
+     * @var DefaultProductUnitProviderInterface
      */
     private $provider;
 
     /**
-     * @param DefaultProductUnitProvider $provider
+     * @param DefaultProductUnitProviderInterface $provider
      */
-    public function __construct(DefaultProductUnitProvider $provider)
+    public function __construct(DefaultProductUnitProviderInterface $provider)
     {
         $this->provider = $provider;
     }

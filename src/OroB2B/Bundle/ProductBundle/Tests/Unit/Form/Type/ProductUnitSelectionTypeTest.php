@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Guzzle\Common\Collection;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormEvent;
@@ -123,7 +122,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      * @dataProvider getProductUnitsDataProvider
      *
      * @param array $option
-     * @param primaryUnitPrecision $primaryUnitPrecision
+     * @param ProductUnitPrecision $primaryUnitPrecision
      * @param ArrayCollection $additionalUnitPrecisions
      * @param array $expectedData ;
      */
