@@ -449,6 +449,7 @@ orob2b.account:
                     phone: ""
                     name.prefix: ""
                 label:
+                    address_label: Label
                     primary: Is Primary Address
                     address_types: Address type and usage
             buttons:

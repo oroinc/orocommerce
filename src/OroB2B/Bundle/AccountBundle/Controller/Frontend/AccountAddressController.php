@@ -22,7 +22,7 @@ class AccountAddressController extends Controller
 {
     /**
      * @Route(
-     *     "/{entityId}/address/create",
+     *     "/{entityId}/create",
      *     name="orob2b_account_frontend_account_address_create",
      *     requirements={"entityId":"\d+"}
      * )
@@ -48,7 +48,7 @@ class AccountAddressController extends Controller
 
     /**
      * @Route(
-     *     "/{entityId}/address/update/{id}",
+     *     "/{entityId}/update/{id}",
      *     name="orob2b_account_frontend_account_address_update",
      *     requirements={"entityId":"\d+", "id":"\d+"}
      * )
@@ -84,7 +84,7 @@ class AccountAddressController extends Controller
     {
         $this->prepareEntities($account, $accountAddress, $request);
 
-        $form = $this->get('orob2b_account.provider.fronted_account_address_form')->getForm($accountAddress);
+        $form = $this->get('orob2b_account.provider.frontend_account_address_form')->getForm($accountAddress);
 
         $manager = $this->getDoctrine()->getManagerForClass(
             $this->container->getParameter('orob2b_account.entity.account_address.class')
