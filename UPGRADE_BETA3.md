@@ -72,6 +72,7 @@ OrderBundle:
 - Added `OroB2B/Bundle/OrderBundle/Layout/DataProvider/OrderPaymentMethodProvider` in order to get payment method by `Order` object.
 - Added `Payment Method` and `Payment Status` data to order tables and views on frontend and admin side.
 - Added `get_payment_status_label` twig function in order to show payment status by order id.
+- Public method `postLoad` renamed to `createPrice` in `OroB2B/Bundle/OrderBundle/Entity/OrderLineItem`.
 
 CheckoutBundle:
 --------------
