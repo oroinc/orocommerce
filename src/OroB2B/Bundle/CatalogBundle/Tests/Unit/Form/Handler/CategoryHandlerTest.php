@@ -25,7 +25,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
     {
         parent::setUp();
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $this->entity = new Category();
+        $this->entity = $this->getMock('OroB2B\Bundle\CatalogBundle\Entity\Category');
         $this->handler = new CategoryHandler($this->form, $this->request, $this->manager, $this->eventDispatcher);
     }
 
@@ -48,6 +48,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
 
         if ($isValid) {
             $this->assertAppendRemoveProducts();
+            $this->assertCategoryUnitPrecisionUpdate();
         }
 
         $this->request->setMethod($method);
@@ -85,6 +86,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ->will($this->returnValue(true));
 
         $this->assertAppendRemoveProducts();
+        $this->assertCategoryUnitPrecisionUpdate();
 
         $this->mockProductCategory();
 
@@ -144,5 +146,15 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ->method('getRepository')
             ->with('OroB2BCatalogBundle:Category')
             ->will($this->returnValue($categoryRepository));
+    }
+    
+    protected function assertCategoryUnitPrecisionUpdate()
+    {
+        $defaultProductOptions = $this->getMock('OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
+        $defaultProductOptions->expects($this->once())
+            ->method('updateUnitPrecision');
+        $this->entity->expects($this->any())
+            ->method('getDefaultProductOptions')
+            ->will($this->returnValue($defaultProductOptions));
     }
 }

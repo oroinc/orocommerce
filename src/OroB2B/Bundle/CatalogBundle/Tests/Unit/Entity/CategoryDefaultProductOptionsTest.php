@@ -23,11 +23,7 @@ class CategoryDefaultProductOptionsTest extends \PHPUnit_Framework_TestCase
     public function testProperties()
     {
         $properties = [
-            [
-                'unit' => new ProductUnit(),
-                'precision' => 3,
-                'unitPrecision', new CategoryUnitPrecision()
-            ]
+            ['unitPrecision', new CategoryUnitPrecision()]
         ];
         $this->assertPropertyAccessors(new CategoryDefaultProductOptions(), $properties);
     }
