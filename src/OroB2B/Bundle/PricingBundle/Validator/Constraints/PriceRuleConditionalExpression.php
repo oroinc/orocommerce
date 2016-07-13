@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class DefinedConditionAttributes extends Constraint
+class PriceRuleConditionalExpression extends Constraint
 {
     /**
      * @var string
@@ -16,6 +16,6 @@ class DefinedConditionAttributes extends Constraint
      */
     public function validatedBy()
     {
-        return 'orob2b_pricing.validator_constraints.defined_condition_attributes_validator';
+        return 'orob2b_pricing.validator_constraints.price_rule_conditional_expression_validator';
     }
 }

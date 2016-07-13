@@ -8,8 +8,8 @@ use Symfony\Component\Validator\Constraint;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Expression\ExpressionLanguageConverter;
 use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\AbstractDefinedAttributesValidator;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use OroB2B\Bundle\PricingBundle\Validator\Constraints\AbstractPriceRuleExpressionValidator;
 
 abstract class AbstractDefinedAttributesValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,12 +19,12 @@ abstract class AbstractDefinedAttributesValidatorTest extends \PHPUnit_Framework
     protected $parser;
 
     /**
-     * @var PriceRuleAttributeProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRuleFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $attributeProvider;
+    protected $fieldsProvider;
 
     /**
-     * @var AbstractDefinedAttributesValidator
+     * @var AbstractPriceRuleExpressionValidator
      */
     protected $definedAttributesValidator;
 
@@ -32,7 +32,7 @@ abstract class AbstractDefinedAttributesValidatorTest extends \PHPUnit_Framework
     {
         $expressionConverter = new ExpressionLanguageConverter();
         $this->parser = new ExpressionParser($expressionConverter);
-        $this->attributeProvider = $this->getMockBuilder(PriceRuleAttributeProvider::class)
+        $this->fieldsProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->parser->addNameMapping('Product', Product::class);

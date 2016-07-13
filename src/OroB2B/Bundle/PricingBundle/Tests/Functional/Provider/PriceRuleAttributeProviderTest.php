@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Provider;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -13,7 +13,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 class PriceRuleAttributeProviderTest extends WebTestCase
 {
     /**
-     * @var PriceRuleAttributeProvider
+     * @var PriceRuleFieldsProvider
      */
     protected $provider;
 
@@ -37,7 +37,7 @@ class PriceRuleAttributeProviderTest extends WebTestCase
      */
     public function testGetAvailableConditionAttributes()
     {
-        $fields = $this->provider->getAvailableConditionAttributes(Product::class);
+        $fields = $this->provider->getAvailableFields(Product::class);
         $this->assertEquals(
             $fields,
             [

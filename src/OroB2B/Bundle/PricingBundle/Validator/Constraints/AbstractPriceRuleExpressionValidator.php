@@ -6,10 +6,10 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
 
-abstract class AbstractDefinedAttributesValidator extends ConstraintValidator
+abstract class AbstractPriceRuleExpressionValidator extends ConstraintValidator
 {
     /**
      * @var ExpressionParser
@@ -17,18 +17,18 @@ abstract class AbstractDefinedAttributesValidator extends ConstraintValidator
     protected $parser;
 
     /**
-     * @var PriceRuleAttributeProvider
+     * @var PriceRuleFieldsProvider
      */
-    protected $attributeProvider;
+    protected $priceRuleFieldsProvider;
 
     /**
      * @param ExpressionParser $parser
-     * @param PriceRuleAttributeProvider $attributeProvider
+     * @param PriceRuleFieldsProvider $priceRuleFieldsProvider
      */
-    public function __construct(ExpressionParser $parser, PriceRuleAttributeProvider $attributeProvider)
+    public function __construct(ExpressionParser $parser, PriceRuleFieldsProvider $priceRuleFieldsProvider)
     {
         $this->parser = $parser;
-        $this->attributeProvider = $attributeProvider;
+        $this->priceRuleFieldsProvider = $priceRuleFieldsProvider;
     }
 
     /**
@@ -42,16 +42,16 @@ abstract class AbstractDefinedAttributesValidator extends ConstraintValidator
         try {
             $lexemesInfo = $this->parser->getUsedLexemes($value);
             foreach ($lexemesInfo as $class => $lexemes) {
-                $supportedFields = $this->getSupportedAttributes($class);
+                $supportedFields = $this->getSupportedFields($class);
                 $unsupportedFields = array_diff($lexemes, $supportedFields);
                 if (!empty($unsupportedFields)) {
                     throw new \Exception('Unsupported fields used');
                 }
             }
         } catch (SyntaxError $ex) {
-            $this->context->addViolation('orob2b.pricing.validators.product_price.syntax_error.message');
+            $this->context->addViolation($ex->getMessage());
         } catch (\Exception $ex) {
-            $this->context->addViolation($constraint->message);
+            $this->context->addViolation($ex->getMessage());
         }
     }
 
@@ -60,5 +60,5 @@ abstract class AbstractDefinedAttributesValidator extends ConstraintValidator
      * @return array
      * @throws \Exception
      */
-    abstract protected function getSupportedAttributes($className);
+    abstract protected function getSupportedFields($className);
 }

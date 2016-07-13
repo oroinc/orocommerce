@@ -4,18 +4,18 @@ namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class DefinedRuleAttributes extends Constraint
+class PriceRuleExpression extends Constraint
 {
     /**
      * @var string
      */
-    public $message = 'orob2b.pricing.validators.product_price.unknown_lexemes.message';
+    public $message = 'orob2b.pricing.validators.product_price.expression_is_invalid.message';
 
     /**
      * {@inheritdoc}
      */
     public function validatedBy()
     {
-        return 'orob2b_pricing.validator_constraints.known_lexemes_validator';
+        return 'orob2b_pricing.validator_constraints.price_rule_expression_validator';
     }
 }

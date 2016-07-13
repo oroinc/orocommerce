@@ -3,18 +3,17 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 
-class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
+class PriceRuleFieldsProviderTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var EntityFieldProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $entityFieldProvider;
 
     /**
-     * @var PriceRuleAttributeProvider
+     * @var PriceRuleFieldsProvider
      */
     protected $priceRuleAttributeProvider;
 
@@ -28,22 +27,22 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
         $this->entityFieldProvider = $this->getMockBuilder(EntityFieldProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->priceRuleAttributeProvider = new PriceRuleAttributeProvider($this->entityFieldProvider);
+        $this->priceRuleAttributeProvider = new PriceRuleFieldsProvider($this->entityFieldProvider);
     }
 
     /**
-     * @dataProvider ruleAttributeDataProvider
+     * @dataProvider ruleFieldsDataProvider
      * @param array $fields
      * @param array $expectedFields
      * @throws \Exception
      */
-    public function testGetAvailableRuleAttributes(array $fields, array $expectedFields)
+    public function testFieldsForRule(array $fields, array $expectedFields)
     {
         $className = 'ClassName';
         $this->entityFieldProvider->method('getFields')->willReturn($fields);
 
         $this->priceRuleAttributeProvider->addSupportedClass($className);
-        $actualFields = $this->priceRuleAttributeProvider->getAvailableRuleAttributes($className);
+        $actualFields = $this->priceRuleAttributeProvider->getFields($className, true);
 
         $this->assertEquals($expectedFields, $actualFields);
     }
@@ -51,7 +50,7 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function ruleAttributeDataProvider()
+    public function ruleFieldsDataProvider()
     {
         return [
             [
@@ -72,25 +71,25 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider conditionalAttributeDataProvider
+     * @dataProvider conditionalFieldsDataProvider
      * @param array $fields
      * @param array $expectedFields
      * @throws \Exception
      */
-    public function testGetAvailableConditionAttributes(array $fields, array $expectedFields)
+    public function testFieldsForCondition(array $fields, array $expectedFields)
     {
         $className = 'ClassName';
         $this->entityFieldProvider->method('getFields')->willReturn($fields);
 
         $this->priceRuleAttributeProvider->addSupportedClass($className);
-        $actualFields = $this->priceRuleAttributeProvider->getAvailableConditionAttributes($className);
+        $actualFields = $this->priceRuleAttributeProvider->getFields($className, false, true);
         $this->assertEquals($expectedFields, $actualFields);
     }
 
     /**
      * @return array
      */
-    public function conditionalAttributeDataProvider()
+    public function conditionalFieldsDataProvider()
     {
         return [
             [
@@ -116,17 +115,8 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
     {
         $class = 'ClassName';
         $this->priceRuleAttributeProvider->addSupportedClass($class);
-        $this->assertEquals(['ClassName'], $this->priceRuleAttributeProvider->getSupportedClasses());
         $this->assertTrue($this->priceRuleAttributeProvider->isClassSupported($class));
         $this->assertFalse($this->priceRuleAttributeProvider->isClassSupported('invalidClassName'));
-    }
-    
-    /**
-     * @expectedException \Exception
-     */
-    public function testGetAvailableConditionAttributesException()
-    {
-        $this->priceRuleAttributeProvider->getAvailableConditionAttributes('ClassName');
     }
 
     /**
@@ -134,6 +124,6 @@ class PriceRuleAttributeProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAvailableRuleAttributesException()
     {
-        $this->priceRuleAttributeProvider->getAvailableRuleAttributes('ClassName');
+        $this->priceRuleAttributeProvider->getFields('ClassName');
     }
 }

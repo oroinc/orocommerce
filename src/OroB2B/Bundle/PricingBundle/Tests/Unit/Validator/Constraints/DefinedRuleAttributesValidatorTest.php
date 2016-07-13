@@ -2,21 +2,21 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\DefinedRuleAttributesValidator;
+use OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class DefinedRuleAttributesValidatorTest extends AbstractDefinedAttributesValidatorTest
 {
     /**
-     * @var DefinedRuleAttributesValidator
+     * @var PriceRuleExpressionValidator
      */
     protected $definedAttributesValidator;
 
     protected function setUp()
     {
         parent::setUp();
-        $this->definedAttributesValidator = new DefinedRuleAttributesValidator($this->parser, $this->attributeProvider);
+        $this->definedAttributesValidator = new PriceRuleExpressionValidator($this->parser, $this->fieldsProvider);
     }
 
     /**
@@ -26,7 +26,7 @@ class DefinedRuleAttributesValidatorTest extends AbstractDefinedAttributesValida
      */
     public function testValidateSuccess($value, array $attributes)
     {
-        $this->attributeProvider->method('getAvailableRuleAttributes')->willReturnMap($attributes);
+        $this->fieldsProvider->method('getFields')->willReturn($attributes);
 
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->getMock(ExecutionContextInterface::class);
@@ -42,7 +42,7 @@ class DefinedRuleAttributesValidatorTest extends AbstractDefinedAttributesValida
      */
     public function testValidateError($value, array $attributes)
     {
-        $this->attributeProvider->method('getAvailableRuleAttributes')->willReturnMap($attributes);
+        $this->fieldsProvider->method('getFields')->willReturn($attributes);
 
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->getMock(ExecutionContextInterface::class);
@@ -59,7 +59,7 @@ class DefinedRuleAttributesValidatorTest extends AbstractDefinedAttributesValida
         return [
             ['', []],
             [null, []],
-            ['Product.msrp.value + 1', [['OroB2B\Bundle\ProductBundle\Entity\Product::msrp', ['value']]]],
+            ['Product.msrp.value + 1', ['value']],
         ];
     }
 
@@ -71,8 +71,8 @@ class DefinedRuleAttributesValidatorTest extends AbstractDefinedAttributesValida
     {
         return [
             ['xxx', []],
-            ['product.sku == SKU"', [['OroB2B\Bundle\ProductBundle\Entity\Product', ['sku', 'msrp']]]],
-            ['Product.msrp.value + 1', [['OroB2B\Bundle\ProductBundle\Entity\Product::msrp', []]]],
+            ['product.sku == SKU"', ['sku', 'msrp']],
+            ['Product.msrp.value + 1', []],
         ];
     }
 }
