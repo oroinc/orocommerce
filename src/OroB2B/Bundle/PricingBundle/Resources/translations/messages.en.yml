@@ -52,6 +52,9 @@ orob2b.pricing:
             message:
               enabled: Price List was enabled successfully
               disabled: Price List was disabled successfully
+        recalculate:
+            label: Recalculate
+            message: Price List Rules were Recalculates successfull
         duplicate:
             label: Duplicate Price List
             message: Price List was Duplicated successfull

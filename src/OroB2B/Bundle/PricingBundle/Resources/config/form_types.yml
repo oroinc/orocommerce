@@ -105,14 +105,6 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_currency }
 
-    orob2b_pricing.form.extension.price_list_rule_recalculation_extension:
-        class: 'OroB2B\Bundle\PricingBundle\Form\Extension\PriceListRuleRecalculationExtension'
-        arguments:
-            - '@orob2b_pricing.ebuilder.price_list_product_assignment_builder'
-            - '@orob2b_pricing.builder.product_price_builder'
-        tags:
-            - { name: form.type_extension, alias: orob2b_pricing_price_list }
-
     orob2b_pricing.form.type.price_list_schedule:
         class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListScheduleType'
         tags:
