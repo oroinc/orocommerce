@@ -127,6 +127,9 @@ class PriceListExpressionQueryConverter extends GroupingOrmQueryConverter
         // do nothing, order could not change results
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function saveColumnAliases($columnAliases)
     {
         // do nothing

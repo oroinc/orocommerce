@@ -254,7 +254,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
                     $this->usedPriceRelations[$relationAlias][$node->getRelationField()] = false;
                 }
             }
-
         }
 
         $generatedConditions = [];
