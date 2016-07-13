@@ -4,12 +4,14 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Compiler;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use OroB2B\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -44,10 +46,16 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
 
     public function testCompileTwoProducts()
     {
+        /** @var Product $product1 */
+        $product1 = $this->getReference('product.1');
+        /** @var Product $product2 */
+        $product2 = $this->getReference('product.2');
+
         /** @var Category $category1 */
         $category1 = $this->getReference('category_1');
         /** @var Category $category2 */
         $category2 = $this->getReference('category_1_2');
+
         $assignmentRule = '(product.category == ' . $category1->getId() . ' or category == ' . $category2->getId() . ')'
             . " and (
                     product.price_attribute_price_list_1.value > 1
@@ -58,10 +66,6 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
         $priceList = $this->createPriceList($assignmentRule);
         $qb = $this->getQueryBuilder($priceList);
 
-        /** @var Product $product1 */
-        $product1 = $this->getReference('product.1');
-        /** @var Product $product2 */
-        $product2 = $this->getReference('product.2');
         $expected = [
             [$product1->getId(), $priceList->getId(), false],
             [$product2->getId(), $priceList->getId(), false],
@@ -72,9 +76,17 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
 
     public function testCompileWithManuallyAssigned()
     {
+        /** @var Product $product1 */
+        $product1 = $this->getReference('product.1');
+        /** @var Product $product2 */
+        $product2 = $this->getReference('product.2');
+
         /** @var Category $category1 */
         $category1 = $this->getReference('category_1');
-        $assignmentRule = 'product.category == ' . $category1->getId()
+        /** @var Category $category2 */
+        $category2 = $this->getReference('category_1_2');
+
+        $assignmentRule = '(product.category == ' . $category1->getId() . ' or category == ' . $category2->getId() . ')'
             . " and (
                     product.price_attribute_price_list_1.value > 1
                     or product.price_attribute_price_list_2.currency == 'USD'
@@ -82,15 +94,18 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
             ";
 
         $priceList = $this->createPriceList($assignmentRule);
-        $qb = $this->getQueryBuilder($priceList);
 
-        /** @var Product $product1 */
-        $product1 = $this->getReference('product.1');
-        /** @var Product $product2 */
-        $product2 = $this->getReference('product.2');
+        $manualAssignment = new PriceListToProduct();
+        $manualAssignment->setManual(true)
+            ->setProduct($product2)
+            ->setPriceList($priceList);
+        $em = $this->registry->getManagerForClass(PriceListToProduct::class);
+        $em->persist($manualAssignment);
+        $em->flush();
+
+        $qb = $this->getQueryBuilder($priceList);
         $expected = [
-            [$product1->getId(), $priceList->getId(), false],
-            [$product2->getId(), $priceList->getId(), false],
+            [$product1->getId(), $priceList->getId(), false]
         ];
         $actual = $this->getActualResult($qb);
         $this->assertEquals($expected, array_values($actual));
