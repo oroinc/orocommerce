@@ -251,12 +251,12 @@ class ProductRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider getProductsWithImageDataProvider
+     * @dataProvider getListingImagesFilesByProductIdsDataProvider
      *
      * @param array $products
      * @param array $expectedImages
      */
-    public function testGetImagesFilesByProductIds(array $products, array $expectedImages)
+    public function testGetListingImagesFilesByProductIds(array $products, array $expectedImages)
     {
         $result = $this->repository->getListingImagesFilesByProductIds($this->referencesToEntities($products));
 
@@ -266,7 +266,7 @@ class ProductRepositoryTest extends WebTestCase
     /**
      * @return array
      */
-    public function getProductsWithImageDataProvider()
+    public function getListingImagesFilesByProductIdsDataProvider()
     {
         return [
             [

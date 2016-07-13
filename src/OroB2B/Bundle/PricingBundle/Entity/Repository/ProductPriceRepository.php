@@ -145,6 +145,10 @@ class ProductPriceRepository extends EntityRepository
 
         $qb = $this->createQueryBuilder('price');
         $qb
+            ->addSelect('product', 'unitPrecisions', 'unit')
+            ->leftJoin('price.product', 'product')
+            ->leftJoin('product.unitPrecisions', 'unitPrecisions')
+            ->leftJoin('unitPrecisions.unit', 'unit')
             ->where(
                 $qb->expr()->eq('IDENTITY(price.priceList)', ':priceListId'),
                 $qb->expr()->in('IDENTITY(price.product)', ':productIds')
