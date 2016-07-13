@@ -1,0 +1,22 @@
+@import '_config';
+
+.sticky-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: $sticky-panel-z-index;
+
+    display: none;
+    width: 100%;
+
+    background: $base-white-color;
+
+    &__content {
+        width: $sticky-panel-width;
+        margin: 0 auto;
+    }
+
+    &.has-content {
+        display: block;
+    }
+}
