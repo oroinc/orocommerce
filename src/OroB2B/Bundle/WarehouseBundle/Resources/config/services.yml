@@ -13,3 +13,25 @@ services:
     orob2b_warehouse.entity.helper.warehouse_counter:
         class: 'OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter'
         arguments: ["@oro_entity.doctrine_helper"]
+
+    orob2b_warehouse.api.processor.product_id.normalize_input:
+        class: 'OroB2B\Bundle\ProductBundle\Api\Processor\NormalizeProductId'
+        arguments:
+            - '@oro_api.value_normalizer'
+            - '@oro_api.rest.entity_id_transformer'
+        tags:
+            - { name: oro.api.processor, action: update, group: normalize_input, priority: -105, class: '%orob2b_warehouse.entity.warehouse_inventory_level.class%'}
+
+    orob2b_warehouse.api.processor.entity_id.load_data:
+        class: 'OroB2B\Bundle\ProductBundle\Api\Processor\LoadEntityId'
+        tags:
+            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%orob2b_warehouse.entity.warehouse_inventory_level.class%'}
+
+    orob2b_warehouse.api.processor.update_warehouse_inventory_level.build_query:
+        class: 'OroB2B\Bundle\WarehouseBundle\Api\Processor\BuildSingleWarehouseInventoryLevelQuery'
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.criteria_connector'
+            - '@orob2b_warehouse.entity.helper.warehouse_counter'
+        tags:
+            - { name: oro.api.processor, action: update, group: build_query, priority: -95, class: '%orob2b_warehouse.entity.warehouse_inventory_level.class%'}

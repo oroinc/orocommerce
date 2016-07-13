@@ -51,15 +51,22 @@ class BuildSingleProductQuery implements ProcessorInterface
             return;
         }
 
+        $requestData = $context->getRequestData();
+        if (!array_key_exists('sku', $requestData)) {
+            // sku is required on request in order to identify a product
+            return;
+        }
+
         $queryBuilder = $this->doctrineHelper->getEntityRepositoryForClass($entityClass)->createQueryBuilder('e');
         $this->criteriaConnector->applyCriteria($queryBuilder, $criteria);
 
-        $requestData = $context->getRequestData();
         $sku = $requestData['sku'];
+        unset($requestData['sku']);
         $queryBuilder
             ->andWhere($queryBuilder->expr()->eq('e.sku', ':sku'))
             ->setParameter('sku', $sku);
 
         $context->setQuery($queryBuilder);
+        $context->setRequestData($requestData);
     }
 }

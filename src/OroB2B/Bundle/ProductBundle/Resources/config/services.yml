@@ -390,6 +390,6 @@ services:
             - { name: oro.api.processor, action: update, group: normalize_input, priority: -105, class: '%orob2b_product.entity.product.class%'}
 
     orob2b_product.api.processor.entity_id.load_data:
-            class: 'OroB2B\Bundle\ProductBundle\Api\Processor\LoadEntityId'
-            tags:
-                - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%orob2b_product.entity.product.class%'}
+        class: 'OroB2B\Bundle\ProductBundle\Api\Processor\LoadEntityId'
+        tags:
+            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%orob2b_product.entity.product.class%'}

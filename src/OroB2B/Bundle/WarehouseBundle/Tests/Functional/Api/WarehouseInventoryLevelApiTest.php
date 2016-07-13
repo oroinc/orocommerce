@@ -2,10 +2,16 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\Api;
 
+use Symfony\Component\HttpFoundation\Response;
+
+use Doctrine\ORM\EntityManagerInterface;
+
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 
+use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesInventoryLevelWithPrimaryUnit;
 
 /**
  * @dbIsolation
@@ -22,7 +28,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         parent::setUp();
         $this->loadFixtures(
             [
-                LoadWarehousesAndInventoryLevels::class,
+                LoadWarehousesInventoryLevelWithPrimaryUnit::class
             ]
         );
     }
@@ -89,7 +95,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                         'references' => ['product.1']
                     ],
                 ],
-                'expectedCount' => 2,
+                'expectedCount' => 3,
                 'expectedContent' => [
                     [
                         'type' => 'warehouseinventorylevels',
@@ -109,6 +115,15 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                             'unit' => 'bottle',
                         ],
                     ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 10,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'milliliter',
+                        ],
+                    ],
                 ],
             ],
             'filter by Products' => [
@@ -122,7 +137,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                         'references' => ['product.1', 'product.2']
                     ],
                 ],
-                'expectedCount' => 6,
+                'expectedCount' => 7,
                 'expectedContent' => [
                     [
                         'type' => 'warehouseinventorylevels',
@@ -176,6 +191,15 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                             'productSku' => 'product.2',
                             'warehouseName' => 'Second Warehouse',
                             'unit' => 'box',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 10,
+                            'productSku' => 'product.1',
+                            'warehouseName' => 'First Warehouse',
+                            'unit' => 'milliliter',
                         ],
                     ],
                 ],
@@ -481,6 +505,108 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                 ],
             ],
         ];
+    }
+
+    public function testUpdateEntity()
+    {
+        /** @var WarehouseInventoryLevel $inventoryLevel */
+        $inventoryLevel = $this->getReference(
+            sprintf(
+                'warehouse_inventory_level.%s.%s',
+                LoadWarehousesAndInventoryLevels::WAREHOUSE1,
+                'product_unit_precision.product.1.liter'
+            )
+        );
+        $this->assertEquals('10', $inventoryLevel->getQuantity());
+
+        $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
+        $data = [
+            'data' => [
+                'type' => $entityType,
+                'id' => $inventoryLevel->getProduct()->getSku(),
+                'attributes' =>
+                [
+                    'quantity' => 17,
+                    'unit' => $inventoryLevel->getProductUnitPrecision()->getProductUnitCode(),
+                    'warehouse' => $inventoryLevel->getWarehouse()->getName(),
+                ],
+            ]
+        ];
+        $response = $this->request(
+            'PATCH',
+            $this->getUrl(
+                'oro_rest_api_patch',
+                ['entity' => $entityType, 'id' => $inventoryLevel->getProduct()->getSku()]
+            ),
+            $data
+        );
+
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+        $result = self::jsonToArray($response->getContent());
+        self::assertEquals(17, $result['data']['attributes']['quantity']);
+    }
+
+    public function testUpdateEntityWithDefaultUnit()
+    {
+        /** @var Warehouse $warehouse */
+        $warehouse = $this->getReference(LoadWarehousesAndInventoryLevels::WAREHOUSE1);
+
+        $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
+        $data = [
+            'data' => [
+                'type' => $entityType,
+                'id' => 'product.1',
+                'attributes' =>
+                    [
+                        'quantity' => 1,
+                        'warehouse' => $warehouse->getName(),
+                    ],
+            ]
+        ];
+        $response = $this->request(
+            'PATCH',
+            $this->getUrl(
+                'oro_rest_api_patch',
+                ['entity' => $entityType, 'id' => 'product.1']
+            ),
+            $data
+        );
+
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+        $result = self::jsonToArray($response->getContent());
+        self::assertEquals(1, $result['data']['attributes']['quantity']);
+    }
+
+    public function testUpdateEntityWithOneWarehouse()
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->getReferenceRepository()->getManager();
+        $em->remove($this->getReference(LoadWarehousesAndInventoryLevels::WAREHOUSE2));
+        $em->flush();
+
+        $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
+        $data = [
+            'data' => [
+                'type' => $entityType,
+                'id' => 'product.1',
+                'attributes' =>
+                    [
+                        'quantity' => 100,
+                    ],
+            ]
+        ];
+        $response = $this->request(
+            'PATCH',
+            $this->getUrl(
+                'oro_rest_api_patch',
+                ['entity' => $entityType, 'id' => 'product.1']
+            ),
+            $data
+        );
+
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+        $result = self::jsonToArray($response->getContent());
+        self::assertEquals(100, $result['data']['attributes']['quantity']);
     }
 
     /**
