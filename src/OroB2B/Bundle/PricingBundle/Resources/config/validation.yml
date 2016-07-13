@@ -15,8 +15,7 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
         priceRules:
             - Valid: ~
         productAssignmentRule:
-            - Length:
-                max: 255
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleConditionalExpression: ~
 
 OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
     constraints:
@@ -62,12 +61,10 @@ OroB2B\Bundle\PricingBundle\Entity\PriceRule:
                 message: 'orob2b.product.productunit.invalid'
         ruleCondition:
             - NotBlank: ~
-            - Length:
-                max: 255
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleConditionalExpression: ~
         rule:
             - NotBlank: ~
-            - Length:
-                max: 255
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression: ~
         priority:
             - NotBlank: ~
             - Type:

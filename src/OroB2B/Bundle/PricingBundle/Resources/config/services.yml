@@ -105,15 +105,15 @@ services:
             - '@oro_config.global'
             - '@orob2b_pricing.system_config_converter'
 
-    orob2b_pricing.provider.price_rule_attribute_provider:
-        class: 'OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider'
+    orob2b_pricing.provider.price_rule_fields_provider:
+        class: 'OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider'
         arguments:
-            - '@doctrine'
             - '@oro_entity.entity_field_provider'
         calls:
-            - [addSupportedClass, ['OroB2BProductBundle:Product']]
-            - [addSupportedClass, ['OroB2BPricingBundle:ProductPrice']]
-            - [addSupportedClass, ['OroB2BCatalogBundle:Category']]
+            - [addSupportedClass, ['%orob2b_product.entity.product.class%']]
+            - [addSupportedClass, ['%orob2b_pricing.entity.product_price.class%']]
+            - [addSupportedClass, ['%orob2b_catalog.entity.category.class%']]
+            - [addSupportedClass, ['%orob2b_pricing.entity.price_attribute_product_price.class%']]
 
     orob2b_pricing.provider.product_virtual_relation_provider.config:
         class: 'OroB2B\Bundle\PricingBundle\Provider\ProductVirtualRelationProvider'
@@ -708,3 +708,25 @@ services:
             - [addExpressionMapping, ['PriceList.price.currency', 'PriceList.currency']]
             - [addExpressionMapping, ['PriceList.price.value', 'PriceList.value']]
             - [addExpressionMapping, ['PriceList.price', 'PriceList.value']]
+
+    orob2b_pricing.validator_constraints.abstract_price_rule_expression:
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\AbstractPriceRuleExpressionValidator'
+        public: false
+        abstract: true
+        arguments:
+            - '@orob2b_pricing.expression.parser'
+            - '@orob2b_pricing.provider.price_rule_fields_provider'
+
+    orob2b_pricing.validator_constraints.price_rule_conditional_expression:
+        parent: orob2b_pricing.validator_constraints.abstract_price_rule_expression
+        public: true
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleConditionalExpressionValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing.validator_constraints.price_rule_conditional_expression_validator }
+
+    orob2b_pricing.validator_constraints.price_rule_expression:
+        parent: orob2b_pricing.validator_constraints.abstract_price_rule_expression
+        public: true
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\DefinedRuleAttributesValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing.validator_constraints.price_rule_expression_validator }
