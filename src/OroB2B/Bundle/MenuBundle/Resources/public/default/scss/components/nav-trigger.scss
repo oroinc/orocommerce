@@ -1,0 +1,75 @@
+.nav-trigger {
+    position: relative;
+
+    display: inline-block;
+
+    &__icon,
+    &__count,
+    &__text {
+        display: inline-block;
+
+        vertical-align: middle;
+    }
+
+    &__icon {
+        position: relative;
+
+        width: 33px;
+        height: 33px;
+
+        font-size: 18px;
+        line-height: 1.8;
+        text-align: center;
+
+        border-radius: 50%;
+        background-color: $base-font-color-lighter;
+        color: $base-white-color;
+
+        &--transparent {
+            background-color: transparent;
+        }
+
+        &--chromatic {
+            background-color: $theme-orange-color;
+        }
+
+        &--large {
+            font-size: 28px;
+            line-height: 1;
+        }
+    }
+}
+
+@include breakpoint('desktop') {
+    .nav-trigger {
+        &__count {
+            margin-left: 5px;
+
+            font-weight: bold;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .nav-trigger {
+        &__count {
+            position: absolute;
+            top: -3px;
+            left: -3px;
+
+            padding: 3px 4px;
+
+            font-size: 10px;
+            line-height: 1;
+            text-align: center;
+
+            background-color: $base-font-color-lighter;
+            border-radius: 50%;
+            color:  $base-white-color;
+        }
+
+        &__text {
+            display: none;
+        }
+    }
+}

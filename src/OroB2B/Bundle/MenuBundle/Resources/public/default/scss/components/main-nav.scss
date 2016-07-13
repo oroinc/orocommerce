@@ -1,0 +1,38 @@
+.main-nav {
+    display: flex;
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    vertical-align: middle;
+
+    &__item {
+        flex-grow: 1;
+    }
+
+    &__link {
+        display: block;
+
+        padding: 14px 0;
+
+        text-align: center;
+        text-transform: uppercase;
+
+        color: $theme-middle-gray-color;
+    }
+}
+
+@include breakpoint('tablet') {
+    .main-nav {
+        display: block;
+
+        padding: 10px 15px;
+
+        &__link {
+            padding: 5px 0;
+
+            text-align: left;
+        }
+    }
+}

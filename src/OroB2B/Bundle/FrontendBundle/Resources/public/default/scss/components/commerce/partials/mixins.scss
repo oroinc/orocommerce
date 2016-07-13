@@ -1,10 +1,10 @@
 @function z($layer) {
   $layers: (
-          'base': 1,
-          'fixed': 50,
-          'dropdown': 100,
-          'popup': 150,
-          'hidden': -1
+    'base': 1,
+    'fixed': 50,
+    'dropdown': 100,
+    'popup': 150,
+    'hidden': -1
   );
 
   $z-index: map-get($layers, $layer);
@@ -17,6 +17,23 @@
   position: absolute;
 
   display: block;
+}
+
+// Media breakpoints
+$breakpoint-desktop: 1100px;
+$breakpoint-tablet: $breakpoint-desktop - 1px;
+$breakpoint-mobile: 640px;
+
+@mixin breakpoint($type) {
+  $breakpoints: (
+    'desktop': '(min-width: ' + $breakpoint-desktop + ')',
+    'tablet': '(max-width: ' +  $breakpoint-tablet + ')',
+    'mobile': '(max-width: ' + $breakpoint-mobile + ')'
+  );
+
+  @media #{map-get($breakpoints, $type)} {
+    @content;
+  }
 }
 
 @mixin appearance() {
