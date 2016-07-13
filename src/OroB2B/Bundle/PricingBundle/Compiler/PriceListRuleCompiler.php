@@ -65,6 +65,8 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     public function compile(PriceRule $rule, Product $product = null)
     {
+        $this->reset();
+
         $qb = $this->createQueryBuilder($rule);
         $aliases = $qb->getRootAliases();
         $rootAlias = reset($aliases);
@@ -76,6 +78,11 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         $this->restrictByGivenProduct($qb, $rootAlias, $product);
 
         return $qb;
+    }
+
+    protected function reset()
+    {
+        $this->usedPriceRelations = [];
     }
 
     /**
