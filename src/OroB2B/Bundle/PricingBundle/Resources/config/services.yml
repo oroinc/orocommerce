@@ -705,7 +705,7 @@ services:
             - '@orob2b_pricing.compiler.price_list_rule_compiler'
             - '@orob2b_pricing.triggers_filler.scope_recalculate_triggers_filler'
 
-    orob2b_pricing.ebuilder.price_list_product_assignment_builder:
+    orob2b_pricing.builder.price_list_product_assignment_builder:
         class: 'OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder'
         arguments:
             - '@doctrine'

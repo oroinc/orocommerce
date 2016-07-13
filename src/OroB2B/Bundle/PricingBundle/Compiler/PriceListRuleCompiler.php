@@ -84,7 +84,13 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     protected function createQueryBuilder(PriceRule $rule)
     {
-        $expression = sprintf('%s and (%s) > 0', $rule->getRuleCondition(), $rule->getRule());
+        $ruleCondition = $rule->getRuleCondition();
+        if ($ruleCondition) {
+            $expression = sprintf('%s and (%s) > 0', $ruleCondition, $rule->getRule());
+        } else {
+            $expression = $rule->getRule();
+        }
+
         $node = $this->expressionParser->parse($expression);
         $this->saveUsedPriceRelations($node);
         $source = $this->nodeConverter->convert($node);
@@ -136,21 +142,28 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected function applyRuleConditions(QueryBuilder $qb, PriceRule $rule)
     {
         $additionalConditions = $this->getAdditionalConditions($rule);
+        $conditions = [];
         $condition = $rule->getRuleCondition();
-        if ($additionalConditions) {
-            $condition = sprintf('(%s) and (%s)', $condition, $additionalConditions);
+        if ($condition) {
+            $conditions[] = '(' . $condition . ')';
         }
+        if ($additionalConditions) {
+            $conditions = '(' . $additionalConditions . ')';
+        }
+        $condition = implode(' and ', $conditions);
 
-        $params = [];
-        $qb->andWhere(
-            $this->expressionBuilder->convert(
-                $this->expressionParser->parse($condition),
-                $qb->expr(),
-                $params,
-                $this->queryConverter->getTableAliasByColumn()
-            )
-        );
-        $this->applyParameters($qb, $params);
+        if ($condition) {
+            $params = [];
+            $qb->andWhere(
+                $this->expressionBuilder->convert(
+                    $this->expressionParser->parse($condition),
+                    $qb->expr(),
+                    $params,
+                    $this->queryConverter->getTableAliasByColumn()
+                )
+            );
+            $this->applyParameters($qb, $params);
+        }
     }
 
     /**
@@ -245,13 +258,16 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     protected function getAdditionalConditions(PriceRule $rule)
     {
-        $parsedCondition = $this->expressionParser->parse($rule->getRuleCondition());
+        $ruleCondition = $rule->getRuleCondition();
         $reverseNameMapping = $this->expressionParser->getReverseNameMapping();
-        foreach ($parsedCondition->getNodes() as $node) {
-            if ($node instanceof RelationNode) {
-                $relationAlias = $node->getRelationAlias();
-                if (!empty($this->usedPriceRelations[$relationAlias][$node->getRelationField()])) {
-                    $this->usedPriceRelations[$relationAlias][$node->getRelationField()] = false;
+        if ($ruleCondition) {
+            $parsedCondition = $this->expressionParser->parse($ruleCondition);
+            foreach ($parsedCondition->getNodes() as $node) {
+                if ($node instanceof RelationNode) {
+                    $relationAlias = $node->getRelationAlias();
+                    if (!empty($this->usedPriceRelations[$relationAlias][$node->getRelationField()])) {
+                        $this->usedPriceRelations[$relationAlias][$node->getRelationField()] = false;
+                    }
                 }
             }
         }

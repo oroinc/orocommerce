@@ -20,10 +20,14 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
 
     /**
      * @param PriceList $priceList
-     * @return QueryBuilder
+     * @return QueryBuilder|null
      */
     public function compile(PriceList $priceList)
     {
+        if (!$priceList->getProductAssignmentRule()) {
+            return null;
+        }
+
         $qb = $this->createQueryBuilder($priceList);
         $aliases = $qb->getRootAliases();
         $rootAlias = reset($aliases);
