@@ -7,7 +7,7 @@ config:
         'orob2bshoppinglist/js/app/views/product-add-to-shopping-list-view': 'bundles/orob2bshoppinglist/js/app/views/product-add-to-shopping-list-view.js'
         'orob2bshoppinglist/js/app/views/product-quick-add-to-shopping-list-view': 'bundles/orob2bshoppinglist/js/app/views/product-quick-add-to-shopping-list-view.js'
         'orob2bshoppinglist/js/app/views/base-shopping-lists-link-view': 'bundles/orob2bshoppinglist/js/app/views/base-shopping-lists-link-view.js'
-        'orob2bshoppinglist/js/app/views/base-shopping-lists-popup-view': 'bundles/orob2bshoppinglist/js/app/views/base-shopping-lists-popup-view.js'
+        'orob2bshoppinglist/js/app/widget/shopping-lists-multiple-edit-widget': 'bundles/orob2bshoppinglist/js/app/widget/shopping-lists-multiple-edit-widget.js'
         'oro/shopping-list-create-widget': 'bundles/orob2bshoppinglist/js/app/widget/shopping-list-create-widget.js'
         'oro/content-widget': 'bundles/orob2bshoppinglist/js/app/widget/content-widget.js'
         'orob2bshoppinglist/js/shopping-list-item-errors-handler': 'bundles/orob2bshoppinglist/js/shopping-list-item-errors-handler.js'

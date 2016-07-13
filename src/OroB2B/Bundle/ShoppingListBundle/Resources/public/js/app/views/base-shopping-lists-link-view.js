@@ -4,8 +4,9 @@ define(function(require) {
     var BaseShoppingListsLinkView;
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orob2bfrontend/js/app/elements-helper');
-    var WidgetComponent = require('oroui/js/app/components/widget-component');
+    var ShoppingListsMultipleEditWidget = require('orob2bshoppinglist/js/app/widget/shopping-lists-multiple-edit-widget');
     var _ = require('underscore');
+    var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
 
     BaseShoppingListsLinkView = BaseView.extend(_.extend({}, ElementsHelper, {
@@ -15,24 +16,9 @@ define(function(require) {
         },
 
         template: '',
+        popupTemplate: '',
 
-        widgetOptions: null,
-        widgetComponent: null,
-        widgetDefaultOptions: {
-            type: 'content',
-            options: {
-                content: '#in-shopping-lists-template',
-                dialogOptions: {
-                    'title': '',
-                    'modal': true,
-                    'resizable': false,
-                    'width': 580,
-                    'autoResize': true
-                }
-            }
-        },
-
-        modelAttr: {
+        demoData: {
             shopping_lists: [
                 {
                     shopping_list_id: 0,
@@ -72,14 +58,7 @@ define(function(require) {
             this.initializeElements(options);
 
             this.template = _.template(options['billetTemplate']);
-
-            this.widgetOptions = $.extend(true, {}, this.widgetDefaultOptions, this.widgetOptions, {
-                options: {
-                    dialogOptions: {
-                        'title': this.model.get('name')
-                    }
-                }
-            });
+            this.popupTemplate = _.template(options['popupTemplate']);
 
             this.model.on('change:shopping_lists', this.updateShoppingListsBillet, this);
 
@@ -87,7 +66,7 @@ define(function(require) {
         },
 
         dispose: function() {
-            delete this.modelAttr;
+            delete this.demoData;
             this.disposeElements();
             BaseShoppingListsLinkView.__super__.dispose.apply(this, arguments);
         },
@@ -98,11 +77,11 @@ define(function(require) {
         },
 
         initModel: function(options) {
-            this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
+            this.demoData = $.extend(true, {}, this.demoData, options.demoData || {});
             if (options.productModel) {
                 this.model = options.productModel;
             }
-            _.each(this.modelAttr, function(value, attribute) {
+            _.each(this.demoData, function(value, attribute) {
                 if (!this.model.has(attribute)) {
                     this.model.set(attribute, value);
                 }
@@ -114,7 +93,7 @@ define(function(require) {
                 return null;
             }
 
-            var currentShoppingListLabel = currentShoppingList.shopping_list_lable;
+            var currentShoppingListLabel = currentShoppingList.shopping_list_label;
             var labels = [];
 
             if (_.has(currentShoppingList, 'line_items')) {
@@ -166,10 +145,10 @@ define(function(require) {
         },
 
         renderShoppingListsPopup: function() {
-            if (!this.widgetComponent) {
-                this.widgetComponent = new WidgetComponent(this.widgetOptions);
-            }
-            this.widgetComponent.openWidget();
+            new ShoppingListsMultipleEditWidget({
+                model: this.model,
+                template: this.popupTemplate
+            }).render();
         },
 
         renderShoppingListsBillet: function(billet) {
