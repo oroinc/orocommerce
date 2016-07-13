@@ -52,6 +52,8 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
             $invoicesData[$row['invoice']][] = $row;
         }
 
+        $subtotalProvider = $this->container->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item');
+
         foreach ($invoicesData as $invoiceNumber => $invoiceData) {
             /** @var Invoice $invoice */
             $invoice = $manager
@@ -83,13 +85,14 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
                     $lineItem->setProduct($product);
                     $lineItem->setProductSku($product->getSku());
                 }
-                $subtotal = $this->container
-                    ->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item')
-                    ->getSubtotal($invoice)
-                    ->getAmount();
-                $invoice->setSubtotal($subtotal);
+
+                $invoice->addLineItem($lineItem);
                 $manager->persist($lineItem);
             }
+
+            $subtotal = $subtotalProvider
+                ->getSubtotal($invoice);
+            $invoice->setSubtotal($subtotal->getAmount());
         }
 
         fclose($handler);
