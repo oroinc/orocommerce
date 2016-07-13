@@ -27,25 +27,38 @@ class CategoryDefaultProductUnitProvider implements DefaultProductUnitProviderIn
      */
     public function getDefaultProductUnitPrecision()
     {
-        if (!$this->category) {
-            return null;
-        } else {
-            do {
-                /** @var CategoryUnitPrecision $categoryUnitPrecision */
-                $categoryUnitPrecision = null;
-                if ($this->category->getDefaultProductOptions()) {
-                    $categoryUnitPrecision = $this->category->getDefaultProductOptions()->getUnitPrecision();
-                }
+        $category = $this->category;
+        $data = null;
+        
+        while (null !== $category) {
+            /** @var CategoryUnitPrecision $categoryUnitPrecision */
+            $categoryUnitPrecision = null;
+            if ($category->getDefaultProductOptions()) {
+                $categoryUnitPrecision = $category->getDefaultProductOptions()->getUnitPrecision();
+            }
 
-                if (null !== $categoryUnitPrecision && null !== $categoryUnitPrecision->getUnit()) {
-                    $productUnitPrecision = new ProductUnitPrecision();
-                    return $productUnitPrecision
-                        ->setUnit($categoryUnitPrecision->getUnit())
-                        ->setPrecision($categoryUnitPrecision->getPrecision());
-                }
-                $this->category = $this->category->getParentCategory();
-            } while (null !== $this->category);
+            if (null !== $categoryUnitPrecision && null !== $categoryUnitPrecision->getUnit()) {
+                $data = $this->createProductUnitPrecision($categoryUnitPrecision);
+                break;
+            }
+
+            $category = $category->getParentCategory();
         }
-        return null;
+        
+        return $data;
+    }
+
+    /**
+     * @param CategoryUnitPrecision $categoryUnitPrecision
+     * @return ProductUnitPrecision
+     */
+    protected function createProductUnitPrecision(CategoryUnitPrecision $categoryUnitPrecision)
+    {
+        $productUnitPrecision = new ProductUnitPrecision();
+        $productUnitPrecision
+            ->setUnit($categoryUnitPrecision->getUnit())
+            ->setPrecision($categoryUnitPrecision->getPrecision());
+
+        return $productUnitPrecision;
     }
 }

@@ -40,8 +40,6 @@ class CategoryDefaultProductOptions
     protected $unitPrecision;
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -54,18 +52,10 @@ class CategoryDefaultProductOptions
      */
     public function getUnitPrecision()
     {
-        if ($this->unitPrecision &&
-           ($this->unit !== $this->unitPrecision->getUnit() ||
-            $this->precision !== $this->unitPrecision->getPrecision())) {
-                $this->loadUnitPrecision();
-
-        }
         return $this->unitPrecision;
     }
 
     /**
-     * Set unitPrecision
-     *
      * @param CategoryUnitPrecision $unitPrecision
      *
      * @return Category

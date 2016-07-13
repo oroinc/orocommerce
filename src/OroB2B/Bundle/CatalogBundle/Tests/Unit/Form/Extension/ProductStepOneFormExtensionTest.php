@@ -79,6 +79,8 @@ class ProductStepOneFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->willReturn(true);
 
+        $this->defaultProductUnitProvider->expects($this->never())->method($this->anything());
+
         $this->extension->onPostSubmit($event);
     }
 
@@ -93,8 +95,9 @@ class ProductStepOneFormExtensionTest extends \PHPUnit_Framework_TestCase
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $categoryForm */
         $categoryForm = $mainForm->get('category');
-        $categoryForm->expects($this->never())
-            ->method('getData');
+        $categoryForm->expects($this->never())->method('getData');
+
+        $this->defaultProductUnitProvider->expects($this->never())->method($this->anything());
 
         $this->extension->onPostSubmit($event);
     }

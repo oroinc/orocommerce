@@ -50,9 +50,21 @@ class CategoryUnitPrecisionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetProductUnitCode()
     {
+        $this->assertNull($this->entity->getProductUnitCode());
+
         $this->entity->setUnit((new ProductUnit)->setCode('code'));
 
         $this->assertSame('code', $this->entity->getProductUnitCode());
+    }
+
+    public function testGetProductUnit()
+    {
+        $unit = new ProductUnit();
+        $unit->setCode('code');
+
+        $this->entity->setUnit($unit);
+
+        $this->assertSame($unit, $this->entity->getProductUnit());
     }
 
     public function testCreate()
