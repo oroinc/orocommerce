@@ -20,6 +20,30 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
         $this->expressionParser->addExpressionMapping('Product.category', 'Category');
     }
 
+    public function testGetNamesMapping()
+    {
+        $this->assertEquals(
+            [
+                'PriceList' => 'pl',
+                'Product' => 'p',
+                'Category' => 'c',
+            ],
+            $this->expressionParser->getNamesMapping()
+        );
+    }
+
+    public function testGetReverseNameMapping()
+    {
+        $this->assertEquals(
+            [
+                'pl' => 'PriceList',
+                'p' => 'Product',
+                'c' => 'Category',
+            ],
+            $this->expressionParser->getReverseNameMapping()
+        );
+    }
+
     public function testParse()
     {
         $expression = "(PriceList.currency == 'USD' and Product.margin * 10 > 130*Product.category.minMargin)" .
@@ -68,7 +92,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
             ),
             '||'
         );
-        
+
         $this->assertEquals($expected, $this->expressionParser->parse($expression));
     }
 
@@ -96,9 +120,9 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
                     'pl' => ['currency'],
                     'p' => ['margin', 'someValue'],
                     'p::MSRP' => ['currency'],
-                    'c' => ['minMargin', null]
-                ]
-            ]
+                    'c' => ['minMargin', null],
+                ],
+            ],
         ];
     }
 }
