@@ -148,7 +148,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             $conditions[] = '(' . $condition . ')';
         }
         if ($additionalConditions) {
-            $conditions = '(' . $additionalConditions . ')';
+            $conditions[] = '(' . $additionalConditions . ')';
         }
         $condition = implode(' and ', $conditions);
 
