@@ -1,0 +1,16 @@
+product_inventory_statuses:
+    fileName: product_inventory_statuses.csv
+    contextErrors:
+        - "Error in row #1. The specified Product has not been found in the system"
+        - "Error in row #2. The specified Inventory Status has not been found in the system"
+        - "Error in row #3. Multiple products found having different Inventory Status"
+
+warehouses:
+    fileName: warehouses.csv
+    contextErrors:
+        - "Error in row #1. The Warehouse field is required when Quantity is specified and the system contains multiple warehouses"
+
+product_unit:
+    fileName: product_unit.csv
+    contextErrors:
+        - "Error in row #2. The Unit must be specified"

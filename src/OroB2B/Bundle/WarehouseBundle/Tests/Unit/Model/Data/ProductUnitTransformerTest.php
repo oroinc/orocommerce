@@ -1,8 +1,6 @@
 <?php
 
-
 namespace OroB2B\Bundle\WarehouseBundle\Tests\Model\Data;
-
 
 use OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use OroB2B\Bundle\WarehouseBundle\Model\Data\ProductUnitTransformer;

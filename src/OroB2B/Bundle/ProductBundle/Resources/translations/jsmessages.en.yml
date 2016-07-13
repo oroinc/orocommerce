@@ -78,6 +78,16 @@ orob2b:
                 full: '{0} none|{1} %count% liter|]1,Inf] %count% liters'
                 short: '{0} none|{1} %count% liter|]1,Inf] %count% liters'
 
+        product_unit.milliliter:
+            label:
+                full: milliliter
+                full_plural: milliliters
+                short: milliliter
+                short_plural: milliliters
+            value:
+                full: '{0} none|{1} %count% milliliter|]1,Inf] %count% milliliters'
+                short: '{0} none|{1} %count% milliliter|]1,Inf] %count% milliliters'
+
         product_unit.box:
             label:
                 full: box

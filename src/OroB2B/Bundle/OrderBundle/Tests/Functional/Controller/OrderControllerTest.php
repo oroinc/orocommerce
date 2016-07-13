@@ -182,7 +182,7 @@ class OrderControllerTest extends WebTestCase
                 'product' => $product->getId(),
                 'freeFormProduct' => '',
                 'quantity' => 10,
-                'productUnit' => 'orob2b.product_unit.liter.label.full',
+                'productUnit' => 'liter',
                 'price' => [
                     'value' => 100,
                     'currency' => 'USD'
@@ -632,7 +632,7 @@ class OrderControllerTest extends WebTestCase
                 'product' => '',
                 'freeFormProduct' => 'Free form product',
                 'quantity' => 20,
-                'productUnit' => 'orob2b.product_unit.liter.label.full',
+                'productUnit' => 'liter',
                 'price' => [
                     'value' => 200,
                     'currency' => 'USD'
@@ -644,7 +644,7 @@ class OrderControllerTest extends WebTestCase
                 'product' => $product->getId(),
                 'freeFormProduct' => '',
                 'quantity' => 1,
-                'productUnit' => 'orob2b.product_unit.bottle.label.full',
+                'productUnit' => 'bottle',
                 'price' => [
                     'value' => 10,
                     'currency' => 'USD'

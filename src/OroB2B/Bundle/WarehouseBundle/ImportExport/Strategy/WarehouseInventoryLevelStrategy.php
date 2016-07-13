@@ -69,4 +69,12 @@ class WarehouseInventoryLevelStrategy extends AbstractImportStrategy
     ) {
         $this->inventoryLevelStrategyHelper = $inventoryLevelStrategyHelper;
     }
+
+    /**
+     * Clear caches craeted on strategy helpers
+     */
+    public function clearCache()
+    {
+        $this->inventoryLevelStrategyHelper->clearCache(true);
+    }
 }

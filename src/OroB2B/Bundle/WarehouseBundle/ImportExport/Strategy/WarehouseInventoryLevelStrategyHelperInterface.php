@@ -36,4 +36,13 @@ interface WarehouseInventoryLevelStrategyHelperInterface
      * @return array
      */
     public function getErrors($deep = false);
+
+    /**
+     * Runs through helper and his successor (depending on the parameter) and clear any cache
+     * that the helper has
+     *
+     * @param bool $deep
+     * @return mixed
+     */
+    public function clearCache($deep = false);
 }

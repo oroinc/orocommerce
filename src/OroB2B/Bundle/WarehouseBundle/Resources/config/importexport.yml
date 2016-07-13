@@ -17,7 +17,6 @@ services:
     # Strategy
     orob2b_warehouse.importexport.strategy.warehouse_inventory_level:
         class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy'
-        public: false
         arguments:
             - '@event_dispatcher'
             - '@oro_importexport.strategy.import.helper'
@@ -112,3 +111,10 @@ services:
         class: 'OroB2B\Bundle\WarehouseBundle\Model\Data\ProductUnitTransformer'
         arguments:
             - "@orob2b_product.provider.product_units_provider"
+
+    #Listeners
+    orob2b_warehouse.event_listener.inventory_level_import:
+        class: 'OroB2B\Bundle\WarehouseBundle\EventListener\InventoryLevelsImportListener'
+        arguments: ["@orob2b_warehouse.importexport.strategy.warehouse_inventory_level"]
+        tags:
+            - { name: kernel.event_listener, event: akeneo_batch.step_execution_completed, method: onBatchStepCompleted }

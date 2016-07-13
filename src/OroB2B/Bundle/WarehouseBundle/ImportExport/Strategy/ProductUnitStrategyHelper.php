@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Doctrine\Common\Inflector\Inflector;
-
 use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -28,8 +26,11 @@ class ProductUnitStrategyHelper extends AbstractWarehouseInventoryLevelStrategyH
      * @param TranslatorInterface $translator
      * @param ProductUnitTransformer $productUnitTransformer
      */
-    public function __construct(DatabaseHelper $databaseHelper, TranslatorInterface $translator, ProductUnitTransformer $productUnitTransformer)
-    {
+    public function __construct(
+        DatabaseHelper $databaseHelper,
+        TranslatorInterface $translator,
+        ProductUnitTransformer $productUnitTransformer
+    ) {
         $this->productUnitTransformer = $productUnitTransformer;
         parent::__construct($databaseHelper, $translator);
     }
@@ -154,5 +155,15 @@ class ProductUnitStrategyHelper extends AbstractWarehouseInventoryLevelStrategyH
         $this->updateUnitRequiredCache($product->getSku(), $warehouse->getName());
 
         return $this->requiredUnitCache[$this->getUnitRequiredCacheKey($product->getSku(), $warehouse->getName())] > 1;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function clearCache($deep = false)
+    {
+        $this->requiredUnitCache = [];
+
+        parent::clearCache($deep);
     }
 }

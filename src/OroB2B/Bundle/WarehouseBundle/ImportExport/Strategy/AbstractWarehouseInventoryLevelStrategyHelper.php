@@ -37,9 +37,10 @@ abstract class AbstractWarehouseInventoryLevelStrategyHelper implements Warehous
      *
      * @param string $class
      * @param array $criteria
+     * @param null|string $alternaiveClassName
      * @return null|object
      */
-    protected function checkAndRetrieveEntity($class, array $criteria = [])
+    protected function checkAndRetrieveEntity($class, array $criteria = [], $alternaiveClassName = null)
     {
         $existingEntity = $this->databaseHelper->findOneBy($class, $criteria);
         if (!$existingEntity) {
@@ -47,7 +48,7 @@ abstract class AbstractWarehouseInventoryLevelStrategyHelper implements Warehous
             $shortClassName = end($classNamespace);
             $this->addError(
                 'orob2b.warehouse.import.error.not_found_entity',
-                ['%entity%' => $shortClassName]
+                ['%entity%' => $alternaiveClassName ?: $shortClassName]
             );
         }
 
@@ -99,5 +100,17 @@ abstract class AbstractWarehouseInventoryLevelStrategyHelper implements Warehous
     protected function getProcessedEntity($entities, $name)
     {
         return isset($entities[$name]) ? $entities[$name] : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function clearCache($deep = false)
+    {
+        $this->errors = [];
+
+        if ($deep && $this->successor) {
+            $this->successor->clearCache($deep);
+        }
     }
 }

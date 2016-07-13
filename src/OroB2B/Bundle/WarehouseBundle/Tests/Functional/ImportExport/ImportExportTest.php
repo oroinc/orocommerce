@@ -4,20 +4,25 @@ namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\ImportExport;
 
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
 
 /**
  * @dbIsolation
  */
-class ImportExportTest extends WebTestCase
+class ImportExportTest extends ImportSingleWarehouseTest
 {
+    protected $importStatusFile = 'import_status_data.yml';
+    protected $importLevelFile = 'import_level_data.yml';
+
     protected $inventoryStatusOnlyHeader = [
         'SKU',
         'Product',
@@ -273,6 +278,7 @@ class ImportExportTest extends WebTestCase
         ];
     }
 
+
     protected function getExpectedRowsForExport($header)
     {
         if ($header == $this->inventoryStatusOnlyHeader) {
@@ -288,5 +294,54 @@ class ImportExportTest extends WebTestCase
                 ->getEntityRepository(WarehouseInventoryLevel::class)
                 ->findAll()
         );
+    }
+
+    /**
+     * @param string $fileName
+     * @param array $contextErrors
+     *
+     * @dataProvider validationDataProvider
+     */
+    public function testValidation($fileName, array $contextErrors = [])
+    {
+        $this->cleanUpReader();
+
+        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . $fileName;
+
+        $configuration = [
+            'import_validation' => [
+                'processorAlias' => 'orob2b_warehouse.warehouse_inventory_level',
+                'entityName' => WarehouseInventoryLevel::class,
+                'filePath' => $filePath,
+            ],
+        ];
+
+        $jobResult = $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
+            ProcessorRegistry::TYPE_IMPORT_VALIDATION,
+            JobExecutor::JOB_VALIDATE_IMPORT_FROM_CSV,
+            $configuration
+        );
+
+        $exceptions = $jobResult->getFailureExceptions();
+        $this->assertEmpty($exceptions, implode(PHP_EOL, $exceptions));
+
+        // owner is not available in cli context, managed using ConsoleContextListener
+        $errors = array_filter(
+            $jobResult->getContext()->getErrors(),
+            function ($error) {
+                return strpos($error, 'owner: This value should not be blank.') === false;
+            }
+        );
+        $this->assertEquals($contextErrors, array_values($errors), implode(PHP_EOL, $errors));
+    }
+
+    /**
+     * @return array
+     */
+    public function validationDataProvider()
+    {
+        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import_validation.yml';
+
+        return Yaml::parse(file_get_contents($filePath));
     }
 }

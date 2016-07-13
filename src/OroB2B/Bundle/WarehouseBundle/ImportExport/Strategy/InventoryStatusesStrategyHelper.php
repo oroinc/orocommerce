@@ -42,7 +42,8 @@ class InventoryStatusesStrategyHelper extends AbstractWarehouseInventoryLevelStr
             $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
             $inventoryStatus = $this->checkAndRetrieveEntity(
                 $inventoryStatusClassName,
-                ['name' => $product->getInventoryStatus()]
+                ['name' => $product->getInventoryStatus()],
+                'Inventory Status'
             );
         }
 
@@ -106,5 +107,15 @@ class InventoryStatusesStrategyHelper extends AbstractWarehouseInventoryLevelStr
         }
 
         $this->inventoryStatusCache[$productSku][] = $inventoryStatusName;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function clearCache($deep = false)
+    {
+        $this->inventoryStatusCache = [];
+
+        parent::clearCache($deep);
     }
 }
