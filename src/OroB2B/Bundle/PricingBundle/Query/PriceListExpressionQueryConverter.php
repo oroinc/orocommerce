@@ -25,6 +25,7 @@ class PriceListExpressionQueryConverter extends GroupingOrmQueryConverter
      */
     public function convert(AbstractQueryDesigner $source)
     {
+        $this->tableAliasByColumn = [];
         /** @var array $definition */
         $definition = json_decode($source->getDefinition(), JSON_OBJECT_AS_ARRAY);
         if (empty($definition['columns'])) {
