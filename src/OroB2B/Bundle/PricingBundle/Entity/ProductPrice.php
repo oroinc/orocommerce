@@ -52,7 +52,7 @@ class ProductPrice extends BaseProductPrice
      * @var PriceRule
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceRule")
-     * @ORM\JoinColumn(name="price_rule_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ORM\JoinColumn(name="price_rule_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      **/
     protected $priceRule;
 
