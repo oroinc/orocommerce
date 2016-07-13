@@ -1,5 +1,7 @@
 parameters:
     orob2b_catalog.entity.category.class: OroB2B\Bundle\CatalogBundle\Entity\Category
+    orob2b_catalog.entity.category_default_product_options.class: OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions
+    orob2b_catalog.entity.category_unit_precision.class: OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision
 
 services:
     orob2b_catalog.category_tree_handler:
@@ -92,3 +94,9 @@ services:
         class: 'OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler'
         arguments:
             - "@request_stack"
+
+    orob2b_catalog.provider.default_product_unit_provider.category:
+        class: 'OroB2B\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider'
+        public: true
+        tags:
+            - {name: orob2b_product.default_product_unit_provider, priority: 10}

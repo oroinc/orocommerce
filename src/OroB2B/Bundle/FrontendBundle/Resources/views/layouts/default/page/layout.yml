@@ -11,6 +11,10 @@ layout:
                           id: 'container'
                 header:
                     blockType: container
+                sticky_panel:
+                    blockType: container
+                sticky_panel_content:
+                    blockType: container
                 notification:
                     blockType: block
                 main:
@@ -29,6 +33,8 @@ layout:
                 body:
                     wrapper:
                         header: ~
+                        sticky_panel:
+                            sticky_panel_content: ~
                         main:
                             notification: ~
                             content:
@@ -38,6 +44,10 @@ layout:
         - '@add':
             id: require_js_config
             parentId: require_js
+            blockType: block
+        - '@add':
+            id: sticky_element_notification
+            parentId: sticky_panel_content
             blockType: block
         - '@setOption':
             id: title
