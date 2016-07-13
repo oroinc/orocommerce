@@ -1,8 +1,0 @@
-parent: default
-label: Custom theme
-description: Custom theme description.
-groups: [ commerce ]
-data:
-    assets:
-        styles:
-            output: 'css/layout/custom/styles.css'
