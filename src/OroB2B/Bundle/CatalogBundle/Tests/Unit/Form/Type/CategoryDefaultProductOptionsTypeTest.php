@@ -26,7 +26,6 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-
     /**
      * {@inheritdoc}
      */

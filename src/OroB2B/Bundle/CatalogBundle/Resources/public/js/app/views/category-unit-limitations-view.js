@@ -1,12 +1,11 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var CategoryUnitLimitationsView,
-        BaseView = require('oroui/js/app/views/base/view'),
-        _ = require('underscore');
+    var CategoryUnitLimitationsView;
+    var BaseView = require('oroui/js/app/views/base/view');
+    var _ = require('underscore');
 
     CategoryUnitLimitationsView = BaseView.extend({
-
         /**
          * @property {Object}
          */
@@ -19,12 +18,12 @@ define(function (require) {
         /**
          * {@inheritDoc}
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.$input = this.$el.find(this.options.precisionInput);
             this.$select = this.$el.find(this.options.unitSelect);
             this.$select
-                .on('change'+ this.eventNamespace(), _.bind(this.onChange, this))
+                .on('change' + this.eventNamespace(), _.bind(this.onChange, this))
                 .trigger('change');
         },
 
@@ -48,7 +47,7 @@ define(function (require) {
                 return;
             }
 
-            this.$select.off('change'+ this.eventNamespace());
+            this.$select.off('change' + this.eventNamespace());
 
             CategoryUnitLimitationsView.__super__.dispose.call(this);
         }

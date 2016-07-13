@@ -24,7 +24,6 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-
     /**
      * {@inheritdoc}
      */

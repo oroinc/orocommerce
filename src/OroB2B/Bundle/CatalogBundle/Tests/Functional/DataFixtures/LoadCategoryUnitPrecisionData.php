@@ -18,7 +18,9 @@ class LoadCategoryUnitPrecisionData extends AbstractFixture implements Dependent
         LoadCategoryData::SECOND_LEVEL1 => 'product_unit.box',
     ];
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function getDependencies()
     {
         return [
