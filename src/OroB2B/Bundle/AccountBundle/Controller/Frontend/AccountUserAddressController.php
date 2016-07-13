@@ -124,7 +124,7 @@ class AccountUserAddressController extends Controller
             },
             function (AccountUserAddress $accountAddress) use ($accountUser, $currentUser) {
                 if ($currentUser instanceof AccountUser && $currentUser->getId() === $accountUser->getId()) {
-                    return ['route' => 'orob2b_account_frontend_account_user_profile'];
+                    return ['route' => 'orob2b_account_frontend_account_user_address_index'];
                 } else {
                     return [
                         'route' => 'orob2b_account_frontend_account_user_view',
