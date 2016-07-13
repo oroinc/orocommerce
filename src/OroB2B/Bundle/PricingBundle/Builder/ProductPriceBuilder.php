@@ -65,10 +65,11 @@ class ProductPriceBuilder
      */
     public function buildByPriceList(PriceList $priceList, Product $product = null)
     {
+        $this->getProductPriceRepository()->deleteGeneratedPrices($priceList, $product);
         if (count($priceList->getPriceRules()) > 0) {
             $rules = $this->getSortedRules($priceList);
             foreach ($rules as $rule) {
-                $this->buildByRule($rule, $product);
+                $this->buildByRule($rule, $product, true);
             }
         }
     }
@@ -76,10 +77,11 @@ class ProductPriceBuilder
     /**
      * @param PriceRule $priceRule
      * @param Product|null $product
+     * @param bool $skipClear
      */
-    public function buildByRule(PriceRule $priceRule, Product $product = null)
+    public function buildByRule(PriceRule $priceRule, Product $product = null, $skipClear = false)
     {
-        $this->applyRule($priceRule, $product);
+        $this->applyRule($priceRule, $product, $skipClear);
         if ($product === null) {
             $this->triggersFiller->fillTriggersByPriceList($priceRule->getPriceList());
         } else {
@@ -111,25 +113,18 @@ class ProductPriceBuilder
     /**
      * @param PriceRule $priceRule
      * @param Product|null $product
+     * @param bool $skipClear
      */
-    protected function applyRule(PriceRule $priceRule, Product $product = null)
+    protected function applyRule(PriceRule $priceRule, Product $product = null, $skipClear = false)
     {
-        $this->clearGenerated($priceRule, $product);
+        if (!$skipClear) {
+            $this->getProductPriceRepository()->deleteGeneratedPricesByRule($priceRule, $product);
+        }
         $this->insertFromSelectQueryExecutor->execute(
             ProductPrice::class,
             $this->ruleCompiler->getOrderedFields(),
             $this->ruleCompiler->compile($priceRule, $product)
         );
-    }
-
-    /**
-     * @param PriceRule $priceRule
-     * @param Product|null $product
-     */
-    protected function clearGenerated(PriceRule $priceRule, Product $product = null)
-    {
-        $this->getProductPriceRepository()
-            ->deleteGeneratedPricesByRule($priceRule, $product);
     }
 
     /**
