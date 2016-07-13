@@ -2,22 +2,11 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'default.html.twig'
-        - '@addTree':
-            items:
-                shopping_list_view_tabs:
-                    blockType: container
-            tree:
-                content:
-                    shopping_list_view_tabs: ~
+        - '@add':
+            id: shopping_list_view_tabs
+            blockType: container
+            parentId: content
+            prepend: true
         - '@move':
             id: shopping_lists_sidebar_list
             parentId: shopping_list_view_tabs
-            prepend: true
-        - '@move':
-            id: shopping_list_view_container
-            parentId: content
-            prepend: true
-        - '@move':
-            id: shopping_list_view_tabs
-            parentId: content
-            prepend: true
