@@ -4,10 +4,10 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Handler;
 
 use Doctrine\ORM\EntityManager;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
@@ -21,9 +21,9 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $registry;
+    protected $doctrineHelper;
 
     /**
      * @var ExpressionParser|\PHPUnit_Framework_MockObject_MockObject
@@ -42,7 +42,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMockBuilder(ManagerRegistry::class)
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -55,7 +55,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->priceRuleLexemeHandler = new PriceRuleLexemeHandler(
-            $this->registry,
+            $this->doctrineHelper,
             $this->parser,
             $this->priceRuleProvider
         );
@@ -63,10 +63,10 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateLexemes()
     {
-        $assignmentRule = 'Category.id == 2';
+        $assignmentRule = 'category.id == 2 or category == 10';
         
-        $rule = 'Product.msrp.value + 10';
-        $ruleCondition = 'Product.sku == test';
+        $rule = 'product.msrp.value + 10';
+        $ruleCondition = 'product.sku == test';
 
         /** @var PriceRule $priceRule */
         $priceRule = $this->getEntity(PriceRule::class, ['id' => 1]);
@@ -82,7 +82,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->parser->expects($this->any())
             ->method('getUsedLexemes')
             ->willReturnMap([
-                [$assignmentRule, ['OroB2B\Bundle\ProductBundle\Entity\Category' => ['id']]],
+                [$assignmentRule, ['OroB2B\Bundle\ProductBundle\Entity\Category' => ['id', null]]],
                 [$rule, ['OroB2B\Bundle\ProductBundle\Entity\Product::msrp' => ['value']]],
                 [$ruleCondition, ['OroB2B\Bundle\ProductBundle\Entity\Product' => ['sku']]]
             ]);
@@ -113,9 +113,8 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
 
         $lexemeEntityManager->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BPricingBundle:PriceRuleLexeme')
+            ->with(PriceRuleLexeme::class)
             ->willReturn($lexemeRepository);
-
 
         $msrpId = '42';
         $msrpPriceAttribute = $this->getEntity(PriceAttributePriceList::class, ['id' => $msrpId]);
@@ -130,23 +129,21 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(['fieldName' => 'msrp'])
             ->willReturn($msrpPriceAttribute);
 
-        $priceAttributeEntityManager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityManager')
+            ->with(PriceRuleLexeme::class)
+            ->willReturn($lexemeEntityManager);
 
-        $priceAttributeEntityManager->expects($this->any())
-            ->method('getRepository')
-            ->with('OroB2BPricingBundle:PriceAttributePriceList')
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->with(PriceAttributePriceList::class)
             ->willReturn($priceAttributeRepository);
 
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturnMap([
-                ['OroB2BPricingBundle:PriceRuleLexeme', $lexemeEntityManager],
-                ['OroB2BPricingBundle:PriceAttributePriceList', $priceAttributeEntityManager],
-            ]);
+        $this->doctrineHelper->expects($this->any())
+            ->method('getSingleEntityIdentifierFieldName')
+            ->willReturn('id');
 
-        $lexemeEntityManager->expects($this->any())->method('persist');
+        $lexemeEntityManager->expects($this->exactly(4))->method('persist');
         $lexemeEntityManager->expects($this->once())->method('flush');
 
         $this->priceRuleLexemeHandler->updateLexemes($priceList);

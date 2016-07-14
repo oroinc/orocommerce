@@ -777,6 +777,6 @@ services:
     orob2b_pricing.hander.price_rule_lexeme_handler:
         class: 'OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler'
         arguments:
-            - '@doctrine'
+            - '@oro_entity.doctrine_helper'
             - '@orob2b_pricing.expression.parser'
             - '@orob2b_pricing.provider.price_rule_fields_provider'

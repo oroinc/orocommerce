@@ -2,8 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Handler;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
@@ -15,9 +16,9 @@ use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 class PriceRuleLexemeHandler
 {
     /**
-     * @var ManagerRegistry
+     * @var DoctrineHelper
      */
-    protected $registry;
+    protected $doctrineHelper;
 
     /**
      * @var ExpressionParser
@@ -30,16 +31,16 @@ class PriceRuleLexemeHandler
     protected $priceRuleProvider;
 
     /**
-     * @param ManagerRegistry $registry
+     * @param DoctrineHelper $doctrineHelper
      * @param ExpressionParser $parser
      * @param PriceRuleFieldsProvider $priceRuleProvider
      */
     public function __construct(
-        ManagerRegistry $registry,
+        DoctrineHelper $doctrineHelper,
         ExpressionParser $parser,
         PriceRuleFieldsProvider $priceRuleProvider
     ) {
-        $this->registry = $registry;
+        $this->doctrineHelper = $doctrineHelper;
         $this->parser = $parser;
         $this->priceRuleProvider = $priceRuleProvider;
     }
@@ -51,11 +52,11 @@ class PriceRuleLexemeHandler
     {
         $assignmentRule = $priceList->getProductAssignmentRule();
 
-        $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceRuleLexeme');
+        $em = $this->doctrineHelper->getEntityManager(PriceRuleLexeme::class);
 
         // Remove all lexemes for priceList if price list exist
         if ($priceList->getId()) {
-            $em->getRepository('OroB2BPricingBundle:PriceRuleLexeme')->deleteByPriceList($priceList);
+            $em->getRepository(PriceRuleLexeme::class)->deleteByPriceList($priceList);
         }
 
         //Anew add lexemes for priceList
@@ -100,21 +101,16 @@ class PriceRuleLexemeHandler
                 $lexeme = new PriceRuleLexeme();
                 $lexeme->setPriceRule($priceRule);
                 $lexeme->setClassName($realClassName);
-                $lexeme->setFieldName($fieldName);
+                $lexeme->setFieldName(
+                    $fieldName ? $fieldName : $this->doctrineHelper->getSingleEntityIdentifierFieldName($realClassName)
+                );
                 $lexeme->setPriceList($priceList);
 
                 if ($realClassName ===  PriceAttributeProductPrice::class) {
-                    $classPath = explode("::", $class);
-                    $fieldName = end($classPath);
-
-                    /** @var PriceAttributePriceList $relation */
-                    $relation = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceAttributePriceList')
-                        ->getRepository('OroB2BPricingBundle:PriceAttributePriceList')
-                        ->findOneBy(['fieldName' => $fieldName]);
-
+                    $relation = $this->getPriceAttributeRelationByClass($class);
                     $lexeme->setRelationId($relation->getId());
-                } elseif ($realClassName ===  PriceList::class) {
-                    //@TODO set relation for base price list BB-3372
+                } elseif ($realClassName ===  ProductPrice::class) {
+                    //@TODO set relation id for base price list BB-3273
                 }
 
                 $lexemeEntities[] = $lexeme;
@@ -122,6 +118,19 @@ class PriceRuleLexemeHandler
         }
 
         return $lexemeEntities;
+    }
+
+    /**
+     * @param $class
+     * @return PriceAttributePriceList PriceAttributePriceList
+     */
+    protected function getPriceAttributeRelationByClass($class)
+    {
+        $classPath = explode('::', $class);
+        $fieldName = end($classPath);
+
+        return $this->doctrineHelper->getEntityRepository(PriceAttributePriceList::class)
+            ->findOneBy(['fieldName' => $fieldName]);
     }
 
     /**

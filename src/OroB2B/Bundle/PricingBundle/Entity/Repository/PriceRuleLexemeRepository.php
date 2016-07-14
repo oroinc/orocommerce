@@ -16,7 +16,7 @@ class PriceRuleLexemeRepository extends EntityRepository
         $qb = $this->createQueryBuilder('lexeme');
 
         $qb->delete()
-            ->where($qb->expr()->in('lexeme.priceList', ':priceList'))
+            ->where($qb->expr()->eq('lexeme.priceList', ':priceList'))
             ->setParameter('priceList', $priceList);
         
         $qb->getQuery()->execute();

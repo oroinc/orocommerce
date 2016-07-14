@@ -33,7 +33,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['USD'],
             'active' => true,
-            'assignmentRule' => 'assignment_rule_2',
+            'assignmentRule' => 'category.id == 2',
         ],
         [
             'name' => 'priceList3',
@@ -49,7 +49,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['GBP'],
             'active' => true,
-            'assignmentRule' => 'assignment_rule_4',
+            'assignmentRule' => 'product.inventory_status == discontinued',
         ],
         [
             'name' => 'priceList5',
@@ -57,7 +57,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['GBP', 'EUR'],
             'active' => true,
-            'assignmentRule' => 'assignment_rule_5',
+            'assignmentRule' => 'category == 1 or category.id == 2',
         ],
         [
             'name' => 'priceList6',
