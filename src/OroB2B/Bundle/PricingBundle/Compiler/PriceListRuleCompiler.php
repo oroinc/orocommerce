@@ -43,7 +43,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     /**
      * @var PriceRuleFieldsProvider
      */
-    protected $attributeProvider;
+    protected $fieldsProvider;
 
     /**
      * @var array
@@ -51,11 +51,11 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected $usedPriceRelations = [];
 
     /**
-     * @param PriceRuleFieldsProvider $attributeProvider
+     * @param PriceRuleFieldsProvider $fieldsProvider
      */
-    public function setAttributeProvider($attributeProvider)
+    public function setFieldsProvider(PriceRuleFieldsProvider $fieldsProvider)
     {
-        $this->attributeProvider = $attributeProvider;
+        $this->fieldsProvider = $fieldsProvider;
     }
 
     /**
@@ -251,7 +251,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         foreach ($node->getNodes() as $subNode) {
             if ($subNode instanceof RelationNode) {
                 $classAlias = $subNode->getRelationAlias();
-                $realClass = $this->attributeProvider->getRealClassName($classAlias);
+                $realClass = $this->fieldsProvider->getRealClassName($classAlias);
                 if ($realClass === PriceAttributeProductPrice::class) {
                     $this->usedPriceRelations[$classAlias] = $this->requiredPriceConditions;
                 }

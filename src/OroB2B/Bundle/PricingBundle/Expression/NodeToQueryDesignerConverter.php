@@ -16,14 +16,14 @@ class NodeToQueryDesignerConverter
     /**
      * @var PriceRuleFieldsProvider
      */
-    protected $attributeProvider;
+    protected $fieldsProvider;
 
     /**
      * @param PriceRuleFieldsProvider $attributeProvider
      */
     public function __construct(PriceRuleFieldsProvider $attributeProvider)
     {
-        $this->attributeProvider = $attributeProvider;
+        $this->fieldsProvider = $attributeProvider;
     }
 
     /**
@@ -102,7 +102,7 @@ class NodeToQueryDesignerConverter
     {
         $tableIdentifier = $subNode->getRelationAlias();
 
-        $resolvedContainer = $this->attributeProvider->getRealClassName($tableIdentifier);
+        $resolvedContainer = $this->fieldsProvider->getRealClassName($tableIdentifier);
         if ($resolvedContainer === PriceAttributeProductPrice::class) {
             $path = sprintf(
                 '%s+%s::%s',

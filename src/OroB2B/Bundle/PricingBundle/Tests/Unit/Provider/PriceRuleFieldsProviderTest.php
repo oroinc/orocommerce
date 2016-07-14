@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 
@@ -21,13 +21,13 @@ class PriceRuleFieldsProviderTest extends \PHPUnit_Framework_TestCase
     protected $priceRuleAttributeProvider;
 
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $registry;
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(RegistryInterface::class);
+        $this->registry = $this->getMock(ManagerRegistry::class);
 
         $this->entityFieldProvider = $this->getMockBuilder(EntityFieldProvider::class)
             ->disableOriginalConstructor()

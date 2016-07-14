@@ -122,7 +122,7 @@ class PriceListScheduleTest extends \PHPUnit_Framework_TestCase
                 new \DateTime($item['schedule2']['dates'][1])
             ))
                 ->setPriceList($item['schedule2']['priceList']);
-        };
+        }
 
         return $data;
     }
