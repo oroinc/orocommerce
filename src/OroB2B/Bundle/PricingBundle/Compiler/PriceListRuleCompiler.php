@@ -194,7 +194,10 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
                     $subQb->expr()->eq('productPriceManual.unit', ':unitManual'),
                     $subQb->expr()->eq('productPriceManual.currency', ':currencyManual'),
                     $subQb->expr()->eq('productPriceManual.quantity', ':quantityManual'),
-                    $subQb->expr()->neq('productPriceManual.priceRule', ':priceRuleManual')
+                    $subQb->expr()->orX(
+                        $subQb->expr()->neq('productPriceManual.priceRule', ':priceRuleManual'),
+                        $subQb->expr()->isNull('productPriceManual.priceRule')
+                    )
                 )
             );
 
