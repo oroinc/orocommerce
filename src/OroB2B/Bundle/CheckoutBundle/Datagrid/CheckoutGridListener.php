@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 use Doctrine\Common\Cache\Cache;
 
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\Exception\IncorrectEntityException;
@@ -42,12 +41,7 @@ class CheckoutGridListener
      * @var BaseCheckoutRepository
      */
     protected $baseCheckoutRepository;
-
-    /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
-
+    
     /**
      * @var TotalProcessorProvider
      */
@@ -66,7 +60,6 @@ class CheckoutGridListener
     /**
      * @param UserCurrencyManager    $currencyManager
      * @param BaseCheckoutRepository $baseCheckoutRepository
-     * @param SecurityFacade         $securityFacade
      * @param TotalProcessorProvider $totalProcessor
      * @param EntityNameResolver     $entityNameResolver
      * @param Cache                  $cache
@@ -76,7 +69,6 @@ class CheckoutGridListener
     public function __construct(
         UserCurrencyManager $currencyManager,
         BaseCheckoutRepository $baseCheckoutRepository,
-        SecurityFacade $securityFacade,
         TotalProcessorProvider $totalProcessor,
         EntityNameResolver $entityNameResolver,
         Cache $cache,
@@ -84,7 +76,6 @@ class CheckoutGridListener
     ) {
         $this->currencyManager        = $currencyManager;
         $this->baseCheckoutRepository = $baseCheckoutRepository;
-        $this->securityFacade         = $securityFacade;
         $this->totalProcessor         = $totalProcessor;
         $this->entityNameResolver     = $entityNameResolver;
         $this->cache                  = $cache;

@@ -13,7 +13,7 @@ class OpenOrdersController extends Controller
 {
     /**
      * @Route("/", name="orob2b_checkout_frontend_open_orders")
-     * @Layout(vars={"entity_class"})
+     * @Layout()
      * @Acl(
      *      id="orob2b_order_frontend_view",
      *      type="entity",
@@ -26,8 +26,6 @@ class OpenOrdersController extends Controller
      */
     public function openOrdersAction()
     {
-        return [
-            'entity_class' => $this->container->getParameter('orob2b_order.entity.order.class'),
-        ];
+        return [];
     }
 }

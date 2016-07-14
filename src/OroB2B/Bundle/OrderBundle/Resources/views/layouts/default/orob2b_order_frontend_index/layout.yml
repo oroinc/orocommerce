@@ -8,7 +8,7 @@ layout:
             optionName: value
             optionValue:
                 - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.checkout.order_history.label'
+                - 'orob2b.order.order_history.label'
 
         - '@setOption':
             id: content

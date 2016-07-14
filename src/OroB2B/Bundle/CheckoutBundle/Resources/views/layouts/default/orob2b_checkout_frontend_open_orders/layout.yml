@@ -15,7 +15,7 @@ layout:
             siblingId: ~
             prepend: true
             options:
-                text: 'orob2b.checkout.open_orders.label'
+                text: 'orob2b.checkout.entity_plural_label'
 
         - '@add':
             id: checkouts
@@ -30,4 +30,4 @@ layout:
             optionName: value
             optionValue:
                 - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.checkout.open_orders.label'
+                - 'orob2b.checkout.entity_plural_label'

@@ -42,6 +42,7 @@ orob2b:
         total_discounts_amount.label: Total Discounts Amount
         discounts.label: Discounts
         discountitem.add_label: Add Discount
+        order_history.label: Order History
 
         orderdiscount:
             entity_label: Order Discount

@@ -8,7 +8,6 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
@@ -65,11 +64,6 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
      * @var BaseCheckoutRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $baseCheckoutRepository;
-
-    /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $securityFacade;
 
     /**
      * @var CheckoutGridListener
@@ -131,10 +125,6 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                                      ->method('find')
                                      ->willReturn(new Checkout());
 
-        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
-                                     ->disableOriginalConstructor()
-                                     ->getMock();
-
         $this->totalProcessor = $this->getMockBuilder(TotalProcessorProvider::class)
                                      ->disableOriginalConstructor()
                                      ->getMock();
@@ -154,7 +144,6 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new CheckoutGridListener(
             $this->currencyManager,
             $this->baseCheckoutRepository,
-            $this->securityFacade,
             $this->totalProcessor,
             $this->entityNameResolver,
             $this->cache,

@@ -151,7 +151,6 @@ services:
         arguments:
             - '@orob2b_pricing.user_currency_manager'
             - '@orob2b_checkout.repository.base_checkout'
-            - '@oro_security.security_facade'
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
             - '@oro_entity.entity_name_resolver'
             - '@orob2b_checkout.grid_totals_metadata.cache'

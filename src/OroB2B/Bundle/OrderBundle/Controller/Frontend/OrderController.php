@@ -2,10 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Controller\Frontend;
 
-//use Symfony\Component\Form\FormInterface;
-//use Symfony\Component\HttpFoundation\RedirectResponse;
-//use Symfony\Component\HttpFoundation\Request;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 

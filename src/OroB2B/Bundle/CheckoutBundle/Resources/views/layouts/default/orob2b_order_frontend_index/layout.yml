@@ -10,7 +10,7 @@ layout:
             siblingId: ~
             prepend: true
             options:
-                text: 'orob2b.checkout.open_orders.label'
+                text: 'orob2b.checkout.entity_plural_label'
                 visible: { '@neq': [$data.orob2b_checkout_separate_open_orders, true] }
 
         - '@add':
