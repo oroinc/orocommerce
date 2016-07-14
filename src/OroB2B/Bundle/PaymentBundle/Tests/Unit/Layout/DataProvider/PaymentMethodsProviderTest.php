@@ -2,26 +2,31 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
 class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 {
+    const METHOD = 'Method';
     use EntityTrait;
 
     /**
      * @var PaymentMethodViewRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $registry;
+    protected $paymentMethodViewRegistry;
 
     /**
      * @var PaymentContextProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $paymentContextProvider;
+
+    /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodRegistry;
 
     /**
      * @var PaymentMethodsProvider
@@ -33,7 +38,9 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->registry = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry')
+        $this->paymentMethodViewRegistry = $this->getMockBuilder(
+            'OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry'
+        )
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -42,33 +49,31 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new PaymentMethodsProvider($this->registry, $this->paymentContextProvider);
+        $this->paymentMethodRegistry = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
+
+        $this->provider = new PaymentMethodsProvider(
+            $this->paymentMethodViewRegistry,
+            $this->paymentContextProvider,
+            $this->paymentMethodRegistry
+        );
     }
 
-    public function testGetIdentifier()
+    public function testGetViewsEmpty()
     {
-        $this->assertEquals(PaymentMethodsProvider::NAME, $this->provider->getIdentifier());
-    }
-
-    public function testGetDataEmpty()
-    {
-        $context = new LayoutContext();
-
         $this->paymentContextProvider->expects($this->any())->method('processContext')->willReturn($this->contextData);
 
-        $this->registry->expects($this->once())
+        $this->paymentMethodViewRegistry->expects($this->once())
             ->method('getPaymentMethodViews')
             ->with($this->contextData)
             ->willReturn([]);
 
-        $data = $this->provider->getData($context);
+        $entity = new \stdClass();
+        $data = $this->provider->getViews($entity);
         $this->assertEmpty($data);
     }
 
-    public function testGetData()
+    public function testGetViewsWithoutEntity()
     {
-        $context = new LayoutContext();
-
         $view = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
         $view->expects($this->once())->method('getLabel')->willReturn('label');
         $view->expects($this->once())->method('getBlock')->willReturn('block');
@@ -77,7 +82,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
             ->with($this->contextData)
             ->willReturn([]);
 
-        $this->registry->expects($this->once())
+        $this->paymentMethodViewRegistry->expects($this->once())
             ->method('getPaymentMethodViews')
             ->willReturn(['payment' => $view]);
 
@@ -85,72 +90,187 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
             ->method('processContext')
             ->willReturn($this->contextData);
 
-        $data = $this->provider->getData($context);
+        $entity = new \stdClass();
+        $data = $this->provider->getViews($entity);
         $this->assertEquals(['payment' => ['label' => 'label', 'block' => 'block', 'options' => []]], $data);
     }
 
-    public function testGetDataEntityFromContext()
+    public function testGetViewsWithEntity()
     {
         $entity = new \stdClass();
 
-        $context = new LayoutContext();
-        $context->data()->set('entity', 'entity', $entity);
-
-        $contextData = ['entity' => $entity];
+        $context = ['entity' => $entity];
         $this->paymentContextProvider->expects($this->once())
             ->method('processContext')
             ->with($context, $this->identicalTo($entity))
-            ->willReturn($contextData);
+            ->willReturn($context);
 
         $view = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
-        $view->expects($this->once())->method('getOptions')->with($contextData);
+        $view->expects($this->once())->method('getOptions')->with($context);
 
-        $this->registry->expects($this->once())->method('getPaymentMethodViews')->willReturn(['payment' => $view]);
+        $this->paymentMethodViewRegistry->expects($this->once())->method('getPaymentMethodViews')->willReturn(
+            ['payment' => $view]
+        );
 
-        $this->provider->getData($context);
+        $this->provider->getViews($entity);
     }
 
-    public function testGetDataCheckoutFromContext()
+    /**
+     * @dataProvider isPaymentMethodEnabledDataProvider
+     */
+    public function testIsPaymentMethodEnabled($expected)
     {
-        $checkout = new \stdClass();
+        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn($expected);
 
-        $context = new LayoutContext();
-        $context->data()->set('checkout', 'checkout', $checkout);
+        $this->paymentMethodRegistry->expects($this->once())
+            ->method('getPaymentMethod')
+            ->with(self::METHOD)
+            ->willReturn($paymentMethod);
 
-        $contextData = ['entity' => $checkout];
-        $this->paymentContextProvider->expects($this->once())
-            ->method('processContext')
-            ->with($context, $this->identicalTo($checkout))
-            ->willReturn($contextData);
-
-        $view = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
-        $view->expects($this->once())->method('getOptions')->with($contextData);
-
-        $this->registry->expects($this->once())->method('getPaymentMethodViews')->willReturn(['payment' => $view]);
-
-        $this->provider->getData($context);
+        $result = $this->provider->isPaymentMethodEnabled(self::METHOD);
+        $this->assertEquals($expected, $result);
     }
 
-    public function testGetDataEntityPriorToCheckoutFromContext()
+    /**
+     * @return array
+     */
+    public function isPaymentMethodEnabledDataProvider()
     {
-        $entity = new \stdClass();
-        $checkout = new \stdClass();
+        return [
+            ['expected' => true],
+            ['expected' => false],
+        ];
+    }
 
-        $context = new LayoutContext();
-        $context->data()->set('entity', 'entity', $entity);
-        $context->data()->set('checkout', 'checkout', $checkout);
+    public function testIsPaymentMethodEnabledWithException()
+    {
+        $this->paymentMethodRegistry->expects($this->once())
+            ->method('getPaymentMethod')
+            ->will($this->throwException(new \InvalidArgumentException));
 
-        $contextData = ['entity' => $entity];
-        $this->paymentContextProvider->expects($this->once())
-            ->method('processContext')
-            ->with($context, $this->identicalTo($entity))
-            ->willReturn($contextData);
+        $result = $this->provider->isPaymentMethodEnabled(self::METHOD);
+        $this->assertFalse($result);
+    }
 
-        $view = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
-        $view->expects($this->once())->method('getOptions')->with($contextData);
+    /**
+     * @dataProvider isPaymentMethodApplicableDataProvider
+     * @param bool $isEnabled
+     * @param bool $isApplicable
+     * @param bool $expected
+     */
+    public function testIsPaymentMethodApplicable($isEnabled, $isApplicable, $expected)
+    {
+        $this->paymentContextProvider->expects($this->any())->method('processContext')->willReturn($this->contextData);
 
-        $this->registry->expects($this->once())->method('getPaymentMethodViews')->willReturn(['payment' => $view]);
+        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod->expects($this->once())->method('isEnabled')->willReturn($isEnabled);
+        $paymentMethod->expects($isEnabled ? $this->once() : $this->never())
+            ->method('isApplicable')
+            ->with($this->contextData)
+            ->willReturn($isApplicable);
 
-        $this->provider->getData($context);
+        $this->paymentMethodRegistry->expects($this->once())
+            ->method('getPaymentMethod')
+            ->with(self::METHOD)
+            ->willReturn($paymentMethod);
+
+        $this->assertEquals($expected, $this->provider->isPaymentMethodApplicable(self::METHOD, new \stdClass()));
+    }
+
+    /**
+     * @return array
+     */
+    public function isPaymentMethodApplicableDataProvider()
+    {
+        return [
+            [
+                '$isEnabled' => true,
+                '$isApplicable' => false,
+                '$expected' => false,
+            ],
+            [
+                '$isEnabled' => false,
+                '$isApplicable' => false,
+                '$expected' => false,
+            ],
+            [
+                '$isEnabled' => false,
+                '$isApplicable' => true,
+                '$expected' => false,
+            ],
+            [
+                '$isEnabled' => true,
+                '$isApplicable' => true,
+                '$expected' => true,
+            ],
+        ];
+    }
+
+    public function testIsPaymentMethodApplicableWithException()
+    {
+        $this->paymentMethodRegistry->expects($this->once())
+            ->method('getPaymentMethod')
+            ->will($this->throwException(new \InvalidArgumentException));
+
+        $this->assertFalse($this->provider->isPaymentMethodApplicable(self::METHOD, new \stdClass()));
+    }
+
+    /**
+     * @dataProvider hasApplicablePaymentMethodsDataProvider
+     * @param bool $isEnabled
+     * @param bool $isApplicable
+     * @param bool $expected
+     */
+    public function testHasApplicablePaymentMethods($isEnabled, $isApplicable, $expected)
+    {
+        $this->paymentContextProvider->expects($this->any())->method('processContext')->willReturn($this->contextData);
+
+        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod->expects($this->once())->method('isEnabled')->willReturn($isEnabled);
+        $paymentMethod->expects($isEnabled ? $this->once() : $this->never())
+            ->method('isApplicable')
+            ->with($this->contextData)
+            ->willReturn($isApplicable);
+
+        $this->paymentMethodRegistry->expects($this->once())
+            ->method('getPaymentMethods')
+            ->willReturn([$paymentMethod]);
+
+        $this->assertEquals($expected, $this->provider->hasApplicablePaymentMethods(new \stdClass()));
+    }
+
+    /**
+     * @return array
+     */
+    public function hasApplicablePaymentMethodsDataProvider()
+    {
+        return [
+            [
+                '$isEnabled' => true,
+                '$isApplicable' => false,
+                '$expected' => false,
+            ],
+            [
+                '$isEnabled' => false,
+                '$isApplicable' => false,
+                '$expected' => false,
+            ],
+            [
+                '$isEnabled' => false,
+                '$isApplicable' => true,
+                '$expected' => false,
+            ],
+            [
+                '$isEnabled' => true,
+                '$isApplicable' => true,
+                '$expected' => true,
+            ],
+        ];
     }
 }
