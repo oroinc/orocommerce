@@ -63,8 +63,8 @@ class PriceRuleConditionalExpressionValidatorTest extends AbstractDefinedAttribu
             ['', []],
             [null, []],
             ['0', []],
-            ['product.sku == "SKU"', ['sku', 'msrp']],
-            ['product.msrp.value == 1', ['value']],
+            ['Product.sku == "SKU"', ['sku', 'msrp']],
+            ['Product.msrp.value == 1', ['value']],
         ];
     }
 
@@ -76,7 +76,7 @@ class PriceRuleConditionalExpressionValidatorTest extends AbstractDefinedAttribu
         return [
             ['zzz', []],
             ['product.sku = "SKU"', ['sku', 'msrp']],
-            ['product.msrp.value == 1', []],
+            ['Product.msrp.value == 1', []],
         ];
     }
 }

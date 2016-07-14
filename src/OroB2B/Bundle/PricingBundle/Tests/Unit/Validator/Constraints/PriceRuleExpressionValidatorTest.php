@@ -59,7 +59,7 @@ class PriceRuleExpressionValidatorTest extends AbstractDefinedAttributesValidato
         return [
             ['', []],
             [null, []],
-            ['product.msrp.value + 1', ['value']],
+            ['Product.msrp.value + 1', ['value']],
         ];
     }
 
@@ -72,7 +72,7 @@ class PriceRuleExpressionValidatorTest extends AbstractDefinedAttributesValidato
         return [
             ['xxx', []],
             ['product.sku == SKU"', ['sku', 'msrp']],
-            ['product.msrp.value + 1', []],
+            ['Product.msrp.value + 1', []],
         ];
     }
 }
