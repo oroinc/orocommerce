@@ -10,7 +10,7 @@ use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 
 class PriceRuleLexemeHandler
 {
@@ -25,19 +25,19 @@ class PriceRuleLexemeHandler
     protected $parser;
 
     /**
-     * @var PriceRuleAttributeProvider
+     * @var PriceRuleFieldsProvider
      */
     protected $priceRuleProvider;
 
     /**
      * @param ManagerRegistry $registry
      * @param ExpressionParser $parser
-     * @param PriceRuleAttributeProvider $priceRuleProvider
+     * @param PriceRuleFieldsProvider $priceRuleProvider
      */
     public function __construct(
         ManagerRegistry $registry,
         ExpressionParser $parser,
-        PriceRuleAttributeProvider $priceRuleProvider
+        PriceRuleFieldsProvider $priceRuleProvider
     ) {
         $this->registry = $registry;
         $this->parser = $parser;

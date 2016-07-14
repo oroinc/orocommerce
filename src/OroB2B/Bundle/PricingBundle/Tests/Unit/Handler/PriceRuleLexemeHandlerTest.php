@@ -14,7 +14,7 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 
 class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,7 +36,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
     protected $priceRuleLexemeHandler;
 
     /**
-     * @var PriceRuleAttributeProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRuleFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $priceRuleProvider;
 
@@ -50,7 +50,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->priceRuleProvider = $this->getMockBuilder(PriceRuleAttributeProvider::class)
+        $this->priceRuleProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
