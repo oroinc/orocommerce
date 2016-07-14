@@ -2,24 +2,21 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator;
 
-class DefinedConditionAttributesValidatorTest extends AbstractDefinedAttributesValidatorTest
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+
+class PriceRuleExpressionValidatorTest extends AbstractDefinedAttributesValidatorTest
 {
     /**
      * @var PriceRuleExpressionValidator
      */
-    protected $definedAttributesValidator;
+    protected $expressionValidator;
 
     protected function setUp()
     {
         parent::setUp();
-        $this->definedAttributesValidator = new PriceRuleExpressionValidator(
-            $this->parser,
-            $this->fieldsProvider
-        );
+        $this->expressionValidator = new PriceRuleExpressionValidator($this->parser, $this->fieldsProvider);
     }
 
     /**
@@ -62,11 +59,10 @@ class DefinedConditionAttributesValidatorTest extends AbstractDefinedAttributesV
         return [
             ['', []],
             [null, []],
-            ['0', []],
-            ['Product.sku == "SKU"', ['sku', 'msrp']],
-            ['Product.msrp.value == 1', ['value']],
+            ['Product.msrp.value + 1', ['value']],
         ];
     }
+
 
     /**
      * @return array
@@ -74,9 +70,9 @@ class DefinedConditionAttributesValidatorTest extends AbstractDefinedAttributesV
     public function validateErrorDataProvider()
     {
         return [
-            ['zzz', []],
-            ['product.sku = "SKU"', ['sku', 'msrp']],
-            ['Product.msrp.value == 1', []],
+            ['xxx', []],
+            ['product.sku == SKU"', ['sku', 'msrp']],
+            ['Product.msrp.value + 1', []],
         ];
     }
 }

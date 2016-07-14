@@ -12,7 +12,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Expression\NodeInterface;
 use OroB2B\Bundle\PricingBundle\Expression\RelationNode;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class PriceListRuleCompiler extends AbstractRuleCompiler
@@ -41,7 +41,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     ];
 
     /**
-     * @var PriceRuleAttributeProvider
+     * @var PriceRuleFieldsProvider
      */
     protected $attributeProvider;
 
@@ -51,7 +51,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected $usedPriceRelations = [];
 
     /**
-     * @param PriceRuleAttributeProvider $attributeProvider
+     * @param PriceRuleFieldsProvider $attributeProvider
      */
     public function setAttributeProvider($attributeProvider)
     {
