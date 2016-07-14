@@ -20,10 +20,11 @@ class WarehouseStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHel
         array $errors = []
     ) {
         $this->errors = $errors;
+        $warehouses = $this->countAll();
 
         $existingWarehouse = null;
         $importedWarehouse = $importedEntity->getWarehouse();
-        if ($this->countAll() > 1) {
+        if ($warehouses > 1) {
             if (!$importedWarehouse && $this->isWarehouseRequired($importData)) {
                 $this->addError('orob2b.warehouse.import.error.warehouse_required');
 
@@ -34,11 +35,11 @@ class WarehouseStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHel
                 Warehouse::class,
                 ['name' => $importedWarehouse->getName()]
             );
-        } elseif ($this->countAll() == 1) {
+        } elseif ($warehouses == 1) {
             $existingWarehouse = $this->getSingleWarehouse();
         }
 
-        if (!$existingWarehouse && $this->countAll() < 1) {
+        if (!$existingWarehouse && $warehouses < 1) {
             $this->addError(
                 'orob2b.warehouse.import.error.warehouse_inexistent',
                 [],

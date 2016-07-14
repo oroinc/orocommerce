@@ -541,6 +541,14 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener }
 
+    orob2b_pricing.entity_listener.price_list_product:
+        class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListProductEntityListener'
+        public: false
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: doctrine.orm.entity_listener }
+
     orob2b_pricing.provider.matching_price:
         class: 'OroB2B\Bundle\PricingBundle\Provider\MatchingPriceProvider'
         arguments:

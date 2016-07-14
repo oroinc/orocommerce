@@ -83,6 +83,6 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_T
      */
     protected function getBuilderMock()
     {
-        return $this->getMock(FormBuilderInterface::class);
+        return $this->getMockBuilder(FormBuilderInterface::class)->getMock();
     }
 }

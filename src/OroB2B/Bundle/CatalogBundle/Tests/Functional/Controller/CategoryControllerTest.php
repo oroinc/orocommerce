@@ -23,10 +23,14 @@ class CategoryControllerTest extends WebTestCase
     const DEFAULT_SUBCATEGORY_TITLE = 'Subcategory Title';
     const DEFAULT_CATEGORY_SHORT_DESCRIPTION = 'Category Short Description';
     const DEFAULT_CATEGORY_LONG_DESCRIPTION = 'Category Long Description';
+    const DEFAULT_CATEGORY_UNIT_CODE = 'set';
+    const DEFAULT_CATEGORY_UNIT_PRECISION = 5;
     const UPDATED_DEFAULT_CATEGORY_TITLE = 'Updated Category Title';
     const UPDATED_DEFAULT_SUBCATEGORY_TITLE = 'Updated Subcategory Title';
     const UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION = 'Updated Category Short Description';
     const UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION = 'Updated Category Long Description';
+    const UPDATED_DEFAULT_CATEGORY_UNIT_CODE = 'item';
+    const UPDATED_DEFAULT_CATEGORY_UNIT_PRECISION = 3;
     const LARGE_IMAGE_NAME = 'large_image.png';
     const SMALL_IMAGE_NAME = 'small_image.png';
 
@@ -122,16 +126,24 @@ class CategoryControllerTest extends WebTestCase
      */
     public function testEditCategory($id)
     {
-        list($title, $shortDescription, $longDescription) = [
+        list($title, $shortDescription, $longDescription, $unitPrecision) = [
             self::DEFAULT_CATEGORY_TITLE,
             self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
-            self::DEFAULT_CATEGORY_LONG_DESCRIPTION
+            self::DEFAULT_CATEGORY_LONG_DESCRIPTION,
+            [
+                'code' => self::DEFAULT_CATEGORY_UNIT_CODE,
+                'precision' => self::DEFAULT_CATEGORY_UNIT_PRECISION,
+            ]
         ];
 
-        list($newTitle, $newShortDescription, $newLongDescription) = [
+        list($newTitle, $newShortDescription, $newLongDescription, $newUnitPrecision) = [
             self::UPDATED_DEFAULT_CATEGORY_TITLE,
             self::UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION,
-            self::UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION
+            self::UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION,
+            [
+                'code' => self::UPDATED_DEFAULT_CATEGORY_UNIT_CODE,
+                'precision' => self::UPDATED_DEFAULT_CATEGORY_UNIT_PRECISION,
+            ]
         ];
 
         return $this->assertEdit(
@@ -139,9 +151,11 @@ class CategoryControllerTest extends WebTestCase
             $title,
             $shortDescription,
             $longDescription,
+            $unitPrecision,
             $newTitle,
             $newShortDescription,
-            $newLongDescription
+            $newLongDescription,
+            $newUnitPrecision
         );
     }
 
@@ -154,16 +168,24 @@ class CategoryControllerTest extends WebTestCase
      */
     public function testEditSubCategory($id)
     {
-        list($title, $shortDescription, $longDescription) = [
+        list($title, $shortDescription, $longDescription, $unitPrecision) = [
             self::DEFAULT_SUBCATEGORY_TITLE,
             self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
-            self::DEFAULT_CATEGORY_LONG_DESCRIPTION
+            self::DEFAULT_CATEGORY_LONG_DESCRIPTION,
+            [
+                'code' => self::DEFAULT_CATEGORY_UNIT_CODE,
+                'precision' => self::DEFAULT_CATEGORY_UNIT_PRECISION,
+            ]
         ];
 
-        list($newTitle, $newShortDescription, $newLongDescription) = [
+        list($newTitle, $newShortDescription, $newLongDescription, $newUnitPrecision) = [
             self::UPDATED_DEFAULT_CATEGORY_TITLE,
             self::UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION,
-            self::UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION
+            self::UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION,
+            [
+                'code' => self::UPDATED_DEFAULT_CATEGORY_UNIT_CODE,
+                'precision' => self::UPDATED_DEFAULT_CATEGORY_UNIT_PRECISION,
+            ]
         ];
 
         return $this->assertEdit(
@@ -171,9 +193,11 @@ class CategoryControllerTest extends WebTestCase
             $title,
             $shortDescription,
             $longDescription,
+            $unitPrecision,
             $newTitle,
             $newShortDescription,
-            $newLongDescription
+            $newLongDescription,
+            $newUnitPrecision
         );
     }
 
@@ -221,6 +245,7 @@ class CategoryControllerTest extends WebTestCase
      * @param string $title
      * @param string $shortDescription
      * @param string $longDescription
+     * @param array  $unitPrecision
      *
      * @return int
      */
@@ -228,7 +253,11 @@ class CategoryControllerTest extends WebTestCase
         $parentId,
         $title = self::DEFAULT_CATEGORY_TITLE,
         $shortDescription = self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
-        $longDescription = self::DEFAULT_CATEGORY_LONG_DESCRIPTION
+        $longDescription = self::DEFAULT_CATEGORY_LONG_DESCRIPTION,
+        $unitPrecision = [
+            'code' => self::DEFAULT_CATEGORY_UNIT_CODE,
+            'precision' => self::DEFAULT_CATEGORY_UNIT_PRECISION
+        ]
     ) {
         $crawler = $this->client->request(
             'GET',
@@ -256,6 +285,8 @@ class CategoryControllerTest extends WebTestCase
         $form['orob2b_catalog_category[longDescriptions][values][default]'] = $longDescription;
         $form['orob2b_catalog_category[smallImage][file]'] = $smallImage;
         $form['orob2b_catalog_category[largeImage][file]'] = $largeImage;
+        $form['orob2b_catalog_category[defaultProductOptions][unitPrecision][unit]'] = $unitPrecision['code'];
+        $form['orob2b_catalog_category[defaultProductOptions][unitPrecision][precision]'] = $unitPrecision['precision'];
 
         if ($parentId === $this->masterCatalog->getId()) {
             $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_1)->getId() . ', '
@@ -279,6 +310,8 @@ class CategoryControllerTest extends WebTestCase
         $this->assertContains($longDescription, $html);
         $this->assertContains($smallImage->getFilename(), $html);
         $this->assertContains($largeImage->getFilename(), $html);
+        $this->assertEquals($unitPrecision['code'], $crawler->filter('.unit option[selected]')->attr('value'));
+        $this->assertEquals($unitPrecision['precision'], $crawler->filter('.precision')->attr('value'));
 
         return $this->getCategoryIdByUri($this->client->getRequest()->getRequestUri());
     }
@@ -288,9 +321,11 @@ class CategoryControllerTest extends WebTestCase
      * @param string $title
      * @param string $shortDescription
      * @param string $longDescription
+     * @param array  $unitPrecision
      * @param string $newTitle
      * @param string $newShortDescription
      * @param string $newLongDescription
+     * @param array  $newUnitPrecision
      *
      * @return int
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -300,9 +335,11 @@ class CategoryControllerTest extends WebTestCase
         $title,
         $shortDescription,
         $longDescription,
+        $unitPrecision,
         $newTitle,
         $newShortDescription,
-        $newLongDescription
+        $newLongDescription,
+        $newUnitPrecision
     ) {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
         $form = $crawler->selectButton('Save')->form();
@@ -313,6 +350,8 @@ class CategoryControllerTest extends WebTestCase
         $this->assertContains(self::SMALL_IMAGE_NAME, $html);
         $this->assertContains(self::LARGE_IMAGE_NAME, $html);
         $this->assertFormDefaultLocalized($formValues, $title, $shortDescription, $longDescription);
+        $this->assertEquals($unitPrecision['code'], $crawler->filter('.unit option[selected]')->attr('value'));
+        $this->assertEquals($unitPrecision['precision'], $crawler->filter('.precision')->attr('value'));
 
         $testProductOne = $this->getProductBySku(LoadProductData::PRODUCT_1);
         $testProductTwo = $this->getProductBySku(LoadProductData::PRODUCT_2);
@@ -337,6 +376,12 @@ class CategoryControllerTest extends WebTestCase
         $parameters['orob2b_catalog_category']['shortDescriptions']['values']['default'] = $newShortDescription;
         $parameters['orob2b_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
         $parameters['orob2b_catalog_category']['largeImage']['emptyFile'] = true;
+        $parameters['orob2b_catalog_category']['defaultProductOptions']['unitPrecision']['unit'] =
+            $newUnitPrecision['code']
+        ;
+        $parameters['orob2b_catalog_category']['defaultProductOptions']['unitPrecision']['precision'] =
+            $newUnitPrecision['precision']
+        ;
 
         $parentCategory = $crawler->filter('[name = "orob2b_catalog_category[parentCategory]"]')->attr('value');
         $parameters['orob2b_catalog_category']['parentCategory'] = $parentCategory;
@@ -366,6 +411,8 @@ class CategoryControllerTest extends WebTestCase
         $this->assertNull($this->getProductCategoryByProduct($testProductOne));
         $this->assertNotContains(self::LARGE_IMAGE_NAME, $html);
         $this->assertContains(self::SMALL_IMAGE_NAME, $html);
+        $this->assertEquals($newUnitPrecision['code'], $crawler->filter('.unit option[selected]')->attr('value'));
+        $this->assertEquals($newUnitPrecision['precision'], $crawler->filter('.precision')->attr('value'));
 
         if ($title === self::DEFAULT_CATEGORY_TITLE) {
             $productTwoCategory = $this->getProductCategoryByProduct($testProductTwo);

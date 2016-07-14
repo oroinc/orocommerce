@@ -83,6 +83,6 @@ class InventoryLevelExportTypeExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function getBuilderMock()
     {
-        return $this->getMock(FormBuilderInterface::class);
+        return $this->getMockBuilder(FormBuilderInterface::class)->getMock();
     }
 }

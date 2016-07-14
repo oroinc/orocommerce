@@ -84,7 +84,7 @@ class InventoryStatusesStrategyHelper extends AbstractWarehouseInventoryLevelStr
         }
 
         if (!empty($inventoryStatusName)
-            && array_search($inventoryStatusName, $this->inventoryStatusCache[$productSku]) === false
+            && false === array_search($inventoryStatusName, $this->inventoryStatusCache[$productSku])
         ) {
             return false;
         }

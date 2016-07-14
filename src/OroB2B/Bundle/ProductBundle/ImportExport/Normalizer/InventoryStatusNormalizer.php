@@ -15,9 +15,13 @@ class InventoryStatusNormalizer implements NormalizerInterface
      */
     public function supportsNormalization($data, $format = null, array $context = array())
     {
+        $processors = [
+            self::PRODUCT_INVENTORY_STATUS_ONLY_PROCESSOR,
+            self::WAREHOUSE_INVENTORY_STATUS_ONLY_PROCESSOR
+        ];
+
         return isset($context['processorAlias'])
-                && ($context['processorAlias'] == self::PRODUCT_INVENTORY_STATUS_ONLY_PROCESSOR
-                || $context['processorAlias'] == self::WAREHOUSE_INVENTORY_STATUS_ONLY_PROCESSOR)
+                && in_array($context['processorAlias'], $processors)
                 && $data instanceof Product;
     }
 

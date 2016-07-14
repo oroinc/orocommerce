@@ -49,10 +49,10 @@ class WarehouseInventoryLevelStrategy extends AbstractImportStrategy
 
         if ($entity) {
             $id = $this->databaseHelper->getIdentifier($entity);
-            if (!empty($id)) {
-                $this->context->incrementUpdateCount();
-            } else {
+            if (empty($id)) {
                 $this->context->incrementAddCount();
+            } else {
+                $this->context->incrementUpdateCount();
             }
         } else {
             $this->context->incrementErrorEntriesCount();

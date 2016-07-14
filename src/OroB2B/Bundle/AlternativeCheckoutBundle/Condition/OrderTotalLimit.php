@@ -63,7 +63,7 @@ class OrderTotalLimit extends AbstractComparison
         $order = new Order();
         $order->setLineItems($orderLineItems);
 
-        $orderTotalAmount = $this->totalsProvider->getTotal($order)->getAmount();
+        $orderTotalAmount = $this->totalsProvider->enableRecalculation()->getTotal($order)->getAmount();
 
         return $orderTotalAmount <= $right;
     }

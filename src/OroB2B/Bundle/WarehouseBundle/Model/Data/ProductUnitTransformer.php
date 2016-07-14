@@ -31,6 +31,10 @@ class ProductUnitTransformer
         return null;
     }
 
+    /**
+     * Return array of available product units
+     * @return array
+     */
     protected function getUnits()
     {
         if (empty($this->unitsCache)) {
