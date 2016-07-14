@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class AddSystemOnlyDataColumn implements Migration, ContainerAwareInterface
+class AddPublicColumn implements Migration, ContainerAwareInterface
 {
     /**
      * @var ContainerInterface
@@ -24,7 +24,7 @@ class AddSystemOnlyDataColumn implements Migration, ContainerAwareInterface
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_account_user_role');
-        $table->addColumn('non_public', 'boolean', ['notnull' => false]);
+        $table->addColumn('public', 'boolean', ['notnull' => false]);
 
         $this->updateAccountUserRoles($queries);
     }

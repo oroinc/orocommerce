@@ -86,7 +86,7 @@
         ]
     %}
 
-    {% if not entity.nonPublic %}
+    {% if entity.public %}
         {% set fields = fields|merge([form_row(form.selfManaged)]) %}
     {% endif %}
 

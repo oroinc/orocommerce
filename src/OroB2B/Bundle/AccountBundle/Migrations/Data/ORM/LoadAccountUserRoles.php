@@ -119,6 +119,6 @@ class LoadAccountUserRoles extends AbstractRolesData
     private function setUpSelfManagedData(AccountUserRole $role, $roleConfigData)
     {
         $role->setSelfManaged(isset($roleConfigData['self_managed']) ? $roleConfigData['self_managed'] : false);
-        $role->setNonPublic(isset($roleConfigData['non_public']) ? $roleConfigData['non_public'] : false);
+        $role->setPublic(isset($roleConfigData['public']) ? $roleConfigData['public'] : false);
     }
 }

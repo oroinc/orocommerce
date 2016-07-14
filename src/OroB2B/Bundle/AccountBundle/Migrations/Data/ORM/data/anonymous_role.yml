@@ -1,5 +1,4 @@
 IS_AUTHENTICATED_ANONYMOUSLY:
     label: Non-Authenticated Visitors
-    non_public: true
     permissions:
         entity|OroB2B\Bundle\ProductBundle\Entity\Product: [VIEW_SYSTEM]

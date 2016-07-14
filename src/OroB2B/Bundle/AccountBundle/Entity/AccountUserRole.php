@@ -52,7 +52,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *      }
  * )
  */
-class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
+class AccountUserRole extends AbstractRole implements OrganizationAwareInterface, \Serializable
 {
     const PREFIX_ROLE = 'ROLE_FRONTEND_';
 
@@ -149,9 +149,9 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @var boolean
      *
-     * @ORM\Column(type="boolean", name="non_public", nullable=true)
+     * @ORM\Column(type="boolean", name="public", nullable=true)
      */
-    protected $nonPublic = false;
+    protected $public = true;
 
     /**
      * @param string|null $role
@@ -335,7 +335,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
      */
     public function isSelfManaged()
     {
-        return (bool)$this->selfManaged;
+        return $this->selfManaged;
     }
 
     /**
@@ -349,17 +349,17 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @return boolean
      */
-    public function isNonPublic()
+    public function isPublic()
     {
-        return $this->nonPublic;
+        return $this->public;
     }
 
     /**
-     * @param boolean $nonPublic
+     * @param boolean $public
      */
-    public function setNonPublic($nonPublic)
+    public function setPublic($public)
     {
-        $this->nonPublic = $nonPublic;
+        $this->public = $public;
     }
     
     /**
@@ -371,7 +371,9 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
             [
                 $this->id,
                 $this->role,
-                $this->label
+                $this->label,
+                $this->selfManaged,
+                $this->public
             ]
         );
     }
@@ -385,6 +387,8 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
             $this->id,
             $this->role,
             $this->label,
+            $this->selfManaged,
+            $this->public
             ) = unserialize($serialized);
     }
 }

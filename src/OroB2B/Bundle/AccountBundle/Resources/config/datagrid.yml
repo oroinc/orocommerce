@@ -477,7 +477,7 @@ datagrid:
                     - role.role
                     - role.label
                     - role.selfManaged
-                    - role.nonPublic
+                    - role.public
                     - (CASE WHEN role.account IS NOT NULL THEN false ELSE true END) as isRolePredefined
                 from:
                     - { table: %orob2b_account.entity.account_user_role.class%, alias: role }

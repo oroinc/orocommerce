@@ -18,7 +18,7 @@
 
 {% block content_data %}
     {% set selfManagedProperty = '' %}
-    {% if not entity.nonPublic %}
+    {% if entity.public %}
         {% set selfManagedPropertyValue = '' %}
         {% if entity.selfManaged %}
             {% set selfManagedPropertyValue = 'orob2b.account.accountuserrole.self_managed.value.true.label'|trans %}
