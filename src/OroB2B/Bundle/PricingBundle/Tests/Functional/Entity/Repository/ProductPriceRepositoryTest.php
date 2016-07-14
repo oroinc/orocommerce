@@ -596,7 +596,6 @@ class ProductPriceRepositoryTest extends WebTestCase
 
     public function testDeleteGeneratedPrices()
     {
-
         $registry = $this->getContainer()->get('doctrine');
         /** @var $manager EntityManager */
         $manager = $registry->getManagerForClass(PriceRule::class);
@@ -620,6 +619,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $manager->flush($productPrice);
 
         $rule = new PriceRule();
+        $rule->setRule('1');
         $rule->setPriority(1);
         $rule->setQuantity(1);
         $rule->setPriceList($priceList);

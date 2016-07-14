@@ -13,8 +13,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Component\Tree\Entity\TreeTrait;
 use OroB2B\Bundle\CatalogBundle\Model\ExtendCategory;
+use OroB2B\Component\Tree\Entity\TreeTrait;
 
 /**
  * @ORM\Table(name="orob2b_catalog_category")
@@ -40,7 +40,7 @@ use OroB2B\Bundle\CatalogBundle\Model\ExtendCategory;
  * )
  * @ORM\HasLifecycleCallbacks()
  *
- * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class Category extends ExtendCategory
 {
@@ -217,6 +217,21 @@ class Category extends ExtendCategory
      * )
      */
     protected $longDescriptions;
+
+    /**
+     * @var CategoryDefaultProductOptions
+     *
+     * @ORM\OneToOne(targetEntity="CategoryDefaultProductOptions", cascade={"persist"})
+     * @ORM\JoinColumn(name="default_product_options_id", nullable=true, referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $defaultProductOptions;
 
     /**
      * Constructor
@@ -545,5 +560,27 @@ class Category extends ExtendCategory
         }
 
         return $longDescription->first();
+    }
+
+    /**
+     * @return CategoryDefaultProductOptions
+     */
+    public function getDefaultProductOptions()
+    {
+        return $this->defaultProductOptions;
+    }
+
+    /**
+     * Set unitPrecision
+     *
+     * @param CategoryDefaultProductOptions $defaultProductOptions
+     *
+     * @return Category
+     */
+    public function setDefaultProductOptions(CategoryDefaultProductOptions $defaultProductOptions = null)
+    {
+        $this->defaultProductOptions = $defaultProductOptions;
+    
+        return $this;
     }
 }

@@ -12,7 +12,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Expression\NodeInterface;
 use OroB2B\Bundle\PricingBundle\Expression\RelationNode;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class PriceListRuleCompiler extends AbstractRuleCompiler
@@ -41,9 +41,9 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     ];
 
     /**
-     * @var PriceRuleAttributeProvider
+     * @var PriceRuleFieldsProvider
      */
-    protected $attributeProvider;
+    protected $fieldsProvider;
 
     /**
      * @var array
@@ -51,11 +51,11 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected $usedPriceRelations = [];
 
     /**
-     * @param PriceRuleAttributeProvider $attributeProvider
+     * @param PriceRuleFieldsProvider $fieldsProvider
      */
-    public function setAttributeProvider($attributeProvider)
+    public function setFieldsProvider(PriceRuleFieldsProvider $fieldsProvider)
     {
-        $this->attributeProvider = $attributeProvider;
+        $this->fieldsProvider = $fieldsProvider;
     }
 
     /**
@@ -251,7 +251,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         foreach ($node->getNodes() as $subNode) {
             if ($subNode instanceof RelationNode) {
                 $classAlias = $subNode->getRelationAlias();
-                $realClass = $this->attributeProvider->getRealClassName($classAlias);
+                $realClass = $this->fieldsProvider->getRealClassName($classAlias);
                 if ($realClass === PriceAttributeProductPrice::class) {
                     $this->usedPriceRelations[$classAlias] = $this->requiredPriceConditions;
                 }

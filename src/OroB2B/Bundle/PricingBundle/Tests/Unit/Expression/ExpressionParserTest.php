@@ -120,9 +120,13 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
                     'pl' => ['currency'],
                     'p' => ['margin', 'someValue'],
                     'p::MSRP' => ['currency'],
-                    'c' => ['minMargin', null],
-                ],
+                    'c' => ['minMargin', null]
+                ]
             ],
+            [
+                '1+1',
+                []
+            ]
         ];
     }
 }
