@@ -4,3 +4,10 @@ orob2b_checkout:
     prefix:       account/checkout
     options:
         frontend: true
+
+orob2b_open_orders:
+    resource:     "@OroB2BCheckoutBundle/Controller/Frontend/OpenOrdersController.php"
+    type:         annotation
+    prefix:       account/open-orders
+    options:
+        frontend: true
