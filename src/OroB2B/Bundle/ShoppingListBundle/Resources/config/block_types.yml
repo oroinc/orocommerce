@@ -1,0 +1,65 @@
+services:
+    orob2b_shopping_list.layout.type.shopping_list_awere_block:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{shoppingList: {required: true}}]]
+            - [setName, ['shopping_list_awere_block']]
+        tags:
+             - { name: layout.block_type, alias: shopping_list_awere_block }
+
+    orob2b_shopping_list.layout.type.shopping_list_line_items_list:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        shoppingList: {required: true}
+                        productsMatchedPrice: {required: true}
+                        productsAllPrices: {required: true}
+                        productsUnits: {required: true}
+            - [setName, ['shopping_list_line_items_list']]
+        tags:
+             - { name: layout.block_type, alias: shopping_list_line_items_list }
+
+    orob2b_shopping_list.layout.type.shopping_list_totals:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        shoppingList: {required: true}
+                        totals: {required: true}
+            - [setName, ['shopping_list_totals']]
+        tags:
+             - { name: layout.block_type, alias: shopping_list_totals }
+
+    orob2b_shopping_list.layout.type.shopping_lists_awere_container:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{shoppingLists: {required: true}}]]
+            - [setName, ['shopping_lists_awere_container']]
+        tags:
+             - { name: layout.block_type, alias: shopping_lists_awere_container }
+
+    orob2b_shopping_list.layout.type.add_to_shopping_list_form_button:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        shoppingLists: {required: true}
+                        unitsQuantity: {default: []}
+            - [setName, ['add_to_shopping_list_form_button']]
+        tags:
+             - { name: layout.block_type, alias: add_to_shopping_list_form_button }
+
+    orob2b_shopping_list.layout.block_type.extension.widget_content:
+        parent: oro_layout.block_type.extension.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{savedId: ~, shoppingList: ~}]]
+            - [setExtendedType, ['widget_content']]
+        tags:
+            - { name: layout.block_type_extension, alias: widget_content }

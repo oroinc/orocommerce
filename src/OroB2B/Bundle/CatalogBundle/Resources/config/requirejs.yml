@@ -2,3 +2,4 @@ config:
     paths:
         'orob2bcatalog/js/app/components/tree-form-type-component': 'bundles/orob2bcatalog/js/app/components/tree-form-type-component.js'
         'orob2bcatalog/js/app/components/tree-manage-component': 'bundles/orob2bcatalog/js/app/components/tree-manage-component.js'
+        'orob2bcatalog/js/app/views/category-unit-limitations-view': 'orob2bcatalog/js/app/views/category-unit-limitations-view.js'

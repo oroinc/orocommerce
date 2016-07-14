@@ -13,7 +13,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
+use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
 class ProductType extends AbstractType
 {
@@ -25,14 +25,14 @@ class ProductType extends AbstractType
     protected $dataClass;
 
     /**
-     * @var  DefaultProductUnitProvider
+     * @var DefaultProductUnitProviderInterface
      */
     private $provider;
 
     /**
-     * @param DefaultProductUnitProvider $provider
+     * @param DefaultProductUnitProviderInterface $provider
      */
-    public function __construct(DefaultProductUnitProvider $provider)
+    public function __construct(DefaultProductUnitProviderInterface $provider)
     {
         $this->provider = $provider;
     }
@@ -113,7 +113,6 @@ class ProductType extends AbstractType
                     ]
                 ]
             )
-            ->add('image', 'oro_image', ['label' => 'orob2b.product.image.label', 'required' => false])
             ->add(
                 'primaryUnitPrecision',
                 ProductPrimaryUnitPrecisionType::NAME,
@@ -138,7 +137,11 @@ class ProductType extends AbstractType
                 'variantFields',
                 ProductCustomFieldsChoiceType::NAME,
                 ['label' => 'orob2b.product.variant_fields.label']
+            )->add(
+                'images',
+                ProductImageCollectionType::NAME
             );
+
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
     }
 
@@ -163,7 +166,6 @@ class ProductType extends AbstractType
                     'data'           => $this->provider->getDefaultProductUnitPrecision()
                 ]
             );
-
         }
         if ($product instanceof Product && $product->getHasVariants()) {
             $form

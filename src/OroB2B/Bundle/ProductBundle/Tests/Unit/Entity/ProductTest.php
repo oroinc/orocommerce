@@ -10,6 +10,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
@@ -46,6 +47,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['names', new LocalizedFallbackValue()],
             ['descriptions', new LocalizedFallbackValue()],
             ['shortDescriptions', new LocalizedFallbackValue()],
+            ['images', new ProductImage()],
         ];
 
         $this->assertPropertyCollections(new Product(), $collections);
@@ -132,6 +134,31 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertNotContains($unitPrecision, $actual->toArray());
     }
 
+    public function testImagesRelation()
+    {
+        $productImage = new ProductImage();
+        $product = new Product();
+
+        $this->assertCount(0, $product->getImages());
+
+        $this->assertSame($product, $product->addImage($productImage));
+        $this->assertCount(1, $product->getImages());
+
+        $actual = $product->getImages();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertEquals([$productImage], $actual->toArray());
+
+        $this->assertSame($product, $product->addImage($productImage));
+        $this->assertCount(1, $product->getImages());
+
+        $this->assertSame($product, $product->removeImage($productImage));
+        $this->assertCount(0, $product->getImages());
+
+        $actual = $product->getImages();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertNotContains($productImage, $actual->toArray());
+    }
+
     public function testGetUnitPrecisionByUnitCode()
     {
         $unit = new ProductUnit();
@@ -169,6 +196,24 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['kg'], $product->getAvailableUnitCodes());
     }
 
+    public function testGetAvailableUnits()
+    {
+        $unit = new ProductUnit();
+        $unit
+            ->setCode('itm')
+            ->setDefaultPrecision(3);
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision
+            ->setUnit($unit)
+            ->setPrecision($unit->getDefaultPrecision());
+
+        $product = new Product();
+        $product->addUnitPrecision($unitPrecision);
+
+        $this->assertEquals([$unit], $product->getAvailableUnits());
+    }
+
     public function testClone()
     {
         $id = 123;
@@ -183,6 +228,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $product->getShortDescriptions()->add(new LocalizedFallbackValue());
         $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
         $product->setVariantFields(['field']);
+        $product->addImage(new ProductImage());
 
         $refProduct = new \ReflectionObject($product);
         $refId = $refProduct->getProperty('id');
@@ -194,6 +240,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $product->getNames());
         $this->assertCount(1, $product->getDescriptions());
         $this->assertCount(1, $product->getShortDescriptions());
+        $this->assertCount(1, $product->getImages());
         $this->assertCount(1, $product->getVariantLinks());
         $this->assertCount(1, $product->getVariantFields());
 
@@ -204,6 +251,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $productCopy->getNames());
         $this->assertCount(0, $productCopy->getDescriptions());
         $this->assertCount(0, $productCopy->getShortDescriptions());
+        $this->assertCount(0, $productCopy->getImages());
         $this->assertCount(0, $productCopy->getVariantLinks());
         $this->assertCount(0, $productCopy->getVariantFields());
     }
@@ -383,5 +431,25 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ->setUnit($unit)
             ->setPrecision($unit->getDefaultPrecision());
         return $unitPrecision;
+    }
+
+    public function testGetImagesByType()
+    {
+        $product = new Product();
+
+        $this->assertCount(0, $product->getImagesByType('main'));
+
+        $image1 = new ProductImage();
+        $image1->addType('main');
+        $image1->addType('additional');
+
+        $image2 = new ProductImage();
+        $image2->addType('main');
+
+        $product->addImage($image1);
+        $product->addImage($image2);
+
+        $this->assertCount(2, $product->getImagesByType('main'));
+        $this->assertCount(1, $product->getImagesByType('additional'));
     }
 }

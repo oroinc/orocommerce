@@ -5,12 +5,14 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
 use OroB2B\Bundle\PaymentBundle\Method\PayPalPaymentsPro;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
@@ -21,6 +23,9 @@ use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
 {
     use ConfigTestTrait, EntityTrait;
+
+    const PROXY_HOST = '112.33.44.55';
+    const PROXY_PORT = 7777;
 
     /** @var Gateway|\PHPUnit_Framework_MockObject_MockObject */
     protected $gateway;
@@ -60,8 +65,10 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
 
     public function testExecute()
     {
+        $sourcePaymentTransaction = new PaymentTransaction();
         $transaction = new PaymentTransaction();
         $transaction->setAction(PaymentMethodInterface::CHARGE);
+        $transaction->setSourcePaymentTransaction($sourcePaymentTransaction);
 
         $this->gateway->expects($this->any())
             ->method('request')
@@ -77,7 +84,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
                 'message' => null,
                 'successful' => true,
             ],
-            $this->method->execute($transaction)
+            $this->method->execute($transaction->getAction(), $transaction)
         );
 
         $this->assertTrue($transaction->isSuccessful());
@@ -93,7 +100,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $transaction = new PaymentTransaction();
         $transaction->setAction('wrong_action');
 
-        $this->method->execute($transaction);
+        $this->method->execute($transaction->getAction(), $transaction);
     }
 
     public function testIsEnabled()
@@ -123,6 +130,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
             [true, PaymentMethodInterface::CAPTURE],
             [true, PaymentMethodInterface::CHARGE],
             [true, PaymentMethodInterface::PURCHASE],
+            [true, PayflowGateway::COMPLETE],
         ];
     }
 
@@ -176,6 +184,9 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
 
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction
+            ->setActive(false)
+            ->setSuccessful(true)
+            ->setCurrency('USD')
             ->setReference('source_reference');
         $transaction = new PaymentTransaction();
         $transaction
@@ -188,7 +199,11 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->method->authorize($transaction);
 
         $this->assertEquals($sourceTransaction->getReference(), $transaction->getReference());
+        $this->assertEquals($sourceTransaction->getCurrency(), $transaction->getCurrency());
+        $this->assertEquals($sourceTransaction->isSuccessful(), $transaction->isSuccessful());
+        $this->assertEquals($sourceTransaction->isActive(), $transaction->isActive());
         $this->assertEmpty($transaction->getRequest());
+        $this->assertEmpty($transaction->getResponse());
     }
 
     public function testAuthorizePerformRequestIfAmountAuthorizationIsNotRequiredAndValidationIsMissing()
@@ -200,7 +215,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $transaction = new PaymentTransaction();
 
         $this->gateway->expects($this->once())->method('request')->with('A')
-            ->willReturn(new Response(['PNREF' => 'reference']));
+            ->willReturn(new Response(['PNREF' => 'reference', 'RESULT' => '0']));
 
         $this->method->authorize($transaction);
 
@@ -216,7 +231,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $transaction = new PaymentTransaction();
 
         $this->gateway->expects($this->once())->method('request')->with('A')
-            ->willReturn(new Response(['PNREF' => 'reference']));
+            ->willReturn(new Response(['PNREF' => 'reference', 'RESULT' => '0']));
 
         $this->method->authorize($transaction);
 
@@ -235,6 +250,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('reference', $transaction->getReference());
         $this->assertTrue($transaction->isSuccessful());
+        $this->assertTrue($transaction->isActive());
         $this->assertArrayHasKey('successful', $response);
         $this->assertTrue($response['successful']);
     }
@@ -405,6 +421,8 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
 
         $this->method->purchase($transaction);
 
+        $this->assertFalse($transaction->isSuccessful());
+        $this->assertTrue($transaction->isActive());
         $this->assertArrayHasKey('SECURETOKENID', $transaction->getRequest());
         $this->assertArrayHasKey('CREATESECURETOKEN', $transaction->getRequest());
     }
@@ -431,6 +449,36 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
 
         $this->method->purchase($transaction);
 
+        $this->assertTrue($transaction->isSuccessful());
+        $this->assertTrue($transaction->isActive());
+        $this->assertArrayNotHasKey('SECURETOKENID', $transaction->getRequest());
+        $this->assertArrayNotHasKey('CREATESECURETOKEN', $transaction->getRequest());
+    }
+
+    public function testPurchaseWithSourceAndError()
+    {
+        $this->configureConfig(
+            [
+                $this->getConfigPrefix() . 'payment_action' => PaymentMethodInterface::AUTHORIZE,
+                $this->getConfigPrefix() . 'authorization_for_required_amount' => true,
+            ]
+        );
+
+        $sourceTransaction = new PaymentTransaction();
+
+        $transaction = new PaymentTransaction();
+        $transaction
+            ->setAction(PaymentMethodInterface::PURCHASE)
+            ->setSourcePaymentTransaction($sourceTransaction);
+
+        $this->gateway->expects($this->once())->method('request')->with('A')->willReturn(
+            new Response(['PNREF' => 'reference', 'RESULT' => '12'])
+        );
+
+        $this->method->purchase($transaction);
+
+        $this->assertFalse($transaction->isSuccessful());
+        $this->assertFalse($transaction->isActive());
         $this->assertArrayNotHasKey('SECURETOKENID', $transaction->getRequest());
         $this->assertArrayNotHasKey('CREATESECURETOKEN', $transaction->getRequest());
     }
@@ -446,6 +494,8 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
 
         $this->method->validate($transaction);
 
+        $this->assertTrue($transaction->isActive());
+        $this->assertFalse($transaction->isSuccessful());
         $this->assertArrayHasKey('SECURETOKENID', $transaction->getRequest());
         $this->assertArrayHasKey('CREATESECURETOKEN', $transaction->getRequest());
     }
@@ -461,6 +511,8 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
 
         $this->method->validate($transaction);
 
+        $this->assertTrue($transaction->isActive());
+        $this->assertFalse($transaction->isSuccessful());
         $this->assertEquals(0, $transaction->getAmount());
         $this->assertEquals('USD', $transaction->getCurrency());
     }
@@ -470,8 +522,8 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $transaction = new PaymentTransaction();
         $transaction->setAction(PaymentMethodInterface::VALIDATE);
 
-        $secureToken = uniqid('token', true);
-        $secureTokenId = uniqid('tokenid', true);
+        $secureToken = UUIDGenerator::v4();
+        $secureTokenId = UUIDGenerator::v4();
 
         $this->gateway->expects($this->once())->method('request')->with('A')->willReturn(
             new Response(
@@ -509,19 +561,25 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
             new Response(['PNREF' => 'reference', 'RESULT' => '0'])
         );
 
-        $this->router->expects($this->exactly(2))
+        $this->router->expects($this->exactly(3))
             ->method('generate')
             ->withConsecutive(
                 [
                     'orob2b_payment_callback_return',
                     [
                         'accessIdentifier' => $transaction->getAccessIdentifier(),
-                        'accessToken' => $transaction->getAccessToken(),
                     ],
                     true,
                 ],
                 [
                     'orob2b_payment_callback_error',
+                    [
+                        'accessIdentifier' => $transaction->getAccessIdentifier(),
+                    ],
+                    true,
+                ],
+                [
+                    'orob2b_payment_callback_notify',
                     [
                         'accessIdentifier' => $transaction->getAccessIdentifier(),
                         'accessToken' => $transaction->getAccessToken(),
@@ -573,6 +631,142 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param bool $useProxy
+     */
+    protected function configureProxyOptions($useProxy)
+    {
+        $this->configureConfig(
+            [
+                $this->getConfigPrefix() . 'use_proxy'  => $useProxy,
+                $this->getConfigPrefix() . 'proxy_host' => self::PROXY_HOST,
+                $this->getConfigPrefix() . 'proxy_port' => self::PROXY_PORT,
+            ]
+        );
+    }
+
+    public function testProxyAddressIsNotSetWhenUseProxyConfigurationIsDisabled()
+    {
+        $this->configureProxyOptions(false);
+
+        $this->gateway
+            ->expects($this->never())
+            ->method('setProxySettings');
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('request')
+            ->willReturn(new Response());
+
+        $transaction = new PaymentTransaction();
+        $transaction->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $this->method->execute($transaction->getAction(), $transaction);
+    }
+
+    public function testProxyAddressIsSetWhenUseProxyConfigurationIsEnabled()
+    {
+        $this->configureProxyOptions(true);
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('setProxySettings')
+            ->with(self::PROXY_HOST, self::PROXY_PORT);
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('request')
+            ->willReturn(new Response());
+
+        $transaction = new PaymentTransaction();
+        $transaction->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $this->method->execute($transaction->getAction(), $transaction);
+    }
+
+    public function testVerbosityOptionWithDebug()
+    {
+        $this->configureConfig(
+            [
+                $this->getConfigPrefix() . 'debug_mode' => true,
+            ]
+        );
+
+        $constraint = $this->arrayHasKey(Option\Verbosity::VERBOSITY);
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('request')
+            ->with($this->anything(), $constraint)
+            ->willReturn(new Response());
+
+        $transaction = new PaymentTransaction();
+        $transaction->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $this->method->execute($transaction->getAction(), $transaction);
+    }
+
+    public function testVerbosityOptionWithoutDebug()
+    {
+        $this->configureConfig(
+            [
+                $this->getConfigPrefix() . 'debug_mode' => false,
+            ]
+        );
+
+        $constraint = $this->logicalNot($this->arrayHasKey(Option\Verbosity::VERBOSITY));
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('request')
+            ->with($this->anything(), $constraint)
+            ->willReturn(new Response());
+
+        $transaction = new PaymentTransaction();
+        $transaction->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $this->method->execute($transaction->getAction(), $transaction);
+    }
+
+    /**
+     * @return array
+     */
+    public function sslVerificationEnabledDataProvider()
+    {
+        return [
+            [true],
+            [false],
+        ];
+    }
+
+    /**
+     * @dataProvider sslVerificationEnabledDataProvider
+     *
+     * @param bool $sslVerificationEnabled
+     */
+    public function testSslVerificationOptionValueIsPassedToPayFlow($sslVerificationEnabled)
+    {
+        $this->configureConfig(
+            [
+                $this->getConfigPrefix() . 'enable_ssl_verification' => $sslVerificationEnabled,
+            ]
+        );
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('setSslVerificationEnabled')
+            ->with($sslVerificationEnabled);
+
+        $this->gateway
+            ->expects($this->once())
+            ->method('request')
+            ->willReturn(new Response());
+
+        $transaction = new PaymentTransaction();
+        $transaction->setAction(PaymentMethodInterface::AUTHORIZE);
+        $this->method->execute($transaction->getAction(), $transaction);
+    }
+
+    /**
      * @return string
      */
     abstract protected function getConfigPrefix();
@@ -617,5 +811,47 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertTrue($this->method->isApplicable(['country' => 'US', 'currency' => 'USD']));
+    }
+
+    public function testComplete()
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setResponse(['PNREF' => 'ref']);
+
+        $this->assertEmpty($paymentTransaction->getReference());
+        $this->method->complete($paymentTransaction);
+        $this->assertEquals('ref', $paymentTransaction->getReference());
+    }
+
+    public function testCompleteSuccessfulFromResponse()
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setResponse(['RESULT' => ResponseStatusMap::APPROVED]);
+
+        $this->assertFalse($paymentTransaction->isSuccessful());
+        $this->method->complete($paymentTransaction);
+        $this->assertTrue($paymentTransaction->isSuccessful());
+    }
+
+    public function testCompleteActiveFromResponse()
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setResponse(['RESULT' => ResponseStatusMap::APPROVED]);
+
+        $this->assertFalse($paymentTransaction->isActive());
+        $this->method->complete($paymentTransaction);
+        $this->assertTrue($paymentTransaction->isActive());
+    }
+
+    public function testCompleteWithCharge()
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setResponse(['RESULT' => ResponseStatusMap::APPROVED, 'PNREF' => 'ref']);
+        $paymentTransaction->setAction(PaymentMethodInterface::CHARGE);
+
+        $this->assertEmpty($paymentTransaction->getReference());
+        $this->method->complete($paymentTransaction);
+        $this->assertEquals('ref', $paymentTransaction->getReference());
+        $this->assertFalse($paymentTransaction->isActive());
     }
 }

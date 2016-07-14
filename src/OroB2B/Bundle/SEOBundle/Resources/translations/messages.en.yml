@@ -1,0 +1,15 @@
+orob2b:
+    seo:
+        label: SEO
+
+orob2b.product.meta_titles.label: Meta title
+orob2b.product.meta_descriptions.label: Meta description
+orob2b.product.meta_keywords.label: Meta keywords
+
+orob2b.catalog.category.meta_titles.label: Meta title
+orob2b.catalog.category.meta_descriptions.label: Meta description
+orob2b.catalog.category.meta_keywords.label: Meta keywords
+
+orob2b.cms.page.meta_titles.label: Meta title
+orob2b.cms.page.meta_descriptions.label: Meta description
+orob2b.cms.page.meta_keywords.label: Meta keywords

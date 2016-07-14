@@ -1,0 +1,6 @@
+{% set paymentMethod  =  record.getValue('paymentMethod') %}
+{%- if paymentMethod -%}
+    {{ get_payment_method_admin_label(paymentMethod) }}
+{%- else -%}
+    {{ 'oro.ui.empty'|trans }}
+{%- endif -%}

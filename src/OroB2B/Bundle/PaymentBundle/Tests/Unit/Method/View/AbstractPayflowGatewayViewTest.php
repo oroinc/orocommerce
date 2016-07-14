@@ -57,6 +57,11 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
     /**
      * @return string
      */
+    abstract protected function getRequireCvvEntryKey();
+
+    /**
+     * @return string
+     */
     abstract protected function getAuthForRequiredAmountKey();
 
     /**
@@ -81,22 +86,34 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 
+        $zeroAmountAuthEnabled = false;
+        $requireCvvEntryEnabled = true;
+        $allowedCCTypes = ['visa', 'mastercard'];
+
+        $formOptions = [
+            'zeroAmountAuthorizationEnabled' => $zeroAmountAuthEnabled,
+            'requireCvvEntryEnabled' => $requireCvvEntryEnabled,
+        ];
+
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(CreditCardType::NAME)
+            ->with(CreditCardType::NAME, null, $formOptions)
             ->willReturn($form);
 
-        $this->configManager->expects($this->exactly(2))
+        $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(
                 [
                     $this->getConfigKey($this->getZeroAmountKey()),
                 ],
                 [
+                    $this->getConfigKey($this->getRequireCvvEntryKey()),
+                ],
+                [
                     $this->getConfigKey($this->getAllowedCCTypesKey()),
                 ]
             )
-            ->willReturnOnConsecutiveCalls(false, ['visa', 'mastercard']);
+            ->willReturnOnConsecutiveCalls($zeroAmountAuthEnabled, $requireCvvEntryEnabled, $allowedCCTypes);
 
         $this->paymentTransactionProvider->expects($this->never())->method('getActiveValidatePaymentTransaction');
 
@@ -104,7 +121,7 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
             [
                 'formView' => $formView,
                 'creditCardComponentOptions' => [
-                    'allowedCreditCards' => ['visa', 'mastercard'],
+                    'allowedCreditCards' => $allowedCCTypes,
                 ]
             ],
             $this->methodView->getOptions()
@@ -118,22 +135,34 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 
+        $zeroAmountAuthEnabled = true;
+        $requireCvvEntryEnabled = true;
+        $allowedCCTypes = ['visa', 'mastercard'];
+
+        $formOptions = [
+            'zeroAmountAuthorizationEnabled' => $zeroAmountAuthEnabled,
+            'requireCvvEntryEnabled' => $requireCvvEntryEnabled,
+        ];
+
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(CreditCardType::NAME)
+            ->with(CreditCardType::NAME, null, $formOptions)
             ->willReturn($form);
 
-        $this->configManager->expects($this->exactly(2))
+        $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(
                 [
                     $this->getConfigKey($this->getZeroAmountKey()),
                 ],
                 [
+                    $this->getConfigKey($this->getRequireCvvEntryKey()),
+                ],
+                [
                     $this->getConfigKey($this->getAllowedCCTypesKey()),
                 ]
             )
-            ->willReturnOnConsecutiveCalls(true, ['visa', 'mastercard']);
+            ->willReturnOnConsecutiveCalls($zeroAmountAuthEnabled, $requireCvvEntryEnabled, $allowedCCTypes);
 
         $this->paymentTransactionProvider->expects($this->once())->method('getActiveValidatePaymentTransaction')
             ->willReturn(null);
@@ -142,7 +171,7 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
             [
                 'formView' => $formView,
                 'creditCardComponentOptions' => [
-                    'allowedCreditCards' => ['visa', 'mastercard'],
+                    'allowedCreditCards' => $allowedCCTypes,
                 ]
             ],
             $this->methodView->getOptions()
@@ -156,9 +185,18 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 
+        $zeroAmountAuthEnabled = true;
+        $requireCvvEntryEnabled = true;
+        $allowedCCTypes = ['visa', 'mastercard'];
+
+        $formOptions = [
+            'zeroAmountAuthorizationEnabled' => $zeroAmountAuthEnabled,
+            'requireCvvEntryEnabled' => $requireCvvEntryEnabled,
+        ];
+
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(CreditCardType::NAME)
+            ->with(CreditCardType::NAME, null, $formOptions)
             ->willReturn($form);
 
         $this->configManager->expects($this->exactly(3))
@@ -168,13 +206,13 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                     $this->getConfigKey($this->getZeroAmountKey()),
                 ],
                 [
-                    $this->getConfigKey($this->getAllowedCCTypesKey()),
+                    $this->getConfigKey($this->getRequireCvvEntryKey()),
                 ],
                 [
-                    $this->getConfigKey($this->getAuthForRequiredAmountKey()),
+                    $this->getConfigKey($this->getAllowedCCTypesKey()),
                 ]
             )
-            ->willReturnOnConsecutiveCalls(true, ['visa', 'mastercard'], false);
+            ->willReturnOnConsecutiveCalls($zeroAmountAuthEnabled, $requireCvvEntryEnabled, $allowedCCTypes);
 
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setResponse(['ACCT' => '1111']);
@@ -189,8 +227,7 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                 'creditCardComponentOptions' => [
                     'acct' => '1111',
                     'saveForLaterUse' => false,
-                    'authorizationForRequiredAmount' => false,
-                    'allowedCreditCards' => ['visa', 'mastercard'],
+                    'allowedCreditCards' => $allowedCCTypes,
                 ],
             ],
             $this->methodView->getOptions()
@@ -204,9 +241,18 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 
+        $zeroAmountAuthEnabled = true;
+        $requireCvvEntryEnabled = true;
+        $allowedCCTypes = ['visa', 'mastercard'];
+
+        $formOptions = [
+            'zeroAmountAuthorizationEnabled' => $zeroAmountAuthEnabled,
+            'requireCvvEntryEnabled' => $requireCvvEntryEnabled,
+        ];
+
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(CreditCardType::NAME)
+            ->with(CreditCardType::NAME, null, $formOptions)
             ->willReturn($form);
 
         $this->configManager->expects($this->exactly(3))
@@ -216,13 +262,13 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                     $this->getConfigKey($this->getZeroAmountKey()),
                 ],
                 [
-                    $this->getConfigKey($this->getAllowedCCTypesKey()),
+                    $this->getConfigKey($this->getRequireCvvEntryKey()),
                 ],
                 [
-                    $this->getConfigKey($this->getAuthForRequiredAmountKey()),
+                    $this->getConfigKey($this->getAllowedCCTypesKey()),
                 ]
             )
-            ->willReturnOnConsecutiveCalls(true, ['visa', 'mastercard'], false);
+            ->willReturnOnConsecutiveCalls($zeroAmountAuthEnabled, $requireCvvEntryEnabled, $allowedCCTypes);
 
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
@@ -239,8 +285,7 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                 'creditCardComponentOptions' => [
                     'acct' => '1111',
                     'saveForLaterUse' => true,
-                    'authorizationForRequiredAmount' => false,
-                    'allowedCreditCards' => ['visa', 'mastercard'],
+                    'allowedCreditCards' => $allowedCCTypes,
                 ],
             ],
             $this->methodView->getOptions()
@@ -254,9 +299,18 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 
+        $zeroAmountAuthEnabled = true;
+        $requireCvvEntryEnabled = false;
+        $allowedCCTypes = ['visa', 'mastercard'];
+
+        $formOptions = [
+            'zeroAmountAuthorizationEnabled' => $zeroAmountAuthEnabled,
+            'requireCvvEntryEnabled' => $requireCvvEntryEnabled,
+        ];
+
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(CreditCardType::NAME)
+            ->with(CreditCardType::NAME, null, $formOptions)
             ->willReturn($form);
 
         $this->configManager->expects($this->exactly(3))
@@ -266,13 +320,13 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                     $this->getConfigKey($this->getZeroAmountKey()),
                 ],
                 [
-                    $this->getConfigKey($this->getAllowedCCTypesKey()),
+                    $this->getConfigKey($this->getRequireCvvEntryKey()),
                 ],
                 [
-                    $this->getConfigKey($this->getAuthForRequiredAmountKey()),
+                    $this->getConfigKey($this->getAllowedCCTypesKey()),
                 ]
             )
-            ->willReturnOnConsecutiveCalls(true, ['visa', 'mastercard'], true);
+            ->willReturnOnConsecutiveCalls($zeroAmountAuthEnabled, $requireCvvEntryEnabled, $allowedCCTypes);
 
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
@@ -288,8 +342,7 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                 'creditCardComponentOptions' => [
                     'acct' => '1111',
                     'saveForLaterUse' => false,
-                    'authorizationForRequiredAmount' => true,
-                    'allowedCreditCards' => ['visa', 'mastercard'],
+                    'allowedCreditCards' => $allowedCCTypes,
                 ],
             ],
             $this->methodView->getOptions()

@@ -38,7 +38,7 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
         $transaction = new PaymentTransaction();
         $this->assertFalse($transaction->isSuccessful());
 
-        $this->assertEquals([], $this->method->execute($transaction));
+        $this->assertEquals([], $this->method->execute('', $transaction));
         $this->assertTrue($transaction->isSuccessful());
     }
 

@@ -32,14 +32,20 @@ class ProductUnitRepository extends EntityRepository
         }
 
         $productsUnits = $this->getProductsUnitsQueryBuilder($products)
-            ->select('IDENTITY(productUnitPrecision.product) AS productId, unit.code AS code')
+            ->select(
+                'IDENTITY(productUnitPrecision.product) AS productId, unit.code AS code,
+                 COALESCE(IDENTITY(product.primaryUnitPrecision), 0) as primary'
+            )
             ->getQuery()->getArrayResult();
 
         $result = [];
         foreach ($productsUnits as $unit) {
-            $result[$unit['productId']][] = $unit['code'];
+            if ($unit['primary'] && (isset($result[$unit['productId']]))) {
+                array_unshift($result[$unit['productId']], $unit['code']);
+            } else {
+                $result[$unit['productId']][] = $unit['code'];
+            }
         }
-
         return $result;
     }
 
@@ -56,7 +62,13 @@ class ProductUnitRepository extends EntityRepository
             Join::WITH,
             $qb->expr()->eq('productUnitPrecision.unit', 'unit')
         )
-            ->addOrderBy('unit.code')
+            ->leftJoin(
+                'OroB2BProductBundle:Product',
+                'product',
+                Join::WITH,
+                'product.primaryUnitPrecision = productUnitPrecision'
+            )
+            ->addOrderBy('productUnitPrecision.unit')
             ->andWhere('productUnitPrecision.sell = true')
             ->andWhere($qb->expr()->in('productUnitPrecision.product', ':products'))
             ->setParameter('products', $products);
@@ -134,5 +146,24 @@ class ProductUnitRepository extends EntityRepository
 
         /** @var Product $product */
         return $this->getProductUnitsQueryBuilder($product);
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllUnitCodes()
+    {
+        $results = $this->createQueryBuilder('unit')
+            ->select('unit.code')
+            ->orderBy('unit.code')
+            ->getQuery()
+            ->getScalarResult();
+
+        $codes = [];
+        foreach ($results as $result) {
+            $codes[] = $result['code'];
+        }
+
+        return $codes;
     }
 }

@@ -36,15 +36,11 @@ class QuoteDemandManager
     public function recalculateSubtotals(QuoteDemand $quoteDemand)
     {
         $subtotal = $this->subtotalProvider->getSubtotal($quoteDemand);
-        if ($subtotal) {
-            $quoteDemand->setSubtotal($subtotal->getAmount());
-        }
+        $quoteDemand->setSubtotal($subtotal->getAmount());
 
         $total = $this->totalProvider->getTotal($quoteDemand);
-        if ($total) {
-            $quoteDemand->setTotal($total->getAmount());
-        }
-        
+        $quoteDemand->setTotal($total->getAmount());
+
         $quoteDemand->setTotalCurrency($subtotal->getCurrency());
     }
 }

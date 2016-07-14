@@ -11,11 +11,15 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use OroB2B\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
-class LineItemSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
+class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
+    SubtotalProviderInterface,
+    SubtotalCacheAwareInterface
 {
     const TYPE = 'subtotal';
     const NAME = 'orob2b.pricing.subtotals.subtotal';
@@ -66,30 +70,53 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements Subto
      */
     public function getSubtotal($entity)
     {
-        if (!$entity instanceof LineItemsAwareInterface) {
-            return null;
-        }
+        $amount = $this->isSupported($entity)
+            ? $this->getRecalculatedSubtotalAmount($entity)
+            : 0.0;
 
-        $subtotalAmount = 0.0;
+        return $this->createSubtotal($entity, $amount);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCachedSubtotal(SubtotalAwareInterface $entity)
+    {
+        return $this->createSubtotal($entity, $entity->getSubtotal());
+    }
+
+    /**
+     * @param object $entity
+     * @param float $amount
+     * @return Subtotal
+     */
+    protected function createSubtotal($entity, $amount)
+    {
         $subtotal = new Subtotal();
         $subtotal->setLabel($this->translator->trans(self::NAME . '.label'));
-        $subtotal->setVisible(false);
         $subtotal->setType(self::TYPE);
+        $subtotal->setVisible($amount > 0);
+        $subtotal->setAmount($amount);
+        $subtotal->setCurrency($this->getBaseCurrency($entity));
 
-        $baseCurrency = $this->getBaseCurrency($entity);
+        return $subtotal;
+    }
+
+    /**
+     * @param LineItemsAwareInterface $entity
+     * @return float
+     */
+    protected function getRecalculatedSubtotalAmount($entity)
+    {
+        $subtotalAmount = 0.0;
+        $baseCurrency   = $this->getBaseCurrency($entity);
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof PriceAwareInterface && $lineItem->getPrice() instanceof Price) {
                 $subtotalAmount += $this->getRowTotal($lineItem, $baseCurrency);
             }
         }
-        if ($subtotalAmount > 0) {
-            $subtotal->setVisible(true);
-        }
 
-        $subtotal->setAmount($this->rounding->round($subtotalAmount));
-        $subtotal->setCurrency($baseCurrency);
-
-        return $subtotal;
+        return $this->rounding->round($subtotalAmount);
     }
 
     /**

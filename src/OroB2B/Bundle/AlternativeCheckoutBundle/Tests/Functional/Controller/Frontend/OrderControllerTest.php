@@ -6,14 +6,11 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
-use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -125,19 +122,7 @@ class OrderControllerTest extends WebTestCase
                 'value' => self::SUBTOTAL_VALUE,
                 'filterType' => NumberFilterTypeInterface::TYPE_GREATER_THAN,
                 'expectedCheckouts' => ['checkout.1', 'alternative.checkout.1', 'alternative.checkout.2']
-            ],
-            'paymentMethodPaymentTerm' => [
-                'columnName' => 'paymentMethod',
-                'value' => PaymentTerm::TYPE,
-                'filterType' => TextFilterType::TYPE_CONTAINS,
-                'expectedCheckouts' => ['checkout.2', 'alternative.checkout.2']
-            ],
-            'paymentMethodPayflowGateway' => [
-                'columnName' => 'paymentMethod',
-                'value' => PayflowGateway::TYPE,
-                'filterType' => TextFilterType::TYPE_CONTAINS,
-                'expectedCheckouts' => ['checkout.1', 'alternative.checkout.1']
-            ],
+            ]
         ];
     }
 

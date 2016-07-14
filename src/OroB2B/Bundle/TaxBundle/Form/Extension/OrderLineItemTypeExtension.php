@@ -9,8 +9,8 @@ use Symfony\Component\Form\FormView;
 
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-use OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
 use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class OrderLineItemTypeExtension extends AbstractTypeExtension
 {
@@ -22,8 +22,8 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     /** @var TaxManager */
     protected $taxManager;
 
-    /** @var TaxSubtotalProvider */
-    protected $taxSubtotalProvider;
+    /** @var TotalProcessorProvider */
+    protected $totalProcessorProvider;
 
     /** @var SectionProvider */
     protected $sectionProvider;
@@ -34,20 +34,20 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     /**
      * @param TaxationSettingsProvider $taxationSettingsProvider
      * @param TaxManager $taxManager
-     * @param TaxSubtotalProvider $taxSubtotalProvider
+     * @param TotalProcessorProvider $totalProcessorProvider
      * @param SectionProvider $sectionProvider
      * @param string $extendedType
      */
     public function __construct(
         TaxationSettingsProvider $taxationSettingsProvider,
         TaxManager $taxManager,
-        TaxSubtotalProvider $taxSubtotalProvider,
+        TotalProcessorProvider $totalProcessorProvider,
         SectionProvider $sectionProvider,
         $extendedType
     ) {
         $this->taxationSettingsProvider = $taxationSettingsProvider;
         $this->taxManager = $taxManager;
-        $this->taxSubtotalProvider = $taxSubtotalProvider;
+        $this->totalProcessorProvider = $totalProcessorProvider;
         $this->sectionProvider = $sectionProvider;
         $this->extendedType = (string)$extendedType;
     }
@@ -69,7 +69,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
             return;
         }
 
-        $this->taxSubtotalProvider->setEditMode(true);
+        $this->totalProcessorProvider->enableRecalculation();
     }
 
     /** {@inheritdoc} */

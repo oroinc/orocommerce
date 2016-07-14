@@ -37,7 +37,6 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options.saveForLaterUse = false;
-            this.options.authorizationForRequiredAmount = false;
             AuthorizedCreditCardComponent.__super__.initialize.call(this, options);
 
             this.$authorizedCard = this.$el.find(this.authorizedOptions.authorizedCard);
@@ -113,8 +112,9 @@ define(function(require) {
          * @inheritDoc
          */
         handleSubmit: function(eventData) {
-            if (eventData.responseData.paymentMethod === this.options.paymentMethod
-                && !this.options.authorizationForRequiredAmount) {
+            if (eventData.responseData.paymentMethod === this.options.paymentMethod &&
+                this.paymentValidationRequiredComponentState
+            ) {
                 AuthorizedCreditCardComponent.__super__.handleSubmit.call(this, eventData);
 
             }

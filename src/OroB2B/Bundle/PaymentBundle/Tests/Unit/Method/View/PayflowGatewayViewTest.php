@@ -32,7 +32,12 @@ class PayflowGatewayViewTest extends AbstractPayflowGatewayViewTest
     }
 
     /** {@inheritdoc} */
+    protected function getRequireCvvEntryKey()
+    {
+        return Configuration::PAYFLOW_GATEWAY_REQUIRE_CVV_KEY;
+    }
 
+    /** {@inheritdoc} */
     protected function getAuthForRequiredAmountKey()
     {
         return Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY;
@@ -55,5 +60,11 @@ class PayflowGatewayViewTest extends AbstractPayflowGatewayViewTest
     {
         $this->setConfig($this->once(), Configuration::PAYFLOW_GATEWAY_LABEL_KEY, 'testValue');
         $this->assertEquals('testValue', $this->methodView->getLabel());
+    }
+
+    public function testGetShortLabel()
+    {
+        $this->setConfig($this->once(), Configuration::PAYFLOW_GATEWAY_SHORT_LABEL_KEY, 'testValue');
+        $this->assertEquals('testValue', $this->methodView->getShortLabel());
     }
 }

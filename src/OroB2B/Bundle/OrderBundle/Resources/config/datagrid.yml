@@ -101,9 +101,26 @@ datagrid:
     frontend-orders-grid:
         acl_resource: orob2b_order_frontend_view
         extends: base-orders-grid
+        source:
+            query:
+                select:
+                    - transaction.paymentMethod
+                join:
+                    left:
+                        - { join: '%orob2b_payment.entity.payment_transaction.class%', alias: transaction, conditionType: WITH, condition: "transaction.entityIdentifier = order1.id AND transaction.entityClass = '%orob2b_order.entity.order.class%'" }
         update: false
         delete: false
         columns:
+            paymentMethod:
+                label:         orob2b.order.payment_method.label
+                type:          twig
+                frontend_type: html
+                template:      'OroB2BOrderBundle:Order:Datagrid/paymentMethod.html.twig'
+            paymentStatus:
+                label:         orob2b.order.payment_status.label
+                type:          twig
+                frontend_type: html
+                template:      'OroB2BOrderBundle:Order:Datagrid/paymentStatus.html.twig'
             paymentTermLabel:
                 label:         orob2b.order.payment_term.label
             poNumber:
@@ -119,6 +136,8 @@ datagrid:
                 frontend_type: datetime
         sorters:
             columns:
+                paymentMethod:
+                    data_name: transaction.paymentMethod
                 paymentTermLabel:
                     data_name: paymentTermLabel
                 poNumber:
@@ -167,11 +186,13 @@ datagrid:
                     - order1.sourceEntityId
                     - order1.sourceEntityIdentifier
                     - order1.totalDiscountsAmount
+                    - transaction.paymentMethod
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
                         - { join: order1.accountUser, alias: accountUser }
                         - { join: order1.account, alias: account }
+                        - { join: '%orob2b_payment.entity.payment_transaction.class%', alias: transaction, conditionType: WITH, condition: "transaction.entityIdentifier = order1.id AND transaction.entityClass = '%orob2b_order.entity.order.class%'" }
         columns:
             accountName:
                 label:         orob2b.order.account.label
@@ -179,6 +200,16 @@ datagrid:
                 label:         orob2b.order.account_user.label
             owner:
                 label:         orob2b.order.owner.label
+            paymentMethod:
+                label:         orob2b.order.payment_method.label
+                type:          twig
+                frontend_type: html
+                template:      'OroB2BOrderBundle:Order:Datagrid/paymentMethodFull.html.twig'
+            paymentStatus:
+                label:         orob2b.order.payment_status.label
+                type:          twig
+                frontend_type: html
+                template:      'OroB2BOrderBundle:Order:Datagrid/paymentStatus.html.twig'
             paymentTermLabel:
                 label:         orob2b.order.payment_term.label
             poNumber:
@@ -211,6 +242,8 @@ datagrid:
                     data_name: accountUserName
                 owner:
                     data_name: owner
+                paymentMethod:
+                    data_name: transaction.paymentMethod
                 paymentTermLabel:
                     data_name: paymentTermLabel
                 poNumber:

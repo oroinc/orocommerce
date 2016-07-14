@@ -9,10 +9,13 @@ orob2b:
                 display_options.title: 'Display Options'
             fields:
                 enabled.label: 'Enabled'
-                label.label: 'Label'
                 sort_order.label: 'Sort Order'
                 pay_to.label: 'Pay To'
                 send_to.label: 'Send To'
 
         pay_to: 'Make Check Payable To'
         send_to: 'Send Check To'
+
+    payment:
+        admin:
+            money_order.label: 'Check/Money Order'

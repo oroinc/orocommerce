@@ -121,12 +121,17 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $choices = [];
 
         if ($product) {
-            foreach ($product->getUnitPrecisions() as $unitPrecision) {
+            foreach ($product->getAdditionalUnitPrecisions() as $unitPrecision) {
                 if ($sell === null) {
                     $choices[] = $unitPrecision->getUnit();
                 } elseif ($sell === $unitPrecision->isSell()) {
                     $choices[] = $unitPrecision->getUnit();
                 }
+            }
+
+            if ($primaryUnitPrecision = $product->getPrimaryUnitPrecision()) {
+                $primaryUnit = $primaryUnitPrecision->getUnit();
+                array_unshift($choices, $primaryUnit);
             }
         }
 
@@ -218,7 +223,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         ProductUnit $productUnit = null
     ) {
         return (!$productUnit && $productUnitHolder->getEntityIdentifier())
-            || ($product && $productUnit && !in_array($productUnit, $choices, true));
+        || ($product && $productUnit && !in_array($productUnit, $choices, true));
     }
 
     /**

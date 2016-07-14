@@ -3,11 +3,17 @@ services:
     orob2b_product.form.type.product:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductType'
         arguments:
-            - "@orob2b_product.provider.default_product_unit_provider"
+            - "@orob2b_product.provider.default_product_unit_provider.chain"
         calls:
             - [setDataClass, ['%orob2b_product.entity.product.class%']]
         tags:
             - { name: form.type, alias: orob2b_product }
+
+    orob2b_product.form.type.product_step_one:
+        class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductStepOneType'
+        public: true
+        tags:
+            - { name: form.type, alias: orob2b_product_step_one }
 
     orob2b_product.form.type.product_row:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType'
@@ -124,6 +130,14 @@ services:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType'
         tags:
             - { name: form.type, alias: 'orob2b_product_quick_add_import_from_file' }
+
+    orob2b_product.form.type.product_image_collection:
+        class: 'OroB2B\Bundle\ProductBundle\Form\Type\ProductImageCollectionType'
+        public: true
+        arguments:
+            - "@oro_layout.provider.image_type"
+        tags:
+            - { name: form.type, alias: 'orob2b_product_image_collection' }
 
     orob2b_product.form.type.frontend_line_item:
         class: 'OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType'

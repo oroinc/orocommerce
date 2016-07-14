@@ -8,11 +8,22 @@ services:
         lazy: true
         arguments:
             - '@session'
+            - '@orob2b_payment.payment_method.registry'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.return.payflow_gateway, method: onCallback }
             - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow_gateway, method: onError }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.return.paypal_payments_pro, method: onCallback }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.notify.payflow_gateway, method: onNotify }
             - { name: kernel.event_listener, event: orob2b_payment.callback.error.paypal_payments_pro, method: onError }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.notify.paypal_payments_pro, method: onNotify }
+
+    orob2b_payment.event_listener.ip_check.payflow:
+        class: 'OroB2B\Bundle\PaymentBundle\EventListener\Callback\PayflowIPCheckListener'
+        arguments:
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: orob2b_payment.callback.notify.payflow_gateway, method: onNotify, priority: 255 }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.notify.paypal_payments_pro, method: onNotify, priority: 255 }
 
     orob2b_payment.paypal.payflow.request.registry:
         class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestRegistry'
@@ -52,6 +63,7 @@ services:
     orob2b_payment.paypal.payflow.gateway:
         class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway'
         public: false
+        scope: prototype
         arguments:
             - '@orob2b_payment.paypal.payflow.client.nvp'
             - '@orob2b_payment.paypal.payflow.request.registry'

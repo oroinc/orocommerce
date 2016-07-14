@@ -1,17 +1,23 @@
 .notification-flash {
-  margin-bottom: -2rem;
-  &:empty {
-    display: none;
-    margin-bottom: 0;
+  padding: 15px 0 10px;
+
+  @media (max-width: $screen-md) {
+    padding: 10px 0 5px;
   }
 
   .notification.notification_lg  {
-    padding-left: 48px;
-    padding-right: 48px;
+    width: auto;
+
     margin-left: 15px;
     margin-right: 15px;
-    width: auto;
-    line-height: 2rem;
+    padding-left: 48px;
+    padding-right: 48px;
+
+    line-height: 20px;
+
+    &:not(:first-child) {
+      margin-top: 10px;
+    }
   }
 
   .badge {
@@ -21,143 +27,158 @@
   }
 
   .cf-clear {
-    cursor: pointer;
     position: absolute;
     top: 14px;
     right: 8px;
+
     font-size: 24px;
+
+    cursor: pointer;
+  }
+
+  &--medium {
+    .notification.notification_lg {
+
+    }
   }
 }
+
 .notification {
-  &.notification_success {
+  &_success {
     background: $theme-notice-bg-color;
     color: $theme-notice-font-color;
   }
 
-  &.notification_notice {
+  &_notice {
     background: $theme-notice-bg-color;
     color: $theme-notice-font-color;
   }
 
-  &.notification_alert {
+  &_alert {
     background: $theme-alert-bg-color;
     color: $theme-alert-font-color;
   }
 
-  &.notification_warning {
+  &_warning {
     background: $theme-alert-bg-color;
     color: $theme-alert-font-color;
   }
 
-  &.notification_error {
+  &_error {
     background: $theme-error-bg-color;
     color: $theme-error-font-color;
   }
 
-  &.notification_info {
+  &_info {
     background: $theme-notice-bg-color;
     color: $theme-notice-font-color;
   }
 
-  &.notification_xsm {
-    padding: 0 1rem;
-    line-height: 2.4rem;
-    min-height: 2.4rem;
-    font-size: 1.3rem;
+  &_xsm {
+    min-height: 24px;
+    padding: 0 10px;
+
+    font-size: 13px;
+    line-height: 1.85;
 
     .badge {
-      margin-bottom: .3rem;
+      margin-bottom: 3px;
     }
   }
 
-  &.notification_sm {
-    padding: .5rem 1rem;
-    min-height: 3rem;
+  &_sm {
+    min-height: 30px;
+    padding: 5px 10px;
 
     [class^="cf-"] {
-      font-size: 2rem;
       vertical-align: middle;
+
+      font-size: 20px;
     }
   } 
 
-  &.notification_md {
-    padding: .7rem 1rem;
-    min-height: 3.4rem;
+  &_md {
+    min-height: 34px;
+    padding: 7px 10px;
 
     [class^="cf-"] {
-      font-size: 2rem;
       vertical-align: middle;
+
+      font-size: 20px;
     }
   }
 
-  &.notification_xmd {
-    padding: 2rem 1.5rem;
-    min-height: 4rem;
+  &_xmd {
+    padding: 20px 15px;
+    min-height: 40px;
 
     [class^="cf-"] {
-      font-size: 2rem;
       vertical-align: middle;
+
+      font-size: 20px;
     }
 
-    @media (max-width: 991px) {
-      margin: -1rem -1.5rem 1rem;
+    @media (max-width: $screen-md) {
+      margin: -10px -15px 10px;
     }
   }
 
-  &.notification_lg {
+  &_lg {
     position: relative;
-    width: 100%;
     z-index: 101;
-    min-height: 5rem;
-    line-height: 3rem;
+
+    width: 100%;
+    min-height: 50px;
+    line-height: 30px;
   }
 
-  &.notification-radiused {
-    @include radiused(.3rem);
+  &-radiused {
+    border-radius: 3px;
   }
 
-  &.notification_in-order {
-
-    @media (max-width: 991px) {
-      margin: -1rem -1.5rem 1rem;
+  &_in-order {
+    @media (max-width: $screen-md) {
+      margin: -10px -15px 10px;
     }
   }
 
   > ul {
-    @include list-normalize;
+    @include list-normalize();
   }
-}
 
-.notification__relative-container {
-  position: relative;
-  padding: 0 2rem;
-}
+  &__relative-container {
+    position: relative;
 
-.notification__sign {
-  vertical-align: middle;
+    padding: 0 20px;
+  }
 
-  &.notification__sign_abs {
-    position: absolute;
-    top: 50%;
-    left: 0;
+  &__sign {
+    vertical-align: middle;
 
-    &.notification__sign_error {
-      margin-top: -1.6rem;
-    }
+    &.notification__sign_abs {
+      position: absolute;
+      top: 50%;
+      left: 0;
 
-    &.notification__sign_notice {
-      margin-top: -1.6rem;
-    }
+      &.notification__sign_error {
+        margin-top: -16px;
+      }
 
-    &.notification__sign_alert {
-      margin-top: -1.3rem;
+      &.notification__sign_notice {
+        margin-top: -16px;
+      }
+
+      &.notification__sign_alert {
+        margin-top: -13px;
+      }
     }
   }
-}
 
-.notification__additional-content {
-  padding-left: 3rem;  
-  color: $base-font-color;
+  &__additional-content {
+    padding-left: 30px;
+
+    color: $base-font-color;
+  }
 }
 
 
@@ -166,20 +187,20 @@
   @include list-normalize;
 
   li {
-    margin: .5rem 0 0;
+    margin: 5px 0 0;
   }
 }
 
 .error-message {
-  font-size: 1.3rem;
-  line-height: 1.3rem;
   color: $theme-input-error;
+  font-size: 13px;
+  line-height: 1;
 
   ul {
-    @include list-normalize;
+    @include list-normalize();
 
     li {
-      margin-bottom: .5rem;
+      margin-bottom: 5px;
     }
   }
 }

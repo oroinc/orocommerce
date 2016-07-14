@@ -1,0 +1,3 @@
+orob2b_warehouse_inventory_product_api:
+    resource: "@OroB2BWarehouseBundle/Controller/Api/Rest/WarehouseInventoryLevelController.php"
+    type:     rest

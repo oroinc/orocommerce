@@ -38,6 +38,8 @@ class ProductWithPricesTest extends WebTestCase
 
     const DEFAULT_NAME = 'default name';
 
+    const CATEGORY_ID = 1;
+
     /**
      * {@inheritDoc}
      */
@@ -50,6 +52,13 @@ class ProductWithPricesTest extends WebTestCase
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_create'));
+        $form = $crawler->selectButton('Continue')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['input_action'] = 'orob2b_product_create';
+        $formValues['orob2b_product_step_one']['category'] = self::CATEGORY_ID;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request('POST', $this->getUrl('orob2b_product_create'), $formValues);
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();

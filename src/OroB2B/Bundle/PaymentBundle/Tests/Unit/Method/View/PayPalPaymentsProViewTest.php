@@ -32,7 +32,12 @@ class PayPalPaymentsProViewTest extends AbstractPayflowGatewayViewTest
     }
 
     /** {@inheritdoc} */
+    protected function getRequireCvvEntryKey()
+    {
+        return Configuration::PAYPAL_PAYMENTS_PRO_REQUIRE_CVV_KEY;
+    }
 
+    /** {@inheritdoc} */
     protected function getAuthForRequiredAmountKey()
     {
         return Configuration::PAYPAL_PAYMENTS_PRO_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY;
@@ -55,5 +60,11 @@ class PayPalPaymentsProViewTest extends AbstractPayflowGatewayViewTest
     {
         $this->setConfig($this->once(), Configuration::PAYPAL_PAYMENTS_PRO_LABEL_KEY, 'testValue');
         $this->assertEquals('testValue', $this->methodView->getLabel());
+    }
+
+    public function testGetShortLabel()
+    {
+        $this->setConfig($this->once(), Configuration::PAYPAL_PAYMENTS_PRO_SHORT_LABEL_KEY, 'testValue');
+        $this->assertEquals('testValue', $this->methodView->getShortLabel());
     }
 }

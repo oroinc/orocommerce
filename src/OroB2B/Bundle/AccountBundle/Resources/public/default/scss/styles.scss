@@ -1,6 +1,17 @@
 @import 'orob2bfrontend/default/scss/shared/_vars.scss';
 @import 'orob2bfrontend/default/scss/shared/_mixins.scss';
-@import 'components/account-user-role-edit.scss';
-@import 'style.scss';
+@import 'orob2bfrontend/default/scss/components/commerce/partials/mixins.scss';
+
+@import './components/account-user-role-edit';
+@import './components/capabilities';
+@import './components/check-email';
+@import './components/create-account';
+@import './components/grid-toolbar';
+@import './components/forgot-password';
+@import './components/permissions-grid';
+@import './components/reset-password';
+@import './components/sidebar';
+@import './style';
+
 @import 'components/map-wrapper.scss';
 @import 'components/list-with-map.scss';

@@ -20,6 +20,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 
 class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -128,6 +129,11 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $image = new File();
         $imageCopy = new File();
 
+        $productImage = new StubProductImage();
+        $productImage->setImage($image);
+        $productImageCopy = new StubProductImage();
+        $productImageCopy->setImage($imageCopy);
+
         $attachmentFile1 = new File();
         $attachmentFileCopy1 = new File();
         $attachmentFile2 = new File();
@@ -154,7 +160,7 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
             ->addDescription($this->prepareLocalizedValue(null, self::DESCRIPTION_CUSTOM_LOCALE))
             ->addShortDescription($this->prepareLocalizedValue(null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE))
             ->addShortDescription($this->prepareLocalizedValue(null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE))
-            ->setImage($image);
+            ->addImage($productImage);
 
         $this->skuIncrementor->expects($this->once())
             ->method('increment')
@@ -213,7 +219,7 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::SHORT_DESCRIPTION_DEFAULT_LOCALE, $productCopyShortDescriptions[0]->getText());
         $this->assertEquals(self::SHORT_DESCRIPTION_CUSTOM_LOCALE, $productCopyShortDescriptions[1]->getText());
 
-        $this->assertEquals($imageCopy, $productCopy->getImage());
+        $this->assertEquals($imageCopy, $productImageCopy->getImage());
     }
 
     public function testDuplicateFailed()

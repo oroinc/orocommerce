@@ -37,6 +37,7 @@ orob2b:
                 quote_products: 'Line Items'
                 shipping_information: 'Shipping Information'
                 shipping_address: 'Shipping Address'
+                back.label: 'Back to Quote'
 
             widgets:
                 quote_information: 'Quote Information'

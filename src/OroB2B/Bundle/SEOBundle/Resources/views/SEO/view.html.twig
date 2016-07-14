@@ -1,0 +1,5 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{{ UI.renderHtmlProperty((labelPrefix ~ '.meta_titles.label') | trans, entity.defaultMetaTitle) }}
+{{ UI.renderHtmlProperty((labelPrefix ~ '.meta_descriptions.label') | trans, entity.defaultMetaDescription) }}
+{{ UI.renderHtmlProperty((labelPrefix ~ '.meta_keywords.label') | trans, entity.defaultMetaKeywords) }}

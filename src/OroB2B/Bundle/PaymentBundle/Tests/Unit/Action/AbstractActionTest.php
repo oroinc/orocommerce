@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Action;
 
+use Psr\Log\LoggerInterface;
+
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -32,6 +34,9 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
     /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
     protected $dispatcher;
 
+    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
+    protected $logger;
+
     protected function setUp()
     {
         $this->contextAccessor = $this->getMock('Oro\Component\Action\Model\ContextAccessor');
@@ -46,6 +51,9 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
         $this->router = $this->getMock('Symfony\Component\Routing\RouterInterface');
 
         $this->action = $this->getAction();
+
+        $this->logger = $this->getMock('Psr\Log\LoggerInterface');
+        $this->action->setLogger($this->logger);
 
         $this->dispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
             ->disableOriginalConstructor()

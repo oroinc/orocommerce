@@ -1,6 +1,6 @@
 {% block _middle_bar_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " middlebar"
+    class: attr.class|default('') ~ " middlebar"
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="container-fluid">
@@ -11,16 +11,16 @@
 
 {% block _middle_bar_logo_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " middlebar__left"
+    class: attr.class|default('') ~ " middlebar__left"
     }) %}
     <div {{ block('block_attributes') }}>
-        <a href="{{ path('orob2b_frontend_root') }}" class="logo" style="background: url('{% image '@OroB2BFrontendBundle/Resources/public/default/images/logo.png' %}{{ asset_url }}{% endimage %}') no-repeat;">OROCommerce</a>
+        <a href="{{ path('orob2b_frontend_root') }}" class="logo" style="background: url('{% image '@OroB2BFrontendBundle/Resources/public/default/images/logo/logo-oroacem.svg' %}{{ asset_url }}{% endimage %}') no-repeat;">OROCommerce</a>
     </div>
 {% endblock %}
 
 {% block _middle_bar_center_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " middlebar__center hidden-sm hidden-xs"
+    class: attr.class|default('') ~ " middlebar__center hidden-sm hidden-xs"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -29,7 +29,7 @@
 
 {% block _middle_bar_search_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " search-widget search-widget_centered search-widget_has-options bordered radiused not-implemented"
+    class: attr.class|default('') ~ " search-widget search-widget_centered search-widget_has-options bordered radiused not-implemented"
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="search-widget__options">

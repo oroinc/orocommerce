@@ -6,7 +6,7 @@ use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData as OroLoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
@@ -158,7 +158,6 @@ class AccountUserRoleControllerTest extends WebTestCase
             ->getToken('orob2b_account_frontend_account_user_role')->getValue();
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
-            'input_action'        => '',
             'orob2b_account_frontend_account_user_role' => [
                 '_token' => $token,
                 'label' => self::ACCOUNT_UPDATED_ROLE,
@@ -242,7 +241,6 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
-            'input_action'        => '',
             'orob2b_account_frontend_account_user_role' => [
                 '_token' => $token,
                 'label' => self::CUSTOMIZED_ROLE,

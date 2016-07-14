@@ -64,6 +64,12 @@ class MoneyOrderViewTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('testValue', $this->methodView->getLabel());
     }
 
+    public function testShortGetLabel()
+    {
+        $this->setConfig($this->once(), Configuration::MONEY_ORDER_SHORT_LABEL_KEY, 'testValue');
+        $this->assertEquals('testValue', $this->methodView->getShortLabel());
+    }
+
     /**
      * @param mixed $expects
      * @param string $key

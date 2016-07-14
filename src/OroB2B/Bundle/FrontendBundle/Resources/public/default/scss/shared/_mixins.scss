@@ -1,48 +1,28 @@
 //Mixins
-.box-sizing {
-  box-sizing: border-box;
-}
-
 @mixin list-normalize() {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-@mixin bordered($width, $type: solid, $color) {
-  border: $width $type $color;
-}
-
-@mixin radiused($radius) {
-  border-radius: $radius;
-}
-
-@mixin ellipsis {
+@mixin ellipsis() {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
-.button-icon {
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  padding: 0;
-  cursor: pointer;
-}
-
 @mixin clearfix() {
   &:after {
-    content: '';
+    content: "";
     display: block;
     clear: both;
   }
 }
 
 @mixin input() {
-  padding: 1.3rem 1.2rem;
-  @include bordered(.1rem, solid, $base-border-color);
-  @include radiused(.5rem);
+  padding: 13px 12px;
+  border: 1px solid $base-border-color;
+  border-radius: 5px;
 
   &[disabled] {
     background: $base-background-color;
@@ -54,8 +34,8 @@
   }
 
   &.input_datepicker {
-    padding-left: 3.9rem !important;
-    max-width: 14rem;
+    max-width: 140px;
+    padding-left: 39px !important;
   }
 
   &.input_block {
@@ -64,20 +44,22 @@
   }
 
   &.input_xs {
-    padding: .5rem .9rem;
-    font-size: 1.4rem;
-    line-height: 2rem;
+    padding: 5px 9px;
+
+    font-size: $base-font-size;
+    line-height: 1.4;
   }
 
   &.input_sm {
-    padding: .8rem .9rem;
-    font-size: 1.4rem;
-    line-height: 1.9rem;
+    padding: 8px 9px;
+    font-size: $base-font-size;
+    line-height: 1.36;
   }
 
   &.input_md {
-    padding: 1.1rem .9rem;
-    font-size: 1.4rem;
+    padding: 11px 9px;
+    font-size: $base-font-size;
+    line-height: 1.3;
   }
 
   &.input_has-addon {
@@ -87,22 +69,22 @@
 
   //input types
   &.input_error {
-    border: .1rem solid $theme-input-error;
-    box-shadow: 0 .1rem .7rem 0 rgba(223,96,96,.6);
+    border: 1px solid $theme-input-error;
+    box-shadow: 0 1px 7px 0 rgba(223,96,96,.6);
   }
 
   &.input_success {
-    border: .1rem solid $theme-input-success;
-    box-shadow: 0 .1rem .7rem 0 rgba(126,166,164,.35);
+    border: 1px solid $theme-input-success;
+    box-shadow: 0 1px 7px 0 rgba(126,166,164,.35);
   }
 
   &.input_warning {
-    border: .1rem solid $theme-warning-color;
+    border: 1px solid $theme-warning-color;
   }
 }
 
 .checkbox_custom-container {
-  margin: 0 0 .5rem;
+  margin: 0 0 5px;
 }
 
 .checkbox_custom {
@@ -166,7 +148,7 @@
   }
 
   i {
-    margin-left: .1rem;
+    margin-left: 1px;
   }
 
   .checkbox_checked {
@@ -176,11 +158,11 @@
   .checkbox_not-checked {
     display: inline-block;
   }
-}
 
-.checkbox_custom__text {
-  font-size: 1.3rem;
-  font-weight: 400;
+  &__text {
+    font-size: 13px;
+    font-weight: 400;
+  }
 }
 
 .radio_custom {
@@ -198,12 +180,12 @@
 
   &.radio_custom_abs {
     position: relative;
-    padding-left: 2.8rem;
+    padding-left: 28px;
 
     .radio_checked,
     .radio_not-checked {
       position: absolute;
-      top: .2rem;
+      top: 2px;
       left: 0;
     }
   }
@@ -265,70 +247,4 @@
   .radio_custom__text {
     font-weight: 400;
   }
-}
-
-
-//Custom input file
-.custom-file-upload-hidden {
-  display: none;
-  visibility: hidden;
-  position: absolute;
-  left: -9999px;
-}
-
-.custom-file-upload {
-  display: block;
-  width: auto;
-  padding: 0 0 0 2rem;
-
-  &:before, &:after {
-    content: "";
-    display: block;
-    clear: both;
-    height: 0;
-  }
-
-  label {
-    display: block;
-    margin-bottom: 5px;
-  }
-}
-
-.file-upload-wrapper {
-  position: relative;
-
-  &:before, &:after {
-    content: "";
-    display: block;
-    clear: both;
-    height: 0;
-  }
-}
-
-.file-upload-input {
-  width: calc(100% - 100px);
-  padding: 1rem 1.2rem;
-  border: none;
-  background: transparent;
-  float: left;
-
-  &::-webkit-input-placeholder {
-    color: $base-font-color;
-  }
-
-  &::-moz-placeholder {
-    color: $base-font-color;
-  }
-
-  &:-moz-placeholder {
-    color: $base-font-color;
-  }
-
-  &:-ms-input-placeholder {
-    color: $base-font-color;
-  }
-}
-
-.file-upload-btn {
-  max-width: 10rem;
 }

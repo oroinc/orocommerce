@@ -385,6 +385,7 @@ workflows:
                                   - [[keep], [propertyName, [country]]]
                                   - [[keep], [propertyName, [region]]]
                                   - [[keep], [propertyName, [organization]]]
+                                  - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
             continue_to_shipping_method_definition:
                 pre_conditions:
@@ -422,6 +423,7 @@ workflows:
                                   - [[keep], [propertyName, [country]]]
                                   - [[keep], [propertyName, [region]]]
                                   - [[keep], [propertyName, [organization]]]
+                                  - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
             continue_to_payment_definition:
                 pre_conditions:
@@ -617,7 +619,9 @@ workflows:
                                 transactionOptions:
                                     successUrl: $.result.successUrl
                             - '@redirect':
-                                url: "$.result.responseData[returnUrl]"
+                                route: orob2b_order_frontend_success
+                                route_parameters:
+                                    id: $.result.order.id
 
             continue_to_request_approval_definition:
                 pre_conditions:

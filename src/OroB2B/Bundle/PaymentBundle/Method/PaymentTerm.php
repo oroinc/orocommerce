@@ -47,12 +47,8 @@ class PaymentTerm implements PaymentMethodInterface
     }
 
     /** {@inheritdoc} */
-    public function execute(PaymentTransaction $paymentTransaction)
+    public function execute($action, PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction
-            ->setSuccessful(true)
-            ->setActive(false);
-
         $entity = $this->doctrineHelper->getEntityReference(
             $paymentTransaction->getEntityClass(),
             $paymentTransaction->getEntityIdentifier()
@@ -72,7 +68,12 @@ class PaymentTerm implements PaymentMethodInterface
             $this->propertyAccessor->setValue($entity, 'paymentTerm', $paymentTerm);
             $this->doctrineHelper->getEntityManager($entity)->flush($entity);
         } catch (NoSuchPropertyException $e) {
+            return [];
         }
+
+        $paymentTransaction
+            ->setSuccessful(true)
+            ->setActive(false);
 
         return [];
     }
@@ -121,7 +122,7 @@ class PaymentTerm implements PaymentMethodInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     protected function getAllowedCurrencies()
     {

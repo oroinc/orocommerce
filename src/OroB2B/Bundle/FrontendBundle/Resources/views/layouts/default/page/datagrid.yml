@@ -41,7 +41,7 @@ layout:
         - '@setOption':
             id: datagrid_toolbar
             optionName: attr.class
-            optionValue: 'oro-oq__filter-controls oro-oq__filter-controls oro-oq__filter-controls_has-pagination'
+            optionValue: 'grid__toolbar grid__toolbar--extended'
         - '@add':
             id: datagrid_toolbar_button_container
             parentId: datagrid_toolbar

@@ -61,7 +61,7 @@ class PurchaseAction extends AbstractPaymentMethodAction
             array_merge(
                 $attributes,
                 $this->getCallbackUrls($paymentTransaction),
-                (array)$paymentTransaction->getTransactionOptions(),
+                (array) $paymentTransaction->getTransactionOptions(),
                 $response
             )
         );

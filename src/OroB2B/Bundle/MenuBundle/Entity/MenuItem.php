@@ -314,6 +314,9 @@ class MenuItem extends ExtendMenuItem
     {
         $extras = $this->getExtras();
         $extras['condition'] = $condition;
+        if (!$condition) {
+            unset($extras['condition']);
+        }
         $this->setExtras($extras);
 
         return $this;

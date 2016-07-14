@@ -4,8 +4,9 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Currency;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
+
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguraton;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -57,6 +58,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'scope' => 'app'
                         ],
                         'paypal_payments_pro_label' => [
+                            'value' => Configuration::PAYPAL_PAYMENTS_PRO_LABEL,
+                            'scope' => 'app'
+                        ],
+                        'paypal_payments_pro_short_label' => [
                             'value' => Configuration::CREDIT_CARD_LABEL,
                             'scope' => 'app'
                         ],
@@ -127,10 +132,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => true,
                             'scope' => 'app'
                         ],
-                        'paypal_payments_pro_validate_cvv' => [
-                            'value' => true,
-                            'scope' => 'app'
-                        ],
                         'paypal_payments_pro_zero_amount_authorization' => [
                             'value' => false,
                             'scope' => 'app'
@@ -139,12 +140,15 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => false,
                             'scope' => 'app'
                         ],
-
                         'payflow_gateway_enabled' => [
                             'value' => false,
                             'scope' => 'app'
                         ],
                         'payflow_gateway_label' => [
+                            'value' => Configuration::PAYFLOW_GATEWAY_LABEL,
+                            'scope' => 'app'
+                        ],
+                        'payflow_gateway_short_label' => [
                             'value' => Configuration::CREDIT_CARD_LABEL,
                             'scope' => 'app'
                         ],
@@ -215,10 +219,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => true,
                             'scope' => 'app'
                         ],
-                        'payflow_gateway_validate_cvv' => [
-                            'value' => true,
-                            'scope' => 'app'
-                        ],
                         'payflow_gateway_zero_amount_authorization' => [
                             'value' => false,
                             'scope' => 'app'
@@ -235,20 +235,24 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => Configuration::PAYMENT_TERM_LABEL,
                             'scope' => 'app'
                         ],
+                        'payment_term_short_label' => [
+                            'value' => Configuration::PAYMENT_TERM_LABEL,
+                            'scope' => 'app'
+                        ],
                         'payment_term_sort_order' => [
                             'value' => '30',
                             'scope' => 'app'
                         ],
                         'paypal_payments_pro_allowed_currencies' => [
-                            'value' => Currency::$currencies,
+                            'value' => CurrencyConfiguraton::$defaultCurrencies,
                             'scope' => 'app'
                         ],
                         'payflow_gateway_allowed_currencies' => [
-                            'value' => Currency::$currencies,
+                            'value' => CurrencyConfiguraton::$defaultCurrencies,
                             'scope' => 'app'
                         ],
                         'payment_term_allowed_currencies' => [
-                            'value' =>  Currency::$currencies,
+                            'value' =>  CurrencyConfiguraton::$defaultCurrencies,
                             'scope' => 'app'
                         ],
                         'payment_term_allowed_countries' => [

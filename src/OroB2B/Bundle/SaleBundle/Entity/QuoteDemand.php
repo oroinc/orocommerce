@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\Collection;
 
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
@@ -34,7 +35,11 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      }
  * )
  */
-class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterface, ShippingAwareInterface
+class QuoteDemand implements
+    CheckoutSourceEntityInterface,
+    LineItemsAwareInterface,
+    ShippingAwareInterface,
+    SubtotalAwareInterface
 {
     /**
      * @var int
@@ -241,9 +246,7 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
     }
 
     /**
-     * Get subtotal
-     *
-     * @return float
+     * {@inheritdoc}
      */
     public function getSubtotal()
     {

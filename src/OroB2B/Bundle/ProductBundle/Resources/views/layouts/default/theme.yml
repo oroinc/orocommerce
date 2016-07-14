@@ -1,4 +1,18 @@
 data:
+    images:
+        types:
+            main:
+                label: orob2b.product.productimage.type.main.label
+                dimensions: ~
+                max_number: 1
+            listing:
+                label: orob2b.product.productimage.type.listing.label
+                dimensions: ~
+                max_number: 1
+            additional:
+                label: orob2b.product.productimage.type.additional.label
+                dimensions: ~
+                max_number: ~
     assets:
         styles:
             inputs:

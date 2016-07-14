@@ -60,6 +60,8 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Product extends ExtendProduct implements OrganizationAwareInterface, \JsonSerializable
 {
@@ -377,6 +379,28 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     protected $shortDescriptions;
 
     /**
+     * @var Collection|ProductImage[]
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductImage",
+     *     mappedBy="product",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *               "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $images;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -388,6 +412,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         $this->descriptions = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
         $this->variantLinks = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     /**
@@ -597,13 +622,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     /**
      * Remove unitPrecisions
      *
-     * @param ProductUnitPrecision $unitPrecisions
+     * @param ProductUnitPrecision $unitPrecision
      * @return Product
      */
-    public function removeUnitPrecision(ProductUnitPrecision $unitPrecisions)
+    public function removeUnitPrecision(ProductUnitPrecision $unitPrecision)
     {
-        if ($this->unitPrecisions->contains($unitPrecisions)) {
-            $this->unitPrecisions->removeElement($unitPrecisions);
+        if ($this->unitPrecisions->contains($unitPrecision)) {
+            $this->unitPrecisions->removeElement($unitPrecision);
         }
 
         return $this;
@@ -650,6 +675,22 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
         foreach ($this->unitPrecisions as $unitPrecision) {
             $result[] = $unitPrecision->getUnit()->getCode();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get available units
+     *
+     * @return ProductUnit[]
+     */
+    public function getAvailableUnits()
+    {
+        $result = [];
+
+        foreach ($this->unitPrecisions as $unitPrecision) {
+            $result[] = $unitPrecision->getUnit();
         }
 
         return $result;
@@ -800,6 +841,53 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     }
 
     /**
+     * @return Collection|ProductImage[]
+     */
+    public function getImages()
+    {
+        return $this->images;
+    }
+
+    /**
+     * @param string $type
+     * @return ProductImage[]|Collection
+     */
+    public function getImagesByType($type)
+    {
+        return $this->getImages()->filter(function (ProductImage $image) use ($type) {
+            return $image->hasType($type);
+        });
+    }
+
+    /**
+     * @param ProductImage $image
+     * @return $this
+     */
+    public function addImage(ProductImage $image)
+    {
+        $image->setProduct($this);
+
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ProductImage $image
+     * @return $this
+     */
+    public function removeImage(ProductImage $image)
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return Collection|LocalizedFallbackValue[]
      */
     public function getShortDescriptions()
@@ -886,6 +974,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
             $this->names = new ArrayCollection();
             $this->descriptions = new ArrayCollection();
             $this->shortDescriptions = new ArrayCollection();
+            $this->images = new ArrayCollection();
             $this->variantLinks = new ArrayCollection();
             $this->variantFields = [];
         }

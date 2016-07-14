@@ -28,5 +28,10 @@ interface PaymentMethodViewInterface
     /**
      * @return string
      */
+    public function getShortLabel();
+
+    /**
+     * @return string
+     */
     public function getPaymentMethodType();
 }

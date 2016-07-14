@@ -25,6 +25,14 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
         ]);
     }
 
+    public function testIndexAction()
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_warehouse_inventory_level_index'));
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('warehouse-inventory-grid', $crawler->html());
+    }
+
     public function testUpdateAction()
     {
         /** @var Product $product */

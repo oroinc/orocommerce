@@ -33,7 +33,7 @@ class MoneyOrder implements PaymentMethodInterface
     /**
      * {@inheritdoc}
      */
-    public function execute(PaymentTransaction $paymentTransaction)
+    public function execute($action, PaymentTransaction $paymentTransaction)
     {
         $paymentTransaction->setSuccessful(true);
 
