@@ -185,6 +185,6 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
 
     protected function assertRealTimeCPLQueueListenerDispatched()
     {
-        $this->assertTrue($this->listener->hasCollectionChanges(), "CPL Queue Listener was not dispatched");
+        $this->assertTrue($this->listener->hasCollectionChanges(), 'CPL Queue Listener was not dispatched');
     }
 }

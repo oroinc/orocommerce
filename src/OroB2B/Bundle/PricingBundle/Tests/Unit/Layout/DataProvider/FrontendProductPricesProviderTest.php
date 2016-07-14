@@ -7,9 +7,12 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -68,10 +71,10 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetData()
     {
-        $prices = [1 => 'test', 2 => 'test2'];
         $priceListId = 23;
         $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => $priceListId]);
         $productId = 24;
+        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product */
         $product =  $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Product')
                           ->disableOriginalConstructor()
                           ->getMock();
@@ -117,14 +120,14 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn('EUR');
 
         $actual = $this->provider->getData($context);
-        $this->assertEquals(1, count($actual));
+        $this->assertCount(1, $actual);
         $this->assertEquals('each', current($actual)->getUnit());
     }
 
     /**
      * @param string $unitCode
-     * @param boolen $sell
-     * @return productUnitPresion
+     * @param boolean $sell
+     * @return ProductUnitPrecision
      */
     private function createUnitPrecision($unitCode, $sell)
     {
@@ -151,10 +154,8 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function createProductPrice($unit, $product)
     {
-        $p = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice',
-            array('getUnit', 'getProduct')
-        )
+        $p = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice')
+            ->setMethods(['getUnit', 'getProduct'])
             ->disableOriginalConstructor()
             ->getMock();
 

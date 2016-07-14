@@ -70,7 +70,7 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCas
      * @param array $parameters
      * @param bool|false $withPriceList
      */
-    public function testOnDBQuery($applicable, $parameters = [], $withPriceList = false)
+    public function testOnDBQuery($applicable, array $parameters = [], $withPriceList = false)
     {
         $this->event->expects($this->any())
             ->method('getDataParameters')

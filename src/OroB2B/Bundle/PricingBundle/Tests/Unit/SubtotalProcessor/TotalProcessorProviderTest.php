@@ -124,6 +124,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
 
     public function testRecalculationIsEnabledAndProviderIsCacheAware()
     {
+        /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
@@ -143,6 +144,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
 
     public function testRecalculationIsEnabledAndProviderIsNotCacheAware()
     {
+        /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this->getMockBuilder(
             'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
         )
@@ -164,6 +166,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
 
     public function testRecalculationIsEnabledAndProviderIsSubtotalCacheAware()
     {
+        /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this->getMockBuilder(
             'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         )
@@ -189,6 +192,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
      */
     public function testProviderIsSubtotalCacheAwareButEntityIsNotShouldFail()
     {
+        /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
             ->disableOriginalConstructor()
@@ -201,6 +205,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
 
     public function testRecalculationIsDisabledAndProviderIsSubtotalCacheAware()
     {
+        /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this->getMockBuilder(
             'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         )
@@ -222,6 +227,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
 
     public function testRecalculationIsDisabledAndProviderIsCacheAware()
     {
+        /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
@@ -241,6 +247,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
 
     public function testRecalculationIsDisabledAndProviderIsNotCacheAware()
     {
+        /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this->getMockBuilder(
             'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
         )
@@ -262,6 +269,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
 
     public function testRecalculationIsDisabledByDefault()
     {
+        /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this->getMockBuilder(
             'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         )
