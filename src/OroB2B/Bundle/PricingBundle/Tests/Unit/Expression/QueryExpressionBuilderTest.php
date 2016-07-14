@@ -81,9 +81,9 @@ class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
         $actual = $converter->convert($node, $expr, $params, $aliasMap);
 
         $this->assertEquals(
-            "(mapPL.currency = :_vn0 AND mapP.margin * 10 " .
-            "> (130 * mapC.minMargin) + (1 - (mapPL.someAttr * mapC.maxMargin))) " .
-            "OR (mapC = (-mapP.MSRP) AND NOT(mapMSRP.currency LIKE :_vn1))",
+            '(mapPL.currency = :_vn0 AND mapP.margin * 10 ' .
+            '> (130 * mapC.minMargin) + (1 - (mapPL.someAttr * mapC.maxMargin))) ' .
+            'OR (mapC = (-mapP.MSRP) AND NOT(mapMSRP.currency LIKE :_vn1))',
             (string)$actual
         );
         $this->assertEquals(['_vn0' => 'USD', '_vn1' => 'U'], $params);

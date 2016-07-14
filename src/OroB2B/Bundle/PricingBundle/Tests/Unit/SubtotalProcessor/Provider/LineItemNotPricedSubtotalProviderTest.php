@@ -100,6 +100,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     {
         $value = 142.0;
         $currency = 'USD';
+        $identifier = '1-code-2-USD';
 
         $this->translator->expects($this->once())
             ->method('trans')
@@ -109,7 +110,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
         $product = $this->prepareProduct();
         $productUnit = $this->prepareProductUnit();
         $this->prepareEntityManager($product, $productUnit);
-        $this->preparePrice($value);
+        $this->preparePrice($value, $identifier);
 
         $entity = new EntityNotPricedStub();
         $lineItem = new LineItemNotPricedStub();
@@ -208,10 +209,10 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     }
 
     /**
-     * @param $product
-     * @param $productUnit
+     * @param Product$product
+     * @param ProductUnit $productUnit
      */
-    protected function prepareEntityManager($product, $productUnit)
+    protected function prepareEntityManager(Product $product, ProductUnit $productUnit)
     {
         /* @var $entityManager EntityManager|\PHPUnit_Framework_MockObject_MockObject */
         $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
@@ -229,11 +230,12 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     }
 
     /**
-     * @param $value
+     * @param float $value
+     * @param string $identifier
      */
-    protected function preparePrice($value)
+    protected function preparePrice($value, $identifier)
     {
-        /** @var Price $price */
+        /** @var Price|\PHPUnit_Framework_MockObject_MockObject $price */
         $price = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Entity\Price')
             ->disableOriginalConstructor()
             ->getMock();
@@ -242,6 +244,6 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->willReturn($value);
         $this->productPriceProvider->expects($this->any())
             ->method('getMatchedPrices')
-            ->willReturn([$price]);
+            ->willReturn([$identifier => $price]);
     }
 }

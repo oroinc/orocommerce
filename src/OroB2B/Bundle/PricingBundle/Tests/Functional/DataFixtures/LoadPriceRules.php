@@ -19,6 +19,7 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
     protected $data = [
         [
             'priceList' => 'price_list_1',
+            'rule' => 'product.msrp.value + 10',
             'priority' => 100,
             'reference' => self::PRICE_RULE_1
         ]
@@ -36,6 +37,7 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
             $priceList = $this->getReference($priceRuleData['priceList']);
             $priceRule
                 ->setPriceList($priceList)
+                ->setRule($priceRuleData['rule'])
                 ->setPriority($priceRuleData['priority']);
 
             $manager->persist($priceRule);

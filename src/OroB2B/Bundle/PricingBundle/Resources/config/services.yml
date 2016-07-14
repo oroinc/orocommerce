@@ -691,7 +691,7 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler'
         parent: orob2b_pricing.compiler.abstract_rule_compiler
         calls:
-            - [setAttributeProvider, ['@orob2b_pricing.provider.price_rule_fields_provider']]
+            - [setFieldsProvider, ['@orob2b_pricing.provider.price_rule_fields_provider']]
 
     orob2b_pricing.compiler.product_assignment_rule_compiler:
         class: 'OroB2B\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler'

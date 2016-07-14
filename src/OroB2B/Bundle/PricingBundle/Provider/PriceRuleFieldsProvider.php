@@ -50,7 +50,7 @@ class PriceRuleFieldsProvider
     {
         $realClassName = $this->getRealClassName($className);
         if (!$this->isClassSupported($realClassName)) {
-            throw new \Exception('Class does not supported');
+            throw new \InvalidArgumentException('Class does not supported');
         }
         $fields = $this->getEntityFields($realClassName, $numericOnly, $withRelations);
 
@@ -64,7 +64,7 @@ class PriceRuleFieldsProvider
      */
     public function getRealClassName($className)
     {
-        $classNameInfo = explode("::", $className);
+        $classNameInfo = explode('::', $className);
         $realClassName = $classNameInfo[0];
         if (count($classNameInfo) > 1) {
             $numericOnly = false;
@@ -74,7 +74,9 @@ class PriceRuleFieldsProvider
             if (array_key_exists($fieldName, $fields)) {
                 $realClassName = $fields[$fieldName]['related_entity_name'];
             } else {
-                throw new \Exception('Field "' . $fieldName . '" is not found is class ' . $realClassName);
+                throw new \InvalidArgumentException(
+                    sprintf('Field "%s" is not found is class %s', $fieldName, $realClassName)
+                );
             }
         }
 
@@ -129,6 +131,6 @@ class PriceRuleFieldsProvider
      */
     protected function getCacheKey($className, $numericOnly, $withRelations)
     {
-        return $className . "|" . ($numericOnly ? 't' : 'f') . "|" . ($withRelations ? 't' : 'f');
+        return $className . '|' . ($numericOnly ? 't' : 'f') . '|' . ($withRelations ? 't' : 'f');
     }
 }
