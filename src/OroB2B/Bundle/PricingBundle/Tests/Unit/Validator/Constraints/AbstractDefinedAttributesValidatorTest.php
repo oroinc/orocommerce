@@ -26,7 +26,7 @@ abstract class AbstractDefinedAttributesValidatorTest extends \PHPUnit_Framework
     /**
      * @var AbstractPriceRuleExpressionValidator
      */
-    protected $definedAttributesValidator;
+    protected $expressionValidator;
 
     protected function setUp()
     {
@@ -48,7 +48,7 @@ abstract class AbstractDefinedAttributesValidatorTest extends \PHPUnit_Framework
         $constraint = $this->getMockBuilder(Constraint::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->definedAttributesValidator->initialize($context);
-        $this->definedAttributesValidator->validate($value, $constraint);
+        $this->expressionValidator->initialize($context);
+        $this->expressionValidator->validate($value, $constraint);
     }
 }
