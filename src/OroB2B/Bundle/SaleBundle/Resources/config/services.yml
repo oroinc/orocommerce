@@ -139,3 +139,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
+
+    orob2b_sale.provider.quote_entity_name:
+          class: OroB2B\Bundle\SaleBundle\Provider\QuoteEntityNameProvider
+          public: false
+          arguments:
+            - "@translator"
+          tags:
+            - { name: oro_entity.name_provider, priority: 100 }

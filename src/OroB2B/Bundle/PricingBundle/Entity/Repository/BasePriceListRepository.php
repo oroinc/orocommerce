@@ -153,6 +153,38 @@ abstract class BasePriceListRepository extends EntityRepository
             return [];
         }
 
+        $qb = $this->getFindByPriceListIdAndProductIdsQueryBuilder(
+            $priceListId,
+            $productIds,
+            $getTierPrices,
+            $currency,
+            $productUnitCode,
+            $orderBy
+        );
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Return product prices for specified price list and product IDs
+     *
+     * @param int $priceListId
+     * @param array $productIds
+     * @param bool $getTierPrices
+     * @param string|null $currency
+     * @param string|null $productUnitCode
+     * @param array $orderBy
+     *
+     * @return QueryBuilder
+     */
+    public function getFindByPriceListIdAndProductIdsQueryBuilder(
+        $priceListId,
+        array $productIds,
+        $getTierPrices = true,
+        $currency = null,
+        $productUnitCode = null,
+        array $orderBy = ['unit' => 'ASC', 'quantity' => 'ASC']
+    ) {
         $qb = $this->createQueryBuilder('price');
         $qb
             ->where(
@@ -184,7 +216,7 @@ abstract class BasePriceListRepository extends EntityRepository
             $qb->addOrderBy('price.' . $fieldName, $orderDirection);
         }
 
-        return $qb->getQuery()->getResult();
+        return $qb;
     }
 
     /**
@@ -202,19 +234,26 @@ abstract class BasePriceListRepository extends EntityRepository
         }
 
         $qb = $this->_em->createQueryBuilder();
-        $qb->select('product.id, unit.code, price.quantity, price.value, price.currency')
+        $qb
+            ->select(
+                [
+                    'IDENTITY(price.product) as id',
+                    'IDENTITY(price.unit) as code',
+                    'price.quantity',
+                    'price.value',
+                    'price.currency'
+                ]
+            )
             ->from($this->_entityName, 'price')
-            ->innerJoin('price.product', 'product')
-            ->innerJoin('price.unit', 'unit')
             ->where(
                 $qb->expr()->eq('IDENTITY(price.priceList)', ':priceListId'),
-                $qb->expr()->in('product', ':productIds'),
-                $qb->expr()->in('unit', ':productUnitCodes')
+                $qb->expr()->in('IDENTITY(price.product)', ':productIds'),
+                $qb->expr()->in('IDENTITY(price.unit)', ':productUnitCodes')
             )
             ->setParameter('priceListId', $priceListId)
             ->setParameter('productIds', $productIds)
             ->setParameter('productUnitCodes', $productUnitCodes)
-            ->addOrderBy('price.unit')
+            ->addOrderBy('IDENTITY(price.unit)')
             ->addOrderBy('price.quantity');
 
         if ($currencies) {
