@@ -607,25 +607,8 @@ class ProductPriceRepositoryTest extends WebTestCase
         $repository = $manager->getRepository('OroB2BPricingBundle:ProductPrice');
         $manualPrices = $repository->findBy(['priceList'=>$priceList, 'priceRule' => null]);
 
-        $rule = new PriceRule();
-        $rule->setRule('rule')
-            ->setPriority(1)
-            ->setQuantity(1)
-            ->setPriceList($priceList)
-            ->setCurrency('USD');
-
-        /** @var ProductUnit $unit */
-        $unit = $this->getReference('product_unit.box');
-        /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
-
-        $productPrice = new ProductPrice();
-        $productPrice->setPriceList($priceList)
-            ->setPrice(Price::create(1, 'USD'))
-            ->setQuantity(1)
-            ->setPriceRule($rule)
-            ->setUnit($unit)
-            ->setProduct($product);
+        $rule = $this->createPriceListRule($priceList);
+        $productPrice = $this->createProductPrice($priceList, $rule);
 
         $manager->persist($rule);
         $manager->persist($productPrice);
@@ -646,35 +629,24 @@ class ProductPriceRepositoryTest extends WebTestCase
         $priceList = $this->getReference('price_list_1');
         /** @var ProductPriceRepository $repository */
         $repository = $manager->getRepository('OroB2BPricingBundle:ProductPrice');
+
         $pricesCount = $this->getPricesCount();
 
-        $rule = new PriceRule();
-        $rule->setRule('rule')
-            ->setPriority(1)
-            ->setQuantity(1)
-            ->setPriceList($priceList)
-            ->setCurrency('USD');
+        $rule1 = $this->createPriceListRule($priceList);
+        $rule2 = $this->createPriceListRule($priceList);
+        $productPrice1 = $this->createProductPrice($priceList, $rule1);
+        $productPrice2 = $this->createProductPrice($priceList, $rule2, 'EUR');
 
-        /** @var ProductUnit $unit */
-        $unit = $this->getReference('product_unit.box');
-        /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
-
-        $productPrice = new ProductPrice();
-        $productPrice->setPriceList($priceList)
-            ->setPrice(Price::create(1, 'USD'))
-            ->setQuantity(1)
-            ->setPriceRule($rule)
-            ->setUnit($unit)
-            ->setProduct($product);
-
-        $manager->persist($rule);
-        $manager->persist($productPrice);
+        $manager->persist($rule1);
+        $manager->persist($rule2);
+        $manager->persist($productPrice1);
+        $manager->persist($productPrice2);
         $manager->flush();
 
-        $repository->deleteGeneratedPricesByRule($rule);
-        $this->assertEmpty($repository->findBy(['priceRule'=>$rule]));
-        $this->assertSame($pricesCount, $this->getPricesCount());
+        $repository->deleteGeneratedPricesByRule($rule1);
+        $this->assertEmpty($repository->findBy(['priceRule'=>$rule1]));
+        $this->assertCount(1, $repository->findBy(['priceRule'=>$rule2]));
+        $this->assertSame($pricesCount + 1, $this->getPricesCount());
     }
 
     /**
@@ -703,5 +675,45 @@ class ProductPriceRepositoryTest extends WebTestCase
             ->select('count(pp.id)')
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return PriceRule
+     */
+    protected function createPriceListRule(PriceList $priceList)
+    {
+        $rule = new PriceRule();
+        $rule->setRule('10')
+            ->setPriority(1)
+            ->setQuantity(1)
+            ->setPriceList($priceList)
+            ->setCurrency('USD');
+
+        return $rule;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param PriceRule $rule
+     * @param string $currency
+     * @return ProductPrice
+     */
+    protected function createProductPrice(PriceList $priceList, PriceRule $rule, $currency = 'USD')
+    {
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference('product_unit.box');
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+
+        $productPrice = new ProductPrice();
+        $productPrice->setPriceList($priceList)
+            ->setPrice(Price::create(1, $currency))
+            ->setQuantity(1)
+            ->setPriceRule($rule)
+            ->setUnit($unit)
+            ->setProduct($product);
+
+        return $productPrice;
     }
 }

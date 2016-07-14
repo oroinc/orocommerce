@@ -24,7 +24,7 @@ class PriceListToProductRepositoryTest extends WebTestCase
     protected $repository;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function setUp()
     {
@@ -66,48 +66,49 @@ class PriceListToProductRepositoryTest extends WebTestCase
 
     public function testDeleteGeneratedRelations()
     {
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
-
-        // delete relation for price lists
-        $this->repository->createQueryBuilder('pltp')
-            ->delete()
-            ->where('pltp.priceList = :pl')
-            ->setParameter('pl', $priceList)
-            ->getQuery()
-            ->execute();
-
-        // CREATE TEST DATA
         $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceListToProduct');
-        // manual relation
-        $manualRelation = new PriceListToProduct();
+        $priceList = new PriceList();
+        $priceList->setName('test price list');
+        $em->persist($priceList);
+
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        $manualRelation->setPriceList($priceList)
-            ->setProduct($product1)
-            ->setManual(true);
+        $manualRelation = $this->createRelation($priceList, $product1, true);
         $em->persist($manualRelation);
+
         //not manual relations
-        $nmRelation1 = new PriceListToProduct();
         /** @var Product $product2 */
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
-        $nmRelation1->setPriceList($priceList)
-            ->setProduct($product2)
-            ->setManual(false);
+        $nmRelation1 = $this->createRelation($priceList, $product2, false);
         $em->persist($nmRelation1);
-        $nmRelation2 = new PriceListToProduct();
+
         /** @var Product $product3 */
         $product3 = $this->getReference(LoadProductData::PRODUCT_3);
-        $nmRelation2->setPriceList($priceList)
-            ->setProduct($product3)
-            ->setManual(false);
-        $em->persist($nmRelation2);
+        $nmRelation3 = $this->createRelation($priceList, $product3, false);
+        $em->persist($nmRelation3);
+
         $em->flush();
 
-
         $this->repository->deleteGeneratedRelations($priceList);
+        /** @var PriceListToProduct[] $actual */
         $actual = $this->repository->findBy(['priceList' => $priceList]);
         $this->assertCount(1, $actual);
-        $this->assertSame($manualRelation, $actual[0]);
+        $this->assertEquals($manualRelation->getId(), $actual[0]->getId());
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param Product $product
+     * @param bool $isManual
+     * @return PriceListToProduct
+     */
+    protected function createRelation($priceList, $product, $isManual)
+    {
+        $manualRelation = new PriceListToProduct();
+        $manualRelation->setPriceList($priceList)
+            ->setProduct($product)
+            ->setManual($isManual);
+
+        return $manualRelation;
     }
 }
