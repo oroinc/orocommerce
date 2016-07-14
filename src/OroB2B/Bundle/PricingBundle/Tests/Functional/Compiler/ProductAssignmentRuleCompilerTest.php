@@ -133,7 +133,7 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
      * @param PriceList $priceList
      * @return \Doctrine\ORM\QueryBuilder
      */
-    protected function getQueryBuilder($priceList)
+    protected function getQueryBuilder(PriceList $priceList)
     {
         $qb = $this->compiler->compile($priceList);
         $aliases = $qb->getRootAliases();
