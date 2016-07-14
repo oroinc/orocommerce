@@ -37,7 +37,7 @@ Add placeholder using layout update:
 Add placeholder template
 ```twig
 {% block _sticky_element_notification_widget %}
-    {% set attr = layout_attr_merge(attr, {
+    {% set attr = layout_attr_defaults(attr, {
         'id': 'sticky-element-notification'
     }) %}
     <div {{ block('block_attributes') }}></div>
