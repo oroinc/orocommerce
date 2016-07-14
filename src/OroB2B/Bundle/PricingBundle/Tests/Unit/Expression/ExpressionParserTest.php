@@ -98,6 +98,10 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
                     'p::MSRP' => ['currency'],
                     'c' => ['minMargin', null]
                 ]
+            ],
+            [
+                "1+1",
+                []
             ]
         ];
     }

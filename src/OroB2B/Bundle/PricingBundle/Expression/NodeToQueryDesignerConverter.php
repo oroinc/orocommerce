@@ -8,20 +8,20 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Model\PriceListQueryDesigner;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class NodeToQueryDesignerConverter
 {
     /**
-     * @var PriceRuleAttributeProvider
+     * @var PriceRuleFieldsProvider
      */
     protected $attributeProvider;
 
     /**
-     * @param PriceRuleAttributeProvider $attributeProvider
+     * @param PriceRuleFieldsProvider $attributeProvider
      */
-    public function __construct(PriceRuleAttributeProvider $attributeProvider)
+    public function __construct(PriceRuleFieldsProvider $attributeProvider)
     {
         $this->attributeProvider = $attributeProvider;
     }

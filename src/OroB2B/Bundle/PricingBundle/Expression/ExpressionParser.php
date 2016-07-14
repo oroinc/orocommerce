@@ -55,10 +55,14 @@ class ExpressionParser
 
     /**
      * @param string|Expression $expression
-     * @return NodeInterface
+     * @return NodeInterface|null
      */
     public function parse($expression)
     {
+        if (!$expression) {
+            return null;
+        }
+
         $cacheKey = md5($expression);
         if (array_key_exists($cacheKey, $this->expressionCache)) {
             return $this->expressionCache[$cacheKey];
@@ -85,6 +89,10 @@ class ExpressionParser
     {
         $usedLexemes = [];
         $rootNode = $this->parse($expression);
+        if (!$rootNode) {
+            return $usedLexemes;
+        }
+
         foreach ($rootNode->getNodes() as $node) {
             if ($node instanceof NameNode) {
                 $class = $node->getContainer();

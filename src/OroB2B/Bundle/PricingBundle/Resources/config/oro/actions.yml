@@ -172,7 +172,7 @@ operations:
             icon: icon-money
         actions:
             - '@call_service_method':
-                service: 'orob2b_pricing.ebuilder.price_list_product_assignment_builder'
+                service: 'orob2b_pricing.builder.price_list_product_assignment_builder'
                 method: 'buildByPriceList'
                 method_parameters: [$.entity]
             - '@call_service_method':

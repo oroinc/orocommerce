@@ -643,7 +643,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
             $schema->getTable('orob2b_price_rule'),
             ['price_rule_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_product_unit'),

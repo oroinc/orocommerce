@@ -105,15 +105,15 @@ services:
             - '@oro_config.global'
             - '@orob2b_pricing.system_config_converter'
 
-    orob2b_pricing.provider.price_rule_attribute_provider:
-        class: 'OroB2B\Bundle\PricingBundle\Provider\PriceRuleAttributeProvider'
+    orob2b_pricing.provider.price_rule_fields_provider:
+        class: 'OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider'
         arguments:
-            - '@doctrine'
             - '@oro_entity.entity_field_provider'
         calls:
-            - [addSupportedClass, ['OroB2BProductBundle:Product']]
-            - [addSupportedClass, ['OroB2BPricingBundle:ProductPrice']]
-            - [addSupportedClass, ['OroB2BCatalogBundle:Category']]
+            - [addSupportedClass, ['%orob2b_product.entity.product.class%']]
+            - [addSupportedClass, ['%orob2b_pricing.entity.product_price.class%']]
+            - [addSupportedClass, ['%orob2b_catalog.entity.category.class%']]
+            - [addSupportedClass, ['%orob2b_pricing.entity.price_attribute_product_price.class%']]
 
     orob2b_pricing.provider.product_virtual_relation_provider.config:
         class: 'OroB2B\Bundle\PricingBundle\Provider\ProductVirtualRelationProvider'
@@ -691,7 +691,7 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler'
         parent: orob2b_pricing.compiler.abstract_rule_compiler
         calls:
-            - [setAttributeProvider, ['@orob2b_pricing.provider.price_rule_attribute_provider']]
+            - [setAttributeProvider, ['@orob2b_pricing.provider.price_rule_fields_provider']]
 
     orob2b_pricing.compiler.product_assignment_rule_compiler:
         class: 'OroB2B\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler'
@@ -705,7 +705,7 @@ services:
             - '@orob2b_pricing.compiler.price_list_rule_compiler'
             - '@orob2b_pricing.triggers_filler.scope_recalculate_triggers_filler'
 
-    orob2b_pricing.ebuilder.price_list_product_assignment_builder:
+    orob2b_pricing.builder.price_list_product_assignment_builder:
         class: 'OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder'
         arguments:
             - '@doctrine'
@@ -734,7 +734,7 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter'
         public: false
         arguments:
-            - '@orob2b_pricing.provider.price_rule_attribute_provider'
+            - '@orob2b_pricing.provider.price_rule_fields_provider'
 
     orob2b_pricing.expression.query_expression_builder:
         class: 'OroB2B\Bundle\PricingBundle\Expression\QueryExpressionBuilder'
@@ -749,3 +749,25 @@ services:
             - '@doctrine'
         calls:
             - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
+
+    orob2b_pricing.validator_constraints.abstract_price_rule_expression:
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\AbstractPriceRuleExpressionValidator'
+        public: false
+        abstract: true
+        arguments:
+            - '@orob2b_pricing.expression.parser'
+            - '@orob2b_pricing.provider.price_rule_fields_provider'
+
+    orob2b_pricing.validator_constraints.price_rule_conditional_expression:
+        parent: orob2b_pricing.validator_constraints.abstract_price_rule_expression
+        public: true
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleConditionalExpressionValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing.validator_constraints.price_rule_conditional_expression_validator }
+
+    orob2b_pricing.validator_constraints.price_rule_expression:
+        parent: orob2b_pricing.validator_constraints.abstract_price_rule_expression
+        public: true
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing.validator_constraints.price_rule_expression_validator }
