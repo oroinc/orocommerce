@@ -33,7 +33,7 @@ class PriceRuleChangeTriggersFillerTest extends WebTestCase
     public function testCreateFillerWithProduct()
     {
         /** @var PriceRule $priceRule */
-        $priceRule = $this->getReference('price_list_1_rule');
+        $priceRule = $this->getReference(LoadPriceRules::PRICE_RULE_1);
 
         /** @var Product $product */
         $product = $this->getReference('product.1');
@@ -52,7 +52,7 @@ class PriceRuleChangeTriggersFillerTest extends WebTestCase
     public function testCreateFillerWithoutProduct()
     {
         /** @var PriceRule $priceRule */
-        $priceRule = $this->getReference('price_list_1_rule');
+        $priceRule = $this->getReference(LoadPriceRules::PRICE_RULE_1);
 
         // Check trigger is absent
         $this->assertNull($this->getRuleTrigger($priceRule));

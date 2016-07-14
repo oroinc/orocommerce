@@ -11,6 +11,8 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 
 class LoadPriceRules extends AbstractFixture implements DependentFixtureInterface
 {
+    const PRICE_RULE_1 = 'price_list_1_rule';
+
     /**
      * @var array
      */
@@ -18,7 +20,7 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
         [
             'priceList' => 'price_list_1',
             'priority' => 100,
-            'reference' => 'price_list_1_rule'
+            'reference' => self::PRICE_RULE_1
         ]
     ];
 
