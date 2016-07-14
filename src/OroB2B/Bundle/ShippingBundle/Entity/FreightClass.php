@@ -5,10 +5,12 @@ namespace OroB2B\Bundle\ShippingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
  * @ORM\Table(name="orob2b_shipping_freight_class")
  * @ORM\Entity
+ * @Config()
  */
 class FreightClass implements MeasureUnitInterface, FreightClassInterface
 {
