@@ -147,7 +147,7 @@ class AddPriceRules implements Migration
             $schema->getTable('orob2b_price_rule'),
             ['price_rule_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
