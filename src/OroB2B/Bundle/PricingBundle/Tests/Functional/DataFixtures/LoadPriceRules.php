@@ -36,6 +36,7 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
     {
         foreach ($this->data as $priceRuleData) {
             $priceRule = new PriceRule();
+
             /** @var PriceList $priceList */
             $priceList = $this->getReference($priceRuleData['priceList']);
             /** @var ProductUnit $unit */

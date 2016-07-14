@@ -41,8 +41,8 @@ class AddPriceRules implements Migration
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('quantity', 'float', ['notnull' => false]);
-        $table->addColumn('rule_condition', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('rule', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('rule_condition', 'text', ['notnull' => false]);
+        $table->addColumn('rule', 'text', ['notnull' => true]);
         $table->addColumn('priority', 'integer', []);
         $table->setPrimaryKey(['id']);
     }
@@ -156,7 +156,7 @@ class AddPriceRules implements Migration
             $schema->getTable('orob2b_price_rule'),
             ['price_rule_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -166,6 +166,6 @@ class AddPriceRules implements Migration
     protected function updatePriceListTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list');
-        $table->addColumn('product_assignment_rule', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('product_assignment_rule', 'text', ['notnull' => false]);
     }
 }

@@ -166,7 +166,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             ->setProduct($product)
             ->setPriceRule(null);
 
-        $updatedExpectedProductPrice = clone($expectedProductPrice);
+        $updatedExpectedProductPrice = clone $expectedProductPrice;
         $updatedExpectedProductPrice->setProduct($product);
 
         return [

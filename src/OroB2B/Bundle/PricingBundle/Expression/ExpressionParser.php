@@ -55,10 +55,14 @@ class ExpressionParser
 
     /**
      * @param string|Expression $expression
-     * @return NodeInterface
+     * @return NodeInterface|null
      */
     public function parse($expression)
     {
+        if (!$expression) {
+            return null;
+        }
+
         $cacheKey = md5($expression);
         if (array_key_exists($cacheKey, $this->expressionCache)) {
             return $this->expressionCache[$cacheKey];
@@ -85,6 +89,10 @@ class ExpressionParser
     {
         $usedLexemes = [];
         $rootNode = $this->parse($expression);
+        if (!$rootNode) {
+            return $usedLexemes;
+        }
+
         foreach ($rootNode->getNodes() as $node) {
             if ($node instanceof NameNode) {
                 $class = $node->getContainer();
@@ -95,7 +103,7 @@ class ExpressionParser
                     $usedLexemes[$class][] = $node->getField();
                 }
             } elseif ($node instanceof RelationNode) {
-                $class = $node->getContainer() . '::' . $node->getField();
+                $class = $node->getRelationAlias();
                 if (!array_key_exists($class, $usedLexemes)) {
                     $usedLexemes[$class] = [];
                 }
@@ -114,5 +122,21 @@ class ExpressionParser
     public function getSupportedNames()
     {
         return array_keys($this->namesMapping);
+    }
+
+    /**
+     * @return array
+     */
+    public function getReverseNameMapping()
+    {
+        return array_flip($this->namesMapping);
+    }
+
+    /**
+     * @return array
+     */
+    public function getNamesMapping()
+    {
+        return $this->namesMapping;
     }
 }

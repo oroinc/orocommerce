@@ -40,7 +40,8 @@ class PriceRuleType extends AbstractType
                 self::RULE_CONDITION,
                 'textarea',
                 [
-                    'label' => 'orob2b.pricing.pricerule.rule_condition.label'
+                    'label' => 'orob2b.pricing.pricerule.rule_condition.label',
+                    'required' => false
                 ]
             )
             ->add(
@@ -60,7 +61,7 @@ class PriceRuleType extends AbstractType
             )
             ->add(
                 self::QUANTITY,
-                'number',
+                'text',
                 [
                     'label' => 'orob2b.pricing.pricerule.quantity.label'
                 ]

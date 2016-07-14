@@ -41,6 +41,8 @@ class ProductPriceBuilderTest extends WebTestCase
 
     public function testBuildByRule()
     {
+        $this->markTestSkipped('Will be fixed is scope of BB-3626');
+
         $priceList = new PriceList();
         $priceList->setName('Test');
         $this->manager->persist($priceList);

@@ -164,6 +164,25 @@ operations:
         datagrids:
             - price-list-product-prices-grid
 
+    orob2b_pricing_recalculate_price_list:
+        label: orob2b.pricing.pricelist.recalculate.label
+        routes: [orob2b_pricing_price_list_view]
+        order: 10
+        button_options:
+            icon: icon-money
+        actions:
+            - '@call_service_method':
+                service: 'orob2b_pricing.builder.price_list_product_assignment_builder'
+                method: 'buildByPriceList'
+                method_parameters: [$.entity]
+            - '@call_service_method':
+                service: 'orob2b_pricing.builder.product_price_builder'
+                method: 'buildByPriceList'
+                method_parameters: [$.entity]
+            - '@flash_message':
+                message: orob2b.pricing.pricelist.recalculate.message
+                type: 'success'
+
 action_groups:
     orob2b_pricing_add_product_price:
         parameters:

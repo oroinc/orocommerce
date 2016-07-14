@@ -112,7 +112,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('is_default', 'boolean', []);
         $table->addColumn('active', 'boolean', ['notnull' => true, 'default' => true]);
-        $table->addColumn('product_assignment_rule', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('product_assignment_rule', 'text', ['notnull' => false]);
         $table->addColumn('contain_schedule', 'boolean', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
@@ -643,7 +643,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
             $schema->getTable('orob2b_price_rule'),
             ['price_rule_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_product_unit'),
@@ -1042,7 +1042,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
-    
+
     /**
      * Add orob2b_price_list_to_product foreign keys.
      *
@@ -1078,8 +1078,8 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('quantity', 'float', ['notnull' => false]);
-        $table->addColumn('rule_condition', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('rule', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('rule_condition', 'text', ['notnull' => false]);
+        $table->addColumn('rule', 'text', ['notnull' => true]);
         $table->addColumn('priority', 'integer', []);
         $table->setPrimaryKey(['id']);
     }

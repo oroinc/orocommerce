@@ -62,4 +62,12 @@ class RelationNode implements NodeInterface
     {
         return [$this];
     }
+
+    /**
+     * @return string
+     */
+    public function getRelationAlias()
+    {
+        return $this->getContainer() . '::' . $this->getField();
+    }
 }

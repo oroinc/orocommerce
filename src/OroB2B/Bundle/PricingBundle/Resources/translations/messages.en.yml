@@ -52,6 +52,9 @@ orob2b.pricing:
             message:
               enabled: Price List was enabled successfully
               disabled: Price List was disabled successfully
+        recalculate:
+            label: Recalculate
+            message: Price List Rules were Recalculates successfull
         duplicate:
             label: Duplicate Price List
             message: Price List was Duplicated successfull
@@ -62,7 +65,7 @@ orob2b.pricing:
         field_name.label: Field Name
         id.label: Id
         currencies.label: Currencies
-        prices.label: Prices
+        prices.label: Price Attribute Product Prices
 
     pricerule:
         entity_label: Price Calculation Rule
@@ -97,7 +100,7 @@ orob2b.pricing:
         product.label: Product
         product_sku.label: Product SKU
         product_name.label: Product name
-        price_list.label: Proce List
+        price_list.label: Price List
         currency.label: Currency
         quantity.label: Quantity
         value.label: Value

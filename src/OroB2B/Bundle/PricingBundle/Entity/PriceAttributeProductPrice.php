@@ -17,7 +17,13 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      }
  * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository")
- * @Config()
+ * @Config(
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-usd"
+ *          }
+ *      }
+ * )
  */
 class PriceAttributeProductPrice extends BaseProductPrice
 {

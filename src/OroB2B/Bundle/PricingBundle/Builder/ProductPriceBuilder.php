@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\PricingBundle\Builder;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -16,9 +17,14 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 class ProductPriceBuilder
 {
     /**
-     * @var Registry
+     * @var ManagerRegistry
      */
     protected $registry;
+
+    /**
+     * @var InsertFromSelectQueryExecutor
+     */
+    protected $insertFromSelectQueryExecutor;
 
     /**
      * @var PriceListRuleCompiler
@@ -26,9 +32,9 @@ class ProductPriceBuilder
     protected $ruleCompiler;
 
     /**
-     * @var InsertFromSelectQueryExecutor
+     * @var ProductPriceRepository
      */
-    protected $queryHelper;
+    protected $productPriceRepository;
 
     /**
      * @var ScopeRecalculateTriggersFiller
@@ -36,65 +42,88 @@ class ProductPriceBuilder
     protected $triggersFiller;
 
     /**
-     * @var ProductPriceRepository
-     */
-    protected $productPriceRepository;
-
-    /**
-     * @param Registry $registry
+     * @param ManagerRegistry $registry
+     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param PriceListRuleCompiler $ruleCompiler
-     * @param InsertFromSelectQueryExecutor $queryHelper
      * @param ScopeRecalculateTriggersFiller $triggersFiller
      */
     public function __construct(
-        Registry $registry,
+        ManagerRegistry $registry,
+        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
         PriceListRuleCompiler $ruleCompiler,
-        InsertFromSelectQueryExecutor $queryHelper,
         ScopeRecalculateTriggersFiller $triggersFiller
     ) {
         $this->registry = $registry;
+        $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->ruleCompiler = $ruleCompiler;
-        $this->queryHelper = $queryHelper;
         $this->triggersFiller = $triggersFiller;
     }
 
     /**
      * @param PriceList $priceList
+     * @param Product $product
      */
-    public function buildByPriceList(PriceList $priceList)
+    public function buildByPriceList(PriceList $priceList, Product $product = null)
     {
-        $this->getProductPriceRepository()->deleteGeneratedPrices($priceList);
-        foreach ($priceList->getPriceRules() as $rule) {
-            $this->applyRule($rule);
+        $this->getProductPriceRepository()->deleteGeneratedPrices($priceList, $product);
+        if (count($priceList->getPriceRules()) > 0) {
+            $rules = $this->getSortedRules($priceList);
+            foreach ($rules as $rule) {
+                $this->buildByRule($rule, $product, true);
+            }
         }
-        $this->triggersFiller->fillTriggersByPriceList($priceList);
     }
 
     /**
-     * @param PriceRule $rule
+     * @param PriceRule $priceRule
      * @param Product|null $product
+     * @param bool $skipClear
      */
-    public function buildByRule(PriceRule $rule, Product $product = null)
+    public function buildByRule(PriceRule $priceRule, Product $product = null, $skipClear = false)
     {
-        $this->applyRule($rule, $product);
+        $this->applyRule($priceRule, $product, $skipClear);
         if ($product === null) {
-            $this->triggersFiller->fillTriggersByPriceList($rule->getPriceList());
+            $this->triggersFiller->fillTriggersByPriceList($priceRule->getPriceList());
         } else {
-            $this->triggersFiller->createTriggerByPriceListProduct($rule->getPriceList(), $product);
+            $this->triggersFiller->createTriggerByPriceListProduct($priceRule->getPriceList(), $product);
         }
     }
 
     /**
-     * @param PriceRule $rule
-     * @param Product|null $product
+     * @param PriceList $priceList
+     * @return array
      */
-    protected function applyRule(PriceRule $rule, Product $product = null)
+    protected function getSortedRules(PriceList $priceList)
     {
-        $qb = $this->ruleCompiler->compileRule($rule, $product);
-        $this->queryHelper->execute(
-            'OroB2BPricingBundle:ProductPrice',
-            $this->ruleCompiler->getFieldsOrder(),
-            $qb
+        $rules = $priceList->getPriceRules()->toArray();
+        usort(
+            $rules,
+            function (PriceRule $a, PriceRule $b) {
+                if ($a->getPriority() === $b->getPriority()) {
+                    return 0;
+                }
+
+                return $a->getPriority() < $b->getPriority() ? -1 : 1;
+            }
+        );
+
+        return $rules;
+    }
+
+    /**
+     * @param PriceRule $priceRule
+     * @param Product|null $product
+     * @param bool $skipClear
+     */
+    protected function applyRule(PriceRule $priceRule, Product $product = null, $skipClear = false)
+    {
+        if (!$skipClear) {
+            $this->getProductPriceRepository()->deleteGeneratedPricesByRule($priceRule, $product);
+        }
+        $this->insertFromSelectQueryExecutor->execute(
+            ProductPrice::class,
+            $this->ruleCompiler->getOrderedFields(),
+            $this->ruleCompiler->compile($priceRule, $product)
         );
     }
 
@@ -103,7 +132,12 @@ class ProductPriceBuilder
      */
     protected function getProductPriceRepository()
     {
-        return $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPrice')
-            ->getRepository('OroB2BPricingBundle:ProductPrice');
+        if (!$this->productPriceRepository) {
+            $this->productPriceRepository = $this->registry
+                ->getManagerForClass(ProductPrice::class)
+                ->getRepository(ProductPrice::class);
+        }
+
+        return $this->productPriceRepository;
     }
 }
