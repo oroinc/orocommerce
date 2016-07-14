@@ -144,6 +144,7 @@ class CaptureActionTest extends AbstractActionTest
                     'successful' => false,
                     'message' => null,
                     'testResponse' => 'testResponse',
+                    'testOption' => 'testOption',
                 ]
             ],
             'throw exception' => [
@@ -166,6 +167,7 @@ class CaptureActionTest extends AbstractActionTest
                     'transaction' => 10,
                     'successful' => false,
                     'message' => null,
+                    'testOption' => 'testOption',
                 ]
             ],
         ];

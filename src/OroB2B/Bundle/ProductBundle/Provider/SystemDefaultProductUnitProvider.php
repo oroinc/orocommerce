@@ -8,17 +8,16 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 
-class DefaultProductUnitProvider
+class SystemDefaultProductUnitProvider implements DefaultProductUnitProviderInterface
 {
     /**
      * @var ConfigManager
      */
-    private $configManager;
+    protected $configManager;
 
     /**
-     * @var  ManagerRegistry
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -38,26 +37,17 @@ class DefaultProductUnitProvider
     public function getDefaultProductUnitPrecision()
     {
         $defaultUnitValue = $this->configManager->get('orob2b_product.default_unit');
-        $defaultUnitPrecision = $this->configManager->get('orob2b_product.default_unit_precision');
+        $defaultUnitPrecision = (int)$this->configManager->get('orob2b_product.default_unit_precision');
 
-        $unit = $this
-            ->getRepository()->findOneBy(['code' => $defaultUnitValue]);
-
-        $unitPrecision = new ProductUnitPrecision();
-        $unitPrecision
-            ->setUnit($unit)
-            ->setPrecision($defaultUnitPrecision);
-
-        return $unitPrecision;
-    }
-
-    /**
-     * @return ProductUnitRepository
-     */
-    protected function getRepository()
-    {
-        return $this->registry
-            ->getManagerForClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
-            ->getRepository('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
+        $unit = $this->registry
+            ->getManagerForClass('OroB2BProductBundle:ProductUnit')
+            ->getRepository('OroB2BProductBundle:ProductUnit')
+            ->findOneBy(['code' => $defaultUnitValue]);
+        if ($unit instanceof ProductUnit) {
+            $productUnitPrecision = new ProductUnitPrecision();
+            return $productUnitPrecision->setUnit($unit)->setPrecision($defaultUnitPrecision);
+        } else {
+            return null;
+        }
     }
 }

@@ -396,6 +396,7 @@ class OrderLineItem extends ExtendOrderLineItem implements
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+        $this->createPrice();
 
         return $this;
     }
@@ -434,6 +435,7 @@ class OrderLineItem extends ExtendOrderLineItem implements
     public function setValue($value)
     {
         $this->value = $value;
+        $this->createPrice();
 
         return $this;
     }
@@ -491,7 +493,7 @@ class OrderLineItem extends ExtendOrderLineItem implements
     /**
      * @ORM\PostLoad
      */
-    public function postLoad()
+    public function createPrice()
     {
         if (null !== $this->value && null !== $this->currency) {
             $this->price = Price::create($this->value, $this->currency);
