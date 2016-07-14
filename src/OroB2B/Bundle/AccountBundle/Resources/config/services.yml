@@ -839,13 +839,6 @@ services:
             - '@oro_config.global'
             - '@oro_entity.doctrine_helper'
 
-    orob2b_account.repository.account_user_role:
-        class: Doctrine\ORM\EntityRepository
-        public: false
-        factory:  ["@oro_entity.doctrine_helper", getEntityRepository]
-        arguments:
-            - 'OroB2B\Bundle\AccountBundle\Entity\AccountUserRole'
-
     orob2b_account.provider.fronted_account_user_role_tabs_options:
         class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleOptionsDataProvider'
         arguments:

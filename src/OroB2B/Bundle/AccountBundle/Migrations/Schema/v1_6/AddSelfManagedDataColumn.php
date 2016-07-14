@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Migrations\Schema\v1_7;
+namespace OroB2B\Bundle\AccountBundle\Migrations\Schema\v1_6;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -12,13 +12,8 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 use OroB2B\Bundle\AccountBundle\Migrations\Schema\LoadRolesDataTrait;
 
-class AddSelfManagedDataColumn implements Migration, ContainerAwareInterface
+class AddSelfManagedDataColumn implements Migration
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
     /**
      * {@inheritdoc}
      */
@@ -40,13 +35,5 @@ class AddSelfManagedDataColumn implements Migration, ContainerAwareInterface
         $queries->addPostQuery(
             "update orob2b_account_user_role set self_managed = true where role <> '$anonymousRoleName'"
         );
-    }
-
-    /**
-     * @param ContainerInterface|null $container
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 }
