@@ -179,3 +179,8 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_separate_open_orders }
+
+    orob2b_checkout.workflow_state.storage.checkout_state_diff_storage:
+        class: OroB2B\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutStateDiffStorage
+        arguments:
+            - '@doctrine.orm.entity_manager'
