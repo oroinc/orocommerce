@@ -56,6 +56,7 @@ class PriceRuleFieldsProviderTest extends WebTestCase
                     'status',
                     'updatedAt',
                     'variantFields',
+                    'category',
                     'descriptions',
                     'images',
                     'inventory_status',
