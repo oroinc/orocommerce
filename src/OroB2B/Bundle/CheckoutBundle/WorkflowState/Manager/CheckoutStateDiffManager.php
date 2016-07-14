@@ -27,7 +27,10 @@ class CheckoutStateDiffManager
     {
         $currentState = [];
         foreach ($this->mappers as $mapper) {
-            $currentState[] = $mapper->getCurrentState($entity);
+            if (!$mapper->isEntitySupported($entity)) {
+                continue;
+            }
+            $currentState = array_merge($currentState, $mapper->getCurrentState($entity));
         }
 
         return $currentState;
@@ -40,5 +43,15 @@ class CheckoutStateDiffManager
      */
     public function compareStates($entity, array $savedState)
     {
+        foreach ($this->mappers as $mapper) {
+            if (!$mapper->isEntitySupported($entity)) {
+                continue;
+            }
+            if (!$mapper->compareStates($entity, $savedState)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

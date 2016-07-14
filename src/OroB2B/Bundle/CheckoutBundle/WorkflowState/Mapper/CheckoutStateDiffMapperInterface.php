@@ -11,6 +11,12 @@ interface CheckoutStateDiffMapperInterface
 
     /**
      * @param object $entity
+     * @return boolean
+     */
+    public function isEntitySupported($entity);
+
+    /**
+     * @param object $entity
      * @return array
      */
     public function getCurrentState($entity);
