@@ -1,7 +1,12 @@
 layout:
     actions:
+        - '@add':
+            id: account_sidebar
+            parentId: sidebar_left
+            blockType: container
+
         - '@setBlockTheme':
-            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_order_frontend_index/layout.html.twig'
+            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_open_orders/layout.html.twig'
 
         - '@add':
             id: checkouts_title
@@ -11,7 +16,6 @@ layout:
             prepend: true
             options:
                 text: 'orob2b.checkout.entity_plural_label'
-                visible: { '@neq': [$data.orob2b_checkout_separate_open_orders, true] }
 
         - '@add':
             id: checkouts
@@ -20,4 +24,10 @@ layout:
             blockType: datagrid
             options:
                 grid_name: frontend-checkouts-grid
-                visible: { '@neq': [$data.orob2b_checkout_separate_open_orders, true] }
+
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.checkout.entity_plural_label'
