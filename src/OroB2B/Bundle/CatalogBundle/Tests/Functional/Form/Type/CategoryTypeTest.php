@@ -16,6 +16,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
+use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -51,6 +52,7 @@ class CategoryTypeTest extends WebTestCase
         $localizationRepository = $doctrine->getRepository('OroLocaleBundle:Localization');
         $categoryRepository = $doctrine->getRepository('OroB2BCatalogBundle:Category');
         $productRepository = $doctrine->getRepository('OroB2BProductBundle:Product');
+        $productUnitRepository = $doctrine->getRepository('OroB2BProductBundle:ProductUnit');
 
         /** @var Localization[] $localizations */
         $localizations = $localizationRepository->findAll();
@@ -79,6 +81,10 @@ class CategoryTypeTest extends WebTestCase
 
         $smallImage = new UploadedFile($smallImageFile, $smallImageName, null, null, null, true);
         $largeImage = new UploadedFile($largeImageFile, $largeImageName, null, null, null, true);
+        
+        $productUnit = $productUnitRepository->findOneBy(['code' => 'kg']);
+        $unitPrecision = new CategoryUnitPrecision();
+        $unitPrecision->setUnit($productUnit)->setPrecision(3);
 
         // prepare input array
         $submitData = [
@@ -90,6 +96,7 @@ class CategoryTypeTest extends WebTestCase
             'largeImage' => ['file' => $largeImage],
             'appendProducts' => implode(',', $this->getProductIds($appendedProducts)),
             'removeProducts' => implode(',', $this->getProductIds($removedProducts)),
+            'defaultProductOptions' => ['unitPrecision' => ['unit' => 'kg', 'precision' => 3]],
             '_token' => $this->tokenManager->getToken('category')->getValue(),
         ];
 
@@ -121,25 +128,10 @@ class CategoryTypeTest extends WebTestCase
         $this->assertEquals($defaultTitle, $category->getDefaultTitle()->getString());
         $this->assertEquals($defaultShortDescription, $category->getDefaultShortDescription()->getText());
         $this->assertEquals($defaultLongDescription, $category->getDefaultLongDescription()->getText());
+        $this->assertEquals($unitPrecision, $category->getDefaultProductOptions()->getUnitPrecision());
 
         foreach ($localizations as $localization) {
-            $localizedTitle = $this->getValueByLocalization($category->getTitles(), $localization);
-            $this->assertNotEmpty($localizedTitle);
-            $this->assertEmpty($localizedTitle->getString());
-            $this->assertEquals(FallbackType::SYSTEM, $localizedTitle->getFallback());
-
-            $localizedShortDescription = $this->getValueByLocalization(
-                $category->getShortDescriptions(),
-                $localization
-            );
-            $this->assertNotEmpty($localizedShortDescription);
-            $this->assertEmpty($localizedShortDescription->getText());
-            $this->assertEquals(FallbackType::SYSTEM, $localizedShortDescription->getFallback());
-
-            $localizedLongDescription = $this->getValueByLocalization($category->getLongDescriptions(), $localization);
-            $this->assertNotEmpty($localizedLongDescription);
-            $this->assertEmpty($localizedLongDescription->getText());
-            $this->assertEquals(FallbackType::SYSTEM, $localizedLongDescription->getFallback());
+            $this->assertLocalization($localization, $category);
         }
         // assert related products
         $this->assertEquals($appendedProducts, $form->get('appendProducts')->getData());
@@ -174,5 +166,30 @@ class CategoryTypeTest extends WebTestCase
         }
 
         return null;
+    }
+
+    /**
+     * @param Localization $localization
+     * @param Category $category
+     */
+    protected function assertLocalization($localization, $category)
+    {
+        $localizedTitle = $this->getValueByLocalization($category->getTitles(), $localization);
+        $this->assertNotEmpty($localizedTitle);
+        $this->assertEmpty($localizedTitle->getString());
+        $this->assertEquals(FallbackType::SYSTEM, $localizedTitle->getFallback());
+
+        $localizedShortDescription = $this->getValueByLocalization(
+            $category->getShortDescriptions(),
+            $localization
+        );
+        $this->assertNotEmpty($localizedShortDescription);
+        $this->assertEmpty($localizedShortDescription->getText());
+        $this->assertEquals(FallbackType::SYSTEM, $localizedShortDescription->getFallback());
+
+        $localizedLongDescription = $this->getValueByLocalization($category->getLongDescriptions(), $localization);
+        $this->assertNotEmpty($localizedLongDescription);
+        $this->assertEmpty($localizedLongDescription->getText());
+        $this->assertEquals(FallbackType::SYSTEM, $localizedLongDescription->getFallback());
     }
 }
