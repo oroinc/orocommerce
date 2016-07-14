@@ -9,6 +9,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityDataProvider;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -127,8 +128,8 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                 'product' => new Product(),
                 'shoppingList' => $activeShoppingList,
                 'lineItems' => [
-                    $this->createLineItem('code1', 42, $activeShoppingList),
-                    $this->createLineItem('code2', 100, $activeShoppingList)
+                    $this->createLineItem(1, 'code1', 42, $activeShoppingList),
+                    $this->createLineItem(2, 'code2', 100, $activeShoppingList)
                 ],
                 'expected' => [
                     [
@@ -136,8 +137,8 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                         'shopping_list_label' => 'ShoppingList 1',
                         'is_current' => true,
                         'line_items' => [
-                            ['unit' => 'code1', 'quantity' => 42],
-                            ['unit' => 'code2', 'quantity' => 100],
+                            ['line_item_id' => 1, 'unit' => 'code1', 'quantity' => 42],
+                            ['line_item_id' => 2, 'unit' => 'code2', 'quantity' => 100],
                         ]
                     ]
                 ]
@@ -146,9 +147,9 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                 'product' => new Product(),
                 'shoppingList' => $activeShoppingList,
                 'lineItems' => [
-                    $this->createLineItem('code1', 42, $activeShoppingList),
-                    $this->createLineItem('code2', 100, $activeShoppingList),
-                    $this->createLineItem('code3', 30, $otherShoppingList),
+                    $this->createLineItem(1, 'code1', 42, $activeShoppingList),
+                    $this->createLineItem(2, 'code2', 100, $activeShoppingList),
+                    $this->createLineItem(3, 'code3', 30, $otherShoppingList),
                 ],
                 'expected' => [
                     [
@@ -156,8 +157,8 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                         'shopping_list_label' => 'ShoppingList 1',
                         'is_current' => true,
                         'line_items' => [
-                            ['unit' => 'code1', 'quantity' => 42],
-                            ['unit' => 'code2', 'quantity' => 100],
+                            ['line_item_id' => 1, 'unit' => 'code1', 'quantity' => 42],
+                            ['line_item_id' => 2,'unit' => 'code2', 'quantity' => 100],
                         ]
                     ],
                     [
@@ -165,7 +166,7 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                         'shopping_list_label' => 'ShoppingList 2',
                         'is_current' => false,
                         'line_items' => [
-                            ['unit' => 'code3', 'quantity' => 30],
+                            ['line_item_id' => 3, 'unit' => 'code3', 'quantity' => 30],
                         ]
                     ]
                 ]
@@ -173,25 +174,35 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
         ];
     }
 
-    /**
-     * @param string $code
-     * @param int $quantity
-     * @param ShoppingList $shoppingList
-     * @return LineItem
-     */
-    protected function createLineItem($code, $quantity, $shoppingList)
+    /*
+       * @param int $id
+       * @param string $unit
+       * @param int $quantity
+       * @param shoppingList $shoppingList
+       *
+       * @return  Mock_LineItem
+       *
+       */
+    private function createLineItem($id, $unit, $quantity, $shoppingList)
     {
-        return $this->getEntity(
-            'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem',
-            [
-                'unit' => $this->getEntity(
-                    'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
-                    ['code' => $code]
-                ),
-                'quantity' => $quantity,
-                'shoppingList' => $shoppingList
-            ]
-        );
+        $lineItem = $this
+            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem')
+            ->setMethods(['getId', 'getUnit', 'getQuantity', 'getShoppingList'])
+            ->getMock();
+        $lineItem ->expects($this->any())
+            ->method('getId')
+            ->will($this->returnValue($id));
+        $lineItem ->expects($this->any())
+            ->method('getUnit')
+            ->will($this->returnValue((new ProductUnit())->setCode($unit)));
+        $lineItem ->expects($this->any())
+            ->method('getQuantity')
+            ->will($this->returnValue($quantity));
+        $lineItem ->expects($this->any())
+            ->method('getShoppingList')
+            ->will($this->returnValue($shoppingList));
+
+        return $lineItem;
     }
     
     /**

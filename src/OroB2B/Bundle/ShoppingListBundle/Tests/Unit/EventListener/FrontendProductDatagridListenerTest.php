@@ -217,21 +217,9 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->with([1, 2], $user)
             ->willReturn(
                 [
-                    (new LineItem())
-                        ->setUnit((new ProductUnit())->setCode('unt1'))
-                        ->setQuantity(1)
-                        ->setShoppingList($shoppingList1)
-                        ->setProduct($productOne),
-                    (new LineItem())
-                        ->setUnit((new ProductUnit())->setCode('unt2'))
-                        ->setQuantity(2)
-                        ->setShoppingList($shoppingList2)
-                        ->setProduct($productOne),
-                    (new LineItem())
-                        ->setUnit((new ProductUnit())->setCode('unt3'))
-                        ->setQuantity(5)
-                        ->setShoppingList($shoppingList2)
-                        ->setProduct($productOne)
+                    $this->createLineItem(1, 'unt1', 1, $shoppingList1, $productOne),
+                    $this->createLineItem(2, 'unt2', 2, $shoppingList2, $productOne),
+                    $this->createLineItem(3, 'unt3', 5, $shoppingList2, $productOne),
                 ]
             );
 
@@ -267,15 +255,15 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'shopping_list_id' => 1,
                     'shopping_list_label' => 'Shopping List1',
                     'is_current' => true,
-                    'line_items' => [['unit'=>'unt1','quantity' => 1]]
+                    'line_items' => [['line_item_id' => 1, 'unit' => 'unt1','quantity' => 1]]
                 ],
                 [
                     'shopping_list_id' => 2,
                     'shopping_list_label' => 'Shopping List2',
                     'is_current' => false,
                     'line_items' => [
-                        ['unit'=>'unt2','quantity' => 2],
-                        ['unit'=>'unt3','quantity' => 5],
+                        ['line_item_id' => 2, 'unit' => 'unt2','quantity' => 2],
+                        ['line_item_id' => 3, 'unit' => 'unt3','quantity' => 5],
                     ],
                 ],
             ],
@@ -304,5 +292,40 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getLabel')
             ->will($this->returnValue($label));
         return $shoppingList;
+    }
+
+    /*
+     * @param int $id
+     * @param string $unit
+     * @param int $quantity
+     * @param shoppingList $shoppingList
+     * @param product $product
+     *
+     * @return  Mock_LineItem
+     *
+     */
+    private function createLineItem($id, $unit, $quantity, $shoppingList, $product)
+    {
+        $lineItem = $this
+            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem')
+            ->setMethods(['getId', 'getUnit', 'getQuantity', 'getShoppingList', 'getProduct'])
+            ->getMock();
+        $lineItem ->expects($this->any())
+            ->method('getId')
+            ->will($this->returnValue($id));
+        $lineItem ->expects($this->any())
+            ->method('getUnit')
+            ->will($this->returnValue((new ProductUnit())->setCode($unit)));
+        $lineItem ->expects($this->any())
+            ->method('getQuantity')
+            ->will($this->returnValue($quantity));
+        $lineItem ->expects($this->any())
+            ->method('getShoppingList')
+            ->will($this->returnValue($shoppingList));
+        $lineItem ->expects($this->any())
+            ->method('getProduct')
+            ->will($this->returnValue($product));
+
+        return $lineItem;
     }
 }

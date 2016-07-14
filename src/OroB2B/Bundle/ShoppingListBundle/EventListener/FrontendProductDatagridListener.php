@@ -143,6 +143,7 @@ class FrontendProductDatagridListener
             $productId = $lineItem->getProduct()->getId();
             $groupedUnits[$productId][$shoppingListId][] =
                 [
+                    'line_item_id' => $lineItem->getId(),
                     'unit' => $lineItem->getProductUnitCode(),
                     'quantity' => $lineItem->getQuantity()
                 ];

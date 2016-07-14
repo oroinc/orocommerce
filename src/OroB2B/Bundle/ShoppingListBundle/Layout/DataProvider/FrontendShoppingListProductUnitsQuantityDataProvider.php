@@ -97,6 +97,7 @@ class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServe
             $shoppingListId = $itemShoppingList->getId();
             $groupedUnits[$shoppingListId][] =
                 [
+                    'line_item_id' => $lineItem->getId(),
                     'unit' => $lineItem->getProductUnitCode(),
                     'quantity' => $lineItem->getQuantity()
                 ];
