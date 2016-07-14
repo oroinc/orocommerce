@@ -39,13 +39,49 @@ class OrderLineItemTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors($entity, $properties);
     }
 
-    public function testPostLoad()
+    public function testCreatePrice()
     {
         $entity = new OrderLineItem();
+        $this->assertEmpty($entity->getPrice());
         $entity->setValue(42);
         $entity->setCurrency('USD');
+        $entity->createPrice();
+        $this->assertEquals(Price::create(42, 'USD'), $entity->getPrice());
+    }
+
+    public function testPriceNotInitializedWithValueWithoutCurrency()
+    {
+        $orderLineItem = new OrderLineItem();
+        $this->assertEmpty($orderLineItem->getPrice());
+        $orderLineItem->setValue(42);
+        $this->assertEmpty($orderLineItem->getPrice());
+    }
+
+    public function testPriceNotInitializedWithCurrencyWithoutValue()
+    {
+        $orderLineItem = new OrderLineItem();
+        $this->assertEmpty($orderLineItem->getPrice());
+        $orderLineItem->setCurrency('USD');
+        $this->assertEmpty($orderLineItem->getPrice());
+    }
+
+    public function testCreatePriceCalledOnSetCurrency()
+    {
+        $entity = new OrderLineItem();
         $this->assertEmpty($entity->getPrice());
-        $entity->postLoad();
+        $entity->setValue(42);
+        $this->assertEmpty($entity->getPrice());
+        $entity->setCurrency('USD');
+        $this->assertEquals(Price::create(42, 'USD'), $entity->getPrice());
+    }
+
+    public function testCreatePriceCalledOnSetValue()
+    {
+        $entity = new OrderLineItem();
+        $this->assertEmpty($entity->getPrice());
+        $entity->setCurrency('USD');
+        $this->assertEmpty($entity->getPrice());
+        $entity->setValue(42);
         $this->assertEquals(Price::create(42, 'USD'), $entity->getPrice());
     }
 
