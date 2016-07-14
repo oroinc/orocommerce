@@ -42,6 +42,7 @@ orob2b:
         total_discounts_amount.label: Total Discounts Amount
         discounts.label: Discounts
         discountitem.add_label: Add Discount
+        order_history.label: Order History
 
         orderdiscount:
             entity_label: Order Discount
@@ -183,7 +184,9 @@ orob2b:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Orders'
                 frontend_product_visibility.title: 'Can Be Added to Orders'
-
+            groups:
+                orders.title: 'Orders'
+                orders_history.title: 'Orders History'
         success:
             thank_you: 'Thank You For Your Purchase!'
             order_number: 'Your order number is'
