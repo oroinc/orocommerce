@@ -11,7 +11,7 @@ use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
 use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\AbstractPriceRuleExpressionValidator;
 
-abstract class AbstractDefinedAttributesValidatorTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractPriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ExpressionParser
@@ -35,7 +35,7 @@ abstract class AbstractDefinedAttributesValidatorTest extends \PHPUnit_Framework
         $this->fieldsProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->parser->addNameMapping('Product', Product::class);
+        $this->parser->addNameMapping('product', Product::class);
     }
 
     /**

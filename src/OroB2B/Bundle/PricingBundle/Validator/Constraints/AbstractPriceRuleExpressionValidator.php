@@ -41,9 +41,11 @@ abstract class AbstractPriceRuleExpressionValidator extends ConstraintValidator
         }
         try {
             $lexemesInfo = $this->parser->getUsedLexemes($value);
-            foreach ($lexemesInfo as $class => $lexemes) {
+            foreach ($lexemesInfo as $class => $fields) {
                 $supportedFields = $this->getSupportedFields($class);
-                $unsupportedFields = array_diff($lexemes, $supportedFields);
+                // Add possibility lexemes without fields
+                array_push($supportedFields, null);
+                $unsupportedFields = array_diff($fields, $supportedFields);
                 if (!empty($unsupportedFields)) {
                     throw new \Exception('Unsupported fields used');
                 }
