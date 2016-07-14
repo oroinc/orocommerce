@@ -6,14 +6,11 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-
+use Oro\Bundle\LocaleBundle\Migrations\Data\ORM\LoadLocalizationData;
+use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
-
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -59,7 +56,6 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
         //todo fix localization reference retrieval if changed BB-3367
         ///** @var Localization $localization */
         //$localization = $this->getReference('default_localization');
-        
 
         $website = new Website();
         $website
@@ -67,7 +63,7 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
             ->setOrganization($organization)
             ->setOwner($businessUnit)
             ->setUrl($url);
-            //->addLocalization($localization); //todo add localization direct to configuration impl in BB-3367
+        //->addLocalization($localization); //todo add localization direct to configuration impl in BB-3367
 
         $manager->persist($website);
         /** @var EntityManager $manager */

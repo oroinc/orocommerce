@@ -6,10 +6,14 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class RemoveLocalizationsRelation implements Migration
+class ChangeLocalizationsRelation implements Migration
 {
     public function up(Schema $schema, QueryBag $queries)
     {
+
+        
+        
+        
         $schema->dropTable('orob2b_websites_localizations');
     }
 }

@@ -7,8 +7,8 @@ orob2b:
         name.label: Name
         url.label: URL
         owner.label: Owner
-#        organization.label: Organization
-#        localizations.label: Localizations
+        organization.label: Organization
+        localizations.label: Localizations
         inversed_websites.label: Inversed websites
         related_websites.label: Related websites
 
