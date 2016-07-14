@@ -442,16 +442,14 @@
                     view: 'oroui/js/app/views/layout-subtree-view',
                     rootId : block.vars.id,
                     reloadEvents: ['shopping-list:updated'],
-                    eventChannelId: 'shopping-list-title'
+                    eventChannelId: 'shopping-list-title',
+                    shoppingListCount: shoppingLists|length,
+                    selectedShoppingList: selectedShoppingList.id
                 },
                 'data-dropdown-trigger': true
             }|merge(attr|merge({
             class: attr.class|default('') ~ " shopping-list mt1-md"
         })) %}
-
-        {% if shoppingLists | length >= 6 %}
-            {% set attr = attr|merge({class: attr.class|default('') ~ " shopping-list--fulfilled"}) %}
-        {% endif %}
 
         <!-- START ORDERS TABS LIST -->
         <ul {{ block('block_attributes') }}>

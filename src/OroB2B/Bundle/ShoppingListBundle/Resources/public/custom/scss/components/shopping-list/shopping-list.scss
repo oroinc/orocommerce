@@ -43,6 +43,14 @@
         &:nth-child(n+6) {
             display: none;
         }
+
+        @media (max-width: $screen-md) {
+            width: 25%;
+            
+            &:nth-child(n+5) {
+                display: none;
+            }
+        }
     }
 
     &__link {

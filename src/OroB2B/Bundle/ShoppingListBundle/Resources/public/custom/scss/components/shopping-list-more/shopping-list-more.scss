@@ -3,6 +3,7 @@
     top: 0;
     right: 0;
 
+    display: none;
     width: 37px;
     height: 100%;
 
@@ -14,6 +15,10 @@
     border-bottom: 1px solid $base-font-color-lightest;
     background: #ededed;
 
+    &--visible {
+        display: block;
+    }
+    
     &__handle {
         height: 100%;
         margin: 0;

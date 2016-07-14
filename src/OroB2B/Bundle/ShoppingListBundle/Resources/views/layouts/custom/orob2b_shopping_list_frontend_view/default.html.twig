@@ -1,5 +1,3 @@
-{% extends 'OroB2BShoppingListBundle:layouts/default:orob2b_shopping_list_frontend_view/view.html.twig' %}
-
 {% block _shopping_list_view_tabs_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
@@ -20,29 +18,25 @@
     </div>
 {% endblock %}
 
-{% block _shopping_lists_sidebar_list_widget %}
-    {{ parent() }}
-
-    {% if shoppingLists | length >= 6 %}
-        <input class="shopping-list-helper" type="radio" id="shopping-list-more" name="dropdowns" hidden="hidden">
-        <div class="shopping-list-more">
-            <label class="shopping-list-more__handle" for="shopping-list-more">
-                <i class="shopping-list-more__icon cf-add_circle"></i>
-            </label>
-            <span class="shopping-list-more__dropdown">
-                <ul class="shopping-list-links">
-                    {% for shoppingList in shoppingLists %}
-                        <li class="shopping-list-links__item {% if shoppingList.id == selectedShoppingList.id %} shopping-list-links__item--current {% endif %}">
-                            <a class="shopping-list-links__link" href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}">
-                                <i class="shopping-list-links__icon cf-check"></i>
-                                <span class="shopping-list-links__text">{{ shoppingList.label }}</span>
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </span>
-        </div>
-        <input class="shopping-list-helper" type="radio" id="shopping-list-overlay" name="dropdowns" checked="checked" hidden="hidden">
-        <label class="shopping-list-overlay" for="shopping-list-overlay"></label>
-    {% endif %}
-{% endblock _shopping_lists_sidebar_list_widget %}
+{% block _shopping_list_view_more_widget %}
+    <input class="shopping-list-helper" type="radio" id="shopping-list-more" name="dropdowns" hidden="hidden">
+    <div class="shopping-list-more">
+        <label class="shopping-list-more__handle" for="shopping-list-more">
+            <i class="shopping-list-more__icon cf-add_circle"></i>
+        </label>
+        <span class="shopping-list-more__dropdown">
+            <ul class="shopping-list-links">
+                {% for shoppingList in shoppingLists %}
+                    <li class="shopping-list-links__item {% if shoppingList.id == selectedShoppingList.id %} shopping-list-links__item--current {% endif %}">
+                        <a class="shopping-list-links__link" href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}">
+                            <i class="shopping-list-links__icon cf-check"></i>
+                            <span class="shopping-list-links__text">{{ shoppingList.label }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </span>
+    </div>
+    <input class="shopping-list-helper" type="radio" id="shopping-list-overlay" name="dropdowns" checked="checked" hidden="hidden">
+    <label class="shopping-list-overlay" for="shopping-list-overlay"></label>
+{% endblock _shopping_list_view_more_widget %}
