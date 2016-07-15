@@ -3,9 +3,11 @@
 namespace OroB2B\Bundle\WebsiteBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Driver\Statement;
+
+use Psr\Log\LoggerInterface;
+
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
-use Psr\Log\LoggerInterface;
 
 class CopyLocalizationReferencesToConfigQuery extends ParametrizedMigrationQuery
 {
@@ -15,9 +17,19 @@ class CopyLocalizationReferencesToConfigQuery extends ParametrizedMigrationQuery
     /** @var Statement */
     private $defaultLocalizationStatement;
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getDescription()
+    {
+        return 'Copy websites localization relation to system configuration';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function execute(LoggerInterface $logger)
     {
-
         $result = $this->connection->fetchAll('SELECT website_id, localization_id FROM orob2b_websites_localizations');
 
         $relations = [];
@@ -43,6 +55,11 @@ class CopyLocalizationReferencesToConfigQuery extends ParametrizedMigrationQuery
         }
     }
 
+    /**
+     * @param int $websiteId
+     * @param array $localizationIds
+     * @return Statement
+     */
     protected function prepareEnabledLocalizationsInsertStatement($websiteId, array $localizationIds)
     {
         if (null === $this->enabledLocalizationsStatement) {
@@ -79,6 +96,11 @@ class CopyLocalizationReferencesToConfigQuery extends ParametrizedMigrationQuery
         return $this->enabledLocalizationsStatement;
     }
 
+    /**
+     * @param int $websiteId
+     * @param int $defaultLocalizationId
+     * @return Statement
+     */
     protected function prepareDefaultLocalizationStatement($websiteId, $defaultLocalizationId)
     {
         if (null === $this->defaultLocalizationStatement) {
@@ -114,10 +136,5 @@ class CopyLocalizationReferencesToConfigQuery extends ParametrizedMigrationQuery
         $this->defaultLocalizationStatement->bindValue(':textValue', $defaultLocalizationId, 'text');
 
         return $this->defaultLocalizationStatement;
-    }
-
-    public function getDescription()
-    {
-        return 'Copy websites localization relation to system configuration';
     }
 }

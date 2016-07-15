@@ -6,11 +6,13 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\LocaleBundle\Migrations\Data\ORM\LoadLocalizationData;
-use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
+
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
