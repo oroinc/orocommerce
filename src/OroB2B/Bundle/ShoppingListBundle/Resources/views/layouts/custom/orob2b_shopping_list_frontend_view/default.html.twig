@@ -1,17 +1,19 @@
 {% block _shopping_list_view_tabs_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% set attr = layout_attr_merge(attr, {
+        'data-page-component-module': 'orob2bshoppinglist/js/app/components/shoppinglist-view-component',
+        'data-page-component-options': {
+            eventChannelId: 'shopping-list-title'
+        },
+        '~class': "shopping-list-tabs"
+    }) %}
 
-    {% set attr = layout_attr_merge(attr, {'~class': " shopping-list-tabs"}) %}
-
-    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-        module: 'orob2bshoppinglist/js/app/components/shoppinglist-view-component'
-    }) }}>
+    <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _shopping_list_view_container_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': " shopping-list-wrapper"}) %}
+    {% set attr = layout_attr_merge(attr, {'~class': "shopping-list-wrapper"}) %}
 
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -19,24 +21,28 @@
 {% endblock %}
 
 {% block _shopping_list_view_more_widget %}
-    <input class="shopping-list-helper" type="radio" id="shopping-list-more" name="dropdowns" hidden="hidden">
-    <div class="shopping-list-more">
-        <label class="shopping-list-more__handle" for="shopping-list-more">
-            <i class="shopping-list-more__icon cf-add_circle"></i>
-        </label>
-        <span class="shopping-list-more__dropdown">
-            <ul class="shopping-list-links">
-                {% for shoppingList in shoppingLists %}
-                    <li class="shopping-list-links__item {% if shoppingList.id == selectedShoppingList.id %} shopping-list-links__item--current {% endif %}">
-                        <a class="shopping-list-links__link" href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}">
-                            <i class="shopping-list-links__icon cf-check"></i>
-                            <span class="shopping-list-links__text">{{ shoppingList.label }}</span>
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </span>
+    {% set attr = layout_attr_merge(attr, {'~class': "shopping-list-dropdown"}) %}
+
+    <div{{ block('block_attributes') }}>
+        <input class="shopping-list-dropdown__helper" type="radio" id="shopping-list-dropdown" name="dropdowns" hidden="hidden">
+        <div class="shopping-list-dropdown__inner">
+            <label class="shopping-list-dropdown__handle" for="shopping-list-dropdown">
+                <i class="shopping-list-dropdown__icon cf-add_circle"></i>
+            </label>
+            <span class="shopping-list-dropdown__dropdown">
+                <ul class="shopping-list-links">
+                    {% for shoppingList in shoppingLists %}
+                        <li class="shopping-list-links__item shopping-list-links__item--{{ shoppingList.id }} {% if shoppingList.id == selectedShoppingList.id %} shopping-list-links__item--current {% endif %}">
+                            <a class="shopping-list-links__link" href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}">
+                                <i class="shopping-list-links__icon cf-check"></i>
+                                <span class="shopping-list-links__text">{{ shoppingList.label }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </span>
+        </div>
+        <input class="shopping-list-dropdown__helper" type="radio" id="shopping-list-overlay" name="dropdowns" checked="checked" hidden="hidden">
+        <label class="shopping-list-dropdown__overlay" for="shopping-list-overlay"></label>
     </div>
-    <input class="shopping-list-helper" type="radio" id="shopping-list-overlay" name="dropdowns" checked="checked" hidden="hidden">
-    <label class="shopping-list-overlay" for="shopping-list-overlay"></label>
 {% endblock _shopping_list_view_more_widget %}

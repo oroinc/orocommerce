@@ -435,24 +435,24 @@
 {% block _shopping_lists_sidebar_list_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    <div class="shopping-list-navigation mt3-md">
-        {% set attr = {
-                'data-page-component-module': 'orob2bshoppinglist/js/app/views/shoppinglist-sidebar-view',
-                'data-page-component-options': {
-                    view: 'oroui/js/app/views/layout-subtree-view',
-                    rootId : block.vars.id,
-                    reloadEvents: ['shopping-list:updated'],
-                    eventChannelId: 'shopping-list-title',
-                    shoppingListCount: shoppingLists|length,
-                    selectedShoppingList: selectedShoppingList.id
-                },
-                'data-dropdown-trigger': true
-            }|merge(attr|merge({
-            class: attr.class|default('') ~ " shopping-list mt1-md"
-        })) %}
+    {% set attr = {
+            'data-page-component-module': 'orob2bshoppinglist/js/app/views/shoppinglist-sidebar-view',
+            'data-page-component-options': {
+                view: 'oroui/js/app/views/layout-subtree-view',
+                rootId : block.vars.id,
+                reloadEvents: ['shopping-list:updated'],
+                eventChannelId: 'shopping-list-title',
+                shoppingListCount: shoppingLists|length,
+                selectedShoppingList: selectedShoppingList.id
+            },
+            'data-dropdown-trigger': true
+        }|merge(attr|merge({
+        class: attr.class|default('') ~ " shopping-list-navigation"
+    })) %}
 
+    <div {{ block('block_attributes') }}>
         <!-- START ORDERS TABS LIST -->
-        <ul {{ block('block_attributes') }}>
+        <ul class="shopping-list">
             {% for shoppingList in shoppingLists %}
                 <li class="shopping-list__item">
                     <a href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}" class="shopping-list__link {% if shoppingList.id == selectedShoppingList.id %} shopping-list__link--current {% endif %}">

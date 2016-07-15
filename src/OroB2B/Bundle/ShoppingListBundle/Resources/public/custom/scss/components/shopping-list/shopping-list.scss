@@ -1,6 +1,6 @@
 .shopping-list {
     width: 100%;
-    margin: 0 !important;
+    margin: 0;
 
     font-size: 0;
     white-space: nowrap;
@@ -40,16 +40,8 @@
             border-radius: 0 3px 0 0;
         }
 
-        &:nth-child(n+6) {
+        &--hidden {
             display: none;
-        }
-
-        @media (max-width: $screen-md) {
-            width: 25%;
-            
-            &:nth-child(n+5) {
-                display: none;
-            }
         }
     }
 

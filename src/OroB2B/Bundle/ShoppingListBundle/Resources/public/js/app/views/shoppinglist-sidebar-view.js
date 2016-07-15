@@ -17,8 +17,8 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            shoppingListVisible: 6,
-            selectedShoppingList: null
+            shoppingListCount: null,
+            shoppingListVisible: 6
         },
 
         /**
@@ -26,6 +26,7 @@ define(function(require) {
          * @param options
          */
         initialize: function(options) {
+            this.options = _.defaults(options || {}, this.options);
             this.$el = options._sourceElement;
             this.eventChannelId = options.eventChannelId;
             this.selectedShoppingList = options.selectedShoppingList;
@@ -33,9 +34,9 @@ define(function(require) {
             // listen to incoming title updates and re-render the whole shopping list
             mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateCurrentTitle, this);
 
-            mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateAdditionalDropdown, this);
+            this.hideTail(this.options.shoppingListVisible);
 
-            this.showAdditionalDropdown(options.shoppingListCount);
+            this.showAdditionalDropdown(this.options.shoppingListCount);
         },
 
         /**
@@ -48,24 +49,26 @@ define(function(require) {
 
         /**
          *
+         * @param shoppingListVisible
+         */
+        hideTail: function(shoppingListVisible) {
+            if (shoppingListVisible > 0) {
+                this.$el.find('.shopping-list__item:nth-child(n+' + shoppingListVisible + ')').addClass('shopping-list__item--hidden');
+            }
+        },
+
+        /**
+         *
          * @param shoppingListCount
          */
         showAdditionalDropdown: function(shoppingListCount) {
             var shoppingListVisible = this.options.shoppingListVisible;
 
             if (shoppingListCount >= shoppingListVisible) {
-                this.$el.addClass('shopping-list--fulfilled');
+                this.$el.find('.shopping-list').addClass('shopping-list--fulfilled');
 
-                this.$el.parent().next().next().addClass('shopping-list-more--visible');
+                this.$el.next('.shopping-list-dropdown').addClass('shopping-list-dropdown--visible');
             }
-        },
-
-        /**
-         *
-         * @param updateData
-         */
-        updateAdditionalDropdown: function(updateData) {
-            this.$el.parent().next().next().find('.shopping-list-links__item:nth-child(' + this.selectedShoppingList + ') .shopping-list-links__text').text(updateData.label);
         }
     });
 
