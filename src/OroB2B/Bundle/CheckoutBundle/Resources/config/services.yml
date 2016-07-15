@@ -200,5 +200,7 @@ services:
 
     orob2b_checkout.workflow_state.mapper.payment_method_diff:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodDiffMapper'
+        arguments:
+            - '@orob2b_payment.payment_method.registry'
         tags:
              - { name: checkout.workflow_state.mapper }

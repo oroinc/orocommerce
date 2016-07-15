@@ -3,10 +3,23 @@
 namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
 class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
 {
     const DATA_NAME = 'paymentMethod';
+
+    /** @var PaymentMethodRegistry */
+    protected $paymentMethodRegistry;
+
+    /**
+     * @param PaymentMethodRegistry $paymentMethodRegistry
+     */
+    public function __construct(PaymentMethodRegistry $paymentMethodRegistry)
+    {
+        $this->paymentMethodRegistry = $paymentMethodRegistry;
+    }
+
 
     /**
      * @return int
@@ -43,8 +56,22 @@ class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function compareStates($checkout, array $savedState)
     {
-        return
-            isset($savedState[self::DATA_NAME]) &&
-            $savedState[self::DATA_NAME] === $checkout->getPaymentMethod();
+        if (!isset($savedState[self::DATA_NAME]) ||
+            !is_string($savedState[self::DATA_NAME])
+        ) {
+            return false;
+        }
+
+        $paymentMethod = $savedState[self::DATA_NAME];
+
+        try {
+            if (!$this->paymentMethodRegistry->getPaymentMethod($paymentMethod)->isEnabled()) {
+                return false;
+            }
+        } catch (\InvalidArgumentException $e) {
+            return false;
+        }
+
+        return $paymentMethod === $checkout->getPaymentMethod();
     }
 }
