@@ -139,7 +139,6 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
         }
     }
 
-
     /**
      * @param InputInterface $input
      * @param OutputInterface $output

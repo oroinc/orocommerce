@@ -58,7 +58,6 @@ OroB2B\Bundle\PricingBundle\Entity\PriceRule:
             - NotBlank:
                 message: 'orob2b.product.productunit.invalid'
         ruleCondition:
-            - NotBlank: ~
             - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleConditionalExpression: ~
         rule:
             - NotBlank: ~

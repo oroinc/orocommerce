@@ -96,7 +96,7 @@ class PriceListRepository extends EntityRepository
     public function getPriceListsWithRules()
     {
         $qb = $this->createQueryBuilder('priceList');
-        $qb->select('partial priceList.{id}, priceRule')
+        $qb->select('priceList, priceRule')
             ->leftJoin('priceList.priceRules', 'priceRule')
             ->where(
                 $qb->expr()->orX(
