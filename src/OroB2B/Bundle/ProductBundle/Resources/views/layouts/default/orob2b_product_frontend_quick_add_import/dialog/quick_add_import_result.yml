@@ -26,36 +26,36 @@ layout:
                     blockType: import_validation_items_count_text
                     options:
                         text: 'orob2b.product.frontend.quick_add.import_validation.total_items'
-                        collection: { '@value': $data.collection }
+                        collection: '=data["collection"]'
                 quick_add_import_validation_valid_items_count:
                     blockType: import_validation_items_count_text
                     options:
                         text: 'orob2b.product.frontend.quick_add.import_validation.valid_items'
-                        collection: { '@value': $data.collection }
+                        collection: '=data["collection"]'
                 quick_add_import_validation_invalid_items_count:
                     blockType: import_validation_items_count_text
                     options:
                         text: 'orob2b.product.frontend.quick_add.import_validation.invalid_items'
-                        collection: { '@value': $data.collection }
+                        collection: '=data["collection"]'
                 quick_add_import_validation_invalid_items:
                     blockType: import_validation_items
                     options:
-                        collection: { '@value': $data.collection }
+                        collection: '=data["collection"]'
                 quick_add_form:
                     blockType: container
                 quick_add_form_start:
                     blockType: form_start
                     options:
-                        form: { '@value': $data.orob2b_product_quick_add_form_provider }
+                        form: '=data["orob2b_product_quick_add_form_provider"]'
                         form_route_name: 'orob2b_product_frontend_quick_add_validation_result'
                 quick_add_form_fields:
                     blockType: form_fields
                     options:
-                        form: { '@value': $data.orob2b_product_quick_add_form_provider }
+                        form: '=data["orob2b_product_quick_add_form_provider"]'
                 quick_add_form_end:
                     blockType: form_end
                     options:
-                        form: { '@value': $data.orob2b_product_quick_add_form_provider }
+                        form: '=data["orob2b_product_quick_add_form_provider"]'
                 quick_add_form_buttons:
                     blockType: container
                 quick_add_form_cancel:
@@ -66,7 +66,7 @@ layout:
                         text: Back
                         style: gray
                         attr:
-                            'data-url': { '@value': $data.backToUrl }
+                            'data-url': '=data["backToUrl"]'
             tree:
                 widget_content:
                     quick_add_import_validation:
@@ -86,5 +86,6 @@ layout:
             id: widget_actions
             parentId: quick_add_form
             siblingId: quick_add_form_buttons
-    conditions:
-        '@eq': [$context.import_step, 'result']
+
+    conditions: 'context["import_step"]=="result"'
+

@@ -35,20 +35,20 @@ layout:
                 account_user_top_actions:
                     blockType: action_line_buttons
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        actions: { '@value': $data.actions.all }
-                        entity: { '@value': $data.entity }
+                        visible: '=data["entity"]!=null'
+                        actions: '=data["actions"].getAll()'
+                        entity: '=data["entity"]'
 
                 account_user_view_information:
                     blockType: container
                 account_user_view_information_title:
                     blockType: text
                     options:
-                        text: {'@value': 'orob2b.account.frontend.sections.account_user.my_profile'}
+                        text: 'orob2b.account.frontend.sections.account_user.my_profile'
                 account_user_view_information_content:
                     blockType: account_user_awere_block
                     options:
-                        accountUser: { '@value': $data.entity }
+                        accountUser: '=data["entity"]'
                 account_user_address_book:
                     blockType: container
                 account_user_address_book_head:
@@ -56,19 +56,20 @@ layout:
                 account_user_address_book_title:
                     blockType: text
                     options:
-                        text: {'@value': 'orob2b.account.frontend.sections.account_user.address_book'}
+                        text: 'orob2b.account.frontend.sections.account_user.address_book'
                 account_user_address_add_link:
                     blockType: link
                     options:
-                        visible: { '@acl': orob2b_account_frontend_account_user_address_create }
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_address_create")'
                         route_name: orob2b_account_frontend_account_user_address_create
-                        route_parameters: { entityId: {'@value': $data.entity.id }}
-                        text: {'@value': 'orob2b.account.address.add'}
+                        route_parameters:
+                            entityId: '=data["entity"].getId()'
+                        text: 'orob2b.account.address.add'
                         icon: plus
                 account_user_address_book_content:
                     blockType: address_book
                     options:
-                        entity: { '@value': $data.entity }
+                        entity: '=data["entity"]'
                         addressListRouteName: 'orob2b_api_account_frontend_get_accountuser_addresses'
                         addressCreateRouteName: 'orob2b_account_frontend_account_user_address_create'
                         addressCreateAclResource: 'orob2b_account_frontend_account_user_address_create'

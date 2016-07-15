@@ -7,10 +7,10 @@ layout:
                 checkout_sidebar:
                     blockType: checkout_sidebar
                     options:
-                        checkout: { '@value': $data.checkout }
-                        steps: { '@value': $data.orob2b_checkout_steps }
-                        currentStep: { '@value': $data.workflowStep }
-                        editTransitions: { '@value': $data.orob2b_checkout_back_transitions }
+                        checkout: '=data["checkout"]'
+                        steps: '=data["orob2b_checkout_steps"]'
+                        currentStep: '=data["workflowStep"]'
+                        editTransitions: '=data["orob2b_checkout_back_transitions"]'
                 enter_billing_address_information:
                     blockType: block
                 enter_shipping_address_information:
@@ -32,5 +32,5 @@ layout:
                         enter_shipping_method_information: ~
                         enter_payment_information: ~
                         step_edit_button: ~
-    conditions:
-        '@empty': [$context.widget_container]
+
+    conditions: '!context["widget_container"]'

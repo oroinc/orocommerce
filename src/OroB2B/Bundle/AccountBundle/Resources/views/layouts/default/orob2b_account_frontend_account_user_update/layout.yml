@@ -9,7 +9,7 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - { '@value': $data.entity.fullName }
+                - '=data["entity"].getFullName()'
                 - 'orob2b.account.frontend.title.account_user.edit'
                 - 'orob2b.account.frontend.account_user.entity_plural_label'
 
@@ -19,7 +19,7 @@ layout:
             optionValue:
                 label: 'orob2b.account.frontend.title.page.account_user.edit'
                 parameters:
-                    '%identifier%': { '@value': $data.entity.fullName }
+                    '%identifier%': '=data["entity"].getFullName()'
 
         - '@setOption':
             id: content
@@ -40,15 +40,15 @@ layout:
                 account_user_edit_form_start:
                     blockType: form_start
                     options:
-                        form: { '@value': $data.orob2b_account_frontend_account_user_form }
+                        form: '=data["orob2b_account_frontend_account_user_form"]'
                 account_user_edit_form_fields:
                     blockType: form_fields
                     options:
-                        form: { '@value': $data.orob2b_account_frontend_account_user_form }
+                        form: '=data["orob2b_account_frontend_account_user_form"]'
                 account_user_edit_form_end:
                     blockType: form_end
                     options:
-                        form: { '@value': $data.orob2b_account_frontend_account_user_form }
+                        form: '=data["orob2b_account_frontend_account_user_form"]'
                         render_rest: false
                 account_user_edit_form_actions:
                     blockType: container

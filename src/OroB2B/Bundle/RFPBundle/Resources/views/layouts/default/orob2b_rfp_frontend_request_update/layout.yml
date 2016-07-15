@@ -12,7 +12,7 @@ layout:
                 -
                     label: 'orob2b.frontend.rfp.request.edit_title.label'
                     parameters:
-                        '%id%': { '@value': $data.entity.id }
+                        '%id%': '=data["entity"].getId()'
 
         - '@setOption':
             id: page_title
@@ -25,7 +25,7 @@ layout:
             optionValue:
                 label: 'orob2b.frontend.rfp.request.edit_title.label'
                 parameters:
-                    '%id%': { '@value': $data.entity.id }
+                    '%id%': '=data["entity"].getId()'
 
         - '@add':
             id: account_sidebar
@@ -45,25 +45,25 @@ layout:
                 rfp_form_start:
                     blockType: form_start
                     options:
-                        form: { '@value': $data.orob2b_rfp_request_form }
+                        form: '=data["orob2b_rfp_request_form"]'
                 rfp_form_fields:
                     blockType: form_fields
                     options:
-                        form: { '@value': $data.orob2b_rfp_request_form }
+                        form: '=data["orob2b_rfp_request_form"]'
                 rfp_form_lineitems:
                     blockType: form_fields
                     options:
-                        form: { '@value': $data.orob2b_rfp_request_form }
+                        form: '=data["orob2b_rfp_request_form"]'
                 rfp_form_end:
                     blockType: form_end
                     options:
-                        form: { '@value': $data.orob2b_rfp_request_form }
+                        form: '=data["orob2b_rfp_request_form"]'
                 rfp_form_actions:
                     blockType: container
                 rfp_form_actions_back:
                     blockType: link
                     options:
-                        path: { '@value': $data.backToUrl }
+                        path: '=data["backToUrl"]'
                         text: orob2b.frontend.rfp.request.create_form.back.label
                         icon: cf-left-open-mini
                 rfp_form_actions_create:

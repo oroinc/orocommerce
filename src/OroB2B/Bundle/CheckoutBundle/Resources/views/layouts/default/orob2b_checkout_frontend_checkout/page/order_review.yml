@@ -15,18 +15,18 @@ layout:
                 checkout_button_continue_right:
                     blockType: checkout_transition_continue
                     options:
-                        transitionData: { '@value': $data.orob2b_checkout_continue_transition }
-                        checkout: { '@value': $data.checkout }
+                        transitionData: '=data["orob2b_checkout_continue_transition"]'
+                        checkout: '=data["checkout"]'
                 checkout_button_back_right:
                     blockType: checkout_transition_back
                     options:
-                        transitionData: { '@value': $data.orob2b_checkout_back_transition }
-                        checkout: { '@value': $data.checkout }
+                        transitionData: '=data["orob2b_checkout_back_transition"]'
+                        checkout: '=data["checkout"]'
             tree:
                 checkout_form:
                     checkout_form_buttons:
-                          checkout_button_continue_right: ~
-                          checkout_button_back_right: ~
+                        checkout_button_continue_right: ~
+                        checkout_button_back_right: ~
         - '@move':
             id: checkout_order_summary_table
             parentId: checkout_form_fields
@@ -35,7 +35,5 @@ layout:
             siblingId: checkout_form_fields
             prepend: false
 
-    conditions:
-        '@and':
-            - '@eq': [$context.workflowStepName, 'order_review']
-            - '@empty': [$context.widget_container]
+    conditions: 'context["workflowStepName"]=="order_review" && !context["widget_container"]'
+

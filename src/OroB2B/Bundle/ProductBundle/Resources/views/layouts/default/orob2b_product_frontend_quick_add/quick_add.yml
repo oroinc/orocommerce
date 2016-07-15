@@ -25,15 +25,15 @@ layout:
                 quick_add_form_start:
                     blockType: form_start
                     options:
-                        form: { '@value': $data.orob2b_product_quick_add_form_provider }
+                        form: '=data["orob2b_product_quick_add_form_provider"]'
                 quick_add_form_fields:
                     blockType: form_fields
                     options:
-                        form: { '@value': $data.orob2b_product_quick_add_form_provider }
+                        form: '=data["orob2b_product_quick_add_form_provider"]'
                 quick_add_form_end:
                     blockType: form_end
                     options:
-                        form: { '@value': $data.orob2b_product_quick_add_form_provider }
+                        form: '=data["orob2b_product_quick_add_form_provider"]'
                 quick_add_form_buttons:
                     blockType: block
             tree:

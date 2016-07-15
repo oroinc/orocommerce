@@ -5,22 +5,22 @@ layout:
             parentId: account_sidebar
             blockType: link
             options:
+                visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_view")'
                 route_name: orob2b_account_frontend_account_user_profile
                 text: orob2b.account.frontend.account_user.profile.label
-                visible: { '@acl': orob2b_account_frontend_account_user_view }
         - '@add':
             id: account_sidebar_account
             parentId: account_sidebar
             blockType: link
             options:
+                visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_view")'
                 route_name: orob2b_account_frontend_account_user_index
                 text: orob2b.account.frontend.account_user.entity_plural_label
-                visible: { '@acl': orob2b_account_frontend_account_user_view }
         - '@add':
             id: account_sidebar_account_role
             parentId: account_sidebar
             blockType: link
             options:
+                visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_role_index")'
                 route_name: orob2b_account_frontend_account_user_role_index
                 text: orob2b.account.frontend.account_user.role.entity_plural_label
-                visible: { '@acl': orob2b_account_frontend_account_user_role_index }

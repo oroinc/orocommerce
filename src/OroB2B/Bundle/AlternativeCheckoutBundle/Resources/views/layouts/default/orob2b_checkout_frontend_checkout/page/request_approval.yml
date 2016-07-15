@@ -11,7 +11,7 @@ layout:
         - '@setOption':
             id: checkout_form_fields
             optionName: transitionData
-            optionValue: { '@value': $data.orob2b_checkout_continue_transition }
+            optionValue: '=data["orob2b_checkout_continue_transition"]'
         - '@addTree':
             items:
                 checkout_form_buttons:
@@ -19,20 +19,18 @@ layout:
                 checkout_button_continue:
                     blockType: checkout_transition_continue
                     options:
-                        transitionData: { '@value': $data.orob2b_checkout_continue_transition }
-                        checkout: { '@value': $data.checkout }
+                        transitionData: '=data["orob2b_checkout_continue_transition"]'
+                        checkout: '=data["checkout"]'
                 checkout_button_back:
                     blockType: checkout_transition_back
                     options:
-                        transitionData: { '@value': $data.orob2b_checkout_back_transition }
-                        checkout: { '@value': $data.checkout }
+                        transitionData: '=data["orob2b_checkout_back_transition"]'
+                        checkout: '=data["checkout"]'
             tree:
                 checkout_form:
                     checkout_form_buttons:
-                          checkout_button_continue: ~
-                          checkout_button_back: ~
-    conditions:
-        '@and':
-            - '@eq': [$context.workflowName, 'b2b_flow_alternative_checkout']
-            - '@eq': [$context.workflowStepName, 'request_approval']
-            - '@empty': [$context.widget_container]
+                        checkout_button_continue: ~
+                        checkout_button_back: ~
+
+    conditions: 'context["workflowStepName"]=="request_approval" && context["workflowName"=="b2b_flow_alternative_checkout"] && !context["widget_container"]'
+

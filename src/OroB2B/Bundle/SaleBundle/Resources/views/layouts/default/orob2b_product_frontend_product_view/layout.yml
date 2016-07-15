@@ -7,10 +7,10 @@ layout:
             parentId: product_prices
             blockType: units_request_for_quote
             options:
-                units: { @value: $data.product_units_without_prices }
+                units: '=data["product_units_without_prices"]'
         - @add:
             id: request_a_quote_form_button
             parentId: line_item_buttons
             blockType: block
             options:
-                visible: { @has_elements: $data.product_units_without_prices }
+                visible: '=data["product_units_without_prices"]!=null'
