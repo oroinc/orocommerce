@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Storage;
 
-interface CheckoutStateDiffStorageInterface
+interface CheckoutDiffStorageInterface
 {
     /**
      * @param object $entity
