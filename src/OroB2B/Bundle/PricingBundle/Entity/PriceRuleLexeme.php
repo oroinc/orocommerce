@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="orob2b_price_rule_lexeme")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository")
  */
 class PriceRuleLexeme
 {
@@ -37,9 +37,24 @@ class PriceRuleLexeme
      * @var PriceRule
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceRule", inversedBy="lexemes")
-     * @ORM\JoinColumn(name="price_rule_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="price_rule_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      **/
     protected $priceRule;
+
+    /**
+     * @var PriceList
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList", inversedBy="priceRules")
+     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     **/
+    protected $priceList;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="relation_id", type="integer", nullable=true)
+     */
+    protected $relationId;
 
     /**
      * @return int
@@ -51,14 +66,17 @@ class PriceRuleLexeme
 
     /**
      * @param PriceRule $priceRule
+     * @return $this
      */
-    public function setPriceRule($priceRule)
+    public function setPriceRule(PriceRule $priceRule = null)
     {
         $this->priceRule = $priceRule;
+
+        return $this;
     }
 
     /**
-     * @return PriceRule
+     * @return PriceRule|null
      */
     public function getPriceRule()
     {
@@ -101,5 +119,43 @@ class PriceRuleLexeme
     public function getFieldName()
     {
         return $this->fieldName;
+    }
+
+    /**
+     * @return PriceList|null
+     */
+    public function getPriceList()
+    {
+        return $this->priceList;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return $this
+     */
+    public function setPriceList(PriceList $priceList = null)
+    {
+        $this->priceList = $priceList;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRelationId()
+    {
+        return $this->relationId;
+    }
+
+    /**
+     * @param int $relationId
+     * @return $this
+     */
+    public function setRelationId($relationId)
+    {
+        $this->relationId = $relationId;
+        
+        return $this;
     }
 }

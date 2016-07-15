@@ -516,8 +516,10 @@ services:
         arguments:
             - '@orob2b_pricing.builder.combined_price_list_activation_plan_builder'
             - '@orob2b_pricing.price_list_change_trigger_handler'
+            - '@orob2b_pricing.hander.price_rule_lexeme_handler'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit.orob2b_pricing_price_list, method: beforeSubmit }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_pricing_price_list, method: onPostSubmit }
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.orob2b_pricing_price_list, method: afterFlush }
 
     orob2b_pricing.system_config_converter:
@@ -771,3 +773,10 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator'
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing.validator_constraints.price_rule_expression_validator }
+
+    orob2b_pricing.hander.price_rule_lexeme_handler:
+        class: 'OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@orob2b_pricing.expression.parser'
+            - '@orob2b_pricing.provider.price_rule_fields_provider'

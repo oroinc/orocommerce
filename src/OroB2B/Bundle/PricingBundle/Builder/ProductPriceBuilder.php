@@ -61,7 +61,7 @@ class ProductPriceBuilder
 
     /**
      * @param PriceList $priceList
-     * @param Product $product
+     * @param Product|null $product
      */
     public function buildByPriceList(PriceList $priceList, Product $product = null)
     {
@@ -69,23 +69,60 @@ class ProductPriceBuilder
         if (count($priceList->getPriceRules()) > 0) {
             $rules = $this->getSortedRules($priceList);
             foreach ($rules as $rule) {
-                $this->buildByRule($rule, $product, true);
+                $this->applyRule($rule, $product);
             }
         }
+        $this->fillTriggers($priceList, $product);
     }
 
     /**
      * @param PriceRule $priceRule
      * @param Product|null $product
-     * @param bool $skipClear
      */
-    public function buildByRule(PriceRule $priceRule, Product $product = null, $skipClear = false)
+    public function buildByRule(PriceRule $priceRule, Product $product = null)
     {
-        $this->applyRule($priceRule, $product, $skipClear);
+        $this->getProductPriceRepository()->deleteGeneratedPricesByRule($priceRule, $product);
+        $this->applyRule($priceRule, $product);
+        $this->fillTriggers($priceRule->getPriceList(), $product);
+    }
+
+    /**
+     * @param PriceRule $priceRule
+     * @param Product|null $product
+     */
+    protected function applyRule(PriceRule $priceRule, Product $product = null)
+    {
+        $this->insertFromSelectQueryExecutor->execute(
+            ProductPrice::class,
+            $this->ruleCompiler->getOrderedFields(),
+            $this->ruleCompiler->compile($priceRule, $product)
+        );
+    }
+
+    /**
+     * @return ProductPriceRepository
+     */
+    protected function getProductPriceRepository()
+    {
+        if (!$this->productPriceRepository) {
+            $this->productPriceRepository = $this->registry
+                ->getManagerForClass(ProductPrice::class)
+                ->getRepository(ProductPrice::class);
+        }
+
+        return $this->productPriceRepository;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param Product|null $product
+     */
+    protected function fillTriggers(PriceList $priceList, Product $product = null)
+    {
         if ($product === null) {
-            $this->triggersFiller->fillTriggersByPriceList($priceRule->getPriceList());
+            $this->triggersFiller->fillTriggersByPriceList($priceList);
         } else {
-            $this->triggersFiller->createTriggerByPriceListProduct($priceRule->getPriceList(), $product);
+            $this->triggersFiller->createTriggerByPriceListProduct($priceList, $product);
         }
     }
 
@@ -108,36 +145,5 @@ class ProductPriceBuilder
         );
 
         return $rules;
-    }
-
-    /**
-     * @param PriceRule $priceRule
-     * @param Product|null $product
-     * @param bool $skipClear
-     */
-    protected function applyRule(PriceRule $priceRule, Product $product = null, $skipClear = false)
-    {
-        if (!$skipClear) {
-            $this->getProductPriceRepository()->deleteGeneratedPricesByRule($priceRule, $product);
-        }
-        $this->insertFromSelectQueryExecutor->execute(
-            ProductPrice::class,
-            $this->ruleCompiler->getOrderedFields(),
-            $this->ruleCompiler->compile($priceRule, $product)
-        );
-    }
-
-    /**
-     * @return ProductPriceRepository
-     */
-    protected function getProductPriceRepository()
-    {
-        if (!$this->productPriceRepository) {
-            $this->productPriceRepository = $this->registry
-                ->getManagerForClass(ProductPrice::class)
-                ->getRepository(ProductPrice::class);
-        }
-
-        return $this->productPriceRepository;
     }
 }
