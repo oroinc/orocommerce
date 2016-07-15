@@ -52,7 +52,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *      }
  * )
  */
-class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
+class AccountUserRole extends AbstractRole implements OrganizationAwareInterface, \Serializable
 {
     const PREFIX_ROLE = 'ROLE_FRONTEND_';
 
@@ -317,7 +317,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function serialize()
     {
@@ -325,13 +325,13 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
             [
                 $this->id,
                 $this->role,
-                $this->label
+                $this->label,
             ]
         );
     }
 
     /**
-     * @param string $serialized
+     * {@inheritdoc}
      */
     public function unserialize($serialized)
     {
