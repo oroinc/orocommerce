@@ -2,13 +2,63 @@
 
 namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
 
-class PriceRuleExpressionValidator extends AbstractPriceRuleExpressionValidator
+use Symfony\Component\ExpressionLanguage\SyntaxError;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidator;
+
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
+
+class PriceRuleExpressionValidator extends ConstraintValidator
 {
     /**
+     * @var ExpressionParser
+     */
+    protected $parser;
+
+    /**
+     * @var PriceRuleFieldsProvider
+     */
+    protected $priceRuleFieldsProvider;
+
+    /**
+     * @param ExpressionParser $parser
+     * @param PriceRuleFieldsProvider $priceRuleFieldsProvider
+     */
+    public function __construct(ExpressionParser $parser, PriceRuleFieldsProvider $priceRuleFieldsProvider)
+    {
+        $this->parser = $parser;
+        $this->priceRuleFieldsProvider = $priceRuleFieldsProvider;
+    }
+
+    /**
+     * @param string $value
+     * @param PriceRuleExpression $constraint
+     *
      * {@inheritdoc}
      */
-    protected function getSupportedFields($className)
+    public function validate($value, Constraint $constraint)
     {
-        return $this->priceRuleFieldsProvider->getFields($className);
+        if ($value === null || $value === '') {
+            return;
+        }
+        try {
+            $lexemesInfo = $this->parser->getUsedLexemes($value);
+            foreach ($lexemesInfo as $class => $fields) {
+                $supportedFields = $this->priceRuleFieldsProvider->getFields(
+                    $class,
+                    $constraint->numericOnly,
+                    $constraint->withRelations
+                );
+                // Add possibility lexemes without fields
+                $supportedFields[] = null;
+                $unsupportedFields = array_diff($fields, $supportedFields);
+                if (count($unsupportedFields) > 0) {
+                    $this->context->addViolation($constraint->message);
+                }
+            }
+        } catch (SyntaxError $ex) {
+            $this->context->addViolation($constraint->message);
+        }
     }
 }

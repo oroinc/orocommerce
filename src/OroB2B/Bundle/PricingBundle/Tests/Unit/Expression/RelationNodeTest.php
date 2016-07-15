@@ -18,5 +18,6 @@ class RelationNodeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('testClass::relation', $node->getRelationAlias());
 
         $this->assertEquals([$node], $node->getNodes());
+        $this->assertFalse($node->isBoolean());
     }
 }

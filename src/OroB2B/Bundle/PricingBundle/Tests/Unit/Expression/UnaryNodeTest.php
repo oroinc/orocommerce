@@ -23,4 +23,40 @@ class UnaryNodeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals([$node, $subnode], $node->getNodes());
     }
+
+    public function testIsBooleanTrue()
+    {
+        /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $subnode */
+        $subnode = $this->getMock(NodeInterface::class);
+        $subnode->expects($this->once())
+            ->method('isBoolean')
+            ->willReturn(true);
+
+        $node = new UnaryNode($subnode, 'not');
+        $this->assertTrue($node->isBoolean());
+    }
+
+    public function testIsBooleanIsNotNot()
+    {
+        /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $subnode */
+        $subnode = $this->getMock(NodeInterface::class);
+        $subnode->expects($this->any())
+            ->method('isBoolean')
+            ->willReturn(true);
+
+        $node = new UnaryNode($subnode, '-');
+        $this->assertFalse($node->isBoolean());
+    }
+
+    public function testIsBooleanFalseSub()
+    {
+        /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $subnode */
+        $subnode = $this->getMock(NodeInterface::class);
+        $subnode->expects($this->any())
+            ->method('isBoolean')
+            ->willReturn(false);
+
+        $node = new UnaryNode($subnode, 'not');
+        $this->assertFalse($node->isBoolean());
+    }
 }

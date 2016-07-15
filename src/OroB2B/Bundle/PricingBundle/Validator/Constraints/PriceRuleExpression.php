@@ -12,6 +12,16 @@ class PriceRuleExpression extends Constraint
     public $message = 'orob2b.pricing.validators.product_price.expression_is_invalid.message';
 
     /**
+     * @var bool
+     */
+    public $withRelations = false;
+
+    /**
+     * @var bool
+     */
+    public $numericOnly = false;
+
+    /**
      * {@inheritdoc}
      */
     public function validatedBy()

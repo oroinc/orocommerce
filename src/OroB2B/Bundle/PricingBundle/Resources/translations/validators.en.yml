@@ -1,6 +1,8 @@
 orob2b:
     pricing:
           validators:
+              logical_expression:
+                  message: 'Invalid logical expression'
               price_attrirute_price_list:
                   fieldName.message: 'Field Name cannot contains special chars or spaces'
               price_list:

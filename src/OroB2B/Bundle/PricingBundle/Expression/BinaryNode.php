@@ -10,12 +10,19 @@ class BinaryNode implements NodeInterface
     protected static $booleanOperations = [
         'and' => true,
         'or' => true,
+    ];
+
+    /**
+     * @var array
+     */
+    protected static $booleanExpressions = [
         '==' => true,
         '!=' => true,
         '>' => true,
         '<' => true,
         '<=' => true,
-        '>=' => true
+        '>=' => true,
+        'like' => true
     ];
 
     /**
@@ -104,11 +111,31 @@ class BinaryNode implements NodeInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function isBoolean()
+    {
+        if ($this->isBooleanOperation()) {
+            return $this->getLeft()->isBoolean() && $this->getRight()->isBoolean();
+        }
+
+        return $this->isBooleanExpression();
+    }
+
+    /**
      * @return bool
      */
-    public function isBooleanOperation()
+    protected function isBooleanOperation()
     {
-        return !$this->isMathOperation();
+        return !empty(self::$booleanOperations[$this->getOperation()]);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isBooleanExpression()
+    {
+        return !empty(self::$booleanExpressions[$this->getOperation()]);
     }
 
     /**
@@ -116,6 +143,8 @@ class BinaryNode implements NodeInterface
      */
     public function isMathOperation()
     {
-        return empty(self::$booleanOperations[$this->getOperation()]);
+        $operation = $this->getOperation();
+
+        return empty(self::$booleanOperations[$operation]) && empty(self::$booleanExpressions[$operation]);
     }
 }

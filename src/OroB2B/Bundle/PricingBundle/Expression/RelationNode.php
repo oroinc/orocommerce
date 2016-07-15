@@ -70,4 +70,12 @@ class RelationNode implements NodeInterface
     {
         return $this->getContainer() . '::' . $this->getField();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isBoolean()
+    {
+        return false;
+    }
 }
