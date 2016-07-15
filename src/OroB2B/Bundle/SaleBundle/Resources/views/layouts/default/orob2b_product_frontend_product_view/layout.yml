@@ -1,7 +1,7 @@
 layout:
     actions:
         - @setBlockTheme:
-            themes: 'OroB2BSaleBundle:layouts:default/orob2b_product_frontend_product_view/layout.html.twig'
+            themes: 'layout.html.twig'
         - @add:
             id: units_request_for_quote
             parentId: product_prices
@@ -10,7 +10,7 @@ layout:
                 units: { @value: $data.product_units_without_prices }
         - @add:
             id: request_a_quote_form_button
-            parentId: line_item_buttons
+            parentId: line_item_form_buttons
             blockType: block
             options:
                 visible: { @has_elements: $data.product_units_without_prices }

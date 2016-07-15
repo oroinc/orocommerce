@@ -1,33 +1,14 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_view/line_item_form.html.twig'
-        - '@addTree':
-            items:
-                line_item_form:
-                    blockType: container
-                    siblingId: product_specification
-                line_item_form_start:
-                    blockType: form_start
-                    options:
-                        form: { '@value': $data.orob2b_product_line_item_form }
-                line_item_form_fields:
-                    blockType: form_fields
-                    options:
-                        preferred_fields: [quantity]
-                        form: { '@value': $data.orob2b_product_line_item_form }
-                line_item_form_end:
-                    blockType: form_end
-                    options:
-                        form: { '@value': $data.orob2b_product_line_item_form }
-                line_item_buttons:
-                    blockType: container
-            tree:
-                product_specification_container:
-                    line_item_form:
-                        line_item_form_start: ~
-                        line_item_form_fields: ~
-                        line_item_buttons: ~
-                        line_item_form_end: ~
+            themes: 'line_item_form.html.twig'
+        - '@move':
+            id: line_item_form
+            parentId: product_specification_container
+            siblingId: product_specification
+    imports:
+        -
+            id: orob2b_product_line_item_form
+            root: product_specification_container
     conditions:
         '@neq': [ $context.logged_user, null ]

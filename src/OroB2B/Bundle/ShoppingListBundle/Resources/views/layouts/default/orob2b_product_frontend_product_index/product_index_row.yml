@@ -1,11 +1,11 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_product_frontend_product_index/product_index_row.html.twig'
+            themes: 'product_index_row.html.twig'
         - '@add':
             id: add_to_shopping_list_form_button
             blockType: add_to_shopping_list_form_button
-            parentId: line_item_buttons
+            parentId: line_item_form_buttons
             siblingId: ~
             prepend: true
             options:

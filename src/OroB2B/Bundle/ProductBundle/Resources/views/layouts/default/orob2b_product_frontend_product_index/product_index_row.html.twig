@@ -190,7 +190,7 @@
     </div>
 {% endblock %}
 
-{% block _line_item_buttons_widget %}
+{% block _line_item_form_buttons_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if block.children is not empty %}
         {% set attr = attr|merge({class: attr.class|default('') ~ " add-product-from-view-component "}) %}

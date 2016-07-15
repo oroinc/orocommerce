@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'quick_add_import_result.html.twig'
+            themes: '../../orob2b_product_frontend_quick_add_import/dialog/quick_add_import_result.html.twig'
         - '@setOption':
             id: widget_content
             optionName: 'attr.data-page-component-module'
@@ -17,11 +17,9 @@ layout:
             blockType: button
             options:
                 type: button
-                action: button
-                text: Back
+                action: reset
+                text: Cancel
                 style: gray
-                attr:
-                    'data-url': { '@value': $data.backToUrl }
         - '@setOption':
             id: quick_add_form_start
             optionName: form_route_name
