@@ -1,5 +1,4 @@
-{# main menu: items #}
-{% block _main_menu_container_new_widget %}
+{% block _sidebar_main_menu_container_widget %}
     {% set attr = layout_attr_merge(attr, {'~class': " account-sidebar"}) %}
     <div {{ block('block_attributes') }}>
         <ul class="top-nav__list main-menu-container">
@@ -8,8 +7,7 @@
     </div>
 {% endblock %}
 
-{# main menu: product categories #}
-{% block _main_menu_container_categories_widget %}
+{% block _sidebar_product_categories_container_widget %}
     {% set attr = layout_attr_merge(attr, {'~class': " account-sidebar"}) %}
     <div {{ block('block_attributes') }}>
         <div class="collapse-view expanded"

@@ -1,4 +1,0 @@
-layout:
-    actions:
-        - '@setBlockTheme':
-            themes: 'OroB2BMenuBundle:layouts:custom/menu.html.twig'

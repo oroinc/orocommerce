@@ -1,0 +1,31 @@
+{% block _quick_access_menu_widget %}
+    {% set attr = layout_attr_merge(attr, {'~class': " account-sidebar"}) %}
+    <div {{ block('block_attributes') }}>
+        <ul class="navigation-widget__list">
+            <li>
+                <a href="{{ path('orob2b_product_frontend_quick_add') }}">
+                  <span class="badge badge_sm badge_circled-corners badge_orange navigation-widget__badge">
+                    <i class="cf-flash"></i>
+                  </span>
+                    <span>Quick Order Form</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ path('orob2b_sale_quote_frontend_index') }}">
+                  <span class="badge badge_sm badge_circled-corners badge_orange-light navigation-widget__badge">
+                    <i class="cf-local_offer"></i>
+                  </span>
+                    <span>Quotes</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ path('orob2b_order_frontend_index') }}">
+                  <span class="badge badge_sm badge_circled-corners badge_yellow navigation-widget__badge">
+                    <i class="cf-assignment"></i>
+                  </span>
+                    <span>Purchase Orders</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+{% endblock %}

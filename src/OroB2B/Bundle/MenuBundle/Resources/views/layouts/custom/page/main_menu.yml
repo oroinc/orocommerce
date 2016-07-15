@@ -4,49 +4,41 @@ layout:
             themes: 'OroB2BMenuBundle:layouts:custom/page/main_menu.html.twig'
         - '@addTree':
             items:
-                main_menu_container_new:
+                sidebar_main_menu_container:
                     blockType: container
-                main_menu_container_categories:
+                    siblingId: account_sidebar
+                    prepend: false
+                sidebar_product_categories_container:
                     blockType: container
+                    siblingId: account_sidebar
+                    prepend: false
+                sidebar_quick_access_menu_container:
+                    blockType: container
+                    siblingId: account_sidebar
+                    prepend: false
             tree:
-                header:
-                    main_menu_container_new: ~
-                    main_menu_container_categories: ~
-
-        # moving main menu items into a separate container...
+                sidebar_left:
+                    sidebar_main_menu_container: ~
+                    sidebar_product_categories_container: ~
+                    sidebar_quick_access_menu_container: ~
         - '@move':
             id: main_menu
-            parentId: main_menu_container_new
+            parentId: sidebar_main_menu_container
             prepend: true
-        # ... then moving the container to sidebar
-        - '@move':
-            id: main_menu_container_new
-            parentId: sidebar_left
-            siblingId: account_sidebar
-            prepend: false
-
-        # moving main menu categories into a separate container...
         - '@move':
             id: categories_main_menu
-            parentId: main_menu_container_categories
+            parentId: sidebar_product_categories_container
             prepend: true
-        # ... then moving the container to sidebar
-        - '@move':
-            id: main_menu_container_categories
-            parentId: sidebar_left
-            siblingId: account_sidebar
-            prepend: false
-
-        # move shopping lists to sidebar
-        - '@move':
-            id: main_menu_shopping_lists_wrapper
-            parentId: main_menu_container_categories
-            prepend: false
-
-        # remove empty block: 'nav.top-nav'
         - '@remove':
             id: main_menu_container
-
+        - '@move':
+            id: quick_access_menu
+            parentId: sidebar_quick_access_menu_container
+            prepend: true
+        - '@move':
+            id: main_menu_shopping_lists_wrapper
+            parentId: quick_access_container
+            prepend: false
     conditions:
             '@and':
                 - '@neq': [ $context.logged_user, null ]
