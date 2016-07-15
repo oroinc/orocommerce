@@ -57,7 +57,7 @@ services:
         arguments:
             - '@orob2b_tax.provider.taxation_settings_provider'
             - '@orob2b_tax.manager.tax_manager'
-            - '@orob2b_tax.provider.tax_subtotal'
+            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
             - '@orob2b_order.form.section.provider'
             - 'orob2b_order_line_item'
         tags:
@@ -68,7 +68,7 @@ services:
         arguments:
             - '@orob2b_tax.provider.taxation_settings_provider'
             - '@orob2b_tax.manager.tax_manager'
-            - '@orob2b_tax.provider.tax_subtotal'
+            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
             - '@orob2b_order.form.section.provider'
             - 'orob2b_order_line_item_frontend'
         tags:

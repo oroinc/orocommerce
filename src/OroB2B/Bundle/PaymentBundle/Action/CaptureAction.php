@@ -50,6 +50,7 @@ class CaptureAction extends AbstractPaymentMethodAction
                     'successful' => $capturePaymentTransaction->isSuccessful(),
                     'message' => null,
                 ],
+                (array) $capturePaymentTransaction->getTransactionOptions(),
                 $response
             )
         );

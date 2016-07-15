@@ -107,6 +107,11 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      */
     protected $sell;
 
+    public function __clone()
+    {
+        $this->id = null;
+    }
+
     /**
      * @return int
      */
@@ -251,7 +256,11 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      */
     public function getProductUnitCode()
     {
-        return $this->getUnit()->getCode();
+        if ($unit = $this->getUnit()) {
+            return $unit->getCode();
+        } else {
+            return null;
+        }
     }
 
     /**

@@ -7,7 +7,7 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     /**
-     * @export orob2border/js/app/components/products-prices-component
+     * @export orob2border/js/app/components/notes-component
      * @extends oroui.app.components.base.Component
      * @class orob2border.app.components.NotesComponent
      */

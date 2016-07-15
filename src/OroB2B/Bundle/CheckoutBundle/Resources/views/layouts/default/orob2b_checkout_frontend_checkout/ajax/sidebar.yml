@@ -5,13 +5,12 @@ layout:
         - '@addTree':
             items:
                 checkout_sidebar:
-                    blockType: container
+                    blockType: checkout_sidebar
                     options:
-                        vars:
-                            checkout: { '@value': $data.checkout }
-                            steps: { '@value': $data.orob2b_checkout_steps }
-                            currentStep: { '@value': $data.workflowStep }
-                            editTransitions: { '@value': $data.orob2b_checkout_back_transitions }
+                        checkout: { '@value': $data.checkout }
+                        steps: { '@value': $data.orob2b_checkout_steps }
+                        currentStep: { '@value': $data.workflowStep }
+                        editTransitions: { '@value': $data.orob2b_checkout_back_transitions }
                 enter_billing_address_information:
                     blockType: block
                 enter_shipping_address_information:

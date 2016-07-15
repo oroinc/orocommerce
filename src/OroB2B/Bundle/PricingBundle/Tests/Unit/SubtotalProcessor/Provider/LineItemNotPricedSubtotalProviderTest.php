@@ -100,6 +100,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     {
         $value = 142.0;
         $currency = 'USD';
+        $identifier = '1-code-2-USD';
 
         $this->translator->expects($this->once())
             ->method('trans')
@@ -109,7 +110,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
         $product = $this->prepareProduct();
         $productUnit = $this->prepareProductUnit();
         $this->prepareEntityManager($product, $productUnit);
-        $this->preparePrice($value);
+        $this->preparePrice($value, $identifier);
 
         $entity = new EntityNotPricedStub();
         $lineItem = new LineItemNotPricedStub();
@@ -230,8 +231,9 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
 
     /**
      * @param $value
+     * @param $identifier
      */
-    protected function preparePrice($value)
+    protected function preparePrice($value, $identifier)
     {
         /** @var Price $price */
         $price = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Entity\Price')
@@ -242,6 +244,6 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->willReturn($value);
         $this->productPriceProvider->expects($this->any())
             ->method('getMatchedPrices')
-            ->willReturn([$price]);
+            ->willReturn([$identifier => $price]);
     }
 }

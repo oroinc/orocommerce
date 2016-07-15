@@ -1,27 +1,97 @@
 services:
-    orob2b_checkout.layout.block.type.abstract_transition_button:
+    orob2b_checkout.layout.block_type.abstract_transition_button:
         abstract: true
         parent: oro_layout.block_type.abstract_configurable
         calls:
             - [setOptionsConfig, [{transitionData: {required: true}, checkout: {required: true}}]]
 
-    orob2b_checkout.layout.block.type.transition_button.back:
-        parent: orob2b_checkout.layout.block.type.abstract_transition_button
+    orob2b_checkout.layout.block_type.checkout_transition_back:
+        parent: orob2b_checkout.layout.block_type.abstract_transition_button
         calls:
             - [setName, ['checkout_transition_back']]
         tags:
             - { name: layout.block_type, alias: checkout_transition_back }
 
-    orob2b_checkout.layout.block.type.transition_button.continue:
-        parent: orob2b_checkout.layout.block.type.abstract_transition_button
+    orob2b_checkout.layout.block_type.checkout_transition_continue:
+        parent: orob2b_checkout.layout.block_type.abstract_transition_button
         calls:
             - [setName, ['checkout_transition_continue']]
         tags:
             - { name: layout.block_type, alias: checkout_transition_continue }
 
-    orob2b_checkout.layout.block.type.transition_button.edit:
-        parent: orob2b_checkout.layout.block.type.abstract_transition_button
+    orob2b_checkout.layout.block_type.checkout_transition_step_edit:
+        parent: orob2b_checkout.layout.block_type.abstract_transition_button
         calls:
             - [setName, ['checkout_transition_step_edit']]
         tags:
             - { name: layout.block_type, alias: checkout_transition_step_edit }
+
+    orob2b_checkout.layout.block_type.checkout_information:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{workflowStep: {required: true}, stepOrder: {default: '-'}}]]
+            - [setName, ['checkout_information']]
+        tags:
+            - { name: layout.block_type, alias: checkout_information }
+
+    orob2b_checkout.layout.block_type.checkout_form:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        checkout: {required: true}
+                        form: {required: true}
+            - [setName, ['checkout_form']]
+        tags:
+            - { name: layout.block_type, alias: checkout_form }
+
+    orob2b_checkout.layout.block_type.checkout_form_fields:
+        parent: orob2b_checkout.layout.block_type.checkout_form
+        calls:
+            - [setName, ['checkout_form_fields']]
+        tags:
+            - { name: layout.block_type, alias: checkout_form_fields }
+
+    orob2b_checkout.layout.block_type.checkout_order_summary:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        checkout: {required: true}
+                        summary: {required: true}
+            - [setName, ['checkout_order_summary']]
+        tags:
+            - { name: layout.block_type, alias: checkout_order_summary }
+
+    orob2b_checkout.layout.block_type.checkout_order_summary_table:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        checkout: {required: true}
+                        summary: {required: true}
+                        workflowStep: {required: true}
+            - [setName, ['checkout_order_summary_table']]
+        tags:
+            - { name: layout.block_type, alias: checkout_order_summary_table }
+
+    orob2b_checkout.layout.block_type.checkout_sidebar:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        checkout: {required: true}
+                        steps: {required: true}
+                        currentStep: {required: true}
+                        editTransitions: {required: true}
+            - [setName, ['checkout_sidebar']]
+        tags:
+            - { name: layout.block_type, alias: checkout_sidebar }

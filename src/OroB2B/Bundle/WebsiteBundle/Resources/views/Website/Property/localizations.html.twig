@@ -1,8 +1,0 @@
-{% set localizations = record.getValue('localizations').toArray() %}
-
-{% set codes = [] %}
-{% for localization in localizations %}
-    {% set codes = codes|merge([localization.languageCode]) %}
-{% endfor %}
-
-{{ codes|join(', ') }}

@@ -46,3 +46,11 @@ services:
             - [setName, ['order_total']]
         tags:
              - { name: layout.block_type, alias: order_total }
+
+    orob2b_product.layout.type.success_order:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{order: {required: true}}]]
+            - [setName, ['success_order']]
+        tags:
+             - { name: layout.block_type, alias: success_order }

@@ -1,0 +1,8 @@
+services:
+    orob2b_pricing.layout.type.product_prices:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{prices: {required: true}}]]
+            - [setName, ['product_prices']]
+        tags:
+             - { name: layout.block_type, alias: product_prices }

@@ -31,9 +31,6 @@ class OrderType extends AbstractType
     /** @var string */
     protected $dataClass;
 
-    /** @var string */
-    protected $websiteClass = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
-
     /** @var OrderAddressSecurityProvider */
     protected $orderAddressSecurityProvider;
 
@@ -88,14 +85,6 @@ class OrderType extends AbstractType
                 [
                     'label' => 'orob2b.order.account_user.label',
                     'required' => false,
-                ]
-            )
-            ->add(
-                'website',
-                'entity',
-                [
-                    'class' => $this->websiteClass,
-                    'label' => 'orob2b.order.website.label'
                 ]
             )
             ->add('poNumber', 'text', ['required' => false, 'label' => 'orob2b.order.po_number.label'])
@@ -262,14 +251,6 @@ class OrderType extends AbstractType
         $paymentTerm = $this->paymentTermProvider->getAccountGroupPaymentTerm($account->getGroup());
 
         return $paymentTerm ? $paymentTerm->getId() : null;
-    }
-
-    /**
-     * @param string $websiteClass
-     */
-    public function setWebsiteClass($websiteClass)
-    {
-        $this->websiteClass = $websiteClass;
     }
 
     /**

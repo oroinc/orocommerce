@@ -42,3 +42,20 @@ orob2b:
 
         inventory:
             entity_plural_label: Inventories
+
+        datagrid:
+            order:
+                label: Warehouse
+            order_line_item:
+                label: Warehouse
+
+        form:
+            order:
+                label: Warehouse
+
+    order:
+        orderlineitem:
+            warehouse:
+                label: Warehouse
+        warehouse:
+            label: Warehouse
