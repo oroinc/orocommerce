@@ -35,8 +35,7 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData',
-            'Oro\Bundle\LocaleBundle\Migrations\Data\ORM\LoadLocalizationData'
+            'Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData'
         ];
     }
 
@@ -53,17 +52,12 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
 
         $url = $this->container->get('oro_config.manager')->get('oro_ui.application_url');
 
-        //todo fix localization reference retrieval if changed BB-3367
-        ///** @var Localization $localization */
-        //$localization = $this->getReference('default_localization');
-
         $website = new Website();
         $website
             ->setName(self::DEFAULT_WEBSITE_NAME)
             ->setOrganization($organization)
             ->setOwner($businessUnit)
             ->setUrl($url);
-        //->addLocalization($localization); //todo add localization direct to configuration impl in BB-3367
 
         $manager->persist($website);
         /** @var EntityManager $manager */
