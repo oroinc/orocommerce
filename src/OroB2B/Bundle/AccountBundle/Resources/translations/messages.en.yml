@@ -31,7 +31,7 @@ orob2b.account:
             name_prefix: 'Enter your name prefix'
             name_suffix: 'Enter your name suffix'
         action:
-            create.label: 'Save'
+            create.label: 'Create'
             save.label: 'Save'
             cancel.label: 'Cancel'
 

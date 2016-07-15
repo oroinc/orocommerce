@@ -1,15 +1,15 @@
-{% block _account_user_edit_page_widget %}
+{% block _account_user_page_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
     }) %}
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
-{% block _account_user_edit_form_start_widget %}
+{% block __orob2b_account_user_form__account_user_form_start_widget %}
     {{ block_widget(block) }}
 {% endblock %}
 
-{% block _account_user_edit_form_fields_widget %}
+{% block __orob2b_account_user_form__account_user_form_fields_widget %}
     {{ form_row(form._token) }}
 
     <fieldset class="profile__form__row">
@@ -69,7 +69,7 @@
     {{ form_row(form.account)}}
 {% endblock %}
 
-{% block _account_user_edit_form_actions_widget %}
+{% block __orob2b_account_user_form__account_user_form_actions_widget %}
     {{ block_widget(block) }}
     <fieldset class="profile__form__row">
         <div class="profile__form__req-text"><sup>*</sup>
