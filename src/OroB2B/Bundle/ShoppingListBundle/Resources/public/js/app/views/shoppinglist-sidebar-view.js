@@ -10,13 +10,11 @@ define(function(require) {
     var ShoppingListSidebarView;
 
     ShoppingListSidebarView = BaseView.extend({
-
-        eventChannelId: null,
-
         /**
          * @property {Object}
          */
         options: {
+            eventChannelId: null,
             shoppingListCount: null,
             shoppingListVisible: 6
         },
@@ -27,12 +25,9 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            this.$el = options._sourceElement;
-            this.eventChannelId = options.eventChannelId;
-            this.selectedShoppingList = options.selectedShoppingList;
 
             // listen to incoming title updates and re-render the whole shopping list
-            mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateCurrentTitle, this);
+            mediator.on('shopping-list-event:' + this.options.eventChannelId + ':update', this.updateCurrentTitle, this);
 
             this.hideTail(this.options.shoppingListVisible);
 
@@ -44,7 +39,7 @@ define(function(require) {
          * @param updateData
          */
         updateCurrentTitle: function(updateData) {
-            this.$el.find('.current-title').text(updateData.label);
+            this.options._sourceElement.find('.current-title').text(updateData.label);
         },
 
         /**
@@ -53,7 +48,9 @@ define(function(require) {
          */
         hideTail: function(shoppingListVisible) {
             if (shoppingListVisible > 0) {
-                this.$el.find('.shopping-list__item:nth-child(n+' + shoppingListVisible + ')').addClass('shopping-list__item--hidden');
+                this.options._sourceElement
+                    .find('.shopping-list__item:nth-child(n+' + shoppingListVisible + ')')
+                    .addClass('shopping-list__item--hidden');
             }
         },
 
@@ -65,9 +62,13 @@ define(function(require) {
             var shoppingListVisible = this.options.shoppingListVisible;
 
             if (shoppingListCount >= shoppingListVisible) {
-                this.$el.find('.shopping-list').addClass('shopping-list--fulfilled');
+                this.options._sourceElement
+                    .find('.shopping-list')
+                    .addClass('shopping-list--fulfilled');
 
-                this.$el.next('.shopping-list-dropdown').addClass('shopping-list-dropdown--visible');
+                this.options._sourceElement
+                    .next('.shopping-list-dropdown')
+                    .addClass('shopping-list-dropdown--visible');
             }
         }
     });
