@@ -11,7 +11,7 @@ class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
     /**
      * @return int
      */
-    public function getMapperPriority()
+    public function getPriority()
     {
         return 10;
     }

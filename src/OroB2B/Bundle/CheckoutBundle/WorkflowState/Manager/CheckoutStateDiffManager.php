@@ -9,7 +9,7 @@ class CheckoutStateDiffManager
     /**
      * @var CheckoutStateDiffMapperInterface[]
      */
-    private $mappers;
+    protected $mappers;
 
     /**
      * @param CheckoutStateDiffMapperInterface $mapper
@@ -19,6 +19,23 @@ class CheckoutStateDiffManager
         $this->mappers[] = $mapper;
     }
 
+    protected function getMappers()
+    {
+        usort(
+            $this->mappers,
+            function (CheckoutStateDiffMapperInterface $mapper1, CheckoutStateDiffMapperInterface $mapper2) {
+                $priority1 = $mapper1->getPriority();
+                $priority2 = $mapper2->getPriority();
+                if ($priority1 == $priority2) {
+                    return 0;
+                }
+                return ($priority1 < $priority2) ? -1 : 1;
+            }
+        );
+
+        return $this->mappers;
+    }
+
     /**
      * @param object $entity
      * @return array
@@ -26,7 +43,7 @@ class CheckoutStateDiffManager
     public function getCurrentState($entity)
     {
         $currentState = [];
-        foreach ($this->mappers as $mapper) {
+        foreach ($this->getMappers() as $mapper) {
             if (!$mapper->isEntitySupported($entity)) {
                 continue;
             }
@@ -43,7 +60,7 @@ class CheckoutStateDiffManager
      */
     public function compareStates($entity, array $savedState)
     {
-        foreach ($this->mappers as $mapper) {
+        foreach ($this->getMappers() as $mapper) {
             if (!$mapper->isEntitySupported($entity)) {
                 continue;
             }

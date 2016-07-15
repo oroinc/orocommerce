@@ -7,7 +7,7 @@ interface CheckoutStateDiffMapperInterface
     /**
      * @return int
      */
-    public function getMapperPriority();
+    public function getPriority();
 
     /**
      * @param object $entity
