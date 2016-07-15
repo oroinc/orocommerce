@@ -20,7 +20,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_checkout")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="checkout_discriminator", type="string", length=30)
  * @ORM\HasLifecycleCallbacks()
