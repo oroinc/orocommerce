@@ -316,8 +316,6 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $result = $this->getJsonResponseContent($response, 200);
 
-
-
         foreach ($result['data'] as $row) {
             $role = $this->getUserRoleRepository()->find($row['id']);
 

@@ -390,5 +390,8 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
             $this->selfManaged,
             $this->public
             ) = unserialize($serialized);
+
+        $this->websites     = new ArrayCollection();
+        $this->accountUsers = new ArrayCollection();
     }
 }

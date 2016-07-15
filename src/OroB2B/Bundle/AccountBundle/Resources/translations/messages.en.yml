@@ -141,8 +141,8 @@ orob2b.account:
             label:                  'Self Managed'
             value.true.label:       'Yes'
             value.false.label:      'No'
-        non_public:
-            label:                  'Non-public'
+        public:
+            label:                  'Public'
             value.true.label:       'Yes'
             value.false.label:      'No'
 
