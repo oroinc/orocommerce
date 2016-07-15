@@ -1,0 +1,6 @@
+orob2b_website_localiztion_frontend_ajax:
+    resource:     "@OroB2BWebsiteBundle/Controller/Frontend/AjaxLocalizationController.php"
+    type:         annotation
+    prefix:       /website/localiztion
+    options:
+        frontend: true

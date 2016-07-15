@@ -1,24 +1,29 @@
 {% block localization_switcher_widget %}
     {% if data.localizations|length > 1 %}
-    <div class="oro-toolbar">
-        <div class="oro-toolbar__content" data-toggle="dropdown">
-            {{ data.current_localization.title }}
-            <span class="oro-toolbar__icon">
-                <i class="cf-down-open-mini"></i>
-            </span>
-        </div>
+        <div class="oro-toolbar"
+             data-page-component-module="orob2bwebsite/js/app/components/localization-switcher-component"
+             data-page-component-options="{{ {
+                 'selectedLocalization': data.current_localization.title,
+                 'localizationSwitcherRoute': 'orob2b_website_frontend_set_current_localization'
+             }|json_encode }}">
+            <div class="oro-toolbar__content" data-toggle="dropdown">
+                {{ data.current_localization.title }}
+                <span class="oro-toolbar__icon">
+                    <i class="cf-down-open-mini"></i>
+                </span>
+            </div>
 
-        <div class="oro-toolbar__dropdown dropdown-menu">
-            <ul class="oro-toolbar__list">
-                {% for localization in data.localizations %}
-                <li class="oro-toolbar__list-item">
-                    <a class="oro-toolbar__link" href="javascript: void(0);">
-                        {{ localization.title }}
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
+            <div class="oro-toolbar__dropdown dropdown-menu">
+                <ul class="oro-toolbar__list">
+                    {% for localization in data.localizations %}
+                    <li class="oro-toolbar__list-item">
+                        <a class="oro-toolbar__link" href="javascript: void(0);" data-localization="{{ localization.id }}">
+                            {{ localization.title }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
-    </div>
     {% endif %}
 {% endblock %}

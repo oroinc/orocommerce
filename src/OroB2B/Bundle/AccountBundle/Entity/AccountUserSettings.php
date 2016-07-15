@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 
 use OroB2B\Bundle\AccountBundle\Model\ExtendAccountUserSettings;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -49,9 +50,17 @@ class AccountUserSettings extends ExtendAccountUserSettings
     /**
      * @var string
      *
-     * @ORM\Column(name="currency", type="string", length=3)
+     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
      */
     protected $currency;
+
+    /**
+     * @var Localization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\LocaleBundle\Entity\Localization")
+     * @ORM\JoinColumn(name="localization_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
+     */
+    protected $localization;
 
     /**
      * @param Website $website
@@ -112,6 +121,25 @@ class AccountUserSettings extends ExtendAccountUserSettings
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * @return Localization
+     */
+    public function getLocalization()
+    {
+        return $this->localization;
+    }
+
+    /**
+     * @param Localization $localization
+     * @return $this
+     */
+    public function setLocalization(Localization $localization = null)
+    {
+        $this->localization = $localization;
 
         return $this;
     }

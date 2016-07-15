@@ -31,7 +31,11 @@ services:
     orob2b_website.user_localization_manager:
         class: 'OroB2B\Bundle\WebsiteBundle\Manager\UserLocalizationManager'
         arguments:
+            - '@session'
+            - '@security.token_storage'
             - '@oro_config.manager'
+            - '@orob2b_website.manager'
+            - '@orob2b_account_user.manager'
             - '@oro_locale.provider.localization'
 
     orob2b_website.model.action.assign_current_website:
