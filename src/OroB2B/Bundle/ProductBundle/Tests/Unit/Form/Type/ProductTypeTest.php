@@ -339,7 +339,6 @@ class ProductTypeTest extends FormIntegrationTestCase
             $expectedProduct->addAdditionalUnitPrecision($productUnitPrecision);
         }
 
-
         if ($withNamesAndDescriptions) {
             $expectedProduct
                 ->addName($this->createLocalizedValue('first name'))
