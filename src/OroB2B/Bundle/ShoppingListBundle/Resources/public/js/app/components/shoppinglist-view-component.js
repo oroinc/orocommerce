@@ -37,7 +37,9 @@ define(function(require) {
          * @param updateData
          */
         updateDropdown: function(updateData) {
-            this.options._sourceElement.find('.shopping-list-links__item--' + updateData.id + ' .shopping-list-links__text').text(updateData.label);
+            this.options._sourceElement
+                .find('.shopping-list-links__item--' + updateData.id + ' .shopping-list-links__text')
+                .text(updateData.label);
         }
     });
 });
