@@ -9,6 +9,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -18,6 +19,7 @@ use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -51,12 +53,12 @@ class PriceListRuleCompilerTest extends WebTestCase
     public function testApplyRuleConditions()
     {
         /** @var Product $product1 */
-        $product1 = $this->getReference('product.1');
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var Product $product2 */
-        $product2 = $this->getReference('product.2');
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
         /** @var Category $category1 */
-        $category1 = $this->getReference('category_1');
+        $category1 = $this->getReference(LoadCategoryData::FIRST_LEVEL);
 
         /** @var ProductUnit $unitLitre */
         $unitLitre = $this->getReference('product_unit.liter');
@@ -91,9 +93,9 @@ class PriceListRuleCompilerTest extends WebTestCase
     public function testRestrictByManualPrices()
     {
         /** @var Product $product1 */
-        $product1 = $this->getReference('product.1');
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var Product $product2 */
-        $product2 = $this->getReference('product.2');
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
         /** @var ProductUnit $unitLitre */
         $unitLitre = $this->getReference('product_unit.liter');
@@ -137,9 +139,9 @@ class PriceListRuleCompilerTest extends WebTestCase
     public function testRestrictByProduct()
     {
         /** @var Product $product1 */
-        $product1 = $this->getReference('product.1');
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var Product $product2 */
-        $product2 = $this->getReference('product.2');
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
         /** @var ProductUnit $unitLitre */
         $unitLitre = $this->getReference('product_unit.liter');
@@ -173,12 +175,12 @@ class PriceListRuleCompilerTest extends WebTestCase
     public function testRestrictByAssignedProducts()
     {
         /** @var Product $product2 */
-        $product2 = $this->getReference('product.2');
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
         /** @var Category $category1 */
-        $category1 = $this->getReference('category_1');
+        $category1 = $this->getReference(LoadCategoryData::FIRST_LEVEL);
         /** @var Category $category2 */
-        $category2 = $this->getReference('category_1_2');
+        $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
         /** @var ProductUnit $unitLitre */
         $unitLitre = $this->getReference('product_unit.liter');
