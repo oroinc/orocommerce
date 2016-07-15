@@ -6,11 +6,11 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServerRenderDataProvider
 {

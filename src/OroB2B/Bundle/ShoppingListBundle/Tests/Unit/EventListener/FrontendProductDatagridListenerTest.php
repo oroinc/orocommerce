@@ -186,7 +186,6 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnResultAfter()
     {
         $user = new AccountUser();
-        $shoppingList = new ShoppingList();
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
@@ -272,12 +271,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($recordTwo->getValue('shopping_lists'));
     }
 
-    /*
+    /**
      * @param int $id
      * @param string $label
-     *
-     * @return  Mock_ShoppingList
-     *
+     * @return  ShoppingList
      */
     private function createShoppingList($id, $label)
     {
@@ -294,15 +291,13 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         return $shoppingList;
     }
 
-    /*
+    /**
      * @param int $id
      * @param string $unit
      * @param int $quantity
      * @param shoppingList $shoppingList
      * @param product $product
-     *
-     * @return  Mock_LineItem
-     *
+     * @return  LineItem
      */
     private function createLineItem($id, $unit, $quantity, $shoppingList, $product)
     {
