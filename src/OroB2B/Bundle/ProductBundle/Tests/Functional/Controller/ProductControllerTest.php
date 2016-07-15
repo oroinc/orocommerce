@@ -180,11 +180,13 @@ class ProductControllerTest extends WebTestCase
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'status' => Product::STATUS_ENABLED,
                 'primaryUnitPrecision' => [
-                    'unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION
+                    'unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION,
                 ],
                 'additionalUnitPrecisions' => [
-                    ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
-                    ['unit' => self::THIRD_UNIT_CODE, 'precision' => self::THIRD_UNIT_PRECISION]
+                    ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION,
+                     'conversionRate' => 2, 'sell' => false],
+                    ['unit' => self::THIRD_UNIT_CODE, 'precision' => self::THIRD_UNIT_PRECISION,
+                     'conversionRate' => 3, 'sell' => true]
                 ],
                 'names' => [
                     'values' => [
@@ -240,26 +242,14 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
         $actualAdditionalUnitPrecisions = [
-            [
-                'unit' => $crawler
-                    ->filter('select[name="orob2b_product[additionalUnitPrecisions][0][unit]"] :selected')
-                    ->html(),
-                'precision' => $crawler
-                    ->filter('input[name="orob2b_product[additionalUnitPrecisions][0][precision]"]')
-                    ->extract('value')[0],
-            ],
-            [
-                'unit' => $crawler
-                    ->filter('select[name="orob2b_product[additionalUnitPrecisions][1][unit]"] :selected')
-                    ->html(),
-                'precision' => $crawler
-                    ->filter('input[name="orob2b_product[additionalUnitPrecisions][1][precision]"]')
-                    ->extract('value')[0],
-            ]
+            $this->getActualAdditionalUnitPrecision($crawler, 0),
+            $this->getActualAdditionalUnitPrecision($crawler, 1),
         ];
         $expectedAdditionalUnitPrecisions = [
-            ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION],
-            ['unit' => self::THIRD_UNIT_FULL_NAME, 'precision' => self::THIRD_UNIT_PRECISION],
+            ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION,
+                'conversionRate' => 2, 'sell' => false],
+            ['unit' => self::THIRD_UNIT_FULL_NAME, 'precision' => self::THIRD_UNIT_PRECISION,
+                'conversionRate' => 3, 'sell' => true],
         ];
 
         $this->assertEquals(
@@ -428,6 +418,107 @@ class ProductControllerTest extends WebTestCase
         $product = $this->getProductDataBySku(self::UPDATED_SKU);
 
         return $product->getId();
+    }
+
+    /**
+     * @depends testUpdate
+     * @return int
+     */
+    public function testPrimaryPrecisionAdditionalPrecisionSwap()
+    {
+        $product = $this->getProductDataBySku(self::UPDATED_SKU);
+        $id = $product->getId();
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        /** @var Form $form */
+        $form = $crawler->selectButton('Save and Close')->form();
+
+        $formValues = $form->getPhpValues();
+
+        $additionalUnit = array_pop($formValues['orob2b_product']['additionalUnitPrecisions']);
+        $primaryUnit = $formValues['orob2b_product']['primaryUnitPrecision'];
+        $formValues['orob2b_product']['additionalUnitPrecisions'][2] =
+            $primaryUnit;
+
+        $formValues['orob2b_product']['primaryUnitPrecision'] =
+            ['unit' => $additionalUnit['unit'], 'precision' => $additionalUnit['precision']];
+
+        $this->client->request($form->getMethod(), $form->getUri(), $formValues);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        // Check product unit precisions
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        $actualUnitPrecisions = [
+            [
+                'unit' => $crawler
+                    ->filter('select[name="orob2b_product[primaryUnitPrecision][unit]"] :selected')
+                    ->html(),
+                'precision' => $crawler
+                    ->filter('input[name="orob2b_product[primaryUnitPrecision][precision]"]')
+                    ->extract('value')[0],
+                'conversionRate' => $crawler
+                    ->filter('input[name="orob2b_product[primaryUnitPrecision][conversionRate]"]')
+                    ->extract('value')[0],
+                'sell' => $crawler
+                    ->filter('input[name="orob2b_product[primaryUnitPrecision][sell]"]')
+                    ->extract('value')[0],
+            ],
+            $this->getActualAdditionalUnitPrecision($crawler, 0),
+            $this->getActualAdditionalUnitPrecision($crawler, 1),
+        ];
+        $expectedUnitPrecisions = [
+            ['unit' => self::THIRD_UNIT_FULL_NAME, 'precision' => self::THIRD_UNIT_PRECISION,
+             'conversionRate' => 1, 'sell' => true],
+            ['unit' => self::FIRST_UNIT_FULL_NAME, 'precision' => self::FIRST_UNIT_PRECISION,
+             'conversionRate' => 1, 'sell' => true],
+            ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION,
+             'conversionRate' => 2, 'sell' => false],
+        ];
+        $this->assertEquals(
+            $expectedUnitPrecisions,
+            $actualUnitPrecisions
+        );
+        return $id;
+    }
+
+    /**
+     * @depends testUpdate
+     * @return int
+     */
+    public function testRemoveAddSameAdditionalPrecision()
+    {
+        $product = $this->getProductDataBySku(self::UPDATED_SKU);
+        $id = $product->getId();
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        /** @var Form $form */
+        $form = $crawler->selectButton('Save and Close')->form();
+
+        $formValues = $form->getPhpValues();
+
+        $additionalUnit = array_pop($formValues['orob2b_product']['additionalUnitPrecisions']);
+        $formValues['orob2b_product']['additionalUnitPrecisions'][2] = $additionalUnit;
+
+        $this->client->request($form->getMethod(), $form->getUri(), $formValues);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        // Check product unit precisions
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        $actualUnitPrecisions = [
+            $this->getActualAdditionalUnitPrecision($crawler, 0),
+            $this->getActualAdditionalUnitPrecision($crawler, 1),
+        ];
+        $expectedUnitPrecisions = [
+            ['unit' => self::FIRST_UNIT_FULL_NAME, 'precision' => self::FIRST_UNIT_PRECISION,
+                'conversionRate' => 1, 'sell' => true],
+            ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION,
+                'conversionRate' => 2, 'sell' => false],
+        ];
+        $this->assertEquals(
+            $expectedUnitPrecisions,
+            $actualUnitPrecisions
+        );
+        return $id;
     }
 
     /**
@@ -661,5 +752,28 @@ class ProductControllerTest extends WebTestCase
         );
 
         return $result;
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @param int $position
+     * @return array
+     */
+    protected function getActualAdditionalUnitPrecision(Crawler $crawler, $position)
+    {
+        return [
+            'unit' => $crawler
+                ->filter('select[name="orob2b_product[additionalUnitPrecisions][' . $position . '][unit]"] :selected')
+                ->html(),
+            'precision' => $crawler
+                ->filter('input[name="orob2b_product[additionalUnitPrecisions][' . $position . '][precision]"]')
+                ->extract('value')[0],
+            'conversionRate' => $crawler
+                ->filter('input[name="orob2b_product[additionalUnitPrecisions][' . $position . '][conversionRate]"]')
+                ->extract('value')[0],
+            'sell' => (bool)$crawler
+                ->filter('input[name="orob2b_product[additionalUnitPrecisions][' . $position . '][sell]"]')
+                ->extract('checked')[0],
+        ];
     }
 }
