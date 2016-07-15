@@ -1,0 +1,19 @@
+layout:
+    actions:
+        - '@add':
+            id: account_sidebar_order
+            parentId: account_sidebar
+            blockType: link
+            options:
+                route_name: orob2b_order_frontend_index
+                text: orob2b.order.order_history.label
+        - '@add':
+            id: account_sidebar_open_orders
+            parentId: account_sidebar
+            blockType: link
+            options:
+                route_name: orob2b_checkout_frontend_open_orders
+                text: orob2b.checkout.entity_plural_label
+                visible: { '@value': $data.orob2b_checkout_separate_open_orders }
+    conditions:
+        '@acl': orob2b_order_frontend_view

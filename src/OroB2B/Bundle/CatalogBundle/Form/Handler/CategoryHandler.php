@@ -84,6 +84,10 @@ class CategoryHandler
         $this->appendProducts($category, $appendProducts);
         $this->removeProducts($category, $removeProducts);
 
+        if ($category->getDefaultProductOptions()) {
+            $category->getDefaultProductOptions()->updateUnitPrecision();
+        }
+        
         $this->manager->persist($category);
         $this->manager->flush();
     }
