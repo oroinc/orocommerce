@@ -19,11 +19,11 @@ class NodeToQueryDesignerConverter
     protected $fieldsProvider;
 
     /**
-     * @param PriceRuleFieldsProvider $attributeProvider
+     * @param PriceRuleFieldsProvider $fieldsProvider
      */
-    public function __construct(PriceRuleFieldsProvider $attributeProvider)
+    public function __construct(PriceRuleFieldsProvider $fieldsProvider)
     {
-        $this->fieldsProvider = $attributeProvider;
+        $this->fieldsProvider = $fieldsProvider;
     }
 
     /**
