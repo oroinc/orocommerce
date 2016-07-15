@@ -47,9 +47,11 @@ define(function(require) {
          * @param shoppingListVisible
          */
         hideTail: function(shoppingListVisible) {
+            var shoppingListHidden = shoppingListVisible + 1;
+
             if (shoppingListVisible > 0) {
                 this.options._sourceElement
-                    .find('.shopping-list__item:nth-child(n+' + shoppingListVisible + ')')
+                    .find('.shopping-list__item:nth-child(n+' + shoppingListHidden + ')')
                     .addClass('shopping-list__item--hidden');
             }
         },
@@ -61,7 +63,7 @@ define(function(require) {
         showAdditionalDropdown: function(shoppingListCount) {
             var shoppingListVisible = this.options.shoppingListVisible;
 
-            if (shoppingListCount >= shoppingListVisible) {
+            if (shoppingListCount > shoppingListVisible) {
                 this.options._sourceElement
                     .find('.shopping-list')
                     .addClass('shopping-list--fulfilled');
