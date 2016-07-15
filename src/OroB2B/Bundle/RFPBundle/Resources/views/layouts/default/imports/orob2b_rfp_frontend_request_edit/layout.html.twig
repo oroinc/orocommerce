@@ -1,32 +1,32 @@
-{% block _rfp_page_widget %}
+{% block __orob2b_rfp_frontend_request_edit__rfp_page_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
     }) %}
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
-{% block _rfp_form_container_widget %}
+{% block __orob2b_rfp_frontend_request_edit__rfp_form_container_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " {{ class_prefix }}__form_container"
     }) %}
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
-{% block _rfp_page_title_widget %}
+{% block __orob2b_rfp_frontend_request_edit__rfp_page_title_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " {{ class_prefix }}__title"
     }) %}
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
-{% block _rfp_form_start_widget %}
+{% block __orob2b_rfp_frontend_request_edit__rfp_form_start_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " {{ class_prefix }}__form {{ class_prefix }}__form_register"
     }) %}
     {{ block('form_start_widget') }}
 {% endblock %}
 
-{% block _rfp_form_fields_widget %}
+{% block __orob2b_rfp_frontend_request_edit__rfp_form_fields_widget %}
     {{ form_row(form.firstName) }}
     {{ form_row(form.lastName) }}
     {{ form_row(form.email)  }}
@@ -39,18 +39,18 @@
     {{ form_row(form.assignedAccountUsers) }}
 {% endblock %}
 
-{% block _rfp_form_lineitems_widget %}
+{% block __orob2b_rfp_frontend_request_edit__rfp_form_lineitems_widget %}
     {{ form_widget(form.requestProducts) }}
     {{ form_errors(form.requestProducts) }}
 {% endblock %}
 
-{% block _rfp_form_actions_create_widget %}
+{% block __orob2b_rfp_frontend_request_edit__rfp_form_actions_create_widget %}
     <div class="rfq-widget_block text-right">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
-{% block _rfp_form_actions_back_widget %}
+{% block __orob2b_rfp_frontend_request_edit__rfp_form_actions_back_widget %}
     <div class="rfq-widget_block text-right">
         {{ block_widget(block) }}
     </div>
