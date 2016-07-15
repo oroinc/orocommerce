@@ -129,7 +129,7 @@ class CheckoutGridListener
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
         $em = $this->doctrine->getManagerForClass(BaseCheckout::class);
-        // todo: Reduce db queries count
+        // todo: BB-3822 Reduce db queries count
         foreach ($records as $record) {
             if (!$record->getValue('total')) {
                 $id = $record->getValue('id');
