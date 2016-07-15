@@ -179,7 +179,7 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
      * @param string $unit
      * @param int $quantity
      * @param ShoppingList $shoppingList
-     * @return  LineItem
+     * @return LineItem
      */
     private function createLineItem($id, $unit, $quantity, $shoppingList)
     {
