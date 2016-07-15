@@ -13,11 +13,8 @@ layout:
                     shoppingLists: { '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
         - '@add':
             id: product_shopping_lists
-            blockType: block
             parentId: product_grid_row_secondary_content_first_container
-            # parentId: line_item_form
-            # siblingId: line_item_form_start
-            # prepend: true
+            blockType: block
 
     conditions:
         '@and':
