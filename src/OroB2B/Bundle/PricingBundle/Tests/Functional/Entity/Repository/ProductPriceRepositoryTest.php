@@ -646,7 +646,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $repository->deleteGeneratedPricesByRule($rule1);
         $this->assertEmpty($repository->findBy(['priceRule'=>$rule1]));
         $this->assertCount(1, $repository->findBy(['priceRule'=>$rule2]));
-        $this->assertSame($pricesCount + 1, $this->getPricesCount());
+        $this->assertEquals($pricesCount + 1, $this->getPricesCount());
     }
 
     /**
@@ -671,7 +671,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $repository = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroB2BPricingBundle:ProductPrice');
-        return $repository->createQueryBuilder('pp')
+        return (int)$repository->createQueryBuilder('pp')
             ->select('count(pp.id)')
             ->getQuery()
             ->getSingleScalarResult();
