@@ -25,7 +25,7 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriority()
     {
-        $this->assertEquals(10, $this->mapper->getPriority());
+        $this->assertEquals(20, $this->mapper->getPriority());
     }
 
     public function testIsEntitySupported()

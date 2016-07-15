@@ -4,16 +4,16 @@ namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
-class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
+class BillingAddressDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'shipToBillingAddress';
+    const DATA_NAME = 'billingAddress';
 
     /**
      * @return int
      */
     public function getPriority()
     {
-        return 20;
+        return 10;
     }
 
     /**
@@ -32,7 +32,10 @@ class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
     public function getCurrentState($checkout)
     {
         return [
-            self::DATA_NAME => $checkout->isShipToBillingAddress(),
+            self::DATA_NAME => [
+                'id' => $checkout->getBillingAddress()->getId(),
+                'updated' => $checkout->getBillingAddress()->getUpdated(),
+            ],
         ];
     }
 
@@ -45,6 +48,10 @@ class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
     {
         return
             isset($savedState[self::DATA_NAME]) &&
-            $savedState[self::DATA_NAME] === $checkout->isShipToBillingAddress();
+            isset($savedState[self::DATA_NAME]['id']) &&
+            isset($savedState[self::DATA_NAME]['updated']) &&
+            $savedState[self::DATA_NAME]['updated'] instanceof \DateTimeInterface &&
+            $savedState[self::DATA_NAME]['id'] === $checkout->getBillingAddress()->getId() &&
+            $savedState[self::DATA_NAME]['updated'] >= $checkout->getBillingAddress()->getUpdated();
     }
 }
