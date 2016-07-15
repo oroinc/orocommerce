@@ -107,7 +107,7 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
 
         $qb = $this->getQueryBuilder($priceList);
         $expected = [
-            [$product1->getId(), $priceList->getId(), false]
+            [$product1->getId(), $priceList->getId(), false],
         ];
         $actual = $this->getActualResult($qb);
         $this->assertEquals($expected, array_values($actual));
@@ -154,7 +154,15 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
         $actual = $qb->getQuery()->getArrayResult();
         $actual = array_map(
             function (array $value) {
-                return array_values($value);
+                return array_map(
+                    function ($val) {
+                        if (is_numeric($val)) {
+                            $val = (int)$val;
+                        }
+                        return $val;
+                    },
+                    array_values($value)
+                );
             },
             $actual
         );

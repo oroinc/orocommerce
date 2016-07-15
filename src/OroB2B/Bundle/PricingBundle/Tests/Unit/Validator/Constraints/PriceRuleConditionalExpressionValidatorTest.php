@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleConditionalExpressionValidator;
 
-class PriceRuleConditionalExpressionValidatorTest extends AbstractDefinedAttributesValidatorTest
+class PriceRuleConditionalExpressionValidatorTest extends AbstractPriceRuleExpressionValidatorTest
 {
     /**
      * @var PriceRuleConditionalExpressionValidator
@@ -63,8 +63,8 @@ class PriceRuleConditionalExpressionValidatorTest extends AbstractDefinedAttribu
             ['', []],
             [null, []],
             ['0', []],
-            ['Product.sku == "SKU"', ['sku', 'msrp']],
-            ['Product.msrp.value == 1', ['value']],
+            ['product.sku == "SKU"', ['sku', 'msrp']],
+            ['product.msrp.value == 1', ['value']],
         ];
     }
 

@@ -262,7 +262,7 @@ abstract class BasePriceListRepository extends EntityRepository
                 ->setParameter('currencies', $currencies);
         }
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getArrayResult();
     }
 
     /**
