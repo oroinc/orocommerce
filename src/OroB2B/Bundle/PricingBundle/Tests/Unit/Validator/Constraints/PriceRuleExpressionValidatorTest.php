@@ -6,7 +6,7 @@ use OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidat
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class PriceRuleExpressionValidatorValidatorTest extends AbstractPriceRuleExpressionValidatorTest
+class PriceRuleExpressionValidatorTest extends AbstractPriceRuleExpressionValidatorTest
 {
     /**
      * @var PriceRuleExpressionValidator
