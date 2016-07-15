@@ -214,12 +214,18 @@ services:
             - "@doctrine"
             - "@orob2b_product.formatter.product_unit_label"
 
-    orob2b_product.provider.default_product_unit_provider:
-        class: 'OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider'
+    orob2b_product.provider.default_product_unit_provider.chain:
+        class: 'OroB2B\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider'
+        public: false
+
+    orob2b_product.provider.default_product_unit_provider.system:
+        class: 'OroB2B\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider'
         public: false
         arguments:
             - "@oro_config.manager"
             - "@doctrine"
+        tags:
+            - {name: orob2b_product.default_product_unit_provider, priority: 0}
 
     orob2b_product.provider.quick_add_form_provider:
         class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider'
@@ -316,7 +322,7 @@ services:
     orob2b_product.event_listener.abstract_product_select_db_query:
         abstract: true
         arguments:
-            - "@oro_config.global"
+            - "@oro_config.manager"
             - "@orob2b_product.model.product_visibility_query_builder_modifier"
             - "@orob2b_frontend.request.frontend_helper"
 

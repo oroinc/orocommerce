@@ -91,6 +91,7 @@ class InvoiceController extends Controller
     public function createAction()
     {
         $invoice = new Invoice();
+        $invoice->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
         $invoice->setCurrency($this->get('oro_locale.settings')->getCurrency());
 
         return $this->update($invoice);

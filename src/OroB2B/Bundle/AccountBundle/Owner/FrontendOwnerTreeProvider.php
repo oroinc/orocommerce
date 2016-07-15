@@ -83,9 +83,10 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
         foreach ($accounts as $account) {
             if ($account->getOrganization()) {
                 $tree->addLocalEntity($account->getId(), $account->getOrganization()->getId());
-                if ($account->getParent()) {
-                    $tree->addDeepEntity($account->getId(), $account->getParent()->getId());
-                }
+                $tree->addDeepEntity(
+                    $account->getId(),
+                    $account->getParent() ? $account->getParent()->getId() : null
+                );
             }
         }
 

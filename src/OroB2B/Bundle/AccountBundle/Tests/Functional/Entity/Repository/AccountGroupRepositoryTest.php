@@ -7,6 +7,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
@@ -69,6 +71,24 @@ class AccountGroupRepositoryTest extends WebTestCase
         sort($accountGroupIds);
 
         $this->assertEquals($expectedAccountGroupIds, $accountGroupIds);
+    }
+
+    public function testGetBatchIterator()
+    {
+        $expectedNames = [
+            LoadAnonymousAccountGroup::GROUP_NAME_NON_AUTHENTICATED,
+            LoadGroups::GROUP1,
+            LoadGroups::GROUP2,
+            LoadGroups::GROUP3,
+        ];
+
+        $accountGroupsIterator = $this->repository->getBatchIterator();
+        $accountGroupNames = [];
+        foreach ($accountGroupsIterator as $accountGroup) {
+            $accountGroupNames[] = $accountGroup->getName();
+        }
+
+        $this->assertEquals($expectedNames, $accountGroupNames);
     }
 
     /**

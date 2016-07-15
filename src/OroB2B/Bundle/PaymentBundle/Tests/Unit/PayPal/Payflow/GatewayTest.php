@@ -104,4 +104,111 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
         $this->gateway->setTestMode(false);
         $this->assertEquals(Gateway::PRODUCTION_FORM_ACTION, $this->gateway->getFormAction());
     }
+
+    /**
+     * @return array
+     */
+    public function sslVerificationEnabledProvider()
+    {
+        return [
+            [true],
+            [false],
+        ];
+    }
+
+    /**
+     * @dataProvider sslVerificationEnabledProvider
+     * @param bool $enabled
+     */
+    public function testSslVerificationEnabledIsPassedToClientInRequest($enabled)
+    {
+        $this->prepareRequest();
+
+        $this->client
+            ->expects($this->once())
+            ->method('send')
+            ->with(
+                $this->isType('string'),
+                $this->isType('array'),
+                ['SSL_VERIFY' => $enabled]
+            )
+            ->willReturn([]);
+
+        $this->gateway->setSslVerificationEnabled($enabled);
+        $this->gateway->request('ACTION', [
+            Partner::PARTNER => 'PARTNER',
+        ]);
+    }
+
+    public function testProxyAddressOptionIsNotPassedToClientIfProxyAddressWasNotSet()
+    {
+        $this->prepareRequest();
+
+        $this->client
+            ->expects($this->once())
+            ->method('send')
+            ->with(
+                $this->isType('string'),
+                $this->isType('array'),
+                ['SSL_VERIFY' => true]
+            )
+            ->willReturn([]);
+
+        $this->gateway->request('ACTION', [
+            Partner::PARTNER => 'PARTNER',
+        ]);
+    }
+
+    public function testProxyAddressOptionIsPassedToClientIfProxyAddressWasSet()
+    {
+        $this->prepareRequest();
+
+        $proxyHost = '12.23.34.45';
+        $proxyPort = 5555;
+
+        $this->client
+            ->expects($this->once())
+            ->method('send')
+            ->with(
+                $this->isType('string'),
+                $this->isType('array'),
+                [
+                    'SSL_VERIFY'    => true,
+                    'PROXY_HOST' => $proxyHost,
+                    'PROXY_PORT' => $proxyPort,
+                ]
+            )
+            ->willReturn([]);
+
+        $this->gateway->setProxySettings($proxyHost, $proxyPort);
+
+        $this->gateway->request('ACTION', [
+            Partner::PARTNER => 'PARTNER',
+        ]);
+    }
+
+    protected function prepareRequest()
+    {
+        $request = $this->getMock('OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestInterface');
+        $request
+            ->expects($this->once())
+            ->method('configureOptions')
+            ->with(
+                $this->isInstanceOf('OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\OptionsResolver')
+            )
+            ->willReturnCallback(function (OptionsResolver $resolver) {
+                $resolver->setDefined(Partner::PARTNER);
+            });
+
+        $this->requestRegistry
+            ->expects($this->once())
+            ->method('getRequest')
+            ->willReturn($request);
+
+        $processor = $this->getMock('OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Processor\ProcessorInterface');
+        $this->processorRegistry
+            ->expects($this->once())
+            ->method('getProcessor')
+            ->willReturn($processor);
+    }
 }

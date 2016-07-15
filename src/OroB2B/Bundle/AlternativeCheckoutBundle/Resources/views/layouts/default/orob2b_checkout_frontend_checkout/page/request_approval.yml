@@ -6,13 +6,11 @@ layout:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/form_theme.html.twig'
         - '@setOption':
             id: checkout_information
-            optionName: vars
-            optionValue:
-                workflowStep: { '@value': $data.workflowStep }
-                stepOrder: 6
+            optionName: stepOrder
+            optionValue: 6
         - '@setOption':
             id: checkout_form_fields
-            optionName: vars.transitionData
+            optionName: transitionData
             optionValue: { '@value': $data.orob2b_checkout_continue_transition }
         - '@addTree':
             items:

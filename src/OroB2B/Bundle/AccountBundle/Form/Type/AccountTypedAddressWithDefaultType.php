@@ -44,7 +44,7 @@ class AccountTypedAddressWithDefaultType extends AbstractType
         }
 
         $repository = $em->getRepository($options['class']);
-        $entities   = $repository->findAll();
+        $entitiesIterator = $repository->getBatchIterator();
 
         /** @var ClassMetadataInfo $classMetadata */
         $classMetadata   = $em->getClassMetadata($options['class']);
@@ -53,7 +53,7 @@ class AccountTypedAddressWithDefaultType extends AbstractType
         $choiceLabels = [];
 
         /** @var AddressType $entity */
-        foreach ($entities as $entity) {
+        foreach ($entitiesIterator as $entity) {
             $pkValue = $classMetadata->getReflectionProperty($identifierField)->getValue($entity);
 
             if ($options['property']) {

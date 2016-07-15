@@ -23,7 +23,7 @@ class Subtotal
     /**
      * @var float
      */
-    protected $amount;
+    protected $amount = 0;
 
     /**
      * @var string
@@ -35,7 +35,7 @@ class Subtotal
      *
      * @var integer
      */
-    protected $operation;
+    protected $operation = self::OPERATION_ADD;
 
     /**
      * Visibility in total
@@ -43,11 +43,6 @@ class Subtotal
      * @var boolean
      */
     protected $visible;
-
-    public function __construct()
-    {
-        $this->operation = self::OPERATION_ADD;
-    }
 
     /**
      * Extra data

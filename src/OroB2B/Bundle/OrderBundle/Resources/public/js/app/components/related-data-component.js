@@ -17,13 +17,7 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        options: {
-            selectors: {
-                account: 'input[name$="[account]"]',
-                accountUser: 'input[name$="[accountUser]"]',
-                website: 'select[name$="[website]"]'
-            }
-        },
+        options: {},
 
         /**
          * @inheritDoc

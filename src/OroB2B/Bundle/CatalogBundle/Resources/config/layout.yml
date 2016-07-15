@@ -3,6 +3,7 @@ services:
         class: OroB2B\Bundle\CatalogBundle\Layout\DataProvider\CategoryTreeProvider
         arguments:
             - '@orob2b_catalog.provider.category_tree_provider'
+            - '@doctrine'
         tags:
             - { name: layout.data_provider, alias: category_tree }
 

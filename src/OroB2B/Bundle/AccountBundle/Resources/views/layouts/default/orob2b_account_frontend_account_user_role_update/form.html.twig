@@ -23,18 +23,12 @@
 
     {{ form_row(form.label) }}
 
-    {% for name, config in form.vars.privilegeConfig %}
-        <div class="mb4-md mb4-sm">
-            <h3 class="account-navigation-title mb2-md mb2-sm">
-                {{ ('orob2b.account.frontend.privileges.' ~ name ~ '.label')|trans }}
-            </h3>
-            {{ form_widget(form.children[name]) }}
-        </div>
-    {% endfor %}
-
     {{ form_widget(form.appendUsers, {'id': 'roleAppendUsers'}) }}
     {{ form_widget(form.removeUsers, {'id': 'roleRemoveUsers'}) }}
 {% endblock %}
+
+{% block _orob2b_account_frontend_account_user_role_entity_row %}{% endblock %}
+{% block _orob2b_account_frontend_account_user_role_action_row %}{% endblock %}
 
 {% block _orob2b_account_frontend_account_user_role_label_row %}
     <div class="row mb3-md mb3-sm">

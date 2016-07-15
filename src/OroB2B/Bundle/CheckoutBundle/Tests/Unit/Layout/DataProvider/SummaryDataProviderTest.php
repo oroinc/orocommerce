@@ -102,6 +102,11 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getSubtotals')
             ->willReturn($subtotals);
 
+        $this->totalProcessorProvider
+            ->expects($this->once())
+            ->method('enableRecalculation')
+            ->willReturn($this->totalProcessorProvider);
+
         $i = 0;
         while ($lineItems->valid()) {
             $info = $lineItems->getInfo();

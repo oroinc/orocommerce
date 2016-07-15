@@ -216,3 +216,9 @@ services:
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
             - '@orob2b_pricing.user_currency_manager'
             - '@oro_config.global'
+
+    orob2b_shopping_list.provider.shopping_list_entity_name:
+        class: OroB2B\Bundle\ShoppingListBundle\Provider\ShoppingListEntityNameProvider
+        public: false
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }

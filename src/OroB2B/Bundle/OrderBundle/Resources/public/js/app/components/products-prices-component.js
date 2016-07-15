@@ -13,7 +13,6 @@ define(function(require) {
     ProductsPricesComponent = BaseProductsPricesComponent.extend({
         initFieldsListeners: function() {
             mediator.on('update:currency', this.setCurrency, this);
-            mediator.on('update:website', this.setWebsite, this);
         },
 
         /**
@@ -51,7 +50,6 @@ define(function(require) {
             }
 
             mediator.off('update:currency', this.setCurrency, this);
-            mediator.off('update:website', this.setWebsite, this);
 
             ProductsPricesComponent.__super__.dispose.call(this);
         }

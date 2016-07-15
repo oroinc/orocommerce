@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
@@ -51,7 +51,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         array $expectedSubtotals,
         $shoppingListRef = LoadShoppingLists::SHOPPING_LIST_2
     ) {
-        $this->getContainer()->get('oro_config.global')
+        $this->getContainer()->get('oro_config.manager')
             ->set(Configuration::getConfigKeyByName(Configuration::ENABLED_CURRENCIES), ['EUR', 'USD']);
         /** @var Product $product */
         $product = $this->getReference($product);
