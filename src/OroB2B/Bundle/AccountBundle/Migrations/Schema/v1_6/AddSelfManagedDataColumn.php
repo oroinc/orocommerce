@@ -7,12 +7,13 @@ use Doctrine\DBAL\Schema\Schema;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 use OroB2B\Bundle\AccountBundle\Migrations\Schema\LoadRolesDataTrait;
 
-class AddSelfManagedDataColumn implements Migration
+class AddSelfManagedDataColumn implements Migration, OrderedMigrationInterface
 {
     /**
      * {@inheritdoc}
@@ -35,5 +36,13 @@ class AddSelfManagedDataColumn implements Migration
         $queries->addPostQuery(
             "update orob2b_account_user_role set self_managed = true where role <> '$anonymousRoleName'"
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 }

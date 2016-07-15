@@ -4,20 +4,17 @@ namespace OroB2B\Bundle\AccountBundle\Migrations\Schema\v1_6;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use OroB2B\Bundle\AccountBundle\Migrations\Schema\LoadRolesDataTrait;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class AddPublicColumn implements Migration, ContainerAwareInterface
-{
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+use OroB2B\Bundle\AccountBundle\Migrations\Schema\LoadRolesDataTrait;
 
+class AddPublicColumn implements Migration, OrderedMigrationInterface
+{
     /**
      * {@inheritdoc}
      */
@@ -42,10 +39,10 @@ class AddPublicColumn implements Migration, ContainerAwareInterface
     }
 
     /**
-     * @param ContainerInterface|null $container
+     * {@inheritdoc}
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function getOrder()
     {
-        $this->container = $container;
+        return 1;
     }
 }
