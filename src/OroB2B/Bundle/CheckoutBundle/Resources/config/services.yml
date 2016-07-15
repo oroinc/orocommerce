@@ -187,3 +187,18 @@ services:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper'
         tags:
              - { name: checkout.workflow_state.mapper }
+
+    orob2b_checkout.workflow_state.mapper.billing_address_diff:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\BillingAddressDiffMapper'
+        tags:
+             - { name: checkout.workflow_state.mapper }
+
+    orob2b_checkout.workflow_state.mapper.shipping_address_diff:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingAddressDiffMapper'
+        tags:
+             - { name: checkout.workflow_state.mapper }
+
+    orob2b_checkout.workflow_state.mapper.payment_method_diff:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodDiffMapper'
+        tags:
+             - { name: checkout.workflow_state.mapper }
