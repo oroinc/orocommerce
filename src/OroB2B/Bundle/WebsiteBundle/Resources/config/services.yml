@@ -23,6 +23,11 @@ services:
             - '%orob2b_website.entity.website.class%'
             - "@doctrine.orm.entity_manager"
 
+    orob2b_website.website.provider:
+        class: 'OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProvider'
+        arguments:
+            - "@doctrine"
+
     orob2b_website.model.action.assign_current_website:
         class: 'OroB2B\Bundle\WebsiteBundle\Model\Action\AssignCurrentWebsite'
         public: false

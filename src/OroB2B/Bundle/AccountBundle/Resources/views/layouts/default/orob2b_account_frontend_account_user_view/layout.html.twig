@@ -36,41 +36,41 @@
         <div class="widget-content">
             <div class="row-fluid form-horizontal">
                 <div class="responsive-block">
-                    {% if  entity.namePrefix is defined %}
-                        {{ UI.renderProperty('orob2b.account.accountuser.name_prefix.label'|trans, entity.namePrefix) }}
+                    {% if  accountUser.namePrefix is defined %}
+                        {{ UI.renderProperty('orob2b.account.accountuser.name_prefix.label'|trans, accountUser.namePrefix) }}
                     {% endif %}
-                    {{ UI.renderProperty('orob2b.account.accountuser.first_name.label'|trans, entity.firstName) }}
-                    {% if  entity.middleName is defined %}
-                        {{ UI.renderProperty('orob2b.account.accountuser.middle_name.label'|trans, entity.middleName) }}
+                    {{ UI.renderProperty('orob2b.account.accountuser.first_name.label'|trans, accountUser.firstName) }}
+                    {% if  accountUser.middleName is defined %}
+                        {{ UI.renderProperty('orob2b.account.accountuser.middle_name.label'|trans, accountUser.middleName) }}
                     {% endif %}
-                    {{ UI.renderProperty('orob2b.account.accountuser.last_name.label'|trans, entity.lastName) }}
-                    {% if  entity.nameSuffix is defined %}
-                        {{ UI.renderProperty('orob2b.account.accountuser.name_suffix.label'|trans, entity.nameSuffix) }}
+                    {{ UI.renderProperty('orob2b.account.accountuser.last_name.label'|trans, accountUser.lastName) }}
+                    {% if  accountUser.nameSuffix is defined %}
+                        {{ UI.renderProperty('orob2b.account.accountuser.name_suffix.label'|trans, accountUser.nameSuffix) }}
                     {% endif %}
 
                     {% set birthday_string %}
-                        {{ entity.birthday is empty ? 'N/A'|trans : entity.birthday|oro_format_date }}
-                        {% if entity.birthday is not empty %}
-                            ({{ entity.birthday|age_string({'default': 'N/A'}) }})
+                        {{ accountUser.birthday is empty ? 'N/A'|trans : accountUser.birthday|oro_format_date }}
+                        {% if accountUser.birthday is not empty %}
+                            ({{ accountUser.birthday|age_string({'default': 'N/A'}) }})
                         {% endif %}
                     {% endset %}
                     {{ UI.renderProperty('orob2b.account.accountuser.birthday.label'|trans, birthday_string) }}
-                    {{ UI.renderHtmlProperty('orob2b.account.accountuser.email.label'|trans, Email.email_address_simple(entity.email)) }}
+                    {{ UI.renderHtmlProperty('orob2b.account.accountuser.email.label'|trans, Email.email_address_simple(accountUser.email)) }}
 
-                    {% if entity.account %}
-                        {{ UI.renderHtmlProperty('orob2b.account.accountuser.profile.company_name'|trans, entity.account.name) }}
+                    {% if accountUser.account %}
+                        {{ UI.renderHtmlProperty('orob2b.account.accountuser.profile.company_name'|trans, accountUser.account.name) }}
                     {% endif %}
 
                     {% if resource_granted('orob2b_account_account_user_role_view') %}
                         {% set roles = [] %}
-                        {% for entityRole in entity.roles %}
-                            {% set roles = roles|merge([entityRole.label]) %}
+                        {% for accountUserRole in accountUser.roles %}
+                            {% set roles = roles|merge([accountUserRole.label]) %}
                         {% endfor %}
                         {{ UI.renderHtmlProperty('orob2b.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
                     {% endif %}
 
-                    {% if entity.salesRepresentatives | length %}
-                        {{ UI.renderHtmlProperty('orob2b.account.accountuser.sales_representatives.label'|trans, UI.entityViewLinks(entity.salesRepresentatives, 'fullName', 'oro_user_view')) }}
+                    {% if accountUser.salesRepresentatives | length %}
+                        {{ UI.renderHtmlProperty('orob2b.account.accountuser.sales_representatives.label'|trans, UI.entityViewLinks(accountUser.salesRepresentatives, 'fullName', 'oro_user_view')) }}
                     {% endif %}
                 </div>
             </div>

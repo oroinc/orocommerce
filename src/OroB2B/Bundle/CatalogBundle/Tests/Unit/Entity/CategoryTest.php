@@ -7,10 +7,11 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class CategoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,6 +39,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             ['parentCategory', null],
             ['createdAt', $date, false],
             ['updatedAt', $date, false],
+            ['defaultProductOptions', new CategoryDefaultProductOptions()]
         ];
 
         $this->assertPropertyAccessors(new Category(), $properties);

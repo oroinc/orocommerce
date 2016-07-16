@@ -9,8 +9,7 @@ layout:
                     blockType: block
                     siblingId: product_grid_row_specification_delivery
                     options:
-                        vars:
-                            attr_renderer: 'block_attributes_underscore'
+                        attr_renderer: 'block_attributes_underscore'
                 product_grid_row_msrp:
                     parentId: product_grid_row_secondary_content_first_container
                     blockType: block
@@ -20,8 +19,7 @@ layout:
                     parentId: product_grid_row_secondary_content_first_container
                     blockType: block
                     options:
-                        vars:
-                            attr_renderer: 'block_attributes_underscore'
+                        attr_renderer: 'block_attributes_underscore'
             tree:
                 product_grid_row_secondary_content_first_container:
                     product_grid_row_listed_price: ~

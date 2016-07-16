@@ -68,5 +68,7 @@ abstract class AbstractCallbackEvent extends AbstractTransactionEvent
     public function markFailed()
     {
         $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
+
+        $this->stopPropagation();
     }
 }

@@ -9,9 +9,10 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings;
+use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings;
 
 class UserCurrencyManager
 {
@@ -131,7 +132,11 @@ class UserCurrencyManager
      */
     public function getAvailableCurrencies()
     {
-        return (array)$this->configManager->get('oro_b2b_pricing.enabled_currencies', []);
+
+        return (array)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::ENABLED_CURRENCIES),
+            []
+        );
     }
 
     /**
@@ -139,7 +144,7 @@ class UserCurrencyManager
      */
     public function getDefaultCurrency()
     {
-        return $this->configManager->get('oro_b2b_pricing.default_currency');
+        return $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_CURRENCY));
     }
 
     /**

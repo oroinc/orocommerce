@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
@@ -20,6 +21,20 @@ use OroB2B\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelHandler;
 
 class WarehouseInventoryLevelController extends Controller
 {
+    /**
+     * @Route("/", name="orob2b_warehouse_inventory_level_index")
+     * @Template
+     * @AclAncestor("orob2b_warehouse_inventory_level_index")
+     *
+     * @return array
+     */
+    public function indexAction()
+    {
+        return [
+            'entity_class' => $this->container->getParameter('orob2b_warehouse.entity.warehouse.class'),
+        ];
+    }
+
     /**
      * Edit product warehouse inventory levels
      *
@@ -80,7 +95,7 @@ class WarehouseInventoryLevelController extends Controller
         $noDataReason = '';
         if (0 === count($product->getUnitPrecisions())) {
             $noDataReason = 'orob2b.warehouse.warehouseinventorylevel.error.units';
-        } elseif (0 === count($this->getAvailableWarehouses())) {
+        } elseif (0 === $this->getAvailableWarehousesCount()) {
             $noDataReason = 'orob2b.warehouse.warehouseinventorylevel.error.warehouses';
         }
 
@@ -90,15 +105,15 @@ class WarehouseInventoryLevelController extends Controller
     }
 
     /**
-     * @return array|Warehouse[]
+     * @return integer
      */
-    private function getAvailableWarehouses()
+    private function getAvailableWarehousesCount()
     {
         $warehouseClass = $this->getParameter('orob2b_warehouse.entity.warehouse.class');
 
         return $this->getDoctrine()
             ->getManagerForClass($warehouseClass)
             ->getRepository($warehouseClass)
-            ->findAll();
+            ->countAll();
     }
 }

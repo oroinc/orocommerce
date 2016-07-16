@@ -66,14 +66,12 @@
             data-page-component-options="{{ {
                 'view': 'orob2bfrontend/js/app/views/form-view',
                  selectors: {
-                     account: 'input[name$="[account]"]',
-                     website: 'select[name$="[website]"]'
+                     account: 'input[name$="[account]"]'
                  }
              }|json_encode }}"
         >
             {{ form_row(form.owner) }}
             {{ ownerSelectors }}
-            {{ form_row(form.website) }}
             {{ form_row(form.validUntil) }}
             {{ form_row(form.locked) }}
             {{ form_row(form.poNumber) }}

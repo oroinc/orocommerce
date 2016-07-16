@@ -7,7 +7,6 @@ services:
         class: 'OroB2B\Bundle\InvoiceBundle\Form\Type\InvoiceType'
         calls:
             - [setDataClass, ['%orob2b_invoice.entity.invoice.class%']]
-            - [setWebsiteClass, ['%orob2b_website.entity.website.class%']]
         tags:
             - { name: form.type, alias: orob2b_invoice_type }
 

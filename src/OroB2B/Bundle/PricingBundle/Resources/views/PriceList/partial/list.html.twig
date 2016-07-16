@@ -14,11 +14,11 @@
             </thead>
             <tbody>
             {% for entity in entities %}
-                <tr>
+                <tr class="price_list{{ entity.priceList.id }}">
                     <td>{{ loop.index }}</td>
-                    <td><a href="{{ path('orob2b_pricing_price_list_view', {'id': entity.priceList.id}) }}">{{ entity.priceList.name }}</a></td>
-                    <td>{{ entity.priority }}</td>
-                    <td>{{ entity.mergeAllowed ? 'orob2b.pricing.pricelist.merge_allowed.yes.label'|trans : 'orob2b.pricing.pricelist.merge_allowed.no.label'|trans }}</td>
+                    <td><a href="{{ path('orob2b_pricing_price_list_view', {'id': entity.priceList.id}) }}" class="price_list_link">{{ entity.priceList.name }}</a></td>
+                    <td class="price_list_priority">{{ entity.priority }}</td>
+                    <td class="price_list_merge_allowed">{{ entity.mergeAllowed ? 'orob2b.pricing.pricelist.merge_allowed.yes.label'|trans : 'orob2b.pricing.pricelist.merge_allowed.no.label'|trans }}</td>
                 </tr>
             {% endfor %}
             </tbody>

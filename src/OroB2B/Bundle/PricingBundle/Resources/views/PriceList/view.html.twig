@@ -87,19 +87,6 @@
         }
     ]) %}
 
-    {% set dataBlocks = dataBlocks|merge([
-        {
-            'title' : 'orob2b.website.entity_plural_label'|trans,
-            'subblocks': [
-                {
-                    'title' : '',
-                    'useSpan': false,
-                    'data' : [dataGrid.renderGrid('price-list-websites-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
-                }
-            ]
-        }
-    ]) %}
-
     {% set id = 'price-list-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 

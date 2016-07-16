@@ -7,9 +7,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class TotalProcessorProvider extends AbstractSubtotalProvider
 {
@@ -28,6 +32,9 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
 
     /** @var  [] */
     protected $subtotals = [];
+
+    /** @var bool */
+    protected $recalculationEnabled = false;
 
     /**
      * @param SubtotalProviderRegistry $subtotalProviderRegistry
@@ -124,7 +131,7 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
 
         if (!array_key_exists($hash, $this->subtotals)) {
             foreach ($this->subtotalProviderRegistry->getSupportedProviders($entity) as $provider) {
-                $subtotals = $provider->getSubtotal($entity);
+                $subtotals = $this->getEntitySubtotal($provider, $entity);
                 $subtotals = is_object($subtotals) ? [$subtotals] : (array) $subtotals;
                 foreach ($subtotals as $subtotal) {
                     $subtotalCollection->add($subtotal);
@@ -134,6 +141,38 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         }
 
         return $this->subtotals[$hash];
+    }
+
+    /**
+     * @param SubtotalProviderInterface $provider
+     * @param object $entity
+     * @return Subtotal
+     */
+    protected function getEntitySubtotal(SubtotalProviderInterface $provider, $entity)
+    {
+        if ($this->recalculationEnabled) {
+            return $provider->getSubtotal($entity);
+        }
+
+        if ($provider instanceof CacheAwareInterface) {
+            return $provider->getCachedSubtotal($entity);
+        }
+
+        if ($provider instanceof SubtotalCacheAwareInterface) {
+            if (!$entity instanceof SubtotalAwareInterface) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        '"%s" expected, but "%s" given',
+                        SubtotalAwareInterface::class,
+                        is_object($entity) ? get_class($entity) : gettype($entity)
+                    )
+                );
+            }
+
+            return $provider->getCachedSubtotal($entity);
+        }
+
+        return $provider->getSubtotal($entity);
     }
 
     /**
@@ -174,5 +213,25 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         }
 
         return $totalAmount;
+    }
+
+    /**
+     * @return $this
+     */
+    public function enableRecalculation()
+    {
+        $this->recalculationEnabled = true;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function disableRecalculation()
+    {
+        $this->recalculationEnabled = false;
+
+        return $this;
     }
 }

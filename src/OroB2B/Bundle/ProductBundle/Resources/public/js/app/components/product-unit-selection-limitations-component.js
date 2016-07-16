@@ -209,7 +209,6 @@ define(function (require) {
          * Add label to all conversionRates inputs
          *
          * @param {String} value
-         * @param {String} text
          */
         addConversionRateLabels: function (value) {
             this.options._sourceElement.find(this.options.conversionRateInput).each(function () {
@@ -259,7 +258,6 @@ define(function (require) {
         /**
          * Show error
          *
-         * @param {jQuery.Event} e
          */
         showError: function () {
             if (!this.error) {

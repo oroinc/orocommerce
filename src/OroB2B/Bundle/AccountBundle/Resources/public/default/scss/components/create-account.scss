@@ -1,0 +1,275 @@
+.create-account {
+  &__title {
+    padding: 0 10px;
+    margin: 0 0 15px;
+
+    font-size: 22px;
+    line-height: 1.2;
+    font-weight: 400;
+  }
+
+  &__form-container {
+    p {
+      margin: 0 0 15px;
+    }
+
+    .create-account__title {
+      padding: 0;
+    }
+
+    &.form-container-x6 {
+      width: 50%;
+      margin: 0 auto;
+      padding: 0 15px;
+
+      @media (max-width: $screen-md) {
+        width: 100%;
+        float: none;
+
+        + .form-container-x6 {
+          margin: 30px 0;
+        }
+      }
+    }
+
+    &.form-container-x6_mfull {
+      float: left;
+      width: 50%;
+      padding: 0 15px;
+
+      @media (max-width: $screen-md) {
+        float: none;
+        width: 100%;
+        padding: 0;
+
+        + .form-container-x6_mfull {
+          margin: 30px 0;
+        }
+      }
+    }
+  }
+
+  &__form {
+    padding: 40px 45px;
+    border-radius: 3px;
+
+    background: $theme-lightest-gray-color;
+
+    &.create-account__form_register {
+      padding: 40px 25% 40px 15%;
+
+      @media (max-width: $screen-md) {
+        padding: 1rem;
+      }
+    }
+
+    &.create-account__form_new-customer {
+      padding: 40px 9%;
+
+      @media (max-width: $screen-md) {
+        padding: 10px;
+      }
+    }
+
+    &.create-account__form_signin {
+      padding: 40px 20%;
+
+      @media (max-width: $screen-md) {
+        padding: 10px;
+      }
+    }
+
+    @media (max-width: $screen-md) {
+      padding: 10px;
+    }
+
+    .removeLineItem.btn {
+      min-width: 30px;
+    }
+
+    .btn {
+      min-width: 200px;
+    }
+
+    &__row {
+      position: relative;
+
+      margin: 0 -5px;
+
+      @include clearfix();
+    }
+
+    &__col {
+      float: left;
+      padding: 0 5px;
+      margin: 0 0 15px;
+
+      &.form__col_x6 {
+        width: 50%;
+
+        @media (max-width: $screen-md) {
+          width: 100%;
+        }
+      }
+
+      &.form__col_x12 {
+        float: none;
+        width: 100%;
+      }
+
+      &.col-city {
+        width: 340px;
+
+        @media (max-width: $screen-md) {
+          width: 100%;
+        }
+      }
+
+      &.col-country {
+        select {
+          width: 100%;
+
+          @include input();
+        }
+      }
+
+      &.col-state {
+        width: 80px;
+
+        select {
+          @include input();
+        }
+
+        @media (max-width: $screen-md) {
+          width: 100px;
+          margin-right: 15px;
+          clear: left;
+
+          select {
+            width: 70px !important;
+          }
+        }
+      }
+
+      &.col-zip {
+        width: 100px;
+        clear: left;
+
+        @media (max-width: $screen-md) {
+          clear: none;
+        }
+      }
+
+      .chosen-container{
+        &.chosen-container-single {
+
+          .chosen-single {
+            padding: 8px 12px;
+            line-height: 25px;
+          }
+        }
+      }
+    }
+
+    &__label {
+      display: block;
+      margin: 0 0 5px;
+
+      font-weight: 400;
+    }
+
+    &__input {
+      @include input();
+
+      &::-webkit-input-placeholder {
+        color: $base-font-color-lightest;
+      }
+
+      &::-moz-placeholder {
+        color: $base-font-color-lightest;
+      }
+
+      &:-moz-placeholder {
+        color: $base-font-color-lightest;
+      }
+
+      &:-ms-input-placeholder {
+        color: $base-font-color-lightest;
+      }
+
+      &:focus {
+        border-color: $base-link-color;
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+        outline: 0;
+      }
+    }
+
+    &__req-text {
+      position: absolute;
+      left: 230px;
+      top: 18px;
+
+      color: $theme-red-color;
+
+      @media (max-width: $screen-md) {
+        position: static;
+
+        margin: 0 0 20px 5px;
+      }
+    }
+
+    &__submit {
+      @media (max-width: $screen-md) {
+        width: 100%;
+      }
+    }
+
+    &__nc-list {
+      margin: 0 0 15px 50px;
+
+      + p {
+        margin: 0 0 25px 35px;
+      }
+    }
+  }
+
+  &_full {
+    width: 860px;
+    margin: 0 auto;
+
+    @media (max-width: $screen-md) {
+      width: 100%;
+      margin-bottom: 80px;
+    }
+  }
+
+  &_half-cols {
+    margin: 0 -15px;
+
+    @include clearfix();
+  }
+
+  &_pos-absolute_vert-centered {
+    position: absolute;
+    top: 50%;
+    left: 0;
+
+    width: 100%;
+
+    transform: translateY(-50%);
+
+    @media (max-width: $screen-md) {
+      margin: 0;
+    }
+
+    .create-account__form-container {
+      &.form-container-x6 {
+        max-width: 700px;
+      }
+    }
+  }
+}
+
+.secondary-contact-info {
+  display: none;
+}

@@ -25,7 +25,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
             ]
         );
 
-        $this->configManager = $this->getContainer()->get('oro_config.global');
+        $this->configManager = $this->getContainer()->get('oro_config.manager');
     }
 
     protected function tearDown()
