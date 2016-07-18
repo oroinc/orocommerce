@@ -262,6 +262,7 @@ datagrid:
                     options:
                         field_options:
                             choices: "@orob2b_product.provider.product_units_provider->getAvailableProductUnits"
+                            multiple: true
         actions:
             delete:
                 type:          delete

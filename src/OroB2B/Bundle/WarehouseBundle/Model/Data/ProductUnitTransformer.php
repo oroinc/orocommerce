@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\WarehouseBundle\Model\Data;
 
 use Doctrine\Common\Inflector\Inflector;
+
 use OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
 class ProductUnitTransformer
@@ -18,6 +19,11 @@ class ProductUnitTransformer
         $this->productUnitsProvider = $productUnitsProvider;
     }
 
+    /**
+     * Based on the full name of a unit return its code
+     * @param string $unit
+     * @return null|string
+     */
     public function transformToProductUnit($unit)
     {
         $unit = Inflector::singularize($unit);

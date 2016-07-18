@@ -43,7 +43,9 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
 
         $processorAliases = $this->getProcessorAliases();
 
-        $defaultChoice = reset($processorAliases);
+        reset($processorAliases);
+        $defaultChoice = key($processorAliases);
+
         $builder->remove(ExportTemplateType::CHILD_PROCESSOR_ALIAS);
 
         $builder->add(

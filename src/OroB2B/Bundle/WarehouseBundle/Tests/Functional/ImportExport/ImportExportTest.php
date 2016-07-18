@@ -18,11 +18,8 @@ use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAn
 /**
  * @dbIsolation
  */
-class ImportExportTest extends ImportSingleWarehouseTest
+class ImportExportTest extends AbstractImportExportTestCase
 {
-    protected $importStatusFile = 'import_status_data.yml';
-    protected $importLevelFile = 'import_level_data.yml';
-
     protected $inventoryStatusOnlyHeader = [
         'SKU',
         'Product',
@@ -343,5 +340,106 @@ class ImportExportTest extends ImportSingleWarehouseTest
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import_validation.yml';
 
         return Yaml::parse(file_get_contents($filePath));
+    }
+
+    /**
+     * @param string $fileName
+     * @param array $configuration
+     *
+     * @dataProvider inventoryStatusDataProvider
+     */
+    public function testImportInventoryStatuses($fileName)
+    {
+        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . $fileName;
+
+        $jobResult = $this->makeImport($filePath);
+        $exceptions = $jobResult->getFailureExceptions();
+        $this->assertEmpty($exceptions, implode(PHP_EOL, $exceptions));
+        $this->assertEmpty(
+            $jobResult->getContext()->getErrors(),
+            implode(PHP_EOL, $jobResult->getContext()->getErrors())
+        );
+
+        $file = fopen($filePath, "r");
+        $header = fgetcsv($file);
+
+        if (!$header) {
+            return;
+        }
+
+        /** @var EntityRepository $repository */
+        $repository = $this->client->getContainer()->get('oro_entity.doctrine_helper')
+            ->getEntityRepository(Product::class);
+
+        $row = fgetcsv($file);
+        while ($row) {
+            $values = array_combine($header, $row);
+            $entity = $repository->findOneBy(['sku' => $values['SKU']]);
+
+            $this->assertTrue($this->assertFields(
+                $entity,
+                $values,
+                array_intersect($this->getFieldMappings(), $header),
+                []
+            ));
+
+            $row = fgetcsv($file);
+        }
+    }
+
+    /**
+     * @param string $fileName
+     * @param array $configuration
+     *
+     * @dataProvider inventoryLevelsDataProvider
+     */
+    public function testImportInventoryLevels($fileName)
+    {
+        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . $fileName;
+
+        $jobResult = $this->makeImport($filePath);
+        $exceptions = $jobResult->getFailureExceptions();
+        $this->assertEmpty($exceptions, implode(PHP_EOL, $exceptions));
+        $this->assertEmpty(
+            $jobResult->getContext()->getErrors(),
+            implode(PHP_EOL, $jobResult->getContext()->getErrors())
+        );
+
+        $file = fopen($filePath, "r");
+        $header = fgetcsv($file);
+
+        if (!$header) {
+            return;
+        }
+
+        $row = fgetcsv($file);
+        while ($row) {
+            $values = array_combine($header, $row);
+
+            $this->assertTrue($this->assertFields(
+                $this->getInventoryLevelEntity($values),
+                $values,
+                array_intersect($this->getFieldMappings(), $header),
+                []
+            ));
+
+            $row = fgetcsv($file);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getImportStatusFile()
+    {
+        return 'import_status_data.yml';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getImportLevelFile()
+    {
+        return 'import_level_data.yml';
     }
 }

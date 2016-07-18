@@ -18,6 +18,7 @@ class ProductUnitStrategyHelper extends AbstractWarehouseInventoryLevelStrategyH
     /** @var array $requiredUnitCache */
     protected $requiredUnitCache = [];
 
+    /** @var ProductUnitTransformer $productUnitTransformer */
     protected $productUnitTransformer;
 
     /**
