@@ -9,16 +9,7 @@ class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
     const DATA_NAME = 'shipToBillingAddress';
 
     /**
-     * @return int
-     */
-    public function getPriority()
-    {
-        return 10;
-    }
-
-    /**
-     * @param object $entity
-     * @return boolean
+     * {@inheritdoc}
      */
     public function isEntitySupported($entity)
     {

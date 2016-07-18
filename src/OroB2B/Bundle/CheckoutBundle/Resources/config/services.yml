@@ -186,4 +186,4 @@ services:
     orob2b_checkout.workflow_state.mapper.ship_to_billing_diff:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper'
         tags:
-             - { name: checkout.workflow_state.mapper }
+             - { name: checkout.workflow_state.mapper, priority: 20 }

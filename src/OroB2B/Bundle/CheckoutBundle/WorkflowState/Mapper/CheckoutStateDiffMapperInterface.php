@@ -5,11 +5,6 @@ namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper;
 interface CheckoutStateDiffMapperInterface
 {
     /**
-     * @return int
-     */
-    public function getPriority();
-
-    /**
      * @param object $entity
      * @return boolean
      */

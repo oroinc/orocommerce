@@ -22,10 +22,8 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->checkoutStateDiffManager = new CheckoutStateDiffManager();
-
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
-
 
     public function testAddMapper()
     {
@@ -39,37 +37,6 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
             'mappers',
             $this->checkoutStateDiffManager
         );
-    }
-
-    public function testGetMappers()
-    {
-        /** @var CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper1 */
-        $mapper1 = $this->getMock('OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface');
-        $mapper1->method('getPriority')->willReturn(20);
-
-        /** @var CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper2 */
-        $mapper2 = $this->getMock('OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface');
-        $mapper2->method('getPriority')->willReturn(10);
-
-        /** @var CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper3 */
-        $mapper3 = $this->getMock('OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface');
-        $mapper3->method('getPriority')->willReturn(10);
-
-        $reflectionClasss = new \ReflectionClass(
-            'OroB2B\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager'
-        );
-        $getMappersMethod = $reflectionClasss->getMethod('getMappers');
-        $getMappersMethod->setAccessible(true);
-
-        $this->checkoutStateDiffManager->addMapper($mapper1);
-        $this->checkoutStateDiffManager->addMapper($mapper2);
-        $this->checkoutStateDiffManager->addMapper($mapper3);
-
-        $result = $getMappersMethod->invoke($this->checkoutStateDiffManager);
-
-        $this->assertSame($mapper3, $result[0]);
-        $this->assertSame($mapper2, $result[1]);
-        $this->assertSame($mapper1, $result[2]);
     }
 
     public function testGetCurrentState()

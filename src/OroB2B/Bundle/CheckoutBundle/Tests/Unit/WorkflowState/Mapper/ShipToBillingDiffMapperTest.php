@@ -23,11 +23,6 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
 
-    public function testGetPriority()
-    {
-        $this->assertEquals(10, $this->mapper->getPriority());
-    }
-
     public function testIsEntitySupported()
     {
         $this->assertEquals(true, $this->mapper->isEntitySupported($this->checkout));

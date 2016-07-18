@@ -12,7 +12,7 @@ class CheckoutStateDiffCompilerPass implements CompilerPassInterface
     const CHECKOUT_STATE_DIFF_MAPPER_TAG = 'checkout.workflow_state.mapper';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
@@ -21,10 +21,23 @@ class CheckoutStateDiffCompilerPass implements CompilerPassInterface
         }
         $definition = $container->getDefinition(self::CHECKOUT_STATE_DIFF_MANAGER);
         $taggedServices = $container->findTaggedServiceIds(self::CHECKOUT_STATE_DIFF_MAPPER_TAG);
-        foreach ($taggedServices as $id => $tags) {
+
+        foreach ($taggedServices as $id => $attributes) {
+            $priority               = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
+            $mappers[$priority][] = new Reference($id);
+        }
+        if (empty($mappers)) {
+            return;
+        }
+
+        // sort by priority and flatten
+        krsort($mappers);
+        $mappers = call_user_func_array('array_merge', $mappers);
+
+        foreach ($mappers as $mapper) {
             $definition->addMethodCall(
                 'addMapper',
-                [new Reference($id)]
+                [new Reference($mapper)]
             );
         }
     }
