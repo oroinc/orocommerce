@@ -4,14 +4,24 @@ namespace OroB2B\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
+
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository")
- * @ORM\Table(name="oro_checkout_workflow_state",
- *     uniqueConstraints={@ORM\UniqueConstraint(name="unique_state", columns={"entity_id", "entity_class", "hash"})}
+ * @ORM\Table(name="orob2b_checkout_workflow_state",
+ *     uniqueConstraints={@ORM\UniqueConstraint(
+ *         name="orob2b_checkout_workflow_state_unique_id_class_token_idx",
+ *         columns={"entity_id", "entity_class", "token"}
+ *     )}
  * )
  */
-class CheckoutWorkflowState
+class CheckoutWorkflowState implements DatesAwareInterface
 {
+    use DatesAwareTrait;
+
     /**
      * @var int
      *
@@ -24,9 +34,9 @@ class CheckoutWorkflowState
     /**
      * @var string
      *
-     * @ORM\Column(type="string", name="hash", length=13)
+     * @ORM\Column(type="string", name="token")
      */
-    protected $hash;
+    protected $token;
 
     /**
      * @var int
@@ -49,6 +59,11 @@ class CheckoutWorkflowState
      */
     protected $stateData;
 
+    public function __construct()
+    {
+        $this->setToken(UUIDGenerator::v4());
+    }
+
     /**
      * @return int
      */
@@ -60,18 +75,18 @@ class CheckoutWorkflowState
     /**
      * @return string
      */
-    public function getHash()
+    public function getToken()
     {
-        return $this->hash;
+        return $this->token;
     }
 
     /**
-     * @param string $hash
+     * @param string $token
      * @return $this
      */
-    public function setHash($hash)
+    public function setToken($token)
     {
-        $this->hash = $hash;
+        $this->token = $token;
         return $this;
     }
 
@@ -94,7 +109,7 @@ class CheckoutWorkflowState
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getEntityId()
     {
@@ -107,7 +122,7 @@ class CheckoutWorkflowState
      */
     public function setEntityId($entityId)
     {
-        $this->entityId = $entityId;
+        $this->entityId = (int)$entityId;
         return $this;
     }
 

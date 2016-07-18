@@ -19,7 +19,7 @@ class LoadCheckoutWorkflowState extends AbstractFixture
         self::CHECKOUT_STATE_1 => [
             'entityId' => 7,
             'entityClass' => 'OroB2B\Bundle\SomeBundle\Entity\SomeEntity',
-            'hash' => 'unique_hash_1',
+            'token' => 'unique_token_1',
             'stateData' => [
                 'testKey' => 'testValue'
             ]
@@ -27,7 +27,7 @@ class LoadCheckoutWorkflowState extends AbstractFixture
         self::CHECKOUT_STATE_2 => [
             'entityId' => 11,
             'entityClass' => 'OroB2B\Bundle\SomeBundle\Entity\SomeOtherEntity',
-            'hash' => 'unique_hash_2',
+            'token' => 'unique_token_2',
             'stateData' => [
                 'anotherTestKey' => 'anotherTestValue'
             ]
@@ -43,7 +43,7 @@ class LoadCheckoutWorkflowState extends AbstractFixture
             $entity = new CheckoutWorkflowState();
             $entity->setEntityId($state['entityId']);
             $entity->setEntityClass($state['entityClass']);
-            $entity->setHash($state['hash']);
+            $entity->setToken($state['token']);
             $entity->setStateData($state['stateData']);
 
             $this->addReference($referenceName, $entity);

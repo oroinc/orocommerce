@@ -7,16 +7,16 @@ interface CheckoutDiffStorageInterface
     /**
      * @param object $entity
      * @param array $data
-     * @return $hash
+     * @return $token
      */
     public function addState($entity, array $data);
 
     /**
      * @param object $entity
-     * @param string $hash
+     * @param string $token
      * @return array
      */
-    public function readState($entity, $hash);
+    public function readState($entity, $token);
 
     /**
      * @param object $entity

@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
+
 use OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
 use OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutWorkflowState;
 
@@ -29,16 +29,16 @@ class CheckoutWorkflowStateRepositoryTest extends WebTestCase
         return $this->getContainer()->get('doctrine')->getRepository('OroB2BCheckoutBundle:CheckoutWorkflowState');
     }
 
-    public function testGetEntityStateByHash()
+    public function testGetEntityStateByToken()
     {
-        $statesData  = LoadCheckoutWorkflowState::getStatesData();
+        $statesData = LoadCheckoutWorkflowState::getStatesData();
         $stateEntity = $this->getReference(LoadCheckoutWorkflowState::CHECKOUT_STATE_1);
-        $stateData   = $statesData[LoadCheckoutWorkflowState::CHECKOUT_STATE_1];
+        $stateData = $statesData[LoadCheckoutWorkflowState::CHECKOUT_STATE_1];
 
         $this->assertEquals(
             $stateEntity,
-            $this->getRepository()->getEntityByHash(
-                $stateData['hash'],
+            $this->getRepository()->getEntityByToken(
+                $stateData['token'],
                 $stateData['entityId'],
                 $stateData['entityClass']
             )
@@ -47,8 +47,8 @@ class CheckoutWorkflowStateRepositoryTest extends WebTestCase
 
     public function testDeleteEntityStates()
     {
-        $statesData  = LoadCheckoutWorkflowState::getStatesData();
-        $stateData   = $statesData[LoadCheckoutWorkflowState::CHECKOUT_STATE_2];
+        $statesData = LoadCheckoutWorkflowState::getStatesData();
+        $stateData = $statesData[LoadCheckoutWorkflowState::CHECKOUT_STATE_2];
         $this->assertEquals(2, $this->countEntities());
 
         $this->getRepository()->deleteEntityStates($stateData['entityId'], $stateData['entityClass']);

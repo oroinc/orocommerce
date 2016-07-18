@@ -18,7 +18,7 @@ class OroB2BCheckoutBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -30,6 +30,7 @@ class OroB2BCheckoutBundleInstaller implements Installation
         $this->createOroB2BCheckoutSourceTable($schema);
         $this->createOroB2BCheckoutTable($schema);
         $this->createOroB2BDefaultCheckoutTable($schema);
+        $this->createCheckoutWorkflowStateTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BCheckoutForeignKeys($schema);
@@ -201,5 +202,25 @@ class OroB2BCheckoutBundleInstaller implements Installation
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function createCheckoutWorkflowStateTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_checkout_workflow_state');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('token', 'string', ['length' => 255]);
+        $table->addColumn('entity_id', 'integer', []);
+        $table->addColumn('entity_class', 'string', ['length' => 255]);
+        $table->addColumn('state_data', 'array', ['comment' => '(DC2Type:array)']);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addUniqueIndex(
+            ['entity_id', 'entity_class', 'token'],
+            'orob2b_checkout_workflow_state_unique_id_class_token_idx'
+        );
+        $table->setPrimaryKey(['id']);
     }
 }

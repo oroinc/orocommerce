@@ -1,41 +1,53 @@
 <?php
+
 namespace OroB2B\Bundle\CheckoutBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
 
 class CheckoutWorkflowStateRepository extends EntityRepository
 {
     /**
-     * @param string $hash
-     * @param integer $entityId
+     * @param string $token
+     * @param int $entityId
      * @param string $entityClass
      * @return CheckoutWorkflowState
      */
-    public function getEntityByHash($hash, $entityId, $entityClass)
+    public function getEntityByToken($token, $entityId, $entityClass)
     {
-        return $this->createQueryBuilder('t')
-            ->where('t.entityId = :entityId AND t.entityClass = :entityClass AND t.hash = :hash')
+        $qb = $this->createQueryBuilder('t');
+        return $qb
+            ->where($qb->expr()->andX(
+                $qb->expr()->eq('t.entityId', ':entityId'),
+                $qb->expr()->eq('t.entityClass', ':entityClass'),
+                $qb->expr()->eq('t.token', ':token')
+            ))
             ->setParameters([
-                'entityId'    => $entityId,
+                'entityId' => $entityId,
                 'entityClass' => $entityClass,
-                'hash'        => $hash
+                'token' => $token
             ])
             ->getQuery()
-            ->getSingleResult();
+            ->getOneOrNullResult();
     }
 
     /**
-     * @param integer $entityId
+     * @param int $entityId
      * @param string $entityClass
      */
     public function deleteEntityStates($entityId, $entityClass)
     {
-        $this->_em->createQueryBuilder()
-            ->delete($this->_entityName, 't')
-            ->where('t.entityId = :entityId and t.entityClass = :entityClass')
+        $qb = $this->createQueryBuilder('t');
+
+        $qb
+            ->delete()
+            ->where($qb->expr()->andX(
+                $qb->expr()->eq('t.entityId', ':entityId'),
+                $qb->expr()->eq('t.entityClass', ':entityClass')
+            ))
             ->setParameters([
-                'entityId'    => $entityId,
+                'entityId' => $entityId,
                 'entityClass' => $entityClass
             ])
             ->getQuery()
