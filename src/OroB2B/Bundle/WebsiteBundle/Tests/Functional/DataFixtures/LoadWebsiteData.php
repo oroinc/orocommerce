@@ -52,17 +52,10 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
         // Create websites
         foreach ($this->webSites as $webSite) {
             $site = new Website();
-
-            $siteLocalizations = [];
-            foreach ($webSite['localizations'] as $localizationCode) {
-                $siteLocalizations[] = $this->getLocalization($localizationCode);
-            }
-
             $site->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->setName($webSite['name'])
-                ->setUrl($webSite['url'])
-                ->resetLocalizations($siteLocalizations);
+                ->setUrl($webSite['url']);
 
             $this->setReference($site->getName(), $site);
 
