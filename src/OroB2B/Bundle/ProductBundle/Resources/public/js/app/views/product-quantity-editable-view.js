@@ -78,6 +78,10 @@ define(function(require) {
                 unit: this.$el.find(options.elements.unit)
             };
 
+            if (options.$trigger) {
+                this.$trigger = options.$trigger;
+            }
+
             this.elements.unit.prop('disabled', false);
             if (!this.elements.unit.find(':selected').is(':disabled')) {
                 this.enableQuantity();
@@ -85,6 +89,10 @@ define(function(require) {
 
             this.initValidator(options);
             this.initListeners();
+        },
+
+        enableAccept: function() {
+            this.$trigger.prop('disabled', false);
         },
 
         enableQuantity: function() {
@@ -125,6 +133,14 @@ define(function(require) {
         },
 
         initListeners: function() {
+            if (this.$trigger) {
+                this.$trigger.on('click', _.bind(this.onViewChange, this));
+                this.$el.on('change', this.elements.quantity, _.bind(this.enableAccept, this));
+                this.$el.on('change', this.elements.unit, _.bind(this.enableAccept, this));
+
+                return;
+            }
+
             this.$el.on('change', this.elements.quantity, _.bind(this.onViewChange, this));
             this.$el.on('change', this.elements.unit, _.bind(this.onViewChange, this));
         },

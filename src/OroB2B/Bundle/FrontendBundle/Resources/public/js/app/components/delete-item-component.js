@@ -12,18 +12,33 @@ define(function (require) {
     var $ = require('jquery');
 
     DeleteItemComponent = BaseComponent.extend({
+        confirmRemoveComponent: DeleteConfirmation,
+
         initialize: function(options) {
             this.$elem = options._sourceElement;
             this.url = options.url;
             this.removeClass = options.removeClass;
             this.redirect = options.redirect;
+            this.hasOwnTrigger = options.hasOwnTrigger;
+            this.lineItemId = options.lineItemId;
             this.confirmMessage = options.confirmMessage;
             this.sucsessMessage = options.sucsessMessage || __('item_deleted');
             this.okButtonClass = options.okButtonClass;
             this.cancelButtonClass = options.cancelButtonClass;
 
-            this.$elem.on('click', _.bind(this.deleteItem, this));
+            if (!this.hasOwnTrigger) {
+                this.$elem.on('click', _.bind(this.deleteItem, this));
+            }
         },
+
+        dispose: function() {
+            if (!this.hasOwnTrigger) {
+                this.$elem.off('click', _.bind(this.deleteItem, this));
+            }
+            delete this.confirmRemoveComponent;
+            DeleteItemComponent.__super__.dispose.apply(this, arguments);
+        },
+
         deleteItem: function() {
             if (this.confirmMessage) {
                 this.deleteWithConfirmation();
@@ -44,9 +59,9 @@ define(function (require) {
                 options = _.extend(options, {'cancelButtonClass' : this.cancelButtonClass})
             }
 
-            var confirm = new DeleteConfirmation(options);
-            confirm.on('ok',_.bind(this.deleteWithoutConfirmation, this));
-            confirm.open();
+            var confirmRemove = new this.confirmRemoveComponent(options);
+            confirmRemove.on('ok',_.bind(this.deleteWithoutConfirmation, this))
+                .open();
         },
         deleteWithoutConfirmation: function(e) {
             var self = this;
@@ -74,7 +89,7 @@ define(function (require) {
             mediator.execute('redirectTo', {url: this.redirect}, {redirect: true});
         },
         deleteWithoutRedirect: function(e) {
-            mediator.trigger('frontend:item:delete', e);
+            mediator.trigger('frontend:item:delete', {lineItemId: this.lineItemId});
             mediator.execute('showMessage', 'success', this.sucsessMessage, {'flash': true});
         }
     });

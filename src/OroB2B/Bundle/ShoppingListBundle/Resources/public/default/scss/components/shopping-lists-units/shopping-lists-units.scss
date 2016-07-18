@@ -7,6 +7,12 @@
     &:first-child {
         display: block;
         margin-top: 0;
+
+        .shopping-lists-units__actions,
+        .shopping-lists-modify__badges {
+            visibility: visible;
+            opacity: 1;
+        }
     }
 
     &__number {
@@ -23,12 +29,6 @@
         opacity: 0;
 
         transition: visibility 0 linear .3s, opacity .3s linear;
-    }
-
-    &:hover &__actions,
-    &:first-child &__actions {
-        visibility: visible;
-        opacity: 1;
     }
 
     &:hover &__actions {

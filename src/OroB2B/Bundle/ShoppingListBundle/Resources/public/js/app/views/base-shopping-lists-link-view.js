@@ -5,6 +5,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orob2bfrontend/js/app/elements-helper');
     var ShoppingListsMultipleEditWidget = require('orob2bshoppinglist/js/app/widget/shopping-lists-multiple-edit-widget');
+    var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
@@ -17,36 +18,8 @@ define(function(require) {
 
         template: '',
         popupTemplate: '',
-
-        demoData: {
-            shopping_lists: [
-                {
-                    shopping_list_id: 0,
-                    shopping_list_label: 'Shopping List 1',
-                    is_current: true,
-                    line_items: [
-                        {
-                            unit: 'item',
-                            quantity: 5
-                        },
-                        {
-                            unit: 'set',
-                            quantity: 1
-                        }
-                    ]
-                },
-                {
-                    shopping_list_id: 1,
-                    shopping_list_label: 'Shopping List 2',
-                    line_items: [
-                        {
-                            unit: 'item',
-                            quantity: 10
-                        }
-                    ]
-                }
-            ]
-        },
+        quantityComponentOptions: null,
+        deleteLineOptions: null,
 
         initialize: function(options) {
             BaseShoppingListsLinkView.__super__.initialize.apply(this, arguments);
@@ -57,35 +30,29 @@ define(function(require) {
             }
             this.initializeElements(options);
 
+            this.quantityComponentOptions = options.quantityComponentOptions;
+            this.deleteLineOptions = options.deleteLineOptions;
             this.template = _.template(options['billetTemplate']);
             this.popupTemplate = _.template(options['popupTemplate']);
 
+            mediator.on('shopping-list:updated', this.updateShoppingListsBillet, this);
             this.model.on('change:shopping_lists', this.updateShoppingListsBillet, this);
-
             this.render();
         },
 
         dispose: function() {
-            delete this.demoData;
             this.disposeElements();
             BaseShoppingListsLinkView.__super__.dispose.apply(this, arguments);
         },
 
         render: function() {
             this.updateShoppingListsBillet();
-            this.initShoppingListsPopupButton();
         },
 
         initModel: function(options) {
-            this.demoData = $.extend(true, {}, this.demoData, options.demoData || {});
             if (options.productModel) {
                 this.model = options.productModel;
             }
-            _.each(this.demoData, function(value, attribute) {
-                if (!this.model.has(attribute)) {
-                    this.model.set(attribute, value);
-                }
-            }, this);
         },
 
         setLabels: function(currentShoppingList) {
@@ -99,12 +66,12 @@ define(function(require) {
             if (_.has(currentShoppingList, 'line_items')) {
                 _.each(currentShoppingList.line_items, function (lineItem) {
                     var label = {};
-                    var lineItemsLabel = _.__(
+                    var lineItemsLabel = __(
                         'orob2b.product.product_unit.' + lineItem.unit + '.value.short',
                         {'count': lineItem.quantity},
                         lineItem.quantity);
 
-                    label.name = _.__('orob2b.shoppinglist.billet.items_in_shopping_list')
+                    label.name = __('orob2b.shoppinglist.billet.items_in_shopping_list')
                         .replace('{{ lineItems }}', lineItemsLabel);
 
                     label.name = label.name.replace('{{ shoppingList }}', currentShoppingListLabel);
@@ -138,6 +105,7 @@ define(function(require) {
             billet.shoppingLists = shoppingLists;
 
             this.renderShoppingListsBillet(billet);
+            this.initShoppingListsPopupButton();
         },
 
         initShoppingListsPopupButton: function() {
@@ -147,7 +115,9 @@ define(function(require) {
         renderShoppingListsPopup: function() {
             new ShoppingListsMultipleEditWidget({
                 model: this.model,
-                template: this.popupTemplate
+                template: this.popupTemplate,
+                quantityComponentOptions: this.quantityComponentOptions,
+                deleteLineOptions: this.deleteLineOptions
             }).render();
         },
 
