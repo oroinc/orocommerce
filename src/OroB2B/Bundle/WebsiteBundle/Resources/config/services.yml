@@ -38,6 +38,15 @@ services:
             - '@orob2b_account_user.manager'
             - '@oro_locale.provider.localization'
 
+    orob2b_website.acl.voter.localization:
+        class: 'OroB2B\Bundle\WebsiteBundle\Acl\Voter\LocalizationVoter'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        calls:
+            - [setClassName, ['%oro_locale.entity.localization.class%']]
+        tags:
+            - { name: security.voter }
+
     orob2b_website.model.action.assign_current_website:
         class: 'OroB2B\Bundle\WebsiteBundle\Model\Action\AssignCurrentWebsite'
         public: false
