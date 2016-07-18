@@ -361,7 +361,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     {
         $this->public = $public;
     }
-    
+
     /**
      * @return string
      */
