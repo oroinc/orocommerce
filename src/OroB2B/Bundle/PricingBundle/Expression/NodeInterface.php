@@ -10,4 +10,9 @@ interface NodeInterface
      * @return array|null
      */
     public function getNodes();
+
+    /**
+     * @return bool
+     */
+    public function isBoolean();
 }

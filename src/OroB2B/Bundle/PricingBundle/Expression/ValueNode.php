@@ -32,4 +32,12 @@ class ValueNode implements NodeInterface
     {
         return [$this];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isBoolean()
+    {
+        return false;
+    }
 }

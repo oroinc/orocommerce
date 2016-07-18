@@ -13,12 +13,14 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 
 class LoadPriceRules extends AbstractFixture implements DependentFixtureInterface
 {
+    const PRICE_RULE_1 = 'price_list_1_price_rule_1';
+
     /**
      * @var array
      */
     protected $data = [
         [
-            'reference' => 'price_list_1_price_rule_1',
+            'reference' => self::PRICE_RULE_1,
             'quantity' => 2,
             'currency' => 'USD',
             'priceList' => 'price_list_1',

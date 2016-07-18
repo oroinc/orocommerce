@@ -47,4 +47,12 @@ class UnaryNode implements NodeInterface
     {
         return array_merge([$this], $this->node->getNodes());
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isBoolean()
+    {
+        return $this->getOperation() === 'not' && $this->getNode()->isBoolean();
+    }
 }

@@ -47,4 +47,12 @@ class NameNode implements NodeInterface
     {
         return [$this];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isBoolean()
+    {
+        return false;
+    }
 }

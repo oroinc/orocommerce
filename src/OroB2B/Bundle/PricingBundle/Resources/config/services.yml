@@ -752,25 +752,20 @@ services:
         calls:
             - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
 
-    orob2b_pricing.validator_constraints.abstract_price_rule_expression:
-        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\AbstractPriceRuleExpressionValidator'
-        public: false
-        abstract: true
+    orob2b_pricing.validator_constraints.logical_expression_validator:
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\LogicalExpressionValidator'
+        public: true
+        arguments:
+            - '@orob2b_pricing.expression.parser'
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing.validator_constraints.logical_expression_validator }
+
+    orob2b_pricing.validator_constraints.price_rule_expression_validator:
+        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator'
+        public: true
         arguments:
             - '@orob2b_pricing.expression.parser'
             - '@orob2b_pricing.provider.price_rule_fields_provider'
-
-    orob2b_pricing.validator_constraints.price_rule_conditional_expression:
-        parent: orob2b_pricing.validator_constraints.abstract_price_rule_expression
-        public: true
-        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleConditionalExpressionValidator'
-        tags:
-            - { name: validator.constraint_validator, alias: orob2b_pricing.validator_constraints.price_rule_conditional_expression_validator }
-
-    orob2b_pricing.validator_constraints.price_rule_expression:
-        parent: orob2b_pricing.validator_constraints.abstract_price_rule_expression
-        public: true
-        class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator'
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing.validator_constraints.price_rule_expression_validator }
 

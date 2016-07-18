@@ -15,5 +15,6 @@ class NameNodeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($field, $node->getField());
 
         $this->assertEquals([$node], $node->getNodes());
+        $this->assertFalse($node->isBoolean());
     }
 }

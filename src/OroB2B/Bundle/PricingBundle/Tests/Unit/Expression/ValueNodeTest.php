@@ -13,5 +13,6 @@ class ValueNodeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($value, $node->getValue());
 
         $this->assertEquals([$node], $node->getNodes());
+        $this->assertFalse($node->isBoolean());
     }
 }
