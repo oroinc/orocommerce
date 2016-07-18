@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\ImportExport\Normalizer;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 use OroB2B\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelNormalizer;
@@ -19,12 +20,21 @@ class WarehouseInventoryLevelNormalizerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
     protected $formatter;
 
+    /** @var  \PHPUnit_Framework_MockObject_MockObject|QuantityRoundingService */
+    protected $roundingService;
+
     protected function setUp()
     {
         $this->formatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->warehouseInventoryLevelNormalizer = new WarehouseInventoryLevelNormalizer($this->formatter);
+        $this->roundingService = $this->getMockBuilder(QuantityRoundingService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->warehouseInventoryLevelNormalizer = new WarehouseInventoryLevelNormalizer(
+            $this->formatter,
+            $this->roundingService
+        );
     }
 
     /**
@@ -50,6 +60,9 @@ class WarehouseInventoryLevelNormalizerTest extends \PHPUnit_Framework_TestCase
         $this->formatter->expects($this->any())
             ->method('format')
             ->willReturn('testCode');
+        $this->roundingService->expects($this->any())
+            ->method('roundQuantity')
+            ->willReturn($quantity);
 
         $results = $this->warehouseInventoryLevelNormalizer->normalize($object);
         $this->assertArrayHasKey('warehouse', $results);

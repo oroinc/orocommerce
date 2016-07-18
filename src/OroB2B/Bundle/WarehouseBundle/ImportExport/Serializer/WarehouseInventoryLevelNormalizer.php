@@ -9,6 +9,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
@@ -20,13 +21,20 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
     private $formatter;
 
     /**
+     * @var QuantityRoundingService
+     */
+    private $roundingService;
+
+    /**
      * WarehouseInventoryLevelNormalizer constructor.
      *
      * @param ProductUnitLabelFormatter $formatter
+     * @param QuantityRoundingService $roundingService
      */
-    public function __construct(ProductUnitLabelFormatter $formatter)
+    public function __construct(ProductUnitLabelFormatter $formatter, QuantityRoundingService $roundingService)
     {
         $this->formatter = $formatter;
+        $this->roundingService = $roundingService;
     }
 
     /**
@@ -48,8 +56,9 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
         }
 
         $product = $object->getProduct();
+
         $result = [
-            'quantity' => $object->getQuantity()
+            'quantity' => $this->getQuantity($object)
         ];
 
         if ($product) {
@@ -72,17 +81,37 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
     }
 
     /**
-     * @param WarehouseInventoryLevel $object
+     * @param WarehouseInventoryLevel $inventoryLevel
+     * @return float|int
+     */
+    protected function getQuantity(WarehouseInventoryLevel $inventoryLevel)
+    {
+        $productUnit = $inventoryLevel->getProductUnitPrecision()
+            ? $inventoryLevel->getProductUnitPrecision()->getUnit()
+            : null;
+        if (!$productUnit) {
+            return $inventoryLevel->getQuantity();
+        }
+
+        return $this->roundingService->roundQuantity(
+            $inventoryLevel->getQuantity(),
+            $productUnit,
+            $inventoryLevel->getProduct()
+        );
+    }
+
+    /**
+     * @param WarehouseInventoryLevel $inventoryLevel
      * @return array
      */
-    protected function getUnitPrecision(WarehouseInventoryLevel $object)
+    protected function getUnitPrecision(WarehouseInventoryLevel $inventoryLevel)
     {
-        $unitPrecision = $object->getProductUnitPrecision();
+        $unitPrecision = $inventoryLevel->getProductUnitPrecision();
         if (!$unitPrecision) {
             return [];
         }
         $code = $unitPrecision->getUnit() ? $unitPrecision->getUnit()->getCode(): null;
-        $code = $this->formatter->format($code, true, $object->getQuantity() > 1);
+        $code = $this->formatter->format($code, true, $inventoryLevel->getQuantity() > 1);
 
         return ['productUnitPrecision' => [
             'unit' => [

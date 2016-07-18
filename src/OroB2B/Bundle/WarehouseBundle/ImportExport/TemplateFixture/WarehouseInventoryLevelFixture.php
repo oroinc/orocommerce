@@ -73,6 +73,7 @@ class WarehouseInventoryLevelFixture extends AbstractTemplateRepository implemen
         $unitPrecision = new ProductUnitPrecision();
         $unit = new ProductUnit();
         $unit->setCode('liter');
+        $unit->setDefaultPrecision(1);
         $unitPrecision->setUnit($unit);
         $unitPrecision->setProduct($product);
         $entity->setProductUnitPrecision($unitPrecision);
