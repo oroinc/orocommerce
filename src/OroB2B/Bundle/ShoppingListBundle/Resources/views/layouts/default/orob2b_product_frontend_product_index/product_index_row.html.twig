@@ -73,13 +73,6 @@
         <% }) %>
         <% } else { %>
         <div class="shopping-lists__text">
-            <ul class="actions-row">
-                <li class="actions-row__item actions-row__item--edit">
-                    <button class="actions-row__button" type="button" title="{{ 'Edit'|trans }}">
-                        <i class="actions-row__icon cf-pencil"></i>
-                    </button>
-                </li>
-            </ul>
             <%= _.__('orob2b.shoppinglist.actions.in_shopping_lists', {
                 count: shoppingLists.length
             }) %>

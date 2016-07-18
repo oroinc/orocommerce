@@ -103,12 +103,14 @@ class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServe
 
         $shoppingListUnits = [];
         $activeShoppingListId = $shoppingList->getId();
-        $shoppingListUnits[] = [
-            'shopping_list_id' => $activeShoppingListId ,
-            'shopping_list_label' => $shoppingListLabels[$activeShoppingListId],
-            'is_current' => true,
-            'line_items' => $groupedUnits[$activeShoppingListId],
-        ];
+        if (isset($groupedUnits[$activeShoppingListId])) {
+            $shoppingListUnits[] = [
+                'shopping_list_id' => $activeShoppingListId,
+                'shopping_list_label' => $shoppingListLabels[$activeShoppingListId],
+                'is_current' => true,
+                'line_items' => $groupedUnits[$activeShoppingListId],
+            ];
+        }
         unset($groupedUnits[$activeShoppingListId]);
         foreach ($groupedUnits as $shoppingListId => $lineItems) {
             $shoppingListUnits[] = [

@@ -8,6 +8,10 @@ define(function(require) {
     var $ = require('jquery');
 
     ProductShoppingListsView = BaseView.extend(_.extend({}, ElementsHelper, {
+        options: {
+            shoppingListsTemplate: ''
+        },
+
         elements: {
             editLineItem: '[data-role="edit-line-item"]'
         },
@@ -16,14 +20,14 @@ define(function(require) {
             'editLineItem': ['click', 'editLineItem']
         },
 
-        options: {
-            shoppingListsTemplate: ''
-        },
-
         modelAttr: {
             shopping_lists: []
         },
-//this.delegateElementEvent('edit', 'click', 'editCurrentShoppingList');
+
+        modelEvents: {
+            'shopping_lists': ['change', 'render']
+        },
+
         initialize: function(options) {
             ProductShoppingListsView.__super__.initialize.apply(this, arguments);
 
@@ -80,8 +84,8 @@ define(function(require) {
                 shoppingLists: this.model.get('shopping_lists')
             }));
 
-            this.$el.replaceWith($el);
-            this.setElement($el);
+            this.$el.html($el);
+            this.delegateEvents();
         },
 
         findCurrentShoppingList: function() {
