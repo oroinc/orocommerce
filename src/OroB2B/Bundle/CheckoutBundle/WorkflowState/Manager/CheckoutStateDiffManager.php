@@ -24,12 +24,7 @@ class CheckoutStateDiffManager
         usort(
             $this->mappers,
             function (CheckoutStateDiffMapperInterface $mapper1, CheckoutStateDiffMapperInterface $mapper2) {
-                $priority1 = $mapper1->getPriority();
-                $priority2 = $mapper2->getPriority();
-                if ($priority1 == $priority2) {
-                    return 0;
-                }
-                return ($priority1 < $priority2) ? -1 : 1;
+                return $mapper1->getPriority() - $mapper2->getPriority();
             }
         );
 

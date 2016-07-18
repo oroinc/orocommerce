@@ -67,11 +67,9 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
 
         $result = $getMappersMethod->invoke($this->checkoutStateDiffManager);
 
-        $this->assertEquals([
-            0 => $mapper2,
-            1 => $mapper3,
-            2 => $mapper1,
-        ], $result);
+        $this->assertSame($mapper3, $result[0]);
+        $this->assertSame($mapper2, $result[1]);
+        $this->assertSame($mapper1, $result[2]);
     }
 
     public function testGetCurrentState()
