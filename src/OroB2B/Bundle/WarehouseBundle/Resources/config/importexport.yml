@@ -34,6 +34,7 @@ services:
 
     orob2b_warehouse.importexport.normalizer.warehouse_inventory_level:
         class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelNormalizer'
+        arguments: ['@orob2b_product.formatter.product_unit_label']
         public: false
 
     # Import processor

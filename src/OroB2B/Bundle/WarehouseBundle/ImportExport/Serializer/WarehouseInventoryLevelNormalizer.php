@@ -2,20 +2,33 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Serializer;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\DenormalizerInterface;
-
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\NormalizerInterface;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use OroB2B\Bundle\WarehouseBundle\ImportExport\DataConverter\InventoryLevelDataConverter as Converter;
 
 class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, NormalizerInterface
 {
+    /**
+     * @var ProductUnitLabelFormatter
+     */
+    private $formatter;
+
+    /**
+     * WarehouseInventoryLevelNormalizer constructor.
+     *
+     * @param ProductUnitLabelFormatter $formatter
+     */
+    public function __construct(ProductUnitLabelFormatter $formatter)
+    {
+        $this->formatter = $formatter;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -68,10 +81,12 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
         if (!$unitPrecision) {
             return [];
         }
+        $code = $unitPrecision->getUnit() ? $unitPrecision->getUnit()->getCode(): null;
+        $code = $this->formatter->format($code, true, $object->getQuantity() > 1);
 
         return ['productUnitPrecision' => [
             'unit' => [
-                'code' => $unitPrecision->getUnit() ? $unitPrecision->getUnit()->getCode() : null
+                'code' => $code
             ]
         ]];
     }

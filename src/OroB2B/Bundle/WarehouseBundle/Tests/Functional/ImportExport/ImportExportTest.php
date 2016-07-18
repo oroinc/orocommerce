@@ -10,8 +10,6 @@ use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
 
@@ -87,9 +85,9 @@ class ImportExportTest extends AbstractImportExportTestCase
 
         $this->assertEquals(
             [
-                'success'    => true,
-                'message'    => 'File was successfully imported.',
-                'errorsUrl'  => null,
+                'success' => true,
+                'message' => 'File was successfully imported.',
+                'errorsUrl' => null,
                 'importInfo' => '0 entities were added, 1 entities were updated',
             ],
             $data
@@ -163,10 +161,70 @@ class ImportExportTest extends AbstractImportExportTestCase
             ->getRealPath();
     }
 
-    /**
-     * @dataProvider getExportTestInput
-     */
-    public function testExportInfluencedByProcessorChoice($exportChoice, $expectedHeader)
+    public function testExportInventoryStatusesONly()
+    {
+        $fileContent = $this->assertExportInfluencedByProcessorChoice(
+            'orob2b_product.export_inventory_status_only',
+            $this->inventoryStatusOnlyHeader
+        );
+
+        $expectedRows = count(
+            $this->client->getContainer()->get('oro_entity.doctrine_helper')
+                ->getEntityRepository(Product::class)
+                ->findAll()
+        );
+
+        $this->assertFileContentConsistency(
+            $fileContent,
+            count($this->inventoryStatusOnlyHeader),
+            $expectedRows
+        );
+    }
+
+    public function testExportDetailedInventoryLevel()
+    {
+        $fileContent = $this->assertExportInfluencedByProcessorChoice(
+            'orob2b_warehouse.detailed_inventory_levels',
+            $this->inventoryLevelHeader
+        );
+
+        $expectedRows = count(
+            $this->client->getContainer()->get('oro_entity.doctrine_helper')
+                ->getEntityRepository(WarehouseInventoryLevel::class)
+                ->findAll()
+        );
+
+        $this->assertFileContentConsistency(
+            $fileContent,
+            count($this->inventoryLevelHeader),
+            $expectedRows
+        );
+
+        // check correct unit format
+        $exportUnits = [];
+        for ($i = 1; $i < count($fileContent); $i++) {
+            $exportUnits[] = end($fileContent[$i]);
+        }
+
+        $inventoryLevels = $this->client->getContainer()->get('oro_api.doctrine_helper')
+            ->getEntityRepository(WarehouseInventoryLevel::class)
+            ->findAll();
+        $formatter = $this->client->getContainer()->get('orob2b_product.formatter.product_unit_label');
+        $actualUnits = [];
+        foreach ($inventoryLevels as $inventoryLevel) {
+            /** @var WarehouseInventoryLevel $inventoryLevel */
+            $precisionUnit = $inventoryLevel->getProductUnitPrecision()->getUnit();
+            $actualUnits[] = $formatter->format(
+                $precisionUnit ? $precisionUnit->getCode() : null,
+                true,
+                $inventoryLevel->getQuantity() > 1
+            );
+        }
+
+        $this->assertEmpty(array_diff($exportUnits, $actualUnits));
+    }
+
+    protected function assertExportInfluencedByProcessorChoice($exportChoice, $expectedHeader)
     {
         $crawler = $this->client->request(
             'GET',
@@ -182,17 +240,10 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->assertArrayHasKey('success', $response);
         $this->assertTrue($response['success']);
 
-        $file = $this->downloadFile($response['url']);
-        $this->assertFileHeader($file, $expectedHeader);
-        $this->assertFileContent($file, count($expectedHeader), $this->getExpectedRowsForExport($expectedHeader));
-    }
+        $fileContent = $this->downloadFile($response['url']);
+        $this->assertEquals($fileContent[0], $expectedHeader);
 
-    public function getExportTestInput()
-    {
-        return [
-            ['orob2b_product.export_inventory_status_only', $this->inventoryStatusOnlyHeader],
-            ['orob2b_warehouse.detailed_inventory_levels', $this->inventoryLevelHeader],
-        ];
+        return $fileContent;
     }
 
     /**
@@ -220,8 +271,8 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->assertArrayHasKey('url', $response);
         $this->assertContains('.csv', $response['url']);
 
-        $file = $this->downloadFile($response['url']);
-        $this->assertFileHeader($file, $expectedHeader);
+        $fileContent = $this->downloadFile($response['url']);
+        $this->assertEquals($fileContent[0], $expectedHeader);
     }
 
     public function getExportTemplateTestInput()
@@ -236,33 +287,28 @@ class ImportExportTest extends AbstractImportExportTestCase
     {
         $this->client->request('GET', $url);
 
-        /** @var File $csvFile */
-        $csvFile = $this->client->getResponse()->getFile();
-        $handle = fopen($csvFile->getRealPath(), "r");
+        /** @var File $file */
+        $file = $this->client->getResponse()->getFile();
+        $handle = fopen($file->getRealPath(), "r");
+        $this->assertNotFalse($handle);
 
-        return $handle;
-    }
-
-    protected function assertFileHeader($csvFile, $expectedHeader)
-    {
-        $this->assertNotFalse($csvFile);
-        $header = fgetcsv($csvFile);
-        $this->assertEquals($expectedHeader, $header);
-    }
-
-    protected function assertFileContent($file, $numberOfColumns, $numberOfRows)
-    {
-        $row = fgetcsv($file);
+        $row = fgetcsv($handle);
         $rows = [];
         while ($row) {
-            $this->assertEquals(count($row), $numberOfColumns);
             $rows[] = $row;
-            $row = fgetcsv($file);
+            $row = fgetcsv($handle);
         }
 
-        $this->assertEquals($numberOfRows, count($rows));
-
         return $rows;
+    }
+
+    protected function assertFileContentConsistency($fileContent, $numberOfColumns, $numberOfRows)
+    {
+        for ($i = 1; $i < count($fileContent); $i++) {
+            $this->assertEquals(count($fileContent[$i]), $numberOfColumns);
+        }
+
+        $this->assertEquals($numberOfRows, count($fileContent) - 1);
     }
 
     protected function getDefaultRequestParameters()
@@ -273,24 +319,6 @@ class ImportExportTest extends AbstractImportExportTestCase
             'entity' => WarehouseInventoryLevel::class,
             'processorAlias' => 'orob2b_warehouse_detailed_inventory_levels'
         ];
-    }
-
-
-    protected function getExpectedRowsForExport($header)
-    {
-        if ($header == $this->inventoryStatusOnlyHeader) {
-            return count(
-                $this->client->getContainer()->get('oro_entity.doctrine_helper')
-                    ->getEntityRepository(Product::class)
-                    ->findAll()
-            );
-        }
-
-        return count(
-            $this->client->getContainer()->get('oro_entity.doctrine_helper')
-                ->getEntityRepository(WarehouseInventoryLevel::class)
-                ->findAll()
-        );
     }
 
     /**
