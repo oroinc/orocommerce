@@ -237,7 +237,7 @@ class ImportExportTest extends WebTestCase
             '&importJob=price_list_product_prices_entity_import_from_csv' .
             '&exportJob=price_list_product_prices_export_to_csv';
 
-        /** TODO: https://magecore.atlassian.net/browse/BB-3827 Change after BAP-1813 */
+        /** TODO: BB-3827 Change after BAP-1813 */
         $form->getFormNode()->setAttribute(
             'action',
             $form->getFormNode()->getAttribute('action'). $optionsPriceList . '&_widgetContainer=dialog'
