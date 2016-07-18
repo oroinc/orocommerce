@@ -1,0 +1,71 @@
+{% block _featured_categories_widget %}
+    {% if use_slider %}
+        {% set attr = {
+                'data-page-component-module': 'orob2bfrontend/js/app/components/content-slider-component',
+                'data-page-component-options': {
+                    useSlider: use_slider,
+                    slidesCount: slides_count
+                }
+            }|merge(attr|merge({
+            class: attr.class|default('') ~ " featured-categories"
+        })) %}
+    {% endif %}
+
+    {% if label is defined %}
+        <h2>{{ label }}</h2>
+    {% endif %}
+
+    <ul{{ block('block_attributes') }}>
+        {% for item in items %}
+            <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block _featured_products_widget %}
+    {% if use_slider %}
+        {% set attr = {
+                'data-page-component-module': 'orob2bfrontend/js/app/components/content-slider-component',
+                'data-page-component-options': {
+                    useSlider: use_slider,
+                    slidesCount: slides_count
+                }
+            }|merge(attr|merge({
+            class: attr.class|default('') ~ " featured-products"
+        })) %}
+    {% endif %}
+
+    {% if label is defined %}
+        <h2>{{ label }}</h2>
+    {% endif %}
+
+    <ul{{ block('block_attributes') }}>
+        {% for item in items %}
+            <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block _top_selling_items_widget %}
+    {% if use_slider %}
+        {% set attr = {
+                'data-page-component-module': 'orob2bfrontend/js/app/components/content-slider-component',
+                'data-page-component-options': {
+                    useSlider: use_slider,
+                    slidesCount: slides_count
+                }
+            }|merge(attr|merge({
+            class: attr.class|default('') ~ " top-selling-items"
+        })) %}
+    {% endif %}
+
+    {% if label is defined %}
+        <h2>{{ label }}</h2>
+    {% endif %}
+
+    <ul{{ block('block_attributes') }}>
+        {% for item in items %}
+            <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

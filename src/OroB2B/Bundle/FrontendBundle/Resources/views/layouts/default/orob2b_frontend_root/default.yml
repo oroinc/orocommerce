@@ -1,0 +1,28 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'default.html.twig'
+        - '@add':
+            id: featured_categories
+            blockType: embeded_list
+            parentId: content
+            options:
+                items: { '@value': [[0, 1, 2, 3, 4, 5, 6, 7, 8]] }
+        - '@add':
+            id: featured_products
+            blockType: embeded_list
+            parentId: content
+            options:
+                items: { '@value': [[0, 1, 2, 3, 4, 5, 6, 7]] }
+                label: 'featured_products'
+                use_slider: { '@value': true }
+                slides_count: { '@value': 4 }
+        - '@add':
+            id: top_selling_items
+            blockType: embeded_list
+            parentId: content
+            options:
+                items: { '@value': [[0, 1, 2, 3, 4, 5, 6, 7]] }
+                label: 'top_selling_items'
+                use_slider: { '@value': true }
+                slides_count: { '@value': 4 }
