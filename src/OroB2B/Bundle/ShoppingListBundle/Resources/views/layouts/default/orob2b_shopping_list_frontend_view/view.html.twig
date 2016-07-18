@@ -155,7 +155,6 @@
                 {% set productMatchedPrice = productsMatchedPrice[lineItem.product.id][lineItem.unit.code] is not empty ? productsMatchedPrice[lineItem.product.id][lineItem.unit.code] : null %}
                 {% set currency = productMatchedPrice ? productMatchedPrice.currency : defaultCurrency %}
                 <tbody class="line_item">
-                    {# TODO: BB-2895. After merge https://github.com/laboro/commerce/pull/1872 place components on their nodes #}
                     <tr class="line_item_view" {{ UI.renderPageComponentAttributes({
                         module: 'oroui/js/app/components/view-component',
                         options: {

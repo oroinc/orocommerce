@@ -116,6 +116,10 @@ define(function(require) {
             return this.$elements[key];
         },
 
+        clearElementsCache: function() {
+            this.$elements = {};
+        },
+
         _findElement: function(key) {
             if (this.elements[key] === undefined && this[key] !== undefined) {
                 return this[key];

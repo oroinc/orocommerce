@@ -10,10 +10,16 @@ layout:
             prepend: true
             options:
                 shoppingLists: { '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
-        - '@add':
-            id: product_shopping_lists
-            parentId: product_grid_row_secondary_content_first_container
-            blockType: block
+        - '@addTree':
+            items:
+                product_shopping_lists:
+                    blockType: container
+                product_shopping_lists_template:
+                    blockType: block
+            tree:
+                product_grid_row_secondary_content_first_container:
+                    product_shopping_lists:
+                        product_shopping_lists_template: ~
     conditions:
         '@and':
             - '@neq': [ $context.logged_user, null ]
