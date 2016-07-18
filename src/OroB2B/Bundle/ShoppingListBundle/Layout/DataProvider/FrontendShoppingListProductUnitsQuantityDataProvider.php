@@ -55,29 +55,25 @@ class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServe
             return null;
         }
 
+        return $this->getProductUnitsQuantity($product);
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    public function getProductUnitsQuantity(Product $product)
+    {
+        if (!$product) {
+            return null;
+        }
+
         $shoppingList = $this->shoppingListManager->getCurrent();
 
         if (!$shoppingList) {
             return null;
         }
 
-        return $this->getProductUnitsQuantity($shoppingList, $product);
-    }
-
-    /**
-     * @param ShoppingList $shoppingList
-     * @param Product $product
-     * @return array
-     */
-    protected function getProductUnitsQuantity(ShoppingList $shoppingList, Product $product)
-    {
-        if (!$product) {
-            return null;
-        }
-
-        if (!$shoppingList) {
-            return null;
-        }
         /** @var AccountUser $accountUser */
         $accountUser = $this->securityFacade->getLoggedUser();
         $lineItems = $this->lineItemRepository

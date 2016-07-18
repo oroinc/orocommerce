@@ -205,19 +205,16 @@ class AjaxLineItemController extends Controller
      */
     protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
     {
-        $productLineItems = [];
-        foreach ($shoppingList->getLineItems() as $lineItem) {
-            if ($lineItem->getProduct() === $product) {
-                $productLineItems[$lineItem->getProductUnitCode()] = $lineItem->getQuantity();
-            }
-        }
+        $productShoppingLists = $this->get(
+            'orob2b_shopping_list.layout.data_provider.frontend_shopping_list_product_units'
+        )->getProductUnitsQuantity($product);
 
         return [
             'successful' => true,
             'message' => $this->getSuccessMessage($shoppingList, $message),
             'product' => [
                 'id' => $product->getId(),
-                'lineItems' => $productLineItems
+                'shopping_lists' => $productShoppingLists
             ],
             'shoppingList' => [
                 'id' => $shoppingList->getId(),
