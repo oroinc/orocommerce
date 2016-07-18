@@ -2,14 +2,28 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Intl\Intl;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+
+use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 /**
@@ -28,8 +42,11 @@ class PriceListControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                LoadPriceListSchedules::class,
+                LoadProductPrices::class,
+                LoadCategoryProductData::class,
+                LoadWebsiteData::class,
+                LoadAccounts::class,
             ]
         );
     }
@@ -160,6 +177,110 @@ class PriceListControllerTest extends WebTestCase
         $this->assertContains(self::ADD_NOTE_BUTTON_NAME, $crawler->html());
 
         return $id;
+    }
+
+    /**
+     * @param $id int
+     * @return int
+     *
+     * @depends testCreate
+     */
+    public function testPriceGeneration($id)
+    {
+        //Create rules for product prices
+        $container = $this->getContainer();
+        /** @var EntityManager $manager */
+        $manager = $container->get('doctrine')->getManager();
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_pricing_price_list_update', ['id' => $id])
+        );
+
+        /** @var Category $category */
+        $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $category = $manager->getRepository(Category::class)->find($category->getId());
+        $manager->refresh($category);
+        $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        $category2 = $manager->getRepository(Category::class)->find($category2->getId());
+        $manager->refresh($category2);
+
+        /** @var Form $form */
+        $form = $crawler->selectButton('Save and Close')->form();
+        $filesData = $form->getFiles();
+        $submittedData = $form->getPhpValues();
+
+        $productAssignmentRule = 'category == ' . $category->getId() . ' or category == ' . $category2->getId();
+        $submittedData['orob2b_pricing_price_list']['productAssignmentRule'] = $productAssignmentRule;
+        $rules = [
+            [
+                'quantity' => 99,
+                'productUnit' => 'item',
+                'currency' => 'USD',
+                'rule' => 1,
+                'ruleCondition' => 'category.id == ' . $category->getId(),
+                'priority' => 1,
+            ],
+            [
+                'quantity' => 99,
+                'productUnit' => 'item',
+                'currency' => 'USD',
+                'rule' => 2,
+                'ruleCondition' => '',
+                'priority' => 2,
+            ]
+        ];
+        $submittedData['orob2b_pricing_price_list']['priceRules'] = $rules;
+
+        $this->client->followRedirects(true);
+        $this->client->request($form->getMethod(), $form->getUri(), $submittedData, $filesData);
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        //Create relation price list to account for CPL's check
+        $priceList = $manager->getRepository(PriceList::class)->find($id);
+        $manager->refresh($priceList);
+
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1_1');
+        $account = $manager->getRepository(Account::class)->find($account->getId());
+
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        $website = $manager->getRepository(Website::class)->find($website->getId());
+
+        $relation = new PriceListToAccount();
+        $relation->setPriority(1);
+        $relation->setPriceList($priceList);
+        $relation->setAccount($account);
+        $relation->setWebsite($website);
+        $manager->persist($relation);
+        $manager->flush($relation);
+
+        //Generate product prices by rules
+        $container->get('orob2b_pricing.builder.price_list_product_assignment_builder')
+            ->buildByPriceList($priceList);
+        $container->get('orob2b_pricing.builder.product_price_builder')
+            ->buildByPriceList($priceList);
+
+        //Combine prices
+        /** @var CombinedPriceListQueueConsumer $consumer */
+        $priceListCollectionConsumer = $container->get('orob2b_pricing.builder.queue_consumer');
+        $priceListCollectionConsumer->process();
+
+        //Get combined price list which would be used at frontend
+        $cpl = $container->get('orob2b_pricing.model.price_list_tree_handler')->getPriceList($account, $website);
+
+        $prices = $manager->getRepository(CombinedProductPrice::class)->findBy(
+            [
+                'priceList' => $cpl, 'quantity' => 99, 'currency' => 'USD'
+            ]
+        );
+
+        $productPrice= $prices[0];
+        $this->assertEquals(Price::create(1, 'USD'), $productPrice->getPrice());
+        $productPrice= $prices[1];
+        $this->assertEquals(Price::create(2, 'USD'), $productPrice->getPrice());
     }
 
     /**
