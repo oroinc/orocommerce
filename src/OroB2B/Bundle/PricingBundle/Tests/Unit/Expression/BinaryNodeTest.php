@@ -55,7 +55,10 @@ class BinaryNodeTest extends \PHPUnit_Framework_TestCase
      */
     public function booleanOperationsDataProvider()
     {
-        return [['and'], ['or']];
+        return [
+            ['and'],
+            ['or']
+        ];
     }
 
     /**
@@ -135,8 +138,15 @@ class BinaryNodeTest extends \PHPUnit_Framework_TestCase
      */
     public function leftRightDataProvider()
     {
-        $operations = $this->booleanOperationsDataProvider();
-        $checkData = [[true, false], [false, true], [false, false]];
+        $operations = [
+            ['and'],
+            ['or']
+        ];
+        $checkData = [
+            [true, false],
+            [false, true],
+            [false, false]
+        ];
         $data = [];
         foreach ($operations as $operation) {
             foreach ($checkData as $dataToCheck) {
