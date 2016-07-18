@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\ImportExport\Normalizer;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 use OroB2B\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelNormalizer;
@@ -15,9 +16,15 @@ class WarehouseInventoryLevelNormalizerTest extends \PHPUnit_Framework_TestCase
      */
     protected $warehouseInventoryLevelNormalizer;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
+    protected $formatter;
+
     protected function setUp()
     {
-        $this->warehouseInventoryLevelNormalizer = new WarehouseInventoryLevelNormalizer();
+        $this->formatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->warehouseInventoryLevelNormalizer = new WarehouseInventoryLevelNormalizer($this->formatter);
     }
 
     /**
@@ -40,6 +47,9 @@ class WarehouseInventoryLevelNormalizerTest extends \PHPUnit_Framework_TestCase
         $productUnit->setCode($productUnitCode);
         $unitPrecision->setUnit($productUnit);
         $object->setProductUnitPrecision($unitPrecision);
+        $this->formatter->expects($this->any())
+            ->method('format')
+            ->willReturn('testCode');
 
         $results = $this->warehouseInventoryLevelNormalizer->normalize($object);
         $this->assertArrayHasKey('warehouse', $results);

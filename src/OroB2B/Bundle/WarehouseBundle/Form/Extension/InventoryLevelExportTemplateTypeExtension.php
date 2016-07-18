@@ -17,6 +17,17 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
     const NAME = 'orob2b_inventory_level_export_template_type_extension';
 
     /**
+     * @return array
+     */
+    public static function getProcessorAliases()
+    {
+        return [
+            'orob2b_product.inventory_status_only_export_template' => 'orob2b.warehouse.export.inventory_status_only',
+            'orob2b_warehouse.inventory_level_export_template' => 'orob2b.warehouse.export.detailed_inventory_levels',
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getName()
@@ -41,7 +52,7 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
             return;
         }
 
-        $processorAliases = $this->getProcessorAliases();
+        $processorAliases = static::getProcessorAliases();
 
         reset($processorAliases);
         $defaultChoice = key($processorAliases);
@@ -71,13 +82,5 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
             $processorAlias = $event->getForm()->get('detailLevel')->getData();
             $event->getForm()->getData()->setProcessorAlias($processorAlias);
         });
-    }
-
-    protected function getProcessorAliases()
-    {
-        return [
-            'orob2b_product.inventory_status_only_export_template' => 'orob2b.warehouse.export.inventory_status_only',
-            'orob2b_warehouse.inventory_level_export_template' => 'orob2b.warehouse.export.detailed_inventory_levels',
-        ];
     }
 }

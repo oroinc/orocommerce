@@ -7,15 +7,11 @@
     {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
         entity_class: entity_class,
         exportJob: 'warehouse_inventory_level_export_to_csv',
-        exportProcessor: 'orob2b_warehouse.detailed_inventory_levels',
+        exportProcessor: exportProcessors,
         importProcessor: 'orob2b_warehouse.warehouse_inventory_level',
-        exportTemplateProcessor: 'orob2b_warehouse.inventory_level_export_template',
-        exportTemplatePopupConfig: {
-            label: 'orob2b.warehouse.export.template_popup.title'|trans
-        },
-        exportPopupConfig: {
-            exportLabel: 'orob2b.warehouse.export.popup.title'|trans
-        },
+        exportTemplateProcessor: exportTemplateProcessors,
+        exportTemplatelabel: 'orob2b.warehouse.export.template_popup.title'|trans,
+        exportLabel: 'orob2b.warehouse.export.popup.title'|trans,
         dataGridName: gridName
     } %}
 {% endblock %}
