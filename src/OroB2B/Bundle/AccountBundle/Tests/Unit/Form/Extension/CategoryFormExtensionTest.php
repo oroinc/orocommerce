@@ -28,8 +28,14 @@ use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
+use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
+use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
+use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 class CategoryFormExtensionTest extends FormIntegrationTestCase
 {
@@ -67,6 +73,12 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $defaultProductOptions = new CategoryDefaultProductOptionsType();
+        $defaultProductOptions->setDataClass('OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
+
+        $categoryUnitPrecision = new CategoryUnitPrecisionType();
+        $categoryUnitPrecision->setDataClass('OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision');
+
         return [
             new PreloadedExtension(
                 [
@@ -75,6 +87,14 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                         $visibilityChoicesProvider
                     ),
                     CategoryType::NAME => new CategoryType(),
+                    CategoryDefaultProductOptionsType::NAME => $defaultProductOptions,
+                    CategoryUnitPrecisionType::NAME => $categoryUnitPrecision,
+                    ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
+                        [
+                            'item' => (new ProductUnit())->setCode('item'),
+                            'kg' => (new ProductUnit())->setCode('kg')
+                        ]
+                    ),
                     EntityIdentifierType::NAME => new EntityIdentifierTypeStub([]),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionType($registry),
                     LocalizedPropertyType::NAME => new LocalizedPropertyType(),
@@ -86,6 +106,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                 ],
                 [
                     CategoryType::NAME => [$this->categoryFormExtension],
+                    'form' => [new IntegerExtension()]
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),

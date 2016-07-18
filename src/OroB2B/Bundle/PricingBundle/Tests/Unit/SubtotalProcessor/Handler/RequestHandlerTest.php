@@ -97,6 +97,11 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher->expects($this->once())->method('dispatch')->willReturn($event);
 
         $this->prepareTotal();
+
+        $this->totalProvider
+            ->expects($this->once())
+            ->method('enableRecalculation');
+
         $totals = $this->requestHandler->recalculateTotals($entityClassName, $entityId, $request);
         $expectedTotals = $this->getExpectedTotal();
 
@@ -163,6 +168,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
 
         $subtotals->add($subtotal);
 
+        $this->totalProvider->expects($this->once())->method('enableRecalculation')->willReturn($this->totalProvider);
         $this->totalProvider->expects($this->once())->method('getTotal')->willReturn($total);
         $this->totalProvider->expects($this->once())->method('getSubtotals')->willReturn($subtotals);
     }

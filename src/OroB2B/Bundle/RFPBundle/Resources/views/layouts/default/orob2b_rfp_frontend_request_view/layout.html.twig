@@ -31,42 +31,42 @@
                         <tbody>
                             <tr class="account-oq__order-info__control">
                                 <td class="account-oq__order-info__title">{{ 'orob2b.frontend.rfp.request.first_name.label'|trans }}</td>
-                                <td>{{ entity.firstName }}</td>
+                                <td>{{ request.firstName }}</td>
                             </tr>
                             <tr class="account-oq__order-info__control">
                                 <td class="account-oq__order-info__title">{{ 'orob2b.frontend.rfp.request.last_name.label'|trans }}</td>
-                                <td>{{ entity.lastName }}</td>
+                                <td>{{ request.lastName }}</td>
                             </tr>
                             <tr class="account-oq__order-info__control">
                                 <td class="account-oq__order-info__title">{{ 'orob2b.frontend.rfp.request.email.label'|trans }}</td>
-                                <td>{{ entity.email }}</td>
+                                <td>{{ request.email }}</td>
                             </tr>
-                            {% if entity.phone %}
+                            {% if request.phone %}
                                 <tr class="account-oq__order-info__control">
                                     <td class="account-oq__order-info__title">{{ 'orob2b.frontend.rfp.request.phone.label'|trans }}</td>
-                                    <td>{{ entity.phone }}</td>
+                                    <td>{{ request.phone }}</td>
                                 </tr>
                             {% endif %}
                             <tr class="account-oq__order-info__control">
                                 <td class="account-oq__order-info__title">{{ 'orob2b.frontend.rfp.request.company.label'|trans }}</td>
-                                <td>{{ entity.company|default('N/A'|trans) }}</td>
+                                <td>{{ request.company|default('N/A'|trans) }}</td>
                             </tr>
-                            {% if entity.role %}
+                            {% if request.role %}
                                 <tr class="account-oq__order-info__control">
                                     <td class="account-oq__order-info__title">{{ 'orob2b.frontend.rfp.request.role.label'|trans }}</td>
-                                    <td>{{ entity.role }}</td>
+                                    <td>{{ request.role }}</td>
                                 </tr>
                             {% endif %}
-                            {% if entity.poNumber %}
+                            {% if request.poNumber %}
                                 <tr class="account-oq__order-info__control">
                                     <td class="account-oq__order-info__title">{{ 'orob2b.frontend.rfp.request.po_number.label'|trans }}</td>
-                                    <td>{{ entity.poNumber }}</td>
+                                    <td>{{ request.poNumber }}</td>
                                 </tr>
                             {% endif %}
-                            {% if entity.shipUntil %}
+                            {% if request.shipUntil %}
                                 <tr class="account-oq__order-info__control">
                                     <td class="account-oq__order-info__title">{{ 'orob2b.frontend.rfp.request.ship_until.label'|trans }}</td>
-                                    <td>{{ entity.shipUntil|oro_format_date }}</td>
+                                    <td>{{ request.shipUntil|oro_format_date }}</td>
                                 </tr>
                             {% endif %}
                         </tbody>
@@ -77,30 +77,30 @@
                 <div class="account-oq__order-info">
                     <table class="table borderless  mobile-table">
                         <tbody>
-                            {% if is_granted_view_account_user(entity) and entity.accountUser %}
+                            {% if is_granted_view_account_user(request) and request.accountUser %}
                                 <tr class="account-oq__order-info__control">
                                     <td class="account-oq__order-info__title">{{ 'orob2b.frontend.rfp.request.account_user.label'|trans }}</td>
                                     <td>
-                                        {{ UI.entityViewLink(entity.accountUser, entity.accountUser.fullName, 'orob2b_account_frontend_account_user_view') }}
+                                        {{ UI.entityViewLink(request.accountUser, request.accountUser.fullName, 'orob2b_account_frontend_account_user_view') }}
                                     </td>
                                 </tr>
                             {% endif %}
-                            {% if entity.assignedAccountUsers|length %}
+                            {% if request.assignedAccountUsers|length %}
                                 <tr>
                                     <td class="account-oq__order-info__title">{{ 'orob2b.frontend.rfp.request.assigned_account_users.label'|trans }}</td>
                                     <td class="account-rfp_request-assigned_users">
-                                        {{ UI.entityViewLinks(entity.assignedAccountUsers, 'fullName', 'orob2b_account_frontend_account_user_view') }}
+                                        {{ UI.entityViewLinks(request.assignedAccountUsers, 'fullName', 'orob2b_account_frontend_account_user_view') }}
                                     </td>
                                 </tr>
                             {% endif %}
                             <tr class="account-oq__order-info__control">
                                 <td class="account-oq__order-info__title">{{ 'orob2b.frontend.rfp.request.status.label'|trans }}</td>
-                                <td>{{ entity.status.label }}</td>
+                                <td>{{ request.status.label }}</td>
                             </tr>
-                            {% if entity.status.name =='canceled' %}
+                            {% if request.status.name =='canceled' %}
                                 <tr class="account-oq__order-info__control">
                                     <td class="account-oq__order-info__title">{{ 'orob2b.frontend.rfp.request.cancellation_reason.label'|trans }}</td>
-                                    <td>{{ entity.cancellationReason }}</td>
+                                    <td>{{ request.cancellationReason }}</td>
                                 </tr>
                             {% endif %}
                             {{ block_widget(block) }}
@@ -136,7 +136,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for requestProduct in entity.requestProducts %}
+                    {% for requestProduct in requestProducts %}
                         {% for requestProductItem in requestProduct.requestProductItems %}
                             <tr class="borderless">
                                 {% if loop.first %}
@@ -211,7 +211,7 @@
             <div class="account-oq__item__body">
                 <table class="oro-grid-table  oro-grid-table-properties oro-grid-table__orders_order-details">
                     <tbody>
-                    {% for requestProduct in entity.requestProducts %}
+                    {% for requestProduct in requestProducts %}
                         <tr>
                             <td class="va-t_sm">
                                 <h3 class="product-item__title product-item__title_in-cart mb1-md">

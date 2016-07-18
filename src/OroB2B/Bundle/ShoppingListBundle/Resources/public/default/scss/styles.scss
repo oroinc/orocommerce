@@ -1,4 +1,6 @@
 @import 'orob2bfrontend/default/scss/shared/_vars';
+@import 'orob2bfrontend/default/scss/shared/_mixins';
+@import 'orob2bfrontend/default/scss/components/commerce/partials/mixins';
 @import 'orob2bfrontend/default/scss/components/commerce/partials/variables';
 
 @import 'components/products-widget';
@@ -8,3 +10,4 @@
 @import 'components/shopping-lists-popup/shopping-lists-popup';
 @import 'components/shopping-lists-units/shopping-lists-units';
 @import 'components/shopping-lists-modify/shopping-lists-modify';
+@import 'components/sidebar';

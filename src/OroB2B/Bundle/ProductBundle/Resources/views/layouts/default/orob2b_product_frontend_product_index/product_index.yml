@@ -9,10 +9,9 @@ layout:
         - '@add':
             id: grid_display_options
             parentId: datagrid_toolbar
-            blockType: block
+            blockType: product_datagrid_options
             options:
-                vars:
-                    current_view: {'@value': $data.orob2b_product_frontend_datagrid_row_view}
+                current_row_view: {'@value': $data.orob2b_product_frontend_datagrid_row_view}
         - '@setOption':
             id: datagrid_toolbar
             optionName: attr.class
@@ -38,11 +37,10 @@ layout:
                 product_grid_container:
                     blockType: container
                 product_grid:
-                    blockType: datagrid
+                    blockType: product_datagrid
                     options:
                         grid_name: frontend-products-grid
-                        vars:
-                            current_row_view: {'@value': $data.orob2b_product_frontend_datagrid_row_view}
+                        current_row_view: {'@value': $data.orob2b_product_frontend_datagrid_row_view}
             tree:
                 content:
                     product_index_page:

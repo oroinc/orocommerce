@@ -55,10 +55,16 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
             ->will($this->returnValue('item'));
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository $productUnitRepository */
-        $productUnitRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $productUnitRepository = $this
+            ->getMockBuilder(
+                'OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository'
+            )
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $productUnitRepository->expects($this->any())
-            ->method('findAll')
-            ->will($this->returnValue([$productUnitMock]));
+            ->method('getAllUnitCodes')
+            ->willReturn(['item']);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManager $entityManager */
         $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')

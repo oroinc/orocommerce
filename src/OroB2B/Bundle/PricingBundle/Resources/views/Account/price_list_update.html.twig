@@ -1,22 +1,3 @@
-{% set websites = form.priceListsByWebsites.vars.websites %}
-<div class="responsive-cell price-lists-by-websites">
-    <div class="oro-tabs">
-        <ul class="nav nav-tabs">
-            {% for website in websites %}
-                <li {% if website.id == websites|first.id %} class="active" {% endif %}>
-                    <a href="#website{{ website.id }}" data-toggle="tab">
-                        {{ website.name }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-        <div class="tab-content">
-            {% for website in websites %}
-                <div class="tab-pane{% if website.id == websites|first.id %} active{% endif %}"
-                     id="website{{ website.id }}"><br>
-                    {{ form_row(form.priceListsByWebsites[website.id]) }}
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
+{% form_theme form with ['OroB2BWebsiteBundle:Form:fields.html.twig'] %}
+
+{{ form_row(form.priceListsByWebsites) }}

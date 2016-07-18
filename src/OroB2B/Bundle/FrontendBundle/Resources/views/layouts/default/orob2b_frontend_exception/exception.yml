@@ -6,14 +6,10 @@ layout:
             id: title
             optionName: value
             optionValue: { '@value': $data.status_text }
-        - '@addTree':
-            items:
-                exception:
-                    blockType: block
-                    options:
-                        vars:
-                            status_code: { '@value': $data.status_code }
-                            status_text: { '@value': $data.status_text }
-            tree:
-                content:
-                    exception: ~
+        - '@add':
+            id: exception
+            parentId: content
+            blockType: exception
+            options:
+                status_code: { '@value': $data.status_code }
+                status_text: { '@value': $data.status_text }

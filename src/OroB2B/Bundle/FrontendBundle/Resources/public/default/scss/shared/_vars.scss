@@ -3,8 +3,11 @@ $lato-font: 'Lato', 'Helvetica', Arial, sans-serif;
 $roboto-font: 'Roboto', 'Helvetica', Arial, sans-serif;
 $default-font-size: 10px;
 $default-font-size-large: 24px;
-$base-font-size: 1.4rem;
-$base-line-height: 1.9rem;
+$base-font-size: 14px;
+$base-line-height: 19px;
+$base-font-icon: 'custom-font-icon';
+
+$site-width: 1400px;
 
 //Theme base colors
 $base-font-color: #464646;
@@ -12,7 +15,9 @@ $base-font-color-light: #525252;
 $base-font-color-lighter: #707070;
 $base-font-color-lightest: #d7d7d7;
 $base-dark-color: #000;
+$base-dark-semi-transparent: rgba(0,0,0,.3);
 $base-white-color: #fff;
+$base-white-semi-transparent: rgba(255,255,255,.3);
 
 //Theme links color 
 $base-link-color: #4597ca;
@@ -25,34 +30,39 @@ $theme-yellow-color: #fcb91d;
 $theme-red-color: #b84926;
 $theme-red2-color: #ab1a25;
 $theme-blue-color: #348fc6;
+$theme-blue2-color: #1980ec;
 $theme-gray-color: #dbdbdb;
 $theme-green-color: #598527;
 $theme-green2-color: #9db699;
-$theme-middle-gray-color: #626365;
 $theme-light-gray-color: #b7b7b7;
-$theme-lightest-gray-color: #fafafa;
+$theme-slight-light-gray-color: #d1d1d1;
+$theme-lighter-gray-color: #ebebeb;
+$theme-slight-lightest-gray-color: #f0f0f0;
+$theme-lightest-gray-color: #f5f5f5;
+$theme-slight-middle-gray-color: #acacac;
+$theme-middle-gray-color: #626365;
 $theme-dark-gray-color: #252525;
 $theme-edit-mode-btn-color: #9e9e9e;
 
 //Theme background colors
 $base-background-color: $base-white-color;
-$base-topbar-background-color: #ebebeb;
-$base-sidebar-background-color: #f0f0f0;
-$base-sidebar-background-color-light: #f7f7f7;
-$base-footer-background-color: #f5f5f5;
+$base-topbar-background-color: $theme-lighter-gray-color;
+$base-sidebar-background-color: $theme-slight-lightest-gray-color;
+$base-sidebar-background-color-light: $theme-lightest-gray-color;
+$base-footer-background-color: $theme-lightest-gray-color;
 $base-tab-background-color: #dedede;
-$base-cart-group-head-color: #e6e6e6;
+$base-cart-group-head-color: $theme-lighter-gray-color;
 
 /*Sales panel colors*/
 $base-sales-panel-top-background-color: #e0e0e0;
-$base-sales-panel-bottom-background-color: #f7f7f7;
+$base-sales-panel-bottom-background-color: $theme-lightest-gray-color;
 
 //Theme borders colors
-$base-border-color: #e6e6e6;
+$base-border-color: $theme-lighter-gray-color;
 $base-active-border-color: #a2d4f3;
 $alt-border-color: #e1e1e1;
-$table-alt-border-color: #d1d1d1;
-$base-checkbox-border-color: #d1d1d1;
+$table-alt-border-color: $theme-slight-light-gray-color;
+$base-checkbox-border-color: $theme-slight-light-gray-color;
 $base-checked-item-in-cart-group: #eff6fb;
 
 //Input errors
@@ -110,3 +120,6 @@ $gallery-description-gutter_md: 3.5rem;
 $gallery-description-gutter_sm: 2.5rem;
 
 $product-specification-container-width: 24rem;
+
+$screen-sm: 767px;
+$screen-md: 991px;

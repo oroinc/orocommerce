@@ -25,12 +25,33 @@ class NVPClient implements ClientInterface
     }
 
     /** {@inheritdoc} */
-    public function send($hostAddress, array $options = [])
+    public function send($hostAddress, array $options = [], array $connectionOptions = [])
     {
         $response = $this->httpClient
-            ->post($hostAddress, [], $this->encoder->encode($options))
+            ->post($hostAddress, [], $this->encoder->encode($options), $this->getRequestOptions($connectionOptions))
             ->send();
 
         return $this->encoder->decode($response->getBody(true));
+    }
+
+    /**
+     * @param array $connectionOptions
+     * @return array
+     */
+    protected function getRequestOptions(array $connectionOptions)
+    {
+        $requestOptions = [
+            'verify' => isset($connectionOptions[self::SSL_VERIFY]) ? (bool)$connectionOptions[self::SSL_VERIFY] : true,
+        ];
+
+        if (isset($connectionOptions[self::PROXY_HOST], $connectionOptions[self::PROXY_PORT])) {
+            $requestOptions['proxy'] = sprintf(
+                '%s:%d',
+                $connectionOptions[self::PROXY_HOST],
+                $connectionOptions[self::PROXY_PORT]
+            );
+        }
+
+        return $requestOptions;
     }
 }

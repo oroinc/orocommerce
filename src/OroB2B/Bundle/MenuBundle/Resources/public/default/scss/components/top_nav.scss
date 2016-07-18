@@ -1,0 +1,188 @@
+/* Topbar component */
+.topbar {
+  background: $base-topbar-background-color;
+  font-size: 12px;
+
+  @media (max-width: $screen-md) {
+    display: none;
+  }
+
+  &__navigation {
+    display: inline-block;
+
+    ul {
+      @include list-normalize();
+
+      li {
+        display: inline-block;
+        margin-right: 40px;
+
+        line-height: 26px;
+
+        &:last-child {
+          margin-right: 0;
+        }
+
+        @media (max-width: 1069px) {
+          margin-right: 30px;
+        }
+
+        @media (max-width: 983px) {
+          margin-right: 20px;
+        }
+      }
+    }
+
+    a {
+      color: $base-font-color-lighter;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &--has-sibling {
+      margin-right: 10px;
+    }
+  }
+
+  &__controls {
+    .cart__promo__link {
+      font-size: $base-font-size;
+
+      &:hover {
+        text-decoration: none;
+
+        cursor: default;
+      }
+
+      span {
+        font-size: $base-font-size;
+
+        &:hover {
+          text-decoration: underline;
+
+          cursor: pointer;
+        }
+      }
+
+      // *** Currency class has not implemented yet or will not be used anymore!!!
+      + .currency {
+        @media (max-width: 880px) {
+          &:before {
+            content: "\A";
+
+            white-space: pre;
+          }
+        }
+      }
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: 26px;
+    right: 0;
+    z-index: 80;
+
+    display: none;
+
+    background: $base-background-color;
+    box-shadow: 0 4px 5px 0 rgba(0,0,0,.4);
+    border-radius: 2px;
+
+    &:before, &:after {
+      content: "";
+      display: block;
+      height: 0;
+
+      clear: both;
+    }
+
+    &__list {
+      @include list-normalize();
+
+      min-width: 130px;
+      padding: 10px 15px;
+
+      text-align: left;
+
+      &.topbar__dropdown__list_lang {
+        min-width: 80px;
+      }
+
+      li {
+        margin: 0 0 7px;
+
+        font-size: $base-font-size;
+
+        &:last-child {
+          margin: 0;
+        }
+      }
+
+      a {
+        font-size: $base-font-size;
+        color: $base-font-color;
+      }
+    }
+  }
+}
+
+
+// *** The following code has not implemented yet or will not be used anymore!!!
+.currency {
+  position: relative;
+
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+
+  font-family: $roboto-font;
+  font-size: 13px;
+  vertical-align: top;
+  text-align: center;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  i {
+    height: 26px;
+  }
+
+  &.active {
+    box-shadow: inset 1px 1px 3px 0 rgba(0,0,0,.3);
+
+    .topbar__dropdown {
+      display: block;
+    }
+  }
+}
+
+.language {
+  position: relative;
+
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+
+  font-size: 12px;
+  vertical-align: top;
+  text-align: center;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  i {
+    height: 26px;
+  }
+
+  &.active {
+    box-shadow: inset 1px 1px 3px 0 rgba(0,0,0,.3);
+
+    .topbar__dropdown {
+      display: block;
+    }
+  }
+}

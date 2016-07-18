@@ -11,6 +11,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
+use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 
 class CategoryTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,8 +34,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
     {
         /** @var FormBuilder|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->disableOriginalConstructor()->getMock();
 
         $builder->expects($this->at(0))
             ->method('add')
@@ -81,12 +81,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'appendProducts',
                 EntityIdentifierType::NAME,
-                [
-                    'class'    => self::PRODUCT_CLASS,
-                    'required' => false,
-                    'mapped'   => false,
-                    'multiple' => true,
-                ]
+                ['class' => self::PRODUCT_CLASS, 'required' => false, 'mapped' => false, 'multiple' => true]
             )
             ->will($this->returnSelf());
 
@@ -95,12 +90,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'removeProducts',
                 EntityIdentifierType::NAME,
-                [
-                    'class'    => self::PRODUCT_CLASS,
-                    'required' => false,
-                    'mapped'   => false,
-                    'multiple' => true,
-                ]
+                ['class' => self::PRODUCT_CLASS, 'required' => false, 'mapped' => false, 'multiple' => true]
             )
             ->will($this->returnSelf());
 
@@ -109,10 +99,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'smallImage',
                 'oro_image',
-                [
-                    'label'    => 'orob2b.catalog.category.small_image.label',
-                    'required' => false
-                ]
+                ['label' => 'orob2b.catalog.category.small_image.label', 'required' => false]
             )->will($this->returnSelf());
 
         $builder->expects($this->at(7))
@@ -120,10 +107,15 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'largeImage',
                 'oro_image',
-                [
-                    'label'    => 'orob2b.catalog.category.large_image.label',
-                    'required' => false
-                ]
+                ['label' => 'orob2b.catalog.category.large_image.label', 'required' => false]
+            )->will($this->returnSelf());
+
+        $builder->expects($this->at(8))
+            ->method('add')
+            ->with(
+                'defaultProductOptions',
+                CategoryDefaultProductOptionsType::NAME,
+                ['required' => false]
             )->will($this->returnSelf());
 
         $this->type->buildForm($builder, []);

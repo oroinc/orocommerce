@@ -35,7 +35,6 @@ class Configuration implements ConfigurationInterface
     const PAYPAL_PAYMENTS_PRO_DEBUG_MODE_KEY = 'paypal_payments_pro_debug_mode';
     const PAYPAL_PAYMENTS_PRO_ENABLE_SSL_VERIFICATION_KEY = 'paypal_payments_pro_enable_ssl_verification';
     const PAYPAL_PAYMENTS_PRO_REQUIRE_CVV_KEY = 'paypal_payments_pro_require_cvv';
-    const PAYPAL_PAYMENTS_PRO_VALIDATE_CVV_KEY = 'paypal_payments_pro_validate_cvv';
     const PAYPAL_PAYMENTS_PRO_ZERO_AMOUNT_AUTHORIZATION_KEY = 'paypal_payments_pro_zero_amount_authorization';
     const PAYPAL_PAYMENTS_PRO_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY =
         'paypal_payments_pro_authorization_for_required_amount';
@@ -60,7 +59,6 @@ class Configuration implements ConfigurationInterface
     const PAYFLOW_GATEWAY_DEBUG_MODE_KEY = 'payflow_gateway_debug_mode';
     const PAYFLOW_GATEWAY_ENABLE_SSL_VERIFICATION_KEY = 'payflow_gateway_enable_ssl_verification';
     const PAYFLOW_GATEWAY_REQUIRE_CVV_KEY = 'payflow_gateway_require_cvv';
-    const PAYFLOW_GATEWAY_VALIDATE_CVV_KEY = 'payflow_gateway_validate_cvv';
     const PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY = 'payflow_gateway_zero_amount_authorization';
     const PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'payflow_gateway_authorization_for_required_amount';
     const PAYFLOW_GATEWAY_ALLOWED_CURRENCIES = 'payflow_gateway_allowed_currencies';
@@ -182,10 +180,6 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => true
                 ],
-                self::PAYPAL_PAYMENTS_PRO_VALIDATE_CVV_KEY => [
-                    'type' => 'boolean',
-                    'value' => true
-                ],
                 self::PAYPAL_PAYMENTS_PRO_ZERO_AMOUNT_AUTHORIZATION_KEY => [
                     'type' => 'boolean',
                     'value' => false
@@ -273,10 +267,6 @@ class Configuration implements ConfigurationInterface
                     'value' => true
                 ],
                 self::PAYFLOW_GATEWAY_REQUIRE_CVV_KEY => [
-                    'type' => 'boolean',
-                    'value' => true
-                ],
-                self::PAYFLOW_GATEWAY_VALIDATE_CVV_KEY => [
                     'type' => 'boolean',
                     'value' => true
                 ],

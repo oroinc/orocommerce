@@ -89,21 +89,11 @@ class PriceMatcher
      */
     protected function fillOrderLineItemData(OrderLineItem $orderLineItem, array $matchedPrice = [])
     {
-        $hasChanges = false;
-
         if (null === $orderLineItem->getCurrency() && !empty($matchedPrice['currency'])) {
             $orderLineItem->setCurrency((string)$matchedPrice['currency']);
-
-            $hasChanges = true;
         }
         if (null === $orderLineItem->getValue() && !empty($matchedPrice['value'])) {
             $orderLineItem->setValue((string)$matchedPrice['value']);
-
-            $hasChanges = true;
-        }
-
-        if ($hasChanges) {
-            $orderLineItem->postLoad();
         }
     }
 
