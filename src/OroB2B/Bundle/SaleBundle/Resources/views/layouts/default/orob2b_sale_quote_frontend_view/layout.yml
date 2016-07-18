@@ -39,7 +39,7 @@ layout:
                 quote_view_controls_list:
                     blockType: block
                     options:
-                        visible: false
+                        visible: '=false'
                 quote_view_information:
                     blockType: quote_view_information
                     options:
@@ -55,7 +55,7 @@ layout:
                 quote_view_accept_button:
                     blockType: action_combined_buttons
                     options:
-                        visible: '=data["entity"].hasOfferVariants()!=null && data["entity"].isAcceptable()==true'
+                        visible: '=data["entity"].hasOfferVariants()!==null && data["entity"].isAcceptable()==true'
                         actions: '=data["actions"].getAll()'
                         entity: '=data["quote"]'
                 quote_view_accept_container:

@@ -13,7 +13,7 @@ layout:
                 product_grid_row_quick_view:
                     blockType: block
                     options:
-                        visible: false
+                        visible: '=false'
                 product_grid_row_title:
                     blockType: block
                     options:
@@ -41,7 +41,7 @@ layout:
                 product_grid_row_mfg:
                     blockType: block
                     options:
-                        visible: false
+                        visible: '=false'
                 product_grid_row_short_description:
                     blockType: block
                     options:
@@ -61,7 +61,7 @@ layout:
                 product_grid_row_specification_delivery:
                     blockType: block
                     options:
-                        visible: false
+                        visible: '=false'
                 product_grid_row_secondary_content_second_container:
                     blockType: container
                     options:
@@ -69,7 +69,7 @@ layout:
                 product_grid_row_more_info:
                     blockType: block
                     options:
-                        visible: false
+                        visible: '=false'
                 line_item_form:
                     blockType: container
                     options:

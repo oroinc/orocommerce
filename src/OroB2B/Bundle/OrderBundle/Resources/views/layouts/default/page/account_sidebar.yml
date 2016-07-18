@@ -5,7 +5,6 @@ layout:
             parentId: account_sidebar
             blockType: link
             options:
+                visible: '=data["acl"].isGranted("orob2b_order_frontend_view")'
                 route_name: orob2b_order_frontend_index
                 text: orob2b.frontend.order.entity_plural_label
-    conditions:
-        '@acl': orob2b_order_frontend_view
