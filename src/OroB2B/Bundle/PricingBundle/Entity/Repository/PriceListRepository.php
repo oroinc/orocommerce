@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceListRepository extends EntityRepository
@@ -86,5 +88,24 @@ class PriceListRepository extends EntityRepository
         }
 
         return $currencies;
+    }
+
+    /**
+     * @return BufferedQueryResultIterator|PriceList[]
+     */
+    public function getPriceListsWithRules()
+    {
+        $qb = $this->createQueryBuilder('priceList');
+        $qb->select('priceList, priceRule')
+            ->leftJoin('priceList.priceRules', 'priceRule')
+            ->where(
+                $qb->expr()->orX(
+                    $qb->expr()->isNotNull('priceList.productAssignmentRule'),
+                    $qb->expr()->isNotNull('priceRule.id')
+                )
+            )
+            ->orderBy('priceList.id, priceRule.priority');
+
+        return new BufferedQueryResultIterator($qb);
     }
 }

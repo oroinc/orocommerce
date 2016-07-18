@@ -11,6 +11,12 @@ use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
+use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleChangeTriggerRepository;
 
 class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implements CronCommandInterface
 {
@@ -56,6 +62,24 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
      * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->processPriceRules($input, $output);
+        $this->processCombinedPriceLists($input, $output);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDefaultDefinition()
+    {
+        return '*/5 * * * *';
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
+    protected function processCombinedPriceLists(InputInterface $input, OutputInterface $output)
     {
         $force = (bool)$input->getOption(self::FORCE);
 
@@ -116,10 +140,36 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
     }
 
     /**
-     * {@inheritDoc}
+     * @param InputInterface $input
+     * @param OutputInterface $output
      */
-    public function getDefaultDefinition()
+    protected function processPriceRules(InputInterface $input, OutputInterface $output)
     {
-        return '*/5 * * * *';
+        $output->writeln('<info>Start the process Price rules</info>');
+        /** @var ProductPriceBuilder $builer */
+        $priceBuilder = $this->getContainer()->get('orob2b_pricing.builder.product_price_builder');
+
+        /** @var PriceListProductAssignmentBuilder $assignmentBuilder */
+        $assignmentBuilder = $this->getContainer()
+            ->get('orob2b_pricing.builder.price_list_product_assignment_builder');
+
+        /** @var PriceListRepository $priceListRepository */
+        $priceListRepository = $this->getContainer()->get('doctrine')
+            ->getManagerForClass(PriceList::class)
+            ->getRepository(PriceList::class);
+
+        /** @var PriceRuleChangeTriggerRepository $triggerRepository */
+        $triggerRepository = $this->getContainer()->get('doctrine')
+            ->getManagerForClass(PriceRuleChangeTrigger::class)
+            ->getRepository(PriceRuleChangeTrigger::class);
+
+        if ((bool)$input->getOption(self::FORCE)) {
+            $triggerRepository->deleteAll();
+            $priceListIterator = $priceListRepository->getPriceListsWithRules();
+            foreach ($priceListIterator as $priceList) {
+                $assignmentBuilder->buildByPriceList($priceList);
+                $priceBuilder->buildByPriceList($priceList);
+            }
+        }
     }
 }

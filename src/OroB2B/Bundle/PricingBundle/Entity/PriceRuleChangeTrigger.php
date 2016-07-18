@@ -8,7 +8,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @ORM\Table(name="orob2b_price_rule_ch_trigger")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleChangeTriggerRepository")
  */
 class PriceRuleChangeTrigger
 {
