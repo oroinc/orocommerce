@@ -89,14 +89,12 @@ class PriceListRepositoryTest extends WebTestCase
 
     public function testGetPriceListsWithRules()
     {
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
-        $priceList->setProductAssignmentRule('product.id == 1');
-        $this->getManager()->flush($priceList);
         $priceListsIterator = $this->getRepository()->getPriceListsWithRules();
         $expectedPriceLists = [
             $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
             $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
+            $this->getReference(LoadPriceLists::PRICE_LIST_4)->getId(),
+            $this->getReference(LoadPriceLists::PRICE_LIST_5)->getId(),
         ];
         foreach ($priceListsIterator as $priceList) {
             $this->assertContains($priceList->getId(), $expectedPriceLists);

@@ -132,7 +132,7 @@ class CombinedPriceListRecalculateCommandTest extends WebTestCase
                 'mode_value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED,
                 'expected_message' => 'The cache is updated successfully',
                 'params' => ['--force'],
-                'expectedCount' => 24,
+                'expectedCount' => 30,
                 'website' => [],
                 'accountGroup' => ['account_group.group1'],
                 'account' => []
