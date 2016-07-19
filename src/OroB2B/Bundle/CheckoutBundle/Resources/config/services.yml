@@ -222,3 +222,9 @@ services:
         public: false
         tags:
              - { name: checkout.workflow_state.mapper, priority: 50 }
+
+#    orob2b_checkout.workflow_state.mapper.ship_until_diff:
+#        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipUntilDiffMapper'
+#        public: false
+#        tags:
+#             - { name: checkout.workflow_state.mapper, priority: 60 }
