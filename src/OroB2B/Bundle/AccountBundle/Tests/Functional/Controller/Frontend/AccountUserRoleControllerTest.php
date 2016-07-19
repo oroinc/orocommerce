@@ -353,6 +353,25 @@ class AccountUserRoleControllerTest extends WebTestCase
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 403);
     }
 
+    public function testDoesntDisplayHiddenRoles()
+    {
+        $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_role_index'));
+
+        $response = $this->client->requestGrid(
+            'frontend-account-account-user-roles-grid'
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+
+        foreach ($result['data'] as $row) {
+            $role = $this->getUserRoleRepository()->find($row['id']);
+
+            if (!$role->isPublic()) {
+                $this->fail('Frontend Account User Role grid should not display hidden roles.');
+            }
+        }
+    }
+
     /**
      * @return AccountUserRole
      */
