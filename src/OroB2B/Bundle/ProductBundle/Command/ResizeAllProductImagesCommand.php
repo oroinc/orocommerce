@@ -24,7 +24,7 @@ class ResizeAllProductImagesCommand extends ContainerAwareCommand
     {
         $this
             ->setName(self::COMMAND_NAME)
-            ->addOption(self::OPTION_FORCE)
+            ->addOption(self::OPTION_FORCE, null, null, 'Overwrite existing images')
             ->setDescription('Resize All Product Images (async)');
     }
 
@@ -34,16 +34,6 @@ class ResizeAllProductImagesCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $force = (bool) $input->getOption(self::OPTION_FORCE);
-
-        if (!$force) {
-            $output->writeln(
-                '<comment>ATTENTION</comment>: To resize all product images ' .
-                'run command with <info>--' . self::OPTION_FORCE . '</info> option:'
-            );
-            $output->writeln(sprintf('    <info>%s --%s</info>', $this->getName(), self::OPTION_FORCE));
-
-            return;
-        }
 
         $container = $this->getContainer();
         $productImageClass = $container->getParameter('orob2b_product.entity.product_image.class');
@@ -62,7 +52,7 @@ class ResizeAllProductImagesCommand extends ContainerAwareCommand
 
         $jobManager = $this->getManagerForClass(Job::class);
         foreach ($productImages as $productImage) {
-            $resizeJob = new Job(ResizeProductImageCommand::COMMAND_NAME, [$productImage->getId()]);
+            $resizeJob = $this->createJob($productImage, $force);
             $jobManager->persist($resizeJob);
         }
         $jobManager->flush();
@@ -76,5 +66,20 @@ class ResizeAllProductImagesCommand extends ContainerAwareCommand
     private function getManagerForClass($class)
     {
         return $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityManagerForClass($class);
+    }
+
+    /**
+     * @param ProductImage $productImage
+     * @param bool $force
+     * @return Job
+     */
+    private function createJob(ProductImage $productImage, $force)
+    {
+        $commandArgs = [$productImage->getId()];
+        if ($force) {
+            $commandArgs[] = sprintf('--%s', self::OPTION_FORCE);
+        }
+
+        return new Job(ResizeProductImageCommand::COMMAND_NAME, $commandArgs);
     }
 }

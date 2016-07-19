@@ -2,10 +2,13 @@
 
 namespace OroB2B\Bundle\ProductBundle\Command;
 
+use Liip\ImagineBundle\Model\Binary;
+
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
@@ -29,7 +32,7 @@ class ResizeProductImageCommand extends ContainerAwareCommand
                 InputArgument::REQUIRED,
                 'ID of ProductImage entity'
             )
-            ->addOption(self::OPTION_FORCE)
+            ->addOption(self::OPTION_FORCE, null, null, 'Overwrite existing images')
             ->setDescription('Resize Product Image (create resized images for all image types)');
     }
 
@@ -38,6 +41,8 @@ class ResizeProductImageCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $force = (bool) $input->getOption(self::OPTION_FORCE);
+
         $container         = $this->getContainer();
         $productImage      = null;
         $productImageId    = (int) $input->getArgument('productImageId');
@@ -60,26 +65,50 @@ class ResizeProductImageCommand extends ContainerAwareCommand
 
         foreach ($this->getDimensionsForProductImage($productImage) as $dimension) {
             $filterName = (string) $dimension;
-            $this->resizeImage($image,$filterName);
+            $this->resizeImage($image, $filterName, $force, $output);
         }
     }
 
     /**
      * @param File $image
      * @param string $filterName
+     * @param bool $force
+     * @param OutputInterface $output
      */
-    private function resizeImage(File $image, $filterName)
+    private function resizeImage(File $image, $filterName, $force, $output)
     {
         $container = $this->getContainer();
+        $cacheResolverName = $container->getParameter('oro_attachment.imagine.cache.resolver.custom_web_path.name');
         $attachmentManager = $container->get('oro_attachment.manager');
-        $path = $container->getParameter('liip_imagine.web_root') . $attachmentManager->getFilteredImageUrl($image, $filterName);
+        $cacheManager = $container->get('liip_imagine.cache.manager');
+        $extensionGuesser = $container->get('liip_imagine.extension_guesser');
+        $path = $attachmentManager->getFilteredImageUrl($image, $filterName);
 
-        $binary = $container->get('liip_imagine')->load($attachmentManager->getContent($image));
+        if ($cacheManager->isStored($path, $filterName, $cacheResolverName) && !$force) {
+            $output->writeln(
+                sprintf(
+                    'Resized image #%d for filter [%s] already exists.',
+                    $image->getId(),
+                    $filterName
+                )
+            );
+
+            return;
+        }
+
+        $mimeType = $image->getMimeType();
+
+        $binary = new Binary($attachmentManager->getContent($image), $mimeType, $extensionGuesser->guess($mimeType));
         $filteredBinary = $container->get('liip_imagine.filter.manager')->applyFilter($binary, $filterName);
 
-        $response = new Response($filteredBinary, Response::HTTP_OK, ['Content-Type' => $image->getMimeType()]);
-
-        $container->get('liip_imagine.cache.manager')->store($response, $path, $filterName);
+        $cacheManager->store($filteredBinary, $path, $filterName, $cacheResolverName);
+        $output->writeln(
+            sprintf(
+                'Resized image #%d for filter [%s] successfully created.',
+                $image->getId(),
+                $filterName
+            )
+        );
     }
 
     /**
