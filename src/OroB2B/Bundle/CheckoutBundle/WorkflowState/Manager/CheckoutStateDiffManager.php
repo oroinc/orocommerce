@@ -9,7 +9,7 @@ class CheckoutStateDiffManager
     /**
      * @var CheckoutStateDiffMapperInterface[]
      */
-    protected $mappers;
+    protected $mappers = [];
 
     /**
      * @param CheckoutStateDiffMapperInterface $mapper
@@ -30,10 +30,10 @@ class CheckoutStateDiffManager
             if (!$mapper->isEntitySupported($entity)) {
                 continue;
             }
-            $currentState = array_merge($currentState, $mapper->getCurrentState($entity));
+            $currentState[] = $mapper->getCurrentState($entity);
         }
 
-        return $currentState;
+        return call_user_func_array('array_merge', $currentState);
     }
 
     /**

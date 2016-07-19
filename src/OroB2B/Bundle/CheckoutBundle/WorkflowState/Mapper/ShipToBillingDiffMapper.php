@@ -13,7 +13,7 @@ class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function isEntitySupported($entity)
     {
-        return $entity instanceof Checkout;
+        return is_object($entity) && $entity instanceof Checkout;
     }
 
     /**

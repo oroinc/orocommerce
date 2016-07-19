@@ -6,7 +6,7 @@ interface CheckoutStateDiffMapperInterface
 {
     /**
      * @param object $entity
-     * @return boolean
+     * @return bool
      */
     public function isEntitySupported($entity);
 

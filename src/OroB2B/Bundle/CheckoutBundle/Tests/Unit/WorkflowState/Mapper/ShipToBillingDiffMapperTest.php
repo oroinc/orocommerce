@@ -28,6 +28,13 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $this->mapper->isEntitySupported($this->checkout));
     }
 
+    public function testIsEntitySupportedNotObject()
+    {
+        $entity = 'string';
+
+        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
+    }
+
     public function testIsEntitySupportedUnsopportedEntity()
     {
         $entity = new \stdClass();

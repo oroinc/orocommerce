@@ -182,8 +182,10 @@ services:
 
     orob2b_checkout.workflow_state.manager.checkout_state_diff:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager'
+        public: false
 
     orob2b_checkout.workflow_state.mapper.ship_to_billing_diff:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper'
+        public: false
         tags:
              - { name: checkout.workflow_state.mapper, priority: 20 }
