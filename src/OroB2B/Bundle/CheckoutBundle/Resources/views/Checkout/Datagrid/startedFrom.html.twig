@@ -1,0 +1,15 @@
+{% set data = record.getValue('startedFrom') %}
+
+{% if data is not null %}
+    {% if resource_granted('VIEW', data.entity) %}
+        {% if data.type == 'shopping_list' %}
+            <a href="{{ path('orob2b_shopping_list_frontend_view', {id: data.id}) }}">{{ data.label }}</a>
+        {% elseif data.type == 'quote' %}
+            <a href="{{ path('orob2b_sale_quote_frontend_view', {id: data.id}) }}">{{ data.label }}</a>
+        {% else %}
+            {{ data.label }}
+        {% endif %}
+    {% else %}
+        {{ data.label }}
+    {% endif %}
+{% endif %}

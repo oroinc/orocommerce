@@ -72,11 +72,10 @@ class MenuItemRepositoryTest extends WebTestCase
      */
     public function testFindMenuItemWithChildrenAndTitleByTitle($title, $expectedData)
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BMenuBundle:MenuItem');
-        $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
+        $queryAnalyzer = new QueryAnalyzer($this->em->getConnection()->getDatabasePlatform());
 
-        $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();
-        $em->getConnection()->getConfiguration()->setSQLLogger($queryAnalyzer);
+        $prevLogger = $this->em->getConnection()->getConfiguration()->getSQLLogger();
+        $this->em->getConnection()->getConfiguration()->setSQLLogger($queryAnalyzer);
 
         /** @var MenuItem $result */
         $result = $this->repository->findMenuItemWithChildrenAndTitleByTitle($title);
@@ -86,7 +85,7 @@ class MenuItemRepositoryTest extends WebTestCase
         $queries = $queryAnalyzer->getExecutedQueries();
         $this->assertCount(1, $queries);
 
-        $em->getConnection()->getConfiguration()->setSQLLogger($prevLogger);
+        $this->em->getConnection()->getConfiguration()->setSQLLogger($prevLogger);
     }
 
     /**
