@@ -2,13 +2,13 @@ layout:
     actions:
         - '@add':
             id: featured_categories
-            blockType: embeded_list
+            blockType: embedded_list
             parentId: content
             options:
                 items: { '@value': [[0, 1, 2, 3, 4, 5, 6, 7, 8]] }
         - '@add':
             id: featured_products
-            blockType: embeded_list
+            blockType: embedded_list
             parentId: content
             options:
                 items: { '@value': [[0, 1, 2, 3, 4, 5, 6, 7]] }
@@ -17,7 +17,7 @@ layout:
                 slides_count: { '@value': 4 }
         - '@add':
             id: top_selling_items
-            blockType: embeded_list
+            blockType: embedded_list
             parentId: content
             options:
                 items: { '@value': [[0, 1, 2, 3, 4, 5, 6, 7]] }

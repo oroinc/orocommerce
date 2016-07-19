@@ -24,10 +24,10 @@ services:
         tags:
             - { name: layout.block_type, alias: back_link }
 
-    orob2b_frontend.block_type.embeded_list:
+    orob2b_frontend.block_type.embedded_list:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             - [setOptionsConfig, [{items: {required: true}, label: ~ , use_slider: {default: false}, slides_count: {default: 4}}]]
-            - [setName, ['embeded_list']]
+            - [setName, ['embedded_list']]
         tags:
-            - { name: layout.block_type, alias: embeded_list }
+            - { name: layout.block_type, alias: embedded_list }
