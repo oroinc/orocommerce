@@ -310,12 +310,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
     public function testDisplaySelfManagedPublicRoles()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_role_index'));
-
-        $response = $this->client->requestGrid(
-            'frontend-account-account-user-roles-grid'
-        );
-
+        $response = $this->client->requestGrid('frontend-account-account-user-roles-grid');
         $result = $this->getJsonResponseContent($response, 200);
 
         $visibleRoleIds = array_map(
