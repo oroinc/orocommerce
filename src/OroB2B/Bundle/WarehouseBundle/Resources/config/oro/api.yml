@@ -14,7 +14,7 @@ oro_api:
                     product.sku:
                         data_type: string
                         allow_array: true
-                    warehouse.id:
+                    warehouse:
                         data_type: integer
                         allow_array: true
                     productUnitPrecision.unit.code:

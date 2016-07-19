@@ -74,9 +74,7 @@ class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
             unset($requestData['warehouse']);
         }
 
-        $unit = array_key_exists('unit', $requestData) ?
-            $requestData['unit'] :
-            $this->doctrineHelper->getEntityRepositoryForClass(Product::class)->getPrimaryUnitPrecisionCode($sku);
+        $unit = $this->getUnit($requestData, $sku);
         unset($requestData['unit']);
 
         $queryBuilder = $this->doctrineHelper->getEntityRepositoryForClass($entityClass)->createQueryBuilder('e');
@@ -99,5 +97,17 @@ class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
 
         $context->setQuery($queryBuilder);
         $context->setRequestData($requestData);
+    }
+
+    /**
+     * @param array $requestData
+     * @param string $sku
+     * @return string
+     */
+    protected function getUnit(array $requestData, $sku)
+    {
+        return array_key_exists('unit', $requestData) ?
+            $requestData['unit'] :
+            $this->doctrineHelper->getEntityRepositoryForClass(Product::class)->getPrimaryUnitPrecisionCode($sku);
     }
 }

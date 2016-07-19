@@ -443,7 +443,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                     ],
                     [
                         'method' => 'getId',
-                        'key' => 'warehouse.id',
+                        'key' => 'warehouse',
                         'references' => [
                             LoadWarehousesAndInventoryLevels::WAREHOUSE1,
                             LoadWarehousesAndInventoryLevels::WAREHOUSE2
@@ -455,7 +455,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                         'references' => ['product_unit.liter', 'product_unit.bottle', 'product_unit.box']
                     ],
                 ],
-                'expectedCount' => 5,
+                'expectedCount' => 6,
                 'expectedContent' => [
                     [
                         'type' => 'warehouseinventorylevels',
@@ -499,6 +499,15 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                             'quantity' => 42,
                             'productSku' => 'product.2',
                             'warehouseName' => 'First Warehouse',
+                            'unit' => 'box',
+                        ],
+                    ],
+                    [
+                        'type' => 'warehouseinventorylevels',
+                        'attributes' => [
+                            'quantity' => 98.765,
+                            'productSku' => 'product.2',
+                            'warehouseName' => 'Second Warehouse',
                             'unit' => 'box',
                         ],
                     ],
