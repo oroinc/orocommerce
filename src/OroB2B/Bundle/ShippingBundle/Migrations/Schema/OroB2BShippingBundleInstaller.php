@@ -14,7 +14,7 @@ class OroB2BShippingBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -28,6 +28,7 @@ class OroB2BShippingBundleInstaller implements Installation
         $this->createOrob2BShippingOrigWarehouseTable($schema);
         $this->createOrob2BShippingProductOptsTable($schema);
         $this->createOrob2BShippingWeightUnitTable($schema);
+        $this->createOrob2BShippingRuleTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BShippingOrigWarehouseForeignKeys($schema);
@@ -125,6 +126,23 @@ class OroB2BShippingBundleInstaller implements Installation
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('conversion_rates', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['code']);
+    }
+
+    /**
+     * Create orob2b_shipping_rule table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BShippingRuleTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_shipping_rule');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('name', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('status', 'string', ['length' => 16]);
+        $table->addColumn('sort_order', 'integer', ['notnull' => true]);
+        $table->addColumn('conditions', 'text', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['name', 'sort_order']);
     }
 
     /**
