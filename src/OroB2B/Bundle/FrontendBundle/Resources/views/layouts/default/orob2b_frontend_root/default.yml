@@ -1,7 +1,5 @@
 layout:
     actions:
-        - '@setBlockTheme':
-            themes: 'default.html.twig'
         - '@add':
             id: featured_categories
             blockType: embeded_list
