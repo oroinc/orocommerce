@@ -39,7 +39,7 @@ layout:
                 checkout_order_summary:
                     blockType: checkout_order_summary
                     options:
-                        visible: '=context["workflowStepName"]!=order_review'
+                        visible: '=context["workflowStepName"]!="order_review"'
                         summary: '=data["orob2b_checkout_summary"]'
                         checkout: '=data["checkout"]'
                 checkout_order_summary_table:

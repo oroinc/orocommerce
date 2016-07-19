@@ -32,5 +32,5 @@ layout:
                         checkout_button_continue: ~
                         checkout_button_back: ~
 
-    conditions: 'context["workflowStepName"]=="request_approval" && context["workflowName"=="b2b_flow_alternative_checkout"]'
+    conditions: 'context["workflowStepName"]=="request_approval" && context["workflowName"]=="b2b_flow_alternative_checkout"'
 
