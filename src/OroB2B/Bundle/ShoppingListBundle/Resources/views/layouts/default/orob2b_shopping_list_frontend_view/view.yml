@@ -73,21 +73,24 @@ layout:
                             '@value': $data.actions.all
                         entity:
                             '@value': $data.entity
+                shopping_list_view_container_content:
+                    blockType: container
             tree:
                 content:
                     shopping_list_view_container:
-                        no_shopping_lists: ~
-                        shopping_list_title: ~
-                        shopping_list_top_actions: ~
-                        shopping_list_line_items:
-                            shopping_list_options: ~
-                            shopping_list_line_items_list: ~
-                            shopping_list_line_items_empty: ~
-                        shopping_list_checkout_container:
-                            shopping_list_button_container:
-                                shopping_list_delete_button: ~
-                            shopping_list_totals: ~
-                            shopping_list_combined_button: ~
+                        shopping_list_view_container_content:
+                            no_shopping_lists: ~
+                            shopping_list_title: ~
+                            shopping_list_top_actions: ~
+                            shopping_list_line_items:
+                                shopping_list_options: ~
+                                shopping_list_line_items_list: ~
+                                shopping_list_line_items_empty: ~
+                            shopping_list_checkout_container:
+                                shopping_list_button_container:
+                                    shopping_list_delete_button: ~
+                                shopping_list_totals: ~
+                                shopping_list_combined_button: ~
         - '@add':
             id: shopping_lists_sidebar_list
             parentId: sidebar_left

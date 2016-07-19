@@ -9,6 +9,13 @@
     </div>
 {% endblock %}
 
+{% block _shopping_list_view_container_content_widget %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+
 {% block _no_shopping_lists_widget %}
     <div class="cart-list_empty">
         <span class="badge badge_orange badge_xlg badge_circle"><i class="cf-basket"></i></span>
@@ -445,25 +452,27 @@
     })) %}
 
     <div {{ block('block_attributes') }}>
-        <!-- START ORDERS TABS LIST -->
         <ul class="shopping-list">
             {% for shoppingList in shoppingLists %}
-                <li class="shopping-list__item">
-                    <a href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}" class="shopping-list__link {% if shoppingList.id == selectedShoppingList.id %} shopping-list__link--current {% endif %}">
-                        <span class='badge badge_sm badge_orange badge_circled-corners shopping-list__item-indicator'><i class="cf-basket"></i></span>
-                        <div class="shopping-list__content">
-                            <h3 class="shopping-list__title text-uppercase {% if shoppingList.id == selectedShoppingList.id %}current-title{% endif %}">{{ shoppingList.label }}</h3>
+                <li class="shopping-list__item {% if shoppingList.id == selectedShoppingList.id %} shopping-list__item--current {% endif %}">
+                    <a href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}"
+                       class="shopping-list__link"
+                    >
+                        <span class='badge badge_sm badge_orange badge_circled-corners shopping-list__item-indicator'>
+                            <i class="cf-basket"></i>
+                        </span>
+                        <span class="shopping-list__name">
+                            <span class="shopping-list__title text-uppercase {% if shoppingList.id == selectedShoppingList.id %}current-title{% endif %}">{{ shoppingList.label }}</span>
                             {% set itemsCount = shoppingList.lineItems.count %}
                             {% if itemsCount %}
                                 <div class="shopping-list__desc">
-                                    <span class="mr1-md"><strong>{{ shoppingList.lineItems.count }}</strong> {{ 'orob2b.shoppinglist.items.label'|transchoice(itemsCount) }}</span>
+                                    ><b>{{ shoppingList.lineItems.count }}</b> {{ 'orob2b.shoppinglist.items.label'|transchoice(itemsCount) }}
                                 </div>
                             {% endif %}
-                        </div>
+                        </span>
                     </a>
                 </li>
             {% endfor %}
         </ul>
-        <!-- END ORDERS TABS LIST -->
     </div>
 {% endblock _shopping_lists_sidebar_list_widget %}

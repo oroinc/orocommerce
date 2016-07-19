@@ -3,42 +3,32 @@
     width: 100%;
     margin: 0;
 
-    font-size: 0;
     white-space: nowrap;
 
     border-radius: 3px 3px 0 0;
-    border-top: 1px solid $theme-lighter-gray-color;
     border-bottom: 1px solid $base-font-color-lightest;
     box-shadow: inset -1px 0 0 0 $theme-lighter-gray-color;
     background: $theme-lightest-gray-color;
 
-    &--fulfilled {
-        width: calc(100% - 37px);
-    }
-
     &__item {
         display: inline-block;
         width: 20%;
-        margin-top: -1px;
 
-        font-size: 14px;
-        vertical-align: top;
 
-        border-bottom: 0;
+        border-top: 1px solid $theme-lighter-gray-color;
+        background: $theme-lightest-gray-color;
+        box-shadow: inset 1px 0 0 0 $theme-lighter-gray-color,
+                    inset 0 1px 0 0 $theme-lighter-gray-color,
+                    inset -1px 0 0 0 $theme-lighter-gray-color,
+                    0 1px 0 0 $base-font-color-lightest;
 
-        &:first-child {
-            border-top: 0;
-        }
-
-        &:first-child .shopping-list__link {
-            margin-left: 0;
-
-            border-radius: 3px 0 0;
-            border-left: 0;
-        }
-
-        &:last-child .shopping-list__link {
-            border-radius: 0 3px 0 0;
+        &--current,
+        &:hover {
+            background: $base-white-color;
+            box-shadow: inset 1px 0 0 0 $base-font-color-lightest,
+                        inset 0 1px 0 0 $base-font-color-lightest,
+                        inset -1px 0 0 0 $base-font-color-lightest,
+                        0 1px 0 0 $base-white-color;
         }
 
         &--hidden {
@@ -46,32 +36,21 @@
         }
     }
 
+    &__content {
+        padding: 15px;
+
+        border: 1px solid #d9d9d9;
+        border-top: 0;
+    }
+
     &__link {
-        margin-left: -1px;
         padding: 16px 15px 12px;
 
         text-align: center;
-
-        border-left: 0;
-        box-shadow: inset 1px 0 0 0 $theme-lighter-gray-color,
-                    inset 0 1px 0 0 $theme-lighter-gray-color,
-                    inset -1px 0 0 0 $theme-lighter-gray-color,
-                    0 1px 0 0 $base-font-color-lightest;
-        background: $theme-lightest-gray-color;
-
-        &--current,
-        &:hover {
-            border-left: 0;
-            box-shadow: inset 1px 0 0 0 $base-font-color-lightest,
-                        inset 0 1px 0 0 $base-font-color-lightest,
-                        inset -1px 0 0 0 $base-font-color-lightest,
-                        0 1px 0 0 $base-white-color;
-            background: $base-white-color;
-        }
     }
 
     &__item-indicator,
-    &__content {
+    &__name {
         display: inline-block;;
 
         vertical-align: baseline;;
@@ -83,15 +62,11 @@
         min-width: 26px;
     }
 
-    &__content {
-        max-width: calc(100% - 36px);
+    &__name {
         margin-left: 10px;
     }
 
     &__title {
-        display: inline-block;
-        max-width: 100%;
-
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

@@ -1,10 +1,10 @@
-@import 'orob2bfrontend/default/scss/shared/_vars.scss';
-@import 'orob2bfrontend/default/scss/shared/_mixins.scss';
-@import 'orob2bfrontend/default/scss/components/commerce/partials/variables.scss';
+@import 'orob2bfrontend/default/scss/shared/_vars';
+@import 'orob2bfrontend/default/scss/shared/_mixins';
+@import 'orob2bfrontend/default/scss/components/commerce/partials/variables';
 
-@import 'components/shopping-list/shopping-list.scss';
-@import 'components/shopping-list-navigation/shopping-list-navigation.scss';
-@import 'components/shopping-list-dropdown/shopping-list-dropdown.scss';
-@import 'components/shopping-list-links/shopping-list-links.scss';
-@import 'components/shopping-list-tabs/shopping-list-tabs.scss';
-@import 'components/shopping-list-wrapper/shopping-list-wrapper.scss';
+@import 'components/shopping-list/shopping-list';
+@import 'components/shopping-list-navigation/shopping-list-navigation';
+@import 'components/shopping-list-dropdown/shopping-list-dropdown';
+@import 'components/shopping-list-links/shopping-list-links';
+@import 'components/shopping-list-tabs/shopping-list-tabs';
+@import 'components/shopping-list-wrapper/shopping-list-wrapper';

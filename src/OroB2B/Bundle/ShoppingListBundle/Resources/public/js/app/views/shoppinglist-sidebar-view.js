@@ -27,7 +27,8 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             // listen to incoming title updates and re-render the whole shopping list
-            mediator.on('shopping-list-event:' + this.options.eventChannelId + ':update', this.updateCurrentTitle, this);
+            mediator.on('shopping-list-event:' + this.options.eventChannelId + ':update',
+                        this.updateCurrentTitle, this);
 
             this.hideTail(this.options.shoppingListVisible);
 
@@ -64,10 +65,6 @@ define(function(require) {
             var shoppingListVisible = this.options.shoppingListVisible;
 
             if (shoppingListCount > shoppingListVisible) {
-                this.options._sourceElement
-                    .find('.shopping-list')
-                    .addClass('shopping-list--fulfilled');
-
                 this.options._sourceElement
                     .next('.shopping-list-dropdown')
                     .addClass('shopping-list-dropdown--visible');

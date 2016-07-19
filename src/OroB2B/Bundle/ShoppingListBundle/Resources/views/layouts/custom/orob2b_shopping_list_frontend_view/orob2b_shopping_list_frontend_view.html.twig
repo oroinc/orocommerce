@@ -1,5 +1,5 @@
 {% block _shopping_list_view_tabs_widget %}
-    {% set attr = layout_attr_merge(attr, {
+    {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'orob2bshoppinglist/js/app/components/shoppinglist-view-component',
         'data-page-component-options': {
             eventChannelId: 'shopping-list-title'
@@ -13,7 +13,15 @@
 {% endblock %}
 
 {% block _shopping_list_view_container_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': "shopping-list-wrapper"}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': "shopping-list-wrapper"}) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_view_container_content_widget %}
+    {% set attr = layout_attr_defaults(attr, {'~class': "shopping-list__content"}) %}
 
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -21,7 +29,7 @@
 {% endblock %}
 
 {% block _shopping_list_view_more_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': "shopping-list-dropdown"}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': "shopping-list-dropdown"}) %}
 
     <div{{ block('block_attributes') }}>
         <input class="shopping-list-dropdown__helper" type="radio" id="shopping-list-dropdown" name="dropdowns" hidden="hidden">
