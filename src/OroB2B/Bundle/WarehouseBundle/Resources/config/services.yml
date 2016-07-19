@@ -16,9 +16,6 @@ services:
 
     orob2b_warehouse.api.processor.product_id.normalize_input:
         class: 'OroB2B\Bundle\ProductBundle\Api\Processor\NormalizeProductId'
-        arguments:
-            - '@oro_api.value_normalizer'
-            - '@oro_api.rest.entity_id_transformer'
         tags:
             - { name: oro.api.processor, action: update, group: normalize_input, priority: -105, class: '%orob2b_warehouse.entity.warehouse_inventory_level.class%'}
 
