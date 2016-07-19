@@ -59,8 +59,8 @@ abstract class AbstractCurrencySelectionType extends AbstractType
                 $currencies = array_merge($currencies, (array)$options['additional_currencies']);
 
                 if (empty($currencies)) {
-                    //TODO: Change the getting currency list from system configuration option
-                    //TODO: "functional currency of organization" when it will be added.
+                    //TODO: BB-3823 Change the getting currency list from system configuration option
+                    //TODO: BB-3823 "functional currency of organization" when it will be added.
                     $currencies = [$this->localeSettings->getCurrency()];
                 }
 
