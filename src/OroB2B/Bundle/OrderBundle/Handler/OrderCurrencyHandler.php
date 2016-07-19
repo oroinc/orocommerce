@@ -27,6 +27,7 @@ class OrderCurrencyHandler
     public function setOrderCurrency(Order $order)
     {
         if (!$order->getCurrency()) {
+            //TODO: BB-3824 Change the getting currency from system configuration
             $order->setCurrency($this->localeSettings->getCurrency());
         }
     }

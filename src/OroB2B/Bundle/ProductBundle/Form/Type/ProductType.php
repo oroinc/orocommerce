@@ -7,11 +7,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
@@ -121,6 +123,7 @@ class ProductType extends AbstractType
                     'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
                     'error_bubbling' => false,
                     'required'       => true,
+                    'mapped'         => false,
                 ]
             )
             ->add(
@@ -131,6 +134,7 @@ class ProductType extends AbstractType
                     'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
                     'error_bubbling' => false,
                     'required'       => false,
+                    'mapped'         => false,
                 ]
             )
             ->add(
@@ -140,9 +144,10 @@ class ProductType extends AbstractType
             )->add(
                 'images',
                 ProductImageCollectionType::NAME
-            );
-
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
+            )
+            ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
+            ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])
+            ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener']);
     }
 
     /**
@@ -150,6 +155,7 @@ class ProductType extends AbstractType
      */
     public function preSetDataListener(FormEvent $event)
     {
+        /** @var Product $product */
         $product = $event->getData();
         $form = $event->getForm();
 
@@ -175,6 +181,51 @@ class ProductType extends AbstractType
                     ['product_class' => $this->dataClass, 'by_reference' => false]
                 );
         }
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function postSetDataListener(FormEvent $event)
+    {
+        /** @var Product $product */
+        $product = $event->getData();
+        $form = $event->getForm();
+
+        // manual mapping
+        $precisionForm = $form->get('primaryUnitPrecision');
+        if (empty($precisionForm->getData())) {
+            // clone is required to prevent data modification by reference
+            $precisionForm->setData(clone $product->getPrimaryUnitPrecision());
+        }
+        $form->get('additionalUnitPrecisions')->setData($product->getAdditionalUnitPrecisions());
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function submitListener(FormEvent $event)
+    {
+        /** @var Product $product */
+        $product = $event->getData();
+        $form = $event->getForm();
+
+        $primaryPrecision = $form->get('primaryUnitPrecision')->getData();
+        if ($primaryPrecision) {
+            $product->setPrimaryUnitPrecision($primaryPrecision);
+        }
+
+        /** @var ProductUnitPrecision[] $additionalPrecisions */
+        $additionalPrecisions = $form->get('additionalUnitPrecisions')->getData();
+        foreach ($additionalPrecisions as $key => $precision) {
+            $existingPrecision = $product->getUnitPrecision($precision->getProductUnitCode());
+            if ($existingPrecision) {
+                // refresh precision object data to prevent problems with property accessor
+                $product->addAdditionalUnitPrecision($precision);
+                $additionalPrecisions[$key] = $existingPrecision;
+            }
+        }
+        PropertyAccess::createPropertyAccessor()->setValue($product, 'additionalUnitPrecisions', $additionalPrecisions);
     }
 
     /**
