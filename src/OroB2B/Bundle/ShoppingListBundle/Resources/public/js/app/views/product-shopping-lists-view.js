@@ -17,7 +17,7 @@ define(function(require) {
         },
 
         elementsEvents: {
-            'editLineItem': ['click', 'editLineItem']
+            editLineItem: ['click', 'editLineItem']
         },
 
         modelAttr: {
@@ -25,7 +25,7 @@ define(function(require) {
         },
 
         modelEvents: {
-            'shopping_lists': ['change', 'render']
+            shopping_lists: ['change', 'render']
         },
 
         initialize: function(options) {

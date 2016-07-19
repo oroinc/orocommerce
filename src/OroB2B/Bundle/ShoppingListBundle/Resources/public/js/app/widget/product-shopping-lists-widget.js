@@ -3,17 +3,17 @@ define(function(require) {
 
     var ShoppingListsMultipleEditWidget;
     var DialogWidget = require('oro/dialog-widget');
+    var ElementsHelper = require('orob2bfrontend/js/app/elements-helper');
     var ProductQuantityView = require('orob2bproduct/js/app/views/product-quantity-editable-view');
-    var DeleteItemComponent = require('orob2bfrontend/js/app/components/delete-item-component');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var __ = require('orotranslation/js/translator');
     var _ = require('underscore');
     var $ = require('jquery');
 
-    ShoppingListsMultipleEditWidget = DialogWidget.extend({
+    ShoppingListsMultipleEditWidget = DialogWidget.extend(_.extend({}, ElementsHelper, {
         options: $.extend(true, {}, DialogWidget.prototype.options, {
-            preventToRemoveModel: true,
+            preventModelRemoval: true,
             template: '',
             dialogOptions: {
                 modal: true,
@@ -34,63 +34,112 @@ define(function(require) {
                 validation: {
                     showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
                 }
-            },
-            deleteLineOptions: {
-                removeClass: 'line_item',
-                confirmMessage: __('orob2b.frontend.shoppinglist.messages.line_item_delete_confirm'),
-                sucsessMessage: __('orob2b.frontend.shoppinglist.messages.line_item_deleted'),
-                okButtonClass: 'btn ok theme-btn_sm btn-orange',
-                cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
             }
         }),
 
         elements: {
-            controlsContainer: '[data-name="shopping-lists-controls-container"]',
+            edit: '[data-role="edit"]',
+            decline: '[data-role="decline"]',
+            accept: '[data-name="shopping-list-accept"]',
+            controlsContainer: '[data-role="shopping-list"]',
             unitsContainer: '[data-name="shopping-lists-units"]',
             modifyContainer: '[data-name="shopping-lists-modify"]',
-            staticContainer: '[data-name="shopping-lists-static"]',
-            accept: '[data-name="shopping-list-accept"]',
-            decline: '[data-name="shopping-list-decline"]'
+            staticContainer: '[data-name="shopping-lists-static"]'
         },
 
-        events: {
-            'click [data-name="shopping-list-edit"]': 'edit',
-            'click [data-name="shopping-list-delete"]': 'delete',
-            'click [data-name="shopping-list-decline"]': 'decline',
-            'click [data-name="shopping-lists-close"]': 'close'
+        elementsEvents: {
+            edit: ['click', 'edit'],
+            decline: ['click', 'decline']
         },
 
-        quantityComponentOptions: null,
-        deleteLineOptions: {
-            removeClass: 'shopping-lists-units',
-            confirmMessage: null,
-            hasOwnTrigger: true
+        modelAttr: {
+            shopping_lists: []
         },
 
-        template: '',
+        modelEvents: {
+            shopping_lists: ['change', 'render']
+        },
 
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, [
-                'dialogOptions', 'template', 'quantityComponentOptions', 'deleteLineOptions'
+                'dialogOptions', 'template', 'quantityComponentOptions'
             ]));
-            this.model = options.productModel;
+
+            this.initModel(options);
             if (!this.model) {
                 return;
             }
-            this.options.url = options.url = false;
-            this.template = _.template(this.options.template);
-            this.route = this.options.quantityComponentOptions.save_api_accessor.route;
-            this.quantityComponentOptions = this.options.quantityComponentOptions;
-            this.deleteLineOptions = _.extend(this.options.deleteLineOptions, this.deleteLineOptions);
+            this.initializeElements(options);
+
             this.options.title = this.model.get('name');
+            this.options.url = options.url = false;
+            this.options.template = options.template = _.template(this.options.template);
+
+            this.route = this.options.quantityComponentOptions.save_api_accessor.route;
+
             mediator.on('frontend:item:delete',  this.onLineItemDelete, this);
-            this.model.on('change:shopping_lists', this.render, this);
 
             ShoppingListsMultipleEditWidget.__super__.initialize.apply(this, arguments);
         },
 
+        initModel: function(options) {
+            this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
+            if (options.productModel) {
+                this.model = options.productModel;
+            }
+
+            _.each(this.modelAttr, function(value, attribute) {
+                if (!this.model.has(attribute)) {
+                    this.model.set(attribute, value);
+                }
+            }, this);
+        },
+
         dispose: function() {
+            this.disposeElements();
             ShoppingListsMultipleEditWidget.__super__.dispose.apply(this, arguments);
+        },
+
+        delegateEvents: function() {
+            ShoppingListsMultipleEditWidget.__super__.delegateEvents.apply(this, arguments);
+            this.delegateElementsEvents();
+        },
+
+        undelegateEvents: function() {
+            this.undelegateElementsEvents();
+            return ShoppingListsMultipleEditWidget.__super__.undelegateEvents.apply(this, arguments);
+        },
+
+        render: function() {
+            this.clearElementsCache();
+
+            var shoppingLists = this.model.get('shopping_lists');
+            if (_.isEmpty(shoppingLists)) {
+                this.dispose();
+                return;
+            }
+
+            this.setElement($(this.options.template({
+                shoppingLists: shoppingLists,
+                productUnits: this.model.get('product_units')
+            })));
+
+            return ShoppingListsMultipleEditWidget.__super__.render.apply(this, arguments);
+        },
+
+        onLineItemDelete: function(deleteData) {
+            var shoppingLists = this.model.get('shopping_lists');
+
+            _.each(shoppingLists, function(shoppingList, key) {
+                shoppingList.line_items = _.filter(shoppingList.line_items, function(lineItem) {
+                    return lineItem.line_item_id != deleteData.lineItemId;
+                });
+                if (_.isEmpty(shoppingList.line_items)) {
+                    shoppingLists.splice(key, 1);
+                }
+            }, this);
+
+            this.model.trigger('change:shopping_lists');
         },
 
         edit: function(e) {
@@ -103,7 +152,7 @@ define(function(require) {
                 var lineItemId = $(unit).data('line-item-id');
                 var shoppingListId = $(unit).data('shopping-list-id');
 
-                this.quantityComponentOptions.save_api_accessor = {
+                this.options.quantityComponentOptions.save_api_accessor = {
                     default_route_parameters: {
                         id: lineItemId
                     },
@@ -114,7 +163,7 @@ define(function(require) {
                     el: $(unit),
                     model: this.model,
                     $trigger: $units.find(this.elements.accept)
-                }, this.quantityComponentOptions));
+                }, this.options.quantityComponentOptions));
 
                 this.listenTo(productQuantityView, 'product:quantity-unit:update',
                     _.bind(this.onLineItemUpdate(e, lineItemId, shoppingListId), this));
@@ -154,46 +203,10 @@ define(function(require) {
             });
         },
 
-        delete: function(e) {
-            var $target = $(e.currentTarget);
-            var lineItemId = $target.data('line-item-id');
-
-            this.deleteLineOptions._sourceElement = $target;
-            this.deleteLineOptions.lineItemId = lineItemId;
-            this.deleteLineOptions.url = routing.generate('orob2b_api_shopping_list_frontend_delete_line_item', {'id': lineItemId});
-            new DeleteItemComponent(this.deleteLineOptions).deleteItem();
-        },
-
-        onLineItemDelete: function(data) {
-            var shoppingLists = this.model.get('shopping_lists');
-
-            _.each(shoppingLists, function(list, key) {
-                if (!_.isEmpty(list.line_items) &&
-                    !_.isEmpty(this.deleteLineItems(list.line_items, data))) {
-                    list.line_items = this.deleteLineItems(list.line_items, data);
-                } else {
-                    shoppingLists.splice(key, 1);
-                }
-            }, this);
-
-            this.model.set('shopping_lists', shoppingLists);
-            this.model.trigger('change:shopping_lists');
-
-            if (_.isEmpty(shoppingLists)) {
-                this.close();
-            }
-        },
-
-        deleteLineItems: function(items, data) {
-            return _.reject(items, function(item) {
-                return item.line_item_id === data.lineItemId
-            });
-        },
-
         toggleEditMode: function(e, key) {
             var $target = $(e.currentTarget);
 
-            if (_.isString(key) && key === 'enable') {
+            if (key === 'enable') {
                 $target
                     .closest(this.elements.controlsContainer)
                     .find(this.elements.staticContainer)
@@ -202,9 +215,7 @@ define(function(require) {
                     .closest(this.elements.controlsContainer)
                     .find(this.elements.modifyContainer)
                     .removeClass('hidden');
-            }
-
-            if (_.isString(key) && key === 'disable') {
+            } else {
                 $target
                     .closest(this.elements.controlsContainer)
                     .find(this.elements.modifyContainer)
@@ -214,48 +225,12 @@ define(function(require) {
                     .find(this.elements.staticContainer)
                     .removeClass('hidden');
             }
-        },
-
-        setLabels: function(shoppingLists) {
-            return _.map(shoppingLists, function(list) {
-                list.line_items = this.setLineItemsLabels(list.line_items);
-                return list;
-            }, this);
-        },
-
-        setLineItemsLabels: function(lineItems) {
-            return _.map(lineItems, function(item) {
-                var label = __(
-                    'orob2b.product.product_unit.' + item.unit + '.value.short',
-                    {'count': item.quantity},
-                    item.quantity);
-                item.trans_unit = label.split(' ').pop();
-                return item;
-            });
         },
 
         decline: function(e) {
             this.toggleEditMode(e, 'disable');
-        },
-        
-        close: function() {
-            this.remove();
-        },
-
-        getPopupContent: function() {
-            return this.template({
-                shoppingLists: this.model.get('shopping_lists'),
-                productUnits: this.model.get('product_units')
-            });
-        },
-
-        render: function() {
-            var $content = $(this.getPopupContent());
-            this.setElement($content);
-
-            return ShoppingListsMultipleEditWidget.__super__.render.apply(this, arguments);
         }
-    });
+    }));
 
     return ShoppingListsMultipleEditWidget;
 });
