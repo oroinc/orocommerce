@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Provider;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 
 class PriceRuleFieldsProvider
@@ -22,9 +23,9 @@ class PriceRuleFieldsProvider
     protected $entityFieldProvider;
 
     /**
-     * @var array
+     * @var DoctrineHelper
      */
-    protected $supportedClasses = [];
+    protected $doctrineHelper;
 
     /**
      * @var array
@@ -33,10 +34,12 @@ class PriceRuleFieldsProvider
 
     /**
      * @param EntityFieldProvider $entityFieldProvider
+     * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(EntityFieldProvider $entityFieldProvider)
+    public function __construct(EntityFieldProvider $entityFieldProvider, DoctrineHelper $doctrineHelper)
     {
         $this->entityFieldProvider = $entityFieldProvider;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -49,55 +52,72 @@ class PriceRuleFieldsProvider
     public function getFields($className, $numericOnly = false, $withRelations = false)
     {
         $realClassName = $this->getRealClassName($className);
-        if (!$this->isClassSupported($realClassName)) {
-            throw new \InvalidArgumentException('Class does not supported');
-        }
         $fields = $this->getEntityFields($realClassName, $numericOnly, $withRelations);
 
         return array_keys($fields);
     }
 
     /**
-     * @param $className
-     * @return string
-     * @throws \Exception
+     * @param string $className
+     * @param string $fieldName
+     * @return null|array
      */
-    public function getRealClassName($className)
+    public function getField($className, $fieldName)
     {
-        $classNameInfo = explode('::', $className);
-        $realClassName = $classNameInfo[0];
-        if (count($classNameInfo) > 1) {
+        $entityFields = $this->getEntityFields($className, false, true);
+        if (array_key_exists($fieldName, $entityFields)) {
+            return $entityFields[$fieldName];
+        }
+        
+        return null;
+    }
+
+    /**
+     * @param string $className
+     * @param string $fieldName
+     * @return bool
+     */
+    public function isRelation($className, $fieldName)
+    {
+        $field = $this->getField($className, $fieldName);
+
+        return !empty($field['relation_type']);
+    }
+
+    /**
+     * @param string $className
+     * @return null|string
+     */
+    public function getIdentityFieldName($className)
+    {
+        return $this->doctrineHelper->getSingleEntityIdentifierFieldName($className, false);
+    }
+
+    /**
+     * @param string $className
+     * @param null|string $fieldName
+     * @return string
+     */
+    public function getRealClassName($className, $fieldName = null)
+    {
+        if (!$fieldName && strpos($className, '::') !== false) {
+            list($className, $fieldName) = explode('::', $className);
+        }
+        
+        if ($fieldName) {
             $numericOnly = false;
             $withRelations = true;
-            $fieldName = $classNameInfo[1];
-            $fields = $this->getEntityFields($realClassName, $numericOnly, $withRelations);
+            $fields = $this->getEntityFields($className, $numericOnly, $withRelations);
             if (array_key_exists($fieldName, $fields)) {
-                $realClassName = $fields[$fieldName]['related_entity_name'];
+                $className = $fields[$fieldName]['related_entity_name'];
             } else {
                 throw new \InvalidArgumentException(
-                    sprintf('Field "%s" is not found is class %s', $fieldName, $realClassName)
+                    sprintf('Field "%s" is not found is class %s', $fieldName, $className)
                 );
             }
         }
 
-        return $realClassName;
-    }
-
-    /**
-     * @param $className
-     * @return bool
-     */
-    public function isClassSupported($className)
-    {
-        return array_key_exists($className, $this->supportedClasses);
-    }
-
-    /**
-     * @param string $class
-     */
-    public function addSupportedClass($class)
-    {
-        $this->supportedClasses[$class] = true;
+        return $className;
     }
 
     /**
@@ -110,7 +130,15 @@ class PriceRuleFieldsProvider
     {
         $cacheKey = $this->getCacheKey($className, $numericOnly, $withRelations);
         if (!array_key_exists($cacheKey, $this->entityFields)) {
-            $fields = $this->entityFieldProvider->getFields($className, $withRelations, $withRelations);
+            $fields = $this->entityFieldProvider->getFields(
+                $className,
+                $withRelations,
+                $withRelations,
+                false,
+                false,
+                true,
+                false
+            );
             $this->entityFields[$cacheKey] = [];
             foreach ($fields as $field) {
                 if ($numericOnly && empty(self::$supportedTypes[$field['type']])) {

@@ -34,7 +34,7 @@ class PriceRuleFieldsProviderTest extends WebTestCase
     public function testGetFiends($class, $onlyNumerical, $withRelations, array $expectedFields)
     {
         $fields = $this->provider->getFields($class, $onlyNumerical, $withRelations);
-        $this->assertEquals($expectedFields, $fields);
+        $this->assertEquals(sort($expectedFields), sort($fields));
     }
 
     /**

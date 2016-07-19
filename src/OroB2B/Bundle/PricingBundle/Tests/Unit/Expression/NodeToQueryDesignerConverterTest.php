@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Expression;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Expression\NameNode;
@@ -73,17 +72,6 @@ class NodeToQueryDesignerConverterTest extends \PHPUnit_Framework_TestCase
                     ]
                 ]
             ],
-            'category field' => [
-                new NameNode(Category::class, 'id'),
-                [
-                    'columns' => [
-                        [
-                            'name' => sprintf('%1$s::products+%1$s::%2$s', Category::class, 'id'),
-                            'table_identifier' => Category::class
-                        ]
-                    ]
-                ]
-            ],
             'product price field' => [
                 new NameNode(ProductPrice::class, 'currency'),
                 [
@@ -96,16 +84,6 @@ class NodeToQueryDesignerConverterTest extends \PHPUnit_Framework_TestCase
                 ]
             ]
         ];
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unsupported field stdClass::field::value
-     */
-    public function testConvertUnsupportedRelation()
-    {
-        $node = new RelationNode(\stdClass::class, 'field', 'value');
-        $this->converter->convert($node);
     }
 
     public function testConvertPriceAttribute()
