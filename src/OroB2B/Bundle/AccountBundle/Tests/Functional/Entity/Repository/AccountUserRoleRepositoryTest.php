@@ -167,7 +167,9 @@ class AccountUserRoleRepositoryTest extends WebTestCase
                     LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER,
                     LoadAccountUserRoleData::ROLE_WITH_WEBSITE,
                     LoadAccountUserRoleData::ROLE_EMPTY,
-                    LoadAccountUserRoleData::ROLE_NOT_SELF_MANAGED
+                    LoadAccountUserRoleData::ROLE_NOT_SELF_MANAGED,
+                    LoadAccountUserRoleData::ROLE_SELF_MANAGED,
+                    LoadAccountUserRoleData::ROLE_NOT_PUBLIC,
                 ]
             ],
             'user from account without custom roles' => [
@@ -176,7 +178,9 @@ class AccountUserRoleRepositoryTest extends WebTestCase
                     LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER,
                     LoadAccountUserRoleData::ROLE_WITH_WEBSITE,
                     LoadAccountUserRoleData::ROLE_EMPTY,
-                    LoadAccountUserRoleData::ROLE_NOT_SELF_MANAGED
+                    LoadAccountUserRoleData::ROLE_NOT_SELF_MANAGED,
+                    LoadAccountUserRoleData::ROLE_SELF_MANAGED,
+                    LoadAccountUserRoleData::ROLE_NOT_PUBLIC,
                 ]
             ]
         ];

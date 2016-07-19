@@ -142,14 +142,14 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @var boolean
      *
-     * @ORM\Column(type="boolean", name="self_managed", nullable=true)
+     * @ORM\Column(type="boolean", name="self_managed", options={"default"=false})
      */
     protected $selfManaged = false;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(type="boolean", name="public", nullable=true)
+     * @ORM\Column(type="boolean", name="public", options={"default"=true})
      */
     protected $public = true;
 

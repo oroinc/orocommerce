@@ -14,6 +14,8 @@ use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRol
 
 /**
  * @dbIsolation
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AccountUserRoleControllerTest extends WebTestCase
 {
@@ -306,7 +308,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         $this->assertFalse($role->isPredefined());
     }
 
-    public function testDoesntDisplaySelfManagedRoles()
+    public function testDisplaySelfManagedPublicRoles()
     {
         $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_role_index'));
 
@@ -316,60 +318,64 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $result = $this->getJsonResponseContent($response, 200);
 
-        foreach ($result['data'] as $row) {
-            $role = $this->getUserRoleRepository()->find($row['id']);
+        $visibleRoleIds = array_map(
+            function (array $row) {
+                return $row['id'];
+            },
+            $result['data']
+        );
 
-            if (!$role->isSelfManaged()) {
-                $this->fail('Frontend Account User Role grid should not display not self managed roles.');
-            }
-        }
+        // invisible role not self managed role (self_managed = false and public = true)
+        $this->assertNotContains(
+            $this->getReference(LoadAccountUserRoleData::ROLE_NOT_SELF_MANAGED)->getId(),
+            $visibleRoleIds
+        );
+
+        // visible not self managed role (self_managed = true and public = true)
+        $this->assertContains(
+            $this->getReference(LoadAccountUserRoleData::ROLE_SELF_MANAGED)->getId(),
+            $visibleRoleIds
+        );
+
+        // invisible not public role (self_managed = true and public = false)
+        $this->assertNotContains(
+            $this->getReference(LoadAccountUserRoleData::ROLE_NOT_PUBLIC)->getId(),
+            $visibleRoleIds
+        );
     }
 
-    public function testShouldNotAllowViewingNotSelfManagedRole()
+    public function testShouldNotAllowViewAndUpdateNotSelfManagedRole()
     {
-        $selfManagedRole = $this->getUserRoleRepository()->findOneBy([
-            'selfManaged' => false
-        ]);
+        $notSelfManagedRole = $this->getReference(LoadAccountUserRoleData::ROLE_NOT_SELF_MANAGED);
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_role_view', ['id' => $selfManagedRole->getId()])
+            $this->getUrl('orob2b_account_frontend_account_user_role_view', ['id' => $notSelfManagedRole->getId()])
         );
-
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 403);
-    }
-
-    public function testShouldNotAllowUpdatingNotSelfManagedRole()
-    {
-        $selfManagedRole = $this->getUserRoleRepository()->findOneBy([
-            'selfManaged' => false
-        ]);
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_role_update', ['id' => $selfManagedRole->getId()])
+            $this->getUrl('orob2b_account_frontend_account_user_role_update', ['id' => $notSelfManagedRole->getId()])
         );
-
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 403);
     }
 
-    public function testDoesntDisplayHiddenRoles()
+    public function testShouldNotAllowViewAndUpdateNotPublicRole()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_role_index'));
+        $notPublicRole = $this->getReference(LoadAccountUserRoleData::ROLE_NOT_PUBLIC);
 
-        $response = $this->client->requestGrid(
-            'frontend-account-account-user-roles-grid'
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_frontend_account_user_role_view', ['id' => $notPublicRole->getId()])
         );
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 403);
 
-        $result = $this->getJsonResponseContent($response, 200);
-
-        foreach ($result['data'] as $row) {
-            $role = $this->getUserRoleRepository()->find($row['id']);
-
-            if (!$role->isPublic()) {
-                $this->fail('Frontend Account User Role grid should not display hidden roles.');
-            }
-        }
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_frontend_account_user_role_update', ['id' => $notPublicRole->getId()])
+        );
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 403);
     }
 
     /**

@@ -20,6 +20,8 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
     const ROLE_WITH_WEBSITE = 'Role with website';
     const ROLE_EMPTY = 'Role without any additional attributes';
     const ROLE_NOT_SELF_MANAGED = 'Role that is not self managed';
+    const ROLE_SELF_MANAGED = 'Role that is self managed';
+    const ROLE_NOT_PUBLIC = 'Role that is not public';
 
     /**
      * {@inheritdoc}
@@ -47,6 +49,8 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
         $this->loadRoleWithWebsite($manager, self::ROLE_WITH_WEBSITE, 'Canada');
         $this->loadEmptyRole($manager, self::ROLE_EMPTY);
         $this->loadNotSelfManagedRole($manager, self::ROLE_NOT_SELF_MANAGED);
+        $this->loadSelfManagedRole($manager, self::ROLE_SELF_MANAGED);
+        $this->loadNotPublicRole($manager, self::ROLE_NOT_PUBLIC);
 
         $manager->flush();
     }
@@ -133,6 +137,43 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
         $entity->setLabel($roleLabel);
         $entity->setOrganization($this->getDefaultOrganization($manager));
         $entity->setSelfManaged(false);
+        $entity->setPublic(true);
+        $this->setReference($entity->getLabel(), $entity);
+        $manager->persist($entity);
+
+        return $entity;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string $roleLabel
+     * @return AccountUserRole
+     */
+    protected function loadSelfManagedRole(ObjectManager $manager, $roleLabel)
+    {
+        $entity = new AccountUserRole();
+        $entity->setLabel($roleLabel);
+        $entity->setOrganization($this->getDefaultOrganization($manager));
+        $entity->setSelfManaged(true);
+        $entity->setPublic(true);
+        $this->setReference($entity->getLabel(), $entity);
+        $manager->persist($entity);
+
+        return $entity;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string $roleLabel
+     * @return AccountUserRole
+     */
+    protected function loadNotPublicRole(ObjectManager $manager, $roleLabel)
+    {
+        $entity = new AccountUserRole();
+        $entity->setLabel($roleLabel);
+        $entity->setOrganization($this->getDefaultOrganization($manager));
+        $entity->setSelfManaged(true);
+        $entity->setPublic(false);
         $this->setReference($entity->getLabel(), $entity);
         $manager->persist($entity);
 
