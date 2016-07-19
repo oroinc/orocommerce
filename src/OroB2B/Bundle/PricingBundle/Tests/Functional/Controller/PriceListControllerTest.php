@@ -247,7 +247,6 @@ class PriceListControllerTest extends WebTestCase
         //Combine prices
         /** @var CombinedPriceListQueueConsumer $consumer */
         $priceListCollectionConsumer = $container->get('orob2b_pricing.builder.queue_consumer');
-        $em = $container->get('doctrine')->getManager();
         $priceListCollectionConsumer->process();
 
         //Get combined price list which would be used at frontend
