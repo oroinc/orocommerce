@@ -182,6 +182,11 @@ services:
 
     orob2b_checkout.workflow_state.manager.checkout_state_diff:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager'
+        arguments:
+            - '@orob2b_checkout.workflow_state.mapper.registry.checkout_state_diff'
+
+    orob2b_checkout.workflow_state.mapper.registry.checkout_state_diff:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegistry'
         public: false
 
     orob2b_checkout.workflow_state.mapper.ship_to_billing_diff:

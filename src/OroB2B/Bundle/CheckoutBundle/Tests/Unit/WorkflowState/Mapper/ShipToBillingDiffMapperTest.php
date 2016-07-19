@@ -42,16 +42,18 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
     }
 
+    public function testGetName()
+    {
+        $this->assertEquals('shipToBillingAddress', $this->mapper->getName());
+    }
+
     public function testGetCurrentState()
     {
         $this->checkout->method('isShipToBillingAddress')->willReturn(true);
 
         $result = $this->mapper->getCurrentState($this->checkout);
 
-        $this->assertEquals(
-            ['shipToBillingAddress' => true],
-            $result
-        );
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStateActualTrue()

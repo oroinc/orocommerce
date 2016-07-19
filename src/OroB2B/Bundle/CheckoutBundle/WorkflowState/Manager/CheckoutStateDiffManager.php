@@ -2,21 +2,18 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Manager;
 
-use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface;
+use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegistry;
 
 class CheckoutStateDiffManager
 {
     /**
-     * @var CheckoutStateDiffMapperInterface[]
+     * @var CheckoutStateDiffMapperRegistry
      */
-    protected $mappers = [];
+    private $mapperRegistry;
 
-    /**
-     * @param CheckoutStateDiffMapperInterface $mapper
-     */
-    public function addMapper(CheckoutStateDiffMapperInterface $mapper)
+    public function __construct(CheckoutStateDiffMapperRegistry $mapperRegistry)
     {
-        $this->mappers[] = $mapper;
+        $this->mapperRegistry = $mapperRegistry;
     }
 
     /**
@@ -26,14 +23,14 @@ class CheckoutStateDiffManager
     public function getCurrentState($entity)
     {
         $currentState = [];
-        foreach ($this->mappers as $mapper) {
+        foreach ($this->mapperRegistry->getMappers() as $mapper) {
             if (!$mapper->isEntitySupported($entity)) {
                 continue;
             }
-            $currentState[] = $mapper->getCurrentState($entity);
+            $currentState[$mapper->getName()] = $mapper->getCurrentState($entity);
         }
 
-        return call_user_func_array('array_merge', $currentState);
+        return $currentState;
     }
 
     /**
@@ -43,7 +40,7 @@ class CheckoutStateDiffManager
      */
     public function isStateActual($entity, array $savedState)
     {
-        foreach ($this->mappers as $mapper) {
+        foreach ($this->mapperRegistry->getMappers() as $mapper) {
             if (!$mapper->isEntitySupported($entity)) {
                 continue;
             }

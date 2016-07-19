@@ -11,8 +11,13 @@ interface CheckoutStateDiffMapperInterface
     public function isEntitySupported($entity);
 
     /**
+     * @return string
+     */
+    public function getName();
+
+    /**
      * @param object $entity
-     * @return array
+     * @return mixed
      */
     public function getCurrentState($entity);
 

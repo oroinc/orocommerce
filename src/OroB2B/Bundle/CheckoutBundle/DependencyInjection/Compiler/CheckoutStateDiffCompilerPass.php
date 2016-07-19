@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class CheckoutStateDiffCompilerPass implements CompilerPassInterface
 {
-    const CHECKOUT_STATE_DIFF_MANAGER = 'orob2b_checkout.workflow_state.manager.checkout_state_diff';
+    const CHECKOUT_STATE_DIFF_REGISTRY = 'orob2b_checkout.workflow_state.mapper.registry.checkout_state_diff';
     const CHECKOUT_STATE_DIFF_MAPPER_TAG = 'checkout.workflow_state.mapper';
 
     /**
@@ -16,14 +16,14 @@ class CheckoutStateDiffCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->has(self::CHECKOUT_STATE_DIFF_MANAGER)) {
+        if (!$container->has(self::CHECKOUT_STATE_DIFF_REGISTRY)) {
             return;
         }
-        $definition = $container->getDefinition(self::CHECKOUT_STATE_DIFF_MANAGER);
+        $definition = $container->getDefinition(self::CHECKOUT_STATE_DIFF_REGISTRY);
         $taggedServices = $container->findTaggedServiceIds(self::CHECKOUT_STATE_DIFF_MAPPER_TAG);
 
         foreach ($taggedServices as $id => $attributes) {
-            $priority               = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
+            $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
             $mappers[$priority][] = new Reference($id);
         }
         if (empty($mappers)) {
