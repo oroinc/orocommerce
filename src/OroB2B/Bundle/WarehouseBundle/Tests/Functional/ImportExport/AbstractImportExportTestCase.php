@@ -2,17 +2,19 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\ImportExport;
 
-use Oro\Bundle\ImportExportBundle\Job\JobResult;
 use Symfony\Component\Yaml\Yaml;
 
+use Doctrine\Common\Util\Inflector;
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\ImportExportBundle\Job\JobResult;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
@@ -51,7 +53,6 @@ abstract class AbstractImportExportTestCase extends WebTestCase
 
         return Yaml::parse(file_get_contents($filePath));
     }
-
 
     /**
      * @param $filePath
@@ -109,7 +110,7 @@ abstract class AbstractImportExportTestCase extends WebTestCase
         $productUnitPrecisionRepository = $this->client->getContainer()->get('oro_entity.doctrine_helper')
             ->getEntityRepository(ProductUnitPrecision::class);
 
-        /** @var EntityRepository $warehouseRepository */
+        /** @var WarehouseRepository $warehouseRepository */
         $warehouseRepository = $this->client->getContainer()->get('oro_entity.doctrine_helper')
             ->getEntityRepository(Warehouse::class);
 

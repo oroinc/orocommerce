@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Oro\Bundle\ImportExportBundle\Form\Type\ExportType;
-
 use OroB2B\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTypeExtension;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
@@ -21,26 +19,13 @@ class InventoryLevelExportTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->inventoryLevelExportTypeExtension = new InventoryLevelExportTypeExtension();
     }
 
-    public function testBuildFormShouldaddEventListener()
-    {
-        $builder = $this->getBuilderMock();
-
-        $builder->expects($this->once())
-            ->method('addEventListener');
-
-        $this->inventoryLevelExportTypeExtension->buildForm(
-            $builder,
-            ['entityName' => WarehouseInventoryLevel::class]
-        );
-    }
-
     public function testBuildFormShouldRemoveDefaultChild()
     {
         $builder = $this->getBuilderMock();
 
         $builder->expects($this->once())
             ->method('remove')
-            ->with(ExportType::CHILD_PROCESSOR_ALIAS);
+            ->with('processorAlias');
 
         $this->inventoryLevelExportTypeExtension->buildForm(
             $builder,

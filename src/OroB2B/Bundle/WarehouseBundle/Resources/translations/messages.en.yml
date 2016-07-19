@@ -49,7 +49,6 @@ orob2b:
                 options.label: Exported data
             template_popup:
                 title: Import Options
-            inventory_status_only: "Inventory statuses only"
             detailed_inventory_levels: "Detailed inventory levels"
 
         import:

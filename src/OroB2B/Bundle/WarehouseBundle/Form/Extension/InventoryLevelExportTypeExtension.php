@@ -14,17 +14,9 @@ class InventoryLevelExportTypeExtension extends InventoryLevelExportTemplateType
     public static function getProcessorAliases()
     {
         return [
-            'orob2b_product.export_inventory_status_only' => 'orob2b.warehouse.export.inventory_status_only',
+            'orob2b_product.export_inventory_status_only' => 'orob2b.product.export.inventory_status_only',
             'orob2b_warehouse.detailed_inventory_levels' => 'orob2b.warehouse.export.detailed_inventory_levels',
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**

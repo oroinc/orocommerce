@@ -187,6 +187,9 @@ orob2b:
                     component_not_accessible: Can't process request, component not accessible
                     invalid_request: Invalid request submitted
 
+        export:
+            inventory_status_only: "Inventory statuses only"
+
     product_unit.each:
         label:
             full: each

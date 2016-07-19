@@ -6,6 +6,8 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Yaml\Yaml;
 
+use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 
@@ -15,15 +17,23 @@ use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAn
 
 /**
  * @dbIsolation
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ImportExportTest extends AbstractImportExportTestCase
 {
+    /**
+     * @var array
+     */
     protected $inventoryStatusOnlyHeader = [
         'SKU',
         'Product',
         'Inventory Status',
     ];
 
+    /**
+     * @var array
+     */
     protected $inventoryLevelHeader = [
         'SKU',
         'Product',
@@ -60,7 +70,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     public function strategyDataProvider()
     {
         return [
-            'add or replace' => ['orob2b_warehouse.warehouse_inventory_level'],
+            'warehouse inventory level' => ['orob2b_warehouse.warehouse_inventory_level'],
         ];
     }
 
@@ -161,7 +171,7 @@ class ImportExportTest extends AbstractImportExportTestCase
             ->getRealPath();
     }
 
-    public function testExportInventoryStatusesONly()
+    public function testExportInventoryStatusesOnly()
     {
         $fileContent = $this->assertExportInfluencedByProcessorChoice(
             'orob2b_product.export_inventory_status_only',
@@ -224,6 +234,11 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->assertEmpty(array_diff($exportUnits, $actualUnits));
     }
 
+    /**
+     * @param string $exportChoice
+     * @param array $expectedHeader
+     * @return array
+     */
     protected function assertExportInfluencedByProcessorChoice($exportChoice, $expectedHeader)
     {
         $crawler = $this->client->request(
@@ -234,7 +249,7 @@ class ImportExportTest extends AbstractImportExportTestCase
             )
         );
         $form = $crawler->selectButton('Export')->form();
-        $form['oro_importexport_export[detailLevel]'] = $exportChoice;
+        $form['oro_importexport_export[processorAlias]'] = $exportChoice;
         $this->client->submit($form);
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('success', $response);
@@ -247,7 +262,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     }
 
     /**
-     * @dataProvider getExportTemplateTestInput
+     * @dataProvider exportTemplateDataProvider
      * @param string $exportChoice
      * @param [] $expectedHeader
      */
@@ -265,7 +280,7 @@ class ImportExportTest extends AbstractImportExportTestCase
             )
         );
         $form = $crawler->selectButton('Download')->form();
-        $form['oro_importexport_export_template[detailLevel]'] = $exportChoice;
+        $form['oro_importexport_export_template[processorAlias]'] = $exportChoice;
         $this->client->submit($form);
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('url', $response);
@@ -275,7 +290,10 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->assertEquals($fileContent[0], $expectedHeader);
     }
 
-    public function getExportTemplateTestInput()
+    /**
+     * @return array
+     */
+    public function exportTemplateDataProvider()
     {
         return [
             ['orob2b_product.inventory_status_only_export_template', $this->inventoryStatusOnlyHeader],
@@ -283,6 +301,10 @@ class ImportExportTest extends AbstractImportExportTestCase
         ];
     }
 
+    /**
+     * @param string $url
+     * @return array
+     */
     protected function downloadFile($url)
     {
         $this->client->request('GET', $url);
@@ -302,6 +324,11 @@ class ImportExportTest extends AbstractImportExportTestCase
         return $rows;
     }
 
+    /**
+     * @param array $fileContent
+     * @param int $numberOfColumns
+     * @param int $numberOfRows
+     */
     protected function assertFileContentConsistency($fileContent, $numberOfColumns, $numberOfRows)
     {
         for ($i = 1; $i < count($fileContent); $i++) {

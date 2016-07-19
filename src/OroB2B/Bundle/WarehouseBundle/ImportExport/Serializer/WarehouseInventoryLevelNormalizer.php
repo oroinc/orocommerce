@@ -111,7 +111,7 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
             return [];
         }
         $code = $unitPrecision->getUnit() ? $unitPrecision->getUnit()->getCode(): null;
-        $code = $this->formatter->format($code, true, $inventoryLevel->getQuantity() > 1);
+        $code = $code ? $this->formatter->format($code, false, $inventoryLevel->getQuantity() > 1) : null;
 
         return ['productUnitPrecision' => [
             'unit' => [
