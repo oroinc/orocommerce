@@ -28,14 +28,20 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
             return null;
         }
 
-        $qb = $this->createQueryBuilder($priceList);
-        $aliases = $qb->getRootAliases();
-        $rootAlias = reset($aliases);
+        $cacheKey = 'ar_' . $priceList->getId();
+        $qb = $this->cache->fetch($cacheKey);
+        if (!$qb) {
+            $qb = $this->createQueryBuilder($priceList);
+            $aliases = $qb->getRootAliases();
+            $rootAlias = reset($aliases);
 
-        $this->modifySelectPart($qb, $priceList, $rootAlias);
-        $this->applyRuleConditions($qb, $priceList);
-        $this->restrictByManualPrices($qb, $priceList, $rootAlias);
-        $qb->addGroupBy($rootAlias . '.id');
+            $this->modifySelectPart($qb, $priceList, $rootAlias);
+            $this->applyRuleConditions($qb, $priceList);
+            $this->restrictByManualPrices($qb, $priceList, $rootAlias);
+            $qb->addGroupBy($rootAlias . '.id');
+
+            $this->cache->save($cacheKey, $qb);
+        }
 
         return $qb;
     }
@@ -118,7 +124,7 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
             );
 
         $qb->setParameter('isManual', true)
-            ->setParameter('priceList', $priceList)
+            ->setParameter('priceList', $priceList->getId())
             ->andWhere(
                 $qb->expr()->not(
                     $qb->expr()->exists(

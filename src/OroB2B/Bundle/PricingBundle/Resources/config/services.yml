@@ -684,6 +684,7 @@ services:
             - '@orob2b_pricing.expression.node_to_query_designer_converter'
             - '@orob2b_pricing.query.price_list_expression_query_converter'
             - '@orob2b_pricing.expression.query_expression_builder'
+            - '@orob2b_pricing.cache.rule_cache'
 
     orob2b_pricing.compiler.price_list_rule_compiler:
         class: 'OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler'
@@ -771,3 +772,16 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@orob2b_pricing.expression.parser'
             - '@orob2b_pricing.provider.price_rule_fields_provider'
+
+    orob2b_pricing.cache.rule_cache.storage:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'orob2b_pricing.cache.rule_cache' ] ]
+
+    orob2b_pricing.cache.rule_cache:
+        class: 'OroB2B\Bundle\PricingBundle\Cache\RuleCache'
+        public: false
+        arguments:
+            - '@orob2b_pricing.cache.rule_cache.storage'
+            - '@doctrine'
