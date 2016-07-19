@@ -64,8 +64,7 @@ class ResizeProductImageCommand extends ContainerAwareCommand
         $image  = $productImage->getImage();
 
         foreach ($this->getDimensionsForProductImage($productImage) as $dimension) {
-            $filterName = (string) $dimension;
-            $this->resizeImage($image, $filterName, $force, $output);
+            $this->resizeImage($image, $dimension->getName(), $force, $output);
         }
     }
 
@@ -97,8 +96,10 @@ class ResizeProductImageCommand extends ContainerAwareCommand
         }
 
         $mimeType = $image->getMimeType();
+        $format = $extensionGuesser->guess($mimeType);
+        $content = $attachmentManager->getContent($image);
 
-        $binary = new Binary($attachmentManager->getContent($image), $mimeType, $extensionGuesser->guess($mimeType));
+        $binary = new Binary($content, $mimeType, $format);
         $filteredBinary = $container->get('liip_imagine.filter.manager')->applyFilter($binary, $filterName);
 
         $cacheManager->store($filteredBinary, $path, $filterName, $cacheResolverName);

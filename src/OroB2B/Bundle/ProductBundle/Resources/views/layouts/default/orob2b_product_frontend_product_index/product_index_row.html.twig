@@ -22,7 +22,6 @@
         class: attr.class|default('') ~ " product-item__image-holder product-item__image-holder_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        {# @TODO replace product_large for 400x400 dynamic filter    #}
         {% set noImageUrl = Image.url(null, 'product_large') %}
         <a href="<%= model.view_link %>" class="view-product" style="background-image: url('<% if (model.image) { %><%= model.image %><% } else { %>{{ noImageUrl }}<% } %>')"></a>
     </div>

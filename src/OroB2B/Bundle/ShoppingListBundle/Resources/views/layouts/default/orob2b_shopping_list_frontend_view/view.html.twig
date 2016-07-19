@@ -190,7 +190,7 @@
                             <div class="product-item product-item_in-cart">
                                 <div class="product-item__image-holder product-item__image-holder_in-cart">
                                     {% set productImage = lineItem.product.getImagesByType('listing')|length > 0  ? lineItem.product.getImagesByType('listing').first.image : null %}
-                                    <a href="{{ path('orob2b_product_frontend_product_view', {'id': lineItem.product.id}) }}">{{ Image.image(productImage, '60x60') }}</a>
+                                    <a href="{{ path('orob2b_product_frontend_product_view', {'id': lineItem.product.id}) }}">{{ Image.image(productImage, 'product_small') }}</a>
                                 </div>
                                 <div class="product-item__desctiption product-item__desctiption_in-cart">
                                     <h3 class="product-item__title product-item__title_in-cart mb1-md">

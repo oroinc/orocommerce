@@ -6,6 +6,7 @@ data:
                 dimensions:
                     - product_original
                     - product_large
+                    - product_small
                 max_number: 1
             listing:
                 label: orob2b.product.productimage.type.listing.label
@@ -18,6 +19,7 @@ data:
                 dimensions:
                     - product_original
                     - product_large
+                    - product_small
                 max_number: ~
         dimensions:
             product_original: { width: ~, height: ~ }

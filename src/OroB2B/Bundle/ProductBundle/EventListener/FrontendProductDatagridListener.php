@@ -22,7 +22,7 @@ use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 class FrontendProductDatagridListener
 {
     const COLUMN_PRODUCT_UNITS = 'product_units';
-    const PRODUCT_IMAGE_FILTER = '400x400';
+    const PRODUCT_IMAGE_FILTER = 'product_large';
     const PRODUCT_IMAGE_TYPE = 'listing';
 
     /**
