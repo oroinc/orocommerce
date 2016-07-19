@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     var ShoppingListsMultipleEditWidget;
-    var ContentWidget = require('orob2bshoppinglist/js/app/widget/content-widget');
+    var DialogWidget = require('oro/dialog-widget');
     var ProductQuantityView = require('orob2bproduct/js/app/views/product-quantity-editable-view');
     var DeleteItemComponent = require('orob2bfrontend/js/app/components/delete-item-component');
     var mediator = require('oroui/js/mediator');
@@ -11,8 +11,8 @@ define(function(require) {
     var _ = require('underscore');
     var $ = require('jquery');
 
-    ShoppingListsMultipleEditWidget = ContentWidget.extend({
-        options: $.extend(true, {}, ContentWidget.prototype.options, {
+    ShoppingListsMultipleEditWidget = DialogWidget.extend({
+        options: $.extend(true, {}, DialogWidget.prototype.options, {
             preventToRemoveModel: true,
             template: '',
             dialogOptions: {
@@ -77,6 +77,7 @@ define(function(require) {
             if (!this.model) {
                 return;
             }
+            this.options.url = options.url = false;
             this.template = _.template(this.options.template);
             this.route = this.options.quantityComponentOptions.save_api_accessor.route;
             this.quantityComponentOptions = this.options.quantityComponentOptions;
@@ -249,8 +250,10 @@ define(function(require) {
         },
 
         render: function() {
-            this.options.content = this.getPopupContent();
-            ShoppingListsMultipleEditWidget.__super__.render.apply(this, arguments);
+            var $content = $(this.getPopupContent());
+            this.setElement($content);
+
+            return ShoppingListsMultipleEditWidget.__super__.render.apply(this, arguments);
         }
     });
 
