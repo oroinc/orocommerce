@@ -572,6 +572,7 @@ datagrid:
                 where:
                     and:
                         - role.selfManaged = true
+                        - role.public = true
         properties:
             id: ~
             view_link:
