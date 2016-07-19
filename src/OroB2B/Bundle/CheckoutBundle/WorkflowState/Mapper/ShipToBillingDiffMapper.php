@@ -9,31 +9,28 @@ class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
     const DATA_NAME = 'shipToBillingAddress';
 
     /**
-     * @return int
-     */
-    public function getPriority()
-    {
-        return 20;
-    }
-
-    /**
-     * @param object $entity
-     * @return boolean
+     * {@inheritdoc}
      */
     public function isEntitySupported($entity)
     {
-        return $entity instanceof Checkout;
+        return is_object($entity) && $entity instanceof Checkout;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return self::DATA_NAME;
     }
 
     /**
      * @param Checkout $checkout
-     * @return array
+     * @return mixed
      */
     public function getCurrentState($checkout)
     {
-        return [
-            self::DATA_NAME => $checkout->isShipToBillingAddress(),
-        ];
+        return $checkout->isShipToBillingAddress();
     }
 
     /**
@@ -41,10 +38,10 @@ class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
      * @param array $savedState
      * @return bool
      */
-    public function compareStates($checkout, array $savedState)
+    public function isStateActual($checkout, array $savedState)
     {
         return
-            isset($savedState[self::DATA_NAME]) &&
-            $savedState[self::DATA_NAME] === $checkout->isShipToBillingAddress();
+            isset($savedState[$this->getName()]) &&
+            $savedState[$this->getName()] === $checkout->isShipToBillingAddress();
     }
 }

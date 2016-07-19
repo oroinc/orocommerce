@@ -5,19 +5,19 @@ namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper;
 interface CheckoutStateDiffMapperInterface
 {
     /**
-     * @return int
-     */
-    public function getPriority();
-
-    /**
      * @param object $entity
-     * @return boolean
+     * @return bool
      */
     public function isEntitySupported($entity);
 
     /**
+     * @return string
+     */
+    public function getName();
+
+    /**
      * @param object $entity
-     * @return array
+     * @return mixed
      */
     public function getCurrentState($entity);
 
@@ -26,5 +26,5 @@ interface CheckoutStateDiffMapperInterface
      * @param array $savedState
      * @return bool
      */
-    public function compareStates($entity, array $savedState);
+    public function isStateActual($entity, array $savedState);
 }

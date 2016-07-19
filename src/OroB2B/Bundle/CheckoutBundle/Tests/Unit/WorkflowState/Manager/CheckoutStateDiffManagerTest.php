@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Manager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface;
+use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegistry;
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper;
 
 class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
@@ -15,123 +16,275 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
     private $checkoutStateDiffManager;
 
     /**
+     * @var CheckoutStateDiffMapperRegistry
+     */
+    private $mapperRegistry;
+
+    /**
      * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
      */
     private $checkout;
 
     public function setUp()
     {
-        $this->checkoutStateDiffManager = new CheckoutStateDiffManager();
-
+        $this->mapperRegistry = new CheckoutStateDiffMapperRegistry();
+        $this->checkoutStateDiffManager = new CheckoutStateDiffManager($this->mapperRegistry);
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
 
-
-    public function testAddMapper()
+    /**
+     * @return CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getMapperMock()
     {
-        /** @var CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper */
-        $mapper = $this->getMock('OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface');
-
-        $this->checkoutStateDiffManager->addMapper($mapper);
-
-        $this->assertAttributeSame(
-            [$mapper],
-            'mappers',
-            $this->checkoutStateDiffManager
-        );
-    }
-
-    public function testGetMappers()
-    {
-        /** @var CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper1 */
-        $mapper1 = $this->getMock('OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface');
-        $mapper1->method('getPriority')->willReturn(20);
-
-        /** @var CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper2 */
-        $mapper2 = $this->getMock('OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface');
-        $mapper2->method('getPriority')->willReturn(10);
-
-        /** @var CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper3 */
-        $mapper3 = $this->getMock('OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface');
-        $mapper3->method('getPriority')->willReturn(10);
-
-        $reflectionClasss = new \ReflectionClass(
-            'OroB2B\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager'
-        );
-        $getMappersMethod = $reflectionClasss->getMethod('getMappers');
-        $getMappersMethod->setAccessible(true);
-
-        $this->checkoutStateDiffManager->addMapper($mapper1);
-        $this->checkoutStateDiffManager->addMapper($mapper2);
-        $this->checkoutStateDiffManager->addMapper($mapper3);
-
-        $result = $getMappersMethod->invoke($this->checkoutStateDiffManager);
-
-        $this->assertEquals([
-            0 => $mapper2,
-            1 => $mapper3,
-            2 => $mapper1,
-        ], $result);
+        return $this->getMock('OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface');
     }
 
     public function testGetCurrentState()
     {
-        $this->checkoutStateDiffManager->addMapper(new ShipToBillingDiffMapper());
-        $this->checkout->method('isShipToBillingAddress')->willReturn(true);
+        $mapper1 = $this->getMapperMock();
+        $mapper1
+            ->expects($this->any())
+            ->method('getName')
+            ->willReturn('mapperName1');
+        $mapper1
+            ->expects($this->once())
+            ->method('isEntitySupported')
+            ->with($this->checkout)
+            ->willReturn(true);
+        $mapper1
+            ->expects($this->once())
+            ->method('getCurrentState')
+            ->with($this->checkout)
+            ->willReturn(true);
+
+        $mapper2 = $this->getMapperMock();
+        $mapper2
+            ->expects($this->any())
+            ->method('getName')
+            ->willReturn('mapperName2');
+        $mapper2
+            ->expects($this->once())
+            ->method('isEntitySupported')
+            ->with($this->checkout)
+            ->willReturn(true);
+        $mapper2
+            ->expects($this->once())
+            ->method('getCurrentState')
+            ->with($this->checkout)
+            ->willReturn([
+                'parameter1' => 7635,
+                'parameter2' => 'test value',
+            ]);
+
+        $this->mapperRegistry->addMapper($mapper1);
+        $this->mapperRegistry->addMapper($mapper2);
 
         $result = $this->checkoutStateDiffManager->getCurrentState($this->checkout);
 
         $this->assertEquals(
             [
-                'shipToBillingAddress' => true,
+                'mapperName1' => true,
+                'mapperName2' => [
+                    'parameter1' => 7635,
+                    'parameter2' => 'test value',
+                ],
             ],
             $result
         );
     }
 
-    public function testGetCurrentStateUnsopportedEntity()
+    public function testGetCurrentStateUnsupportedEntity()
     {
-        $this->checkoutStateDiffManager->addMapper(new ShipToBillingDiffMapper());
-        $entity = new \stdClass();
+        $mapper1 = $this->getMapperMock();
+        $mapper1
+            ->expects($this->any())
+            ->method('getName')
+            ->willReturn('mapperName1');
+        $mapper1
+            ->expects($this->once())
+            ->method('isEntitySupported')
+            ->with($this->checkout)
+            ->willReturn(true);
+        $mapper1
+            ->expects($this->once())
+            ->method('getCurrentState')
+            ->with($this->checkout)
+            ->willReturn(true);
 
-        $result = $this->checkoutStateDiffManager->getCurrentState($entity);
+        $mapper2 = $this->getMapperMock();
+        $mapper2
+            ->expects($this->any())
+            ->method('getName')
+            ->willReturn('mapperName2');
+        $mapper2
+            ->expects($this->once())
+            ->method('isEntitySupported')
+            ->with($this->checkout)
+            ->willReturn(false);
+        $mapper2
+            ->expects($this->any())
+            ->method('getCurrentState')
+            ->with($this->checkout)
+            ->willReturn([
+                'parameter1' => 7635,
+                'parameter2' => 'test value',
+            ]);
+
+        $this->mapperRegistry->addMapper($mapper1);
+        $this->mapperRegistry->addMapper($mapper2);
+
+        $result = $this->checkoutStateDiffManager->getCurrentState($this->checkout);
 
         $this->assertEquals(
-            [],
+            [
+                'mapperName1' => true,
+            ],
             $result
         );
     }
 
-    public function testCompareStates()
+    public function testIsStateActual()
     {
         $savedState = [
-            'shipToBillingAddress' => true,
+            'mapperName1' => true,
+            'mapperName2' => [
+                'parameter1' => 7635,
+                'parameter2' => 'test value',
+            ],
         ];
-        $this->checkoutStateDiffManager->addMapper(new ShipToBillingDiffMapper());
-        $this->checkout->method('isShipToBillingAddress')->willReturn(true);
 
-        $this->assertEquals(true, $this->checkoutStateDiffManager->compareStates($this->checkout, $savedState));
+        $mapper1 = $this->getMapperMock();
+        $mapper1
+            ->expects($this->any())
+            ->method('getName')
+            ->willReturn('mapperName1');
+        $mapper1
+            ->expects($this->once())
+            ->method('isEntitySupported')
+            ->with($this->checkout)
+            ->willReturn(true);
+        $mapper1
+            ->expects($this->once())
+            ->method('isStateActual')
+            ->with($this->checkout, $savedState)
+            ->willReturn(true);
+
+        $mapper2 = $this->getMapperMock();
+        $mapper2
+            ->expects($this->any())
+            ->method('getName')
+            ->willReturn('mapperName2');
+        $mapper2
+            ->expects($this->once())
+            ->method('isEntitySupported')
+            ->with($this->checkout)
+            ->willReturn(true);
+        $mapper2
+            ->expects($this->once())
+            ->method('isStateActual')
+            ->with($this->checkout, $savedState)
+            ->willReturn(true);
+
+        $this->mapperRegistry->addMapper($mapper1);
+        $this->mapperRegistry->addMapper($mapper2);
+
+        $this->assertEquals(true, $this->checkoutStateDiffManager->isStateActual($this->checkout, $savedState));
     }
 
-    public function testCompareStatesFalse()
+    public function testIsStateActualFalse()
     {
         $savedState = [
-            'shipToBillingAddress' => false,
+            'mapperName1' => true,
+            'mapperName2' => [
+                'parameter1' => 7635,
+                'parameter2' => 'test value',
+            ],
         ];
-        $this->checkoutStateDiffManager->addMapper(new ShipToBillingDiffMapper());
-        $this->checkout->method('isShipToBillingAddress')->willReturn(true);
 
-        $this->assertEquals(false, $this->checkoutStateDiffManager->compareStates($this->checkout, $savedState));
+        $mapper1 = $this->getMapperMock();
+        $mapper1
+            ->expects($this->any())
+            ->method('getName')
+            ->willReturn('mapperName1');
+        $mapper1
+            ->expects($this->once())
+            ->method('isEntitySupported')
+            ->with($this->checkout)
+            ->willReturn(true);
+        $mapper1
+            ->expects($this->once())
+            ->method('isStateActual')
+            ->with($this->checkout, $savedState)
+            ->willReturn(true);
+
+        $mapper2 = $this->getMapperMock();
+        $mapper2
+            ->expects($this->any())
+            ->method('getName')
+            ->willReturn('mapperName2');
+        $mapper2
+            ->expects($this->once())
+            ->method('isEntitySupported')
+            ->with($this->checkout)
+            ->willReturn(true);
+        $mapper2
+            ->expects($this->once())
+            ->method('isStateActual')
+            ->with($this->checkout, $savedState)
+            ->willReturn(false);
+
+        $this->mapperRegistry->addMapper($mapper1);
+        $this->mapperRegistry->addMapper($mapper2);
+
+        $this->assertEquals(false, $this->checkoutStateDiffManager->isStateActual($this->checkout, $savedState));
     }
 
-    public function testCompareStatesUnsupportedEntity()
+    public function testIsStateActualUnsupportedEntity()
     {
         $savedState = [
-            'shipToBillingAddress' => true,
+            'mapperName1' => true,
+            'mapperName2' => [
+                'parameter1' => 7635,
+                'parameter2' => 'test value',
+            ],
         ];
-        $this->checkoutStateDiffManager->addMapper(new ShipToBillingDiffMapper());
-        $entity = new \stdClass();
 
-        $this->assertEquals(true, $this->checkoutStateDiffManager->compareStates($entity, $savedState));
+        $mapper1 = $this->getMapperMock();
+        $mapper1
+            ->expects($this->any())
+            ->method('getName')
+            ->willReturn('mapperName1');
+        $mapper1
+            ->expects($this->once())
+            ->method('isEntitySupported')
+            ->with($this->checkout)
+            ->willReturn(true);
+        $mapper1
+            ->expects($this->once())
+            ->method('isStateActual')
+            ->with($this->checkout, $savedState)
+            ->willReturn(true);
+
+        $mapper2 = $this->getMapperMock();
+        $mapper2
+            ->expects($this->any())
+            ->method('getName')
+            ->willReturn('mapperName2');
+        $mapper2
+            ->expects($this->once())
+            ->method('isEntitySupported')
+            ->with($this->checkout)
+            ->willReturn(false);
+        $mapper2
+            ->expects($this->any())
+            ->method('isStateActual')
+            ->with($this->checkout, $savedState)
+            ->willReturn(true);
+
+        $this->mapperRegistry->addMapper($mapper1);
+        $this->mapperRegistry->addMapper($mapper2);
+
+        $this->assertEquals(true, $this->checkoutStateDiffManager->isStateActual($this->checkout, $savedState));
     }
 }

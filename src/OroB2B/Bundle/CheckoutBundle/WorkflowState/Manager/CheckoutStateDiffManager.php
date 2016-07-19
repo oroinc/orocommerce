@@ -2,38 +2,18 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Manager;
 
-use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface;
+use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegistry;
 
 class CheckoutStateDiffManager
 {
     /**
-     * @var CheckoutStateDiffMapperInterface[]
+     * @var CheckoutStateDiffMapperRegistry
      */
-    protected $mappers;
+    private $mapperRegistry;
 
-    /**
-     * @param CheckoutStateDiffMapperInterface $mapper
-     */
-    public function addMapper(CheckoutStateDiffMapperInterface $mapper)
+    public function __construct(CheckoutStateDiffMapperRegistry $mapperRegistry)
     {
-        $this->mappers[] = $mapper;
-    }
-
-    protected function getMappers()
-    {
-        usort(
-            $this->mappers,
-            function (CheckoutStateDiffMapperInterface $mapper1, CheckoutStateDiffMapperInterface $mapper2) {
-                $priority1 = $mapper1->getPriority();
-                $priority2 = $mapper2->getPriority();
-                if ($priority1 == $priority2) {
-                    return 0;
-                }
-                return ($priority1 < $priority2) ? -1 : 1;
-            }
-        );
-
-        return $this->mappers;
+        $this->mapperRegistry = $mapperRegistry;
     }
 
     /**
@@ -43,11 +23,11 @@ class CheckoutStateDiffManager
     public function getCurrentState($entity)
     {
         $currentState = [];
-        foreach ($this->getMappers() as $mapper) {
+        foreach ($this->mapperRegistry->getMappers() as $mapper) {
             if (!$mapper->isEntitySupported($entity)) {
                 continue;
             }
-            $currentState = array_merge($currentState, $mapper->getCurrentState($entity));
+            $currentState[$mapper->getName()] = $mapper->getCurrentState($entity);
         }
 
         return $currentState;
@@ -58,13 +38,13 @@ class CheckoutStateDiffManager
      * @param array $savedState
      * @return bool
      */
-    public function compareStates($entity, array $savedState)
+    public function isStateActual($entity, array $savedState)
     {
-        foreach ($this->getMappers() as $mapper) {
+        foreach ($this->mapperRegistry->getMappers() as $mapper) {
             if (!$mapper->isEntitySupported($entity)) {
                 continue;
             }
-            if (!$mapper->compareStates($entity, $savedState)) {
+            if (!$mapper->isStateActual($entity, $savedState)) {
                 return false;
             }
         }

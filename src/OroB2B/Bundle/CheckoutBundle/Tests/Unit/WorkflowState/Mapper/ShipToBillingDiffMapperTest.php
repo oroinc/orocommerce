@@ -23,14 +23,16 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
 
-    public function testGetPriority()
-    {
-        $this->assertEquals(20, $this->mapper->getPriority());
-    }
-
     public function testIsEntitySupported()
     {
         $this->assertEquals(true, $this->mapper->isEntitySupported($this->checkout));
+    }
+
+    public function testIsEntitySupportedNotObject()
+    {
+        $entity = 'string';
+
+        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
     }
 
     public function testIsEntitySupportedUnsopportedEntity()
@@ -40,19 +42,21 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
     }
 
+    public function testGetName()
+    {
+        $this->assertEquals('shipToBillingAddress', $this->mapper->getName());
+    }
+
     public function testGetCurrentState()
     {
         $this->checkout->method('isShipToBillingAddress')->willReturn(true);
 
         $result = $this->mapper->getCurrentState($this->checkout);
 
-        $this->assertEquals(
-            ['shipToBillingAddress' => true],
-            $result
-        );
+        $this->assertEquals(true, $result);
     }
 
-    public function testCompareStatesTrue()
+    public function testIsStateActualTrue()
     {
         $this->checkout->method('isShipToBillingAddress')->willReturn(true);
         $savedState = [
@@ -61,12 +65,12 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(true, $result);
     }
 
-    public function testCompareStatesFalse()
+    public function testIsStateActualFalse()
     {
         $this->checkout->method('isShipToBillingAddress')->willReturn(false);
         $savedState = [
@@ -75,12 +79,12 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterDoesntExist()
+    public function testIsStateActualParameterDoesntExist()
     {
         $this->checkout->method('isShipToBillingAddress')->willReturn(true);
         $savedState = [
@@ -88,12 +92,12 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterOfWrongType()
+    public function testIsStateActualParameterOfWrongType()
     {
         $this->checkout->method('isShipToBillingAddress')->willReturn(true);
         $savedState = [
@@ -102,7 +106,7 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
