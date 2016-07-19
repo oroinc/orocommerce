@@ -26,7 +26,7 @@ class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
 
     /**
      * @param Checkout $checkout
-     * @return mixed
+     * @return bool
      */
     public function getCurrentState($checkout)
     {

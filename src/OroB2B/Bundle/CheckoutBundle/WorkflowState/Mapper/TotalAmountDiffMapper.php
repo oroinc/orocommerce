@@ -23,20 +23,19 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
     }
 
     /**
-     * @return int
-     */
-    public function getPriority()
-    {
-        return 50;
-    }
-
-    /**
-     * @param object $entity
-     * @return boolean
+     * {@inheritdoc}
      */
     public function isEntitySupported($entity)
     {
-        return $entity instanceof Checkout;
+        return is_object($entity) && $entity instanceof Checkout;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return self::DATA_NAME;
     }
 
     /**
@@ -48,10 +47,8 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
         $total = $this->totalProcessorProvider->getTotal($checkout);
 
         return [
-            self::DATA_NAME => [
-                'amount' => $total->getAmount(),
-                'currency' => $total->getCurrency(),
-            ],
+            'amount' => $total->getAmount(),
+            'currency' => $total->getCurrency(),
         ];
     }
 
@@ -60,15 +57,15 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
      * @param array $savedState
      * @return bool
      */
-    public function compareStates($checkout, array $savedState)
+    public function isStateActual($checkout, array $savedState)
     {
         $total = $this->totalProcessorProvider->getTotal($checkout);
 
         return
-            isset($savedState[self::DATA_NAME]) &&
-            isset($savedState[self::DATA_NAME]['amount']) &&
-            isset($savedState[self::DATA_NAME]['currency']) &&
-            $savedState[self::DATA_NAME]['amount'] === $total->getAmount() &&
-            $savedState[self::DATA_NAME]['currency'] === $total->getCurrency();
+            isset($savedState[$this->getName()]) &&
+            isset($savedState[$this->getName()]['amount']) &&
+            isset($savedState[$this->getName()]['currency']) &&
+            $savedState[$this->getName()]['amount'] === $total->getAmount() &&
+            $savedState[$this->getName()]['currency'] === $total->getCurrency();
     }
 }

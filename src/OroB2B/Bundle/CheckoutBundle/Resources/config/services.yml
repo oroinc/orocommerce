@@ -193,28 +193,32 @@ services:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper'
         public: false
         tags:
-             - { name: checkout.workflow_state.mapper, priority: 20 }
+             - { name: checkout.workflow_state.mapper, priority: 10 }
 
     orob2b_checkout.workflow_state.mapper.billing_address_diff:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\BillingAddressDiffMapper'
+        public: false
         tags:
-             - { name: checkout.workflow_state.mapper }
+             - { name: checkout.workflow_state.mapper, priority: 20 }
 
     orob2b_checkout.workflow_state.mapper.shipping_address_diff:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingAddressDiffMapper'
+        public: false
         tags:
-             - { name: checkout.workflow_state.mapper }
+             - { name: checkout.workflow_state.mapper, priority: 30 }
 
     orob2b_checkout.workflow_state.mapper.payment_method_diff:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodDiffMapper'
         arguments:
             - '@orob2b_payment.payment_method.registry'
+        public: false
         tags:
-             - { name: checkout.workflow_state.mapper }
+             - { name: checkout.workflow_state.mapper, priority: 40 }
 
     orob2b_checkout.workflow_state.mapper.total_amount_diff:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\TotalAmountDiffMapper'
         arguments:
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
+        public: false
         tags:
-             - { name: checkout.workflow_state.mapper }
+             - { name: checkout.workflow_state.mapper, priority: 50 }

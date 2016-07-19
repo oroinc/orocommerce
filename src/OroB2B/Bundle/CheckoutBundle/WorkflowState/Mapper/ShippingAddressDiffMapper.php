@@ -9,20 +9,19 @@ class ShippingAddressDiffMapper implements CheckoutStateDiffMapperInterface
     const DATA_NAME = 'shippingAddress';
 
     /**
-     * @return int
-     */
-    public function getPriority()
-    {
-        return 30;
-    }
-
-    /**
-     * @param object $entity
-     * @return boolean
+     * {@inheritdoc}
      */
     public function isEntitySupported($entity)
     {
-        return $entity instanceof Checkout;
+        return is_object($entity) && $entity instanceof Checkout;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return self::DATA_NAME;
     }
 
     /**
@@ -32,10 +31,8 @@ class ShippingAddressDiffMapper implements CheckoutStateDiffMapperInterface
     public function getCurrentState($checkout)
     {
         return [
-            self::DATA_NAME => [
-                'id' => $checkout->getShippingAddress()->getId(),
-                'updated' => $checkout->getShippingAddress()->getUpdated(),
-            ],
+            'id' => $checkout->getShippingAddress()->getId(),
+            'updated' => $checkout->getShippingAddress()->getUpdated(),
         ];
     }
 
@@ -44,14 +41,14 @@ class ShippingAddressDiffMapper implements CheckoutStateDiffMapperInterface
      * @param array $savedState
      * @return bool
      */
-    public function compareStates($checkout, array $savedState)
+    public function isStateActual($checkout, array $savedState)
     {
         return
-            isset($savedState[self::DATA_NAME]) &&
-            isset($savedState[self::DATA_NAME]['id']) &&
-            isset($savedState[self::DATA_NAME]['updated']) &&
-            $savedState[self::DATA_NAME]['updated'] instanceof \DateTimeInterface &&
-            $savedState[self::DATA_NAME]['id'] === $checkout->getShippingAddress()->getId() &&
-            $savedState[self::DATA_NAME]['updated'] >= $checkout->getShippingAddress()->getUpdated();
+            isset($savedState[$this->getName()]) &&
+            isset($savedState[$this->getName()]['id']) &&
+            isset($savedState[$this->getName()]['updated']) &&
+            $savedState[$this->getName()]['updated'] instanceof \DateTimeInterface &&
+            $savedState[$this->getName()]['id'] === $checkout->getShippingAddress()->getId() &&
+            $savedState[$this->getName()]['updated'] >= $checkout->getShippingAddress()->getUpdated();
     }
 }

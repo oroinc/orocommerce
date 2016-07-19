@@ -35,21 +35,28 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
 
-    public function testGetPriority()
-    {
-        $this->assertEquals(50, $this->mapper->getPriority());
-    }
-
     public function testIsEntitySupported()
     {
         $this->assertEquals(true, $this->mapper->isEntitySupported($this->checkout));
     }
 
-    public function testIsEntitySupportedUnsopportedEntity()
+    public function testIsEntitySupportedNotObject()
+    {
+        $entity = 'string';
+
+        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
+    }
+
+    public function testIsEntitySupportedUnsupportedEntity()
     {
         $entity = new \stdClass();
 
         $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
+    }
+
+    public function testGetName()
+    {
+        $this->assertEquals('totalAmount', $this->mapper->getName());
     }
 
     public function testGetCurrentState()
@@ -66,15 +73,15 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
         $result = $this->mapper->getCurrentState($this->checkout);
 
         $this->assertEquals(
-            ['totalAmount' => [
+            [
                 'amount' => 1264,
                 'currency' => 'EUR',
-            ]],
+            ],
             $result
         );
     }
 
-    public function testCompareStatesTrue()
+    public function testIsStateActualTrue()
     {
         $total = new Subtotal();
         $total->setAmount(1264);
@@ -94,12 +101,12 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(true, $result);
     }
 
-    public function testCompareStatesFalseAmount()
+    public function testIsStateActualFalseAmount()
     {
         $total = new Subtotal();
         $total->setAmount(1264);
@@ -119,12 +126,12 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesFalseCurrency()
+    public function testIsStateActualFalseCurrency()
     {
         $total = new Subtotal();
         $total->setAmount(1264);
@@ -144,12 +151,12 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterDoesntExist()
+    public function testIsStateActualParameterDoesntExist()
     {
         $this->checkout->method('getTotalAmount')->willReturn(true);
         $savedState = [
@@ -157,12 +164,12 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterOfWrongType()
+    public function testIsStateActualParameterOfWrongType()
     {
         $this->checkout->method('getTotalAmount')->willReturn(true);
         $savedState = [
@@ -171,12 +178,12 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterNotSetAmount()
+    public function testIsStateActualParameterNotSetAmount()
     {
         $total = new Subtotal();
         $total->setAmount(1264);
@@ -195,12 +202,12 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterNotSetCurrency()
+    public function testIsStateActualParameterNotSetCurrency()
     {
         $total = new Subtotal();
         $total->setAmount(1264);
@@ -219,7 +226,7 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }

@@ -38,21 +38,28 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
 
-    public function testGetPriority()
-    {
-        $this->assertEquals(40, $this->mapper->getPriority());
-    }
-
     public function testIsEntitySupported()
     {
         $this->assertEquals(true, $this->mapper->isEntitySupported($this->checkout));
     }
 
-    public function testIsEntitySupportedUnsopportedEntity()
+    public function testIsEntitySupportedNotObject()
+    {
+        $entity = 'string';
+
+        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
+    }
+
+    public function testIsEntitySupportedUnsupportedEntity()
     {
         $entity = new \stdClass();
 
         $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
+    }
+
+    public function testGetName()
+    {
+        $this->assertEquals('paymentMethod', $this->mapper->getName());
     }
 
     public function testGetCurrentState()
@@ -61,13 +68,10 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->mapper->getCurrentState($this->checkout);
 
-        $this->assertEquals(
-            ['paymentMethod' => 'payflow_gateway'],
-            $result
-        );
+        $this->assertEquals('payflow_gateway', $result);
     }
 
-    public function testCompareStatesTrue()
+    public function testIsStateActualTrue()
     {
         $this->paymentMethod->method('isEnabled')->willReturn(true);
         $this->checkout->method('getPaymentMethod')->willReturn('payflow_gateway');
@@ -77,12 +81,12 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(true, $result);
     }
 
-    public function testCompareStatesFalse()
+    public function testIsStateActualFalse()
     {
         $this->paymentMethod->method('isEnabled')->willReturn(true);
         $this->checkout->method('getPaymentMethod')->willReturn('paypal_payments_pro');
@@ -92,12 +96,12 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterDoesntExist()
+    public function testIsStateActualParameterDoesntExist()
     {
         $this->paymentMethod->method('isEnabled')->willReturn(true);
         $this->checkout->method('getPaymentMethod')->willReturn('payflow_gateway');
@@ -106,12 +110,12 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterOfWrongType()
+    public function testIsStateActualParameterOfWrongType()
     {
         $this->paymentMethod->method('isEnabled')->willReturn(true);
         $this->checkout->method('getPaymentMethod')->willReturn(123);
@@ -121,12 +125,12 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesPaymentMethodNotEnabled()
+    public function testIsStateActualPaymentMethodNotEnabled()
     {
         $this->paymentMethod->method('isEnabled')->willReturn(false);
         $this->checkout->method('getPaymentMethod')->willReturn('payflow_gateway');
@@ -136,12 +140,12 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesPaymentMethodInvalid()
+    public function testIsStateActualPaymentMethodInvalid()
     {
         $this->paymentMethodRegistry->method('getPaymentMethod')->willThrowException(new \InvalidArgumentException);
         $this->checkout->method('getPaymentMethod')->willReturn('payflow_gateway');
@@ -151,7 +155,7 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }

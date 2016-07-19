@@ -20,33 +20,29 @@ class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
         $this->paymentMethodRegistry = $paymentMethodRegistry;
     }
 
-
     /**
-     * @return int
-     */
-    public function getPriority()
-    {
-        return 40;
-    }
-
-    /**
-     * @param object $entity
-     * @return boolean
+     * {@inheritdoc}
      */
     public function isEntitySupported($entity)
     {
-        return $entity instanceof Checkout;
+        return is_object($entity) && $entity instanceof Checkout;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return self::DATA_NAME;
     }
 
     /**
      * @param Checkout $checkout
-     * @return array
+     * @return string
      */
     public function getCurrentState($checkout)
     {
-        return [
-            self::DATA_NAME => $checkout->getPaymentMethod(),
-        ];
+        return $checkout->getPaymentMethod();
     }
 
     /**
@@ -54,15 +50,15 @@ class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
      * @param array $savedState
      * @return bool
      */
-    public function compareStates($checkout, array $savedState)
+    public function isStateActual($checkout, array $savedState)
     {
-        if (!isset($savedState[self::DATA_NAME]) ||
-            !is_string($savedState[self::DATA_NAME])
+        if (!isset($savedState[$this->getName()]) ||
+            !is_string($savedState[$this->getName()])
         ) {
             return false;
         }
 
-        $paymentMethod = $savedState[self::DATA_NAME];
+        $paymentMethod = $savedState[$this->getName()];
 
         try {
             if (!$this->paymentMethodRegistry->getPaymentMethod($paymentMethod)->isEnabled()) {

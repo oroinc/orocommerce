@@ -31,21 +31,28 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->checkout->method('getShippingAddress')->willReturn($this->shippingAddress);
     }
 
-    public function testGetPriority()
-    {
-        $this->assertEquals(30, $this->mapper->getPriority());
-    }
-
     public function testIsEntitySupported()
     {
         $this->assertEquals(true, $this->mapper->isEntitySupported($this->checkout));
     }
 
-    public function testIsEntitySupportedUnsopportedEntity()
+    public function testIsEntitySupportedNotObject()
+    {
+        $entity = 'string';
+
+        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
+    }
+
+    public function testIsEntitySupportedUnsupportedEntity()
     {
         $entity = new \stdClass();
 
         $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
+    }
+
+    public function testGetName()
+    {
+        $this->assertEquals('shippingAddress', $this->mapper->getName());
     }
 
     public function testGetCurrentState()
@@ -57,15 +64,15 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
         $result = $this->mapper->getCurrentState($this->checkout);
 
         $this->assertEquals(
-            ['shippingAddress' => [
+            [
                 'id' => 123,
                 'updated' => $now,
-            ]],
+            ],
             $result
         );
     }
 
-    public function testCompareStatesTrue()
+    public function testIsStateActualTrue()
     {
         $this->shippingAddress->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
@@ -80,12 +87,12 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(true, $result);
     }
 
-    public function testCompareStatesFalseId()
+    public function testIsStateActualFalseId()
     {
         $this->shippingAddress->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
@@ -100,12 +107,12 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesFalseUpdated()
+    public function testIsStateActualFalseUpdated()
     {
         $this->shippingAddress->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
@@ -120,12 +127,12 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterDoesntExist()
+    public function testIsStateActualParameterDoesntExist()
     {
         $this->shippingAddress->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
@@ -136,12 +143,12 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterOfWrongType()
+    public function testIsStateActualParameterOfWrongType()
     {
         $this->shippingAddress->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
@@ -153,12 +160,12 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterOfWrongTypeUpdated()
+    public function testIsStateActualParameterOfWrongTypeUpdated()
     {
         $this->shippingAddress->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
@@ -173,12 +180,12 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterNotSetId()
+    public function testIsStateActualParameterNotSetId()
     {
         $this->shippingAddress->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
@@ -192,12 +199,12 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterNotSetUpdated()
+    public function testIsStateActualParameterNotSetUpdated()
     {
         $this->shippingAddress->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
@@ -211,7 +218,7 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
