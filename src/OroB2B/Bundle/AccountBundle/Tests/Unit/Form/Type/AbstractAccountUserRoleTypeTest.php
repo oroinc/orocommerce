@@ -93,11 +93,14 @@ abstract class AbstractAccountUserRoleTypeTest extends FormIntegrationTestCase
 
         /** @var AccountUserRole $existingRoleBefore */
         $existingRoleBefore = $this->getEntity(self::DATA_CLASS, 1);
-        $existingRoleBefore->setLabel($roleLabel);
-        $existingRoleBefore->setRole($roleLabel);
+        $existingRoleBefore
+            ->setLabel($roleLabel)
+            ->setRole($roleLabel, false);
 
-        $existingRoleAfter = unserialize(serialize($existingRoleBefore));
-        $existingRoleAfter->setLabel($alteredRoleLabel);
+        $existingRoleAfter = $this->getEntity(self::DATA_CLASS, 1);
+        $existingRoleAfter
+            ->setLabel($alteredRoleLabel)
+            ->setRole($roleLabel, false);
 
         return [
             'empty' => [

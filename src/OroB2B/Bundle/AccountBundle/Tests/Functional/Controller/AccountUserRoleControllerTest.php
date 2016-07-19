@@ -120,6 +120,7 @@ class AccountUserRoleControllerTest extends WebTestCase
             'orob2b_account_account_user_role' => [
                 '_token' => $token,
                 'label' => self::UPDATED_TEST_ROLE,
+                'selfManaged' => true,
                 'account' => $account->getId(),
                 'appendUsers' => $accountUser->getId(),
                 'privileges' => json_encode($this->privileges),
@@ -145,6 +146,8 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->assertNotNull($user);
         $this->assertEquals($user->getRole($role->getRole()), $role);
+
+        $this->assertTrue($role->isSelfManaged());
 
         return $id;
     }

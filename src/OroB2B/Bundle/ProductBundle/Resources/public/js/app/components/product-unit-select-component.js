@@ -10,14 +10,10 @@ define(function(require) {
 
     ProductUnitSelectComponent = BaseComponent.extend({
 
-        defaultQuantity: 1,
-
         /**
          * @property {Object}
          */
-        options: {
-            prices: {}
-        },
+        options: {},
 
         /**
          * @param {Object} additionalOptions
@@ -25,9 +21,7 @@ define(function(require) {
         initialize: function(additionalOptions) {
             _.extend(this.options, additionalOptions || {});
 
-            this.defaultQuantity = this.calculateDefaultQuantity();
             this.initSelect();
-            this.initQuantityInput();
         },
 
         initSelect: function() {
@@ -38,20 +32,6 @@ define(function(require) {
                 select.append($('<option></option>').attr('value', productCode).text(productUnits[productCode]));
             }
             select.change();
-        },
-
-        initQuantityInput: function() {
-            $('[data-name="field-quantity"]', this.options._sourceElement).val(this.defaultQuantity);
-        },
-
-        calculateDefaultQuantity: function() {
-            var minimumQuantity;
-            _.each(this.options.prices, function(price) {
-                if (minimumQuantity === undefined || price.quantity < minimumQuantity) {
-                    minimumQuantity = price.quantity;
-                }
-            });
-            return minimumQuantity !== undefined ? minimumQuantity : 1;
         }
     });
 

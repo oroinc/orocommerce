@@ -177,6 +177,11 @@ class OrderControllerTest extends WebTestCase
         $this->assertNotEquals('N/A', $crawler->filter('.user-name')->text());
 
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
+
+        usort($actualLineItems, function ($a, $b) {
+            return $a['product'] - $b['product'];
+        });
+
         $expectedLineItems = [
             [
                 'product' => $product->getId(),
@@ -191,6 +196,7 @@ class OrderControllerTest extends WebTestCase
                 'shipBy' => $date
             ]
         ];
+
         $this->assertEquals($expectedLineItems, $actualLineItems);
 
         $actualDiscountItems = $this->getActualDiscountItems($crawler, count($discountItems));
@@ -259,6 +265,11 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
 
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
+
+        usort($actualLineItems, function ($a, $b) {
+            return $a['product'] - $b['product'];
+        });
+
         $expectedLineItems = $this->getExpectedLineItemsAfterUpdate($date);
         $this->assertEquals($expectedLineItems, $actualLineItems);
 
