@@ -203,6 +203,7 @@ datagrid:
             quantity:
                 label:           orob2b.warehouse.warehouseinventorylevel.quantity.label
                 frontend_type:   decimal
+                align:           right
                 inline_editing:
                     enable: true
                     editor:

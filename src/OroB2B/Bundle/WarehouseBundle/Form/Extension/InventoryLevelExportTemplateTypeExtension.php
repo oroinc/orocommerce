@@ -17,8 +17,10 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
     public static function getProcessorAliases()
     {
         return [
-            'orob2b_product.inventory_status_only_export_template' => 'orob2b.product.export.inventory_status_only',
-            'orob2b_warehouse.inventory_level_export_template' => 'orob2b.warehouse.export.detailed_inventory_levels',
+            'orob2b_product.inventory_status_only_template'
+                => 'orob2b.product.export.inventory_status_only',
+            'orob2b_warehouse.detailed_inventory_levels_template'
+                => 'orob2b.warehouse.export.detailed_inventory_levels',
         ];
     }
 

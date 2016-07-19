@@ -8,16 +8,14 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class InventoryStatusNormalizer implements NormalizerInterface
 {
-    const PRODUCT_INVENTORY_STATUS_ONLY_PROCESSOR = 'orob2b_product.export_inventory_status_only';
-    const WAREHOUSE_INVENTORY_STATUS_ONLY_PROCESSOR = 'orob2b_product.inventory_status_only_export_template';
     /**
      * {@inheritdoc}
      */
     public function supportsNormalization($data, $format = null, array $context = array())
     {
         $processors = [
-            self::PRODUCT_INVENTORY_STATUS_ONLY_PROCESSOR,
-            self::WAREHOUSE_INVENTORY_STATUS_ONLY_PROCESSOR
+            'orob2b_product.inventory_status_only',
+            'orob2b_product.inventory_status_only_template'
         ];
 
         return isset($context['processorAlias'])

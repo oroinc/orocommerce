@@ -81,7 +81,7 @@ services:
         calls:
              - [setDataConverter, ["@orob2b_product.importexport.inventory_status_converter"]]
         tags:
-            - { name: oro_importexport.processor, type: export, entity: %orob2b_product.entity.product.class%, alias: orob2b_product.export_inventory_status_only }
+            - { name: oro_importexport.processor, type: export, entity: %orob2b_product.entity.product.class%, alias: orob2b_product.inventory_status_only }
 
     orob2b_product.importexport.normalizer.inventory_status:
         class: OroB2B\Bundle\ProductBundle\ImportExport\Normalizer\InventoryStatusNormalizer
@@ -95,4 +95,4 @@ services:
         calls:
             - [setDataConverter, ['@orob2b_product.importexport.inventory_status_converter']]
         tags:
-            - { name: oro_importexport.processor, type: export_template, entity: '%orob2b_product.entity.product.class%', alias: orob2b_product.inventory_status_only_export_template }
+            - { name: oro_importexport.processor, type: export_template, entity: '%orob2b_product.entity.product.class%', alias: orob2b_product.inventory_status_only_template }

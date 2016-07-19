@@ -59,7 +59,7 @@ services:
             - [setDataConverter, ['@orob2b_warehouse.importexport.inventory_level_converter']]
             - [setSerializer, ['@orob2b_warehouse.importexport.serializer.warehouse_inventory_level']]
         tags:
-            - { name: oro_importexport.processor, type: export_template, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.inventory_level_export_template }
+            - { name: oro_importexport.processor, type: export_template, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.detailed_inventory_levels_template }
 
     # Template Fixture
     orob2b_warehouse.importexport.template_fixture.warehouse_inventory_level:
