@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\TriggersFiller;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -26,15 +26,15 @@ class PriceRuleChangeTriggersFiller
     }
 
     /**
-     * @param PriceRule $priceRule
+     * @param PriceList $priceList
      * @param Product|null $product
      */
-    public function createTrigger(PriceRule $priceRule, Product $product = null)
+    public function createTrigger(PriceList $priceList, Product $product = null)
     {
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceRuleChangeTrigger');
         
-        $priceRuleChangeTrigger = new PriceRuleChangeTrigger($priceRule, $product);
+        $priceRuleChangeTrigger = new PriceRuleChangeTrigger($priceList, $product);
         
         $em->persist($priceRuleChangeTrigger);
         $em->flush($priceRuleChangeTrigger);

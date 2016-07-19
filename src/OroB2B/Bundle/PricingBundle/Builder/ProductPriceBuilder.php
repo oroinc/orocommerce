@@ -79,17 +79,6 @@ class ProductPriceBuilder
      * @param PriceRule $priceRule
      * @param Product|null $product
      */
-    public function buildByRule(PriceRule $priceRule, Product $product = null)
-    {
-        $this->getProductPriceRepository()->deleteGeneratedPricesByRule($priceRule, $product);
-        $this->applyRule($priceRule, $product);
-        $this->fillTriggers($priceRule->getPriceList(), $product);
-    }
-
-    /**
-     * @param PriceRule $priceRule
-     * @param Product|null $product
-     */
     protected function applyRule(PriceRule $priceRule, Product $product = null)
     {
         $this->insertFromSelectQueryExecutor->execute(
