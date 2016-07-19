@@ -2,10 +2,7 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Twig;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use OroB2B\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentMethodExtension extends \Twig_Extension
@@ -18,28 +15,20 @@ class PaymentMethodExtension extends \Twig_Extension
     protected $paymentTransactionProvider;
 
     /**
-     * @var  PaymentMethodViewRegistry
+     * @var PaymentMethodLabelFormatter
      */
-    protected $paymentMethodViewRegistry;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected $paymentMethodLabelFormatter;
 
     /**
      * @param PaymentTransactionProvider $paymentTransactionProvider
-     * @param PaymentMethodViewRegistry $paymentMethodViewRegistry
-     * @param TranslatorInterface $translator
+     * @param PaymentMethodLabelFormatter $paymentMethodLabelFormatter
      */
     public function __construct(
         PaymentTransactionProvider $paymentTransactionProvider,
-        PaymentMethodViewRegistry $paymentMethodViewRegistry,
-        TranslatorInterface $translator
+        PaymentMethodLabelFormatter $paymentMethodLabelFormatter
     ) {
         $this->paymentTransactionProvider = $paymentTransactionProvider;
-        $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
-        $this->translator = $translator;
+        $this->paymentMethodLabelFormatter = $paymentMethodLabelFormatter;
     }
 
     /**
@@ -57,8 +46,15 @@ class PaymentMethodExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('get_payment_methods', [$this, 'getPaymentMethods']),
-            new \Twig_SimpleFunction('get_payment_method_label', [$this, 'getPaymentMethodLabel']),
-            new \Twig_SimpleFunction('get_payment_method_admin_label', [$this, 'getPaymentMethodAdminLabel'])
+            new \Twig_SimpleFunction(
+                'get_payment_method_label',
+                [$this->paymentMethodLabelFormatter, 'formatPaymentMethodLabel']
+            ),
+            new \Twig_SimpleFunction(
+                'get_payment_method_admin_label',
+                [$this->paymentMethodLabelFormatter, 'formatPaymentMethodAdminLabel'],
+                ['is_safe' => ['html']]
+            )
         ];
     }
 
@@ -71,43 +67,13 @@ class PaymentMethodExtension extends \Twig_Extension
         $paymentTransactions = $this->paymentTransactionProvider->getPaymentTransactions($entity);
         $paymentMethods = [];
         foreach ($paymentTransactions as $paymentTransaction) {
-            /** @var PaymentMethodViewInterface $paymentMethodView */
-            $paymentMethods[] = $this->getPaymentMethodLabel($paymentTransaction->getPaymentMethod(), false);
+            $paymentMethods[] = $this->paymentMethodLabelFormatter
+                ->formatPaymentMethodLabel(
+                    $paymentTransaction->getPaymentMethod(),
+                    false
+                );
         }
 
         return $paymentMethods;
-    }
-
-    /**
-     * @param string $paymentMethod
-     * @param bool $shortLabel
-     * @return string
-     */
-    public function getPaymentMethodLabel($paymentMethod, $shortLabel = true)
-    {
-        /** @var PaymentMethodViewInterface $paymentMethodView */
-        try {
-            $paymentMethodView = $this->paymentMethodViewRegistry->getPaymentMethodView($paymentMethod);
-
-            return $shortLabel? $paymentMethodView->getShortLabel() : $paymentMethodView->getLabel();
-        } catch (\InvalidArgumentException $e) {
-            return '';
-        }
-    }
-
-    /**
-     * @param string $paymentMethod
-     * @return string
-     */
-    public function getPaymentMethodAdminLabel($paymentMethod)
-    {
-        $adminPaymentMethodLabel = $this->translator->trans('orob2b.payment.admin.'.$paymentMethod.'.label');
-        $adminPaymentMethodShortLabel = $this->getPaymentMethodLabel($paymentMethod);
-
-        if ($adminPaymentMethodLabel == $adminPaymentMethodShortLabel) {
-            return $adminPaymentMethodLabel;
-        } else {
-            return $adminPaymentMethodLabel.' ('.$adminPaymentMethodShortLabel.')';
-        }
     }
 }

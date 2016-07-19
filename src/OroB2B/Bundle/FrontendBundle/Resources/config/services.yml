@@ -33,7 +33,7 @@ services:
         arguments:
             - '@oro_theme.registry'
             - '@orob2b_frontend.request.frontend_helper'
-            - '@oro_config.global'
+            - '@oro_config.manager'
             - '%installed%'
         tags:
             - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest}

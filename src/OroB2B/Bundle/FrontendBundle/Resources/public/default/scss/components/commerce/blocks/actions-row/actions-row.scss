@@ -1,0 +1,41 @@
+.actions-row {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+
+    font-size: $font-size;
+
+    vertical-align: baseline;
+
+    &__item {
+        display: inline-block;
+
+        cursor: pointer;
+
+        &--separate {
+            margin: 0 4px;
+
+            color: $theme-gray-color;
+        }
+    }
+
+    &__button {
+        display: inline-block;
+        padding: 0 3px;
+
+        border: 0   ;
+        background: transparent;
+
+        vertical-align: middle;
+
+        transition: opacity .3s linear;
+
+        &:hover {
+            opacity: .65;
+        }
+    }
+
+    &__icon {
+        margin-right: 0;
+    }
+}

@@ -14,14 +14,17 @@ define(function(require) {
 
         elementsEvents: null,
 
-        modelElements: [],
+        modelElements: {},
+
+        modelEvents: null,
 
         elementEventNamespace: '.elementEvent',
 
         initializeElements: function(options) {
-            _.extend(this, _.pick(options, ['elements', 'modelElements']));
+            $.extend(true, this, _.pick(options, ['elements', 'modelElements']));
             this.$elements = this.$elements || {};
             this.elementsEvents = this.elementsEvents || {};
+            this.modelEvents = this.modelEvents || {};
 
             this.initializeModelElements();
             this.delegateElementsEvents();
@@ -30,7 +33,7 @@ define(function(require) {
         disposeElements: function() {
             this.undelegateElementsEvents();
 
-            var props = ['$elements', 'elements', 'elementsEvents', 'modelElements'];
+            var props = ['$elements', 'elements', 'elementsEvents', 'modelElements', 'modelEvents'];
             for (var i = 0, length = props.length; i < length; i++) {
                 delete this[props[i]];
             }
@@ -40,11 +43,20 @@ define(function(require) {
             if (!this.model) {
                 return;
             }
-            _.each(this.modelElements, function(key) {
-                if (this.elementsEvents[key + ' setModelValue'] === undefined) {
-                    this.elementsEvents[key + ' setModelValue'] = ['change', '_setModelValueFromElementOnChange'];
+            _.each(this.modelElements, function(elementKey, modelKey) {
+                if (this.elementsEvents[elementKey + ' setModelValue'] === undefined) {
+                    this.elementsEvents[elementKey + ' setModelValue'] = ['change', _.bind(function(e) {
+                        return this.setModelValueFromElement(modelKey, elementKey);
+                    }, this)];
                 }
-                this.setModelValueFromElement(key);
+
+                if (this.modelEvents[modelKey + ' setElementValue'] === undefined) {
+                    this.modelEvents[modelKey + ' setElementValue'] = ['change', _.bind(function(e) {
+                        return this.setElementValueFromModel(modelKey, elementKey);
+                    }, this)];
+                }
+
+                this.setModelValueFromElement(modelKey, elementKey);
             }, this);
         },
 
@@ -58,6 +70,16 @@ define(function(require) {
                 var callback = eventCallback[1];
                 this.delegateElementEvent(key, event, callback);
             }, this);
+
+            _.each(this.modelEvents, function(eventCallback, eventKey) {
+                if (!eventCallback) {
+                    return;
+                }
+                var key = eventKey.split(' ')[0];
+                var event = eventCallback[0];
+                var callback = eventCallback[1];
+                this.delegateModelEvent(key, event, callback);
+            }, this);
         },
 
         delegateElementEvent: function(key, event, callback) {
@@ -69,18 +91,33 @@ define(function(require) {
             });
         },
 
+        delegateModelEvent: function(key, event, callback) {
+            if (!_.isFunction(callback)) {
+                callback = _.bind(this[callback], this);
+            }
+            this.model.on(event + ':' + key, function(e) {
+                callback(e, key);
+            }, this);
+        },
+
         undelegateElementsEvents: function() {
             var elementEventNamespace = this.elementEventNamespace + this.cid;
             _.each(this.$elements, function($element) {
                 $element.off(elementEventNamespace);
             });
+
+            this.model.off(null, null, this);//off all events with this context.
         },
 
-        getElement: function(key) {
+        getElement: function(key, $default) {
             if (this.$elements[key] === undefined) {
-                this.$elements[key] = this._findElement(key) || $([]);
+                this.$elements[key] = this._findElement(key) || $default || $([]);
             }
             return this.$elements[key];
+        },
+
+        clearElementsCache: function() {
+            this.$elements = {};
         },
 
         _findElement: function(key) {
@@ -110,20 +147,33 @@ define(function(require) {
             return $context.find(selector);
         },
 
-        setModelValueFromElement: function(key) {
-            var $element = this.getElement(key);
-            var element = $element.get(0);
-            var validator = $element.closest('form').validate();
+        setModelValueFromElement: function(modelKey, elementKey) {
+            var $element = this.getElement(elementKey);
             if (!$element.length) {
                 return false;
             }
-            if (!validator || validator.element(element)) {
-                this.model.set(key, element.value);
+            var value = $element.val();
+            if (value === this.model.get(modelKey)) {
+                return;
+            }
+
+            var validator = $element.closest('form').validate();
+            if (!validator || validator.element($element.get(0))) {
+                this.model.set(modelKey, value);
             }
         },
 
-        _setModelValueFromElementOnChange: function(e, key) {
-            this.setModelValueFromElement(key);
+        setElementValueFromModel: function(modelKey, elementKey) {
+            var $element = this.getElement(elementKey);
+            if (!$element.length) {
+                return false;
+            }
+            var value = this.model.get(modelKey);
+            if (value === $element.val()) {
+                return;
+            }
+
+            $element.val(value).change();
         }
     };
 });

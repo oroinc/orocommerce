@@ -16,35 +16,19 @@
 @import 'shared/base.scss';
 
 /*=== START COMPONENTS===*/
-@import 'components/accountnavigation-widget.scss';
-@import 'components/autocomplete-widget.scss';
-@import 'components/cart-groups.scss';
-@import 'components/filter-widget.scss';
-@import 'components/hero-widget.scss';
-@import 'components/matrix-widget.scss';
+@import 'components/checkout-widget.scss';
 @import 'components/messages-widget.scss';
 @import 'components/notification-messages.scss';
 @import 'components/dialog.scss';
-@import 'components/order-widget.scss';
 @import 'components/pagination-widget.scss';
-@import 'components/pin-widget.scss';
-@import 'components/productdescription-widget.scss';
-@import 'components/product-badges.scss';
 @import 'components/products-widget.scss';
-@import 'components/pseudo-selectbox.scss';
-@import 'components/review-widget.scss';
-@import 'components/sales-panel.scss';
 @import 'components/search-widget.scss';
-@import 'components/sticky-widget.scss';
-@import 'components/lbgallery-widget.scss';
+@import 'components/tab-collection.scss';
 @import 'components/uploader-widget.scss';
 /*=== END COMPONENTS===*/
 
 /*Layout*/
 @import 'shared/layout.scss';
-
-/*Gallery*/
-@import 'shared/gallery.scss';
 
 /*Tables*/
 @import 'shared/tables.scss';

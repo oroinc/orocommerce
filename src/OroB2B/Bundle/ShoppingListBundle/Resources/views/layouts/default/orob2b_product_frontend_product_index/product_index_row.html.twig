@@ -24,182 +24,197 @@
 {% endblock %}
 
 {% block _product_shopping_lists_widget %}
-    {% set popup %}
+    {% set shoppingListsTemplate %}
         {% spaceless %}
-            <div>
-                <% if (!_.isEmpty(popupData.shoppingLists)) { %>
-                <table class="shopping-lists-popup">
-                    <thead class="shopping-lists-popup__headline">
-                    <tr class="shopping-lists-popup__item">
-                        <th class="shopping-lists-popup__list">{{ 'orob2b.shoppinglist.entity_label'|trans }}</th>
-                        <th class="shopping-lists-popup__quantity">{{ 'orob2b.frontend.shoppinglist.view.qty.label'|trans }}</th>
-                    </tr>
-                    </thead>
-                    <tfoot class="shopping-lists-popup__footer">
-                    <tr class="shopping-lists-popup__actions">
-                        <td class="shopping-lists-popup__gap"></td>
-                        <td class="shopping-lists-popup__cancel">
-                            <button class="btn theme-btn btn-orange"
-                                    type="submit"
-                                    data-name="shopping-lists-close">Close</button>
-                        </td>
-                    </tr>
-                    </tfoot>
-                    <tbody class="shopping-lists-popup__content">
-                    <% _.each(popupData.shoppingLists, function(list) { %>
-                    <tr class="shopping-lists-popup__item">
-                        <td class="shopping-lists-popup__list">
-                            <a class="shopping-lists-popup__link" href="#"><%= list.shopping_list_label %></a>
-                        </td>
-                        <td class="shopping-lists-popup__quantity"
+            {{ block_widget(block) }}
+        {% endspaceless %}
+    {% endset %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'orob2bshoppinglist/js/app/views/product-shopping-lists-view',
+            template: shoppingListsTemplate
+        }
+    }) %}
+    <div {{ block('block_attributes') }}></div>
+{% endblock %}
+
+{% block _product_shopping_lists_template_widget %}
+    <% if (!_.isEmpty(shoppingLists)) { %>
+        <div class="shopping-lists">
+            {{ block_widget(block) }}
+        </div>
+    <% } %>
+{% endblock %}
+
+{% block _product_shopping_lists_template_preview_widget %}
+    <i class="shopping-lists__icon"></i>
+    <% if (currentShoppingList) { %>
+    <% _.each(currentShoppingList.line_items, function(item) { %>
+    <div class="shopping-lists__text">
+        <span class="shopping-lists__label"><%= _.__(
+                'orob2b.shoppinglist.actions.added_to_shopping_list', {
+                lineItems: _.__(
+                    'orob2b.product.product_unit.' + item.unit + '.value.short',
+                    {count: item.quantity},
+                    item.quantity
+                ),
+                shoppingList: currentShoppingList.shopping_list_label
+        }) %></span>
+        <ul class="actions-row">
+            <li class="actions-row__item actions-row__item--edit">
+                <button type="button"
+                        title="{{ 'Edit'|trans }}"
+                        class="actions-row__button"
+                        data-role="edit-line-item"
+                        data-line-item-id="<%= item.line_item_id %>"
+                >
+                    <i class="actions-row__icon cf-pencil"></i>
+                </button>
+            </li>
+        </ul>
+    </div>
+    <% }) %>
+    <% } else { %>
+    <div class="shopping-lists__text">
+        <%= _.__('orob2b.shoppinglist.actions.in_shopping_lists', {
+        count: shoppingLists.length
+        }) %>
+    </div>
+    <% } %>
+{% endblock %}
+
+{% block _product_shopping_lists_popup_widget %}
+    {% set shoppingListsTemplate %}
+        {% spaceless %}
+            {{ block_widget(block) }}
+        {% endspaceless %}
+    {% endset %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/widget-component',
+        '~data-page-component-options': {
+            type: 'product-shopping-lists',
+            createOnEvent: 'click',
+            options: {
+                template: shoppingListsTemplate,
+                quantityComponentOptions: {
+                    dataKey: constant('OroB2B\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
+                    enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                }
+            }
+        },
+        '~class': ' shopping-lists__link'
+    }) %}
+    <a {{ block('block_attributes') }}>Add item to multiple lists</a>
+{% endblock %}
+
+{% block _product_shopping_lists_popup_template_widget %}
+    <table class="shopping-lists-popup">
+        <thead class="shopping-lists-popup__headline">
+        <tr class="shopping-lists-popup__item">
+            <th class="shopping-lists-popup__list">{{ 'orob2b.shoppinglist.entity_label'|trans }}</th>
+            <th class="shopping-lists-popup__quantity">{{ 'orob2b.frontend.shoppinglist.view.qty.label'|trans }}</th>
+        </tr>
+        </thead>
+        <tbody class="shopping-lists-popup__content">
+        <% _.each(shoppingLists, function(list) { %>
+        <tr class="shopping-lists-popup__item">
+            <td class="shopping-lists-popup__list">
+                <a class="shopping-lists-popup__link" href="#"><%= list.shopping_list_label %></a>
+            </td>
+            <td class="shopping-lists-popup__quantity"
                             data-name="shopping-lists-controls-container">
                             <% var ListLineItems = list.line_items; %>
                             <% if (!_.isEmpty(ListLineItems)) { %>
                             <% _.each(ListLineItems, function(lineItem, i) { %>
-                            <div class="shopping-lists-units"
-                                 data-name="shopping-lists-units"
+                <div class="shopping-lists-units"
+                data-name="shopping-lists-units"
                                  data-shopping-list-id="<%= list.shopping_list_id %>"
                                  data-line-item-id="<%= lineItem.line_item_id %>">
-                                <form action="#">
+                                 <form action="#">
                                     <div class="shopping-lists-static"
                                          data-name="shopping-lists-static">
-                                        <span class="shopping-lists-units__number"><%= lineItem.quantity %></span>
-                                        <span class="shopping-lists-units__separate">/</span>
-                                        <span class="shopping-lists-units___measurement"><%= lineItem.trans_unit %></span>
-                                        <div class="shopping-lists-units__actions">
-                                            <ul class="actions-menu-row">
-                                                <li class="actions-menu-row__item actions-menu-row__item--edit">
-                                                    <button class="actions-menu-row__button"
-                                                            type="button" title="Edit"
-                                                            data-name="shopping-list-edit">
-                                                        <i class="actions-menu-row__icon cf-pencil"></i>
-                                                    </button>
-                                                </li>
-                                                <li class="actions-menu-row__item actions-menu-row__item--separate">|</li>
-                                                <li class="actions-menu-row__item actions-menu-row__item--remove">
-                                                    <button class="actions-menu-row__button" type="button"
-                                                            title="Remove"
-                                                            data-name="shopping-list-delete"
+                    <span class="shopping-lists-units__number"><%= lineItem.quantity %></span>
+                    <span class="shopping-lists-units__separate">/</span>
+                    <span class="shopping-lists-units__measurements"><%= lineItem.trans_unit %></span>
+                    <div class="shopping-lists-units__actions">
+                        <ul class="actions-row">
+                            <li class="actions-row__item actions-row__item--edit">
+                                <button class="actions-row__button" type="button" title="Edit" data-name="shopping-list-edit">
+                                    <i class="actions-row__icon cf-pencil"></i>
+                                </button>
+                            </li>
+                            <li class="actions-row__item actions-row__item--separate">|</li>
+                            <li class="actions-row__item actions-row__item--remove">
+                                <button class="actions-row__button" type="button" title="Remove"
+                                data-name="shopping-list-delete"
                                                             data-line-item-id="<%= lineItem.line_item_id %>">
-                                                        <i class="actions-menu-row__icon cf-trash"></i>
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <ul class="shopping-lists-modify hidden"
-                                        data-name="shopping-lists-modify">
-                                        <li class="shopping-lists-modify__text">
-                                            <input class="shopping-lists-modify__input input input_xs"
-                                                   type="number"
+                                    <i class="actions-row__icon cf-trash"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                    <ul class="shopping-lists-modify hidden"
+                    data-name="shopping-lists-modify">
+                        <li class="shopping-lists-modify__text">
+                            <input class="shopping-lists-modify__input input input_xs"
+                                type="number"
                                                    value="<%= lineItem.quantity %>"
                                                    name="product_qty"
                                                    data-name="field__quantity"
                                                    disabled="disabled" required>
-                                        </li>
-                                        <li class="shopping-lists-modify__select">
-                                            <select class="oro-select2 oro-select2--size-s"
-                                                    name="product_unit"
+                        </li>
+                        <li class="shopping-lists-modify__select">
+                            <select class="oro-select2 oro-select2--size-s" name="product_unit"
                                                     data-name="field__unit" required>
-                                                <% _.each(popupData.productUnits, function(unit) { %>
+                                <% _.each(productUnits, function(unit) { %>
                                                     <% if (unit === lineItem.unit) { %>
                                                         <option value="<%= unit %>" selected="selected"><%= unit %></option>
                                                     <% } else { %>
                                                         <option value="<%= unit %>"><%= unit %></option>
                                                     <% } %>
                                                 <% }); %>
-                                            </select>
-                                        </li>
-                                        <li class="shopping-lists-modify__badges">
+                            </select>
+                        </li>
+                        <li class="shopping-lists-modify__badges">
                                             <span class="shopping-lists-modify__edit">
                                                 <button class="shopping-lists-modify__button badge badge_sm badge_orange badge_circled-corners"
-                                                        type="button"
-                                                        title="Apply"
+                                                type="button"
+                                                title="Apply"
                                                         disabled
                                                         data-name="shopping-list-accept">
                                                     <i class="shopping-lists-modify__icon cf-check"></i>
                                                 </button>
                                             </span>
-                                            <span class="shopping-lists-modify__edit">
+                            <span class="shopping-lists-modify__edit">
                                                 <button class="shopping-lists-modify__button badge badge_sm badge_l-dark badge_circled-corners"
-                                                        type="button"
-                                                        title="Cancel"
+                                                type="button"
+                                                title="Cancel"
                                                         data-name="shopping-list-decline">
                                                     <i class="shopping-lists-modify__icon cf-clear"></i>
                                                 </button>
                                             </span>
-                                        </li>
-                                    </ul>
-                                </form>
-                            </div>
-                            <% }); %>
+                        </li>
+                    </ul>
+                    </form>
+                </div>
+                <% }); %>
                             <% } %>
-                        </td>
-                    </tr>
-                    <% }); %>
-                    </tbody>
-                </table>
-                <% } %>
-            </div>
-        {% endspaceless %}
-    {% endset %}
-
-    {% set shopping_billet %}
-        {% spaceless %}
-            <% if (!_.isEmpty(billet.shoppingLists)) { %>
-            <div class="shopping-lists-billet">
-                <i class="shopping-lists-billet__icon"></i>
-                <% if (billet.shoppingList && billet.shoppingList.is_current) { %>
-                    <% _.each(billet.currentLineItemsLabels, function(label) { %>
-                        <div class="shopping-lists-billet__text">
-                            <span class="shopping-lists-billet__label"><%= label.name %></span>
-                            <i class="cf-pencil shopping-lists-billet__edit-icon"></i>
-                        </div>
-                    <% }); %>
-                <% } else { %>
-                    <div class="shopping-lists-billet__text">
-                        <i class="shopping-lists-billet__icon"></i>
-                        In Shopping Lists (<span class="shopping-lists-billet__count"><%= billet.shoppingLists.length %></span>)
-                    </div>
-                <% } %>
-                <a class="shopping-lists-billet__link" data-name="shopping-lists-link">Add item to multiple lists</a>
-            </div>
-            <% } %>
-        {% endspaceless %}
-    {% endset %}
-
-    {% set attr = {
-        "data-page-component-module": "oroui/js/app/components/view-component",
-        "data-page-component-options": {
-            view: 'orob2bshoppinglist/js/app/views/base-shopping-lists-link-view',
-            billetTemplate: shopping_billet,
-            popupTemplate: popup,
-            quantityComponentOptions: {
-                dataKey: constant('OroB2B\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
-                enable: resource_granted('orob2b_shopping_list_frontend_update'),
-                elements: {
-                    quantity: '[name="product_qty"]',
-                    unit: '[name="product_unit"]'
-                },
-                save_api_accessor: {
-                    route: 'orob2b_api_shopping_list_frontend_put_line_item'
-                },
-                validation: {
-                    showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
-                }
-            },
-            deleteLineOptions: {
-                removeClass: 'line_item',
-                confirmMessage: 'orob2b.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
-                sucsessMessage: 'orob2b.frontend.shoppinglist.messages.line_item_deleted'|trans,
-                okButtonClass: 'btn ok theme-btn_sm btn-orange',
-                cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
-            }
-        }|json_encode}
-    %}
-    <div {{ block('block_attributes') }}>
-        <div data-name="shopping-lists-billet"></div>
-    </div>
+            </td>
+        </tr>
+        <% }); %>
+        </tbody>
+        <tfoot class="shopping-lists-popup__footer">
+        <tr class="shopping-lists-popup__actions">
+            <td class="shopping-lists-popup__gap"></td>
+            <td class="shopping-lists-popup__cancel">
+                <button class="btn theme-btn btn-orange"
+                        type="submit"
+                        data-name="shopping-lists-close">Close</button>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
 {% endblock %}
-
-

@@ -6,11 +6,3 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
-
-{% block _account_user_address_edit_form_errors_widget %}
-    {% if form.vars.errors|length > 0 %}
-        <div{{ block('block_attributes') }}>
-            {{ form_errors(form) }}
-        </div>
-    {% endif %}
-{% endblock %}

@@ -18,5 +18,6 @@ class OroB2BCMSExtension extends Extension
         $loader->load('services.yml');
         $loader->load('twig.yml');
         $loader->load('form_types.yml');
+        $loader->load('block_types.yml');
     }
 }

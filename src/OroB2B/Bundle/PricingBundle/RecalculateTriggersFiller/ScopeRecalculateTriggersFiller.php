@@ -154,7 +154,7 @@ class ScopeRecalculateTriggersFiller
         $accounts
     ) {
         if (empty($websites) && (!empty($accountGroups) || !empty($accounts))) {
-            $websites = $this->registry->getRepository('OroB2BWebsiteBundle:Website')->findAll();
+            $websites = $this->registry->getRepository('OroB2BWebsiteBundle:Website')->getBatchIterator();
         }
 
         foreach ($websites as $website) {

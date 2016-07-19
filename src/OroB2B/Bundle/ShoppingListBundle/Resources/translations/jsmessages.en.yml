@@ -11,8 +11,7 @@ orob2b:
             add_to_new_shopping_list: Create New Shopping List
         datagrid:
             add_to_shopping_list: Add To Shopping List
-        billet:
-            items_in_shopping_list: Added {{ lineItems }} to {{ shoppingList }}
         actions:
             add_to_shopping_list: Add to {{ shoppingList }}
             added_to_shopping_list: Added {{ lineItems }} to {{ shoppingList }}
+            in_shopping_lists: In Shopping Lists ({{ count }})

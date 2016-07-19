@@ -3,17 +3,28 @@
 
   display: inline-block;
 
+  margin-bottom: auto; // Reset bootstrap style
 
-  input[type="checkbox"] {
+  &__input {
     position: absolute;
 
     z-index: -1;
 
-    visibility: hidden;
+    margin: 0;
 
+    opacity: 0;
+
+    &:focus {
+      ~ .oro-checkbox__icon {
+        &:before {
+          outline: 2px solid rgba(99,153,239,0.47);
+          outline-offset: -2px;
+        }
+      }
+    }
 
     &:checked {
-      ~ label {
+      ~ .oro-checkbox__icon {
 
         &:before {
             content: '\e834';
@@ -24,31 +35,34 @@
     }
   }
 
-  label {
+  &__icon {
     display: inline-block;
     vertical-align: middle;
 
-    margin: auto;
+    margin-right: $offset-x-m / 2;
 
     font-weight: normal;
     font-style: normal;
     line-height: 1;
     text-transform: none;
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     font-feature-settings: 'liga';
 
     &:before {
       content: '\e835';
 
       display: inline-block;
-      margin-right: 5px;
 
-      font-family: 'custom-font-icon';
+      font-family: $base-font-icon;
       font-size: 17px;
       line-height: 1;
       color: #d1d1d1;
     }
+  }
+
+  &__text {
+    vertical-align: middle;
   }
 }

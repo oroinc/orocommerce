@@ -111,7 +111,8 @@ services:
         parent: orob2b_product.form.type.extension.product_data_storage.abstract
         calls:
             - [setDataClass, ['%orob2b_rfp.entity.request.class%']]
-            - [setExtendedType, [orob2b_rfp_frontend_request]]
+            - [setExtendedType, ['orob2b_rfp_frontend_request']]
+            - [setConfigManager, ['@oro_config.manager']]
         tags:
             - { name: form.type_extension, alias: orob2b_rfp_frontend_request }
 
@@ -131,7 +132,7 @@ services:
             - '@orob2b_pricing.provider.combined_product_price'
             - '@orob2b_pricing.model.price_list_tree_handler'
         calls:
-            - [setExtendedType, [orob2b_order_type]]
+            - [setExtendedType, ['orob2b_order_type']]
         tags:
             - { name: form.type_extension, alias: orob2b_order_type }
 

@@ -1,8 +1,10 @@
+$shopping-lists-actions-width: 55px;
+
 .shopping-lists-units {
     position: relative;
 
     display: block;
-    margin-top: 8px;
+    padding: 4px $shopping-lists-actions-width 4px 0;
 
     &:first-child {
         display: block;
@@ -25,13 +27,21 @@
     }
 
     &__actions {
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        width: $shopping-lists-actions-width;
+
+        color: $base-link-color;
+
         visibility: hidden;
         opacity: 0;
 
-        transition: visibility 0 linear .3s, opacity .3s linear;
+        transition: opacity .3s linear;
     }
 
     &:hover &__actions {
-        transition-delay: 0;
+        transition-delay: 0.1s;
     }
 }

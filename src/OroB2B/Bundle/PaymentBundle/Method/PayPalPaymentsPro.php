@@ -23,6 +23,14 @@ class PayPalPaymentsPro extends PayflowGateway
     /**
      * {@inheritdoc}
      */
+    protected function isDebugModeEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_DEBUG_MODE_KEY);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function isTestMode()
     {
         return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_TEST_MODE_KEY);
@@ -30,6 +38,38 @@ class PayPalPaymentsPro extends PayflowGateway
 
     /**
      * {@inheritdoc}
+     */
+    protected function isUseProxyEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_USE_PROXY_KEY);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getProxyHost()
+    {
+        return (string)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_PROXY_HOST_KEY);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getProxyPort()
+    {
+        return (int)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_PROXY_PORT_KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isSslVerificationEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ENABLE_SSL_VERIFICATION_KEY);
+    }
+
+    /**
+     * @return bool
      */
     public function isEnabled()
     {
@@ -41,7 +81,7 @@ class PayPalPaymentsPro extends PayflowGateway
      */
     protected function getPurchaseAction()
     {
-        return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY);
+        return (string)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY);
     }
 
     /**
@@ -49,7 +89,7 @@ class PayPalPaymentsPro extends PayflowGateway
      */
     protected function getAllowedCountries()
     {
-        return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_SELECTED_COUNTRIES_KEY);
+        return (array)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_SELECTED_COUNTRIES_KEY);
     }
 
     /**
@@ -57,7 +97,7 @@ class PayPalPaymentsPro extends PayflowGateway
      */
     protected function isAuthorizationForRequiredAmountEnabled()
     {
-        return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
+        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
     }
 
     /**
@@ -82,6 +122,6 @@ class PayPalPaymentsPro extends PayflowGateway
      */
     protected function getAllowedCurrencies()
     {
-        return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES);
+        return (array)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES);
     }
 }

@@ -45,7 +45,10 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     {
         $isZeroAmountAuthorizationEnabled = $this->isZeroAmountAuthorizationEnabled();
 
-        $formOptions = ['zeroAmountAuthorizationEnabled' => $isZeroAmountAuthorizationEnabled];
+        $formOptions = [
+            'zeroAmountAuthorizationEnabled' => $isZeroAmountAuthorizationEnabled,
+            'requireCvvEntryEnabled'         => $this->isRequireCvvEntryEnabled(),
+        ];
 
         $formView = $this->formFactory->create(CreditCardType::NAME, null, $formOptions)->createView();
 
@@ -137,5 +140,13 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     protected function isZeroAmountAuthorizationEnabled()
     {
         return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isRequireCvvEntryEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_REQUIRE_CVV_KEY);
     }
 }

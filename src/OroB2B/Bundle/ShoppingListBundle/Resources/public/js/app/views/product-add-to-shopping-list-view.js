@@ -26,7 +26,7 @@ define(function(require) {
         dropdownWidget: null,
 
         modelAttr: {
-            current_shopping_list_line_items: {}
+            shopping_lists: []
         },
 
         initialize: function(options) {
@@ -124,7 +124,7 @@ define(function(require) {
                 !mainButtonShoppingList || shoppingList.id !== parseInt(mainButtonShoppingList.id, 10)) {
                 return;
             }
-            this.model.set('current_shopping_list_line_items', product.lineItems);
+            this.model.set('shopping_lists', product.shopping_lists);
 
             this.updateMainButton();
         },
@@ -132,9 +132,13 @@ define(function(require) {
         _onShoppingListCreate: function(shoppingList, product) {
             if (this.model) {
                 if (!product || product.id !== parseInt(this.model.get('id'), 10)) {
-                    this.model.set('current_shopping_list_line_items', {});
+                    var modelCurrentShoppingLists = this.findCurrentShoppingList();
+                    if (modelCurrentShoppingLists) {
+                        modelCurrentShoppingLists.is_current = false;
+                        this.model.trigger('change:shopping_lists');
+                    }
                 } else {
-                    this.model.set('current_shopping_list_line_items', product.lineItems);
+                    this.model.set('shopping_lists', product.shopping_lists);
                 }
             }
 
@@ -197,7 +201,7 @@ define(function(require) {
             if (!this.model) {
                 return;
             }
-            if (_.isEmpty(this.model.get('current_shopping_list_line_items'))) {
+            if (_.isEmpty(this.findCurrentShoppingList())) {
                 this.dropdownWidget.group.removeClass(this.options.addedClass).addClass(this.options.defaultClass);
             } else {
                 this.dropdownWidget.group.removeClass(this.options.defaultClass).addClass(this.options.addedClass);
@@ -209,24 +213,24 @@ define(function(require) {
                 return;
             }
             var model = this.model;
-            var modelLineItems = model.get('current_shopping_list_line_items');
+            var modelCurrentShoppingLists = this.findCurrentShoppingList();
             var shoppingList = $button.data('shoppinglist');
             var label;
 
-            if (_.isEmpty(modelLineItems)) {
+            if (_.isEmpty(modelCurrentShoppingLists)) {
                 label =  _.__('orob2b.shoppinglist.actions.add_to_shopping_list');
             } else {
                 var lineItems = '';
-                if (_.size(modelLineItems) === 1) {
-                    _.each(modelLineItems, function(count, unit) {
+                if (_.size(modelCurrentShoppingLists) === 1) {
+                    _.each(modelCurrentShoppingLists.line_items, function(lineItem) {
                         if (_.size(model.get('product_units')) > 1) {
                             lineItems = _.__(
-                                'orob2b.product.product_unit.' + unit + '.value.short',
-                                {'count': count},
-                                count
+                                'orob2b.product.product_unit.' + lineItem.unit + '.value.full',
+                                {'count': lineItem.count},
+                                lineItem.count
                             );
                         } else {
-                            lineItems = count;
+                            lineItems = lineItem.count;
                         }
                     });
                 }
@@ -247,9 +251,9 @@ define(function(require) {
                 return;
             }
             var shoppingList = this.dropdownWidget.main.data('shoppinglist');
-            var modelLineItems = this.model.get('current_shopping_list_line_items');
+            var modelCurrentShoppingLists = this.findCurrentShoppingList();
 
-            if (!this.$remove && !_.isEmpty(modelLineItems)) {
+            if (!this.$remove && !_.isEmpty(modelCurrentShoppingLists)) {
                 var $button = $(this.options.removeButtonTemplate(shoppingList));
                 $button = this.dropdownWidget._collectButtons($button);
                 $button = this.dropdownWidget._prepareButtons($button);
@@ -257,10 +261,16 @@ define(function(require) {
 
                 this.$remove = $button;
                 this.dropdownWidget.main.data('clone').parent().after(this.$remove);
-            } else if (this.$remove && _.isEmpty(modelLineItems)) {
+            } else if (this.$remove && _.isEmpty(modelCurrentShoppingLists)) {
                 this.$remove.remove();
                 delete this.$remove;
             }
+        },
+
+        findCurrentShoppingList: function() {
+            return _.find(this.model.get('shopping_lists'), function(list) {
+                return list.is_current;
+            }) || null;
         },
 
         onClick: function(e) {

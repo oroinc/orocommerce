@@ -11,7 +11,6 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -92,17 +91,10 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testFinishView()
     {
-        $firstPriceList = new PriceList();
-        $this->setProperty($firstPriceList, 'id', 1);
-        $firstPriceList->setName('First Price List')
-            ->setCurrencies(['EUR', 'USD']);
-
-        $secondPriceList = new PriceList();
-        $this->setProperty($secondPriceList, 'id', 2);
-        $secondPriceList->setName('Second Price List')
-            ->setCurrencies(['CAD', 'USD']);
-
-        $priceLists = [$firstPriceList, $secondPriceList];
+        $currencies = [
+            '1' => ['EUR', 'USD'],
+            '2' => ['CAD', 'USD']
+        ];
 
         /** @var \Symfony\Component\Form\FormView|\PHPUnit_Framework_MockObject_MockObject $view */
         $view = new FormView();
@@ -112,13 +104,13 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+        $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
         $repository->expects($this->once())
-            ->method('findAll')
-            ->will($this->returnValue($priceLists));
+            ->method('getCurrenciesIndexedByPricelistIds')
+            ->will($this->returnValue($currencies));
 
         $this->registry->expects($this->once())
             ->method('getRepository')
@@ -127,10 +119,7 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
 
         $this->formType->finishView($view, $form, []);
         $this->assertEquals(
-            json_encode([
-                '1' => ['EUR', 'USD'],
-                '2' => ['CAD', 'USD']
-            ]),
+            json_encode($currencies),
             $view->vars['attr']['data-currencies']
         );
     }

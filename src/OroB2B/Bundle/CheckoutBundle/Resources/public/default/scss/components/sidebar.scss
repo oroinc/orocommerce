@@ -1,0 +1,40 @@
+.checkout-sidebar {
+  padding: 0 15px;
+}
+
+// *** The code below has not implemented yet!!!
+.checkout-sidebar_in-content {
+  float: left;
+  width: 220px;
+
+  @media (max-width: $screen-md) {
+    display: none;
+  }
+
+  .checkout-navigation {
+    margin: 0;
+  }
+}
+
+.checkout-sidebar_experimental {
+
+  @media (max-width: $screen-md) {
+    display: none;
+  }
+
+  .checkout-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: stretch;
+    margin: 0 0 1rem;
+    border: 0;
+
+    font-size: 0;
+
+    li {
+      padding: 0 30px 20px 24px;
+
+      font-size: $base-font-size;
+    }
+  }
+}
