@@ -32,7 +32,7 @@ class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
      * @param array $savedState
      * @return bool
      */
-    public function compareStates($checkout, array $savedState)
+    public function isStateActual($checkout, array $savedState)
     {
         return
             isset($savedState[self::DATA_NAME]) &&

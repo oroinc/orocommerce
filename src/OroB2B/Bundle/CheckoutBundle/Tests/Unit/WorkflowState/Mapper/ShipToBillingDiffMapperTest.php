@@ -54,7 +54,7 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testCompareStatesTrue()
+    public function testIsStateActualTrue()
     {
         $this->checkout->method('isShipToBillingAddress')->willReturn(true);
         $savedState = [
@@ -63,12 +63,12 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(true, $result);
     }
 
-    public function testCompareStatesFalse()
+    public function testIsStateActualFalse()
     {
         $this->checkout->method('isShipToBillingAddress')->willReturn(false);
         $savedState = [
@@ -77,12 +77,12 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterDoesntExist()
+    public function testIsStateActualParameterDoesntExist()
     {
         $this->checkout->method('isShipToBillingAddress')->willReturn(true);
         $savedState = [
@@ -90,12 +90,12 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }
 
-    public function testCompareStatesParameterOfWrongType()
+    public function testIsStateActualParameterOfWrongType()
     {
         $this->checkout->method('isShipToBillingAddress')->willReturn(true);
         $savedState = [
@@ -104,7 +104,7 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->compareStates($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
         $this->assertEquals(false, $result);
     }

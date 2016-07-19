@@ -141,7 +141,7 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testCompareStates()
+    public function testIsStateActual()
     {
         $savedState = [
             'mapperName1' => true,
@@ -159,7 +159,7 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $mapper1
             ->expects($this->once())
-            ->method('compareStates')
+            ->method('isStateActual')
             ->with($this->checkout, $savedState)
             ->willReturn(true);
 
@@ -171,17 +171,17 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $mapper2
             ->expects($this->once())
-            ->method('compareStates')
+            ->method('isStateActual')
             ->with($this->checkout, $savedState)
             ->willReturn(true);
 
         $this->checkoutStateDiffManager->addMapper($mapper1);
         $this->checkoutStateDiffManager->addMapper($mapper2);
 
-        $this->assertEquals(true, $this->checkoutStateDiffManager->compareStates($this->checkout, $savedState));
+        $this->assertEquals(true, $this->checkoutStateDiffManager->isStateActual($this->checkout, $savedState));
     }
 
-    public function testCompareStatesFalse()
+    public function testIsStateActualFalse()
     {
         $savedState = [
             'mapperName1' => true,
@@ -199,7 +199,7 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $mapper1
             ->expects($this->once())
-            ->method('compareStates')
+            ->method('isStateActual')
             ->with($this->checkout, $savedState)
             ->willReturn(true);
 
@@ -211,17 +211,17 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $mapper2
             ->expects($this->once())
-            ->method('compareStates')
+            ->method('isStateActual')
             ->with($this->checkout, $savedState)
             ->willReturn(false);
 
         $this->checkoutStateDiffManager->addMapper($mapper1);
         $this->checkoutStateDiffManager->addMapper($mapper2);
 
-        $this->assertEquals(false, $this->checkoutStateDiffManager->compareStates($this->checkout, $savedState));
+        $this->assertEquals(false, $this->checkoutStateDiffManager->isStateActual($this->checkout, $savedState));
     }
 
-    public function testCompareStatesUnsupportedEntity()
+    public function testIsStateActualUnsupportedEntity()
     {
         $savedState = [
             'mapperName1' => true,
@@ -239,7 +239,7 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $mapper1
             ->expects($this->once())
-            ->method('compareStates')
+            ->method('isStateActual')
             ->with($this->checkout, $savedState)
             ->willReturn(true);
 
@@ -251,13 +251,13 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
         $mapper2
             ->expects($this->any())
-            ->method('compareStates')
+            ->method('isStateActual')
             ->with($this->checkout, $savedState)
             ->willReturn(true);
 
         $this->checkoutStateDiffManager->addMapper($mapper1);
         $this->checkoutStateDiffManager->addMapper($mapper2);
 
-        $this->assertEquals(true, $this->checkoutStateDiffManager->compareStates($this->checkout, $savedState));
+        $this->assertEquals(true, $this->checkoutStateDiffManager->isStateActual($this->checkout, $savedState));
     }
 }

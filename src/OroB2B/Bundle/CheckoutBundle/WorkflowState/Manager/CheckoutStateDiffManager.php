@@ -41,13 +41,13 @@ class CheckoutStateDiffManager
      * @param array $savedState
      * @return bool
      */
-    public function compareStates($entity, array $savedState)
+    public function isStateActual($entity, array $savedState)
     {
         foreach ($this->mappers as $mapper) {
             if (!$mapper->isEntitySupported($entity)) {
                 continue;
             }
-            if (!$mapper->compareStates($entity, $savedState)) {
+            if (!$mapper->isStateActual($entity, $savedState)) {
                 return false;
             }
         }
