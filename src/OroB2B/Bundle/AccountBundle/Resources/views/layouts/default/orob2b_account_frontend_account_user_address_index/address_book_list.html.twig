@@ -1,12 +1,12 @@
 {% block _account_address_book_addresses_list_head_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': ' oro-grid__row'}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': ' oro-grid__row'}) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _account_address_book_addresses_list_title_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': ' oro-grid__column oro-grid__column-half'}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': ' oro-grid__column oro-grid__column-half'}) %}
     <div {{ block('block_attributes') }}>
         <h2 class="user-page-title">
             <span class="badge badge_sm badge_circle badge_orange badge_has-inline-sibling">
@@ -18,12 +18,12 @@
 {% endblock %}
 
 {% block _account_address_book_addresses_list_create_button_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': ' btn btn_xsm btn-dark pull-right'}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': ' btn btn_xsm btn-dark pull-right'}) %}
     {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
 
 {% block _account_address_book_addresses_list_widget %}
-    {% set attr = layout_attr_merge(attr, {
+    {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'orob2baccount/js/app/components/frontend-account-address-book-component',
         'data-page-component-options': componentOptions|merge({
             template: '#account-address-book-addresses-list-template'
@@ -36,7 +36,7 @@
 {% endblock %}
 
 {% block _account_address_book_addresses_list_template_widget %}
-    {% set attr = layout_attr_merge(attr, {
+    {% set attr = layout_attr_defaults(attr, {
         id: 'account-address-book-addresses-list-template'
     }) %}
     <script{{ block('block_attributes') }} type="text/template">
@@ -45,7 +45,7 @@
 {% endblock %}
 
 {% block _account_address_book_addresses_list_template_item_widget %}
-    {% set attr = layout_attr_merge(attr, {
+    {% set attr = layout_attr_defaults(attr, {
         '~class': " address-list__item"
     }) %}
     <li {{ block('block_attributes_underscore') }}>
@@ -54,21 +54,21 @@
 {% endblock %}
 
 {% block _account_address_book_addresses_list_template_item_address_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': " address-list__address"}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': " address-list__address"}) %}
     <div {{ block('block_attributes') }}>
         <%= street %>, <%= city %>, <%= postalCode %>, <%= combinedCode %>
     </div>
 {% endblock %}
 
 {% block _account_address_book_addresses_list_template_item_label_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': " address-list__label"}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': " address-list__label"}) %}
     <% if (primary) { %>
         <div {{ block('block_attributes') }}><%= _.escape(label) %></div>
     <% } %>
 {% endblock %}
 
 {% block _account_address_book_addresses_list_template_item_type_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': " address-list__type"}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': " address-list__type"}) %}
     <div {{ block('block_attributes') }}>
         <% _.each(types, function(type) { %>
         <div><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('orob2b.account.address.default_type', {type_name: _.escape(type.label)}) : _.escape(type.label) %></div>
@@ -77,19 +77,19 @@
 {% endblock %}
 
 {% block _account_address_book_addresses_list_template_item_actions_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': " address-list__actions actions"}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': " address-list__actions actions"}) %}
     <nav {{ block('block_attributes') }}>{{ block_widget(block) }}</nav>
 {% endblock %}
 
 {% block _account_address_book_addresses_list_template_item_actions_edit_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': " address-list__button item-edit-button"}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': " address-list__button item-edit-button"}) %}
     <button {{ block('block_attributes') }}>
         <i class="cf-pencil cf--no-offset"></i>
     </button>
 {% endblock %}
 
 {% block _account_address_book_addresses_list_template_item_actions_remove_widget %}
-    {% set attr = layout_attr_merge(attr, {'~class': " address-list__button item-remove-button"}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': " address-list__button item-remove-button"}) %}
     <button {{ block('block_attributes') }}>
         <i class="cf-trash cf--no-offset"></i>
     </button>
@@ -108,7 +108,7 @@
 {% endblock %}
 
 {% block _account_address_book_user_addresses_list_widget %}
-    {% set attr = layout_attr_merge(attr, {
+    {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'orob2baccount/js/app/components/frontend-account-address-book-component',
         'data-page-component-options': componentOptions|merge({
             template: '#account-address-book-user-addresses-list-template'
@@ -121,7 +121,7 @@
 {% endblock %}
 
 {% block _account_address_book_user_addresses_list_template_widget %}
-    {% set attr = layout_attr_merge(attr, {
+    {% set attr = layout_attr_defaults(attr, {
         id: 'account-address-book-user-addresses-list-template'
     }) %}
     {{ block('_account_address_book_addresses_list_template_widget') }}

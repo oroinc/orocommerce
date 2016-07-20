@@ -1204,6 +1204,35 @@ datagrid:
                 type: twig
                 frontend_type: html
                 template: OroB2BAccountBundle:Address:Frontend/Datagrid/types.html.twig
+        sorters:
+            columns:
+                street:
+                    data_name: street
+                city:
+                    data_name: city
+                state:
+                    data_name: state
+                zip:
+                    data_name: zip
+                countryName:
+                    data_name: countryName
+        filters:
+            columns:
+                street:
+                    type:      string
+                    data_name: street
+                city:
+                    type:      string
+                    data_name: city
+                state:
+                    type:      string
+                    data_name: state
+                zip:
+                    type:      string
+                    data_name: zip
+                countryName:
+                    type:      string
+                    data_name: countryName
         actions:
             show_map:
                 type:          map
