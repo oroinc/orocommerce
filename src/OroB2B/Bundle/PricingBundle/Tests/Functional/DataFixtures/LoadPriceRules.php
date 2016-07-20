@@ -25,7 +25,7 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
             'currency' => 'USD',
             'priceList' => 'price_list_1',
             'productUnit' => 'product_unit.milliliter',
-            'ruleCondition' => 'product.category.id == 1',
+            'ruleCondition' => 'product.category.id == 1 and product.status == "enabled"',
             'rule' => 'product.msrp.value + 10',
             'priority' => 1,
         ]

@@ -26,9 +26,8 @@ class LoadPriceRuleLexemes extends AbstractFixture implements DependentFixtureIn
             'reference' => 'price_list_1_lexeme_2',
             'priceList' => 'price_list_1',
             'priceRule' => 'price_list_1_price_rule_1',
-            'className' => 'OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
-            'fieldName' => 'value',
-            'reference_entity' => 'price_attribute_price_list_1'
+            'className' => 'OroB2B\Bundle\ProductBundle\Entity\Product',
+            'fieldName' => 'status',
         ]
     ];
 
@@ -48,7 +47,7 @@ class LoadPriceRuleLexemes extends AbstractFixture implements DependentFixtureIn
                 ->setPriceRule($priceRule);
 
             if (isset($lexeme['reference_entity'])) {
-                $lexemeEntity->setRelationId($this->getReference('price_list_1_price_rule_1')->getId());
+                $lexemeEntity->setRelationId($this->getReference($lexeme['reference_entity'])->getId());
             }
 
             $manager->persist($lexemeEntity);

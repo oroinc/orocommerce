@@ -660,11 +660,6 @@ services:
             - '@oro_config.global'
             - '@oro_entity.orm.insert_from_select_query_executor'
 
-    orob2b_pricing.triggers_filler.price_rule_change_triggers_filler:
-        class: 'OroB2B\Bundle\PricingBundle\TriggersFiller\PriceRuleChangeTriggersFiller'
-        arguments:
-            - '@doctrine'
-
     orob2b_pricing.duplicator.schedule:
         class: 'OroB2B\Bundle\PricingBundle\Duplicator\ScheduleDuplicator'
 
@@ -771,3 +766,13 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@orob2b_pricing.expression.parser'
             - '@orob2b_pricing.provider.price_rule_fields_provider'
+
+    orob2b_pricing.listener.orm.product_listener:
+        class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\ProductEntityListener'
+        public: false
+        arguments:
+            - '@oro_b2bentity.extra_insert_entity_storage'
+            - '@doctrine'
+            - '@orob2b_pricing.provider.price_rule_fields_provider'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_product.entity.product.class%', event: preUpdate }
