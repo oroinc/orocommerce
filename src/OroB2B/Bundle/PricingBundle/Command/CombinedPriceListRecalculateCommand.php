@@ -58,7 +58,7 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
                 []
             )
             ->addOption(
-                self::PRICE_LIST, //наумова 66 17-00  093-992-92-61  волгоградская 11 19    093-441-21 21
+                self::PRICE_LIST,
                 null,
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 'price list ids for prices recalculate',
