@@ -13,6 +13,11 @@ use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServerRenderDataProvider
 {
     /**
+     * @var array
+     */
+    protected $data = [];
+
+    /**
      * @var ShoppingListManager
      */
     protected $shoppingListManager;
@@ -37,33 +42,56 @@ class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServe
      */
     public function getData(ContextInterface $context)
     {
+        /** @var Product $product */
         $product = $context->data()->get('product');
         if (!$product) {
             return null;
         }
 
-        $shoppingList = $this->shoppingListManager->getCurrent();
-        if (!$shoppingList) {
-            return null;
-        }
+        $this->setProductsShoppingLists([$product]);
 
-        return $this->getProductUnitsQuantity($shoppingList, $product);
+        return $this->data[$product->getId()];
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param Product $product
-     * @return array
-     */
-    protected function getProductUnitsQuantity(ShoppingList $shoppingList, Product $product)
+    public function getProductsShoppingLists($products)
     {
-        $items = $this->lineItemRepository->getItemsByShoppingListAndProduct($shoppingList, $product);
-        $units = [];
+        $this->setProductsShoppingLists($products);
+        $productsUnits = [];
 
-        foreach ($items as $item) {
-            $units[$item->getProductUnitCode()] = $item->getQuantity();
+        foreach ($products as $product) {
+            $productId = $product->getId();
+            if ($this->data[$productId]) {
+                $productsUnits[$productId] = $this->data[$productId];
+            }
         }
 
-        return $units;
+        return $productsUnits;
+    }
+
+    protected function setProductsShoppingLists($products)
+    {
+        $products = array_filter($products, function ($product) {
+            return !array_key_exists($product->getId(), $this->data);
+        });
+        if (!$products) {
+            return;
+        }
+
+        $shoppingList = $this->shoppingListManager->getCurrent();
+        if (!$shoppingList) {
+            return;
+        }
+
+        $items = $this->lineItemRepository->getItemsByShoppingListAndProducts($shoppingList, $products);
+        $productsUnits = [];
+
+        foreach ($items as $item) {
+            $productsUnits[$item->getProduct()->getId()][$item->getProductUnitCode()] = $item->getQuantity();
+        }
+
+        foreach ($products as $product) {
+            $productId = $product->getId();
+            $this->data[$productId] = isset($productsUnits[$productId]) ? $productsUnits[$productId] : [];
+        }
     }
 }

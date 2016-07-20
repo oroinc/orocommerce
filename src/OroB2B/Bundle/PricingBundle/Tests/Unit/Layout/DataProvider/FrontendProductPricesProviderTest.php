@@ -76,7 +76,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
                           ->disableOriginalConstructor()
                           ->getMock();
 
-        $product->expects($this->once())
+        $product->expects($this->any())
             ->method('getId')
             ->willReturn($productId);
 
