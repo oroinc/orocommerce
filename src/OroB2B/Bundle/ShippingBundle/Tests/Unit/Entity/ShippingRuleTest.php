@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingDestination;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 
 class ShippingRulesTest extends \PHPUnit_Framework_TestCase
@@ -23,6 +24,13 @@ class ShippingRulesTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertPropertyAccessors(new ShippingRule(), $properties);
+    }
+
+    public function testRelations()
+    {
+        $this->assertPropertyCollections(new ShippingRule(), [
+            ['shippingDestinations', new ShippingDestination()],
+        ]);
     }
 
     public function testToString()

@@ -29,10 +29,12 @@ class OroB2BShippingBundleInstaller implements Installation
         $this->createOrob2BShippingProductOptsTable($schema);
         $this->createOrob2BShippingWeightUnitTable($schema);
         $this->createOrob2BShippingRuleTable($schema);
+        $this->createOrob2BShippingDestinationTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BShippingOrigWarehouseForeignKeys($schema);
         $this->addOrob2BShippingProductOptsForeignKeys($schema);
+        $this->addOrob2BShippingDestinationForeignKeys($schema);
     }
 
     /**
@@ -142,7 +144,23 @@ class OroB2BShippingBundleInstaller implements Installation
         $table->addColumn('sort_order', 'integer', ['notnull' => true]);
         $table->addColumn('conditions', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['name', 'sort_order']);
+        $table->addUniqueIndex(['name']);
+    }
+
+    /**
+     * Create orob2b_shipping_destination table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BShippingDestinationTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_shipping_destination');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
+        $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
+        $table->addColumn('postal_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('shipping_rule_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -210,6 +228,34 @@ class OroB2BShippingBundleInstaller implements Installation
             ['weight_unit_code'],
             ['code'],
             ['onDelete' => null, 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_shipping_destination foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BShippingDestinationForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_shipping_destination');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_country'),
+            ['country_code'],
+            ['iso2_code'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_region'),
+            ['region_code'],
+            ['combined_code'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_shipping_rule'),
+            ['shipping_rule_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -10,9 +12,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use OroB2B\Bundle\ShippingBundle\Model\ExtendShippingRule;
 
 /**
- * @ORM\Table(
- *      name="orob2b_shipping_rule",
- * )
+ * @ORM\Entity
+ * @ORM\Table(name="orob2b_shipping_rule")
+ * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      routeName="orob2b_shipping_rule_index",
  *      routeView="orob2b_shipping_rule_view",
@@ -31,7 +33,6 @@ use OroB2B\Bundle\ShippingBundle\Model\ExtendShippingRule;
  *          }
  *      }
  * )
- * @ORM\HasLifecycleCallbacks()
  */
 class ShippingRule extends ExtendShippingRule
 {
@@ -103,11 +104,11 @@ class ShippingRule extends ExtendShippingRule
      *  )
      */
     protected $sortOrder;
-    
+
     /**
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -120,13 +121,20 @@ class ShippingRule extends ExtendShippingRule
      *  )
      */
     protected $conditions;
-    
+
+    /**
+     * @var Collection|ShippingDestination[]
+     *
+     * @ORM\OneToMany(targetEntity="ShippingDestination", mappedBy="shippingRule", cascade={"ALL"}, orphanRemoval=true)
+     */
+    protected $shippingDestinations;
+
     /**
      * {@inheritdoc}
      */
     public function __construct()
     {
-        parent::__construct();
+        $this->shippingDestinations = new ArrayCollection();
     }
 
     /**
@@ -235,5 +243,41 @@ class ShippingRule extends ExtendShippingRule
     public function __toString()
     {
         return (string)$this->name;
+    }
+
+    /**
+     * @return Collection|ShippingDestination[]
+     */
+    public function getShippingDestinations()
+    {
+        return $this->shippingDestinations;
+    }
+
+    /**
+     * @param ShippingDestination $shippingDestination
+     *
+     * @return $this
+     */
+    public function addShippingDestination(ShippingDestination $shippingDestination)
+    {
+        if (!$this->shippingDestinations->contains($shippingDestination)) {
+            $this->shippingDestinations->add($shippingDestination);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ShippingDestination $shippingDestination
+     *
+     * @return $this
+     */
+    public function removeShippingDestination(ShippingDestination $shippingDestination)
+    {
+        if ($this->shippingDestinations->contains($shippingDestination)) {
+            $this->shippingDestinations->removeElement($shippingDestination);
+        }
+
+        return $this;
     }
 }
