@@ -121,7 +121,7 @@ class StartCheckoutTest extends WebTestCase
             $context->offsetGet('redirectUrl'),
             $this->client->getContainer()->get('router')->generate(
                 'orob2b_checkout_frontend_checkout',
-                ['id' => $workflowItem->getId()]
+                ['id' => $checkout->getId()]
             )
         );
     }
