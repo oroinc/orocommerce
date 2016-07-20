@@ -5,8 +5,6 @@ oro_api:
             fields:
                 productSku:
                     property_path: product.sku
-                warehouseName:
-                    property_path: warehouse.name
                 unit:
                     property_path: productUnitPrecision.unit.code
             filters:
