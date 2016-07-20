@@ -59,9 +59,7 @@ class PriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
         $repository = $this->getMockBuilder(PriceRuleChangeTriggerRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $priceRule = $this->getMock(PriceRule::class);
-        $priceRule->method('getPriceList')->willReturn(new PriceList());
-        $trigger = new PriceRuleChangeTrigger($priceRule);
+        $trigger = new PriceRuleChangeTrigger(new PriceList());
 
         $repository->method('getTriggersIterator')->willReturn([$trigger]);
         $manager->method('getRepository')->willReturn($repository);

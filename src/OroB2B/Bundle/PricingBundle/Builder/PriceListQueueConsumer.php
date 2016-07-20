@@ -46,12 +46,11 @@ class PriceListQueueConsumer
         $repository = $em->getRepository(PriceRuleChangeTrigger::class);
         $iterator = $repository->getTriggersIterator();
 
-        //TODO: use $trigger->getPriceList() as soon as it will be available
         foreach ($iterator as $trigger) {
             /** @var $trigger PriceRuleChangeTrigger */
-            $this->productAssignmentBuilder->buildByPriceList($trigger->getPriceRule()->getPriceList());
+            $this->productAssignmentBuilder->buildByPriceList($trigger->getPriceList());
             $this->productPriceBuilder->buildByPriceList(
-                $trigger->getPriceRule()->getPriceList(),
+                $trigger->getPriceList(),
                 $trigger->getProduct()
             );
             $em->remove($trigger);
