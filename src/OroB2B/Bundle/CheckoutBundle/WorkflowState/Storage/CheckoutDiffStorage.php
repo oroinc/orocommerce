@@ -2,8 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Storage;
 
-use Doctrine\ORM\EntityManager;
-
+use Oro\Bundle\EntityBundle\Exception\InvalidEntityException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
@@ -12,42 +11,48 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateReposito
 class CheckoutDiffStorage implements CheckoutDiffStorageInterface
 {
     /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
 
-    public function __construct(EntityManager $entityManager, DoctrineHelper $doctrineHelper)
+    /**
+     * @var string
+     */
+    protected $checkoutWorkflowStateEntity;
+
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     * @param string $checkoutWorkflowStateEntity
+     */
+    public function __construct(DoctrineHelper $doctrineHelper, $checkoutWorkflowStateEntity)
     {
-        $this->entityManager = $entityManager;
         $this->doctrineHelper = $doctrineHelper;
+        $this->checkoutWorkflowStateEntity = $checkoutWorkflowStateEntity;
     }
 
     /**
      * {@inheritdoc}
-     * @throws \Oro\Bundle\EntityBundle\Exception\InvalidEntityException
+     * @throws InvalidEntityException
      */
     public function addState($entity, array $data)
     {
         /** @var CheckoutWorkflowState $storageEntity */
-        $storageEntity = new CheckoutWorkflowState();
+        $storageEntity = new $this->checkoutWorkflowStateEntity;
         $storageEntity->setStateData($data);
         $storageEntity->setEntityClass($this->doctrineHelper->getEntityClass($entity));
         $storageEntity->setEntityId($this->doctrineHelper->getSingleEntityIdentifier($entity));
 
-        $this->entityManager->persist($storageEntity);
-        $this->entityManager->flush($storageEntity);
+        $em = $this->doctrineHelper->getEntityManager($storageEntity);
+
+        $em->persist($storageEntity);
+        $em->flush($storageEntity);
 
         return $storageEntity->getToken();
     }
 
     /**
      * {@inheritdoc}
-     * @throws \Oro\Bundle\EntityBundle\Exception\InvalidEntityException
+     * @throws InvalidEntityException
      */
     public function readState($entity, $token)
     {
@@ -62,7 +67,7 @@ class CheckoutDiffStorage implements CheckoutDiffStorageInterface
 
     /**
      * {@inheritdoc}
-     * @throws \Oro\Bundle\EntityBundle\Exception\InvalidEntityException
+     * @throws InvalidEntityException
      */
     public function deleteStates($entity)
     {
@@ -79,6 +84,6 @@ class CheckoutDiffStorage implements CheckoutDiffStorageInterface
      */
     protected function getRepository()
     {
-        return $this->entityManager->getRepository('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState');
+        return $this->doctrineHelper->getEntityRepositoryForClass($this->checkoutWorkflowStateEntity);
     }
 }

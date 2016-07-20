@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Storage;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -20,46 +20,29 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
     private $doctrineHelper;
 
     /**
-     * @var CheckoutWorkflowStateRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $entityRepository;
-
-    /**
-     * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $entityManager;
-
-    /**
      * @var CheckoutDiffStorage
      */
     private $storage;
 
     public function setUp()
     {
-        $this->entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storage = new CheckoutDiffStorage($this->entityManager, $this->doctrineHelper);
+        $this->storage = new CheckoutDiffStorage($this->doctrineHelper, self::STORAGE_ENTITY_CLASS);
     }
 
     /**
-     * @param CheckoutWorkflowState $item
-     * @param array $data
-     * @param int $entityId
+     * @param CheckoutWorkflowState $entity
      * @return bool
      */
-    public function assertStorageEntityPersisted($item, $data, $entityId)
+    public function assertStorageEntity(CheckoutWorkflowState $entity)
     {
-        /** @var CheckoutWorkflowState $item */
         $this->isInstanceOf(self::STORAGE_ENTITY_CLASS);
-        $this->assertEquals($data, $item->getStateData());
-        $this->assertEquals($entityId, $item->getEntityId());
-        $this->assertEquals('stdClass', $item->getEntityClass());
+        $this->assertEquals(['someKey' => 'someValue'], $entity->getStateData());
+        $this->assertEquals(7, $entity->getEntityId());
+        $this->assertEquals('stdClass', $entity->getEntityClass());
         return true;
     }
 
@@ -69,24 +52,27 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
         $entityId = 7;
         $data = ['someKey' => 'someValue'];
 
-        $this->setSingleEntityIdentifier($entityId);
+        $this->prepareSingleEntityIdentifier($entityId);
+        $this->prepareEntityClass('stdClass');
 
-        $that = $this;
-        $assertionCallback = function ($item) use ($that, $data, $entityId) {
-            return $that->assertStorageEntityPersisted($item, $data, $entityId);
-        };
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->getMock('\Doctrine\ORM\EntityManagerInterface');
 
-        $this->setEntityClass('stdClass');
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManager')
+            ->willReturn($em);
 
-        $this->entityManager
-            ->expects($this->once())
+        $em->expects($this->once())
             ->method('persist')
-            ->with($this->callback($assertionCallback));
+            ->with($this->callback(function (CheckoutWorkflowState $entity) {
+                return $this->assertStorageEntity($entity);
+            }));
 
-        $this->entityManager
-            ->expects($this->once())
+        $em->expects($this->once())
             ->method('flush')
-            ->with($this->callback($assertionCallback));
+            ->with($this->callback(function (CheckoutWorkflowState $entity) {
+                return $this->assertStorageEntity($entity);
+            }));
 
         $this->assertNotEmpty($this->storage->addState($entity, $data));
     }
@@ -97,21 +83,19 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
         $entity = new \stdClass();
         $token = 'unique_token_1';
 
-        $this->setSingleEntityIdentifier($entityId);
-        $this->setEntityClass('stdClass');
-        $this->setEntityRepository();
+        $this->prepareSingleEntityIdentifier($entityId);
+        $this->prepareEntityClass('stdClass');
+        $repository = $this->prepareEntityRepository();
 
         $expectedData = ['someKey' => 'someValue'];
         $storageEntity = $this->getMockBuilder(self::STORAGE_ENTITY_CLASS)
             ->getMock();
 
-        $storageEntity
-            ->expects($this->once())
+        $storageEntity->expects($this->once())
             ->method('getStateData')
             ->willReturn($expectedData);
 
-        $this->entityRepository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('getEntityByToken')
             ->with($entityId, get_class($entity), $token)
             ->willReturn($storageEntity);
@@ -125,12 +109,11 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
         $entity = new \stdClass();
         $token = 'unique_token_1';
 
-        $this->setSingleEntityIdentifier($entityId);
-        $this->setEntityClass('stdClass');
-        $this->setEntityRepository();
+        $this->prepareSingleEntityIdentifier($entityId);
+        $this->prepareEntityClass('stdClass');
+        $repository = $this->prepareEntityRepository();
 
-        $this->entityRepository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('getEntityByToken')
             ->with($entityId, get_class($entity), $token)
             ->willReturn(null);
@@ -143,12 +126,11 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
         $entityId = 7;
         $entity = new \stdClass();
 
-        $this->setSingleEntityIdentifier($entityId);
-        $this->setEntityClass('stdClass');
-        $this->setEntityRepository();
+        $this->prepareSingleEntityIdentifier($entityId);
+        $this->prepareEntityClass('stdClass');
+        $repository = $this->prepareEntityRepository();
 
-        $this->entityRepository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('deleteEntityStates')
             ->with($entityId, get_class($entity));
 
@@ -158,7 +140,7 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
     /**
      * @param int $id
      */
-    protected function setSingleEntityIdentifier($id)
+    protected function prepareSingleEntityIdentifier($id)
     {
         $this->doctrineHelper
             ->expects($this->once())
@@ -169,26 +151,29 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $class
      */
-    protected function setEntityClass($class)
+    protected function prepareEntityClass($class)
     {
         $this->doctrineHelper
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getEntityClass')
             ->willReturn($class);
     }
 
-    protected function setEntityRepository()
+    /**
+     * @return CheckoutWorkflowStateRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function prepareEntityRepository()
     {
-        $this->entityRepository = $this->getMockBuilder(
+        $repository = $this->entityRepository = $this->getMockBuilder(
             'OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->entityManager
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(self::STORAGE_ENTITY_CLASS)
-            ->willReturn($this->entityRepository);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepositoryForClass')
+            ->willReturn($repository);
+
+        return $repository;
     }
 }

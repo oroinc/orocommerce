@@ -87,6 +87,7 @@ class CheckoutWorkflowState implements DatesAwareInterface
     public function setToken($token)
     {
         $this->token = $token;
+
         return $this;
     }
 
@@ -102,9 +103,10 @@ class CheckoutWorkflowState implements DatesAwareInterface
      * @param array $stateData
      * @return $this
      */
-    public function setStateData($stateData)
+    public function setStateData(array $stateData)
     {
         $this->stateData = $stateData;
+
         return $this;
     }
 
@@ -123,6 +125,7 @@ class CheckoutWorkflowState implements DatesAwareInterface
     public function setEntityId($entityId)
     {
         $this->entityId = (int)$entityId;
+
         return $this;
     }
 
@@ -141,6 +144,7 @@ class CheckoutWorkflowState implements DatesAwareInterface
     public function setEntityClass($entityClass)
     {
         $this->entityClass = $entityClass;
+
         return $this;
     }
 }

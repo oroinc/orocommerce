@@ -2,6 +2,7 @@ parameters:
     orob2b_checkout.entity.base_checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout
     orob2b_checkout.entity.checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
     orob2b_checkout.entity.checkout_source.class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
+    orob2b_checkout.entity.checkout_workflow_state.class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState
 
 services:
     # Data Providers
@@ -181,7 +182,8 @@ services:
             - { name: layout.data_provider, alias: orob2b_checkout_separate_open_orders }
 
     orob2b_checkout.workflow_state.storage.checkout_state_diff_storage:
-        class: OroB2B\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorage
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorage'
+        pablic: false
         arguments:
-            - '@doctrine.orm.entity_manager'
             - '@oro_entity.doctrine_helper'
+            - '%orob2b_checkout.entity.checkout_workflow_state.class%'
