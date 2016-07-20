@@ -26,7 +26,7 @@ workflows:
             payment_method:
                 property_path: checkout.paymentMethod
             request_approval_notes:
-                property_path: checkout.requestApprovalNotes
+                type: string
                 label: Notes
             billing_address_has_shipping:
                 type: boolean
@@ -55,6 +55,17 @@ workflows:
             edit_order_link:
                 type: string
                 label: Edit Order Link
+            allowed:
+                type: bool
+                label: Is checkout approved
+            allow_request_date:
+                type: object
+                label: Data of approving
+                options:
+                    class: DateTime
+            requested_for_approve:
+                type: bool
+                label: Is requested for approve
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -230,7 +241,7 @@ workflows:
                         request_approval_notes:
                             form_type: textarea
                             options:
-                                data: $checkout.requestApprovalNotes
+                                data: $request_approval_notes
 
             back_to_billing_address:
                 label: Edit Billing Information
@@ -324,8 +335,8 @@ workflows:
                 post_actions:
                     - '@assign_value':
                         conditions:
-                            '@equal': [$checkout.allowed, true]
-                        parameters: [$checkout.allowed, false]
+                            '@equal': [$allowed, true]
+                        parameters: [$allowed, false]
             back_to_billing_address_definition:
                 post_actions:
                     - '@assign_value': [$billing_address_has_shipping, true]
@@ -437,7 +448,7 @@ workflows:
                         message: "Pending approval"
                         parameters:
                             - '@less_order_total_limit': [$checkout, 5000]
-                            - '@equal': [$checkout.allowed, true]
+                            - '@equal': [$allowed, true]
                             - '@acl_granted': 'orob2b_alternativecheckout_checkout_approve'
                 post_actions:
                     - '@assign_value':
@@ -476,7 +487,7 @@ workflows:
                         attribute: $.result.lineItems
                         checkout: $checkout
                     - '@call_method':
-                        object:  $.result.order
+                        object: $.result.order
                         method: setLineItems
                         method_parameters:
                             - $.result.lineItems
@@ -484,8 +495,8 @@ workflows:
                         service: orob2b_order.handler.order_totals_handler
                         method: fillSubtotals
                         method_parameters:
-                            -  $.result.order
-                    - '@flush_entity':  $.result.order
+                            - $.result.order
+                    - '@flush_entity': $.result.order
 
                     # Save billing address if required
                     - '@assign_constant_value': [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
@@ -630,27 +641,27 @@ workflows:
                             - '@acl_granted': 'orob2b_alternativecheckout_checkout_approve'
                         - '@not':
                             - '@less_order_total_limit': [$checkout, 5000]
-                        - '@equal': [$checkout.allowed, false]
+                        - '@equal': [$allowed, false]
 
             request_for_approve_order_definition:
                 post_actions:
                     - '@assign_value':
                         conditions:
-                            '@equal': [$checkout.requestedForApprove, false]
-                        parameters: [$checkout.requestedForApprove, true]
+                            '@equal': [$requested_for_approve, false]
+                        parameters: [$requested_for_approve, true]
 
             approve_order_definition:
                 pre_conditions:
                     '@and':
                         - '@acl_granted': 'orob2b_alternativecheckout_checkout_approve'
-                        - '@equal': [$checkout.allowed, false]
+                        - '@equal': [$allowed, false]
                 post_actions:
                     - '@assign_value':
                         conditions:
-                            '@equal': [$checkout.allowed, false]
-                        parameters: [$checkout.allowed, true]
+                            '@equal': [$allowed, false]
+                        parameters: [$allowed, true]
                     - '@create_datetime':
-                        attribute: $checkout.allowRequestDate
+                        attribute: $allow_request_date
 
             continue_to_order_review_definition:
                 pre_conditions:
