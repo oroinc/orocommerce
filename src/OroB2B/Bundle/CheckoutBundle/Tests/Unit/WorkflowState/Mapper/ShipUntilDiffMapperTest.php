@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipUntilDiffMapper;
 
-class ShipUntillDiffMapperTest extends \PHPUnit_Framework_TestCase
+class ShipUntilDiffMapperTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ShipUntilDiffMapper

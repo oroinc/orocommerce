@@ -4,9 +4,9 @@ namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
-class ShipUntilDiffMapper implements CheckoutStateDiffMapperInterface
+class CustomerNotesDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'shipUntil';
+    const DATA_NAME = 'customerNotes';
 
     /**
      * {@inheritdoc}
@@ -26,11 +26,11 @@ class ShipUntilDiffMapper implements CheckoutStateDiffMapperInterface
 
     /**
      * @param Checkout $checkout
-     * @return \DateTime
+     * @return string
      */
     public function getCurrentState($checkout)
     {
-        return $checkout->getShipUntil();
+        return $checkout->getCustomerNotes();
     }
 
     /**
@@ -42,7 +42,6 @@ class ShipUntilDiffMapper implements CheckoutStateDiffMapperInterface
     {
         return
             isset($savedState[$this->getName()]) &&
-            $savedState[$this->getName()] instanceof \DateTimeInterface &&
-            $savedState[$this->getName()] === $checkout->getShipUntil();
+            $savedState[$this->getName()] === $checkout->getCustomerNotes();
     }
 }
