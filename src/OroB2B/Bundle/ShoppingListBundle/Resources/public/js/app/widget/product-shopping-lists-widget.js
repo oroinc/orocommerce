@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var ShoppingListsMultipleEditWidget;
+    var ProductShoppingListsWidget;
     var DialogWidget = require('oro/dialog-widget');
     var ElementsHelper = require('orob2bfrontend/js/app/elements-helper');
-    var ProductQuantityView = require('orob2bproduct/js/app/views/product-quantity-editable-view');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var __ = require('orotranslation/js/translator');
     var _ = require('underscore');
     var $ = require('jquery');
 
-    ShoppingListsMultipleEditWidget = DialogWidget.extend(_.extend({}, ElementsHelper, {
+    ProductShoppingListsWidget = DialogWidget.extend(_.extend({}, ElementsHelper, {
         options: $.extend(true, {}, DialogWidget.prototype.options, {
             preventModelRemoval: true,
             template: '',
@@ -20,31 +19,16 @@ define(function(require) {
                 resizable: false,
                 width: 580,
                 autoResize: true
-            },
-            quantityComponentOptions: {
-                dataKey: '',
-                enable: false,
-                elements: {
-                    quantity: '[name="product_qty"]',
-                    unit: '[name="product_unit"]'
-                },
-                save_api_accessor: {
-                    route: 'orob2b_api_shopping_list_frontend_put_line_item'
-                },
-                validation: {
-                    showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
-                }
             }
         }),
 
         elements: {
             edit: '[data-role="edit"]',
             decline: '[data-role="decline"]',
-            accept: '[data-name="shopping-list-accept"]',
+            accept: '[data-role="accept"]',
             controlsContainer: '[data-role="shopping-list"]',
-            unitsContainer: '[data-name="shopping-lists-units"]',
-            modifyContainer: '[data-name="shopping-lists-modify"]',
-            staticContainer: '[data-name="shopping-lists-static"]'
+            modifyContainer: '[data-role="shopping-lists-modify"]',
+            staticContainer: '[data-role="shopping-lists-static"]'
         },
 
         elementsEvents: {
@@ -75,11 +59,10 @@ define(function(require) {
             this.options.url = options.url = false;
             this.options.template = options.template = _.template(this.options.template);
 
-            this.route = this.options.quantityComponentOptions.save_api_accessor.route;
-
             mediator.on('frontend:item:delete',  this.onLineItemDelete, this);
+            mediator.on('product:quantity-unit:update', this.onLineItemUpdate, this);
 
-            ShoppingListsMultipleEditWidget.__super__.initialize.apply(this, arguments);
+            ProductShoppingListsWidget.__super__.initialize.apply(this, arguments);
         },
 
         initModel: function(options) {
@@ -97,17 +80,17 @@ define(function(require) {
 
         dispose: function() {
             this.disposeElements();
-            ShoppingListsMultipleEditWidget.__super__.dispose.apply(this, arguments);
+            ProductShoppingListsWidget.__super__.dispose.apply(this, arguments);
         },
 
         delegateEvents: function() {
-            ShoppingListsMultipleEditWidget.__super__.delegateEvents.apply(this, arguments);
+            ProductShoppingListsWidget.__super__.delegateEvents.apply(this, arguments);
             this.delegateElementsEvents();
         },
 
         undelegateEvents: function() {
             this.undelegateElementsEvents();
-            return ShoppingListsMultipleEditWidget.__super__.undelegateEvents.apply(this, arguments);
+            return ProductShoppingListsWidget.__super__.undelegateEvents.apply(this, arguments);
         },
 
         render: function() {
@@ -124,7 +107,7 @@ define(function(require) {
                 productUnits: this.model.get('product_units')
             })));
 
-            return ShoppingListsMultipleEditWidget.__super__.render.apply(this, arguments);
+            return ProductShoppingListsWidget.__super__.render.apply(this, arguments);
         },
 
         onLineItemDelete: function(deleteData) {
@@ -142,51 +125,22 @@ define(function(require) {
             this.model.trigger('change:shopping_lists');
         },
 
-        edit: function(e) {
-            var $target = $(e.currentTarget);
-            var $units = $target
-                            .closest(this.elements.controlsContainer)
-                            .find(this.elements.unitsContainer);
+        onLineItemUpdate: function(updateData) {
+            var updatedShoppingLists = this.updateShoppingLists(
+                    this.model.get('shopping_lists'),
+                    updateData.shoppingListId,
+                    updateData.lineItemId,
+                    updateData.data
+                );
 
-            _.each($units, function(unit) {
-                var lineItemId = $(unit).data('line-item-id');
-                var shoppingListId = $(unit).data('shopping-list-id');
-
-                this.options.quantityComponentOptions.save_api_accessor = {
-                    default_route_parameters: {
-                        id: lineItemId
-                    },
-                    route: this.route
-                };
-
-                var productQuantityView = new ProductQuantityView(_.extend({
-                    el: $(unit),
-                    model: this.model,
-                    $trigger: $units.find(this.elements.accept)
-                }, this.options.quantityComponentOptions));
-
-                this.listenTo(productQuantityView, 'product:quantity-unit:update',
-                    _.bind(this.onLineItemUpdate(e, lineItemId, shoppingListId), this));
-            }, this);
-
-            this.toggleEditMode(e, 'enable');
-        },
-
-        onLineItemUpdate: function(e, lineItemId, shoppingListId) {
-            return function(response) {
-                _.extend(response, {'line_item_id': lineItemId});
-                var oldShoppingLists = this.model.get('shopping_lists');
-                var newShoppingLists = this.updateShoppingLists(oldShoppingLists, shoppingListId, lineItemId, response);
-
-                this.model.set('shopping_lists', newShoppingLists);
-                this.model.trigger('change:shopping_lists');
-                this.toggleEditMode(e, 'disable');
-            };
+            this.model.set('shopping_lists', updatedShoppingLists);
+            this.model.trigger('change:shopping_lists');
+            this.toggleEditMode(updateData.event, 'disable');
         },
 
         updateShoppingLists: function(shoppingLists, shoppingListId, lineItemId, newLineItem) {
             return _.map(shoppingLists, function(list) {
-                if (list.hasOwnProperty('shopping_list_id') && list.shopping_list_id === shoppingListId) {
+                if (list.hasOwnProperty('shopping_list_id') && list.shopping_list_id === parseInt(shoppingListId)) {
                     list.line_items = this.updateLineItems(list.line_items, lineItemId, newLineItem);
                 }
                 return list;
@@ -195,7 +149,7 @@ define(function(require) {
 
         updateLineItems: function(lineItems, lineItemId, newLineItem) {
             return _.map(lineItems, function(item) {
-                if (item.hasOwnProperty('line_item_id') && item.line_item_id === lineItemId) {
+                if (item.hasOwnProperty('line_item_id') && item.line_item_id === parseInt(lineItemId)) {
                     item.unit = newLineItem.unit;
                     item.quantity = newLineItem.quantity;
                 }
@@ -227,10 +181,14 @@ define(function(require) {
             }
         },
 
+        edit: function(e) {
+            this.toggleEditMode(e, 'enable');
+        },
+
         decline: function(e) {
             this.toggleEditMode(e, 'disable');
         }
     }));
 
-    return ShoppingListsMultipleEditWidget;
+    return ProductShoppingListsWidget;
 });

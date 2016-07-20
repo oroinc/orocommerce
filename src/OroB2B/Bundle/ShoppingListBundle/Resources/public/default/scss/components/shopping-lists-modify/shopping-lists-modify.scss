@@ -15,8 +15,13 @@
     }
 
     &__badges {
+        position: absolute;
+        top: 50%;
+
         visibility: hidden;
         opacity: 0;
+
+        transform: translateY(-50%);
     }
 
     &__text {

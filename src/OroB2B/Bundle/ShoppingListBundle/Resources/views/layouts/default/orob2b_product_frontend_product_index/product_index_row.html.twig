@@ -127,102 +127,130 @@
                     <a class="shopping-lists-popup__link" href="#"><%= list.shopping_list_label %></a>
                 </td>
                 <td class="shopping-lists-popup__quantity">
-                                <% var ListLineItems = list.line_items; %>
-                                <% if (!_.isEmpty(ListLineItems)) { %>
-                                <% _.each(ListLineItems, function(lineItem, i) { %>
-                    <div class="shopping-lists-units"
-                    data-name="shopping-lists-units"
-                                     data-shopping-list-id="<%= list.shopping_list_id %>"
-                                     data-line-item-id="<%= lineItem.line_item_id %>">
-                                     <form action="#">
-                                        <div class="shopping-lists-static"
-                                             data-name="shopping-lists-static">
-                        <span class="shopping-lists-units__number"><%= lineItem.quantity %></span>
-                        <span class="shopping-lists-units__separate">/</span>
-                        <span class="shopping-lists-units__measurements"><%= _.__(
-                            'orob2b.product.product_unit.' + lineItem.unit + '.value.short',
-                            {count: lineItem.quantity},
-                            lineItem.quantity
-                        ) %></span>
-                        <div class="shopping-lists-units__actions">
-                            <ul class="actions-row">
-                                <li class="actions-row__item actions-row__item--edit">
-                                    <button class="actions-row__button" type="button" title="Edit" data-role="edit">
-                                        <i class="actions-row__icon cf-pencil"></i>
-                                    </button>
-                                </li>
-                                <li class="actions-row__item actions-row__item--separate">|</li>
-                                <li class="actions-row__item actions-row__item--remove">
-                                    <button class="actions-row__button" type="button" title="Remove"
-                                            {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
-                                                module: 'orob2bfrontend/js/app/components/delete-item-component',
-                                                options: {
-                                                    route: 'orob2b_api_shopping_list_frontend_delete_line_item',
-                                                    routeParams: {
-                                                        id: '<%= lineItem.line_item_id %>'
-                                                    },
-                                                    triggerData: {
-                                                        lineItemId: '<%= lineItem.line_item_id %>'
-                                                    },
-                                                    removeClass: 'shopping-lists-popup__item',
-                                                    confirmMessage: 'orob2b.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
-                                                    sucsessMessage: 'orob2b.frontend.shoppinglist.messages.line_item_deleted'|trans,
-                                                    okButtonClass: 'btn ok theme-btn_sm btn-orange',
-                                                    cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
-                                                }
-                                            })) }}>
-                                            <i class="actions-row__icon cf-trash"></i>
-                                    </button>
-                                </li>
-                            </ul>
+                    <% var ListLineItems = list.line_items; %>
+                    <% if (!_.isEmpty(ListLineItems)) { %>
+                    <% _.each(ListLineItems, function(lineItem, i) { %>
+                        <div class="shopping-lists-units"
+                            {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
+                                module: 'oroui/js/app/components/view-component',
+                                options: {
+                                    view: 'orob2bshoppinglist/js/app/views/line-item-view',
+                                    modelAttr: '<%= shoppingLists %>',
+                                    lineItemId: '<%= lineItem.line_item_id %>',
+                                    quantityComponentOptions: {
+                                        dataKey: constant('OroB2B\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
+                                        enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                                        elements: {
+                                            trigger: '[data-role="accept"]',
+                                            quantity: '[name="product_qty"]',
+                                            unit: '[name="product_unit"]'
+                                        },
+                                        save_api_accessor: {
+                                            default_route_parameters: {
+                                                id: '<%=lineItem.line_item_id %>'
+                                            },
+                                            route: 'orob2b_api_shopping_list_frontend_put_line_item'
+                                        },
+                                        validation: {
+                                            showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
+                                        },
+                                        triggerData: {
+                                            lineItemId: '<%= lineItem.line_item_id %>',
+                                            shoppingListId: '<%= list.shopping_list_id %>'
+                                        }
+                                    }
+                                },
+                                layout: 'separate'
+                            })) }}>
+                            <form action="#">
+                                <div class="shopping-lists-static"
+                                     data-role="shopping-lists-static">
+                                    <span class="shopping-lists-units__number"><%= lineItem.quantity %></span>
+                                    <span class="shopping-lists-units__separate">/</span>
+                                    <span class="shopping-lists-units__measurements"><%= _.__(
+                                        'orob2b.product.product_unit.' + lineItem.unit + '.value.short',
+                                        {count: lineItem.quantity},
+                                        lineItem.quantity
+                                    ) %></span>
+                                    <div class="shopping-lists-units__actions">
+                                        <ul class="actions-row">
+                                            <li class="actions-row__item actions-row__item--edit">
+                                                <button class="actions-row__button" type="button" title="Edit" data-role="edit">
+                                                    <i class="actions-row__icon cf-pencil"></i>
+                                                </button>
+                                            </li>
+                                            <li class="actions-row__item actions-row__item--separate">|</li>
+                                            <li class="actions-row__item actions-row__item--remove">
+                                                <button class="actions-row__button" type="button" title="Remove"
+                                                        {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
+                                                            module: 'orob2bfrontend/js/app/components/delete-item-component',
+                                                            options: {
+                                                                route: 'orob2b_api_shopping_list_frontend_delete_line_item',
+                                                                routeParams: {
+                                                                    id: '<%= lineItem.line_item_id %>'
+                                                                },
+                                                                triggerData: {
+                                                                    lineItemId: '<%= lineItem.line_item_id %>'
+                                                                },
+                                                                removeClass: 'shopping-lists-popup__item',
+                                                                confirmMessage: 'orob2b.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
+                                                                sucsessMessage: 'orob2b.frontend.shoppinglist.messages.line_item_deleted'|trans,
+                                                                okButtonClass: 'btn ok theme-btn_sm btn-orange',
+                                                                cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
+                                                            }
+                                                        })) }}>
+                                                        <i class="actions-row__icon cf-trash"></i>
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <ul class="shopping-lists-modify hidden"
+                                    data-role="shopping-lists-modify">
+                                    <li class="shopping-lists-modify__text">
+                                        <input class="shopping-lists-modify__input input input_xs"
+                                               type="number"
+                                               value="<%= lineItem.quantity %>"
+                                               name="product_qty"
+                                               data-name="field__quantity"
+                                               disabled="disabled" required>
+                                    </li>
+                                    <li class="shopping-lists-modify__select">
+                                        <select class="oro-select2 oro-select2--size-s" name="product_unit"
+                                                data-name="field__unit" required>
+                                            <% _.each(productUnits, function(unit) { %>
+                                                <% if (unit === lineItem.unit) { %>
+                                                    <option value="<%= unit %>" selected="selected"><%= unit %></option>
+                                                <% } else { %>
+                                                    <option value="<%= unit %>"><%= unit %></option>
+                                                <% } %>
+                                            <% }); %>
+                                        </select>
+                                    </li>
+                                    <li class="shopping-lists-modify__badges">
+                                        <span class="shopping-lists-modify__edit">
+                                            <button class="shopping-lists-modify__button badge badge_sm badge_orange badge_circled-corners"
+                                                    type="button"
+                                                    title="Accept"
+                                                    disabled
+                                                    data-role="accept">
+                                                    <i class="shopping-lists-modify__icon cf-check"></i>
+                                            </button>
+                                        </span>
+                                        <span class="shopping-lists-modify__edit">
+                                            <button class="shopping-lists-modify__button badge badge_sm badge_l-dark badge_circled-corners"
+                                                    type="button"
+                                                    title="Cancel"
+                                                    data-role="decline">
+                                                    <i class="shopping-lists-modify__icon cf-clear"></i>
+                                            </button>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </form>
                         </div>
-                    </div>
-                        <ul class="shopping-lists-modify hidden"
-                        data-name="shopping-lists-modify">
-                            <li class="shopping-lists-modify__text">
-                                <input class="shopping-lists-modify__input input input_xs"
-                                    type="number"
-                                                       value="<%= lineItem.quantity %>"
-                                                       name="product_qty"
-                                                       data-name="field__quantity"
-                                                       disabled="disabled" required>
-                            </li>
-                            <li class="shopping-lists-modify__select">
-                                <select class="oro-select2 oro-select2--size-s" name="product_unit"
-                                                        data-name="field__unit" required>
-                                    <% _.each(productUnits, function(unit) { %>
-                                                        <% if (unit === lineItem.unit) { %>
-                                                            <option value="<%= unit %>" selected="selected"><%= unit %></option>
-                                                        <% } else { %>
-                                                            <option value="<%= unit %>"><%= unit %></option>
-                                                        <% } %>
-                                                    <% }); %>
-                                </select>
-                            </li>
-                            <li class="shopping-lists-modify__badges">
-                                <span class="shopping-lists-modify__edit">
-                                    <button class="shopping-lists-modify__button badge badge_sm badge_orange badge_circled-corners"
-                                            type="button"
-                                            title="Apply"
-                                            disabled
-                                            data-name="shopping-list-accept">
-                                            <i class="shopping-lists-modify__icon cf-check"></i>
-                                    </button>
-                                </span>
-                                <span class="shopping-lists-modify__edit">
-                                    <button class="shopping-lists-modify__button badge badge_sm badge_l-dark badge_circled-corners"
-                                            type="button"
-                                            title="Cancel"
-                                            data-role="decline">
-                                            <i class="shopping-lists-modify__icon cf-clear"></i>
-                                    </button>
-                                </span>
-                            </li>
-                        </ul>
-                        </form>
-                    </div>
                     <% }); %>
-                                <% } %>
+                    <% } %>
                 </td>
             </tr>
             <% }); %>

@@ -25,6 +25,7 @@ define(function(require) {
                 preventWindowUnload: __('oro.form.inlineEditing.inline_edits')
             },
             elements: {
+                trigger: '[data-role$="[accept]"]',
                 quantity: '[name$="[quantity]"]',
                 unit: '[name$="[unit]"]'
             },
@@ -64,6 +65,7 @@ define(function(require) {
             this.dataKey = options.dataKey;
             this.quantityFieldName = options.quantityFieldName;
             this.unitFieldName = options.unitFieldName;
+            this.triggerData = options.triggerData || null;
 
             this.initElements(options);
 
@@ -74,13 +76,10 @@ define(function(require) {
 
         initElements: function(options) {
             this.elements = {
+                trigger: this.$el.find(options.elements.trigger),
                 quantity: this.$el.find(options.elements.quantity),
                 unit: this.$el.find(options.elements.unit)
             };
-
-            if (options.$trigger) {
-                this.$trigger = options.$trigger;
-            }
 
             this.elements.unit.prop('disabled', false);
             if (!this.elements.unit.find(':selected').is(':disabled')) {
@@ -92,7 +91,7 @@ define(function(require) {
         },
 
         enableAccept: function() {
-            this.$trigger.prop('disabled', false);
+            this.elements.trigger.prop('disabled', false);
         },
 
         enableQuantity: function() {
@@ -133,11 +132,10 @@ define(function(require) {
         },
 
         initListeners: function() {
-            if (this.$trigger) {
-                this.$trigger.on('click', _.bind(this.onViewChange, this));
+            if (this.elements.trigger) {
+                this.elements.trigger.on('click', _.bind(this.onViewChange, this));
                 this.$el.on('change', this.elements.quantity, _.bind(this.enableAccept, this));
                 this.$el.on('change', this.elements.unit, _.bind(this.enableAccept, this));
-
                 return;
             }
 
@@ -154,11 +152,12 @@ define(function(require) {
             this.elements.unit.val(this.oldModelState.unit).change();
         },
 
-        onViewChange: function() {
+        onViewChange: function(e) {
             if (!this.isValid()) {
                 return;
             }
 
+            this.triggerData.event = e;
             this.enableQuantity();
             this.saveChanges();
         },
@@ -223,7 +222,10 @@ define(function(require) {
                 'product:quantity-unit:update',
                 this.getValue()
             );
+            this.triggerData.data = response;
+
             mediator.execute('showFlashMessage', 'success', this.messages.success);
+            mediator.trigger('product:quantity-unit:update', this.triggerData || e);
         },
 
         onSaveError: function(jqXHR) {
