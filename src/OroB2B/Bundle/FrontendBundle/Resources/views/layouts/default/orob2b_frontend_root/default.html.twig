@@ -1,0 +1,37 @@
+{% block _heero_promo_widget %}
+    <div class="heero-promo">
+        {% set attr = layout_attr_defaults(attr, {
+            'data-page-component-options': {
+                autoplaySpeed: 4000,
+                arrowsNav: false,
+                dotsNav: true
+            }
+        }) %}
+
+        {{ block_widget(block, {attr: attr}) }}
+    </div>
+{% endblock %}
+
+{% block _featured_categories_widget %}
+    <div class="featured-categories">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _featured_products_widget %}
+    <div class="featured-products">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _top_selling_items_widget %}
+    <div class="top-selling-items">
+        {% set attr = layout_attr_defaults(attr, {
+            'data-page-component-options': {
+                mobileEnabled: false
+            }
+        }) %}
+
+        {{ block_widget(block, {attr: attr}) }}
+    </div>
+{% endblock %}

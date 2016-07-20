@@ -1,7 +1,5 @@
 config:
     paths:
-        'orob2bfrontend/default/vendors/slick': 'bundles/orob2bfrontend/default/vendors/slick/slick.js'
-
         'orob2bfrontend/js/app/components/widget-form-component': 'bundles/orob2bfrontend/js/app/components/widget-form-component.js'
         'orob2bfrontend/js/app/components/switchable-editable-view-component': 'bundles/orob2bfrontend/js/app/components/switchable-editable-view-component.js'
         'orob2bfrontend/js/app/components/attached-editable-view-component': 'bundles/orob2bfrontend/js/app/components/attached-editable-view-component.js'
@@ -25,5 +23,8 @@ config:
         'orob2bfrontend/default/js/app/views/sticky-panel-view': 'orob2bfrontend/default/js/app/views/sticky-panel-view.js'
 
         'orob2bfrontend/js/app/elements-helper': 'bundles/orob2bfrontend/js/app/elements-helper.js'
+
+        'orob2bfrontend/default/vendors/slick/slick': 'bundles/orob2bfrontend/default/vendors/slick/slick.js'
+        'orob2bfrontend/js/app/components/list-slider-component': 'bundles/orob2bfrontend/js/app/components/list-slider-component.js'
     appmodules:
         - orob2bfrontend/js/app/modules/inline-editor-types-map-module

@@ -1,5 +1,15 @@
 layout:
     actions:
+        - '@setBlockTheme':
+            themes: 'default.html.twig'
+        - '@add':
+            id: heero_promo
+            blockType: embedded_list
+            parentId: content
+            options:
+                items: { '@value': [[0, 1, 2]] }
+                use_slider: { '@value': true }
+                slides_count: { '@value': 1 }
         - '@add':
             id: featured_categories
             blockType: embedded_list
