@@ -31,7 +31,7 @@ class CheckoutStateDiffCompilerPass implements CompilerPassInterface
         }
 
         // sort by priority and flatten
-        krsort($mappers);
+        ksort($mappers);
         $mappers = call_user_func_array('array_merge', $mappers);
 
         foreach ($mappers as $mapper) {
