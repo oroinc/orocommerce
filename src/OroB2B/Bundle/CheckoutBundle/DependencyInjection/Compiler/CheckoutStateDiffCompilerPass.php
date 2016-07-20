@@ -19,13 +19,16 @@ class CheckoutStateDiffCompilerPass implements CompilerPassInterface
         if (!$container->has(self::CHECKOUT_STATE_DIFF_REGISTRY)) {
             return;
         }
+
         $definition = $container->getDefinition(self::CHECKOUT_STATE_DIFF_REGISTRY);
         $taggedServices = $container->findTaggedServiceIds(self::CHECKOUT_STATE_DIFF_MAPPER_TAG);
+        $mappers = [];
 
         foreach ($taggedServices as $id => $attributes) {
             $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
             $mappers[$priority][] = new Reference($id);
         }
+
         if (empty($mappers)) {
             return;
         }
