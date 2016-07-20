@@ -1,0 +1,14 @@
+services:
+    orob2b_website.layout.data_provider.localizations:
+        class: 'Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider\LocalizationsProvider'
+        public: true
+        arguments:
+            - '@oro_frontend_localization.user_localization_manager'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_website_localizations }
+
+    orob2b_website.layout.block_type.localization_switcher:
+        class: 'Oro\Bundle\FrontendLocalizationBundle\Layout\Block\Type\LocalizationSwitcherType'
+        public: true
+        tags:
+             - { name: layout.block_type, alias: localization_switcher }

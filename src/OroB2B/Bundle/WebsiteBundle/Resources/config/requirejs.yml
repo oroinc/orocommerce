@@ -1,3 +1,0 @@
-config:
-    paths:
-        'orob2bwebsite/js/app/components/localizaion-switcher-component': 'bundles/orob2bwebsite/js/app/components/localization-switcher-component.js'
