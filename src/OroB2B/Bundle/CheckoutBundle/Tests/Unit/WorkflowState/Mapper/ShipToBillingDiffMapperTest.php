@@ -5,6 +5,9 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
+/**
+ * @SuppressWarnings("TooManyPublicMethods")
+ */
 class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
 {
     /**

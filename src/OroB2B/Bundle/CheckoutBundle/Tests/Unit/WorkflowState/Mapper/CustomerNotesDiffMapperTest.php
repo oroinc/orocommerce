@@ -10,12 +10,12 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
     /**
      * @var CustomerNotesDiffMapper
      */
-    private $mapper;
+    protected $mapper;
 
     /**
      * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $checkout;
+    protected $checkout;
 
     public function setUp()
     {
@@ -54,7 +54,10 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurrentState()
     {
-        $this->checkout->expects($this->once())->method('getCustomerNotes')->willReturn('testCustomerNotes');
+        $this->checkout
+            ->expects($this->once())
+            ->method('getCustomerNotes')
+            ->willReturn('testCustomerNotes');
 
         $result = $this->mapper->getCurrentState($this->checkout);
 
@@ -63,7 +66,11 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualTrue()
     {
-        $this->checkout->expects($this->once())->method('getCustomerNotes')->willReturn('testCustomerNotes');
+        $this->checkout
+            ->expects($this->once())
+            ->method('getCustomerNotes')
+            ->willReturn('testCustomerNotes');
+
         $savedState = [
             'parameter1' => 10,
             'customerNotes' => 'testCustomerNotes',
@@ -77,7 +84,11 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualFalse()
     {
-        $this->checkout->expects($this->once())->method('getCustomerNotes')->willReturn('changedCustomerNotes');
+        $this->checkout
+            ->expects($this->once())
+            ->method('getCustomerNotes')
+            ->willReturn('changedCustomerNotes');
+
         $savedState = [
             'parameter1' => 10,
             'customerNotes' => 'testCustomerNotes',
@@ -91,7 +102,11 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterDoesntExist()
     {
-        $this->checkout->expects($this->any())->method('getCustomerNotes')->willReturn('testCustomerNotes');
+        $this->checkout
+            ->expects($this->never())
+            ->method('getCustomerNotes')
+            ->willReturn('testCustomerNotes');
+
         $savedState = [
             'parameter1' => 10,
             'parameter3' => 'green',
@@ -104,7 +119,11 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongType()
     {
-        $this->checkout->expects($this->once())->method('getCustomerNotes')->willReturn('testCustomerNotes');
+        $this->checkout
+            ->expects($this->once())
+            ->method('getCustomerNotes')
+            ->willReturn('testCustomerNotes');
+
         $savedState = [
             'parameter1' => 10,
             'customerNotes' => 1,

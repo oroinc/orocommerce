@@ -10,12 +10,12 @@ class ShipUntilDiffMapperTest extends \PHPUnit_Framework_TestCase
     /**
      * @var ShipUntilDiffMapper
      */
-    private $mapper;
+    protected $mapper;
 
     /**
      * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $checkout;
+    protected $checkout;
 
     public function setUp()
     {
@@ -55,7 +55,11 @@ class ShipUntilDiffMapperTest extends \PHPUnit_Framework_TestCase
     public function testGetCurrentState()
     {
         $now = new \DateTimeImmutable();
-        $this->checkout->expects($this->once())->method('getShipUntil')->willReturn($now);
+
+        $this->checkout
+            ->expects($this->once())
+            ->method('getShipUntil')
+            ->willReturn($now);
 
         $result = $this->mapper->getCurrentState($this->checkout);
 
@@ -65,7 +69,12 @@ class ShipUntilDiffMapperTest extends \PHPUnit_Framework_TestCase
     public function testIsStateActualTrue()
     {
         $now = new \DateTimeImmutable();
-        $this->checkout->expects($this->once())->method('getShipUntil')->willReturn($now);
+
+        $this->checkout
+            ->expects($this->once())
+            ->method('getShipUntil')
+            ->willReturn($now);
+
         $savedState = [
             'parameter1' => 10,
             'shipUntil' => $now,
@@ -80,7 +89,12 @@ class ShipUntilDiffMapperTest extends \PHPUnit_Framework_TestCase
     public function testIsStateActualFalse()
     {
         $now = new \DateTimeImmutable();
-        $this->checkout->expects($this->once())->method('getShipUntil')->willReturn($now->modify('-1 minute'));
+
+        $this->checkout
+            ->expects($this->once())
+            ->method('getShipUntil')
+            ->willReturn($now->modify('-1 minute'));
+
         $savedState = [
             'parameter1' => 10,
             'shipUntil' => $now,
@@ -95,7 +109,12 @@ class ShipUntilDiffMapperTest extends \PHPUnit_Framework_TestCase
     public function testIsStateActualParameterDoesntExist()
     {
         $now = new \DateTimeImmutable();
-        $this->checkout->expects($this->any())->method('getShipUntil')->willReturn($now);
+
+        $this->checkout
+            ->expects($this->never())
+            ->method('getShipUntil')
+            ->willReturn($now);
+
         $savedState = [
             'parameter1' => 10,
             'parameter3' => 'green',
@@ -109,7 +128,12 @@ class ShipUntilDiffMapperTest extends \PHPUnit_Framework_TestCase
     public function testIsStateActualParameterOfWrongType()
     {
         $now = new \DateTimeImmutable();
-        $this->checkout->expects($this->any())->method('getShipUntil')->willReturn($now);
+
+        $this->checkout
+            ->expects($this->never())
+            ->method('getShipUntil')
+            ->willReturn($now);
+
         $savedState = [
             'parameter1' => 10,
             'shipUntil' => 1,

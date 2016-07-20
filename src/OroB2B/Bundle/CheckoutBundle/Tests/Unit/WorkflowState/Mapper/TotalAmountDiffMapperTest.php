@@ -15,17 +15,17 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
     /**
      * @var TotalAmountDiffMapper
      */
-    private $mapper;
+    protected $mapper;
 
     /**
      * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $checkout;
+    protected $checkout;
 
     /**
      * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $totalProcessorProvider;
+    protected $totalProcessorProvider;
 
     public function setUp()
     {
@@ -72,6 +72,7 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
         $total = new Subtotal();
         $total->setAmount(1264);
         $total->setCurrency('EUR');
+
         $this->totalProcessorProvider
             ->expects($this->once())
             ->method('getTotal')
@@ -94,6 +95,7 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
         $total = new Subtotal();
         $total->setAmount(1264);
         $total->setCurrency('EUR');
+
         $this->totalProcessorProvider
             ->expects($this->once())
             ->method('getTotal')
@@ -119,6 +121,7 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
         $total = new Subtotal();
         $total->setAmount(1264);
         $total->setCurrency('EUR');
+
         $this->totalProcessorProvider
             ->expects($this->once())
             ->method('getTotal')
@@ -144,6 +147,7 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
         $total = new Subtotal();
         $total->setAmount(1264);
         $total->setCurrency('EUR');
+
         $this->totalProcessorProvider
             ->expects($this->once())
             ->method('getTotal')
@@ -166,7 +170,11 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterDoesntExist()
     {
-        $this->checkout->expects($this->any())->method('getTotalAmount')->willReturn(true);
+        $this->checkout
+            ->expects($this->never())
+            ->method('getTotalAmount')
+            ->willReturn(true);
+
         $savedState = [
             'parameter1' => 10,
             'parameter3' => 'green',
@@ -179,7 +187,11 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongType()
     {
-        $this->checkout->expects($this->any())->method('getTotalAmount')->willReturn(true);
+        $this->checkout
+            ->expects($this->never())
+            ->method('getTotalAmount')
+            ->willReturn(true);
+
         $savedState = [
             'parameter1' => 10,
             'totalAmount' => 1,
@@ -196,6 +208,7 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
         $total = new Subtotal();
         $total->setAmount(1264);
         $total->setCurrency('EUR');
+
         $this->totalProcessorProvider
             ->expects($this->once())
             ->method('getTotal')
@@ -220,6 +233,7 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
         $total = new Subtotal();
         $total->setAmount(1264);
         $total->setCurrency('EUR');
+
         $this->totalProcessorProvider
             ->expects($this->once())
             ->method('getTotal')

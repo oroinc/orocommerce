@@ -14,24 +14,27 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
     /**
      * @var ShippingAddressDiffMapper
      */
-    private $mapper;
+    protected $mapper;
 
     /**
      * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $checkout;
+    protected $checkout;
 
     /**
      * @var OrderAddress|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $shippingAddress;
+    protected $shippingAddress;
 
     public function setUp()
     {
         $this->mapper = new ShippingAddressDiffMapper();
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
         $this->shippingAddress = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
-        $this->checkout->expects($this->any())->method('getShippingAddress')->willReturn($this->shippingAddress);
+        $this->checkout
+            ->expects($this->any())
+            ->method('getShippingAddress')
+            ->willReturn($this->shippingAddress);
     }
 
     public function tearDown()
@@ -65,9 +68,17 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurrentState()
     {
-        $this->shippingAddress->expects($this->once())->method('getId')->willReturn(123);
+        $this->shippingAddress
+            ->expects($this->once())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->shippingAddress->expects($this->once())->method('getUpdated')->willReturn($now);
+
+        $this->shippingAddress
+            ->expects($this->once())
+            ->method('getUpdated')
+            ->willReturn($now);
 
         $result = $this->mapper->getCurrentState($this->checkout);
 
@@ -82,9 +93,17 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualTrue()
     {
-        $this->shippingAddress->expects($this->once())->method('getId')->willReturn(123);
+        $this->shippingAddress
+            ->expects($this->once())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->shippingAddress->expects($this->once())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->shippingAddress
+            ->expects($this->once())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -102,9 +121,17 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualFalseId()
     {
-        $this->shippingAddress->expects($this->once())->method('getId')->willReturn(123);
+        $this->shippingAddress
+            ->expects($this->once())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->shippingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->shippingAddress
+            ->expects($this->never())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -122,9 +149,17 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualFalseUpdated()
     {
-        $this->shippingAddress->expects($this->once())->method('getId')->willReturn(123);
+        $this->shippingAddress
+            ->expects($this->once())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->shippingAddress->expects($this->once())->method('getUpdated')->willReturn($now->modify('+1 minute'));
+
+        $this->shippingAddress
+            ->expects($this->once())
+            ->method('getUpdated')
+            ->willReturn($now->modify('+1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -142,9 +177,17 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterDoesntExist()
     {
-        $this->shippingAddress->expects($this->any())->method('getId')->willReturn(123);
+        $this->shippingAddress
+            ->expects($this->never())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->shippingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->shippingAddress
+            ->expects($this->never())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -158,9 +201,17 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongType()
     {
-        $this->shippingAddress->expects($this->any())->method('getId')->willReturn(123);
+        $this->shippingAddress
+            ->expects($this->never())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->shippingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->shippingAddress
+            ->expects($this->never())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -175,9 +226,17 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongTypeUpdated()
     {
-        $this->shippingAddress->expects($this->any())->method('getId')->willReturn(123);
+        $this->shippingAddress
+            ->expects($this->never())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->shippingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->shippingAddress
+            ->expects($this->never())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -195,9 +254,17 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterNotSetId()
     {
-        $this->shippingAddress->expects($this->any())->method('getId')->willReturn(123);
+        $this->shippingAddress
+            ->expects($this->never())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->shippingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->shippingAddress
+            ->expects($this->never())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -214,9 +281,17 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterNotSetUpdated()
     {
-        $this->shippingAddress->expects($this->any())->method('getId')->willReturn(123);
+        $this->shippingAddress
+            ->expects($this->never())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->shippingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->shippingAddress
+            ->expects($this->never())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,

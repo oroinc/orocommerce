@@ -14,24 +14,27 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
     /**
      * @var BillingAddressDiffMapper
      */
-    private $mapper;
+    protected $mapper;
 
     /**
      * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $checkout;
+    protected $checkout;
 
     /**
      * @var OrderAddress|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $billingAddress;
+    protected $billingAddress;
 
     public function setUp()
     {
         $this->mapper = new BillingAddressDiffMapper();
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
         $this->billingAddress = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
-        $this->checkout->expects($this->any())->method('getBillingAddress')->willReturn($this->billingAddress);
+        $this->checkout
+            ->expects($this->any())
+            ->method('getBillingAddress')
+            ->willReturn($this->billingAddress);
     }
 
     public function tearDown()
@@ -65,9 +68,17 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurrentState()
     {
-        $this->billingAddress->expects($this->once())->method('getId')->willReturn(123);
+        $this->billingAddress
+            ->expects($this->once())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->billingAddress->expects($this->once())->method('getUpdated')->willReturn($now);
+
+        $this->billingAddress
+            ->expects($this->once())
+            ->method('getUpdated')
+            ->willReturn($now);
 
         $result = $this->mapper->getCurrentState($this->checkout);
 
@@ -82,9 +93,17 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualTrue()
     {
-        $this->billingAddress->expects($this->once())->method('getId')->willReturn(123);
+        $this->billingAddress
+            ->expects($this->once())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->billingAddress->expects($this->once())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->billingAddress
+            ->expects($this->once())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -102,9 +121,17 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualFalseId()
     {
-        $this->billingAddress->expects($this->once())->method('getId')->willReturn(123);
+        $this->billingAddress
+            ->expects($this->once())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->billingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->billingAddress
+            ->expects($this->never())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -122,9 +149,17 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualFalseUpdated()
     {
-        $this->billingAddress->expects($this->once())->method('getId')->willReturn(123);
+        $this->billingAddress
+            ->expects($this->once())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->billingAddress->expects($this->once())->method('getUpdated')->willReturn($now->modify('+1 minute'));
+
+        $this->billingAddress
+            ->expects($this->once())
+            ->method('getUpdated')
+            ->willReturn($now->modify('+1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -142,9 +177,17 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterDoesntExist()
     {
-        $this->billingAddress->expects($this->any())->method('getId')->willReturn(123);
+        $this->billingAddress
+            ->expects($this->never())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->billingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->billingAddress
+            ->expects($this->never())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -158,9 +201,17 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongType()
     {
-        $this->billingAddress->expects($this->any())->method('getId')->willReturn(123);
+        $this->billingAddress
+            ->expects($this->never())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->billingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->billingAddress
+            ->expects($this->never())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -175,9 +226,17 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongTypeUpdated()
     {
-        $this->billingAddress->expects($this->any())->method('getId')->willReturn(123);
+        $this->billingAddress
+            ->expects($this->never())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->billingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->billingAddress
+            ->expects($this->never())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -195,9 +254,17 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterNotSetId()
     {
-        $this->billingAddress->expects($this->any())->method('getId')->willReturn(123);
+        $this->billingAddress
+            ->expects($this->never())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->billingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->billingAddress
+            ->expects($this->never())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -214,9 +281,17 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterNotSetUpdated()
     {
-        $this->billingAddress->expects($this->any())->method('getId')->willReturn(123);
+        $this->billingAddress
+            ->expects($this->never())
+            ->method('getId')
+            ->willReturn(123);
+
         $now = new \DateTimeImmutable();
-        $this->billingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
+
+        $this->billingAddress
+            ->expects($this->never())
+            ->method('getUpdated')
+            ->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
