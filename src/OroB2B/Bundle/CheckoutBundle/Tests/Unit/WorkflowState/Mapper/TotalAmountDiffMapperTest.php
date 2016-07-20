@@ -7,6 +7,9 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
+/**
+ * @SuppressWarnings("TooManyPublicMethods")
+ */
 class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -33,6 +36,11 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->mapper = new TotalAmountDiffMapper($this->totalProcessorProvider);
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
+    }
+
+    public function tearDown()
+    {
+        unset($this->mapper, $this->checkout, $this->totalProcessorProvider);
     }
 
     public function testIsEntitySupported()

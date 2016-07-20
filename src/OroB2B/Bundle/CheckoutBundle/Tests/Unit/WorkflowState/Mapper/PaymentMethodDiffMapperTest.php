@@ -7,6 +7,9 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
+/**
+ * @SuppressWarnings("TooManyPublicMethods")
+ */
 class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -36,6 +39,11 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->paymentMethodRegistry->method('getPaymentMethod')->willReturn($this->paymentMethod);
         $this->mapper = new PaymentMethodDiffMapper($this->paymentMethodRegistry);
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
+    }
+
+    public function tearDown()
+    {
+        unset($this->mapper, $this->checkout, $this->paymentMethodRegistry, $this->paymentMethod);
     }
 
     public function testIsEntitySupported()

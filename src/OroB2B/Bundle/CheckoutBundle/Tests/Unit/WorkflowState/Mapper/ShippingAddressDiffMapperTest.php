@@ -6,6 +6,9 @@ use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingAddressDiffMapper;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 
+/**
+ * @SuppressWarnings("TooManyPublicMethods")
+ */
 class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -29,6 +32,11 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
         $this->shippingAddress = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
         $this->checkout->method('getShippingAddress')->willReturn($this->shippingAddress);
+    }
+
+    public function tearDown()
+    {
+        unset($this->mapper, $this->checkout, $this->shippingAddress);
     }
 
     public function testIsEntitySupported()

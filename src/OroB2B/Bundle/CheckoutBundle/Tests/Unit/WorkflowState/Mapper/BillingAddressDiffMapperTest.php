@@ -6,6 +6,9 @@ use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\BillingAddressDiffMapper;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 
+/**
+ * @SuppressWarnings("TooManyPublicMethods")
+ */
 class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -29,6 +32,11 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
         $this->billingAddress = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
         $this->checkout->method('getBillingAddress')->willReturn($this->billingAddress);
+    }
+
+    public function tearDown()
+    {
+        unset($this->mapper, $this->checkout, $this->billingAddress);
     }
 
     public function testIsEntitySupported()

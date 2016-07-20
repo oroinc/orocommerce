@@ -23,6 +23,11 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
 
+    public function tearDown()
+    {
+        unset($this->mapper, $this->checkout);
+    }
+
     public function testIsEntitySupported()
     {
         $this->assertEquals(true, $this->mapper->isEntitySupported($this->checkout));
