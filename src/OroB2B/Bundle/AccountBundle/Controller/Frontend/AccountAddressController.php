@@ -106,7 +106,6 @@ class AccountAddressController extends Controller
                     'route' => 'orob2b_account_frontend_account_user_address_index'
                 ];
             },
-
             $this->get('translator')->trans('orob2b.account.controller.accountaddress.saved.message'),
             $handler,
             function (AccountAddress $accountAddress, FormInterface $form, Request $request) {
