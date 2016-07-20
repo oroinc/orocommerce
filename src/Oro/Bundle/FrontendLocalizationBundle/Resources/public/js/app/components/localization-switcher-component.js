@@ -28,6 +28,9 @@ define(function(require) {
                 .on('click', this.options.localizationElement, _.bind(this.onLocalizationChange, this));
         },
 
+        /**
+         * @param {Event} e
+         */
         onLocalizationChange: function(e) {
             e.preventDefault();
             var $el = $(e.target);
