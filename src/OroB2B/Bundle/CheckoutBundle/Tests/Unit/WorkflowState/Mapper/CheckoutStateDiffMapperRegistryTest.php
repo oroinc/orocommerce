@@ -10,26 +10,17 @@ class CheckoutStateDiffMapperRegistryTest extends \PHPUnit_Framework_TestCase
     /** @var CheckoutStateDiffMapperRegistry */
     protected $registry;
 
-    /** @var CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $mapper;
-
     protected function setUp()
     {
         $this->registry = new CheckoutStateDiffMapperRegistry();
-
-        $this->mapper = $this->getMockBuilder(
-            'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
     }
 
     protected function tearDown()
     {
-        unset($this->registry, $this->mapper);
+        unset($this->registry);
     }
 
-    public function testGetMappers()
+    public function testEmptyGetMappers()
     {
         $mappers = $this->registry->getMappers();
         $this->assertInternalType('array', $mappers);
@@ -38,19 +29,41 @@ class CheckoutStateDiffMapperRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testAddMapper()
     {
-        $this->registry->addMapper($this->mapper);
-        $this->assertContains($this->mapper, $this->registry->getMappers());
+        $mapper = $this->getMapper();
+        $mapper->expects($this->once())
+            ->method('getName')
+            ->willReturn('test_name');
+
+        $this->registry->addMapper($mapper);
+
+        $mappers = $this->registry->getMappers();
+
+        $this->assertCount(1, $mappers);
+        $this->assertContains($mapper, $mappers);
+
+        $mapper2 = $this->getMapper();
+        $mapper2->expects($this->once())
+            ->method('getName')
+            ->willReturn('test_other_name');
+
+        $this->registry->addMapper($mapper2);
+
+        $mappers = $this->registry->getMappers();
+
+        $this->assertCount(2, $mappers);
+        $this->assertContains($mapper, $mappers);
     }
 
     public function testRegistry()
     {
-        $this->mapper->expects($this->any())
+        $mapper = $this->getMapper();
+        $mapper->expects($this->once())
             ->method('getName')
             ->willReturn('test_name');
 
-        $this->registry->addMapper($this->mapper);
-        $this->assertEquals($this->mapper, $this->registry->getMapper('test_name'));
-        $this->assertEquals(['test_name' => $this->mapper], $this->registry->getMappers());
+        $this->registry->addMapper($mapper);
+        $this->assertEquals($mapper, $this->registry->getMapper('test_name'));
+        $this->assertEquals(['test_name' => $mapper], $this->registry->getMappers());
     }
 
     /**
@@ -60,5 +73,13 @@ class CheckoutStateDiffMapperRegistryTest extends \PHPUnit_Framework_TestCase
     public function testRegistryException()
     {
         $this->registry->getMapper('wrong_name');
+    }
+
+    /**
+     * @return CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getMapper()
+    {
+        return $this->getMock('OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface');
     }
 }

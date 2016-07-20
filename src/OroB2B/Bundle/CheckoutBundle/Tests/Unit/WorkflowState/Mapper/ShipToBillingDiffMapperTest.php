@@ -10,12 +10,12 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
     /**
      * @var ShipToBillingDiffMapper
      */
-    private $mapper;
+    protected $mapper;
 
     /**
      * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $checkout;
+    protected $checkout;
 
     public function setUp()
     {
@@ -35,7 +35,7 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
     }
 
-    public function testIsEntitySupportedUnsopportedEntity()
+    public function testIsEntitySupportedUnsupportedEntity()
     {
         $entity = new \stdClass();
 
@@ -49,16 +49,29 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurrentState()
     {
-        $this->checkout->method('isShipToBillingAddress')->willReturn(true);
+        $this->checkout->expects($this->once())
+            ->method('isShipToBillingAddress')
+            ->willReturn(true);
 
-        $result = $this->mapper->getCurrentState($this->checkout);
+        $this->assertEquals(true, $this->mapper->getCurrentState($this->checkout));
+    }
 
-        $this->assertEquals(true, $result);
+    public function testGetCurrentStateWithFalse()
+    {
+        $this->checkout->expects($this->once())
+            ->method('isShipToBillingAddress')
+            ->willReturn(false);
+
+        $this->assertEquals(false, $this->mapper->getCurrentState($this->checkout));
     }
 
     public function testIsStateActualTrue()
     {
-        $this->checkout->method('isShipToBillingAddress')->willReturn(true);
+        $this->checkout
+            ->expects($this->once())
+            ->method('isShipToBillingAddress')
+            ->willReturn(true);
+
         $savedState = [
             'parameter1' => 10,
             'shipToBillingAddress' => true,
@@ -72,7 +85,11 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualFalse()
     {
-        $this->checkout->method('isShipToBillingAddress')->willReturn(false);
+        $this->checkout
+            ->expects($this->once())
+            ->method('isShipToBillingAddress')
+            ->willReturn(false);
+
         $savedState = [
             'parameter1' => 10,
             'shipToBillingAddress' => true,
@@ -84,9 +101,13 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $result);
     }
 
-    public function testIsStateActualParameterDoesntExist()
+    public function testIsStateActualParameterNotExist()
     {
-        $this->checkout->method('isShipToBillingAddress')->willReturn(true);
+        $this->checkout
+            ->expects($this->never())
+            ->method('isShipToBillingAddress')
+            ->willReturn(true);
+
         $savedState = [
             'parameter1' => 10,
             'parameter3' => 'green',
@@ -99,7 +120,10 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongType()
     {
-        $this->checkout->method('isShipToBillingAddress')->willReturn(true);
+        $this->checkout->expects($this->once())
+            ->method('isShipToBillingAddress')
+            ->willReturn(true);
+
         $savedState = [
             'parameter1' => 10,
             'shipToBillingAddress' => 1,
