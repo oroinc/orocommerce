@@ -476,6 +476,8 @@ datagrid:
                     - role.id
                     - role.role
                     - role.label
+                    - role.selfManaged as self_managed
+                    - role.public
                     - (CASE WHEN role.account IS NOT NULL THEN false ELSE true END) as isRolePredefined
                 from:
                     - { table: %orob2b_account.entity.account_user_role.class%, alias: role }
@@ -536,15 +538,24 @@ datagrid:
         columns:
             account_name:
                 label: orob2b.account.accountuserrole.account.label
+            self_managed:
+                label: orob2b.account.accountuserrole.self_managed.label
+                frontend_type: boolean
+                data_name: self_managed
         sorters:
             columns:
                 account_name:
                     data_name: account_name
+                self_managed:
+                    data_name: self_managed
         filters:
             columns:
                 account_name:
                     type:      string
                     data_name: account_name
+                self_managed:
+                    type:      boolean
+                    data_name: self_managed
         properties:
             view_link:
                 route: orob2b_account_account_user_role_view
@@ -555,12 +566,20 @@ datagrid:
     frontend-account-account-user-roles-grid:
         acl_resource: orob2b_account_frontend_account_user_role_index
         extends: basic-account-account-user-roles-grid
-        extended_entity_name: %orob2b_account.entity.account_user_role.class%
         source:
             skip_acl_apply: true
+            query:
+                where:
+                    and:
+                        - role.selfManaged = true
+                        - role.public = true
         properties:
+            id: ~
             view_link:
+                type: url
                 route:  orob2b_account_frontend_account_user_role_view
+                params:
+                    - id
             update_link:
                 type: url
                 route: orob2b_account_frontend_account_user_role_update
@@ -574,6 +593,11 @@ datagrid:
         actions:
             view:
                 acl_resource:  orob2b_account_frontend_account_user_role_view
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                rowAction:     true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
