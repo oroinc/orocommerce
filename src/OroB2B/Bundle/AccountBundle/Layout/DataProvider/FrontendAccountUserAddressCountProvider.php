@@ -2,8 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
+use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 

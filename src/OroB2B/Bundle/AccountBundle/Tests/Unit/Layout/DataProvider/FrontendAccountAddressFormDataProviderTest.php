@@ -5,8 +5,8 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
-use Oro\Component\Layout\ContextInterface;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
+use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\ContextDataCollection;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
