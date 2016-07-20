@@ -563,10 +563,12 @@ services:
     orob2b_pricing.entity_listener.category:
         class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\CategoryEntityListener'
         public: false
-#        arguments:
-#            - '@orob2b_pricing.price_list_change_trigger_handler'
+        arguments:
+            - '@oro_b2bentity.extra_insert_entity_storage'
+            - '@orob2b_pricing.provider.price_rule_fields_provider'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_catalog.entity.category.class%', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_catalog.entity.category.class%', event: preRemove }
 
     orob2b_pricing.entity_listener.price_list_product:
         class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListProductEntityListener'
