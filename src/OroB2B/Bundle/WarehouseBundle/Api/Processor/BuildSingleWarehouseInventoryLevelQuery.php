@@ -90,8 +90,7 @@ class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
             ->setParameter('unit', $unit);
         if (isset($warehouse)) {
             $queryBuilder
-                ->leftJoin('e.warehouse', 'warehouse')
-                ->andWhere($queryBuilder->expr()->eq('warehouse.name', ':warehouse'))
+                ->andWhere($queryBuilder->expr()->eq('e.warehouse', ':warehouse'))
                 ->setParameter('warehouse', $warehouse);
         }
 
