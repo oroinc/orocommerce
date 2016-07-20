@@ -58,45 +58,79 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
     {
         /** @var Product $product */
         $product = $context->data()->get('product');
-        $productId = $product->getId();
 
-        if (!array_key_exists($productId, $this->data)) {
-            $priceList = $this->priceListRequestHandler->getPriceListByAccount();
+        $this->setProductsPrices([$product->getId()]);
 
-            /** @var ProductPriceRepository $priceRepository */
-            $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
-            $prices = $priceRepository->findByPriceListIdAndProductIds(
-                $priceList->getId(),
-                [$productId],
-                true,
-                $this->userCurrencyManager->getUserCurrency(),
-                null,
-                [
-                    'unit' => 'ASC',
-                    'currency' => 'DESC',
-                    'quantity' => 'ASC',
-                ]
-            );
-            if (count($prices)) {
-                $unitPrecisions = current($prices)->getProduct()->getUnitPrecisions();
+        return $this->data[$product->getId()];
+    }
 
-                $unitsToSell = [];
-                foreach ($unitPrecisions as $unitPrecision) {
+    public function getProductsPrices($products)
+    {
+        $productsId = [];
+        foreach ($products as $product) {
+            $productsId[] = $product->getId();
+        }
+
+        $this->setProductsPrices($productsId);
+        $productsPrices = [];
+
+        foreach ($productsId as $productId) {
+            if ($this->data[$productId]) {
+                $productsPrices[$productId] = $this->data[$productId];
+            }
+        }
+
+        return $productsPrices;
+    }
+
+    protected function setProductsPrices($productsId)
+    {
+        $productsId = array_filter($productsId, function ($productId) {
+            return !array_key_exists($productId, $this->data);
+        });
+        if (!$productsId) {
+            return;
+        }
+
+        $priceList = $this->priceListRequestHandler->getPriceListByAccount();
+
+        /** @var ProductPriceRepository $priceRepository */
+        $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
+        $prices = $priceRepository->findByPriceListIdAndProductIds(
+            $priceList->getId(),
+            $productsId,
+            true,
+            $this->userCurrencyManager->getUserCurrency(),
+            null,
+            [
+                'unit' => 'ASC',
+                'currency' => 'DESC',
+                'quantity' => 'ASC',
+            ]
+        );
+
+        $pricesByProduct = [];
+        $productUnits = [];
+        foreach ($prices as $price) {
+            $product = $price->getProduct();
+            $productId = $product->getId();
+
+            if (!isset($productUnits[$productId])) {
+                $productUnits[$productId] = [];
+                foreach ($product->getUnitPrecisions() as $unitPrecision) {
                     if ($unitPrecision->isSell()) {
-                        $unitsToSell[] = $unitPrecision->getUnit();
-                    }
-                }
-
-                foreach ($prices as $key => $combinedProductPrice) {
-                    if (!in_array($combinedProductPrice->getUnit(), $unitsToSell)) {
-                        unset($prices[$key]);
+                        $productUnits[$productId][] = $unitPrecision->getUnit();
                     }
                 }
             }
 
-            $this->data[$productId] = $prices;
+            if (in_array($price->getUnit(), $productUnits[$productId])) {
+                $pricesByProduct[$productId][] = $price;
+            }
         }
 
-        return $this->data[$productId];
+        foreach ($productsId as $productId) {
+            $this->data[$productId] = isset($pricesByProduct[$productId]) ? $pricesByProduct[$productId] : [];
+        }
     }
 }

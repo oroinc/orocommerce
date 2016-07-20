@@ -54,16 +54,16 @@ class LineItemRepository extends EntityRepository
 
     /**
      * @param ShoppingList $shoppingList
-     * @param Product $product
+     * @param Product[] $product
      * @return array|LineItem[]
      */
-    public function getItemsByShoppingListAndProduct(ShoppingList $shoppingList, Product $product)
+    public function getItemsByShoppingListAndProducts(ShoppingList $shoppingList, $products)
     {
-        $qb = $this->createQueryBuilder('li')
-            ->select('li')
-            ->where('li.shoppingList = :shoppingList', 'li.product = :product')
+        $qb = $this->createQueryBuilder('li');
+        $qb->select('li')
+            ->where('li.shoppingList = :shoppingList', $qb->expr()->in('li.product', ':product'))
             ->setParameter('shoppingList', $shoppingList)
-            ->setParameter('product', $product);
+            ->setParameter('product', $products);
 
         return $qb->getQuery()->getResult();
     }

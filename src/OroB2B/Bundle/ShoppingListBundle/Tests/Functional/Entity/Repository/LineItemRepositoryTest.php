@@ -52,7 +52,7 @@ class LineItemRepositoryTest extends WebTestCase
         /** @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
 
-        $lineItems = $this->getRepository()->getItemsByShoppingListAndProduct($shoppingList, $product);
+        $lineItems = $this->getRepository()->getItemsByShoppingListAndProducts($shoppingList, $product);
 
         $this->assertCount(1, $lineItems);
         $this->assertContains($lineItem, $lineItems);

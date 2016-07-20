@@ -204,6 +204,14 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_product_units_quantity }
 
+    orob2b_shopping_list.layout.data_provider.featured_products_shopping_lists:
+        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FeaturedProductsShoppingListsProvider'
+        arguments:
+            - '@orob2b_shopping_list.layout.data_provider.frontend_shopping_list_product_units'
+            - '@orob2b_product.layout.data_provider.featured_products'
+        tags:
+            - { name: layout.data_provider, alias: featured_products_shopping_lists }
+
     orob2b_shopping_list.repository.line_item:
         class: Doctrine\ORM\EntityRepository
         public: false

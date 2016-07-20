@@ -378,3 +378,11 @@ services:
             - "@form.factory"
         tags:
             - { name: layout.data_provider, alias: orob2b_product_line_item_form }
+
+    orob2b_product.layout.data_provider.featured_products:
+        class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
+        arguments:
+            - "@orob2b_product.repository.product"
+            - "@orob2b_product.product.manager"
+        tags:
+            - { name: layout.data_provider, alias: featured_products }
