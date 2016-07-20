@@ -56,60 +56,23 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
         return $mapper;
     }
 
-    /**
-     * @param string $name
-     * @param bool $isEntitySupported
-     * @param mixed $currentState
-     * @param object $object
-     * @return CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getMapperCurrentStateMock($name, $isEntitySupported, $currentState, $object)
-    {
-        $mapper = $this->getBaseMapperMock($name, $isEntitySupported, $object);
-
-        $mapper
-            ->expects($isEntitySupported ? $this->once() : $this->never())
-            ->method('getCurrentState')
-            ->with($object)
-            ->willReturn($currentState);
-
-        return $mapper;
-    }
-
-    /**
-     * @param string $name
-     * @param bool $isEntitySupported
-     * @param bool $isStateActual
-     * @param array $savedState
-     * @param object $object
-     * @return CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getMapperStateActualMock($name, $isEntitySupported, $isStateActual, $savedState, $object)
-    {
-        $mapper = $this->getBaseMapperMock($name, $isEntitySupported, $object);
-
-        $mapper
-            ->expects($isEntitySupported ? $this->once() : $this->never())
-            ->method('isStateActual')
-            ->with($object, $savedState)
-            ->willReturn($isStateActual);
-
-        return $mapper;
-    }
-
     public function testGetCurrentState()
     {
         $object = new \stdClass();
-        $mapper1 = $this->getMapperCurrentStateMock('mapperName1', true, true, $object);
-        $mapper2 = $this->getMapperCurrentStateMock(
-            'mapperName2',
-            true,
-            [
-                'parameter1' => 7635,
-                'parameter2' => 'test value'
-            ],
-            $object
-        );
+        $mapper1 = $this->getBaseMapperMock('mapperName1', true, $object);
+        $mapper2 = $this->getBaseMapperMock('mapperName2', true, $object);
+
+        $mapper1
+            ->expects($this->once())
+            ->method('getCurrentState')
+            ->with($object)
+            ->willReturn(true);
+
+        $mapper2
+            ->expects($this->once())
+            ->method('getCurrentState')
+            ->with($object)
+            ->willReturn(['parameter1' => 7635, 'parameter2' => 'test value']);
 
         $this->mapperRegistry->expects($this->once())
             ->method('getMappers')
@@ -132,16 +95,18 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetCurrentStateUnsupportedEntity()
     {
         $object = new \stdClass();
-        $mapper1 = $this->getMapperCurrentStateMock('mapperName1', true, true, $object);
-        $mapper2 = $this->getMapperCurrentStateMock(
-            'mapperName2',
-            false,
-            [
-                'parameter1' => 7635,
-                'parameter2' => 'test value'
-            ],
-            $object
-        );
+        $mapper1 = $this->getBaseMapperMock('mapperName1', true, $object);
+        $mapper2 = $this->getBaseMapperMock('mapperName2', false, $object);
+
+        $mapper1
+            ->expects($this->once())
+            ->method('getCurrentState')
+            ->with($object)
+            ->willReturn(true);
+
+        $mapper2
+            ->expects($this->never())
+            ->method('getCurrentState');
 
         $this->mapperRegistry->expects($this->once())
             ->method('getMappers')
@@ -168,8 +133,20 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        $mapper1 = $this->getMapperStateActualMock('mapperName1', true, true, $savedState, $object);
-        $mapper2 = $this->getMapperStateActualMock('mapperName2', true, true, $savedState, $object);
+        $mapper1 = $this->getBaseMapperMock('mapperName1', true, $object);
+        $mapper2 = $this->getBaseMapperMock('mapperName2', true, $object);
+
+        $mapper1
+            ->expects($this->once())
+            ->method('isStateActual')
+            ->with($object, $savedState)
+            ->willReturn(true);
+
+        $mapper2
+            ->expects($this->once())
+            ->method('isStateActual')
+            ->with($object, $savedState)
+            ->willReturn(true);
 
         $this->mapperRegistry->expects($this->once())
             ->method('getMappers')
@@ -189,8 +166,18 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        $mapper1 = $this->getMapperStateActualMock('mapperName1', true, true, $savedState, $object);
-        $mapper2 = $this->getMapperStateActualMock('mapperName2', true, false, $savedState, $object);
+        $mapper1 = $this->getBaseMapperMock('mapperName1', true, $object);
+        $mapper2 = $this->getBaseMapperMock('mapperName2', true, $object);
+
+        $mapper1
+            ->expects($this->once())
+            ->method('isStateActual')
+            ->with($object, $savedState)
+            ->willReturn(true);
+
+        $mapper2
+            ->expects($this->once())
+            ->method('isStateActual');
 
         $this->mapperRegistry->expects($this->once())
             ->method('getMappers')
@@ -210,12 +197,15 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        $mapper1 = $this->getMapperStateActualMock('mapperName1', true, true, $savedState, $object);
-        $mapper2 = $this->getMapperStateActualMock('mapperName2', false, false, $savedState, $object);
+        $mapper = $this->getBaseMapperMock('mapperName2', false, $object);
+
+        $mapper
+            ->expects($this->never())
+            ->method('isStateActual');
 
         $this->mapperRegistry->expects($this->once())
             ->method('getMappers')
-            ->willReturn([$mapper1, $mapper2]);
+            ->willReturn([$mapper]);
 
         $this->assertEquals(true, $this->checkoutStateDiffManager->isStateActual($object, $savedState));
     }
