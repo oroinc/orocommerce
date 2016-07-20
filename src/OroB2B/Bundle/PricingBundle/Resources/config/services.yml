@@ -1,5 +1,6 @@
 parameters:
     orob2b_pricing.entity.price_list.class: OroB2B\Bundle\PricingBundle\Entity\PriceList
+    orob2b_pricing.entity.price_rule.class: OroB2B\Bundle\PricingBundle\Entity\PriceRule
     orob2b_pricing.entity.price_list_schedule.class: OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule
     orob2b_pricing.entity.combined_price_list.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList
 
@@ -547,14 +548,24 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener }
 
-    #TODO: refactor after BB-1289
     orob2b_pricing.entity_listener.price_list:
         class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener'
         public: false
         arguments:
             - '@orob2b_pricing.price_list_change_trigger_handler'
+            - '@orob2b_pricing.cache.rule_cache'
         tags:
-            - { name: doctrine.orm.entity_listener }
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_list.class%', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_list.class%', event: preRemove }
+
+    orob2b_pricing.entity_listener.price_rule:
+        class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceRuleEntityListener'
+        public: false
+        arguments:
+            - '@orob2b_pricing.cache.rule_cache'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_rule.class%', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_rule.class%', event: preRemove }
 
     orob2b_pricing.entity_listener.price_list_product:
         class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListProductEntityListener'
