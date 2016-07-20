@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Expression;
 
 use OroB2B\Bundle\PricingBundle\Expression;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 
 class ExpressionParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -11,13 +12,21 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
      */
     protected $expressionParser;
 
+    /**
+     * @var PriceRuleFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $fieldsProvider;
+
     protected function setUp()
     {
-        $this->expressionParser = new Expression\ExpressionParser(new Expression\ExpressionLanguageConverter());
+        $this->fieldsProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->expressionParser = new Expression\ExpressionParser(
+            new Expression\ExpressionLanguageConverter($this->fieldsProvider)
+        );
         $this->expressionParser->addNameMapping('PriceList', 'pl');
         $this->expressionParser->addNameMapping('Product', 'p');
-        $this->expressionParser->addNameMapping('Category', 'c');
-        $this->expressionParser->addExpressionMapping('Product.category', 'Category');
     }
 
     public function testGetNamesMapping()
@@ -25,8 +34,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             [
                 'PriceList' => 'pl',
-                'Product' => 'p',
-                'Category' => 'c',
+                'Product' => 'p'
             ],
             $this->expressionParser->getNamesMapping()
         );
@@ -37,8 +45,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             [
                 'pl' => 'PriceList',
-                'p' => 'Product',
-                'c' => 'Category',
+                'p' => 'Product'
             ],
             $this->expressionParser->getReverseNameMapping()
         );
@@ -46,6 +53,8 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
 
     public function testParse()
     {
+        $this->assertCategoryRelation();
+
         $expression = "(PriceList.currency == 'USD' and Product.margin * 10 > 130*Product.category.minMargin)" .
             " || (Product.category == -Product.MSRP and not (Product.MSRP.currency matches 'U'))";
 
@@ -64,7 +73,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
                     ),
                     new Expression\BinaryNode(
                         new Expression\ValueNode(130),
-                        new Expression\NameNode('c', 'minMargin'),
+                        new Expression\RelationNode('p', 'category', 'minMargin'),
                         '*'
                     ),
                     '>'
@@ -73,7 +82,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
             ),
             new Expression\BinaryNode(
                 new Expression\BinaryNode(
-                    new Expression\NameNode('c'),
+                    new Expression\RelationNode('p', 'category', 'categoryId'),
                     new Expression\UnaryNode(
                         new Expression\NameNode('p', 'MSRP'),
                         '-'
@@ -103,8 +112,8 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetUsedLexemes($expression, array $expected)
     {
+        $this->assertCategoryRelation();
         $this->assertEquals($expected, $this->expressionParser->getUsedLexemes($expression));
-
     }
 
     /**
@@ -120,7 +129,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
                     'pl' => ['currency'],
                     'p' => ['margin', 'someValue'],
                     'p::MSRP' => ['currency'],
-                    'c' => ['minMargin', null]
+                    'p::category' => ['minMargin', 'categoryId']
                 ]
             ],
             [
@@ -128,5 +137,24 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
                 []
             ]
         ];
+    }
+
+    protected function assertCategoryRelation()
+    {
+        $this->fieldsProvider->expects($this->any())
+            ->method('isRelation')
+            ->willReturnMap(
+                [
+                    ['p', 'category', true]
+                ]
+            );
+        $this->fieldsProvider->expects($this->any())
+            ->method('getRealClassName')
+            ->with('p', 'category')
+            ->willReturn('Category');
+        $this->fieldsProvider->expects($this->any())
+            ->method('getIdentityFieldName')
+            ->with('Category')
+            ->willReturn('categoryId');
     }
 }

@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 
 use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
@@ -25,6 +26,11 @@ class PriceRuleFieldsProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $registry;
 
+    /**
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $doctrineHelper;
+
     protected function setUp()
     {
         $this->registry = $this->getMock(ManagerRegistry::class);
@@ -32,7 +38,13 @@ class PriceRuleFieldsProviderTest extends \PHPUnit_Framework_TestCase
         $this->entityFieldProvider = $this->getMockBuilder(EntityFieldProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->priceRuleAttributeProvider = new PriceRuleFieldsProvider($this->entityFieldProvider);
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->priceRuleAttributeProvider = new PriceRuleFieldsProvider(
+            $this->entityFieldProvider,
+            $this->doctrineHelper
+        );
     }
 
     /**
@@ -46,7 +58,6 @@ class PriceRuleFieldsProviderTest extends \PHPUnit_Framework_TestCase
         $className = 'ClassName';
         $this->entityFieldProvider->method('getFields')->willReturn($fields);
 
-        $this->priceRuleAttributeProvider->addSupportedClass($className);
         $actualFields = $this->priceRuleAttributeProvider->getFields($className, true);
 
         $this->assertEquals($expectedFields, $actualFields);
@@ -86,7 +97,6 @@ class PriceRuleFieldsProviderTest extends \PHPUnit_Framework_TestCase
         $className = 'ClassName';
         $this->entityFieldProvider->method('getFields')->willReturn($fields);
 
-        $this->priceRuleAttributeProvider->addSupportedClass($className);
         $actualFields = $this->priceRuleAttributeProvider->getFields($className, false, true);
         $this->assertEquals($expectedFields, $actualFields);
     }
@@ -114,21 +124,5 @@ class PriceRuleFieldsProviderTest extends \PHPUnit_Framework_TestCase
                 ]
             ]
         ];
-    }
-
-    public function testAddAvailableClass()
-    {
-        $class = 'ClassName';
-        $this->priceRuleAttributeProvider->addSupportedClass($class);
-        $this->assertTrue($this->priceRuleAttributeProvider->isClassSupported($class));
-        $this->assertFalse($this->priceRuleAttributeProvider->isClassSupported('invalidClassName'));
-    }
-
-    /**
-     * @expectedException \Exception
-     */
-    public function testGetAvailableRuleAttributesException()
-    {
-        $this->priceRuleAttributeProvider->getFields('ClassName');
     }
 }

@@ -15,7 +15,8 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
         priceRules:
             - Valid: ~
         productAssignmentRule:
-            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression: ~
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                withRelations: true
             - OroB2B\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
 
 OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
@@ -59,12 +60,14 @@ OroB2B\Bundle\PricingBundle\Entity\PriceRule:
             - NotBlank:
                 message: 'orob2b.product.productunit.invalid'
         ruleCondition:
-            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression: ~
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                withRelations: true
             - OroB2B\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
         rule:
             - NotBlank: ~
             - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
                 numericOnly: true
+                withRelations: true
         priority:
             - NotBlank: ~
             - Type:

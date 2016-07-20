@@ -30,11 +30,11 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $expressionConverter = new ExpressionLanguageConverter();
-        $this->parser = new ExpressionParser($expressionConverter);
         $this->fieldsProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $expressionConverter = new ExpressionLanguageConverter($this->fieldsProvider);
+        $this->parser = new ExpressionParser($expressionConverter);
         $this->parser->addNameMapping('product', Product::class);
         $this->expressionValidator = new PriceRuleExpressionValidator($this->parser, $this->fieldsProvider);
     }

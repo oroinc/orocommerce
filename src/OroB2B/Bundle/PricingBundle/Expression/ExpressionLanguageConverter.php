@@ -5,8 +5,23 @@ namespace OroB2B\Bundle\PricingBundle\Expression;
 use Symfony\Component\ExpressionLanguage\Node;
 use Symfony\Component\ExpressionLanguage\ParsedExpression;
 
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+
 class ExpressionLanguageConverter
 {
+    /**
+     * @var PriceRuleFieldsProvider
+     */
+    protected $fieldsProvider;
+
+    /**
+     * @param PriceRuleFieldsProvider $fieldsProvider
+     */
+    public function __construct(PriceRuleFieldsProvider $fieldsProvider)
+    {
+        $this->fieldsProvider = $fieldsProvider;
+    }
+
     /**
      * @param ParsedExpression $expression
      * @param array $namesMapping
@@ -39,14 +54,26 @@ class ExpressionLanguageConverter
                     $this->getConstantNodeValue($node->nodes['attribute'])
                 );
             } else {
-                return new NameNode(
-                    $this->getNameNodeValue($rootNameNode, $namesMapping),
-                    $this->getConstantNodeValue($node->nodes['attribute'])
-                );
+                $container = $this->getNameNodeValue($rootNameNode, $namesMapping);
+                $field = $this->getConstantNodeValue($node->nodes['attribute']);
+
+                if ($this->fieldsProvider->isRelation($container, $field)) {
+                    return new RelationNode(
+                        $container,
+                        $field,
+                        $this->fieldsProvider->getIdentityFieldName(
+                            $this->fieldsProvider->getRealClassName($container, $field)
+                        )
+                    );
+                } else {
+                    return new NameNode($container, $field);
+                }
             }
         } elseif ($node instanceof Node\NameNode) {
+            $container = $this->getNameNodeValue($node, $namesMapping);
             return new NameNode(
-                $this->getNameNodeValue($node, $namesMapping)
+                $container,
+                $this->fieldsProvider->getIdentityFieldName($container)
             );
         } elseif ($node instanceof Node\ConstantNode) {
             return new ValueNode(

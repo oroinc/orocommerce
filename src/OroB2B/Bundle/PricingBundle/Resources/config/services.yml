@@ -109,11 +109,7 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider'
         arguments:
             - '@oro_entity.entity_field_provider'
-        calls:
-            - [addSupportedClass, ['%orob2b_product.entity.product.class%']]
-            - [addSupportedClass, ['%orob2b_pricing.entity.product_price.class%']]
-            - [addSupportedClass, ['%orob2b_catalog.entity.category.class%']]
-            - [addSupportedClass, ['%orob2b_pricing.entity.price_attribute_product_price.class%']]
+            - '@oro_entity.doctrine_helper'
 
     orob2b_pricing.provider.product_virtual_relation_provider.config:
         class: 'OroB2B\Bundle\PricingBundle\Provider\ProductVirtualRelationProvider'
@@ -717,6 +713,8 @@ services:
     orob2b_pricing.expression.expression_language_converter:
         class: 'OroB2B\Bundle\PricingBundle\Expression\ExpressionLanguageConverter'
         public: false
+        arguments:
+            - '@orob2b_pricing.provider.price_rule_fields_provider'
 
     orob2b_pricing.expression.parser:
         class: 'OroB2B\Bundle\PricingBundle\Expression\ExpressionParser'
@@ -724,10 +722,8 @@ services:
         arguments:
             - '@orob2b_pricing.expression.expression_language_converter'
         calls:
-            - [addNameMapping, ['category', '%orob2b_catalog.entity.category.class%']]
             - [addNameMapping, ['product', '%orob2b_product.entity.product.class%']]
             - [addNameMapping, ['pricelist', '%orob2b_pricing.entity.product_price.class%']]
-            - [addExpressionMapping, ['product.category', 'category']]
             - [addExpressionMapping, ['PriceList.price.currency', 'pricelist.currency']]
             - [addExpressionMapping, ['PriceList.price.value', 'pricelist.value']]
             - [addExpressionMapping, ['PriceList.price', 'pricelist.value']]
