@@ -14,6 +14,7 @@ use OroB2B\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WarehouseBundle\Api\Processor\BuildSingleWarehouseInventoryLevelQuery;
 use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelatedTestCase
 {
@@ -51,7 +52,11 @@ class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelated
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->processor = new BuildSingleWarehouseInventoryLevelQuery($this->doctrineHelper, $this->criteriaConnector, $this->warehouseCounter);
+        $this->processor = new BuildSingleWarehouseInventoryLevelQuery(
+            $this->doctrineHelper,
+            $this->criteriaConnector,
+            $this->warehouseCounter
+        );
     }
 
 
@@ -99,5 +104,89 @@ class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelated
         $this->processor->process($this->context);
 
         $this->assertFalse($this->context->hasQuery());
+    }
+
+    public function testProcessBuildQueryWithMultipleWarehouses()
+    {
+        $this->warehouseCounter->expects($this->once())
+            ->method('areMoreWarehouses')
+            ->willReturn(true);
+
+        $this->context->setRequestData(
+            [
+                'sku' => 'product.1',
+                'warehouse' => 1,
+                'unit' => 'liter'
+            ]
+        );
+
+        $resolver = $this->getMockBuilder(EntityClassResolver::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $criteria = new Criteria($resolver);
+
+        $this->criteriaConnector->expects($this->once())
+            ->method('applyCriteria');
+
+        $this->context->setCriteria($criteria);
+        $this->context->setClassName(WarehouseInventoryLevel::class);
+
+        $this->processor->process($this->context);
+
+        $this->assertTrue($this->context->hasQuery());
+
+        $query = 'SELECT e FROM %s e LEFT JOIN e.product product LEFT JOIN e.productUnitPrecision productPrecision 
+LEFT JOIN productPrecision.unit unit WHERE product.sku = :sku AND unit.code = :unit 
+AND e.warehouse = :warehouse';
+        $query = str_replace("\n", '', $query);
+
+        $this->assertEquals(
+            $this->context->getQuery()->getDql(),
+            sprintf(
+                $query,
+                WarehouseInventoryLevel::class
+            )
+        );
+    }
+
+    public function testProcessBuildQueryWithOneWarehouses()
+    {
+        $this->warehouseCounter->expects($this->once())
+            ->method('areMoreWarehouses')
+            ->willReturn(false);
+
+        $this->context->setRequestData(
+            [
+                'sku' => 'product.1',
+                'unit' => 'liter'
+            ]
+        );
+
+        $resolver = $this->getMockBuilder(EntityClassResolver::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $criteria = new Criteria($resolver);
+
+        $this->criteriaConnector->expects($this->once())
+            ->method('applyCriteria');
+
+        $this->context->setCriteria($criteria);
+        $this->context->setClassName(WarehouseInventoryLevel::class);
+
+        $this->processor->process($this->context);
+
+        $this->assertTrue($this->context->hasQuery());
+
+        $query = 'SELECT e FROM %s e LEFT JOIN e.product product LEFT JOIN e.productUnitPrecision productPrecision 
+LEFT JOIN productPrecision.unit unit WHERE product.sku = :sku AND unit.code = :unit';
+        $query = str_replace("\n", '', $query);
+
+        $this->assertEquals(
+            $this->context->getQuery()->getDql(),
+            sprintf(
+                $query,
+                WarehouseInventoryLevel::class
+            )
+        );
     }
 }
