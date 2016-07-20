@@ -54,7 +54,7 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurrentState()
     {
-        $this->checkout->method('getCustomerNotes')->willReturn('testCustomerNotes');
+        $this->checkout->expects($this->once())->method('getCustomerNotes')->willReturn('testCustomerNotes');
 
         $result = $this->mapper->getCurrentState($this->checkout);
 
@@ -63,7 +63,7 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualTrue()
     {
-        $this->checkout->method('getCustomerNotes')->willReturn('testCustomerNotes');
+        $this->checkout->expects($this->once())->method('getCustomerNotes')->willReturn('testCustomerNotes');
         $savedState = [
             'parameter1' => 10,
             'customerNotes' => 'testCustomerNotes',
@@ -77,7 +77,7 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualFalse()
     {
-        $this->checkout->method('getCustomerNotes')->willReturn('changedCustomerNotes');
+        $this->checkout->expects($this->once())->method('getCustomerNotes')->willReturn('changedCustomerNotes');
         $savedState = [
             'parameter1' => 10,
             'customerNotes' => 'testCustomerNotes',
@@ -91,7 +91,7 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterDoesntExist()
     {
-        $this->checkout->method('getCustomerNotes')->willReturn('testCustomerNotes');
+        $this->checkout->expects($this->any())->method('getCustomerNotes')->willReturn('testCustomerNotes');
         $savedState = [
             'parameter1' => 10,
             'parameter3' => 'green',
@@ -104,7 +104,7 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongType()
     {
-        $this->checkout->method('getCustomerNotes')->willReturn('testCustomerNotes');
+        $this->checkout->expects($this->once())->method('getCustomerNotes')->willReturn('testCustomerNotes');
         $savedState = [
             'parameter1' => 10,
             'customerNotes' => 1,

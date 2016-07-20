@@ -166,7 +166,7 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterDoesntExist()
     {
-        $this->checkout->method('getTotalAmount')->willReturn(true);
+        $this->checkout->expects($this->any())->method('getTotalAmount')->willReturn(true);
         $savedState = [
             'parameter1' => 10,
             'parameter3' => 'green',
@@ -179,7 +179,7 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongType()
     {
-        $this->checkout->method('getTotalAmount')->willReturn(true);
+        $this->checkout->expects($this->any())->method('getTotalAmount')->willReturn(true);
         $savedState = [
             'parameter1' => 10,
             'totalAmount' => 1,

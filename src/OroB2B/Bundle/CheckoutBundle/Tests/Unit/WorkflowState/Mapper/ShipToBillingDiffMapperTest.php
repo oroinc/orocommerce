@@ -54,7 +54,7 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurrentState()
     {
-        $this->checkout->method('isShipToBillingAddress')->willReturn(true);
+        $this->checkout->expects($this->once())->method('isShipToBillingAddress')->willReturn(true);
 
         $result = $this->mapper->getCurrentState($this->checkout);
 
@@ -63,7 +63,7 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualTrue()
     {
-        $this->checkout->method('isShipToBillingAddress')->willReturn(true);
+        $this->checkout->expects($this->once())->method('isShipToBillingAddress')->willReturn(true);
         $savedState = [
             'parameter1' => 10,
             'shipToBillingAddress' => true,
@@ -77,7 +77,7 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualFalse()
     {
-        $this->checkout->method('isShipToBillingAddress')->willReturn(false);
+        $this->checkout->expects($this->once())->method('isShipToBillingAddress')->willReturn(false);
         $savedState = [
             'parameter1' => 10,
             'shipToBillingAddress' => true,
@@ -91,7 +91,7 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterDoesntExist()
     {
-        $this->checkout->method('isShipToBillingAddress')->willReturn(true);
+        $this->checkout->expects($this->any())->method('isShipToBillingAddress')->willReturn(true);
         $savedState = [
             'parameter1' => 10,
             'parameter3' => 'green',
@@ -104,7 +104,7 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongType()
     {
-        $this->checkout->method('isShipToBillingAddress')->willReturn(true);
+        $this->checkout->expects($this->once())->method('isShipToBillingAddress')->willReturn(true);
         $savedState = [
             'parameter1' => 10,
             'shipToBillingAddress' => 1,

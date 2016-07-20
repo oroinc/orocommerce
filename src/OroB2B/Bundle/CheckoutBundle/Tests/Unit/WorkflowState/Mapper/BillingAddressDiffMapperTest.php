@@ -31,7 +31,7 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->mapper = new BillingAddressDiffMapper();
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
         $this->billingAddress = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
-        $this->checkout->method('getBillingAddress')->willReturn($this->billingAddress);
+        $this->checkout->expects($this->any())->method('getBillingAddress')->willReturn($this->billingAddress);
     }
 
     public function tearDown()
@@ -65,9 +65,9 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurrentState()
     {
-        $this->billingAddress->method('getId')->willReturn(123);
+        $this->billingAddress->expects($this->once())->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
-        $this->billingAddress->method('getUpdated')->willReturn($now);
+        $this->billingAddress->expects($this->once())->method('getUpdated')->willReturn($now);
 
         $result = $this->mapper->getCurrentState($this->checkout);
 
@@ -82,9 +82,9 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualTrue()
     {
-        $this->billingAddress->method('getId')->willReturn(123);
+        $this->billingAddress->expects($this->once())->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
-        $this->billingAddress->method('getUpdated')->willReturn($now->modify('-1 minute'));
+        $this->billingAddress->expects($this->once())->method('getUpdated')->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -102,9 +102,9 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualFalseId()
     {
-        $this->billingAddress->method('getId')->willReturn(123);
+        $this->billingAddress->expects($this->once())->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
-        $this->billingAddress->method('getUpdated')->willReturn($now->modify('-1 minute'));
+        $this->billingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -122,9 +122,9 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualFalseUpdated()
     {
-        $this->billingAddress->method('getId')->willReturn(123);
+        $this->billingAddress->expects($this->once())->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
-        $this->billingAddress->method('getUpdated')->willReturn($now->modify('+1 minute'));
+        $this->billingAddress->expects($this->once())->method('getUpdated')->willReturn($now->modify('+1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -142,9 +142,9 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterDoesntExist()
     {
-        $this->billingAddress->method('getId')->willReturn(123);
+        $this->billingAddress->expects($this->any())->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
-        $this->billingAddress->method('getUpdated')->willReturn($now->modify('-1 minute'));
+        $this->billingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -158,9 +158,9 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongType()
     {
-        $this->billingAddress->method('getId')->willReturn(123);
+        $this->billingAddress->expects($this->any())->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
-        $this->billingAddress->method('getUpdated')->willReturn($now->modify('-1 minute'));
+        $this->billingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -175,9 +175,9 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongTypeUpdated()
     {
-        $this->billingAddress->method('getId')->willReturn(123);
+        $this->billingAddress->expects($this->any())->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
-        $this->billingAddress->method('getUpdated')->willReturn($now->modify('-1 minute'));
+        $this->billingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -195,9 +195,9 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterNotSetId()
     {
-        $this->billingAddress->method('getId')->willReturn(123);
+        $this->billingAddress->expects($this->any())->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
-        $this->billingAddress->method('getUpdated')->willReturn($now->modify('-1 minute'));
+        $this->billingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,
@@ -214,9 +214,9 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterNotSetUpdated()
     {
-        $this->billingAddress->method('getId')->willReturn(123);
+        $this->billingAddress->expects($this->any())->method('getId')->willReturn(123);
         $now = new \DateTimeImmutable();
-        $this->billingAddress->method('getUpdated')->willReturn($now->modify('-1 minute'));
+        $this->billingAddress->expects($this->any())->method('getUpdated')->willReturn($now->modify('-1 minute'));
 
         $savedState = [
             'parameter1' => 10,

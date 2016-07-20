@@ -36,7 +36,10 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
     {
         $this->paymentMethod = $this->getMock('\OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $this->paymentMethodRegistry = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
-        $this->paymentMethodRegistry->method('getPaymentMethod')->willReturn($this->paymentMethod);
+        $this->paymentMethodRegistry
+            ->expects($this->any())
+            ->method('getPaymentMethod')
+            ->willReturn($this->paymentMethod);
         $this->mapper = new PaymentMethodDiffMapper($this->paymentMethodRegistry);
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
@@ -72,7 +75,7 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurrentState()
     {
-        $this->checkout->method('getPaymentMethod')->willReturn('payflow_gateway');
+        $this->checkout->expects($this->once())->method('getPaymentMethod')->willReturn('payflow_gateway');
 
         $result = $this->mapper->getCurrentState($this->checkout);
 
@@ -81,8 +84,8 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualTrue()
     {
-        $this->paymentMethod->method('isEnabled')->willReturn(true);
-        $this->checkout->method('getPaymentMethod')->willReturn('payflow_gateway');
+        $this->paymentMethod->expects($this->once())->method('isEnabled')->willReturn(true);
+        $this->checkout->expects($this->once())->method('getPaymentMethod')->willReturn('payflow_gateway');
         $savedState = [
             'parameter1' => 10,
             'paymentMethod' => 'payflow_gateway',
@@ -96,8 +99,8 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualFalse()
     {
-        $this->paymentMethod->method('isEnabled')->willReturn(true);
-        $this->checkout->method('getPaymentMethod')->willReturn('paypal_payments_pro');
+        $this->paymentMethod->expects($this->once())->method('isEnabled')->willReturn(true);
+        $this->checkout->expects($this->once())->method('getPaymentMethod')->willReturn('paypal_payments_pro');
         $savedState = [
             'parameter1' => 10,
             'paymentMethod' => 'payflow_gateway',
@@ -111,8 +114,8 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterDoesntExist()
     {
-        $this->paymentMethod->method('isEnabled')->willReturn(true);
-        $this->checkout->method('getPaymentMethod')->willReturn('payflow_gateway');
+        $this->paymentMethod->expects($this->any())->method('isEnabled')->willReturn(true);
+        $this->checkout->expects($this->any())->method('getPaymentMethod')->willReturn('payflow_gateway');
         $savedState = [
             'parameter1' => 10,
             'parameter3' => 'green',
@@ -125,8 +128,8 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongType()
     {
-        $this->paymentMethod->method('isEnabled')->willReturn(true);
-        $this->checkout->method('getPaymentMethod')->willReturn(123);
+        $this->paymentMethod->expects($this->once())->method('isEnabled')->willReturn(true);
+        $this->checkout->expects($this->once())->method('getPaymentMethod')->willReturn(123);
         $savedState = [
             'parameter1' => 10,
             'paymentMethod' => 'payflow_gateway',
@@ -140,8 +143,8 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualPaymentMethodNotEnabled()
     {
-        $this->paymentMethod->method('isEnabled')->willReturn(false);
-        $this->checkout->method('getPaymentMethod')->willReturn('payflow_gateway');
+        $this->paymentMethod->expects($this->once())->method('isEnabled')->willReturn(false);
+        $this->checkout->expects($this->any())->method('getPaymentMethod')->willReturn('payflow_gateway');
         $savedState = [
             'parameter1' => 10,
             'paymentMethod' => 'payflow_gateway',
@@ -155,8 +158,11 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualPaymentMethodInvalid()
     {
-        $this->paymentMethodRegistry->method('getPaymentMethod')->willThrowException(new \InvalidArgumentException);
-        $this->checkout->method('getPaymentMethod')->willReturn('payflow_gateway');
+        $this->paymentMethodRegistry
+            ->expects($this->once())
+            ->method('getPaymentMethod')
+            ->willThrowException(new \InvalidArgumentException);
+        $this->checkout->expects($this->any())->method('getPaymentMethod')->willReturn('payflow_gateway');
         $savedState = [
             'parameter1' => 10,
             'paymentMethod' => 'payflow_gateway',

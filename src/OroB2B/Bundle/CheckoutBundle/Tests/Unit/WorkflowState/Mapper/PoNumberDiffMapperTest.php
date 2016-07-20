@@ -54,7 +54,7 @@ class PoNumberDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurrentState()
     {
-        $this->checkout->method('getPoNumber')->willReturn('testPoNumber');
+        $this->checkout->expects($this->once())->method('getPoNumber')->willReturn('testPoNumber');
 
         $result = $this->mapper->getCurrentState($this->checkout);
 
@@ -63,7 +63,7 @@ class PoNumberDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualTrue()
     {
-        $this->checkout->method('getPoNumber')->willReturn('testPoNumber');
+        $this->checkout->expects($this->once())->method('getPoNumber')->willReturn('testPoNumber');
         $savedState = [
             'parameter1' => 10,
             'poNumber' => 'testPoNumber',
@@ -77,7 +77,7 @@ class PoNumberDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualFalse()
     {
-        $this->checkout->method('getPoNumber')->willReturn('changedPoNumber');
+        $this->checkout->expects($this->once())->method('getPoNumber')->willReturn('changedPoNumber');
         $savedState = [
             'parameter1' => 10,
             'poNumber' => 'testPoNumber',
@@ -91,7 +91,7 @@ class PoNumberDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterDoesntExist()
     {
-        $this->checkout->method('getPoNumber')->willReturn('testPoNumber');
+        $this->checkout->expects($this->any())->method('getPoNumber')->willReturn('testPoNumber');
         $savedState = [
             'parameter1' => 10,
             'parameter3' => 'green',
@@ -104,7 +104,7 @@ class PoNumberDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterOfWrongType()
     {
-        $this->checkout->method('getPoNumber')->willReturn('testPoNumber');
+        $this->checkout->expects($this->once())->method('getPoNumber')->willReturn('testPoNumber');
         $savedState = [
             'parameter1' => 10,
             'poNumber' => 1,
