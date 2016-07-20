@@ -32,6 +32,11 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
 
+    public function tearDown()
+    {
+        unset($this->checkoutStateDiffManager, $this->mapperRegistry, $this->checkout);
+    }
+
     /**
      * @return CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject
      */
