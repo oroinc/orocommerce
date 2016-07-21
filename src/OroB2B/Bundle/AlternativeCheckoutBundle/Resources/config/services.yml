@@ -1,11 +1,8 @@
-parameters:
-    orob2b_alternativecheckout.entity.alternativecheckout.class: OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout
-
 services:
     orob2b_alternativecheckout.event_listener.checkout_entity:
         parent: 'orob2b_checkout.event_listener.checkout_entity.abstract'
         calls:
-            - [setCheckoutClassName, ['%orob2b_alternativecheckout.entity.alternativecheckout.class%']]
+            - [setCheckoutClassName, ['%orob2b_checkout.entity.checkout.class%']]
             - [setCheckoutType, ['alternative']]
         tags:
             - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity, priority: 10}

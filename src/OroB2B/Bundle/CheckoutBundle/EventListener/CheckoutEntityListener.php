@@ -10,9 +10,9 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 /**
@@ -137,10 +137,10 @@ class CheckoutEntityListener
     protected function findExistingCheckout(CheckoutEntityEvent $event)
     {
         if ($event->getCheckoutId() && $this->isAcceptableCheckoutType($event, $this->getCheckoutType())) {
-            /** @var BaseCheckout $checkout */
+            /** @var Checkout $checkout */
             $checkout = $this->getRepository()->find($event->getCheckoutId());
         } elseif ($event->getSource() && $event->getSource()->getId()) {
-            /** @var BaseCheckout $checkout */
+            /** @var Checkout $checkout */
             $checkout = $this->getRepository()->findOneBy(['source' => $event->getSource()]);
         }
 
@@ -148,13 +148,13 @@ class CheckoutEntityListener
     }
 
     /**
-     * @param BaseCheckout $checkout
-     * @return BaseCheckout
+     * @param Checkout $checkout
+     * @return Checkout
      */
-    protected function actualizeCheckoutCurrency(BaseCheckout $checkout)
+    protected function actualizeCheckoutCurrency(Checkout $checkout)
     {
         /** @var EntityManager $em */
-        $em = $this->doctrine->getManagerForClass('OroB2BCheckoutBundle:BaseCheckout');
+        $em = $this->doctrine->getManagerForClass('OroB2BCheckoutBundle:Checkout');
         $checkout->setCurrency($this->userCurrencyManager->getUserCurrency());
         $em->persist($checkout);
         $em->flush($checkout);
@@ -260,7 +260,7 @@ class CheckoutEntityListener
     {
         $checkoutClassName = $this->getCheckoutClassName();
 
-        return new $checkoutClassName;
+        return new $checkoutClassName($this->checkoutType);
     }
 
     /**

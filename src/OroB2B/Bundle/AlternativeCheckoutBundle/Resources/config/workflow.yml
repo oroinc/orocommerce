@@ -1,7 +1,7 @@
 workflows:
     b2b_flow_alternative_checkout:
         label: Alternative Checkout
-        entity: OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout
+        entity: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
         entity_attribute: checkout
         start_step: enter_billing_address
         steps_display_ordered: true

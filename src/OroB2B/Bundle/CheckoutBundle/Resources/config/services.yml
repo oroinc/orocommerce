@@ -1,5 +1,4 @@
 parameters:
-    orob2b_checkout.entity.base_checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout
     orob2b_checkout.entity.checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
     orob2b_checkout.entity.checkout_source.class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
 
@@ -133,12 +132,12 @@ services:
         calls:
             - [ setNamespace, [ 'orob2b_checkout_grid_totals_metadata' ] ]
 
-    orob2b_checkout.repository.base_checkout:
+    orob2b_checkout.repository.checkout:
         class: Doctrine\ORM\EntityRepository
         public: false
         factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
         arguments:
-            - '%orob2b_checkout.entity.base_checkout.class%'
+            - '%orob2b_checkout.entity.checkout.class%'
 
     orob2b_checkout.datagrid.checkout_grid_helper:
         class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper
@@ -151,7 +150,7 @@ services:
         class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener
         arguments:
             - '@orob2b_pricing.user_currency_manager'
-            - '@orob2b_checkout.repository.base_checkout'
+            - '@orob2b_checkout.repository.checkout'
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
             - '@oro_entity.entity_name_resolver'
             - '@orob2b_checkout.grid_totals_metadata.cache'

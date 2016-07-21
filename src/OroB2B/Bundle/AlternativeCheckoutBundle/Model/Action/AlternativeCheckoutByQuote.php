@@ -2,14 +2,13 @@
 
 namespace OroB2B\Bundle\AlternativeCheckoutBundle\Model\Action;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\Action\Model\ContextAccessor;
 
-use OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class AlternativeCheckoutByQuote extends AbstractAction
 {
@@ -65,8 +64,8 @@ class AlternativeCheckoutByQuote extends AbstractAction
         /** @var Checkout $checkout */
         $quote = $this->contextAccessor->getValue($context, $this->options[self::QUOTE]);
         $checkout = $this->registry
-            ->getManagerForClass('OroB2BAlternativeCheckoutBundle:AlternativeCheckout')
-            ->getRepository('OroB2BAlternativeCheckoutBundle:AlternativeCheckout')
+            ->getManagerForClass('OroB2BCheckoutBundle:Checkout')
+            ->getRepository('OroB2BCheckoutBundle:Checkout')
             ->getCheckoutByQuote($quote);
 
         $this->contextAccessor->setValue($context, $this->options[self::CHECKOUT_ATTRIBUTE], $checkout);

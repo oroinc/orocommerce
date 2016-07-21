@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AlternatiiveCheckoutBundle\Migrations\Schema\v1_2;
+namespace OroB2B\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Types\Type;
