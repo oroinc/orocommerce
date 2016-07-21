@@ -14,7 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
@@ -24,7 +23,13 @@ class AccountUserAddressController extends Controller
     /**
      * @Route("/", name="orob2b_account_frontend_account_user_address_index")
      * @Layout(vars={"entity_class", "account_address_count", "account_user_address_count"})
-     * @AclAncestor("orob2b_account_frontend_account_user_address_view")
+     * @Acl(
+     *      id="orob2b_account_frontend_account_user_address_view",
+     *      type="entity",
+     *      class="OroB2BAccountBundle:AccountUserAddress",
+     *      permission="VIEW",
+     *      group_name="commerce"
+     * )
      *
      * @return array
      */
