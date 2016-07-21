@@ -197,7 +197,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
 
     orob2b_shopping_list.data_provider.product_shopping_lists:
-            class: 'OroB2B\Bundle\ShoppingListBundle\DataProvider\ProductShoppingLists'
+            class: 'OroB2B\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider'
             arguments:
                 - '@orob2b_shopping_list.shopping_list.manager'
                 - '@orob2b_shopping_list.repository.line_item'
