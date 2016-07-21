@@ -16,6 +16,7 @@ class OroB2BSaleBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->enableQuoteExpiredProcess($schema, $queries);
+        $this->removeQuoteAddressSerializedDataColumn($schema);
     }
 
     /**
