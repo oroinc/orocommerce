@@ -173,8 +173,8 @@ class OroB2BShippingBundleInstaller implements Installation
         $table = $schema->createTable('orob2b_shipping_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['notnull' => true, 'length' => 255]);
-        $table->addColumn('status', 'string', ['length' => 16]);
-        $table->addColumn('sort_order', 'integer', ['notnull' => true]);
+        $table->addColumn('enabled', 'boolean', ['notnull' => true, 'default' => true]);
+        $table->addColumn('priority', 'integer', ['notnull' => true]);
         $table->addColumn('conditions', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['name']);

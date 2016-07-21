@@ -20,8 +20,8 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
         $properties = [
             ['id', '123'],
             ['name', 'Test Rule'],
-            ['status', ShippingRule::STATUS_ENABLED, ShippingRule::STATUS_DISABLED],
-            ['sortOrder', 10],
+            ['enabled', true],
+            ['priority', 10],
             ['conditions',  'Subtotal > 50 USD AND Subtotal <= 100 USD'],
         ];
 
@@ -63,8 +63,8 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
     {
         $id = 123;
         $name = 'Test Rule';
-        $status = ShippingRule::STATUS_ENABLED;
-        $sortOrder = 20;
+        $enabled = true;
+        $priority = 20;
         $conditions = 'Subtotal > 50 USD AND Subtotal <= 100 USD';
         
         /** @var ShippingRule $shippingRule */
@@ -73,24 +73,24 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
             [
                 'id' => $id,
                 'name' => $name,
-                'status' => $status,
-                'sortOrder' => $sortOrder,
+                'enabled' => $enabled,
+                'priority' => $priority,
                 'conditions' => $conditions,
             ]
         );
 
         $this->assertEquals($id, $shippingRule->getId());
         $this->assertEquals($name, $shippingRule->getName());
-        $this->assertEquals($status, $shippingRule->getStatus());
-        $this->assertEquals($sortOrder, $shippingRule->getSortOrder());
+        $this->assertEquals($enabled, $shippingRule->isEnabled());
+        $this->assertEquals($priority, $shippingRule->getPriority());
         $this->assertEquals($conditions, $shippingRule->getConditions());
 
         $shippingRuleCopy = clone $shippingRule;
 
         $this->assertNull($shippingRuleCopy->getId());
         $this->assertEquals($name, $shippingRuleCopy->getName());
-        $this->assertEquals($status, $shippingRuleCopy->getStatus());
-        $this->assertEquals($sortOrder, $shippingRuleCopy->getSortOrder());
+        $this->assertEquals($enabled, $shippingRuleCopy->isEnabled());
+        $this->assertEquals($priority, $shippingRuleCopy->getPriority());
         $this->assertEquals($conditions, $shippingRuleCopy->getConditions());
     }
 }

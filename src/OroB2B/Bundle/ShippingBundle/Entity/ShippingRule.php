@@ -74,7 +74,7 @@ class ShippingRule extends ExtendShippingRule
     /**
      * @var bool
      *
-     * @ORM\Column(name="status", type="string", length=16, nullable=false)
+     * @ORM\Column(name="enabled", type="boolean", nullable=false, options={"default"=true})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -86,12 +86,12 @@ class ShippingRule extends ExtendShippingRule
      *      }
      *  )
      */
-    protected $status = self::STATUS_DISABLED;
+    protected $enabled = true;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="sort_order", type="integer")
+     * @ORM\Column(name="priority", type="integer")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -103,7 +103,7 @@ class ShippingRule extends ExtendShippingRule
      *      }
      *  )
      */
-    protected $sortOrder;
+    protected $priority;
 
     /**
      * @var string
@@ -147,14 +147,6 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @return array
-     */
-    public static function getStatuses()
-    {
-        return [self::STATUS_ENABLED, self::STATUS_DISABLED];
-    }
-
-    /**
      * @return int
      */
     public function getId()
@@ -182,21 +174,21 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @return string
+     * @return bool
      */
-    public function getStatus()
+    public function isEnabled()
     {
-        return $this->status;
+        return $this->enabled;
     }
 
     /**
-     * @param string $status
+     * @param bool $enabled
      *
      * @return $this
      */
-    public function setStatus($status)
+    public function setEnabled($enabled)
     {
-        $this->status = $status;
+        $this->enabled = $enabled;
 
         return $this;
     }
@@ -204,18 +196,18 @@ class ShippingRule extends ExtendShippingRule
     /**
      * @return int
      */
-    public function getSortOrder()
+    public function getPriority()
     {
-        return $this->sortOrder;
+        return $this->priority;
     }
 
     /**
-     * @param int $sortOrder
+     * @param int $priority
      * @return $this
      */
-    public function setSortOrder($sortOrder)
+    public function setPriority($priority)
     {
-        $this->sortOrder = $sortOrder;
+        $this->priority = $priority;
 
         return $this;
     }

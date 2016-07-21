@@ -44,6 +44,15 @@ orob2b:
             entity_label: Freight Class
             entity_plural_label: Freight Classes
             code.label: Code
+        shippingrule:
+            entity_label: Shipping Rule
+            entity_plural_label: Shipping Rules
+            id.label: Id
+            name.label: Name
+            enabled.label: Enabled
+            priority.label: Priority
+            conditions.label: Conditions
+            shipping_destinations.label: Shipping Destinations
         warehouse:
             use_system_configuration: Use System Configuration
             system_configuration.label: '(system configuration)'
