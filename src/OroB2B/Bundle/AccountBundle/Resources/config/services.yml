@@ -244,11 +244,6 @@ services:
         class: 'OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordResetHandler'
         parent: orob2b_account.account_user.password.handler.abstract
 
-    orob2b_account.event_listener.datagrid.website:
-        class: 'OroB2B\Bundle\AccountBundle\EventListener\Datagrid\WebsiteDatagridListener'
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.websites-grid, method: onBuildBeforeWebsites }
-
     orob2b_account.event_listener.form_view:
         class: 'OroB2B\Bundle\AccountBundle\Form\EventListener\FormViewListener'
         arguments:
