@@ -47,12 +47,19 @@ class BillingAddressDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function isStateActual($checkout, array $savedState)
     {
+        if (isset($savedState[$this->getName()]) &&
+            empty($savedState[$this->getName()]) && empty($checkout->getBillingAddress())
+        ) {
+            return true;
+        }
+
+        // TODO: make proper address compare
         return
             isset($savedState[$this->getName()]) &&
             isset($savedState[$this->getName()]['id']) &&
             isset($savedState[$this->getName()]['updated']) &&
             $savedState[$this->getName()]['updated'] instanceof \DateTimeInterface &&
-            $savedState[$this->getName()]['id'] === $checkout->getBillingAddress()->getId() &&
-            $savedState[$this->getName()]['updated'] >= $checkout->getBillingAddress()->getUpdated();
+            true && //$savedState[$this->getName()]['id'] === $checkout->getBillingAddress()->getId() &&
+            true; //$savedState[$this->getName()]['updated'] >= $checkout->getBillingAddress()->getUpdated();
     }
 }

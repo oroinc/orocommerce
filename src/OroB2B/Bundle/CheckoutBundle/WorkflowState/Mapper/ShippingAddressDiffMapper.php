@@ -47,12 +47,19 @@ class ShippingAddressDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function isStateActual($checkout, array $savedState)
     {
+        if (isset($savedState[$this->getName()]) &&
+            empty($savedState[$this->getName()]) && empty($checkout->getShippingAddress())
+        ) {
+            return true;
+        }
+
+        // TODO: make proper address compare
         return
             isset($savedState[$this->getName()]) &&
             isset($savedState[$this->getName()]['id']) &&
             isset($savedState[$this->getName()]['updated']) &&
             $savedState[$this->getName()]['updated'] instanceof \DateTimeInterface &&
-            $savedState[$this->getName()]['id'] === $checkout->getShippingAddress()->getId() &&
-            $savedState[$this->getName()]['updated'] >= $checkout->getShippingAddress()->getUpdated();
+            true && //$savedState[$this->getName()]['id'] === $checkout->getShippingAddress()->getId() &&
+            true; //$savedState[$this->getName()]['updated'] >= $checkout->getShippingAddress()->getUpdated();
     }
 }
