@@ -25,7 +25,7 @@ define(function(require) {
                 preventWindowUnload: __('oro.form.inlineEditing.inline_edits')
             },
             elements: {
-                trigger: '[data-role$="[accept]"]',
+                saveButton: '',
                 quantity: '[name$="[quantity]"]',
                 unit: '[name$="[unit]"]'
             },
@@ -75,11 +75,10 @@ define(function(require) {
         },
 
         initElements: function(options) {
-            this.elements = {
-                trigger: this.$el.find(options.elements.trigger),
-                quantity: this.$el.find(options.elements.quantity),
-                unit: this.$el.find(options.elements.unit)
-            };
+            this.elements = {};
+            _.each(options.elements, function(selector, key) {
+                this.elements[key] = selector ? this.$el.find(selector) : null;
+            }, this);
 
             this.elements.unit.prop('disabled', false);
             if (!this.elements.unit.find(':selected').is(':disabled')) {
@@ -91,7 +90,7 @@ define(function(require) {
         },
 
         enableAccept: function() {
-            this.elements.trigger.prop('disabled', false);
+            this.elements.saveButton.prop('disabled', false);
         },
 
         enableQuantity: function() {
@@ -132,8 +131,8 @@ define(function(require) {
         },
 
         initListeners: function() {
-            if (this.elements.trigger) {
-                this.elements.trigger.on('click', _.bind(this.onViewChange, this));
+            if (this.elements.saveButton) {
+                this.elements.saveButton.on('click', _.bind(this.onViewChange, this));
                 this.$el.on('change', this.elements.quantity, _.bind(this.enableAccept, this));
                 this.$el.on('change', this.elements.unit, _.bind(this.enableAccept, this));
                 return;
@@ -157,7 +156,9 @@ define(function(require) {
                 return;
             }
 
-            this.triggerData.event = e;
+            if (this.triggerData) {
+                this.triggerData.event = e;
+            }
             this.enableQuantity();
             this.saveChanges();
         },
@@ -218,14 +219,13 @@ define(function(require) {
             this.saveModelState();
             this.restoreSavedState();
 
-            this.trigger(
-                'product:quantity-unit:update',
-                this.getValue()
-            );
-            this.triggerData.data = response;
+            var value = _.extend({}, this.triggerData || {}, {
+                lineItem: value
+            });
+            this.trigger('product:quantity-unit:update', value);
+            mediator.trigger('product:quantity-unit:update', value);
 
             mediator.execute('showFlashMessage', 'success', this.messages.success);
-            mediator.trigger('product:quantity-unit:update', this.triggerData || e);
         },
 
         onSaveError: function(jqXHR) {

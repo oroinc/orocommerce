@@ -127,11 +127,11 @@ define(function(require) {
 
         onLineItemUpdate: function(updateData) {
             var updatedShoppingLists = this.updateShoppingLists(
-                    this.model.get('shopping_lists'),
-                    updateData.shoppingListId,
-                    updateData.lineItemId,
-                    updateData.data
-                );
+                this.model.get('shopping_lists'),
+                updateData.shoppingListId,
+                updateData.lineItemId,
+                updateData.lineItem
+            );
 
             this.model.set('shopping_lists', updatedShoppingLists);
             this.model.trigger('change:shopping_lists');
