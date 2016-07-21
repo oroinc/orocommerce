@@ -130,11 +130,20 @@ class ShippingRule extends ExtendShippingRule
     protected $shippingDestinations;
 
     /**
+     * @var Collection|ShippingRuleConfiguration[]
+     *
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration", mappedBy="rule")
+     */
+    protected $configurations;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
     {
+        parent::__construct();
         $this->shippingDestinations = new ArrayCollection();
+        $this->configurations = new ArrayCollection();
     }
 
     /**
@@ -228,6 +237,64 @@ class ShippingRule extends ExtendShippingRule
         $this->conditions = $conditions;
 
         return $this;
+    }
+
+    /**
+     * @param ShippingRuleConfiguration $lineItem
+     * @return bool
+     */
+    public function hasConfiguration(ShippingRuleConfiguration $lineItem)
+    {
+        return $this->configurations->contains($lineItem);
+    }
+
+    /**
+     * @param ShippingRuleConfiguration $configuration
+     * @return $this
+     */
+    public function addConfiguration(ShippingRuleConfiguration $configuration)
+    {
+        if (!$this->hasConfiguration($configuration)) {
+            $this->configurations[] = $configuration;
+            $configuration->setRule($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ShippingRuleConfiguration $configuration
+     * @return $this
+     */
+    public function removeConfiguration(ShippingRuleConfiguration $configuration)
+    {
+        if ($this->hasConfiguration($configuration)) {
+            $this->configurations->removeElement($configuration);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Collection|ShippingRuleConfiguration[] $configurations
+     * @return $this
+     */
+    public function setConfigurations(Collection $configurations)
+    {
+        foreach ($configurations as $configuration) {
+            $configuration->setRule($this);
+        }
+        $this->configurations = $configurations;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ShippingRuleConfiguration[]
+     */
+    public function getConfigurations()
+    {
+        return $this->configurations;
     }
 
     public function __clone()

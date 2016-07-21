@@ -2,13 +2,15 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingDestination;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity\Stub\CustomShippingRuleConfiguration;
 
-class ShippingRulesTest extends \PHPUnit_Framework_TestCase
+class ShippingRuleTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;
@@ -23,7 +25,22 @@ class ShippingRulesTest extends \PHPUnit_Framework_TestCase
             ['conditions',  'Subtotal > 50 USD AND Subtotal <= 100 USD'],
         ];
 
-        $this->assertPropertyAccessors(new ShippingRule(), $properties);
+        $rule = new ShippingRule();
+        $this->assertPropertyAccessors($rule, $properties);
+        $this->assertPropertyCollection($rule, 'configurations', new CustomShippingRuleConfiguration());
+    }
+
+    public function testLineItemsSetter()
+    {
+        $configurations = new ArrayCollection([new CustomShippingRuleConfiguration()]);
+        $shippingRule = new ShippingRule();
+        $this->assertEmpty($shippingRule->getConfigurations());
+        $shippingRule->setConfigurations($configurations);
+        $result = $shippingRule->getConfigurations();
+        $this->assertEquals($configurations, $result);
+        foreach ($result as $configuration) {
+            $this->assertEquals($configuration->getRule()->getId(), $shippingRule->getId());
+        }
     }
 
     public function testRelations()
