@@ -58,7 +58,7 @@ services:
         tags:
             - { name: security.voter }
 
-    orob2b_product_viisbility.acl.voter.account:
+    orob2b_product_visibility.acl.voter.account:
         class: 'OroB2B\Bundle\AccountBundle\Acl\Voter\ProductVisibilityVoter'
         public: false
         arguments:
