@@ -4,14 +4,15 @@ Product API
 Table of Contents
 -----------------
  - [GET Products](#get-products)
- - [PATCH Products](#patch-products)
+ - [PATCH Product](#patch-product)
 
 GET Products
 ============
-
 Returns a collection of **Products**.
+
 This API can be used to retrieve Inventory-Statuses.
-One or more Product SKU can be provided in order to filter the received data.
+
+One or more Product SKUs can be provided in order to filter the received data.
 
 Resource URL
 ------------
@@ -20,6 +21,7 @@ Resource URL
 Request Headers
 ---------------
 ``Content-Type:  application/vnd.api+json``
+
 Do not forget to add the request headers for authentication.
 
 Resource Information
@@ -31,13 +33,16 @@ Parameters
 ----------
 ### sku
 Product SKU(s).
+
 One ore more Product SKU can be provided as request query.
+
 E.g.: `filter[sku]=0RT28` or `filter[sku]=0RT28,1AB92`
 
 Authentication Requirements
 ---------------------------
 WSSE authentication is required.
-ACL permission to view projects is required.
+
+ACL permission to view products is required.
 
 Example Request
 ---------------
@@ -102,11 +107,12 @@ Example Response
 }
 ```
 
-PATCH Products
-==============
-
+PATCH Product
+=============
 Updates a single **Product**.
+
 This API can be used to update the Inventory-Status of a Product.
+
 One Product SKU must be provided in order to identify the Product.
 
 Resource URL
@@ -116,6 +122,7 @@ Resource URL
 Request Headers
 ---------------
 ``Content-Type:  application/vnd.api+json``
+
 Do not forget to add the request headers for authentication.
 
 Resource Information
@@ -127,19 +134,27 @@ Parameters
 ----------
 ### type
 Type of the resource.
+
 Must be set to `products`.
+
 E.g.: `"type": "products"`
 
 ### sku
 Product SKU.
+
 One Product SKU must be provided in order to identify the Product.
+
 The key for the Product SKU is `id` since this is the identifier of the Product.
+
 E.g.: `"id": "0RT28"`
 
 ### inventory_status
 Product Inventory Status.
+
 One Inventory Status can be provided, in order to update the Product Inventory Status.
-Since Inventory Status is a separate entity from Product, it has to be provided in the relationships section.
+
+Since Inventory Status is a separate entity from Product, it is provided in the `relationships` section.
+
 E.g.:
 ```json
 "relationships": {
@@ -155,7 +170,8 @@ E.g.:
 Authentication Requirements
 ---------------------------
 WSSE authentication is required.
-ACL permission to update projects is required.
+
+ACL permission to update products is required.
 
 Example Request
 ---------------
