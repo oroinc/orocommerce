@@ -5,7 +5,7 @@ layout:
         - '@add':
             id: add_to_shopping_list_form_button
             blockType: add_to_shopping_list_form_button
-            parentId: line_item_form_buttons
+            parentId: line_item_buttons
             siblingId: ~
             prepend: true
             options:
