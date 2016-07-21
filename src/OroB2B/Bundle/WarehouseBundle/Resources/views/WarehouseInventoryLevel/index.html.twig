@@ -2,3 +2,16 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% set gridName = 'warehouse-inventory-grid' %}
 {% set pageTitle = 'orob2b.warehouse.warehouseinventorylevel.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
+        entity_class: entity_class,
+        exportJob: 'warehouse_inventory_level_export_to_csv',
+        exportProcessor: exportProcessors,
+        importProcessor: 'orob2b_warehouse.warehouse_inventory_level',
+        exportTemplateProcessor: exportTemplateProcessors,
+        exportTemplatelabel: 'orob2b.warehouse.export.template_popup.title'|trans,
+        exportLabel: 'orob2b.warehouse.export.popup.title'|trans,
+        dataGridName: gridName
+    } %}
+{% endblock %}

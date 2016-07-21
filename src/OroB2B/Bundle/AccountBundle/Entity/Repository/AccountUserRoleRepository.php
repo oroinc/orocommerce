@@ -97,11 +97,15 @@ class AccountUserRoleRepository extends EntityRepository
 
     /**
      * @param OrganizationInterface $organization
-     * @param mixed $account
+     * @param mixed                 $account
+     * @param bool                  $onlySelfManaged
      * @return QueryBuilder
      */
-    public function getAvailableRolesByAccountUserQueryBuilder(OrganizationInterface $organization, $account)
-    {
+    public function getAvailableRolesByAccountUserQueryBuilder(
+        OrganizationInterface $organization,
+        $account,
+        $onlySelfManaged = false
+    ) {
         if ($account instanceof Account) {
             $account = $account->getId();
         }
@@ -117,14 +121,36 @@ class AccountUserRoleRepository extends EntityRepository
             $qb->setParameter('account', (int)$account);
         }
 
-        $qb->where(
-            $qb->expr()->andX(
-                $expr,
-                $qb->expr()->eq('accountUserRole.organization', ':organization')
-            )
-        );
+        if ($onlySelfManaged) {
+            $qb->where(
+                $qb->expr()->andX(
+                    $expr,
+                    $qb->expr()->eq('accountUserRole.selfManaged', ':selfManaged'),
+                    $qb->expr()->eq('accountUserRole.organization', ':organization')
+                )
+            );
+            $qb->setParameter('selfManaged', true, \PDO::PARAM_BOOL);
+        } else {
+            $qb->where(
+                $qb->expr()->andX(
+                    $expr,
+                    $qb->expr()->eq('accountUserRole.organization', ':organization')
+                )
+            );
+        }
+
         $qb->setParameter('organization', $organization);
 
         return $qb;
+    }
+
+    /**
+     * @param OrganizationInterface $organization
+     * @param mixed $account
+     * @return QueryBuilder
+     */
+    public function getAvailableSelfManagedRolesByAccountUserQueryBuilder(OrganizationInterface $organization, $account)
+    {
+        return $this->getAvailableRolesByAccountUserQueryBuilder($organization, $account, true);
     }
 }
