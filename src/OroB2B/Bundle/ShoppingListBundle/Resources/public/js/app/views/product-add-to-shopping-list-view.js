@@ -15,8 +15,17 @@ define(function(require) {
             buttonTemplate: '',
             removeButtonTemplate: '',
             defaultClass: '',
-            addedClass: '',
-            buttonsSelector: '.add-to-shopping-list-button'
+            buttonsSelector: '.add-to-shopping-list-button',
+            elements: {
+                quantity: '[name$="[quantity]"]',
+                unit: '[name$="[unit]"]'
+            },
+            messages: {
+                success: 'oro.form.inlineEditing.successMessage'
+            },
+            api: {
+                update: 'orob2b_api_shopping_list_frontend_put_line_item'
+            }
         },
 
         $el: null,
@@ -45,6 +54,15 @@ define(function(require) {
                 this.options.removeButtonTemplate = _.template(this.options.removeButtonTemplate);
             }
 
+            this._updateCurrentShoppingList();
+
+            this.messages = this.options.messages;
+            this.$form = this.$el.closest('form');
+            this.elements = {
+                quantity: this.$form.find(this.options.elements.quantity),
+                unit: this.$form.find(this.options.elements.unit)
+            };
+
             mediator.on('shopping-list:updated', this._onShoppingListUpdate, this);
             mediator.on('shopping-list:created', this._onShoppingListCreate, this);
         },
@@ -64,15 +82,22 @@ define(function(require) {
                     this.model.set(attribute, value);
                 }
             }, this);
+
+            this.model.on('editLineItem', this._updateCurrentShoppingList, this);
         },
 
         dispose: function(options) {
             delete this.dropdownWidget;
             delete this.modelAttr;
             delete this.$remove;
+            delete this.lineItemId;
+            delete this.messages;
 
             mediator.off('shopping-list:updated', this._onShoppingListUpdate, this);
             mediator.off('shopping-list:created', this._onShoppingListCreate, this);
+            if (this.model) {
+                this.model.on('editLineItem', this._updateCurrentShoppingList, this);
+            }
 
             ProductAddToShoppingListView.__super__.dispose.apply(this, arguments);
         },
@@ -174,6 +199,19 @@ define(function(require) {
             }
         },
 
+        _updateCurrentShoppingList: function(lineItemId) {
+            var currentLineItem = this.findCurrentLineItem(lineItemId);
+
+            if (currentLineItem) {
+                this.model.set({
+                    quantity: currentLineItem.quantity,
+                    unit: currentLineItem.unit
+                });
+
+                this.updateMainButton();
+            }
+        },
+
         transformCreateNewButton: function() {
             var $button = this.findNewButton();
             if ($button.length) {
@@ -186,7 +224,6 @@ define(function(require) {
 
         updateMainButton: function() {
             if (this.dropdownWidget.main && this.dropdownWidget.main.data('shoppinglist')) {
-                this.toggleButtonsClass();
 
                 this.setButtonLabel(this.dropdownWidget.main);
                 this.setButtonLabel(this.dropdownWidget.main.data('clone'));
@@ -195,17 +232,6 @@ define(function(require) {
             }
 
             this.initButtons();
-        },
-
-        toggleButtonsClass: function() {
-            if (!this.model) {
-                return;
-            }
-            if (_.isEmpty(this.findCurrentShoppingList())) {
-                this.dropdownWidget.group.removeClass(this.options.addedClass).addClass(this.options.defaultClass);
-            } else {
-                this.dropdownWidget.group.removeClass(this.options.defaultClass).addClass(this.options.addedClass);
-            }
         },
 
         setButtonLabel: function($button) {
@@ -234,7 +260,11 @@ define(function(require) {
                         }
                     });
                 }
-                label =  _.__('orob2b.shoppinglist.actions.added_to_shopping_list')
+
+                var labelName = modelCurrentShoppingLists ? 'orob2b.shoppinglist.actions.update_shopping_list'
+                                                          : 'orob2b.shoppinglist.actions.added_to_shopping_list';
+
+                label =  _.__(labelName)
                     .replace('{{ lineItems }}', lineItems);
             }
 
@@ -261,6 +291,7 @@ define(function(require) {
 
                 this.$remove = $button;
                 this.dropdownWidget.main.data('clone').parent().after(this.$remove);
+                this.$remove.attr('data-is-remove', true);
             } else if (this.$remove && _.isEmpty(modelCurrentShoppingLists)) {
                 this.$remove.remove();
                 delete this.$remove;
@@ -273,10 +304,34 @@ define(function(require) {
             }) || null;
         },
 
+        findCurrentLineItem: function(lineItemId) {
+            if (!this.model) {
+                return;
+            }
+
+            var modelCurrentShoppingLists = this.findCurrentShoppingList();
+            var currentLineItem = null;
+
+            if (modelCurrentShoppingLists) {
+                if (lineItemId) {
+                    currentLineItem = _.filter(modelCurrentShoppingLists.line_items, function(shoppingListItem) {
+                        return shoppingListItem.line_item_id === lineItemId;
+                    })[0];
+
+                    this.lineItemId = lineItemId;
+                } else {
+                    currentLineItem = modelCurrentShoppingLists.line_items[0];
+                    this.lineItemId = currentLineItem.line_item_id;
+                }
+            }
+
+            return currentLineItem;
+        },
+
         onClick: function(e) {
             var $button = $(e.currentTarget);
             var url = $button.data('url');
-            var formData = this.$el.closest('form').serialize();
+            var formData = this.$form.serialize();
             var urlOptions = {};
 
             if (!this.dropdownWidget.validateForm()) {
@@ -290,9 +345,30 @@ define(function(require) {
             if ($button.data('intention') === 'new') {
                 this._createNewShoppingList(url, urlOptions, formData);
             } else {
-                var shoppingList = $button.data('shoppinglist');
-                urlOptions.shoppingListId = shoppingList.id;
-                this._addProductToShoppingList(url, urlOptions, formData);
+                var self = this;
+                var addProductToShoppingList = function() {
+                    var shoppingList = $button.data('shoppinglist');
+                    urlOptions.shoppingListId = shoppingList.id;
+                    self._addProductToShoppingList(url, urlOptions, formData);
+                };
+
+                if (this.lineItemId && this.findCurrentShoppingList()) {
+                    var currentLineItem = this.findCurrentLineItem(this.lineItemId);
+                    if ((currentLineItem.unit === this.elements.unit.val())
+                        && !$(e.currentTarget).parent().attr('data-is-remove')
+                    ) {
+                        // update product in shopping list
+                        formData = this.getValue();
+                        this._updateProductToShoppingList(this.options.api.update, {id: this.lineItemId}, formData);
+                    } else {
+                        // remove product from shopping list
+                        addProductToShoppingList();
+                        this.lineItemId = null;
+                    }
+                } else {
+                    // add product to shopping list
+                    addProductToShoppingList();
+                }
             }
         },
 
@@ -327,6 +403,41 @@ define(function(require) {
                     Error.handle({}, xhr, {enforce: true});
                 }
             });
+        },
+
+        _updateProductToShoppingList: function(url, urlOptions, formData) {
+            var self = this;
+
+            mediator.execute('showLoading');
+            $.ajax({
+                type: 'PUT',
+                url: routing.generate(url, urlOptions),
+                data: {orob2b_product_frontend_line_item: formData},
+                dataType: "json",
+                success: function(response) {
+                    var shoppingLists = self.model.get('shopping_lists');
+                    var currentLineItem = self.findCurrentLineItem(urlOptions.id);
+
+                    mediator.execute('hideLoading');
+
+                    currentLineItem.quantity = response.quantity;
+                    currentLineItem.unit = response.unit;
+
+                    self.model.trigger('change:shopping_lists', shoppingLists);
+                    mediator.execute('showFlashMessage', 'success', _.__(self.messages.success));
+                },
+                error: function(xhr) {
+                    mediator.execute('hideLoading');
+                    Error.handle({}, xhr, {enforce: true});
+                }
+            });
+        },
+
+        getValue: function() {
+            return {
+                quantity: this.elements.quantity.val(),
+                unit: this.elements.unit.val()
+            };
         }
     });
 
