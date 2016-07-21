@@ -107,6 +107,7 @@ OrderBundle:
     - required `OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager`
     - method `getBaseCurrency` was removed
 
+
 PaymentBundle:
 --------------
 - Modified `OroB2B\Bundle\PaymentBundle\Controller\Frontend\CallbackController`
