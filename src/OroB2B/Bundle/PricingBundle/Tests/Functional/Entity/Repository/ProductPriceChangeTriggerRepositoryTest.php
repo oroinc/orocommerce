@@ -2,14 +2,19 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\AbstractChangedProductPriceTest;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
  */
-class ProductPriceChangeTriggerRepositoryTest extends AbstractChangedProductPriceTest
+class ProductPriceChangeTriggerRepositoryTest extends WebTestCase
 {
     /**
      * {@inheritdoc}
@@ -18,32 +23,55 @@ class ProductPriceChangeTriggerRepositoryTest extends AbstractChangedProductPric
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+            LoadPriceLists::class,
+            LoadProductData::class
         ]);
     }
 
-    public function testIsSaved()
+    public function testIsExistingTriggerFalse()
     {
-        $this->clearTable();
-        $productPrice = $this->getProductPrice();
+        /** @var ProductPriceChangeTriggerRepository $repository */
+        $repository = $this
+            ->getContainer()
+            ->get('doctrine')
+            ->getManager()
+            ->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
+
         /** @var PriceList $priceList */
-        $priceList = $productPrice->getPriceList();
-        $product = $productPrice->getProduct();
+        $priceList = $this->getReference('price_list_1');
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $trigger = new ProductPriceChangeTrigger($priceList, $product);
+
+        $this->assertFalse($repository->isExisting($trigger));
+    }
+
+    public function testIsExistingTriggerTrue()
+    {
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        /** @var ProductPriceChangeTriggerRepository $repository */
+        $repository = $em->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_1');
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
 
         $trigger = new ProductPriceChangeTrigger($priceList, $product);
-        //should be false before save
-        $this->assertFalse($this->getProductPriceChangeTriggerRepository()->isCreated($trigger));
+        $em->persist($trigger);
+        $em->flush();
 
-        $this->getProductPriceManager()->persist($trigger);
-        $this->getProductPriceManager()->flush();
-        //should be true after save
-        $this->assertTrue($this->getProductPriceChangeTriggerRepository()->isCreated($trigger));
+        $this->assertTrue($repository->isExisting($trigger));
     }
 
     public function testDeleteAll()
     {
-        $this->assertNotEmpty($this->getProductPriceChangeTriggerRepository()->findAll());
-        $this->getProductPriceChangeTriggerRepository()->deleteAll();
-        $this->assertCount(0, $this->getProductPriceChangeTriggerRepository()->findAll());
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        /** @var ProductPriceChangeTriggerRepository $repository */
+        $repository = $em->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
+        $this->assertNotEmpty($repository->findBy([]));
+
+        $repository->deleteAll();
+        $this->assertCount(0, $repository->findBy([]));
     }
 }

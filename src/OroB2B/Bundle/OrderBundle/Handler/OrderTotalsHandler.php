@@ -26,7 +26,7 @@ class OrderTotalsHandler
     public function fillSubtotals(Order $order)
     {
         $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
-        $total = $this->totalProvider->getTotal($order);
+        $total = $this->totalProvider->enableRecalculation()->getTotal($order);
 
         $order->setSubtotal($subtotal->getAmount());
         $order->setTotal($total->getAmount());
