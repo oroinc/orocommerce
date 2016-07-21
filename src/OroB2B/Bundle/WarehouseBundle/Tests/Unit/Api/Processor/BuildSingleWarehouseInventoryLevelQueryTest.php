@@ -1,6 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Api\Processor;
+namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\Api\Processor;
+
+use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\ApiBundle\Collection\Criteria;
 use Oro\Bundle\ApiBundle\Processor\Update\UpdateContext;
@@ -10,8 +12,6 @@ use Oro\Bundle\ApiBundle\Config\FiltersConfigExtra;
 use Oro\Bundle\ApiBundle\Util\CriteriaConnector;
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 
-use OroB2B\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WarehouseBundle\Api\Processor\BuildSingleWarehouseInventoryLevelQuery;
 use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
@@ -112,13 +112,12 @@ class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelated
             ->method('areMoreWarehouses')
             ->willReturn(true);
 
-        $this->context->setRequestData(
-            [
-                'sku' => 'product.1',
-                'warehouse' => 1,
-                'unit' => 'liter'
-            ]
-        );
+        $requestData = [
+            'sku' => 'product.1',
+            'warehouse' => 1,
+            'unit' => 'liter'
+        ];
+        $this->context->setRequestData($requestData);
 
         $resolver = $this->getMockBuilder(EntityClassResolver::class)
             ->disableOriginalConstructor()
@@ -135,18 +134,12 @@ class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelated
 
         $this->assertTrue($this->context->hasQuery());
 
-        $query = 'SELECT e FROM %s e LEFT JOIN e.product product LEFT JOIN e.productUnitPrecision productPrecision 
-LEFT JOIN productPrecision.unit unit WHERE product.sku = :sku AND unit.code = :unit 
-AND e.warehouse = :warehouse';
-        $query = str_replace("\n", '', $query);
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->context->getQuery();
 
-        $this->assertEquals(
-            $this->context->getQuery()->getDql(),
-            sprintf(
-                $query,
-                WarehouseInventoryLevel::class
-            )
-        );
+        foreach ($requestData as $parameter => $value) {
+            $this->assertEquals($queryBuilder->getParameter($parameter)->getValue(), $value);
+        }
     }
 
     public function testProcessBuildQueryWithOneWarehouses()
@@ -155,12 +148,11 @@ AND e.warehouse = :warehouse';
             ->method('areMoreWarehouses')
             ->willReturn(false);
 
-        $this->context->setRequestData(
-            [
-                'sku' => 'product.1',
-                'unit' => 'liter'
-            ]
-        );
+        $requestData = [
+            'sku' => 'product.1',
+            'unit' => 'liter'
+        ];
+        $this->context->setRequestData($requestData);
 
         $resolver = $this->getMockBuilder(EntityClassResolver::class)
             ->disableOriginalConstructor()
@@ -177,16 +169,10 @@ AND e.warehouse = :warehouse';
 
         $this->assertTrue($this->context->hasQuery());
 
-        $query = 'SELECT e FROM %s e LEFT JOIN e.product product LEFT JOIN e.productUnitPrecision productPrecision 
-LEFT JOIN productPrecision.unit unit WHERE product.sku = :sku AND unit.code = :unit';
-        $query = str_replace("\n", '', $query);
-
-        $this->assertEquals(
-            $this->context->getQuery()->getDql(),
-            sprintf(
-                $query,
-                WarehouseInventoryLevel::class
-            )
-        );
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->context->getQuery();
+        foreach ($requestData as $parameter => $value) {
+            $this->assertEquals($queryBuilder->getParameter($parameter)->getValue(), $value);
+        }
     }
 }

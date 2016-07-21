@@ -97,9 +97,6 @@ class BuildSingleProductQueryTest extends GetProcessorOrmRelatedTestCase
         $this->processor->process($this->context);
 
         $this->assertTrue($this->context->hasQuery());
-        $this->assertEquals(
-            $this->context->getQuery()->getDql(),
-            sprintf('SELECT e FROM %s e WHERE e.sku = :sku', Product::class)
-        );
+        $this->assertEquals($this->context->getQuery()->getParameter('sku')->getValue(), 'product.1');
     }
 }

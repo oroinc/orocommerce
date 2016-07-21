@@ -86,7 +86,6 @@ class ProductApiTest extends RestJsonApiTestCase
     public function cgetParamsAndExpectation()
     {
         return [
-
             'filter by Product' => [
                 'entityClass' => Product::class,
                 'statusCode' => 200,

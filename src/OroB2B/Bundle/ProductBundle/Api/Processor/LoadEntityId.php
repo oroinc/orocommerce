@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ProductBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\SingleItemContext;
-
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
@@ -11,6 +10,9 @@ class LoadEntityId implements ProcessorInterface
 {
     const METHOD = 'getId';
 
+    /**
+     * {@inheritdoc}
+     */
     public function process(ContextInterface $context)
     {
         /** @var SingleItemContext $context */
