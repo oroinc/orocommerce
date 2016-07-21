@@ -42,12 +42,11 @@ class ProductShoppingListsDataProvider
         $this->securityFacade = $securityFacade;
     }
     
-
     /**
-     * @param Product $product
+     * @param Product|null $product
      * @return array
      */
-    public function getProductUnitsQuantity(Product $product)
+    public function getProductUnitsQuantity($product)
     {
         if (!$product) {
             return null;
