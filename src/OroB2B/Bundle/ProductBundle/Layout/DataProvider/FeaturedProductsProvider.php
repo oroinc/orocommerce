@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Layout\DataProvider;
 
-use Doctrine\ORM\EntityRepository;
-
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
