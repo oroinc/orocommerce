@@ -30,10 +30,14 @@ class ShippingAddressDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function getCurrentState($checkout)
     {
-        return [
-            'id' => $checkout->getShippingAddress()->getId(),
-            'updated' => $checkout->getShippingAddress()->getUpdated(),
-        ];
+        if (!empty($checkout->getShippingAddress())) {
+            return [
+                'id' => $checkout->getShippingAddress()->getId(),
+                'updated' => $checkout->getShippingAddress()->getUpdated(),
+            ];
+        }
+
+        return [];
     }
 
     /**

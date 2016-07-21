@@ -17,11 +17,6 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
     protected $mapper;
 
     /**
-     * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $checkout;
-
-    /**
      * @var OrderAddress|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $billingAddress;
@@ -29,22 +24,38 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->mapper = new BillingAddressDiffMapper();
-        $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
         $this->billingAddress = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
-        $this->checkout
-            ->expects($this->any())
-            ->method('getBillingAddress')
-            ->willReturn($this->billingAddress);
     }
 
     public function tearDown()
     {
-        unset($this->mapper, $this->checkout, $this->billingAddress);
+        unset($this->mapper, $this->billingAddress);
+    }
+
+    /**
+     * @param mixed $billingAddress
+     * @return Checkout|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getCheckout($billingAddress)
+    {
+        $checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
+
+        $checkout
+            ->expects($this->any())
+            ->method('getBillingAddress')
+            ->willReturn($billingAddress);
+
+        return $checkout;
     }
 
     public function testIsEntitySupported()
     {
-        $this->assertEquals(true, $this->mapper->isEntitySupported($this->checkout));
+        $this->assertEquals(
+            true,
+            $this->mapper->isEntitySupported(
+                $this->getCheckout($billingAddress = $this->billingAddress)
+            )
+        );
     }
 
     public function testIsEntitySupportedNotObject()
@@ -80,7 +91,9 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             ->method('getUpdated')
             ->willReturn($now);
 
-        $result = $this->mapper->getCurrentState($this->checkout);
+        $result = $this->mapper->getCurrentState(
+            $this->getCheckout($billingAddress = $this->billingAddress)
+        );
 
         $this->assertEquals(
             [
@@ -89,6 +102,15 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             ],
             $result
         );
+    }
+
+    public function testGetCurrentStateEmptyBillingAddress()
+    {
+        $result = $this->mapper->getCurrentState(
+            $this->getCheckout($billingAddress = null)
+        );
+
+        $this->assertEquals([], $result);
     }
 
     public function testIsStateActualTrue()
@@ -114,7 +136,10 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual(
+            $this->getCheckout($billingAddress = $this->billingAddress),
+            $savedState
+        );
 
         $this->assertEquals(true, $result);
     }
@@ -142,7 +167,10 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual(
+            $this->getCheckout($billingAddress = $this->billingAddress),
+            $savedState
+        );
 
         $this->assertEquals(false, $result);
     }
@@ -170,7 +198,10 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual(
+            $this->getCheckout($billingAddress = $this->billingAddress),
+            $savedState
+        );
 
         $this->assertEquals(false, $result);
     }
@@ -194,7 +225,10 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual(
+            $this->getCheckout($billingAddress = $this->billingAddress),
+            $savedState
+        );
 
         $this->assertEquals(false, $result);
     }
@@ -219,7 +253,10 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual(
+            $this->getCheckout($billingAddress = $this->billingAddress),
+            $savedState
+        );
 
         $this->assertEquals(false, $result);
     }
@@ -247,7 +284,10 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual(
+            $this->getCheckout($billingAddress = $this->billingAddress),
+            $savedState
+        );
 
         $this->assertEquals(false, $result);
     }
@@ -274,7 +314,10 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual(
+            $this->getCheckout($billingAddress = $this->billingAddress),
+            $savedState
+        );
 
         $this->assertEquals(false, $result);
     }
@@ -301,7 +344,10 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $result = $this->mapper->isStateActual(
+            $this->getCheckout($billingAddress = $this->billingAddress),
+            $savedState
+        );
 
         $this->assertEquals(false, $result);
     }

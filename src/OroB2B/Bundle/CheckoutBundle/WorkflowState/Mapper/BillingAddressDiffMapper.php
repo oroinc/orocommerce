@@ -30,10 +30,14 @@ class BillingAddressDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function getCurrentState($checkout)
     {
-        return [
-            'id' => $checkout->getBillingAddress()->getId(),
-            'updated' => $checkout->getBillingAddress()->getUpdated(),
-        ];
+        if (!empty($checkout->getBillingAddress())) {
+            return [
+                'id' => $checkout->getBillingAddress()->getId(),
+                'updated' => $checkout->getBillingAddress()->getUpdated(),
+            ];
+        }
+
+        return [];
     }
 
     /**
