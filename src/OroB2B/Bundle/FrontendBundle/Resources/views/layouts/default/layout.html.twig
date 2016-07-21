@@ -137,7 +137,10 @@
 
         <ul class="embedded-list__items">
             {% for item in items %}
-                <li class="embedded-list__item">{{ item }}</li>
+                <li class="embedded-list__item">
+                    {% do block|merge_context({'item': item}) %}
+                    {{ block('container_widget') }}
+                </li>
             {% endfor %}
         </ul>
     </div>
