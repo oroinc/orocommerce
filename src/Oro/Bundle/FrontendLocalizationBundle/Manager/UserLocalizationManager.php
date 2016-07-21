@@ -127,7 +127,7 @@ class UserLocalizationManager
                 $userWebsiteSettings = new AccountUserSettings($website);
                 $user->setWebsiteSettings($userWebsiteSettings);
             }
-            $userWebsiteSettings->setLocalization();
+            $userWebsiteSettings->setLocalization($localization);
             $this->userManager->getStorageManager()->flush();
         } else {
             $sessionLocalizations = $this->getSessionLocalizations();
