@@ -137,6 +137,14 @@ orob2b.account:
         type.customizable.label:         'Customizable'
         account_users.label:             'Account Users'
         frontend.edit-predifined-role.message:   'Predefined roles cannot be edited directly. We copied all the original data so that you can save it as a new user role for your organization. All users will be moved from the original role to this new role after you click on "Save".'
+        self_managed:
+            label:                  'Self Managed'
+            value.true.label:       'Yes'
+            value.false.label:      'No'
+        public:
+            label:                  'Public'
+            value.true.label:       'Yes'
+            value.false.label:      'No'
 
     accountuseraddress:
         city.label:                 City
@@ -177,7 +185,7 @@ orob2b.account:
             disable: 'Disable'
             confirm: 'Confirm'
             send_confirmation: 'Resend Confirmation Email'
-            create: 'Create Account'
+            create: 'Create Account User'
             edit: 'Edit'
             delete: 'Delete'
 
@@ -201,6 +209,8 @@ orob2b.account:
         password: 'Password'
 
     accountaddress:
+        entity_label:        Address
+        entity_plural_label: Addresses
         city.label:          City
         country.label:       Country
         entity_description:  Represent account's address
@@ -224,6 +234,7 @@ orob2b.account:
         street.label:        Street
         street2.label:       Street 2
         types.label:         Types
+        types.singular_label: Type
         addresses_to_types.label:   Addresses to address types
         phone.label:         Phone
 
@@ -386,6 +397,8 @@ orob2b.account:
             welcome_failed.message: 'Welcome email sending failed'
         accountuseraddress:
             saved.message: 'Account User Address has been saved'
+        accountaddress:
+            saved.message: 'Account Address has been saved'
         accountuserrole:
             saved.message:     'Account User Role has been saved'
 
@@ -445,6 +458,7 @@ orob2b.account:
                     phone: ""
                     name.prefix: ""
                 label:
+                    address_label: Label
                     primary: Is Primary Address
                     address_types: Address type and usage
             buttons:
@@ -462,11 +476,16 @@ orob2b.account:
             role.entity_plural_label: Account User Roles
             entity_plural_label: Account Users
             profile.label: Account Information
+            address.label: Address Book
             full_name.label: Name
             email.label: Email Address
             status.label: Status
             status_active.label: Active
             status_inactive.label: Inactive
+        account_user_address_book:
+            account_addresses:      'Company Addresses'
+            account_user_addresses: 'My Addresses'
+            create.label: 'Add Company Address'
         title:
             account_user_role.create: Create Account User Role
             account_user_role.edit: Edit Account User Role
@@ -487,6 +506,7 @@ orob2b.account:
             account_user.user_profile: 'User profile'
             account_user.my_profile: 'My profile'
             account_user.address_book: 'Address book'
+
         account_user_link.text: '< Back to Account User List'
         action:
             back.label: "< Back"
