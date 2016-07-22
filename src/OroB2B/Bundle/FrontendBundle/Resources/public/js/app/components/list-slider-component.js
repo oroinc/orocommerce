@@ -13,11 +13,12 @@ define(function(require) {
          */
         options: {
             mobileEnabled: true,
-            slidesCount: 4,
-            slidesScroll: 1,
+            slidesToShow: 4,
+            slidesToScroll: 1,
+            autoplay: true,
             autoplaySpeed: 2000,
-            arrowsNav: true,
-            dotsNav: false
+            arrows: true,
+            dots: false
         },
 
         /**
@@ -28,14 +29,7 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             if (this.options.mobileEnabled) {
-                $(this.options._sourceElement).slick({
-                    slidesToShow: this.options.slidesCount,
-                    slidesToScroll: this.options.slidesScroll,
-                    autoplay: true,
-                    autoplaySpeed: this.options.autoplaySpeed,
-                    arrows: this.options.arrowsNav,
-                    dots: this.options.dotsNav
-                });
+                $(this.options._sourceElement).slick(this.options);
             }
         }
     });
