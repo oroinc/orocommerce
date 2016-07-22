@@ -1,9 +1,9 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_quick_add/quick_add.html.twig'
+            themes: 'quick_add.html.twig'
         - '@setFormTheme':
-            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_quick_add/form.html.twig'
+            themes: 'form.html.twig'
         - '@appendOption':
             id: title
             optionName: value
@@ -16,35 +16,15 @@ layout:
             id: content
             optionName: class_prefix
             optionValue: 'quick-order'
-        - '@addTree':
-            items:
-                quick_add:
-                    blockType: container
-                quick_add_form:
-                    blockType: container
-                quick_add_form_start:
-                    blockType: form_start
-                    options:
-                        form: { '@value': $data.orob2b_product_quick_add_form_provider }
-                quick_add_form_fields:
-                    blockType: form_fields
-                    options:
-                        form: { '@value': $data.orob2b_product_quick_add_form_provider }
-                quick_add_form_end:
-                    blockType: form_end
-                    options:
-                        form: { '@value': $data.orob2b_product_quick_add_form_provider }
-                quick_add_form_buttons:
-                    blockType: block
-            tree:
-                content:
-                    quick_add:
-                        quick_add_form:
-                            quick_add_form_start: ~
-                            quick_add_form_fields: ~
-                            quick_add_form_buttons: ~
-                            quick_add_form_end: ~
+        - '@add':
+            id: quick_add_container
+            parentId: content
+            blockType: container
         - '@add':
             id: quick_add_import_button
             parentId: page_title_container
             blockType: block
+    imports:
+        -
+            id: orob2b_product_quick_add_form
+            root: quick_add_container

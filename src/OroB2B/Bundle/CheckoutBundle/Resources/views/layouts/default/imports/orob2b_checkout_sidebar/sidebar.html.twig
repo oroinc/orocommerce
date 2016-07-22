@@ -1,4 +1,4 @@
-{% block _checkout_sidebar_widget %}
+{% block __orob2b_checkout_sidebar__checkout_sidebar_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-sidebar"}) %}
     <div {{ block('block_attributes') }}
         data-role="checkout-sidebar"
@@ -52,19 +52,19 @@
     </div>
 {% endblock %}
 
-{% block _enter_billing_address_information_widget %}
+{% block __orob2b_checkout_sidebar__enter_billing_address_information_widget %}
     {% if checkout.billingAddress %}
         <div>{{ checkout.billingAddress|oro_format_address }}</div>
     {% endif %}
 {% endblock %}
 
-{% block _enter_shipping_address_information_widget %}
+{% block __orob2b_checkout_sidebar__enter_shipping_address_information_widget %}
     {% if checkout.shippingAddress %}
         <div>{{ checkout.shippingAddress|oro_format_address }}</div>
     {% endif %}
 {% endblock %}
 
-{% block _enter_shipping_method_information_widget %}
+{% block __orob2b_checkout_sidebar__enter_shipping_method_information_widget %}
     {% if checkout.shippingCost %}
         <div>{{ 'orob2b.checkout.quoted_shipping_amount.label'|trans}}:
             {{ checkout.shippingCost|oro_format_price }}</div>
@@ -73,7 +73,7 @@
     {% endif %}
 {% endblock %}
 
-{% block _enter_payment_information_widget %}
+{% block __orob2b_checkout_sidebar__enter_payment_information_widget %}
     {% if checkout.paymentMethod %}
         <div>{{ get_payment_method_label(checkout.paymentMethod) }}</div>
     {% endif %}

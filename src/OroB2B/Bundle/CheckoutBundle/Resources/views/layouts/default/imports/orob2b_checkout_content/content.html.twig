@@ -2,9 +2,9 @@
     {% set attr = attr|merge({class: attr.class|default('') ~ " page-container"}) %}
     <h1 class="page-title page-title--decreased">{{ 'orob2b.checkout.entity_label'|trans }}</h1>
     <div {{ block('block_attributes') }}
-        data-role="checkout-content"
-        data-page-component-module="oroui/js/app/components/view-component"
-        data-page-component-options="{{ {
+            data-role="checkout-content"
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
                 view: 'orob2bcheckout/js/app/views/checkout-content-view',
             }|json_encode }}">
         {{ block_widget(block) }}
@@ -42,11 +42,11 @@
             {{ form_widget(form._token) }}
         </div>
         {{ block_widget(block) }}
-    </form>
-    {{ oro_form_js_validation(form) }}
+        </form>
+        {{ oro_form_js_validation(form) }}
     {% else %}
         <form method="post" class="checkout__form" action="">
-        {{ block_widget(block) }}
+            {{ block_widget(block) }}
         </form>
     {% endif %}
 {%- endblock %}
@@ -80,10 +80,10 @@
                 </div>
                 {% set editLink = workfowItem.data.get('edit_order_link') %}
                 {% if editLink %}
-                <a href="{{ editLink }}" class="checkout-order-summary__header__edit-link">
-                    <i class="cf-pencil"></i>
-                    {{ 'orob2b.checkout.order_summary.edit_order'|trans }}
-                </a>
+                    <a href="{{ editLink }}" class="checkout-order-summary__header__edit-link">
+                        <i class="cf-pencil"></i>
+                        {{ 'orob2b.checkout.order_summary.edit_order'|trans }}
+                    </a>
                 {% endif %}
             </div>
             {{ block_widget(block) }}
@@ -98,11 +98,11 @@
                data-page-component-module="oroui/js/app/components/view-component"  
                data-page-component-options="{{ {view: 'orob2bfrontend/js/app/views/scrollable-table'}|json_encode }}">
             <thead class="hidden-xs">
-                <tr data-scrollable-content-head>
-                    <th>{{ 'orob2b.checkout.order_summary.item'|trans }}</th>
-                    <th class="text-center">{{ 'orob2b.checkout.order_summary.quantity'|trans }}</th>
-                    <th class="text-right" data-scrollable-item-has-offset>{{ 'orob2b.checkout.order_summary.price'|trans }}</th>
-                </tr>
+            <tr data-scrollable-content-head>
+                <th>{{ 'orob2b.checkout.order_summary.item'|trans }}</th>
+                <th class="text-center">{{ 'orob2b.checkout.order_summary.quantity'|trans }}</th>
+                <th class="text-right" data-scrollable-item-has-offset>{{ 'orob2b.checkout.order_summary.price'|trans }}</th>
+            </tr>
             </thead>
 
             <tbody>
@@ -210,26 +210,3 @@
         {{ block_widget(block) }}
     </div>
 {%- endblock %}
-
-{% block _checkout_button_continue_right_widget %}
-    {% if transitionData is defined and transitionData %}
-        {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
-        <div class="order-checkout-widget order-checkout-widget_block text-right">
-            {{ _layout.conditionMessagesStart(transitionData) }}
-            <button type="submit"
-                    class="btn btn_xlg {% if transitionData.isAllowed %}btn-orange{% endif %} checkout__submit-btn" {{ _layout.transitionAttrbiutes(transitionData, checkout) }}>
-                {{ transitionData.transition.label|trans }}
-            </button>
-            {{ _layout.conditionMessagesEnd(transitionData) }}
-        </div>
-    {% endif %}
-{% endblock %}
-
-{% block _checkout_button_back_right_widget %}
-    {% if transitionData is defined and transitionData %}
-        {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
-        <div class="checkout__form__back order-checkout-widget order-checkout-widget_block text-right">
-            {{ block_widget(block) }}
-        </div>
-    {% endif %}
-{% endblock %}
