@@ -4,6 +4,7 @@ define(function(require) {
     var ProductAddToShoppingListView;
     var BaseView = require('oroui/js/app/views/base/view');
     var ShoppingListCreateWidget = require('oro/shopping-list-create-widget');
+    var ApiAccessor = require('oroui/js/tools/api-accessor');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
     var Error = require('oroui/js/error');
@@ -15,13 +16,15 @@ define(function(require) {
             buttonTemplate: '',
             removeButtonTemplate: '',
             defaultClass: '',
-            addedClass: '',
+            editClass: '',
             buttonsSelector: '.add-to-shopping-list-button',
             messages: {
                 success: 'oro.form.inlineEditing.successMessage'
             },
-            api: {
-                update: 'orob2b_api_shopping_list_frontend_put_line_item'
+            save_api_accessor: {
+                http_method: 'PUT',
+                route: 'orob2b_api_shopping_list_frontend_put_line_item',
+                form_name: 'orob2b_product_frontend_line_item'
             }
         },
 
@@ -51,9 +54,8 @@ define(function(require) {
                 this.options.removeButtonTemplate = _.template(this.options.removeButtonTemplate);
             }
 
-            this._updateCurrentShoppingList();
-
-            this.messages = this.options.messages;
+            this._editLineItem();
+            this.saveApiAccessor = new ApiAccessor(this.options.save_api_accessor);
 
             mediator.on('shopping-list:updated', this._onShoppingListUpdate, this);
             mediator.on('shopping-list:created', this._onShoppingListCreate, this);
@@ -75,20 +77,19 @@ define(function(require) {
                 }
             }, this);
 
-            this.model.on('editLineItem', this._updateCurrentShoppingList, this);
+            this.model.on('editLineItem', this._editLineItem, this);
         },
 
         dispose: function(options) {
             delete this.dropdownWidget;
             delete this.modelAttr;
             delete this.$remove;
-            delete this.lineItemId;
-            delete this.messages;
+            delete this.editShoppingList;
+            delete this.editLineItem;
 
-            mediator.off('shopping-list:updated', this._onShoppingListUpdate, this);
-            mediator.off('shopping-list:created', this._onShoppingListCreate, this);
+            mediator.off(null, null, this);
             if (this.model) {
-                this.model.on('editLineItem', this._updateCurrentShoppingList, this);
+                this.model.off(null, null, this);
             }
 
             ProductAddToShoppingListView.__super__.dispose.apply(this, arguments);
@@ -136,12 +137,11 @@ define(function(require) {
             if (!this.model) {
                 return;
             }
-            var mainButtonShoppingList = this.dropdownWidget.main.data('shoppinglist');
-            if (!product || product.id !== parseInt(this.model.get('id'), 10) ||
-                !mainButtonShoppingList || shoppingList.id !== parseInt(mainButtonShoppingList.id, 10)) {
+            if (!product || product.id !== parseInt(this.model.get('id'), 10)) {
                 return;
             }
             this.model.set('shopping_lists', product.shopping_lists);
+            this._editLineItem(this.editLineItem ? this.editLineItem.line_item_id : null);
 
             this.updateMainButton();
         },
@@ -191,17 +191,38 @@ define(function(require) {
             }
         },
 
-        _updateCurrentShoppingList: function(lineItemId) {
-            var currentLineItem = this.findCurrentLineItem(lineItemId);
+        _editLineItem: function(lineItemId) {
+            this.editLineItem = null;
+            this.editShoppingList = null;
 
-            if (currentLineItem) {
-                this.model.set({
-                    quantity: currentLineItem.quantity,
-                    unit: currentLineItem.unit
-                });
-
-                this.updateMainButton();
+            if (!this.model) {
+                return ;
             }
+
+            _.each(this.model.get('shopping_lists'), function(shoppingList) {
+                if (this.editLineItem) {
+                    return;
+                }
+
+                if (lineItemId) {
+                    this.editLineItem = _.findWhere(shoppingList.line_items, {line_item_id: lineItemId});
+                } else if (shoppingList.is_current) {
+                    this.editLineItem = shoppingList.line_items[0] || null;
+                }
+
+                if (this.editLineItem) {
+                    this.editShoppingList = shoppingList;
+                }
+            }, this);
+
+            if (this.editLineItem) {
+                this.model.set({
+                    quantity: this.editLineItem.quantity,
+                    unit: this.editLineItem.unit
+                });
+            }
+
+            this.updateMainButton();
         },
 
         transformCreateNewButton: function() {
@@ -231,10 +252,11 @@ define(function(require) {
             if (!this.model) {
                 return;
             }
-            if (_.isEmpty(this.findCurrentShoppingList())) {
-                this.dropdownWidget.group.removeClass(this.options.addedClass).addClass(this.options.defaultClass);
+
+            if (_.isEmpty(this.editShoppingList)) {
+                this.dropdownWidget.group.removeClass(this.options.editClass).addClass(this.options.defaultClass);
             } else {
-                this.dropdownWidget.group.removeClass(this.options.defaultClass).addClass(this.options.addedClass);
+                this.dropdownWidget.group.removeClass(this.options.defaultClass).addClass(this.options.editClass);
             }
         },
 
@@ -242,41 +264,25 @@ define(function(require) {
             if (!this.model) {
                 return;
             }
-            var model = this.model;
-            var modelCurrentShoppingLists = this.findCurrentShoppingList();
-            var shoppingList = $button.data('shoppinglist');
+
             var label;
-
-            if (_.isEmpty(modelCurrentShoppingLists)) {
-                label =  _.__('orob2b.shoppinglist.actions.add_to_shopping_list');
+            if (_.isEmpty(this.editShoppingList)) {
+                label =  _.__('orob2b.shoppinglist.actions.add_to_shopping_list', {
+                    shoppingList: $button.data('shoppinglist').label
+                });
+                $button.data('intention', 'add');
             } else {
-                var lineItems = '';
-                if (_.size(modelCurrentShoppingLists) === 1) {
-                    _.each(modelCurrentShoppingLists.line_items, function(lineItem) {
-                        if (_.size(model.get('product_units')) > 1) {
-                            lineItems = _.__(
-                                'orob2b.product.product_unit.' + lineItem.unit + '.value.full',
-                                {'count': lineItem.count},
-                                lineItem.count
-                            );
-                        } else {
-                            lineItems = lineItem.count;
-                        }
-                    });
-                }
-
-                var labelName = modelCurrentShoppingLists ? 'orob2b.shoppinglist.actions.update_shopping_list'
-                                                          : 'orob2b.shoppinglist.actions.added_to_shopping_list';
-
-                label =  _.__(labelName)
-                    .replace('{{ lineItems }}', lineItems);
+                label =  _.__('orob2b.shoppinglist.actions.update_shopping_list', {
+                    shoppingList: this.editShoppingList.shopping_list_label
+                });
+                $button.data('intention', 'update');
             }
 
-            label = label.replace('{{ shoppingList }}', shoppingList.label);
             if (this.dropdownWidget.options.truncateLength &&
                 $button.get(0) === this.dropdownWidget.main.get(0)) {
                 label = _.trunc(label, this.dropdownWidget.options.truncateLength, false, '...');
             }
+
             $button.attr('title', label).html(label);
         },
 
@@ -285,9 +291,8 @@ define(function(require) {
                 return;
             }
             var shoppingList = this.dropdownWidget.main.data('shoppinglist');
-            var modelCurrentShoppingLists = this.findCurrentShoppingList();
 
-            if (!this.$remove && !_.isEmpty(modelCurrentShoppingLists)) {
+            if (!this.$remove && !_.isEmpty(this.editShoppingList)) {
                 var $button = $(this.options.removeButtonTemplate(shoppingList));
                 $button = this.dropdownWidget._collectButtons($button);
                 $button = this.dropdownWidget._prepareButtons($button);
@@ -295,8 +300,7 @@ define(function(require) {
 
                 this.$remove = $button;
                 this.dropdownWidget.main.data('clone').parent().after(this.$remove);
-                this.$remove.attr('data-is-remove', true);
-            } else if (this.$remove && _.isEmpty(modelCurrentShoppingLists)) {
+            } else if (this.$remove && _.isEmpty(this.editShoppingList)) {
                 this.$remove.remove();
                 delete this.$remove;
             }
@@ -308,33 +312,10 @@ define(function(require) {
             }) || null;
         },
 
-        findCurrentLineItem: function(lineItemId) {
-            if (!this.model) {
-                return;
-            }
-
-            var modelCurrentShoppingLists = this.findCurrentShoppingList();
-            var currentLineItem = null;
-
-            if (modelCurrentShoppingLists) {
-                if (lineItemId) {
-                    currentLineItem = _.filter(modelCurrentShoppingLists.line_items, function(shoppingListItem) {
-                        return shoppingListItem.line_item_id === lineItemId;
-                    })[0];
-
-                    this.lineItemId = lineItemId;
-                } else {
-                    currentLineItem = modelCurrentShoppingLists.line_items[0];
-                    this.lineItemId = currentLineItem.line_item_id;
-                }
-            }
-
-            return currentLineItem;
-        },
-
         onClick: function(e) {
             var $button = $(e.currentTarget);
             var url = $button.data('url');
+            var intention = $button.data('intention');
             var formData = this.$el.closest('form').serialize();
             var urlOptions = {};
 
@@ -346,33 +327,14 @@ define(function(require) {
                 urlOptions.productId = this.model.get('id');
             }
 
-            if ($button.data('intention') === 'new') {
+            if (intention === 'new') {
                 this._createNewShoppingList(url, urlOptions, formData);
+            } else if (intention === 'update') {
+                this._saveLineItem();
             } else {
-                var self = this;
-                var addProductToShoppingList = function() {
-                    var shoppingList = $button.data('shoppinglist');
-                    urlOptions.shoppingListId = shoppingList.id;
-                    self._addProductToShoppingList(url, urlOptions, formData);
-                };
-
-                if (this.lineItemId && this.findCurrentShoppingList()) {
-                    var currentLineItem = this.findCurrentLineItem(this.lineItemId);
-                    if ((currentLineItem.unit === this.model.get('unit'))
-                        && !$(e.currentTarget).parent().attr('data-is-remove')
-                    ) {
-                        // update product in shopping list
-                        formData = this.getValue();
-                        this._updateProductToShoppingList(this.options.api.update, {id: this.lineItemId}, formData);
-                    } else {
-                        // remove product from shopping list
-                        addProductToShoppingList();
-                        this.lineItemId = null;
-                    }
-                } else {
-                    // add product to shopping list
-                    addProductToShoppingList();
-                }
+                var shoppingList = $button.data('shoppinglist');
+                urlOptions.shoppingListId = shoppingList.id;
+                this._addProductToShoppingList(url, urlOptions, formData);
             }
         },
 
@@ -409,39 +371,27 @@ define(function(require) {
             });
         },
 
-        _updateProductToShoppingList: function(url, urlOptions, formData) {
-            var self = this;
-
+        _saveLineItem: function(urlOptions, formData) {
             mediator.execute('showLoading');
-            $.ajax({
-                type: 'PUT',
-                url: routing.generate(url, urlOptions),
-                data: {orob2b_product_frontend_line_item: formData},
-                dataType: "json",
-                success: function(response) {
-                    var shoppingLists = self.model.get('shopping_lists');
-                    var currentLineItem = self.findCurrentLineItem(urlOptions.id);
 
-                    mediator.execute('hideLoading');
-
-                    currentLineItem.quantity = response.quantity;
-                    currentLineItem.unit = response.unit;
-
-                    self.model.trigger('change:shopping_lists', shoppingLists);
-                    mediator.execute('showFlashMessage', 'success', _.__(self.messages.success));
-                },
-                error: function(xhr) {
-                    mediator.execute('hideLoading');
-                    Error.handle({}, xhr, {enforce: true});
-                }
-            });
-        },
-
-        getValue: function() {
-            return {
+            var savePromise = this.saveApiAccessor.send({
+                id: this.editLineItem.line_item_id
+            }, {
                 quantity: this.model.get('quantity'),
                 unit: this.model.get('unit')
-            };
+            });
+
+            savePromise
+                .done(_.bind(function(response) {
+                    this.editLineItem.quantity = response.quantity;
+                    this.editLineItem.unit = response.unit;
+                    this.model.trigger('change:shopping_lists');
+
+                    mediator.execute('showFlashMessage', 'success', _.__(this.options.messages.success));
+                }, this))
+                .always(function() {
+                    mediator.execute('hideLoading');
+                });
         }
     });
 
