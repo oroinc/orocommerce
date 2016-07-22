@@ -1,37 +1,7 @@
-accountGroup,priceList,website,priority,mergeAllowed
-All Customers,Wholesale Price List,Default,100,0
-All Customers,Partner C Custom Price List,Default,200,1
-All Customers,Wholesale Price List,US,100,1
-All Customers,Default Price List,US,200,1
-All Customers,Default Price List,Australia,100,0
-All Customers,Partner C Custom Price List,Australia,200,1
-All Customers,Wholesale Price List,Canada,100,1
-All Customers,Partner C Custom Price List,Canada,200,1
-All Customers,Default Price List,Mexico,100,1
-All Customers,Partner C Custom Price List,Mexico,200,0
-All Customers,Wholesale Price List,Europe,100,1
-All Customers,Partner C Custom Price List,Europe,200,1
-Wholesale Accounts,Partner C Custom Price List,Default,100,0
-Wholesale Accounts,Wholesale Price List,Default,200,1
-Wholesale Accounts,Default Price List,US,100,1
-Wholesale Accounts,Wholesale Price List,US,200,1
-Wholesale Accounts,Partner C Custom Price List,Australia,100,1
-Wholesale Accounts,Wholesale Price List,Australia,200,1
-Wholesale Accounts,Default Price List,Mexico,100,1
-Wholesale Accounts,Wholesale Price List,Mexico,200,0
-Wholesale Accounts,Default Price List,Canada,100,1
-Wholesale Accounts,Partner C Custom Price List,Canada,200,1
-Wholesale Accounts,Wholesale Price List,Europe,100,1
-Wholesale Accounts,Partner C Custom Price List,Europe,200,0
-Partners,Wholesale Price List,Default,100,1
-Partners,Partner C Custom Price List,Default,200,1
-Partners,Default Price List,US,100,1
-Partners,Partner C Custom Price List,US,200,1
-Partners,Wholesale Price List,Australia,100,1
-Partners,Default Price List,Australia,200,0
-Partners,Partner C Custom Price List,Mexico,100,1
-Partners,Wholesale Price List,Mexico,200,1
-Partners,Default Price List,Canada,100,1
-Partners,Partner C Custom Price List,Canada,200,1
-Partners,Wholesale Price List,Europe,100,1
-Partners,Partner C Custom Price List,Europe,200,1
+accountGroup,priceList,priority,mergeAllowed
+All Customers,Wholesale Price List,100,0
+All Customers,Partner C Custom Price List,200,1
+Wholesale Accounts,Partner C Custom Price List,100,0
+Wholesale Accounts,Wholesale Price List,200,1
+Partners,Wholesale Price List,100,1
+Partners,Partner C Custom Price List,200,1

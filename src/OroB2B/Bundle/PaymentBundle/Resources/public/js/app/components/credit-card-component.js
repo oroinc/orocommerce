@@ -161,7 +161,7 @@ define(function(require) {
             this.month = e.target.value;
 
             this.setExpirationDate();
-            this.validate(this.options.selectors.expirationDate);
+            this.validateIfMonthAndYearNotBlank();
         },
 
         /**
@@ -170,7 +170,13 @@ define(function(require) {
         collectYearDate: function(e) {
             this.year = e.target.value;
             this.setExpirationDate();
-            this.validate(this.options.selectors.expirationDate);
+            this.validateIfMonthAndYearNotBlank();
+        },
+
+        validateIfMonthAndYearNotBlank: function () {
+            if (this.year && this.month) {
+                this.validate(this.options.selectors.expirationDate);
+            }
         },
 
         setExpirationDate: function() {
@@ -228,6 +234,14 @@ define(function(require) {
                         }
                     }
                 });
+
+            // Add validator to form
+            $.data(virtualForm, 'validator', validator);
+
+            // Emulate that elements are nested into the form
+            $.each(this.options.selectors, function (index, selector) {
+                virtualForm.find(selector).prop('form', virtualForm);
+            });
 
             // Add CC type validation rule
             var cardNumberField = clonedForm.find(this.options.selectors.cardNumber);

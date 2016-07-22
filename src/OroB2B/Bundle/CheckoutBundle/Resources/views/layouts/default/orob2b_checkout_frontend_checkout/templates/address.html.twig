@@ -40,7 +40,7 @@
         <fieldset class="checkout__form__row">
             <div class="checkout__form__col col-zip">
                 {{- form_label(address_form.postalCode) -}}
-                {{- form_widget(address_form.postalCode, {'attr' : {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) -}}
+                {{- form_widget(address_form.postalCode, {'attr' : {'class': 'checkout__form__input', 'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) -}}
             </div>
             <div class="checkout__form__col form__col_x8 col-zip-error">
                 {{- form_errors(address_form.postalCode) -}}

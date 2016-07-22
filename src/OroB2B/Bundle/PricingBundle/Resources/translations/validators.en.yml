@@ -13,7 +13,8 @@ orob2b:
                   not_allowed_unit.message: 'Unit "%unit%" is not allowed for product "%product%".'
                   not_existing_product.message: 'Product does not exist.'
                   not_existing_unit.message: 'Product unit does not exist.'
-                  quantity.blank: Qantity should not be blank.
+                  quantity.blank: 'Quantity should not be blank.'
               default_currency.message: 'Currency "%invalidCurrency%" is not valid default currency. Selected currency must be in enabled list'
               using_as_available: "{1} Currency %curr%  is used in COMMERCE > Catalog > Pricing > Display Currencies > Available Currencies|]1,Inf[Currencies %curr% are used in COMMERCE > Catalog > Pricing > Display Currencies > Available Currencies"
               is_not_enabled: "Currency %currency% is not enabled"
+              price_for_product_unit_exists.message: "Units: '%units%', are used in price attribute prices and can't be removed"

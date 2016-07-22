@@ -3,14 +3,9 @@ services:
         class: 'OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType'
         arguments:
             - "@doctrine"
+            - "@orob2b_website.website.provider"
         tags:
             - { name: form.type, alias: orob2b_website_scoped_data_type }
         calls:
             - [setWebsiteClass,['%orob2b_website.entity.website.class%']]
 
-    orob2b_website.form.type.website:
-        class: 'OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteType'
-        calls:
-            - [setDataClass, ['%orob2b_website.entity.website.class%']]
-        tags:
-            - { name: form.type, alias: orob2b_website_type }

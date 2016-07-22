@@ -2,11 +2,11 @@
     <label class="control-label">{{ 'orob2b.payment.methods.label'|trans }}</label>
     <div class="controls">
         <div class="control-label">
-            {% if data is not empty %}
-                {{ ('orob2b.payment.admin.' ~ data.paymentMethod ~ '.label')|trans }}
-            {% else %}
+            {%- if data is not empty -%}
+                {{ get_payment_method_admin_label(data.paymentMethod) }}
+            {%- else -%}
                 {{ 'oro.ui.empty'|trans }}
-            {% endif %}
+            {%- endif -%}
         </div>
     </div>
 </div>

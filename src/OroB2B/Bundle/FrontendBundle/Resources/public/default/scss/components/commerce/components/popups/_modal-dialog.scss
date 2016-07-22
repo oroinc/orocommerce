@@ -1,0 +1,24 @@
+.modal-dialog {
+  &__body {
+    position: relative;
+
+    padding: 50px;
+  }
+
+  &--centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 500px; //bootstrap override
+    margin: 0 auto; //bootstrap override
+  }
+}
+
+.modal {
+  &.in {
+    .modal-dialog {
+      transform: translate(-50%, -50%); //bootstrap override
+    }
+  }
+}

@@ -12,6 +12,9 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class LoadPriceListData extends AbstractFixture implements ContainerAwareInterface
 {
+    /** @var string */
+    const DEFAULT_PRICE_LIST_NAME = 'Default Price List';
+
     /**
      * @var ContainerInterface
      */
@@ -34,7 +37,7 @@ class LoadPriceListData extends AbstractFixture implements ContainerAwareInterfa
         $priceList
             ->setDefault(true)
             ->setCurrencies(['USD', 'EUR'])
-            ->setName('Default Price List');
+            ->setName(self::DEFAULT_PRICE_LIST_NAME);
 
         $manager->persist($priceList);
         $manager->flush();

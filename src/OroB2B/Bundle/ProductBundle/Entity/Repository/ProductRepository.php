@@ -6,7 +6,10 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductImageType;
 
 class ProductRepository extends EntityRepository
 {
@@ -172,17 +175,35 @@ class ProductRepository extends EntityRepository
     }
 
     /**
-     * @param array $products
-     * @return Product[]
+     * @param array $productIds
+     * @return File[]
      */
-    public function getProductsWithImage(array $products)
+    public function getListingImagesFilesByProductIds(array $productIds)
     {
-        $qb = $this->createQueryBuilder('p');
-        return $qb->select('partial p.{id, image}')
-            ->join('p.image', 'image')
-            ->where($qb->expr()->in('p', ':products'))
-            ->setParameter('products', $products)
-            ->getQuery()
-            ->execute();
+        $qb = $this->_em->createQueryBuilder()
+            ->select('imageFile as image, IDENTITY(pi.product) as product_id')
+            ->from('OroAttachmentBundle:File', 'imageFile')
+            ->join(
+                'OroB2BProductBundle:ProductImage',
+                'pi',
+                Expr\Join::WITH,
+                'imageFile.id = pi.image'
+            );
+
+        $qb->where($qb->expr()->in('pi.product', ':products'))
+            ->setParameter('products', $productIds);
+
+        $qb->join('pi.types', 'imageTypes')
+            ->andWhere($qb->expr()->eq('imageTypes.type', ':imageType'))
+            ->setParameter('imageType', ProductImageType::TYPE_LISTING);
+
+        $productImages = $qb->getQuery()->execute();
+        $images = [];
+
+        foreach ($productImages as $productImage) {
+            $images[$productImage['product_id']] = $productImage['image'];
+        }
+        
+        return $images;
     }
 }

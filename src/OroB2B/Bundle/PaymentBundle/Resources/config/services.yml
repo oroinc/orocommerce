@@ -35,12 +35,18 @@ services:
         tags:
             - { name: twig.extension }
 
+    orob2b_payment.formatter.payment_method_label:
+        class: 'OroB2B\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter'
+        arguments:
+            - "@orob2b_payment.payment_method.view.registry"
+            - "@translator"
+
     orob2b_payment.twig.payment_method_extension:
         class: 'OroB2B\Bundle\PaymentBundle\Twig\PaymentMethodExtension'
         public: false
         arguments:
             - "@orob2b_payment.provider.payment_transaction"
-            - "@orob2b_payment.payment_method.view.registry"
+            - "@orob2b_payment.formatter.payment_method_label"
         tags:
             - { name: twig.extension }
 

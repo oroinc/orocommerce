@@ -1,5 +1,5 @@
 {% block _line_item_form_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " line_item_form_product_view"}) %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " product__buy line_item_form_product_view"}) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>

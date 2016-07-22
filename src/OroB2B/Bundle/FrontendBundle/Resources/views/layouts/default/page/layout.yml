@@ -11,6 +11,10 @@ layout:
                           id: 'container'
                 header:
                     blockType: container
+                sticky_panel:
+                    blockType: container
+                sticky_panel_content:
+                    blockType: container
                 notification:
                     blockType: block
                 main:
@@ -25,24 +29,25 @@ layout:
                     blockType: text
                     options:
                         text: ~
-                scripts:
-                    blockType: script
-                    options:
-                        content: 'require(["orob2bfrontend/default/js/main"])'
             tree:
                 body:
                     wrapper:
                         header: ~
+                        sticky_panel:
+                            sticky_panel_content: ~
                         main:
                             notification: ~
                             content:
                                 page_title_container:
                                     page_title: ~
                             sidebar_left: ~
-                    scripts: ~
         - '@add':
             id: require_js_config
             parentId: require_js
+            blockType: block
+        - '@add':
+            id: sticky_element_notification
+            parentId: sticky_panel_content
             blockType: block
         - '@setOption':
             id: title

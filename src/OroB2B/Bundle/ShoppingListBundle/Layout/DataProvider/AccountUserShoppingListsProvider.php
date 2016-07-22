@@ -102,9 +102,7 @@ class AccountUserShoppingListsProvider
 
             /** @var ShoppingList[] $shoppingLists */
             $shoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
-            foreach ($shoppingLists as $shoppingList) {
-                $shoppingList->setSubtotal($this->totalManager->getSubtotal($shoppingList));
-            }
+            $this->totalManager->setSubtotals($shoppingLists, false);
         }
 
         return ['shoppingLists' => $shoppingLists];

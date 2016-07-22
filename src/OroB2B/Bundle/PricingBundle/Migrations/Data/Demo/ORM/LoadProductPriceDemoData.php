@@ -2,65 +2,19 @@
 
 namespace OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\ORM\EntityManager;
-
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
-class LoadProductPriceDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
+class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var array
-     */
-    protected $products = [];
-
-    /**
-     * @var array
-     */
-    protected $productUnis = [];
-
-    /**
-     * @var array
-     */
-    protected $priceLists = [];
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
-        ];
-    }
-
-    /**
      * {@inheritdoc}
+     * @param EntityManager $manager
      */
     public function load(ObjectManager $manager)
     {
@@ -149,34 +103,6 @@ class LoadProductPriceDemoData extends AbstractFixture implements ContainerAware
                 ->setPrice($unitPrice->setValue(round($unitPrice->getValue() * (1 - $discount), 2)));
             $manager->persist($price);
         }
-    }
-
-    /**
-     * @param EntityManager $manager
-     * @param string $sku
-     * @return Product|null
-     */
-    protected function getProductBySku(EntityManager $manager, $sku)
-    {
-        if (!array_key_exists($sku, $this->products)) {
-            $this->products[$sku] = $manager->getRepository('OroB2BProductBundle:Product')->findOneBy(['sku' => $sku]);
-        }
-
-        return $this->products[$sku];
-    }
-
-    /**
-     * @param EntityManager $manager
-     * @param string $code
-     * @return ProductUnit|null
-     */
-    protected function getProductUnit(EntityManager $manager, $code)
-    {
-        if (!array_key_exists($code, $this->productUnis)) {
-            $this->productUnis[$code] = $manager->getRepository('OroB2BProductBundle:ProductUnit')->find($code);
-        }
-
-        return $this->productUnis[$code];
     }
 
     /**

@@ -6,8 +6,8 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 
 class PriceListProductPricesCurrencyValidator extends ConstraintValidator
 {
@@ -19,7 +19,7 @@ class PriceListProductPricesCurrencyValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$value instanceof PriceList) {
+        if (!$value instanceof BasePriceList) {
             throw new UnexpectedTypeException($value, 'OroB2B\Bundle\PricingBundle\Entity\PriceList');
         }
 

@@ -12,14 +12,36 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType;
 use OroB2B\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelHandler;
+use OroB2B\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension;
+use OroB2B\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTypeExtension;
 
 class WarehouseInventoryLevelController extends Controller
 {
+    /**
+     * @Route("/", name="orob2b_warehouse_inventory_level_index")
+     * @Template
+     * @AclAncestor("orob2b_warehouse_inventory_level_index")
+     *
+     * @return array
+     */
+    public function indexAction()
+    {
+        $entityName = $this->container->getParameter('orob2b_warehouse.entity.warehouse_inventory_level.class');
+
+        return [
+            'entity_class' => $entityName,
+            'exportProcessors' => array_keys(InventoryLevelExportTypeExtension::getProcessorAliases()),
+            'exportTemplateProcessors' => array_keys(
+                InventoryLevelExportTemplateTypeExtension::getProcessorAliases()
+            ),
+        ];
+    }
+
     /**
      * Edit product warehouse inventory levels
      *
@@ -80,7 +102,7 @@ class WarehouseInventoryLevelController extends Controller
         $noDataReason = '';
         if (0 === count($product->getUnitPrecisions())) {
             $noDataReason = 'orob2b.warehouse.warehouseinventorylevel.error.units';
-        } elseif (0 === count($this->getAvailableWarehouses())) {
+        } elseif (0 === $this->getAvailableWarehousesCount()) {
             $noDataReason = 'orob2b.warehouse.warehouseinventorylevel.error.warehouses';
         }
 
@@ -90,15 +112,15 @@ class WarehouseInventoryLevelController extends Controller
     }
 
     /**
-     * @return array|Warehouse[]
+     * @return integer
      */
-    private function getAvailableWarehouses()
+    private function getAvailableWarehousesCount()
     {
         $warehouseClass = $this->getParameter('orob2b_warehouse.entity.warehouse.class');
 
         return $this->getDoctrine()
             ->getManagerForClass($warehouseClass)
             ->getRepository($warehouseClass)
-            ->findAll();
+            ->countAll();
     }
 }

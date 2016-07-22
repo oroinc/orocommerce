@@ -51,7 +51,8 @@ class ProductController extends Controller
     public function infoAction(Product $product)
     {
         return [
-            'product' => $product
+            'product' => $product,
+            'imageTypes' => $this->get('oro_layout.provider.image_type')->getImageTypes()
         ];
     }
 

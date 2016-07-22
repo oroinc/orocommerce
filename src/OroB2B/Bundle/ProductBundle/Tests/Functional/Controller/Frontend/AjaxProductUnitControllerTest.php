@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -63,38 +63,38 @@ class AjaxProductUnitControllerTest extends WebTestCase
             'product.1 full' => [
                 'product.1',
                 [
-                    'bottle' => 'orob2b.product_unit.bottle.label.full',
-                    'liter' => 'orob2b.product_unit.liter.label.full',
-                    'milliliter' => 'orob2b.product_unit.milliliter.label.full',
+                    'bottle' => 'bottle',
+                    'liter' => 'liter',
+                    'milliliter' => 'milliliter',
                 ],
                 false
             ],
             'product.2 full' => [
                 'product.2',
                 [
-                    'bottle' => 'orob2b.product_unit.bottle.label.full',
-                    'box' => 'orob2b.product_unit.box.label.full',
-                    'liter' => 'orob2b.product_unit.liter.label.full',
-                    'milliliter' => 'orob2b.product_unit.milliliter.label.full',
+                    'bottle' => 'bottle',
+                    'box' => 'box',
+                    'liter' => 'liter',
+                    'milliliter' => 'milliliter',
                 ],
                 false
             ],
             'product.1 short' => [
                 'product.1',
                 [
-                    'bottle' => 'orob2b.product_unit.bottle.label.short',
-                    'liter' => 'orob2b.product_unit.liter.label.short',
-                    'milliliter' => 'orob2b.product_unit.milliliter.label.short',
+                    'bottle' => 'bottle',
+                    'liter' => 'liter',
+                    'milliliter' => 'milliliter',
                 ],
                 true
             ],
             'product.2 short' => [
                 'product.2',
                 [
-                    'bottle' => 'orob2b.product_unit.bottle.label.short',
-                    'box' => 'orob2b.product_unit.box.label.short',
-                    'liter' => 'orob2b.product_unit.liter.label.short',
-                    'milliliter' => 'orob2b.product_unit.milliliter.label.short',
+                    'bottle' => 'bottle',
+                    'box' => 'box',
+                    'liter' => 'liter',
+                    'milliliter' => 'milliliter',
                 ],
                 true
             ]

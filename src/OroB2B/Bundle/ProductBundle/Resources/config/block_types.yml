@@ -1,0 +1,50 @@
+services:
+    orob2b_product.layout.type.import_validation_items_count_text:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{collection: {required: true}}]]
+            - [setName, ['import_validation_items_count_text']]
+            - [setParent, ['text']]
+        tags:
+             - { name: layout.block_type, alias: import_validation_items_count_text }
+
+    orob2b_product.layout.type.import_validation_items:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{collection: {required: true}}]]
+            - [setName, ['import_validation_items']]
+        tags:
+             - { name: layout.block_type, alias: import_validation_items }
+
+    orob2b_product.layout.type.product_view_container:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{product: {required: true}}]]
+            - [setName, ['product_view_container']]
+        tags:
+             - { name: layout.block_type, alias: product_view_container }
+
+    orob2b_product.layout.type.product_image:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{product: {required: true}}]]
+            - [setName, ['product_image']]
+        tags:
+             - { name: layout.block_type, alias: product_image }
+
+    orob2b_product.layout.type.product_datagrid:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{current_row_view: {required: true}}]]
+            - [setName, ['product_datagrid']]
+            - [setParent, ['datagrid']]
+        tags:
+             - { name: layout.block_type, alias: product_datagrid }
+
+    orob2b_product.layout.type.product_datagrid_options:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{current_row_view: {required: true}}]]
+            - [setName, ['product_datagrid_options']]
+        tags:
+             - { name: layout.block_type, alias: product_datagrid_options }

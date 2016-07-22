@@ -53,7 +53,7 @@ orob2b:
                 payflow_gateway.title: 'Payflow Gateway'
                 display_options.title: 'Display Options'
                 integration.title: 'Integration'
-                advansed_settings.title: 'Advansed Settings'
+                advanced_settings.title: 'Advanced Settings'
                 payment_terms.title: 'Payment Terms'
             fields:
                 merchant_country.label: 'Merchant Country'
@@ -91,7 +91,6 @@ orob2b:
                 debug_mode.label: 'Debug Mode'
                 enable_ssl_verification.label: 'Enable SSL Verification'
                 require_cvv.label: 'Require CVV Entry'
-                validate_cvv.label: 'Validate CVV'
                 zero_amount_authorization:
                     label: 'Zero Amount Authorization'
                     tooltip: |
@@ -127,6 +126,6 @@ orob2b:
             use_authorized_card: '< Use an existing card'
 
         admin:
-            payment_term.label: 'Payment Term'
-            paypal_payments_pro.label: 'Credit Card (Paypal Payments Pro)'
-            payflow_gateway.label: 'Credit Card (Payflow Gateway)'
+            payment_term.label: 'Payment Terms'
+            paypal_payments_pro.label: 'Paypal Payments Pro'
+            payflow_gateway.label: 'Payflow Gateway'

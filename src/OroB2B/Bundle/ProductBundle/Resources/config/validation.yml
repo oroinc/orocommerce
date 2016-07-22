@@ -35,6 +35,9 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - NotBlank: ~
         variantLinks:
             - Valid: ~
+        images:
+            - Valid: ~
+            - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~
 
 OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
     properties:
@@ -76,6 +79,13 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
         conversionRate:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+
+OroB2B\Bundle\ProductBundle\Entity\ProductImage:
+    constraints:
+        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImage: ~
+    properties:
+        product:
+            - NotBlank: ~
 
 OroB2B\Bundle\ProductBundle\Model\ProductRow:
     properties:

@@ -30,6 +30,15 @@ class Gateway
     /** @var bool */
     protected $testMode = false;
 
+    /** @var bool */
+    protected $sslVerificationEnabled = true;
+
+    /** @var string */
+    protected $proxyHost;
+
+    /** @var int */
+    protected $proxyPort;
+
     /**
      * @param ClientInterface $client
      * @param RequestRegistry $requestRegistry
@@ -59,7 +68,20 @@ class Gateway
         $processor = $this->processorRegistry->getProcessor($options[Partner::PARTNER]);
         $processor->configureOptions($resolver);
 
-        $responseData = $this->client->send($this->getHostAddress(), $resolver->resolve($options));
+        $connectionOptions = [
+            ClientInterface::SSL_VERIFY => $this->sslVerificationEnabled,
+        ];
+
+        if ($this->proxyHost && $this->proxyPort) {
+            $connectionOptions[ClientInterface::PROXY_HOST] = $this->proxyHost;
+            $connectionOptions[ClientInterface::PROXY_PORT] = $this->proxyPort;
+        }
+
+        $responseData = $this->client->send(
+            $this->getHostAddress(),
+            $resolver->resolve($options),
+            $connectionOptions
+        );
 
         return new Response($responseData);
     }
@@ -86,5 +108,23 @@ class Gateway
     public function setTestMode($testMode)
     {
         $this->testMode = (bool)$testMode;
+    }
+
+    /**
+     * @param bool $enabled
+     */
+    public function setSslVerificationEnabled($enabled)
+    {
+        $this->sslVerificationEnabled = $enabled;
+    }
+
+    /**
+     * @param string $proxyHost
+     * @param int $proxyPort
+     */
+    public function setProxySettings($proxyHost, $proxyPort)
+    {
+        $this->proxyHost = $proxyHost;
+        $this->proxyPort = $proxyPort;
     }
 }

@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -33,7 +33,6 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     public function getDependencies()
     {
         return [
-            LoadAccountUserData::class,
             LoadWebsiteData::class
         ];
     }

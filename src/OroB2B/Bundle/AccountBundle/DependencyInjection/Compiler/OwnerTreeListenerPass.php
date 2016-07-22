@@ -10,14 +10,6 @@ class OwnerTreeListenerPass implements CompilerPassInterface
     const LISTENER_SERVICE = 'oro_security.ownership_tree_subscriber';
 
     /**
-     * @var array
-     */
-    protected static $supportedEntities = [
-        'orob2b_account.entity.account.class',
-        'orob2b_account.entity.account_user.class',
-    ];
-
-    /**
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
@@ -27,9 +19,20 @@ class OwnerTreeListenerPass implements CompilerPassInterface
         }
 
         $listenerDefinition = $container->getDefinition(self::LISTENER_SERVICE);
-
-        foreach (static::$supportedEntities as $entity) {
-            $listenerDefinition->addMethodCall('addSupportedClass', [$container->getParameter($entity)]);
-        }
+        $listenerDefinition->addMethodCall(
+            'addSupportedClass',
+            [
+                $container->getParameter('orob2b_account.entity.account.class'),
+                ['parent', 'organization']
+            ]
+        );
+        $listenerDefinition->addMethodCall(
+            'addSupportedClass',
+            [
+                $container->getParameter('orob2b_account.entity.account_user.class'),
+                ['account', 'organization'],
+                ['organizations']
+            ]
+        );
     }
 }

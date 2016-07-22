@@ -67,6 +67,7 @@ class SummaryDataProvider
             $order->setLineItems($this->checkoutLineItemsManager->getData($checkout));
             $lineItemsWithTotals = $this->getOrderLineItemsTotals($order->getLineItems());
 
+            $this->totalsProvider->enableRecalculation();
             $this->summary[$checkout->getId()] = [
                 'lineItemsWithTotals' => $lineItemsWithTotals,
                 'subtotals' => $this->totalsProvider->getSubtotals($order),

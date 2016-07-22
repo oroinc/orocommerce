@@ -7,6 +7,7 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
 
 /**
  * @dbIsolation
+ * @group CommunityEdition
  */
 class AccountGroupControllerTest extends AbstractPriceListsByEntityTestCase
 {

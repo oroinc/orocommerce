@@ -2,21 +2,17 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\Migrations\Data\Demo\ORM;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-
+use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
-class LoadWarehouseDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
+class LoadWarehouseDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
     use UserUtilityTrait;
 
@@ -41,19 +37,6 @@ class LoadWarehouseDemoData extends AbstractFixture implements ContainerAwareInt
     ];
 
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getDependencies()
@@ -72,6 +55,7 @@ class LoadWarehouseDemoData extends AbstractFixture implements ContainerAwareInt
         $user = $this->getFirstUser($manager);
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
+        $precisions   = $this->getObjectReferences($manager, 'OroB2BProductBundle:ProductUnitPrecision');
 
         foreach ($this->warehouses as $reference => $row) {
             $warehouse = new Warehouse();
@@ -81,7 +65,6 @@ class LoadWarehouseDemoData extends AbstractFixture implements ContainerAwareInt
                 ->setOrganization($organization);
             $manager->persist($warehouse);
 
-            $precisions = $this->getPrecisions();
             if (!empty($row['generateLevels'])) {
                 foreach ($precisions as $precision) {
                     $level = new WarehouseInventoryLevel();
@@ -97,13 +80,5 @@ class LoadWarehouseDemoData extends AbstractFixture implements ContainerAwareInt
         }
 
         $manager->flush();
-    }
-
-    /**
-     * @return ProductUnitPrecision[]
-     */
-    protected function getPrecisions()
-    {
-        return $this->container->get('doctrine')->getRepository('OroB2BProductBundle:ProductUnitPrecision')->findAll();
     }
 }
