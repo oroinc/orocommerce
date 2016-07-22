@@ -1,0 +1,91 @@
+{% block __orob2b_product_quick_add_validation__quick_add_validation_widget %}
+    {% set widgetOptions = {
+        _wid: app.request.get('_wid')
+    } %}
+    {% set attr = {
+        id: 'import-validation',
+        'data-page-component-module': 'orob2bproduct/js/app/components/quick-add-import-validation-component',
+        'data-page-component-options': widgetOptions|json_encode,
+        'class': 'validation-info'
+    }|merge(attr) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __orob2b_product_quick_add_validation__quick_add_validation_items_table_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' table table-condensed table-hover'
+    }) %}
+    <table {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </table>
+{% endblock %}
+
+{% block __orob2b_product_quick_add_validation__quick_add_validation_items_table_title_widget %}
+    <thead>
+        <tr>
+            <th></th>
+            <th><div class="pull-right">{{ block_widget(block) }}</div></th>
+        </tr>
+    </thead>
+{% endblock %}
+
+{% block __orob2b_product_quick_add_validation__quick_add_validation_items_table_body_widget %}
+    <tbody>
+        {{ block_widget(block) }}
+    </tbody>
+{% endblock %}
+
+{% block __orob2b_product_quick_add_validation__quick_add_validation_total_items_count_widget %}
+    <tr {{ block('block_attributes') }}>
+        <td>{{ block_widget(block) }}</td>
+        <td><div class="pull-right">{{ collection.count }}</div></td>
+    </tr>
+{% endblock %}
+
+{% block __orob2b_product_quick_add_validation__quick_add_validation_valid_items_count_widget %}
+    <tr {{ block('block_attributes') }}>
+        <td>{{ block_widget(block) }}</td>
+        <td><div class="pull-right">{{ collection.validRows|length }}</div></td>
+    </tr>
+{% endblock %}
+
+{% block __orob2b_product_quick_add_validation__quick_add_validation_invalid_items_count_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' error'
+    }) %}
+    <tr {{ block('block_attributes') }}>
+        <td>
+            {% if collection.invalidRows|length %}
+                <a href="javascript: void(0)" class="error-toggle">{{ block_widget(block) }}</a>
+            {% else %}
+                {{ block_widget(block) }}
+            {% endif %}
+        </td>
+        <td><div class="pull-right">{{ collection.invalidRows|length }}</div></td>
+    </tr>
+{% endblock %}
+
+{% block __orob2b_product_quick_add_validation__quick_add_validation_invalid_items_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' import-errors'
+    }) %}
+    {% if collection.invalidRows|length %}
+        <div {{ block('block_attributes') }}>
+            <ol>
+                {% for invalidRow in collection.invalidRows %}
+                    <li>
+                        {% if invalidRow.isComplete and invalidRow.product is empty %}
+                            {{ 'orob2b.product.frontend.quick_add.import_validation.validator.not_found'
+                            |trans({'%sku%' : invalidRow.sku}) }}
+                        {% else %}
+                            {{ 'orob2b.product.frontend.quick_add.import_validation.validator.invalid_format'
+                            |trans({'%index%' : invalidRow.index}) }}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    {% endif %}
+{% endblock %}

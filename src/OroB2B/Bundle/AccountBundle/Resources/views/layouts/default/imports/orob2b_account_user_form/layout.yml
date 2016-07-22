@@ -1,0 +1,51 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@setFormTheme':
+            themes: 'form_theme.html.twig'
+        - '@addTree':
+            items:
+                __account_user_page:
+                    blockType: container
+                    options:
+                        class_prefix: 'account-profile-edit-page'
+                __account_user_form_start:
+                    blockType: form_start
+                    options:
+                        form: { '@value': $data.orob2b_account_frontend_account_user_form }
+                __account_user_form_fields:
+                    blockType: form_fields
+                    options:
+                        form: { '@value': $data.orob2b_account_frontend_account_user_form }
+                __account_user_form_end:
+                    blockType: form_end
+                    options:
+                        form: { '@value': $data.orob2b_account_frontend_account_user_form }
+                        render_rest: false
+                __account_user_form_actions:
+                    blockType: container
+                __account_user_form_actions_cancel:
+                    blockType: link
+                    options:
+                        route_name: orob2b_account_frontend_account_user_index
+                        text: orob2b.account.form.action.cancel.label
+                        attr:
+                            'class': btn theme-btn btn-gray
+                __account_user_form_actions_create:
+                    blockType: button
+                    options:
+                        action: submit
+                        text: orob2b.account.form.action.save.label
+                        style: auto
+                        attr:
+                            'class': role-submit
+            tree:
+                __root:
+                    __account_user_page:
+                        __account_user_form_start: ~
+                        __account_user_form_fields: ~
+                        __account_user_form_actions:
+                            __account_user_form_actions_create: ~
+                            __account_user_form_actions_cancel: ~
+                        __account_user_form_end: ~
