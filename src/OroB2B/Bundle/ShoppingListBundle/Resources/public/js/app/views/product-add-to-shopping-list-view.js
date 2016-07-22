@@ -15,11 +15,8 @@ define(function(require) {
             buttonTemplate: '',
             removeButtonTemplate: '',
             defaultClass: '',
+            addedClass: '',
             buttonsSelector: '.add-to-shopping-list-button',
-            elements: {
-                quantity: '[name$="[quantity]"]',
-                unit: '[name$="[unit]"]'
-            },
             messages: {
                 success: 'oro.form.inlineEditing.successMessage'
             },
@@ -57,11 +54,6 @@ define(function(require) {
             this._updateCurrentShoppingList();
 
             this.messages = this.options.messages;
-            this.$form = this.$el.closest('form');
-            this.elements = {
-                quantity: this.$form.find(this.options.elements.quantity),
-                unit: this.$form.find(this.options.elements.unit)
-            };
 
             mediator.on('shopping-list:updated', this._onShoppingListUpdate, this);
             mediator.on('shopping-list:created', this._onShoppingListCreate, this);
@@ -224,6 +216,7 @@ define(function(require) {
 
         updateMainButton: function() {
             if (this.dropdownWidget.main && this.dropdownWidget.main.data('shoppinglist')) {
+                this.toggleButtonsClass();
 
                 this.setButtonLabel(this.dropdownWidget.main);
                 this.setButtonLabel(this.dropdownWidget.main.data('clone'));
@@ -232,6 +225,17 @@ define(function(require) {
             }
 
             this.initButtons();
+        },
+
+        toggleButtonsClass: function() {
+            if (!this.model) {
+                return;
+            }
+            if (_.isEmpty(this.findCurrentShoppingList())) {
+                this.dropdownWidget.group.removeClass(this.options.addedClass).addClass(this.options.defaultClass);
+            } else {
+                this.dropdownWidget.group.removeClass(this.options.defaultClass).addClass(this.options.addedClass);
+            }
         },
 
         setButtonLabel: function($button) {
@@ -331,7 +335,7 @@ define(function(require) {
         onClick: function(e) {
             var $button = $(e.currentTarget);
             var url = $button.data('url');
-            var formData = this.$form.serialize();
+            var formData = this.$el.closest('form').serialize();
             var urlOptions = {};
 
             if (!this.dropdownWidget.validateForm()) {
@@ -354,7 +358,7 @@ define(function(require) {
 
                 if (this.lineItemId && this.findCurrentShoppingList()) {
                     var currentLineItem = this.findCurrentLineItem(this.lineItemId);
-                    if ((currentLineItem.unit === this.elements.unit.val())
+                    if ((currentLineItem.unit === this.model.get('unit'))
                         && !$(e.currentTarget).parent().attr('data-is-remove')
                     ) {
                         // update product in shopping list
@@ -435,8 +439,8 @@ define(function(require) {
 
         getValue: function() {
             return {
-                quantity: this.elements.quantity.val(),
-                unit: this.elements.unit.val()
+                quantity: this.model.get('quantity'),
+                unit: this.model.get('unit')
             };
         }
     });
