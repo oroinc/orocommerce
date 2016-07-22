@@ -58,7 +58,7 @@ class AccountUserSettings extends ExtendAccountUserSettings
      * @var Localization
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\LocaleBundle\Entity\Localization")
-     * @ORM\JoinColumn(name="localization_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
+     * @ORM\JoinColumn(name="localization_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
      */
     protected $localization;
 
