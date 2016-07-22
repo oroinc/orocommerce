@@ -26,7 +26,7 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=10
+     *              "order"=30
      *          }
      *      }
      * )
@@ -40,7 +40,7 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=20
+     *              "order"=40
      *          }
      *      }
      * )

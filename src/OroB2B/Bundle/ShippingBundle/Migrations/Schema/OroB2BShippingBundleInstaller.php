@@ -132,6 +132,7 @@ class OroB2BShippingBundleInstaller implements Installation
         $table->addColumn('rule_id', 'integer', ['notnull' => false]);
         $table->addColumn('type', 'string', ['length' => 255]);
         $table->addColumn('method', 'string', ['length' => 255]);
+        $table->addColumn('entity_name', 'string', ['length' => 255]);
         $table->addIndex(['rule_id'], 'idx_b517b837744e0351', []);
         $table->setPrimaryKey(['id']);
     }

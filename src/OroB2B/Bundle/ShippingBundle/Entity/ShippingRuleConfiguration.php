@@ -13,7 +13,7 @@ use OroB2B\Bundle\ShippingBundle\Model\ExtendShippingRuleConfiguration;
  * @ORM\Table(name="orob2b_shipping_rule_config")
  * @ORM\Entity
  * @ORM\InheritanceType("JOINED")
- * @ORM\DiscriminatorColumn(name="method", type="string")
+ * @ORM\DiscriminatorColumn(name="entity_name", type="string")
  * @Config
  */
 abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
@@ -28,16 +28,30 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
     /**
      * @var string
      *
-     * @ORM\Column(type="string", name="type", nullable=false)
+     * @ORM\Column(name="type", type="string", nullable=false)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=5
+     *              "order"=10
      *          }
      *      }
      * )
      */
     protected $type;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="method", type="string", nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=20
+     *          }
+     *      }
+     * )
+     */
+    protected $method;
 
     /**
      * @var ShippingRule
@@ -88,6 +102,24 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
     public function setRule(ShippingRule $rule)
     {
         $this->rule = $rule;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    /**
+     * @param string $method
+     * @return $this
+     */
+    public function setMethod($method)
+    {
+        $this->method = $method;
         return $this;
     }
 }
