@@ -9,12 +9,11 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
-class TransitionFormDataProvider extends AbstractServerRenderDataProvider
+class TransitionFormDataProvider
 {
     /**
      * @var FormFactoryInterface
@@ -22,7 +21,7 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
     protected $formFactory;
 
     /**
-     * @var DataProviderInterface
+     * @var object
      */
     protected $continueTransitionDataProvider;
 
@@ -40,9 +39,9 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * @param DataProviderInterface $continueTransitionDataProvider
+     * @param object $continueTransitionDataProvider
      */
-    public function setContinueTransitionDataProvider(DataProviderInterface $continueTransitionDataProvider)
+    public function setContinueTransitionDataProvider($continueTransitionDataProvider)
     {
         $this->continueTransitionDataProvider = $continueTransitionDataProvider;
     }

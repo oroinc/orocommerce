@@ -7,7 +7,7 @@ use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 
-class FrontendDatagridRowViewProvider extends AbstractServerRenderDataProvider
+class FrontendDatagridRowViewProvider
 {
     const FRONTEND_DATAGRID_NAME = 'frontend-products-grid';
 

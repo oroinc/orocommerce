@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\BackTransitionDataProvider;
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
@@ -14,7 +13,7 @@ use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 class BackTransitionDataProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DataProviderInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|\stdClass
      */
     protected $transitionsDataProvider;
 
@@ -25,7 +24,7 @@ class BackTransitionDataProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->transitionsDataProvider = $this->getMock('Oro\Component\Layout\DataProviderInterface');
+        $this->transitionsDataProvider = $this->getMock(\stdClass::class, ['getData']);
         $this->dataProvider = new BackTransitionDataProvider();
         $this->dataProvider->setBackTransitionsDataProvider($this->transitionsDataProvider);
     }

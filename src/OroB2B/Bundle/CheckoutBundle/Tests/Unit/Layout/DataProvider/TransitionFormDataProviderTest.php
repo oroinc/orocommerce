@@ -10,8 +10,6 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 
-use Oro\Component\Layout\DataProviderInterface;
-
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider;
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
@@ -21,7 +19,7 @@ class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
     use CheckoutAwareContextTrait;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DataProviderInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|\stdClass
      */
     protected $continueTransitionDataProvider;
 
@@ -37,7 +35,7 @@ class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->continueTransitionDataProvider = $this->getMock('Oro\Component\Layout\DataProviderInterface');
+        $this->continueTransitionDataProvider = $this->getMock(\stdClass::class, ['getData']);
         $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
 
         $this->dataProvider = new TransitionFormDataProvider($this->formFactory);

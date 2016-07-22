@@ -28,11 +28,6 @@ class FrontendAccountUserCurrencyProviderTest extends \PHPUnit_Framework_TestCas
         $this->dataProvider = new FrontendAccountUserCurrencyProvider($this->userCurrencyManager);
     }
 
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('orob2b_account_frontend_account_user_currency', $this->dataProvider->getIdentifier());
-    }
-
     public function testGetData()
     {
         /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context **/

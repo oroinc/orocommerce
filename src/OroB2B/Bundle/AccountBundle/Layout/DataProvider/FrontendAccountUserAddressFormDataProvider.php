@@ -16,7 +16,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType;
 
-class FrontendAccountUserAddressFormDataProvider extends AbstractServerRenderDataProvider
+class FrontendAccountUserAddressFormDataProvider
 {
     /**
      * @var FormFactoryInterface

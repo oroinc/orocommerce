@@ -27,11 +27,6 @@ class CreditCardFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new CreditCardFormProvider($this->formFactory);
     }
 
-    public function testGetIdentifier()
-    {
-        $this->assertEquals(CreditCardFormProvider::NAME, $this->provider->getIdentifier());
-    }
-
     public function testGetData()
     {
         /**

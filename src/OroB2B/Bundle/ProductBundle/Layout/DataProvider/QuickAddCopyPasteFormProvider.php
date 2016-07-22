@@ -5,14 +5,13 @@ namespace OroB2B\Bundle\ProductBundle\Layout\DataProvider;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
-use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 
-class QuickAddCopyPasteFormProvider implements DataProviderInterface
+class QuickAddCopyPasteFormProvider
 {
     /**
      * @var FormAccessor
@@ -35,14 +34,6 @@ class QuickAddCopyPasteFormProvider implements DataProviderInterface
     public function __construct(FormFactoryInterface $formFactory)
     {
         $this->formFactory = $formFactory;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        return 'orob2b_product_quick_add_copy_paste_form_provider';
     }
 
     /**

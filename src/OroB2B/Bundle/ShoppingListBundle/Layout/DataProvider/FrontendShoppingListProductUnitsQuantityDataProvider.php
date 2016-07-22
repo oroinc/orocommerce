@@ -10,7 +10,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
-class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServerRenderDataProvider
+class FrontendShoppingListProductUnitsQuantityDataProvider
 {
     /**
      * @var ShoppingListManager

@@ -2,13 +2,12 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
-class PaymentMethodsProvider implements DataProviderInterface
+class PaymentMethodsProvider
 {
     const NAME = 'orob2b_payment_methods_provider';
 
@@ -31,14 +30,6 @@ class PaymentMethodsProvider implements DataProviderInterface
     {
         $this->registry = $registry;
         $this->paymentContextProvider = $paymentContextProvider;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        return self::NAME;
     }
 
     /** {@inheritdoc} */

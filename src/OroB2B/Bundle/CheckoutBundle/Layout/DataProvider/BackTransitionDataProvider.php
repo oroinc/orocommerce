@@ -4,19 +4,18 @@ namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
 
-class BackTransitionDataProvider extends AbstractServerRenderDataProvider
+class BackTransitionDataProvider
 {
     /**
-     * @var DataProviderInterface
+     * @var object
      */
     protected $transitionsDataProvider;
 
     /**
-     * @param DataProviderInterface $transitionsDataProvider
+     * @param object $transitionsDataProvider
      */
-    public function setBackTransitionsDataProvider(DataProviderInterface $transitionsDataProvider)
+    public function setBackTransitionsDataProvider($transitionsDataProvider)
     {
         $this->transitionsDataProvider = $transitionsDataProvider;
     }

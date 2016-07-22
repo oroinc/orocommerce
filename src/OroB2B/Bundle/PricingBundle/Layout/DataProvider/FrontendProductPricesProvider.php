@@ -13,7 +13,7 @@ use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
+class FrontendProductPricesProvider
 {
     /**
      * @var array

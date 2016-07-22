@@ -9,7 +9,7 @@ use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
-class ProductUnitsWithoutPricesProvider extends AbstractServerRenderDataProvider
+class ProductUnitsWithoutPricesProvider
 {
     /**
      * @var array

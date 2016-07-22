@@ -12,7 +12,7 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
-abstract class AbstractTransitionDataProvider extends AbstractServerRenderDataProvider
+abstract class AbstractTransitionDataProvider
 {
     /**
      * @var WorkflowManager

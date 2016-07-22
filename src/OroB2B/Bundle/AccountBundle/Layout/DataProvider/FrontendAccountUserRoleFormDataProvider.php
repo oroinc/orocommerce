@@ -13,7 +13,7 @@ use Oro\Component\Layout\ContextInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler;
 
-class FrontendAccountUserRoleFormDataProvider extends AbstractServerRenderDataProvider
+class FrontendAccountUserRoleFormDataProvider
 {
     /** @var AccountUserRoleUpdateFrontendHandler */
     protected $handler;

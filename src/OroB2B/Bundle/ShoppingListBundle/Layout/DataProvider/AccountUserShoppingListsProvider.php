@@ -16,7 +16,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 
-class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
+class AccountUserShoppingListsProvider
 {
     const DATA_SORT_BY_UPDATED = 'updated';
 

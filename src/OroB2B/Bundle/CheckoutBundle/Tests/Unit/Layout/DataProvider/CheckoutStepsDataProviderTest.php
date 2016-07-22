@@ -34,14 +34,6 @@ class CheckoutStepsDataProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \BadMethodCallException
-     */
-    public function testGetIdentifier()
-    {
-        $this->provider->getIdentifier();
-    }
-
-    /**
      * @dataProvider getDataDataProvider
      * @param Checkout $checkout
      * @param bool $displayOrdered

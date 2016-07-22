@@ -16,7 +16,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
-class SummaryDataProvider extends AbstractServerRenderDataProvider
+class SummaryDataProvider
 {
     /**
      * @var CheckoutLineItemsManager

@@ -26,14 +26,6 @@ class TaxDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new TaxDataProvider($this->taxManager);
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     */
-    public function testGetIdentifier()
-    {
-        $this->provider->getIdentifier();
-    }
-
     public function testGetData()
     {
         $context = new LayoutContext();

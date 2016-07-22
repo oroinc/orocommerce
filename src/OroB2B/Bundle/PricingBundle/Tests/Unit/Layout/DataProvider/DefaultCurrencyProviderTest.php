@@ -28,11 +28,6 @@ class DefaultCurrencyProviderTest extends \PHPUnit_Framework_TestCase
         $this->defaultCurrencyProvider = new DefaultCurrencyProvider($this->userCurrencyManager);
     }
 
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('orob2b_pricing_default_currency', $this->defaultCurrencyProvider->getIdentifier());
-    }
-
     public function testGetData()
     {
         /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context **/

@@ -8,7 +8,7 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
-class CheckoutStepsDataProvider extends AbstractServerRenderDataProvider
+class CheckoutStepsDataProvider
 {
     /**
      * @var WorkflowManager
@@ -21,14 +21,6 @@ class CheckoutStepsDataProvider extends AbstractServerRenderDataProvider
     public function __construct(WorkflowManager $workflowManager)
     {
         $this->workflowManager = $workflowManager;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getIdentifier()
-    {
-        throw new \BadMethodCallException('Not implemented yet');
     }
 
     /**

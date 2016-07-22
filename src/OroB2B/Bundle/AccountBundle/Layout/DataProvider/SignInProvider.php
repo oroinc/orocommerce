@@ -10,7 +10,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
-class SignInProvider extends AbstractServerRenderDataProvider
+class SignInProvider
 {
     /**
      * @var array

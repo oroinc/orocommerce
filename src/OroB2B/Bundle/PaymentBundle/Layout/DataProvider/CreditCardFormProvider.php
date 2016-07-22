@@ -5,13 +5,12 @@ namespace OroB2B\Bundle\PaymentBundle\Layout\DataProvider;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
-use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 
 use OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType;
 
-class CreditCardFormProvider implements DataProviderInterface
+class CreditCardFormProvider
 {
     const NAME = 'orob2b_payment_credit_card_form_provider';
 
@@ -36,14 +35,6 @@ class CreditCardFormProvider implements DataProviderInterface
     public function __construct(FormFactoryInterface $formFactory)
     {
         $this->formFactory = $formFactory;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        return self::NAME;
     }
 
     /**

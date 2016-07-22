@@ -12,7 +12,7 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType;
 
-class FrontendAccountUserForgotPasswordFormProvider extends AbstractServerRenderDataProvider
+class FrontendAccountUserForgotPasswordFormProvider
 {
     /**
      * @var FormAccessor

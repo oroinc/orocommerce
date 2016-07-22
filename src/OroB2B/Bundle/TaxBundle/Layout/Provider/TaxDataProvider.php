@@ -3,11 +3,10 @@
 namespace OroB2B\Bundle\TaxBundle\Layout\Provider;
 
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
 
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 
-class TaxDataProvider implements DataProviderInterface
+class TaxDataProvider
 {
     /** @var TaxManager */
     protected $taxManager;
@@ -18,12 +17,6 @@ class TaxDataProvider implements DataProviderInterface
     public function __construct(TaxManager $taxManager)
     {
         $this->taxManager = $taxManager;
-    }
-
-    /** {@inheritDoc} */
-    public function getIdentifier()
-    {
-        throw new \BadMethodCallException('Not implemented');
     }
 
     /** {@inheritDoc} */

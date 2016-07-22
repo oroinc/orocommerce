@@ -28,11 +28,6 @@ class EnabledCurrenciesProviderTest extends \PHPUnit_Framework_TestCase
         $this->enabledCurrenciesProvider = new EnabledCurrenciesProvider($this->userCurrencyManager);
     }
 
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('orob2b_pricing_enabled_currencies', $this->enabledCurrenciesProvider->getIdentifier());
-    }
-
     public function testGetData()
     {
         /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context **/

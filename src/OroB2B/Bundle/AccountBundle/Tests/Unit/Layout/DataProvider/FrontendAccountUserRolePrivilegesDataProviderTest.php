@@ -31,15 +31,6 @@ class FrontendAccountUserRolePrivilegesDataProviderTest extends \PHPUnit_Framewo
         unset($this->privilegesHelper, $this->dataProvider);
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Not implemented
-     */
-    public function testGetIdentifier()
-    {
-        $this->dataProvider->getIdentifier();
-    }
-
     public function testGetDataWithCorrectRole()
     {
         $role = new AccountUserRole();

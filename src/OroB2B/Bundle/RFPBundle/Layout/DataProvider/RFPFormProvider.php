@@ -13,7 +13,7 @@ use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 
-class RFPFormProvider extends AbstractServerRenderDataProvider
+class RFPFormProvider
 {
     /** @var FormAccessor[] */
     protected $data = [];

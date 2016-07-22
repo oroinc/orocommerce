@@ -13,7 +13,7 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
-class FrontendAccountUserProfileFormProvider extends AbstractServerRenderDataProvider
+class FrontendAccountUserProfileFormProvider
 {
     /** @var FormAccessor[] */
     protected $data = [];

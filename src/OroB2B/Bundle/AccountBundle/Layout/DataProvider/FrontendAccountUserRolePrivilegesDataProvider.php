@@ -3,12 +3,11 @@
 namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper;
 
-class FrontendAccountUserRolePrivilegesDataProvider implements DataProviderInterface
+class FrontendAccountUserRolePrivilegesDataProvider
 {
     /** @var AccountUserRolePrivilegesHelper */
     protected $privilegesHelper;
@@ -19,14 +18,6 @@ class FrontendAccountUserRolePrivilegesDataProvider implements DataProviderInter
     public function __construct(AccountUserRolePrivilegesHelper $privilegesHelper)
     {
         $this->privilegesHelper = $privilegesHelper;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        throw new \BadMethodCallException('Not implemented');
     }
 
     /**

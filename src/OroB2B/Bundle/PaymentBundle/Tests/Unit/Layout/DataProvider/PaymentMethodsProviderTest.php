@@ -45,11 +45,6 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new PaymentMethodsProvider($this->registry, $this->paymentContextProvider);
     }
 
-    public function testGetIdentifier()
-    {
-        $this->assertEquals(PaymentMethodsProvider::NAME, $this->provider->getIdentifier());
-    }
-
     public function testGetDataEmpty()
     {
         $context = new LayoutContext();

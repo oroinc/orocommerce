@@ -13,7 +13,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Model\ProductLineItem;
 use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 
-class ProductLineItemFormProvider extends AbstractServerRenderDataProvider
+class ProductLineItemFormProvider
 {
     const NULL_PRODUCT_KEY = 'no-product';
 

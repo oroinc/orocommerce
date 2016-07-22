@@ -7,7 +7,7 @@ use Oro\Component\Layout\ContextInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
 
-class CurrentCategoryProvider extends AbstractServerRenderDataProvider
+class CurrentCategoryProvider
 {
     /**
      * @var CategoryRepository

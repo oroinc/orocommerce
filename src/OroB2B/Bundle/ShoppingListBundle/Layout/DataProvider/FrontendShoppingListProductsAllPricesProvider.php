@@ -9,7 +9,7 @@ use OroB2B\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
 use OroB2B\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 
-class FrontendShoppingListProductsAllPricesProvider extends AbstractServerRenderDataProvider
+class FrontendShoppingListProductsAllPricesProvider
 {
     /**
      * @var FrontendProductPricesDataProvider

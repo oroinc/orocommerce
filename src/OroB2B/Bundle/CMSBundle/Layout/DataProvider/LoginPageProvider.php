@@ -10,7 +10,7 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
 use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
 
-class LoginPageProvider extends AbstractServerRenderDataProvider
+class LoginPageProvider
 {
     /**
      * @var LoginPage

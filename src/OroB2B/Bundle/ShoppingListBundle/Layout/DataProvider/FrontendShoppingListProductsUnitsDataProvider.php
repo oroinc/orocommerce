@@ -12,7 +12,7 @@ use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class FrontendShoppingListProductsUnitsDataProvider extends AbstractServerRenderDataProvider
+class FrontendShoppingListProductsUnitsDataProvider
 {
     /**
      * @var Registry

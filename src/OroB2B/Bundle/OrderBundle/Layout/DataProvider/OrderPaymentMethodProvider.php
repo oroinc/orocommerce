@@ -7,7 +7,7 @@ use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 
-class OrderPaymentMethodProvider extends AbstractServerRenderDataProvider
+class OrderPaymentMethodProvider
 {
     /**
      * @var PaymentTransactionProvider

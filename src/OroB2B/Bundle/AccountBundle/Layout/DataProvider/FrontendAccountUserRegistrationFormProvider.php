@@ -21,7 +21,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
-class FrontendAccountUserRegistrationFormProvider extends AbstractServerRenderDataProvider
+class FrontendAccountUserRegistrationFormProvider
 {
     /** @var FormAccessor */
     protected $data;

@@ -7,7 +7,7 @@ use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 
-class OrderPaymentStatusProvider extends AbstractServerRenderDataProvider
+class OrderPaymentStatusProvider
 {
     /**
      * @var PaymentStatusProvider

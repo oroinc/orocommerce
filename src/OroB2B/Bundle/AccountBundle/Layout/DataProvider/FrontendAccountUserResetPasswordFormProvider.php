@@ -13,7 +13,7 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType;
 
-class FrontendAccountUserResetPasswordFormProvider extends AbstractServerRenderDataProvider
+class FrontendAccountUserResetPasswordFormProvider
 {
     /**
      * @var FormAccessor

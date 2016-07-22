@@ -8,7 +8,7 @@ use Oro\Component\Layout\ContextInterface;
 use OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
 use OroB2B\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 
-class FrontendShoppingListProductsMatchedPriceProvider extends AbstractServerRenderDataProvider
+class FrontendShoppingListProductsMatchedPriceProvider
 {
     /**
      * @var FrontendProductPricesDataProvider
