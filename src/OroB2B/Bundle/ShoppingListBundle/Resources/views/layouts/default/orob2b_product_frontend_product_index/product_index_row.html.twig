@@ -16,7 +16,7 @@
         remove: removeOptions,
         componentOptions: {
             defaultClass: 'btn-dark',
-            addedClass: 'btn-green'
+            editClass: 'btn-dark'
         },
         singleButtonACss: 'btn-block btn-dark btn_lg'
     } %}
@@ -46,37 +46,41 @@
     <div class="shopping-lists">
         <i class="shopping-lists__icon"></i>
         <% if (currentShoppingList) { %>
-        <% _.each(currentShoppingList.line_items, function(item) { %>
-        <div class="shopping-lists__text">
-            <span class="shopping-lists__label"><%= _.__(
-                    'orob2b.shoppinglist.actions.added_to_shopping_list', {
-                    lineItems: _.__(
-                        'orob2b.product.product_unit.' + item.unit + '.value.short',
-                        {count: item.quantity},
-                        item.quantity
-                    ),
-                    shoppingList: currentShoppingList.shopping_list_label
-            }) %></span>
-            <ul class="actions-row">
-                <li class="actions-row__item actions-row__item--edit">
-                    <button type="button"
-                            title="{{ 'Edit'|trans }}"
-                            class="actions-row__button"
-                            data-role="edit-line-item"
-                            data-line-item-id="<%= item.line_item_id %>"
-                    >
-                        <i class="actions-row__icon cf-pencil"></i>
-                    </button>
-                </li>
-            </ul>
-        </div>
-        <% }) %>
+            <% _.each(currentShoppingList.line_items, function(item) { %>
+            <div class="shopping-lists__text">
+                <div class="shopping-lists__description-row">
+                     <span class="shopping-lists__label"><%= _.__(
+                        'orob2b.shoppinglist.actions.added_to_shopping_list', {
+                        lineItems: _.__(
+                            'orob2b.product.product_unit.' + item.unit + '.value.short',
+                            {count: item.quantity},
+                            item.quantity
+                        ),
+                        shoppingList: currentShoppingList.shopping_list_label
+                    }) %></span>
+                </div>
+                <div class="shopping-lists__ui-row">
+                    <ul class="actions-row">
+                        <li class="actions-row__item actions-row__item--edit">
+                            <button type="button"
+                                    title="{{ 'Edit'|trans }}"
+                                    class="actions-row__button"
+                                    data-role="edit-line-item"
+                                    data-line-item-id="<%= item.line_item_id %>"
+                            >
+                                <i class="actions-row__icon cf-pencil"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <% }) %>
         <% } else { %>
-        <div class="shopping-lists__text">
-            <%= _.__('orob2b.shoppinglist.actions.in_shopping_lists', {
-                count: shoppingLists.length
-            }) %>
-        </div>
+            <div class="shopping-lists__text">
+                <%= _.__('orob2b.shoppinglist.actions.in_shopping_lists', {
+                    count: shoppingLists.length
+                }) %>
+            </div>
         <% } %>
         {#{{ UI.clientLink({
             'dataUrl': path('orob2b_product_frontend_quick_add_import'),
