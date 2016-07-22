@@ -6,7 +6,7 @@ use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider as CategoriesProvider;
 
 class FeaturedCategoriesProvider extends AbstractServerRenderDataProvider
 {
@@ -16,14 +16,14 @@ class FeaturedCategoriesProvider extends AbstractServerRenderDataProvider
     protected $data;
 
     /**
-     * @var CategoryTreeProvider
+     * @var CategoriesProvider
      */
     protected $categoryTreeProvider;
 
     /**
-     * @param CategoryTreeProvider $categoryTreeProvider
+     * @param CategoriesProvider $categoryTreeProvider
      */
-    public function __construct(CategoryTreeProvider $categoryTreeProvider)
+    public function __construct(CategoriesProvider $categoryTreeProvider)
     {
         $this->categoryTreeProvider = $categoryTreeProvider;
     }
