@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
-use Oro\Component\Testing\Unit\EntityTrait;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -15,8 +13,6 @@ use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
 {
-    use EntityTrait;
-
     /** @var ShoppingListManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $shoppingListManager;
 

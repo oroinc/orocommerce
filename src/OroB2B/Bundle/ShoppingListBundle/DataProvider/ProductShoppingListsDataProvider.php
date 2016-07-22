@@ -52,6 +52,7 @@ class ProductShoppingListsDataProvider
             return null;
         }
 
+        /** @var ShoppingList $shoppingList */
         $shoppingList = $this->shoppingListManager->getCurrent();
 
         if (!$shoppingList) {
