@@ -1,0 +1,8 @@
+warehouse_quantity:
+    fileName: B1.csv
+
+full_data:
+    fileName: C1.csv
+
+inventory_levels_minimal:
+    fileName: E1.csv

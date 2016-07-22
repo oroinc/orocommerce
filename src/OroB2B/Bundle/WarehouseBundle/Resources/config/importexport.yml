@@ -1,0 +1,123 @@
+services:
+    #Converter
+    orob2b_warehouse.importexport.inventory_level_converter:
+        parent: oro_importexport.data_converter.configurable
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\DataConverter\InventoryLevelDataConverter'
+
+    #Export processor
+    orob2b_warehouse.importexport.processor.export_detailed_inventory_levels:
+        parent: oro_importexport.processor.export_abstract
+        public: false
+        calls:
+             - [setDataConverter, ["@orob2b_warehouse.importexport.inventory_level_converter"]]
+             - [setSerializer, ['@orob2b_warehouse.importexport.serializer.warehouse_inventory_level']]
+        tags:
+            - { name: oro_importexport.processor, type: export, entity: %orob2b_warehouse.entity.warehouse_inventory_level.class%, alias: orob2b_warehouse.detailed_inventory_levels }
+
+    # Strategy
+    orob2b_warehouse.importexport.strategy.warehouse_inventory_level:
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy'
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_importexport.strategy.import.helper'
+            - '@oro_importexport.field.field_helper'
+            - '@oro_importexport.field.database_helper'
+        calls:
+             - [setInventoryLevelStrategyHelper, ["@orob2b_warehouse.importexport.strategy_helper.inventory_statuses"]]
+
+    #Serializer
+    orob2b_warehouse.importexport.serializer.warehouse_inventory_level:
+        class: 'Oro\Bundle\ImportExportBundle\Serializer\Serializer'
+        arguments:
+          - ['@orob2b_warehouse.importexport.normalizer.warehouse_inventory_level']
+          - ['@oro_importexport.serializer.dummy_encoder']
+
+    orob2b_warehouse.importexport.normalizer.warehouse_inventory_level:
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelNormalizer'
+        arguments:
+            - '@orob2b_product.formatter.product_unit_label'
+            - '@orob2b_product.service.quantity_rounding'
+        public: false
+
+    # Import processor
+    orob2b_warehouse.importexport.processor.import.warehouse_inventory_level:
+        parent: oro_importexport.processor.import_abstract
+        public: false
+        calls:
+            - [setDataConverter, ['@orob2b_warehouse.importexport.inventory_level_converter']]
+            - [setStrategy, ['@orob2b_warehouse.importexport.strategy.warehouse_inventory_level']]
+            - [setSerializer, ['@orob2b_warehouse.importexport.serializer.warehouse_inventory_level']]
+        tags:
+            - { name: oro_importexport.processor, type: import, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.warehouse_inventory_level }
+            - { name: oro_importexport.processor, type: import_validation, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.warehouse_inventory_level }
+
+    # Export template
+    orob2b_warehouse.importexport.processor.export_template.inventory_level:
+        public: false
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, ['@orob2b_warehouse.importexport.inventory_level_converter']]
+            - [setSerializer, ['@orob2b_warehouse.importexport.serializer.warehouse_inventory_level']]
+        tags:
+            - { name: oro_importexport.processor, type: export_template, entity: '%orob2b_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.detailed_inventory_levels_template }
+
+    # Template Fixture
+    orob2b_warehouse.importexport.template_fixture.warehouse_inventory_level:
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\TemplateFixture\WarehouseInventoryLevelFixture'
+        public: false
+        tags:
+            - { name: oro_importexport.template_fixture }
+
+    # Inventory level Reader
+    orob2b_warehouse.importexport.reader.inventory_level:
+        public: false
+        parent: oro_importexport.reader.entity
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Reader\InventoryLevelReader'
+
+    #Strategy Helpers
+    orob2b_warehouse.importexport.strategy_helper.warehouse_inventory_level:
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategyHelper'
+        public: false
+        arguments:
+            - "@oro_importexport.field.database_helper"
+            - "@translator"
+
+    orob2b_warehouse.importexport.strategy_helper.product_unit:
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\ProductUnitStrategyHelper'
+        public: false
+        arguments:
+            - "@oro_importexport.field.database_helper"
+            - "@translator"
+            - "@orob2b_warehouse.transformer.inventory_product_unit"
+        calls:
+             - [setSuccessor, ["@orob2b_warehouse.importexport.strategy_helper.warehouse_inventory_level"]]
+
+    orob2b_warehouse.importexport.strategy_helper.warehouse:
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseStrategyHelper'
+        public: false
+        arguments:
+            - "@oro_importexport.field.database_helper"
+            - "@translator"
+        calls:
+             - [setSuccessor, ["@orob2b_warehouse.importexport.strategy_helper.product_unit"]]
+
+    orob2b_warehouse.importexport.strategy_helper.inventory_statuses:
+        class: 'OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\InventoryStatusesStrategyHelper'
+        arguments:
+            - "@oro_importexport.field.database_helper"
+            - "@translator"
+        calls:
+             - [setSuccessor, ["@orob2b_warehouse.importexport.strategy_helper.warehouse"]]
+
+    #Transformer
+    orob2b_warehouse.transformer.inventory_product_unit:
+        class: 'OroB2B\Bundle\WarehouseBundle\Model\Data\ProductUnitTransformer'
+        arguments:
+            - "@orob2b_product.provider.product_units_provider"
+
+    #Listeners
+    orob2b_warehouse.event_listener.inventory_level_import:
+        class: 'OroB2B\Bundle\WarehouseBundle\EventListener\InventoryLevelsImportListener'
+        arguments: ["@orob2b_warehouse.importexport.strategy.warehouse_inventory_level"]
+        tags:
+            - { name: kernel.event_listener, event: akeneo_batch.step_execution_completed, method: onBatchStepCompleted }
