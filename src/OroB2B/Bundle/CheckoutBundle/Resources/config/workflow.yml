@@ -61,6 +61,12 @@ workflows:
             payment_save_for_later:
                 type: bool
                 label: Save payment data for later use
+            state_token_storage:
+                type: array
+                label: Storage of checkout states
+            state_token:
+                type: string
+                label: Token to track checkout state
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -112,6 +118,33 @@ workflows:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
                 form_options:
+                    init_actions:
+                        # Get snapshot after form submit by token form the request
+                        - '@tree':
+                            conditions:
+                                '@equal': [$.result.stateGenerated, true]
+                            actions:
+                                - '@get_checkout_state':
+                                    token: $state_token
+                                    attribute: $.result.formCheckoutState
+                        # Generate snapshot before submit
+                        # and set flag to $.result.stateGenerated
+                        - '@tree':
+                            conditions:
+                                '@not':
+                                    - '@equal': [$.result.stateGenerated, true]
+                            actions:
+#                                - '@assign_value': [$.result.currentState, []]
+                                - '@generate_checkout_state_snapshot':
+                                    checkout: $checkout
+                                    attribute: $.result.initCheckoutState
+#                                - '@save_checkout_state':
+#                                    checkout: $checkout
+#                                    saveTo: $.result.currentState
+#                                    token: $.result.currentStateToken
+                                - '@assing_value': [$.result.stateGenerated, true]
+
+
                     attribute_fields:
                         billing_address:
                             form_type: orob2b_checkout_address
@@ -133,6 +166,8 @@ workflows:
                             form_type: orob2b_ship_to_billing_address
                             options:
                                 label: Ship to this address
+                        state_token:
+                            form_type: hidden
 
             continue_to_shipping_method:
                 label: Continue
@@ -291,8 +326,19 @@ workflows:
                             parameters:
                                 entity: $checkout
                 conditions:
-                    '@not_empty': $checkout.billingAddress
+                    '@and':
+                        - '@not_empty': $checkout.billingAddress
+                        - '@check_checkout_states': [$.result.initCheckoutState, $.result.formCheckoutState]
                 post_actions:
+                    # TODO: Move down at the end of actions
+                    - '@generate_checkout_state_snapshot':
+                        checkout: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        state: $.result.actualCheckoutState
+                        saveTo: $state_token_storage
+                        tokenAttribute: $state_token
+
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
                     - '@call_method':
                         conditions:

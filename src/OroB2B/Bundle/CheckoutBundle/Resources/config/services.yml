@@ -202,3 +202,18 @@ services:
         public: false
         tags:
              - { name: checkout.workflow_state.mapper, priority: 20 }
+
+    orob2b_checkout.action.save_checkout_state:
+        class: 'OroB2B\Bundle\CheckoutBundle\Action\SaveCheckoutStateAction'
+        arguments:
+            - '@oro_action.context_accessor'
+        tags:
+            - { name: oro_workflow.action, alias: save_checkout_state }
+
+    orob2b_checkout.condition.check_checkout_states:
+        class: 'OroB2B\Bundle\CheckoutBundle\Condition\CheckCheckoutStates'
+        arguments:
+            - '@orob2b_checkout.workflow_state.manager.checkout_state_diff'
+        tags:
+            - { name: oro_workflow.condition, alias: check_checkout_states }
+            - { name: oro_action.condition, alias: check_checkout_states }

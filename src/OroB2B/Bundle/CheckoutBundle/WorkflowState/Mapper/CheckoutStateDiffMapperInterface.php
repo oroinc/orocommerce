@@ -27,4 +27,11 @@ interface CheckoutStateDiffMapperInterface
      * @return bool
      */
     public function isStateActual($entity, array $savedState);
+
+    /**
+     * @param array $state1
+     * @param array $state2
+     * @return bool
+     */
+    public function isStatesEqual($state1, $state2);
 }

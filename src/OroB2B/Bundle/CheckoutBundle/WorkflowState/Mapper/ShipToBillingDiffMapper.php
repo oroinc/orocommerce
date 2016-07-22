@@ -44,4 +44,16 @@ class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
             isset($savedState[$this->getName()]) &&
             $savedState[$this->getName()] === $checkout->isShipToBillingAddress();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isStatesEqual($state1, $state2)
+    {
+        if (!isset($state1[self::DATA_NAME], $state2[self::DATA_NAME])) {
+            return false;
+        }
+
+        return $state1[self::DATA_NAME] === $state2[self::DATA_NAME];
+    }
 }

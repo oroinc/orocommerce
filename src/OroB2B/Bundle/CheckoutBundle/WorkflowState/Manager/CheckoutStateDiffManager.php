@@ -43,6 +43,7 @@ class CheckoutStateDiffManager
      * @param object $entity
      * @param array $savedState
      * @return bool
+     * @deprecated
      */
     public function isStateActual($entity, array $savedState)
     {
@@ -58,5 +59,30 @@ class CheckoutStateDiffManager
         }
 
         return true;
+    }
+
+
+    /**
+     * @param object $entity
+     * @param array $state1
+     * @param array $state2
+     * @return bool
+     */
+    public function isStatesEqual($entity, array $state1, array $state2)
+    {
+        /** @var CheckoutStateDiffMapperInterface $mapper */
+        foreach ($this->mapperRegistry->getMappers() as $mapper) {
+            if (!$mapper->isEntitySupported($entity)) {
+                continue;
+            }
+
+            if ($mapper->isStatesEqual($state1, $state2)) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }
