@@ -1,15 +1,11 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
+    var ContentSliderComponent;
     var _ = require('underscore');
     var BaseComponent = require('oroui/js/app/components/base/component');
-
     var $ = require('jquery');
-    var Slick = require('orob2bfrontend/default/vendors/slick/slick');
-
-    var ContentSliderComponent;
+    require('slick');
 
     ContentSliderComponent = BaseComponent.extend({
         /**

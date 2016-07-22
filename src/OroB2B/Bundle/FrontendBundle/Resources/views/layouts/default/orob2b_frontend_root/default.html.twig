@@ -1,7 +1,7 @@
-{% block _heero_promo_widget %}
-    <div class="heero-promo">
+{% block _hero_promo_widget %}
+    <div class="hero-promo">
         {% set attr = layout_attr_defaults(attr, {
-            'data-page-component-options': {
+            '~data-page-component-options': {
                 autoplaySpeed: 4000,
                 arrowsNav: false,
                 dotsNav: true
@@ -27,7 +27,7 @@
 {% block _top_selling_items_widget %}
     <div class="top-selling-items">
         {% set attr = layout_attr_defaults(attr, {
-            'data-page-component-options': {
+            '~data-page-component-options': {
                 mobileEnabled: false
             }
         }) %}

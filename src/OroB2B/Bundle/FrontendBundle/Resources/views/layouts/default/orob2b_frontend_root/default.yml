@@ -3,7 +3,7 @@ layout:
         - '@setBlockTheme':
             themes: 'default.html.twig'
         - '@add':
-            id: heero_promo
+            id: hero_promo
             blockType: embedded_list
             parentId: content
             options:

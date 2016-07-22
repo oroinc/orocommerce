@@ -118,7 +118,7 @@
 {% block embedded_list_widget %}
     <div class="embedded-list">
         {% set attr = layout_attr_defaults(attr, {
-            '~class': 'embedded-list__items'
+            'class': 'embedded-list__container'
         }) %}
 
         {% if use_slider %}
@@ -127,7 +127,7 @@
                 '~data-page-component-options': {
                     slidesCount: slides_count
                 },
-                '~class': ' embedded-list__items--slider'
+                '~class': ' embedded-list__container--slider'
             }) %}
         {% endif %}
 
