@@ -321,6 +321,8 @@ class ProductTypeTest extends FormIntegrationTestCase
         if ($hasVariants) {
             $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
         }
+        
+        $expectedProduct->setPrimaryUnitPrecision($this->getDefaultProductUnitPrecision());
 
         if ($withProductUnitPrecision) {
             $productUnit = new ProductUnit();
@@ -336,8 +338,6 @@ class ProductTypeTest extends FormIntegrationTestCase
 
             $expectedProduct->addAdditionalUnitPrecision($productUnitPrecision);
         }
-
-        $expectedProduct->setPrimaryUnitPrecision($this->getDefaultProductUnitPrecision());
 
         if ($withNamesAndDescriptions) {
             $expectedProduct

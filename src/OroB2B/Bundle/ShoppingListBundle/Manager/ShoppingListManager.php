@@ -219,7 +219,6 @@ class ShoppingListManager
     }
 
     /**
-     * TODO: refactor, recalculate subtotals once
      * @param array        $lineItems
      * @param ShoppingList $shoppingList
      * @param int          $batchSize

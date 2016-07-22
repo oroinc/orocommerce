@@ -12,9 +12,11 @@
 {% endblock %}
 
 {% block _top_nav_widget %}
-    <nav class="topbar__navigation topbar__navigation--has-sibling">
-        {{ block_widget(block) }}
-    </nav>
+    {% spaceless %}
+        <nav class="topbar__navigation topbar__navigation--has-sibling">
+            {{ block_widget(block) }}
+        </nav>
+    {% endspaceless %}
 {% endblock %}
 
 {% block _top_nav_menu_container_widget %}

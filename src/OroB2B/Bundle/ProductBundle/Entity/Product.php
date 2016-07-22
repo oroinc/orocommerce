@@ -608,9 +608,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function addUnitPrecision(ProductUnitPrecision $unitPrecision)
     {
+        /** @var ProductUnit $productUnit */
         $productUnit = $unitPrecision->getUnit();
         if ($productUnit && $existingUnitPrecision = $this->getUnitPrecision($productUnit->getCode())) {
-            $existingUnitPrecision->setPrecision($unitPrecision->getPrecision());
+            $existingUnitPrecision
+                ->setPrecision($unitPrecision->getPrecision())
+                ->setConversionRate($unitPrecision->getConversionRate())
+                ->setSell($unitPrecision->isSell());
         } else {
             $unitPrecision->setProduct($this);
             $this->unitPrecisions->add($unitPrecision);
@@ -648,16 +652,18 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * Get unitPrecisions by unit code
      *
      * @param string $unitCode
-     * @return ProductUnitPrecision
+     * @return ProductUnitPrecision|null
      */
     public function getUnitPrecision($unitCode)
     {
         $result = null;
 
         foreach ($this->unitPrecisions as $unitPrecision) {
-            if ($unitPrecision->getUnit()->getCode() == $unitCode) {
-                $result = $unitPrecision;
-                break;
+            if ($unit = $unitPrecision->getUnit()) {
+                if ($unit->getCode() == $unitCode) {
+                    $result = $unitPrecision;
+                    break;
+                }
             }
         }
 
@@ -997,11 +1003,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function setPrimaryUnitPrecision($primaryUnitPrecision)
     {
-        $primaryUnitPrecision->setConversionRate(1.0)->setSell(true);
-        $this->primaryUnitPrecision = $primaryUnitPrecision;
         if ($primaryUnitPrecision) {
+            $primaryUnitPrecision->setConversionRate(1.0)->setSell(true);
             $this->addUnitPrecision($primaryUnitPrecision);
+            $this->primaryUnitPrecision = $this->getUnitPrecision($primaryUnitPrecision->getProductUnitCode());
+        } else {
+            $this->primaryUnitPrecision = $primaryUnitPrecision;
         }
+
         return $this;
     }
 
