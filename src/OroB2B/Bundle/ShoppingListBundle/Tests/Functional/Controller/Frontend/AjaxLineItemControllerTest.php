@@ -97,12 +97,12 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertArrayHasKey('id', $result['shoppingList']);
         $this->assertEquals($shoppingList->getId(), $result['shoppingList']['id']);
         $this->assertArrayHasKey('label', $result['shoppingList']);
-        $this->assertArrayHasKey('shopping_lists',  $result['product']);
+        $this->assertArrayHasKey('shopping_lists', $result['product']);
 
-        $this->assertArrayHasKey('shopping_list_id',  $result['product']['shopping_lists'][0]);
-        $this->assertArrayHasKey('shopping_list_label',  $result['product']['shopping_lists'][0]);
-        $this->assertArrayHasKey('is_current',  $result['product']['shopping_lists'][0]);
-        $this->assertArrayHasKey('line_items',  $result['product']['shopping_lists'][0]);
+        $this->assertArrayHasKey('shopping_list_id', $result['product']['shopping_lists'][0]);
+        $this->assertArrayHasKey('shopping_list_label', $result['product']['shopping_lists'][0]);
+        $this->assertArrayHasKey('is_current', $result['product']['shopping_lists'][0]);
+        $this->assertArrayHasKey('line_items', $result['product']['shopping_lists'][0]);
         $this->assertArrayHasKey('unit', $result['product']['shopping_lists'][0]['line_items'][0]);
         $this->assertArrayHasKey('quantity', $result['product']['shopping_lists'][0]['line_items'][0]);
         $this->assertArrayHasKey('line_item_id', $result['product']['shopping_lists'][0]['line_items'][0]);
