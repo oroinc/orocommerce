@@ -1,0 +1,24 @@
+{% block __orob2b_account_user_role_form__account_user_role_form_actions_top_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " pull-right account_user_role_edit_buttons_top"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __orob2b_account_user_role_form__account_user_role_form_users_widget %}
+    {% set grid_parameters = grid_parameters|merge({
+        _parameters: {data_in: form.view.appendUsers.vars.value|split(',')|default([])}
+    }) %}
+
+    <h3 class="account-navigation-title mb2-md mb2-sm">
+        {{ 'orob2b.account.sections.accountuserrole.users'|trans }}
+    </h3>
+    {{ block_widget(block) }}
+{% endblock %}
+
+{% block __orob2b_account_user_role_form__account_user_role_form_actions_bottom_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " pull-right mt2-md"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
