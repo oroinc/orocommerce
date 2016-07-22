@@ -1,0 +1,58 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'content.html.twig'
+        - '@addTree':
+            items:
+                __checkout_content:
+                    blockType: container
+                __checkout_information:
+                    blockType: checkout_information
+                    options:
+                        workflowStep: { '@value': $data.workflowStep }
+                        stepOrder: '-'
+                __checkout_form:
+                    blockType: checkout_form
+                    options:
+                        checkout: { '@value': $data.checkout }
+                        form: { '@value': $data.orob2b_checkout_transition_form }
+                __checkout_form_fields:
+                    blockType: checkout_form_fields
+                    options:
+                        checkout: { '@value': $data.checkout }
+                        form: { '@value': $data.orob2b_checkout_transition_form }
+                __checkout_order_summary:
+                    blockType: checkout_order_summary
+                    options:
+                        visible: { '@neq': [$context.workflowStepName, 'order_review'] }
+                        summary: { '@value': $data.orob2b_checkout_summary }
+                        checkout: { '@value': $data.checkout }
+                __checkout_order_summary_table:
+                    blockType: checkout_order_summary_table
+                    options:
+                        checkout: { '@value': $data.checkout }
+                        workflowStep: { '@value': $data.workflowStep }
+                        summary: { '@value': $data.orob2b_checkout_summary }
+                __checkout_form_buttons:
+                    blockType: container
+                __checkout_button_continue:
+                    blockType: checkout_transition_continue
+                    options:
+                        transitionData: { '@value': $data.orob2b_checkout_continue_transition }
+                        checkout: { '@value': $data.checkout }
+                __checkout_button_back:
+                    blockType: checkout_transition_back
+                    options:
+                        transitionData: { '@value': $data.orob2b_checkout_back_transition }
+                        checkout: { '@value': $data.checkout }
+            tree:
+                __root:
+                    __checkout_content:
+                        __checkout_information:
+                            __checkout_form:
+                                __checkout_form_fields: ~
+                                __checkout_form_buttons:
+                                    __checkout_button_continue: ~
+                                    __checkout_button_back: ~
+                        __checkout_order_summary:
+                            __checkout_order_summary_table: ~

@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\CatalogBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Query\Expr;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -145,6 +146,25 @@ class CategoryRepository extends NestedTreeRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function getCategoriesProductsCountQueryBuilder($categories)
+    {
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('category.id, COUNT(product.id) as products_count')
+            ->from('OroB2BProductBundle:Product', 'product')
+            ->innerJoin(
+                'OroB2BCatalogBundle:Category',
+                'category',
+                Expr\Join::WITH,
+                'product MEMBER OF category.products'
+            )
+            ->where($qb->expr()->in('category.id', ':categories'))
+            ->setParameter('categories', $categories)
+            ->groupBy('category.id');
+
+
+        return $qb;
     }
 
     /**

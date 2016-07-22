@@ -1,7 +1,5 @@
 layout:
     actions:
-        - '@setBlockTheme':
-            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/main.html.twig'
         - '@addTree':
             items:
                 head:
@@ -17,47 +15,17 @@ layout:
                                 label: 'orob2b.checkout.title.step.label'
                                 parameters:
                                     '%step_label%': { '@value': $data.workflowStep.label }
-                checkout_widget_content:
-                    blockType: container
-                checkout_content:
-                    blockType: container
-                checkout_information:
-                    blockType: checkout_information
-                    options:
-                        workflowStep: { '@value': $data.workflowStep }
-                        stepOrder: '-'
-                checkout_form:
-                    blockType: checkout_form
-                    options:
-                        checkout: { '@value': $data.checkout }
-                        form: { '@value': $data.orob2b_checkout_transition_form }
-                checkout_form_fields:
-                    blockType: checkout_form_fields
-                    options:
-                        checkout: { '@value': $data.checkout }
-                        form: { '@value': $data.orob2b_checkout_transition_form }
-                checkout_order_summary:
-                    blockType: checkout_order_summary
-                    options:
-                        visible: { '@neq': [$context.workflowStepName, 'order_review'] }
-                        summary: { '@value': $data.orob2b_checkout_summary }
-                        checkout: { '@value': $data.checkout }
-                checkout_order_summary_table:
-                    blockType: checkout_order_summary_table
-                    options:
-                        checkout: { '@value': $data.checkout }
-                        workflowStep: { '@value': $data.workflowStep }
-                        summary: { '@value': $data.orob2b_checkout_summary }
                 body:
                     blockType: body
             tree:
                 root:
                     head:
                         title: ~
-                    body:
-                        checkout_content:
-                            checkout_information:
-                                checkout_form:
-                                    checkout_form_fields: ~
-                            checkout_order_summary:
-                                checkout_order_summary_table: ~
+                    body: ~
+    imports:
+        -
+            id: orob2b_checkout_content
+            root: body
+        -
+            id: orob2b_checkout_sidebar
+            root: body

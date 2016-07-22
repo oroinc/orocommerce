@@ -48,8 +48,10 @@ class CategoryTreeProvider extends AbstractServerRenderDataProvider
         if (!array_key_exists($userId, $this->data)) {
             $rootCategory = $this->doctrine->getRepository(Category::class)->getMasterCatalogRoot();
 
-            $this->data[$userId] =
-                $rootCategory ? $this->categoryProvider->getCategories($user, $rootCategory, false) : [];
+            $categories = $rootCategory ? $this->categoryProvider->getCategories($user, $rootCategory, false) : [];
+            $this->data[$userId] = array_filter($categories, function (Category $category) use ($rootCategory) {
+                return $category->getParentCategory() === $rootCategory;
+            });
         }
 
         return $this->data[$userId];

@@ -1,5 +1,6 @@
 layout:
     actions:
+<<<<<<< HEAD
         - '@setBlockTheme':
             themes: 'default.html.twig'
         - '@addTree':
@@ -46,3 +47,29 @@ layout:
                         featured_products_item: ~
                     top_selling_items:
                         top_selling_items_item: ~
+=======
+        - '@add':
+            id: featured_categories
+            blockType: embedded_list
+            parentId: content
+            options:
+                items: { '@value': $data.featured_categories }
+        - '@add':
+            id: featured_products
+            blockType: embedded_list
+            parentId: content
+            options:
+                items: { '@value': [[0, 1, 2, 3, 4, 5, 6, 7]] }
+                label: 'featured_products'
+                use_slider: { '@value': true }
+                slides_count: { '@value': 4 }
+        - '@add':
+            id: top_selling_items
+            blockType: embedded_list
+            parentId: content
+            options:
+                items: { '@value': [[0, 1, 2, 3, 4, 5, 6, 7]] }
+                label: 'top_selling_items'
+                use_slider: { '@value': true }
+                slides_count: { '@value': 4 }
+>>>>>>> feature/BB-3760_homepage
