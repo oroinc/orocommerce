@@ -76,7 +76,6 @@ class OroB2BCheckoutBundleInstaller implements Installation
         ]);
         $table->addColumn('shipping_estimate_currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('payment_method', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('checkout_discriminator', 'string', ['notnull' => true, 'length' => 30]);
         $table->addColumn('billing_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('save_billing_address', 'boolean', ['default' => true]);

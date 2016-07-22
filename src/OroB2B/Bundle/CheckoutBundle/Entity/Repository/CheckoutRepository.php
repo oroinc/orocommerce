@@ -119,9 +119,10 @@ class CheckoutRepository extends EntityRepository
 
     /**
      * @param Quote $quote
+     * @param string $checkoutType
      * @return Checkout
      */
-    public function getCheckoutByQuote(Quote $quote)
+    public function getCheckoutByQuote(Quote $quote, $checkoutType = '')
     {
         $qb = $this->createQueryBuilder('checkout');
 
@@ -129,8 +130,12 @@ class CheckoutRepository extends EntityRepository
             ->innerJoin('checkout.source', 'source')
             ->innerJoin('source.quoteDemand', 'qd')
             ->innerJoin('qd.quote', 'quote')
-            ->where($qb->expr()->eq('quote', ':quote'))
+            ->where(
+                $qb->expr()->eq('quote', ':quote'),
+                $qb->expr()->eq('checkout.checkoutType', ':checkoutType')
+            )
             ->setParameter('quote', $quote)
+            ->setParameter('checkoutType', $checkoutType)
             ->getQuery()
             ->getOneOrNullResult();
     }

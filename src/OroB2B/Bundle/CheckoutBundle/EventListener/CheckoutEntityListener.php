@@ -125,7 +125,6 @@ class CheckoutEntityListener
     {
         if ($checkout) {
             $event->setCheckoutEntity($checkout);
-            $event->setWorkflowName($this->getWorkflowName($checkout));
             $event->stopPropagation();
         }
     }

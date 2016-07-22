@@ -18,8 +18,7 @@ class CheckoutEntityEventTest extends \PHPUnit_Framework_TestCase
             ['checkoutEntity', new Checkout()],
             ['source', new CheckoutSource()],
             ['checkoutId', 12],
-            ['type', 'type'],
-            ['workflowName', 'workflowName']
+            ['type', 'type']
         ];
 
         $event = new CheckoutEntityEvent();

@@ -200,24 +200,21 @@ class StartCheckout extends AbstractAction
         $checkoutSource = $sourceRepository->findOneBy([$sourceFieldName => $sourceEntity])
             ?: $this->createCheckoutSource($sourceFieldName, $sourceEntity);
 
-        /** @var CheckoutInterface $checkout */
-        list($checkout, $workflowName) = $this->getCheckoutWithWorkflowName($checkoutSource);
-        
-        $workflowItem = $this->getWorkflowItem($checkout, $workflowName);
-        
+        $checkout = $this->getCheckout($checkoutSource);
+        $workflowItem = $this->getWorkflowItem($checkout);
+
         if (!$workflowItem) {
             $this->updateCheckoutData($context, $checkout);
             $em->persist($checkout);
             $em->flush($checkout);
 
-            $workflowItem = $this->getWorkflowItem($checkout, $workflowName);
+            $workflowItem = $this->getWorkflowItem($checkout);
 
             $this->addWorkflowItemDataSettings($context, $workflowItem);
             $em->flush($workflowItem);
         } else {
             if ($this->getOptionFromContext($context, self::FORCE, false)) {
                 $this->updateCheckoutData($context, $checkout);
-
                 $this->addWorkflowItemDataSettings($context, $workflowItem);
                 $em->flush();
             }
@@ -343,9 +340,9 @@ class StartCheckout extends AbstractAction
 
     /**
      * @param CheckoutSource $checkoutSource
-     * @return array
+     * @return CheckoutInterface
      */
-    protected function getCheckoutWithWorkflowName($checkoutSource)
+    protected function getCheckout($checkoutSource)
     {
         $event = new CheckoutEntityEvent();
         $event->setSource($checkoutSource);
@@ -361,22 +358,21 @@ class StartCheckout extends AbstractAction
             throw new \RuntimeException('Checkout entity should be specified.');
         }
 
-        $workflowName = $event->getWorkflowName();
-
-        if (!$workflowName) {
-            throw new \RuntimeException('Workflow name for checkout entity should be specified.');
-        }
-
-        return [$checkout, $workflowName];
+        return $checkout;
     }
 
     /**
      * @param CheckoutInterface $checkout
-     * @param string $workflowName
      * @return null|WorkflowItem
      */
-    protected function getWorkflowItem(CheckoutInterface $checkout, $workflowName)
+    protected function getWorkflowItem(CheckoutInterface $checkout)
     {
-        return $this->workflowManager->getWorkflowItem($checkout, $workflowName);
+        $items = $this->workflowManager->getWorkflowItemsByEntity($checkout);
+
+        if (count($items) > 1) {
+            throw new \RuntimeException('Should be only one WorkflowItem for Checkout entity.');
+        }
+
+        return array_shift($items);
     }
 }
