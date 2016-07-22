@@ -3,9 +3,13 @@ layout:
         - '@setBlockTheme':
             themes: 'default.html.twig'
         - '@add':
+            id: hero_promo_container
+            blockType: container
+            parentId: content
+        - '@add':
             id: hero_promo
             blockType: embedded_list
-            parentId: content
+            parentId: hero_promo_container
             options:
                 items: { '@value': [[0, 1, 2]] }
                 use_slider: { '@value': true }
@@ -26,9 +30,13 @@ layout:
                 use_slider: { '@value': true }
                 slides_count: { '@value': 4 }
         - '@add':
+            id: top_selling_items_container
+            blockType: container
+            parentId: content
+        - '@add':
             id: top_selling_items
             blockType: embedded_list
-            parentId: content
+            parentId: top_selling_items_container
             options:
                 items: { '@value': [[0, 1, 2, 3, 4, 5, 6, 7]] }
                 label: 'top_selling_items'
