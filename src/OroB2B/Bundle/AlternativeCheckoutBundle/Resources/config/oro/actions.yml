@@ -13,10 +13,35 @@ operations:
             - '@alternative_checkout_to_quote':
                 quote: $.data
                 checkout: $.checkout
+            - '@tree':
+                conditions:
+                    '@not_empty': $.checkout
+                actions:
+                    - '@call_service_method':
+                        attribute: $.workflowItems
+                        service: oro_workflow.manager
+                        method: getWorkflowItemsByEntity
+                        method_parameters: [$.checkout]
+                    - '@count':
+                        array: $.workflowItems
+                        attribute: $.workflowItemsCount
+                    - '@traverse':
+                        conditions:
+                            '@lte':
+                                parameters: [$.workflowItemsCount, 1]
+                                message: "Count of WorkflowItems must be less than or equal to 1"
+                        parameters:
+                            array: $.workflowItems
+                            value: $.workflowItemTemp
+                            actions:
+                                - '@assign_value':
+                                    attribute: $.workflowItem
+                                    value: $.workflowItemTemp
         preconditions:
             '@and':
                 - '@not_empty': $.checkout
-                - '@equal': [$.checkout.requestedForApprove, true]
+                - '@not_empty': $.workflowItem
+                - '@equal': [$.workflowItem.data.requested_for_approve, true]
         actions:
             - '@redirect':
                 route: 'orob2b_checkout_frontend_checkout'
