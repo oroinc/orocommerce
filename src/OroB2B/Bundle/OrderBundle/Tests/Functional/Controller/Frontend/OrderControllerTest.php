@@ -116,7 +116,7 @@ class OrderControllerTest extends WebTestCase
             [
                 'product' => $product->getId(),
                 'quantity' => 10,
-                'productUnit' => 'orob2b.product_unit.liter.label.full',
+                'productUnit' => 'liter',
                 'price' => $this->formatProductPrice($productPrice),
                 'shipBy' => $date,
             ],
@@ -192,7 +192,7 @@ class OrderControllerTest extends WebTestCase
             [
                 'product' => $product->getId(),
                 'quantity' => 15,
-                'productUnit' => 'orob2b.product_unit.liter.label.full',
+                'productUnit' => 'liter',
                 'price' => $this->formatProductPrice($productPrice),
                 'shipBy' => $date,
             ],

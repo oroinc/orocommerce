@@ -1,17 +1,28 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/order_review.html.twig'
+            themes: '../templates/order_review.html.twig'
+        - '@setBlockTheme':
+            themes: '../templates/right_buttons.html.twig'
         - '@setFormTheme':
-            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/form_theme.html.twig'
+            themes: '../templates/form_theme.html.twig'
         - '@setOption':
             id: checkout_information
             optionName: stepOrder
             optionValue: 5
+        - '@move':
+            id: checkout_order_summary_table
+            parentId: checkout_form_fields
+        - '@move':
+            id: checkout_form_buttons
+            siblingId: checkout_form_fields
+            prepend: false
+        - '@remove':
+            id: checkout_button_continue
+        - '@remove':
+            id: checkout_button_back
         - '@addTree':
             items:
-                checkout_form_buttons:
-                    blockType: container
                 checkout_button_continue_right:
                     blockType: checkout_transition_continue
                     options:
@@ -23,19 +34,8 @@ layout:
                         transitionData: { '@value': $data.orob2b_checkout_back_transition }
                         checkout: { '@value': $data.checkout }
             tree:
-                checkout_form:
-                    checkout_form_buttons:
-                          checkout_button_continue_right: ~
-                          checkout_button_back_right: ~
-        - '@move':
-            id: checkout_order_summary_table
-            parentId: checkout_form_fields
-        - '@move':
-            id: checkout_form_buttons
-            siblingId: checkout_form_fields
-            prepend: false
-
+                checkout_form_buttons:
+                    checkout_button_continue_right: ~
+                    checkout_button_back_right: ~
     conditions:
-        '@and':
-            - '@eq': [$context.workflowStepName, 'order_review']
-            - '@empty': [$context.widget_container]
+        '@eq': [$context.workflowStepName, 'order_review']

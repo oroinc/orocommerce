@@ -80,16 +80,23 @@
         </div>
     {% endset %}
 
+    {% set fields = [
+            form_row(form.label),
+            accountSelector,
+        ]
+    %}
+
+    {% if entity.public %}
+        {% set fields = fields|merge([form_row(form.selfManaged)]) %}
+    {% endif %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.account.sections.general'|trans,
             'class': 'active',
             'subblocks': [
                 {
-                    'data': [
-                        form_row(form.label),
-                        accountSelector
-                    ]
+                    'data': fields
                 }
             ]
         }

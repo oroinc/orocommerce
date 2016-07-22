@@ -1,0 +1,64 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@addTree':
+            items:
+                __account_user_view_page:
+                    blockType: container
+                    options:
+                        class_prefix: 'user-page'
+                __account_user_top_actions:
+                    blockType: action_line_buttons
+                    options:
+                        visible: { '@not_empty': $data.entity }
+                        actions: { '@value': $data.actions.all }
+                        entity: { '@value': $data.entity }
+
+                __account_user_view_information:
+                    blockType: container
+                __account_user_view_information_title:
+                    blockType: text
+                    options:
+                        text: {'@value': 'orob2b.account.frontend.sections.account_user.user_profile'}
+                __account_user_view_information_content:
+                    blockType: account_user_awere_block
+                    options:
+                        accountUser: { '@value': $data.entity }
+                __account_user_address_book:
+                    blockType: container
+                __account_user_address_book_head:
+                    blockType: container
+                __account_user_address_book_title:
+                    blockType: text
+                    options:
+                        text: {'@value': 'orob2b.account.frontend.sections.account_user.address_book'}
+                __account_user_address_add_link:
+                    blockType: link
+                    options:
+                        visible: { '@acl': orob2b_account_frontend_account_user_address_create }
+                        route_name: orob2b_account_frontend_account_user_address_create
+                        route_parameters: { entityId: {'@value': $data.entity.id }}
+                        text: {'@value': 'orob2b.account.address.add'}
+                        icon: plus
+                __account_user_address_book_content:
+                    blockType: address_book
+                    options:
+                        entity: { '@value': $data.entity }
+                        addressListRouteName: 'orob2b_api_account_frontend_get_accountuser_addresses'
+                        addressCreateRouteName: 'orob2b_account_frontend_account_user_address_create'
+                        addressCreateAclResource: 'orob2b_account_frontend_account_user_address_create'
+                        addressUpdateRouteName: 'orob2b_account_frontend_account_user_address_update'
+                        addressUpdateAclResource: 'orob2b_account_frontend_account_user_address_update'
+            tree:
+                __root:
+                    __account_user_view_page:
+                        __account_user_top_actions: ~
+                        __account_user_view_information:
+                            __account_user_view_information_title: ~
+                            __account_user_view_information_content: ~
+                        __account_user_address_book:
+                            __account_user_address_book_head:
+                                __account_user_address_book_title: ~
+                                __account_user_address_add_link: ~
+                            __account_user_address_book_content: ~

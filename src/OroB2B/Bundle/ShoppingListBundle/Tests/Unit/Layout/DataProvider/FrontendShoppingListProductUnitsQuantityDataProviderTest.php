@@ -71,7 +71,7 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
 
         $this->lineItemRepository->expects($product && $shoppingList ? $this->once() : $this->never())
             ->method('getItemsByShoppingListAndProduct')
-            ->with($shoppingList, $product)
+            ->with($shoppingList, [$product])
             ->willReturn($lineItems);
 
         $this->assertEquals($expected, $this->provider->getData($context));
@@ -120,7 +120,8 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                     'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
                     ['code' => $code]
                 ),
-                'quantity' => $quantity
+                'quantity' => $quantity,
+                'product' => new Product(),
             ]
         );
     }
