@@ -14,6 +14,7 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProductImage;
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_product_image")
+ * @ORM\HasLifecycleCallbacks
  * @Config
  */
 class ProductImage extends ExtendProductImage
