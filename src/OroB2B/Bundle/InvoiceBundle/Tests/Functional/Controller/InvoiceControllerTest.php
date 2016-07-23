@@ -126,7 +126,7 @@ class InvoiceControllerTest extends WebTestCase
                 'product' => $product->getId(),
                 'freeFormProduct' => '',
                 'quantity' => 10,
-                'productUnit' => 'orob2b.product_unit.liter.label.full',
+                'productUnit' => 'liter',
                 'price' => [
                     'value' => 100,
                     'currency' => 'USD',
@@ -216,7 +216,7 @@ class InvoiceControllerTest extends WebTestCase
                 'freeFormProduct' => '',
                 'product' => $product->getId(),
                 'quantity' => 1,
-                'productUnit' => 'orob2b.product_unit.bottle.label.full',
+                'productUnit' => 'bottle',
                 'price' => [
                     'value' => 10,
                     'currency' => 'USD',
@@ -228,7 +228,7 @@ class InvoiceControllerTest extends WebTestCase
                 'product' => '',
                 'freeFormProduct' => 'Free form product',
                 'quantity' => 20,
-                'productUnit' => 'orob2b.product_unit.liter.label.full',
+                'productUnit' => 'liter',
                 'price' => [
                     'value' => 200,
                     'currency' => 'USD',

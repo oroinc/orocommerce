@@ -10,7 +10,8 @@ layout:
             siblingId: ~
             prepend: true
             options:
-                text: 'orob2b.checkout.pending_orders.label'
+                text: 'orob2b.checkout.entity_plural_label'
+                visible: { '@neq': [$data.orob2b_checkout_separate_open_orders, true] }
 
         - '@add':
             id: checkouts
@@ -19,3 +20,4 @@ layout:
             blockType: datagrid
             options:
                 grid_name: frontend-checkouts-grid
+                visible: { '@neq': [$data.orob2b_checkout_separate_open_orders, true] }

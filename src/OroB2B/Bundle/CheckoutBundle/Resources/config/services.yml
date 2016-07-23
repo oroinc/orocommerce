@@ -132,19 +132,39 @@ services:
         calls:
             - [ setNamespace, [ 'orob2b_checkout_grid_totals_metadata' ] ]
 
+    orob2b_checkout.repository.base_checkout:
+        class: Doctrine\ORM\EntityRepository
+        public: false
+        factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
+        arguments:
+            - '%orob2b_checkout.entity.base_checkout.class%'
+
+    orob2b_checkout.datagrid.checkout_grid_helper:
+        class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper
+        arguments:
+            - '@doctrine'
+            - '@oro_query_designer.entity_field_provider'
+            - '@oro_entity_config.provider.entity'
+
     orob2b_checkout.datagrid.checkout_grid_listener:
         class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener
         arguments:
-            - '@oro_entity_config.provider.entity'
-            - '@oro_query_designer.entity_field_provider'
-            - '@doctrine'
             - '@orob2b_pricing.user_currency_manager'
+            - '@orob2b_checkout.repository.base_checkout'
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
-        calls:
-            - [setCache, ['@orob2b_checkout.grid_totals_metadata.cache']]
+            - '@oro_entity.entity_name_resolver'
+            - '@orob2b_checkout.grid_totals_metadata.cache'
+            - '@orob2b_checkout.datagrid.checkout_grid_helper'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
+
+    orob2b_checkout.datagrid.checkout_grid_column_filter:
+        class: 'OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridAccountUserNameListener'
+        arguments:
+            - '@orob2b_account.security.account_user_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
 
     orob2b_checkout.workflow.condition.order_line_item_has_count:
         class: 'OroB2B\Bundle\CheckoutBundle\Model\Condition\OrderLineItemsHasCount'
@@ -152,3 +172,10 @@ services:
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: oro_workflow.condition, alias: order_line_item_has_count }
+
+    orob2b_checkout.layout.provider.open_orders_separate_page_config:
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\OpenOrdersSeparatePageConfigProvider'
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_checkout_separate_open_orders }

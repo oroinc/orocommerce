@@ -8,17 +8,34 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use OroB2B\Bundle\PricingBundle\Migrations\Data\ORM\LoadPriceListData;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 
 /**
  * @dbIsolation
  */
 class PriceListRepositoryTest extends WebTestCase
 {
+    /**
+     * @var PriceList
+     */
+    protected $defaultPriceList;
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures([
+            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists'
+        ]);
+
+        $this->defaultPriceList = $this->getDefaultPriceList();
+    }
+
+    protected function tearDown()
+    {
+        $this->getRepository()->setDefault($this->defaultPriceList);
+        parent::tearDown();
     }
 
     public function testDefaultState()
@@ -39,6 +56,23 @@ class PriceListRepositoryTest extends WebTestCase
     public function testGetDefault()
     {
         $this->assertEquals($this->getDefaultPriceList()->getId(), $this->getRepository()->getDefault()->getId());
+    }
+
+    public function testGetCurrenciesIndexedByPriceListIds()
+    {
+        /** @var PriceList $defaultPriceList */
+        $defaultPriceList = $this->getRepository()->findOneBy(['name' => LoadPriceListData::DEFAULT_PRICE_LIST_NAME]);
+
+        $expectedCurrencies = [
+            $defaultPriceList->getId() => $defaultPriceList->getCurrencies()
+        ];
+        
+        foreach (LoadPriceLists::getPriceListData() as $priceListData) {
+            $priceList = $this->getReference($priceListData['reference']);
+            $expectedCurrencies[$priceList->getId()] = $priceList->getCurrencies();
+        }
+
+        $this->assertEquals($expectedCurrencies, $this->getRepository()->getCurrenciesIndexedByPricelistIds());
     }
 
     /**

@@ -60,4 +60,31 @@ class PriceListRepository extends EntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * @return array in format
+     * [
+     *     1 => ['EUR', 'USD'],
+     *     5 => ['CAD', 'USD']
+     * ]
+     * where keys 1 and 5 are pricelist ids to which currencies belong
+     */
+    public function getCurrenciesIndexedByPricelistIds()
+    {
+        $qb = $this->createQueryBuilder('priceList');
+
+        $currencyInfo = $qb
+            ->select('priceList.id, priceListCurrency.currency')
+            ->join('priceList.currencies', 'priceListCurrency')
+            ->orderBy('priceListCurrency.currency')
+            ->getQuery()
+            ->getArrayResult();
+
+        $currencies = [];
+        foreach ($currencyInfo as $info) {
+            $currencies[$info['id']][] = $info['currency'];
+        }
+
+        return $currencies;
+    }
 }

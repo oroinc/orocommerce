@@ -43,16 +43,14 @@ class TotalHelper
     public function fillSubtotals(Order $order)
     {
         $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
-        if ($subtotal) {
-            $order->setSubtotal($subtotal->getAmount());
 
+        $order->setSubtotal($subtotal->getAmount());
+        if ($subtotal->getAmount() > 0) {
             foreach ($order->getDiscounts() as $discount) {
                 if ($discount->getType() === OrderDiscount::TYPE_AMOUNT) {
                     $discount->setPercent($this->calculatePercent($subtotal, $discount));
                 }
             }
-        } else {
-            $order->setSubtotal(0.0);
         }
     }
 

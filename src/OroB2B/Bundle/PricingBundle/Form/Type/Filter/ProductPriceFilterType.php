@@ -95,15 +95,14 @@ class ProductPriceFilterType extends AbstractType
      */
     protected function getUnitChoices()
     {
-        $choices = [];
-
-        $units = $this->registry
+        $unitCodes = $this->registry
             ->getManagerForClass('OroB2BProductBundle:ProductUnit')
             ->getRepository('OroB2BProductBundle:ProductUnit')
-            ->findAll();
+            ->getAllUnitCodes();
 
-        foreach ($units as $unit) {
-            $choices[$unit->getCode()] = $this->formatter->format($unit->getCode());
+        $choices = [];
+        foreach ($unitCodes as $unitCode) {
+            $choices[$unitCode] = $this->formatter->format($unitCode);
         }
 
         return $choices;

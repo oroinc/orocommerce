@@ -203,6 +203,16 @@ class ProductUnitRepositoryTest extends WebTestCase
     }
 
     /**
+     * @param array $expectedData
+     *
+     * @dataProvider getAllUnitsProvider
+     */
+    public function testGetAllUnitCodes(array $expectedData)
+    {
+        $this->assertEquals($expectedData, $this->getRepository()->getAllUnitCodes());
+    }
+
+    /**
      * @return array
      */
     public function productUnitsDataProvider()
