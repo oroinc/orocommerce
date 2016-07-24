@@ -29,22 +29,6 @@ class ProductImageListener
      */
     public function postPersist(LifecycleEventArgs $args)
     {
-        $this->resizeProductImage($args);
-    }
-
-    /**
-     * @param LifecycleEventArgs $args
-     */
-    public function postUpdate(LifecycleEventArgs $args)
-    {
-        $this->resizeProductImage($args);
-    }
-
-    /**
-     * @param LifecycleEventArgs $args
-     */
-    protected function resizeProductImage(LifecycleEventArgs $args)
-    {
         /** @var ProductImage $productImage */
         $productImage = $args->getEntity();
         if (!$productImage instanceof ProductImage) {

@@ -26,6 +26,7 @@ class ProductImageResizeEvent extends Event
     public function __construct(ProductImage $productImage, $forceOption = false)
     {
         $this->productImage = $productImage;
+        $this->forceOption = $forceOption;
     }
 
     /**

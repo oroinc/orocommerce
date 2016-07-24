@@ -2,15 +2,12 @@
 
 namespace OroB2B\Bundle\ProductBundle\Command;
 
-use Doctrine\ORM\EntityManager;
-
-use JMS\JobQueueBundle\Entity\Job;
-
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
+use OroB2B\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 
 class ResizeAllProductImagesCommand extends ContainerAwareCommand
 {
@@ -33,14 +30,15 @@ class ResizeAllProductImagesCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $force = (bool) $input->getOption(self::OPTION_FORCE);
+        $forceOption = (bool) $input->getOption(self::OPTION_FORCE);
 
         $container = $this->getContainer();
         $productImageClass = $container->getParameter('orob2b_product.entity.product_image.class');
 
         /** @var ProductImage[] $productImages */
-        $productImages = $this
-            ->getManagerForClass($productImageClass)
+        $productImages = $container
+            ->get('oro_entity.doctrine_helper')
+            ->getEntityManagerForClass($productImageClass)
             ->getRepository($productImageClass)
             ->findAll();
 
@@ -50,36 +48,13 @@ class ResizeAllProductImagesCommand extends ContainerAwareCommand
             return;
         }
 
-        $jobManager = $this->getManagerForClass(Job::class);
+        $eventDispatcher = $container->get('event_dispatcher');
         foreach ($productImages as $productImage) {
-            $resizeJob = $this->createJob($productImage, $force);
-            $jobManager->persist($resizeJob);
+            $eventDispatcher->dispatch(
+                ProductImageResizeEvent::NAME,
+                new ProductImageResizeEvent($productImage, $forceOption)
+            );
         }
-        $jobManager->flush();
         $output->writeln(sprintf('%d product images successfully queued for resize.', $productImageCount));
-    }
-
-    /**
-     * @param $class
-     * @return EntityManager|null
-     */
-    private function getManagerForClass($class)
-    {
-        return $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityManagerForClass($class);
-    }
-
-    /**
-     * @param ProductImage $productImage
-     * @param bool $force
-     * @return Job
-     */
-    private function createJob(ProductImage $productImage, $force)
-    {
-        $commandArgs = [$productImage->getId()];
-        if ($force) {
-            $commandArgs[] = sprintf('--%s', self::OPTION_FORCE);
-        }
-
-        return new Job(ResizeProductImageCommand::COMMAND_NAME, $commandArgs);
     }
 }
