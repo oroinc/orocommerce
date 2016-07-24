@@ -385,6 +385,8 @@ services:
             - '@event_dispatcher'
         tags:
             - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postUpdate }
+            - { name: doctrine.event_listener, event: postFlush }
 
     orob2b_product.event_listener.product_image_resize_listener:
         class: 'OroB2B\Bundle\ProductBundle\EventListener\ProductImageResizeListener'
