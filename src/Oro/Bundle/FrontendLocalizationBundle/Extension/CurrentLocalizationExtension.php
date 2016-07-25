@@ -34,7 +34,7 @@ class CurrentLocalizationExtension implements CurrentLocalizationExtensionInterf
     }
 
     /**
-     * @return Localization
+     * @return Localization|null
      */
     public function getCurrentLocalization()
     {

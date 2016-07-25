@@ -424,7 +424,7 @@ class Category extends ExtendCategory
      */
     public function __toString()
     {
-        return (string)$this->getTitle();
+        return (string) $this->getTitle();
     }
 
     /**

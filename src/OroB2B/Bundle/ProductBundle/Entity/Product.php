@@ -429,8 +429,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     public function __toString()
     {
         try {
-            if ($this->getName()) {
-                return (string)$this->getName();
+            if ($this->getDefaultName()) {
+                return (string)$this->getDefaultName();
             } else {
                 return (string)$this->sku;
             }

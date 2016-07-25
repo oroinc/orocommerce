@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CatalogBundle\Model;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -12,7 +13,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  * @method Category setSmallImage(File $smallImage)
  * @method File getLargeImage()
  * @method Category setLargeImage(File $largeImage)
- * @method LocalizedFallbackValue getTitle()
+ * @method LocalizedFallbackValue getTitle(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultTitle()
  */
 class ExtendCategory
