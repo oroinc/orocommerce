@@ -1,0 +1,5 @@
+.embedded-list {
+    &__container {
+        @include list-normalize();
+    }
+}
