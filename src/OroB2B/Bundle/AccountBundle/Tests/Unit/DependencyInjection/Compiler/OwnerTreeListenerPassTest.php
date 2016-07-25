@@ -14,10 +14,6 @@ class OwnerTreeListenerPassTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $listenerDefinition->expects($this->exactly(2))
-            ->method('addMethodCall')
-            ->with('addSupportedClass', $this->isType('array'));
-
         /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject $containerBuilder */
         $containerBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
             ->disableOriginalConstructor()
@@ -35,7 +31,25 @@ class OwnerTreeListenerPassTest extends \PHPUnit_Framework_TestCase
 
         $containerBuilder->expects($this->exactly(2))
             ->method('getParameter')
-            ->with($this->isType('string'));
+            ->willReturnMap(
+                [
+                    ['orob2b_account.entity.account.class', 'Entity\Account'],
+                    ['orob2b_account.entity.account_user.class', 'Entity\AccountUser'],
+                ]
+            );
+
+        $listenerDefinition->expects($this->at(0))
+            ->method('addMethodCall')
+            ->with(
+                'addSupportedClass',
+                ['Entity\Account', ['parent', 'organization']]
+            );
+        $listenerDefinition->expects($this->at(1))
+            ->method('addMethodCall')
+            ->with(
+                'addSupportedClass',
+                ['Entity\AccountUser', ['account', 'organization'], ['organizations']]
+            );
 
         $compilerPass = new OwnerTreeListenerPass();
         $compilerPass->process($containerBuilder);
