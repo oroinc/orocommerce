@@ -61,5 +61,5 @@ layout:
                     account_address_book_user_addresses_list: ~
     conditions:
         '@and':
-            - '@acl': orob2b_account_frontend_account_user_address_view
+            - '@eq': [true, false]
             - '@lt': [$context.account_user_address_count, 8]
