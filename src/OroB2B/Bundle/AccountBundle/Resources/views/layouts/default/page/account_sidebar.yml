@@ -9,6 +9,17 @@ layout:
                 text: orob2b.account.frontend.account_user.profile.label
                 visible: { '@acl': orob2b_account_frontend_account_user_view }
         - '@add':
+            id: account_sidebar_account_user_address
+            parentId: account_sidebar
+            blockType: link
+            options:
+                route_name: orob2b_account_frontend_account_user_address_index
+                text: orob2b.account.frontend.account_user.address.label
+                visible:
+                    '@or':
+                        - '@acl': orob2b_account_frontend_account_view
+                        - '@acl': orob2b_account_frontend_account_user_view
+        - '@add':
             id: account_sidebar_account
             parentId: account_sidebar
             blockType: link

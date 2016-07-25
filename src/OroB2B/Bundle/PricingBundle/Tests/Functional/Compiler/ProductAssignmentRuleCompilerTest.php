@@ -58,7 +58,8 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
         /** @var Category $category2 */
         $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
-        $assignmentRule = '(product.category == ' . $category1->getId() . ' or category == ' . $category2->getId() . ')'
+        $assignmentRule = '(product.category == ' . $category1->getId()
+            . ' or product.category == ' . $category2->getId() . ')'
             . " and (
                     product.price_attribute_price_list_1.value > 1
                     or product.price_attribute_price_list_2.currency == 'USD'
@@ -88,7 +89,8 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
         /** @var Category $category2 */
         $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
-        $assignmentRule = '(product.category == ' . $category1->getId() . ' or category == ' . $category2->getId() . ')'
+        $assignmentRule = '(product.category == ' . $category1->getId()
+            . ' or product.category == ' . $category2->getId() . ')'
             . " and (
                     product.price_attribute_price_list_1.value > 1
                     or product.price_attribute_price_list_2.currency == 'USD'

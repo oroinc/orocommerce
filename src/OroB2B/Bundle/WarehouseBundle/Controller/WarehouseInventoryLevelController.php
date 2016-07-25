@@ -15,9 +15,10 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType;
 use OroB2B\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelHandler;
+use OroB2B\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension;
+use OroB2B\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTypeExtension;
 
 class WarehouseInventoryLevelController extends Controller
 {
@@ -30,8 +31,14 @@ class WarehouseInventoryLevelController extends Controller
      */
     public function indexAction()
     {
+        $entityName = $this->container->getParameter('orob2b_warehouse.entity.warehouse_inventory_level.class');
+
         return [
-            'entity_class' => $this->container->getParameter('orob2b_warehouse.entity.warehouse.class'),
+            'entity_class' => $entityName,
+            'exportProcessors' => array_keys(InventoryLevelExportTypeExtension::getProcessorAliases()),
+            'exportTemplateProcessors' => array_keys(
+                InventoryLevelExportTemplateTypeExtension::getProcessorAliases()
+            ),
         ];
     }
 

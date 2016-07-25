@@ -476,6 +476,8 @@ datagrid:
                     - role.id
                     - role.role
                     - role.label
+                    - role.selfManaged as self_managed
+                    - role.public
                     - (CASE WHEN role.account IS NOT NULL THEN false ELSE true END) as isRolePredefined
                 from:
                     - { table: %orob2b_account.entity.account_user_role.class%, alias: role }
@@ -536,15 +538,24 @@ datagrid:
         columns:
             account_name:
                 label: orob2b.account.accountuserrole.account.label
+            self_managed:
+                label: orob2b.account.accountuserrole.self_managed.label
+                frontend_type: boolean
+                data_name: self_managed
         sorters:
             columns:
                 account_name:
                     data_name: account_name
+                self_managed:
+                    data_name: self_managed
         filters:
             columns:
                 account_name:
                     type:      string
                     data_name: account_name
+                self_managed:
+                    type:      boolean
+                    data_name: self_managed
         properties:
             view_link:
                 route: orob2b_account_account_user_role_view
@@ -555,12 +566,20 @@ datagrid:
     frontend-account-account-user-roles-grid:
         acl_resource: orob2b_account_frontend_account_user_role_index
         extends: basic-account-account-user-roles-grid
-        extended_entity_name: %orob2b_account.entity.account_user_role.class%
         source:
             skip_acl_apply: true
+            query:
+                where:
+                    and:
+                        - role.selfManaged = true
+                        - role.public = true
         properties:
+            id: ~
             view_link:
+                type: url
                 route:  orob2b_account_frontend_account_user_role_view
+                params:
+                    - id
             update_link:
                 type: url
                 route: orob2b_account_frontend_account_user_role_update
@@ -574,6 +593,11 @@ datagrid:
         actions:
             view:
                 acl_resource:  orob2b_account_frontend_account_user_role_view
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                rowAction:     true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
@@ -1160,3 +1184,140 @@ datagrid:
                 template: OroB2BAccountBundle:DataAudit:author.html.twig
                 frontend_type: html
                 data_name: author
+
+    frontend-account-address-grid-base:
+        source:
+            type: orm
+            query:
+                select:
+                    - address
+                    - address.id as id
+                    - address.street as street
+                    - address.city as city
+                    - address.postalCode as zip
+                    - address.primary as isPrimary
+                    - address.label as label
+                    - address.street2 as street2
+                    - address.phone as phone
+                    - region.name as state
+                    - country.name as countryName
+                join:
+                    left:
+                        - { join: address.country, alias: country}
+                        - { join: address.region, alias: region}
+                where:
+                    and:
+                        - IDENTITY(address.frontendOwner) = :frontend_owner_id
+            bind_parameters:
+                - frontend_owner_id
+        properties:
+            id: ~
+        columns:
+            street:
+                label: orob2b.account.accountaddress.entity_label
+            city:
+                label: orob2b.account.accountaddress.city.label
+            state:
+                label: orob2b.account.accountaddress.region.label
+            zip:
+                label: orob2b.account.accountuseraddress.postal_code.label
+            countryName:
+                label: orob2b.account.accountaddress.country.label
+            types:
+                label: orob2b.account.accountaddress.types.singular_label
+                type: twig
+                frontend_type: html
+                template: OroB2BAccountBundle:Address:Frontend/Datagrid/types.html.twig
+        sorters:
+            columns:
+                street:
+                    data_name: street
+                city:
+                    data_name: city
+                state:
+                    data_name: state
+                zip:
+                    data_name: zip
+                countryName:
+                    data_name: countryName
+        filters:
+            columns:
+                street:
+                    type:      string
+                    data_name: street
+                city:
+                    type:      string
+                    data_name: city
+                state:
+                    type:      string
+                    data_name: state
+                zip:
+                    type:      string
+                    data_name: zip
+                countryName:
+                    type:      string
+                    data_name: countryName
+        actions:
+            show_map:
+                type:          map
+                icon:          map-marker
+
+    frontend-account-account-address-grid:
+        acl_resource: orob2b_account_frontend_account_view
+        extends: frontend-account-address-grid-base
+        source:
+            type: orm
+            query:
+                from:
+                    - { table: %orob2b_account.entity.account_address.class%, alias: address }
+        properties:
+            update_link:
+                type: url
+                route: orob2b_account_frontend_account_address_update
+                params: {entityId: frontendOwner.id , id: id}
+
+            delete_link:
+                type: url
+                route: orob2b_api_account_frontend_delete_account_address
+                params: {entityId: frontendOwner.id , addressId: id}
+        actions:
+            update:
+                type:          navigate
+                link:          update_link
+                icon:          pencil
+                acl_resource:  orob2b_account_frontend_account_address_update
+            delete:
+                type:          delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_account_frontend_account_address_remove
+
+    frontend-account-account-user-address-grid:
+        acl_resource: orob2b_account_frontend_account_user_view
+        extends: frontend-account-address-grid-base
+        source:
+            type: orm
+            query:
+                from:
+                    - { table: %orob2b_account.entity.account_user_address.class%, alias: address }
+        properties:
+            update_link:
+                type: url
+                route: orob2b_account_frontend_account_user_address_update
+                params: {entityId: frontendOwner.id , id: id}
+
+            delete_link:
+                type: url
+                route: orob2b_api_account_frontend_delete_accountuser_address
+                params: {entityId: frontendOwner.id , addressId: id}
+        actions:
+            update:
+                type:          navigate
+                link:          update_link
+                icon:          pencil
+                acl_resource:  orob2b_account_frontend_account_user_address_update
+            delete:
+                type:          delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_account_frontend_account_user_address_remove

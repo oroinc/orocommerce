@@ -1,0 +1,57 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@addTree':
+            items:
+                __rfp_page:
+                    blockType: container
+                    options:
+                        class_prefix: 'edit-frq'
+                __rfp_form_container:
+                    blockType: container
+                __rfp_form_start:
+                    blockType: form_start
+                    options:
+                        form: { '@value': $data.orob2b_rfp_request_form }
+                __rfp_form_fields:
+                    blockType: form_fields
+                    options:
+                        form: { '@value': $data.orob2b_rfp_request_form }
+                __rfp_form_lineitems:
+                    blockType: form_fields
+                    options:
+                        form: { '@value': $data.orob2b_rfp_request_form }
+                __rfp_form_end:
+                    blockType: form_end
+                    options:
+                        form: { '@value': $data.orob2b_rfp_request_form }
+                __rfp_form_actions:
+                    blockType: container
+                __rfp_form_actions_back:
+                    blockType: link
+                    options:
+                        path: { '@value': $data.backToUrl }
+                        text: orob2b.frontend.rfp.request.create_form.back.label
+                        icon: cf-left-open-mini
+                __rfp_form_actions_create:
+                __rfp_form_actions_create:
+                    blockType: button
+                    options:
+                        action: submit
+                        text: orob2b.frontend.rfp.request.create_form.submit.label
+                        style: auto
+                        attr:
+                            class: btn_xlg
+            tree:
+                __root:
+                    __rfp_page:
+                        __rfp_form_container:
+                            __rfp_form_start: ~
+                            __rfp_form_fields: ~
+                            __rfp_form_lineitems: ~
+                            __rfp_form_actions:
+                                __rfp_form_actions_create: ~
+                                __rfp_form_actions_back: ~
+                            __rfp_form_end: ~

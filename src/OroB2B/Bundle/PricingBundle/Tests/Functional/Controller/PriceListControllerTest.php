@@ -203,7 +203,8 @@ class PriceListControllerTest extends WebTestCase
         $filesData = $form->getFiles();
         $submittedData = $form->getPhpValues();
 
-        $productAssignmentRule = 'category == ' . $category->getId() . ' or category == ' . $category2->getId();
+        $productAssignmentRule = 'product.category == ' . $category->getId()
+            . ' or product.category == ' . $category2->getId();
         $submittedData['orob2b_pricing_price_list']['productAssignmentRule'] = $productAssignmentRule;
         $rules = [
             [
@@ -211,7 +212,7 @@ class PriceListControllerTest extends WebTestCase
                 'productUnit' => 'item',
                 'currency' => 'USD',
                 'rule' => 1,
-                'ruleCondition' => 'category.id == ' . $category->getId(),
+                'ruleCondition' => 'product.category.id == ' . $category->getId(),
                 'priority' => 1,
             ],
             [
@@ -255,9 +256,13 @@ class PriceListControllerTest extends WebTestCase
         /** @var EntityManager $manager */
         $prices = $container->get('doctrine')
             ->getManagerForClass(CombinedProductPrice::class)
-            ->getRepository(CombinedProductPrice::class)->findBy([
-                'priceList' => $cpl, 'quantity' => 99, 'currency' => 'USD'
-            ]);
+            ->getRepository(CombinedProductPrice::class)
+            ->findBy(
+                [
+                    'priceList' => $cpl, 'quantity' => 99, 'currency' => 'USD'
+                ],
+                ['product' => 'ASC', 'value' => 'ASC']
+            );
 
         $productPrice = $prices[0];
         $this->assertEquals(Price::create(1, 'USD'), $productPrice->getPrice());
