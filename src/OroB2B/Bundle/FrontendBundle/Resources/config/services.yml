@@ -71,7 +71,7 @@ services:
         class: 'OroB2B\Bundle\FrontendBundle\Request\FrontendHelper'
         arguments:
             - '%web_backend_prefix%'
-            - '@request_stack'
+            - '@service_container'
 
     orob2b_frontend.activity_list.placeholder.filter:
         class: 'OroB2B\Bundle\FrontendBundle\Placeholder\ActivityListPlaceholderFilter'
