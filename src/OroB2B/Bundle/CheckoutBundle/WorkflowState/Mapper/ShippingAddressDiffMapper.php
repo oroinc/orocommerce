@@ -30,11 +30,18 @@ class ShippingAddressDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function getCurrentState($checkout)
     {
-        if (!empty($checkout->getShippingAddress())) {
+        if (!empty($checkout->getShippingAddress()) &&
+            !empty($checkout->getShippingAddress()->getAccountUserAddress())
+        ) {
             return [
-                // TODO: getAccountUserAddress may not be present if the address was entered by hand
                 'id' => $checkout->getShippingAddress()->getAccountUserAddress()->getId(),
                 'updated' => $checkout->getShippingAddress()->getAccountUserAddress()->getUpdated(),
+            ];
+        }
+
+        if (!empty($checkout->getShippingAddress())) {
+            return [
+                'text' => $checkout->getShippingAddress()->__toString(),
             ];
         }
 
@@ -48,20 +55,23 @@ class ShippingAddressDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function isStateActual($checkout, array $savedState)
     {
-        if (isset($savedState[$this->getName()]) &&
-            empty($savedState[$this->getName()]) && empty($checkout->getShippingAddress())
-        ) {
+        if (!isset($savedState[$this->getName()])) {
             return true;
         }
 
-        // TODO: make proper address compare
-        return
-            isset($savedState[$this->getName()]) &&
-            isset($savedState[$this->getName()]['id']) &&
-            isset($savedState[$this->getName()]['updated']) &&
-            $savedState[$this->getName()]['updated'] instanceof \DateTimeInterface &&
-            // TODO: getAccountUserAddress may not be present if the address was entered by hand
-            $savedState[$this->getName()]['id'] === $checkout->getShippingAddress()->getAccountUserAddress()->getId() &&
-            $savedState[$this->getName()]['updated'] >= $checkout->getShippingAddress()->getAccountUserAddress()->getUpdated();
+        if (isset($savedState[$this->getName()]['id']) &&
+            isset($savedState[$this->getName()]['updated'])
+        ) {
+            return
+                $savedState[$this->getName()]['updated'] instanceof \DateTimeInterface &&
+                $savedState[$this->getName()]['id'] ===
+                $checkout->getShippingAddress()->getAccountUserAddress()->getId() &&
+                $savedState[$this->getName()]['updated'] >=
+                $checkout->getShippingAddress()->getAccountUserAddress()->getUpdated();
+        } elseif (isset($savedState[$this->getName()]['text'])) {
+            return $savedState[$this->getName()]['text'] === $checkout->getShippingAddress()->__toString();
+        }
+
+        return true;
     }
 }
