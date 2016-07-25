@@ -62,6 +62,7 @@ class OroB2BCheckoutBundle implements Migration, DatabasePlatformAwareInterface
     {
         $table = $schema->getTable('orob2b_checkout');
         $table->dropColumn('checkout_discriminator');
+        $table->dropColumn('checkout_type');
         $table->addColumn('billing_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('save_billing_address', 'boolean', ['default' => true]);

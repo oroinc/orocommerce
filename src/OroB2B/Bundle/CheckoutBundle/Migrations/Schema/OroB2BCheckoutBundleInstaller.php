@@ -62,7 +62,6 @@ class OroB2BCheckoutBundleInstaller implements Installation
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('checkout_type', 'string', ['notnull' => false, 'length' => 30]);
         $table->addColumn('customer_notes', 'text', ['notnull' => false]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('ship_until', 'date', ['notnull' => false, 'comment' => '(DC2Type:date)']);

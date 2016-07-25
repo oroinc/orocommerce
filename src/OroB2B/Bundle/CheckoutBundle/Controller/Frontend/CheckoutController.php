@@ -33,9 +33,9 @@ class CheckoutController extends Controller
      * Create checkout form
      *
      * @Route(
-     *     "/{id}/{checkoutType}",
+     *     "/{id}",
      *     name="orob2b_checkout_frontend_checkout",
-     *     requirements={"id"="\d+", "checkoutType"="\w+"}
+     *     requirements={"id"="\d+"}
      * )
      * @Layout(vars={"workflowStepName", "workflowName", "checkout"})
      * @Acl(
@@ -48,13 +48,12 @@ class CheckoutController extends Controller
      *
      * @param Request $request
      * @param int $id
-     * @param null|string $checkoutType
      * @return array|Response
      * @throws \Exception
      */
-    public function checkoutAction(Request $request, $id, $checkoutType = null)
+    public function checkoutAction(Request $request, $id)
     {
-        $checkout = $this->getCheckout($id, $checkoutType);
+        $checkout = $this->getCheckout($id);
 
         if (!$checkout) {
             throw new NotFoundHttpException(sprintf('Checkout not found'));
@@ -218,15 +217,13 @@ class CheckoutController extends Controller
 
     /**
      * @param int $id
-     * @param string|null $type
      * @return CheckoutInterface|null
      */
-    protected function getCheckout($id, $type)
+    protected function getCheckout($id)
     {
-        $type = (string)$type;
         $event = new CheckoutEntityEvent();
-        $event->setCheckoutId($id)
-            ->setType($type);
+        $event->setCheckoutId($id);
+
         $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
 
         return $event->getCheckoutEntity();

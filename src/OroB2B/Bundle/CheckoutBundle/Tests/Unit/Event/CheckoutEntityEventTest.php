@@ -17,8 +17,7 @@ class CheckoutEntityEventTest extends \PHPUnit_Framework_TestCase
         $properties = [
             ['checkoutEntity', new Checkout()],
             ['source', new CheckoutSource()],
-            ['checkoutId', 12],
-            ['type', 'type']
+            ['checkoutId', 12]
         ];
 
         $event = new CheckoutEntityEvent();

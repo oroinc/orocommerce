@@ -62,13 +62,6 @@ class Checkout implements
     use CheckoutAddressesTrait;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="checkout_type", type="string", length=30, nullable=true)
-     */
-    protected $checkoutType = '';
-
-    /**
      * @var int
      *
      * @ORM\Id
@@ -151,22 +144,6 @@ class Checkout implements
      * @ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
      */
     protected $source;
-
-    /**
-     * @param string $checkoutType
-     */
-    public function __construct($checkoutType = '')
-    {
-        $this->checkoutType = $checkoutType;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCheckoutType()
-    {
-        return $this->checkoutType;
-    }
 
     /**
      * @return int
