@@ -34,7 +34,7 @@ Parameters
 ### sku
 Product SKU(s).
 
-One ore more Product SKU can be provided as request query.
+One or more Product SKU can be provided as request query.
 
 E.g.: `filter[sku]=0RT28` or `filter[sku]=0RT28,1AB92`
 

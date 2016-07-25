@@ -15,7 +15,10 @@ class NormalizeProductId implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        /** @var UpdateContext $context */
+        if (!$context instanceof UpdateContext) {
+            return;
+        }
+
         $productRequestData = [self::PRODUCT_IDENTIFIER => $context->getId()];
         $context->setRequestData(array_merge($productRequestData, $context->getRequestData()));
         $context->setId(null);

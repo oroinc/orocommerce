@@ -42,7 +42,9 @@ class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        /** @var UpdateContext $context */
+        if (!$context instanceof UpdateContext) {
+            return;
+        }
 
         $criteria = $context->getCriteria();
         if (null === $criteria) {
@@ -82,9 +84,8 @@ class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
         $queryBuilder
             ->leftJoin('e.product', 'product')
             ->leftJoin('e.productUnitPrecision', 'productPrecision')
-            ->leftJoin('productPrecision.unit', 'unit')
             ->andWhere($queryBuilder->expr()->eq('product.sku', ':sku'))
-            ->andWhere($queryBuilder->expr()->eq('unit.code', ':unit'))
+            ->andWhere($queryBuilder->expr()->eq('IDENTITY(productPrecision.unit)', ':unit'))
             ->setParameter('sku', $sku)
             ->setParameter('unit', $unit);
         if (isset($warehouse)) {

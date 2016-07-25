@@ -299,6 +299,36 @@ class ProductRepositoryTest extends WebTestCase
     }
 
     /**
+     * @dataProvider getPrimaryUnitPrecisionCodeDataProvider
+     *
+     * @param int $sku
+     */
+    public function testGetPrimaryUnitPrecisionCode($sku)
+    {
+        /** @var Product $product */
+        $product = $this->getRepository()->findOneBy(['sku' => $sku]);
+
+        $result = $this->repository->getPrimaryUnitPrecisionCode($product->getSku());
+        $this->assertEquals($product->getPrimaryUnitPrecision()->getProductUnitCode(), $result);
+    }
+
+    public function getPrimaryUnitPrecisionCodeDataProvider()
+    {
+        return [
+            [
+                ProductFixture::PRODUCT_1,
+                ProductFixture::PRODUCT_2,
+                ProductFixture::PRODUCT_3,
+                ProductFixture::PRODUCT_4,
+                ProductFixture::PRODUCT_5,
+                ProductFixture::PRODUCT_6,
+                ProductFixture::PRODUCT_7,
+                ProductFixture::PRODUCT_8,
+            ]
+        ];
+    }
+
+    /**
      * @param array $references
      * @return array
      */
