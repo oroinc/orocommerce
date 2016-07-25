@@ -13,6 +13,7 @@ use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
  * @method MenuItem setImage(File $image)
  * @method LocalizedFallbackValue getTitle(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultTitle()
+ * @method LocalizedFallbackValue setDefaultTitle($string)
  */
 class ExtendMenuItem
 {
