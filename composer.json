@@ -21,6 +21,7 @@
     ],
     "require": {
         "oro/platform": "1.10.0-beta.3",
+        "oro/platform-serialised-fields": "1.5.0-beta.3",
         "box/spout": "2.3.*",
         "nicholas-eden/math": "0.6.*",
         "myclabs/deep-copy": "1.5.*",
