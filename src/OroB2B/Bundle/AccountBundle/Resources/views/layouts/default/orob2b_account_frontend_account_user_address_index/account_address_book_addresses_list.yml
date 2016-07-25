@@ -7,7 +7,8 @@ layout:
             items:
                 account_address_book_addresses_list_head:
                     blockType: container
-                    visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
+                    options:
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
                 account_address_book_addresses_list_title:
                     blockType: text
                     options:
@@ -22,15 +23,16 @@ layout:
                         text: 'orob2b.account.frontend.account_user_address_book.create.label'
                 account_address_book_addresses_list:
                     blockType: address_book
-                    visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
                     options:
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
                         entity: '=data["entity"].getAccount()'
                         addressListRouteName: 'orob2b_api_account_frontend_get_account_addresses'
                         addressCreateRouteName: 'orob2b_account_frontend_account_address_create'
                         addressUpdateRouteName: 'orob2b_account_frontend_account_address_update'
                 account_address_book_addresses_list_template:
                     blockType: container
-                    visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
+                    options:
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
                 account_address_book_addresses_list_template_item:
                     blockType: container
                 account_address_book_addresses_list_template_item_address:

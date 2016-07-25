@@ -11,15 +11,16 @@ layout:
             items:
                 account_address_book_user_addresses_grid_head:
                     blockType: container
-                    visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
+                    options:
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
                 account_address_book_user_addresses_grid_title:
                     blockType: text
                     options:
                         text: 'orob2b.account.frontend.account_user_address_book.account_user_addresses'
                 account_address_book_user_addresses_grid:
                     blockType: datagrid
-                    visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
                     options:
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
                         grid_name: frontend-account-account-user-address-grid
                         grid_parameters:
                             frontend_owner_id: '=data["entity"].getId()'
