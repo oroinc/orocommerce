@@ -18,10 +18,15 @@ orob2b:
             products.label:              'Products'
             categories.label:            'Product categories'
             include_subcategories.label: 'Include Sub-Categories'
+            unit.empty.value:            'Parent Category'
+            unit_precision.label:        'Unit Precision'
+            unit.label:                  'Unit of Quantity'
+            precision.label:             'Precision'
 
         sections:
             general: 'General'
             additional: 'Additional'
+            default_options: 'Default Product Options'
 
         subcategory:
             entity_label:   'Subcategory'

@@ -1,0 +1,32 @@
+services:
+    orob2b_sale.layout.type.quote_view_information:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{quote: {required: true}}]]
+            - [setName, ['quote_view_information']]
+        tags:
+             - { name: layout.block_type, alias: quote_view_information }
+
+    orob2b_sale.layout.type.quote_products_container:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{quoteProducts: {required: true}}]]
+            - [setName, ['quote_products_container']]
+        tags:
+             - { name: layout.block_type, alias: quote_products_container }
+
+    orob2b_sale.layout.type.quote_choice_form_container:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{form: {required: true}, quoteDemand: {required: true}}]]
+            - [setName, ['quote_choice_form_container']]
+        tags:
+             - { name: layout.block_type, alias: quote_choice_form_container }
+
+    orob2b_sale.layout.type.units_request_for_quote:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{units: {required: true}}]]
+            - [setName, ['units_request_for_quote']]
+        tags:
+             - { name: layout.block_type, alias: units_request_for_quote }

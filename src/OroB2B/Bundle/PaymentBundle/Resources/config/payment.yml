@@ -11,7 +11,7 @@ services:
         class: 'OroB2B\Bundle\PaymentBundle\Method\PayflowGateway'
         public: false
         arguments:
-            - '@orob2b_payment.paypal.payflow.gateway'
+            - '@orob2b_payment.paypal.payflow.gateway='
             - '@oro_config.global'
             - '@router'
 

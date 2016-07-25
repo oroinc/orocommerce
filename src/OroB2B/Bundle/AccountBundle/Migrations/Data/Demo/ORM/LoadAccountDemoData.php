@@ -2,15 +2,14 @@
 
 namespace OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-
+use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
-class LoadAccountDemoData extends AbstractFixture implements DependentFixtureInterface
+class LoadAccountDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
     const ACCOUNT_REFERENCE_PREFIX = 'account_demo_data';
 
@@ -54,8 +53,11 @@ class LoadAccountDemoData extends AbstractFixture implements DependentFixtureInt
      */
     public function load(ObjectManager $manager)
     {
-        $internalRatings = $manager->getRepository(ExtendHelper::buildEnumValueClassName(Account::INTERNAL_RATING_CODE))
-            ->findAll();
+        $internalRatings = $this->getObjectReferencesByIds(
+            $manager,
+            ExtendHelper::buildEnumValueClassName(Account::INTERNAL_RATING_CODE),
+            LoadAccountInternalRatingDemoData::getDataKeys()
+        );
 
         /** @var \Oro\Bundle\UserBundle\Entity\User $accountOwner */
         $accountOwner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);

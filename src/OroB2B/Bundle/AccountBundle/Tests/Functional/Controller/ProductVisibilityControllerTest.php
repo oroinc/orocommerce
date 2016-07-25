@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
@@ -21,8 +22,6 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData as TestFixturesLoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -71,6 +70,9 @@ class ProductVisibilityControllerTest extends WebTestCase
     /** @var  string */
     protected $visibilityToAccountGroupNotDefaultWebsite;
 
+    /** @var int */
+    protected $defaultWebsiteId;
+
     /** @var  array */
     protected $visibilityClassNames = [
         self::PRODUCT_VISIBILITY_CLASS,
@@ -90,6 +92,8 @@ class ProductVisibilityControllerTest extends WebTestCase
                 'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
             ]
         );
+
+        $this->defaultWebsiteId = $this->getDefaultWebsite()->getId();
 
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
@@ -125,7 +129,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $parameters = $this->explodeArrayPaths($form->getValues());
 
         //first tab checks
-        $defaultWebsiteParams = $parameters[WebsiteScopedDataType::NAME][$this->websiteIds[0]];
+        $defaultWebsiteParams = $parameters[WebsiteScopedDataType::NAME][$this->defaultWebsiteId];
         $this->assertEquals(
             $defaultWebsiteParams[self::ALL_KEY],
             $this->visibilityToAllDefaultWebsite
@@ -137,21 +141,6 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->assertEquals(
             $defaultWebsiteParams[self::ACCOUNT_GROUP_KEY],
             $this->visibilityToAccountGroupDefaultWebsite
-        );
-
-        //second tab checks
-        $notDefaultWebsiteVisibilities = $this->getSelectedVisibilitiesThroughAjax(
-            $this->product->getId(),
-            $this->websiteIds[1]
-        );
-        $this->assertEquals($notDefaultWebsiteVisibilities[self::ALL_KEY], $this->visibilityToAllNotDefaultWebsite);
-        $this->assertEquals(
-            $notDefaultWebsiteVisibilities[self::ACCOUNT_KEY],
-            $this->visibilityToAccountNotDefaultWebsite
-        );
-        $this->assertEquals(
-            $notDefaultWebsiteVisibilities[self::ACCOUNT_GROUP_KEY],
-            $this->visibilityToAccountGroupNotDefaultWebsite
         );
     }
 
@@ -187,7 +176,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         foreach ($this->visibilityClassNames as $className) {
             /** @var VisibilityInterface[]|WebsiteAwareInterface[] $visibilities */
             $visibilities = $em->getRepository($className)->findBy(['product' => $duplicatedProduct]);
-            $this->assertCount(2, $visibilities);
+            $this->assertCount(1, $visibilities);
 
             foreach ($visibilities as $duplicatedVisibility) {
                 /** @var VisibilityInterface $visibilitySourceProduct */
@@ -203,7 +192,7 @@ class ProductVisibilityControllerTest extends WebTestCase
      */
     public function testDeleteVisibilityOnSetDefault()
     {
-        $this->assertCountVisibilities(2, $this->product);
+        $this->assertCountVisibilities(1, $this->product);
 
         $this->visibilityToAllDefaultWebsite = ProductVisibility::getDefault($this->product);
         $this->visibilityToAccountDefaultWebsite = json_encode(
@@ -217,7 +206,7 @@ class ProductVisibilityControllerTest extends WebTestCase
             ]
         );
         $this->submitForm();
-        $this->assertCountVisibilities(1, $this->product);
+        $this->assertCountVisibilities(0, $this->product);
     }
 
     /**
@@ -248,33 +237,11 @@ class ProductVisibilityControllerTest extends WebTestCase
     {
         $crawler = $this->getVisibilityPage();
 
-        $websiteTitles = [
-            LoadWebsiteData::DEFAULT_WEBSITE_NAME,
-            TestFixturesLoadWebsiteData::WEBSITE1,
-            TestFixturesLoadWebsiteData::WEBSITE2,
-            TestFixturesLoadWebsiteData::WEBSITE3
-        ];
-        $counter = 0;
-
-        // Test exits tabs
-        $crawler->filter('.oro-tabs ul li.tab')->each(
-            function (Crawler $node) use (&$counter, $websiteTitles) {
-                $this->assertContains($websiteTitles[$counter], $node->text());
-                $options = json_decode($node->filterXPath('//a/@data-page-component-options')->text(), true);
-                $this->websiteIds[] = $options['options']['alias'];
-                $counter++;
-            }
-        );
         $parameters[WebsiteScopedDataType::NAME] = [
-            $this->websiteIds[0] => [
+            $this->defaultWebsiteId => [
                 self::ALL_KEY => $this->visibilityToAllDefaultWebsite,
                 self::ACCOUNT_KEY => $this->visibilityToAccountDefaultWebsite,
                 self::ACCOUNT_GROUP_KEY => $this->visibilityToAccountGroupDefaultWebsite,
-            ],
-            $this->websiteIds[1] => [
-                self::ALL_KEY => $this->visibilityToAllNotDefaultWebsite,
-                self::ACCOUNT_KEY => $this->visibilityToAccountNotDefaultWebsite,
-                self::ACCOUNT_GROUP_KEY => $this->visibilityToAccountGroupNotDefaultWebsite,
             ],
             '_token' => $crawler->filterXPath(
                 sprintf('//input[@name="%s[_token]"]/@value', WebsiteScopedDataType::NAME)
@@ -373,5 +340,16 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         return $crawler;
+    }
+
+    /**
+     * @return Website
+     */
+    protected function getDefaultWebsite()
+    {
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BWebsiteBundle:Website')
+            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->getDefaultWebsite();
     }
 }

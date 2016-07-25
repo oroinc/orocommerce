@@ -315,4 +315,30 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     {
         return $this->accountUsers;
     }
+
+    /**
+     * @return string
+     */
+    public function serialize()
+    {
+        return serialize(
+            [
+                $this->id,
+                $this->role,
+                $this->label
+            ]
+        );
+    }
+
+    /**
+     * @param string $serialized
+     */
+    public function unserialize($serialized)
+    {
+        list(
+            $this->id,
+            $this->role,
+            $this->label,
+            ) = unserialize($serialized);
+    }
 }

@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 
 class LoadPriceListToAccountGroupDemoData extends LoadBasePriceListRelationDemoData
 {
@@ -25,13 +26,12 @@ class LoadPriceListToAccountGroupDemoData extends LoadBasePriceListRelationDemoD
 
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
-
+        /** @var EntityManager $manager */
+        $website = $this->getWebsiteByName($manager, LoadWebsiteData::DEFAULT_WEBSITE_NAME);
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
-            /** @var EntityManager $manager */
             $account = $this->getAccountGroupByName($manager, $row['accountGroup']);
             $priceList = $this->getPriceListByName($manager, $row['priceList']);
-            $website = $this->getWebsiteByName($manager, $row['website']);
 
             $priceListToAccountGroup = new PriceListToAccountGroup();
             $priceListToAccountGroup->setAccountGroup($account)
@@ -62,5 +62,13 @@ class LoadPriceListToAccountGroupDemoData extends LoadBasePriceListRelationDemoD
         }
 
         return $website;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return array_merge(parent::getDependencies(), [LoadWebsiteData::class]);
     }
 }

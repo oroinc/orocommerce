@@ -9,10 +9,8 @@ layout:
                 - 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/form.html.twig'
         - '@setOption':
             id: checkout_information
-            optionName: vars
-            optionValue:
-                workflowStep: { '@value': $data.workflowStep }
-                stepOrder: 4
+            optionName: stepOrder
+            optionValue: 4
         - '@addTree':
             items:
                 checkout_form_buttons:
@@ -36,13 +34,12 @@ layout:
         - '@add':
             id: payment_methods
             parentId: checkout_information
-            blockType: block
+            blockType: payment_methods
             prepend: true
             options:
                 class_prefix: 'checkout'
-                vars:
-                    views: { '@value': $data.orob2b_payment_methods_provider }
-                    currentPaymentMethod: { '@value': $data.checkout.paymentMethod }
+                views: { '@value': $data.orob2b_payment_methods_provider }
+                currentPaymentMethod: { '@value': $data.checkout.paymentMethod }
 
     conditions:
         '@eq': [$context.workflowStepName, 'enter_payment']

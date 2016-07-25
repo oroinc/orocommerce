@@ -196,6 +196,7 @@ orob2b.account:
             accounts: 'Accounts'
         accountuserrole:
             users: 'Users'
+            entity: 'Entity'
         roles:   'Frontend Capabilities'
         password: 'Password'
 

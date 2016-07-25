@@ -10,18 +10,21 @@ use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 class LoadPaymentTermDemoData extends AbstractFixture
 {
     /**
+     * @var array
+     */
+    static public $paymentTermsLabels = [
+        'net 10',
+        'net 30',
+        'net 60',
+        'net 90',
+    ];
+
+    /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        $paymentTermsLabels = [
-            'net 10',
-            'net 30',
-            'net 60',
-            'net 90',
-        ];
-
-        foreach ($paymentTermsLabels as $paymentTermLabel) {
+        foreach (self::$paymentTermsLabels as $paymentTermLabel) {
             $paymentTerm = new PaymentTerm();
             $paymentTerm->setLabel($paymentTermLabel);
 

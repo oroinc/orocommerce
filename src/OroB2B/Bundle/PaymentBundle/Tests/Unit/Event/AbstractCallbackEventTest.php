@@ -57,11 +57,13 @@ abstract class AbstractCallbackEventTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->getEvent();
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+        $this->assertFalse($event->isPropagationStopped());
 
         $event->markSuccessful();
         $this->assertEquals(Response::HTTP_OK, $event->getResponse()->getStatusCode());
 
         $event->markFailed();
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+        $this->assertTrue($event->isPropagationStopped());
     }
 }

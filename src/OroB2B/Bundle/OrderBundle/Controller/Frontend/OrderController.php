@@ -2,10 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Controller\Frontend;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -42,7 +38,7 @@ class OrderController extends AbstractOrderController
             'entity_class' => $this->container->getParameter('orob2b_order.entity.order.class'),
         ];
     }
-
+    
     /**
      * @Route("/view/{id}", name="orob2b_order_frontend_view", requirements={"id"="\d+"})
      * @AclAncestor("orob2b_order_frontend_view")
@@ -76,49 +72,55 @@ class OrderController extends AbstractOrderController
         ];
     }
 
-    /**
-     * Create order form
-     *
-     * @Route("/create", name="orob2b_order_frontend_create")
-     * @Template("OroB2BOrderBundle:Order/Frontend:update.html.twig")
-     * @Acl(
-     *      id="orob2b_order_frontend_create",
-     *      type="entity",
-     *      class="OroB2BOrderBundle:Order",
-     *      permission="CREATE",
-     *      group_name="commerce"
-     * )
-     *
-     * @return array|RedirectResponse
+    /*
+     * Should be fixed in scope of task BB-3686
      */
-    public function createAction()
-    {
-        $order = new Order();
-        $order->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
+//    /**
+//     * Create order form
+//     *
+//     * @Route("/create", name="orob2b_order_frontend_create")
+//     * @Template("OroB2BOrderBundle:Order/Frontend:update.html.twig")
+//     * @Acl(
+//     *      id="orob2b_order_frontend_create",
+//     *      type="entity",
+//     *      class="OroB2BOrderBundle:Order",
+//     *      permission="CREATE",
+//     *      group_name="commerce"
+//     * )
+//     *
+//     * @return array|RedirectResponse
+//     */
+//    public function createAction()
+//    {
+//        $order = new Order();
+//        $order->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
+//
+//        return $this->update($order);
+//    }
 
-        return $this->update($order);
-    }
-
-    /**
-     * Edit order form
-     *
-     * @Route("/update/{id}", name="orob2b_order_frontend_update", requirements={"id"="\d+"})
-     * @Template("OroB2BOrderBundle:Order/Frontend:update.html.twig")
-     * @Acl(
-     *      id="orob2b_order_frontend_update",
-     *      type="entity",
-     *      class="OroB2BOrderBundle:Order",
-     *      permission="EDIT",
-     *      group_name="commerce"
-     * )
-     *
-     * @param Order $order
-     * @return array|RedirectResponse
+    /*
+     * Should be fixed in scope of task BB-3686
      */
-    public function updateAction(Order $order)
-    {
-        return $this->update($order);
-    }
+//    /**
+//     * Edit order form
+//     *
+//     * @Route("/update/{id}", name="orob2b_order_frontend_update", requirements={"id"="\d+"})
+//     * @Template("OroB2BOrderBundle:Order/Frontend:update.html.twig")
+//     * @Acl(
+//     *      id="orob2b_order_frontend_update",
+//     *      type="entity",
+//     *      class="OroB2BOrderBundle:Order",
+//     *      permission="EDIT",
+//     *      group_name="commerce"
+//     * )
+//     *
+//     * @param Order $order
+//     * @return array|RedirectResponse
+//     */
+//    public function updateAction(Order $order)
+//    {
+//        return $this->update($order);
+//    }
 
     /**
      * Success order
@@ -145,57 +147,60 @@ class OrderController extends AbstractOrderController
         ];
     }
 
-    /**
-     * @param Order $order
-     *
-     * @return array|RedirectResponse
+    /*
+     * Should be fixed in scope of task BB-3686
      */
-    protected function update(Order $order)
-    {
-        $order->setAccountUser($this->getFrontendOrderDataHandler()->getAccountUser());
-        $order->setAccount($this->getFrontendOrderDataHandler()->getAccount());
-        $order->setPaymentTerm($this->getFrontendOrderDataHandler()->getPaymentTerm());
-        $order->setOwner($this->getFrontendOrderDataHandler()->getOwner());
-
-        $form = $this->createForm(FrontendOrderType::NAME, $order);
-
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
-            $order,
-            $form,
-            function (Order $order) {
-                return [
-                    'route' => 'orob2b_order_frontend_update',
-                    'parameters' => ['id' => $order->getId()],
-                ];
-            },
-            function (Order $order) {
-                return [
-                    'route' => 'orob2b_order_frontend_view',
-                    'parameters' => ['id' => $order->getId()],
-                ];
-            },
-            $this->get('translator')->trans('orob2b.order.controller.order.saved.message'),
-            null,
-            function (Order $order, FormInterface $form, Request $request) {
-
-                $submittedData = $request->get($form->getName(), []);
-                $event = new OrderEvent($form, $form->getData(), $submittedData);
-                $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);
-                $orderData = $event->getData()->getArrayCopy();
-
-                return [
-                    'form' => $form->createView(),
-                    'entity' => $order,
-                    'isWidgetContext' => (bool)$request->get('_wid', false),
-                    'isShippingAddressGranted' => $this->getOrderAddressSecurityProvider()
-                        ->isAddressGranted($order, AddressType::TYPE_SHIPPING),
-                    'isBillingAddressGranted' => $this->getOrderAddressSecurityProvider()
-                        ->isAddressGranted($order, AddressType::TYPE_BILLING),
-                    'orderData' => $orderData
-                ];
-            }
-        );
-    }
+//    /**
+//     * @param Order $order
+//     *
+//     * @return array|RedirectResponse
+//     */
+//    protected function update(Order $order)
+//    {
+//        $order->setAccountUser($this->getFrontendOrderDataHandler()->getAccountUser());
+//        $order->setAccount($this->getFrontendOrderDataHandler()->getAccount());
+//        $order->setPaymentTerm($this->getFrontendOrderDataHandler()->getPaymentTerm());
+//        $order->setOwner($this->getFrontendOrderDataHandler()->getOwner());
+//
+//        $form = $this->createForm(FrontendOrderType::NAME, $order);
+//
+//        return $this->get('oro_form.model.update_handler')->handleUpdate(
+//            $order,
+//            $form,
+//            function (Order $order) {
+//                return [
+//                    'route' => 'orob2b_order_frontend_update',
+//                    'parameters' => ['id' => $order->getId()],
+//                ];
+//            },
+//            function (Order $order) {
+//                return [
+//                    'route' => 'orob2b_order_frontend_view',
+//                    'parameters' => ['id' => $order->getId()],
+//                ];
+//            },
+//            $this->get('translator')->trans('orob2b.order.controller.order.saved.message'),
+//            null,
+//            function (Order $order, FormInterface $form, Request $request) {
+//
+//                $submittedData = $request->get($form->getName(), []);
+//                $event = new OrderEvent($form, $form->getData(), $submittedData);
+//                $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);
+//                $orderData = $event->getData()->getArrayCopy();
+//
+//                return [
+//                    'form' => $form->createView(),
+//                    'entity' => $order,
+//                    'isWidgetContext' => (bool)$request->get('_wid', false),
+//                    'isShippingAddressGranted' => $this->getOrderAddressSecurityProvider()
+//                        ->isAddressGranted($order, AddressType::TYPE_SHIPPING),
+//                    'isBillingAddressGranted' => $this->getOrderAddressSecurityProvider()
+//                        ->isAddressGranted($order, AddressType::TYPE_BILLING),
+//                    'orderData' => $orderData
+//                ];
+//            }
+//        );
+//    }
 
     /**
      * @return TotalProcessorProvider

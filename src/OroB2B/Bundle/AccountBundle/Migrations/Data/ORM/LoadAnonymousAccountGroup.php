@@ -16,6 +16,11 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 class LoadAnonymousAccountGroup extends AbstractFixture implements ContainerAwareInterface
 {
     /**
+     * @var string
+     */
+    const GROUP_NAME_NON_AUTHENTICATED = 'Non-Authenticated Visitors';
+
+    /**
      * @var ContainerInterface
      */
     protected $container;
@@ -34,7 +39,7 @@ class LoadAnonymousAccountGroup extends AbstractFixture implements ContainerAwar
     public function load(ObjectManager $manager)
     {
         $accountGroup = new AccountGroup();
-        $accountGroup->setName('Non-Authenticated Visitors');
+        $accountGroup->setName(self::GROUP_NAME_NON_AUTHENTICATED);
 
         /** @var EntityManager $manager */
         $manager->persist($accountGroup);

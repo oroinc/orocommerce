@@ -21,10 +21,12 @@ layout:
                     options:
                         text: 'orob2b.account.accountuser.profile.check_email.title'
                 check_email_message:
-                    blockType: block
+                    blockType: text
                     options:
-                        vars:
-                            email: { '@value': $data.email }
+                        text:
+                            label: 'orob2b.account.accountuser.profile.check_email.message'
+                            parameters:
+                                '%email%': { '@value': $data.email }
                 check_email_return_to_login:
                     blockType: link
                     options:
