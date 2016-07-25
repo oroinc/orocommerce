@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingAddressDiffMapper;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
@@ -78,19 +79,17 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('shippingAddress', $this->mapper->getName());
     }
 
-    public function testGetCurrentState()
+    public function testGetCurrentStateAccountUserAddress()
     {
-        $this->shippingAddress
-            ->expects($this->once())
-            ->method('getId')
-            ->willReturn(123);
-
         $now = new \DateTimeImmutable();
+        $accountUserAddress = new AccountUserAddress();
+        $accountUserAddress->setId(123);
+        $accountUserAddress->setUpdated($now);
 
         $this->shippingAddress
-            ->expects($this->once())
-            ->method('getUpdated')
-            ->willReturn($now);
+            ->expects($this->any())
+            ->method('getAccountUserAddress')
+            ->willReturn($accountUserAddress);
 
         $result = $this->mapper->getCurrentState(
             $this->getCheckout($shippingAddress = $this->shippingAddress)
@@ -100,6 +99,30 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             [
                 'id' => 123,
                 'updated' => $now,
+            ],
+            $result
+        );
+    }
+
+    public function testGetCurrentStateTextAddress()
+    {
+        $this->shippingAddress
+            ->expects($this->once())
+            ->method('getAccountUserAddress')
+            ->willReturn(null);
+
+        $this->shippingAddress
+            ->expects($this->once())
+            ->method('__toString')
+            ->willReturn("First name Last name , Street Street 2 City Kyïvs'ka Oblast' , Ukraine Zip");
+
+        $result = $this->mapper->getCurrentState(
+            $this->getCheckout($shippingAddress = $this->shippingAddress)
+        );
+
+        $this->assertEquals(
+            [
+                'text' => "First name Last name , Street Street 2 City Kyïvs'ka Oblast' , Ukraine Zip",
             ],
             $result
         );
@@ -116,17 +139,15 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualTrue()
     {
-        $this->shippingAddress
-            ->expects($this->once())
-            ->method('getId')
-            ->willReturn(123);
-
         $now = new \DateTimeImmutable();
+        $accountUserAddress = new AccountUserAddress();
+        $accountUserAddress->setId(123);
+        $accountUserAddress->setUpdated($now->modify('-1 minute'));
 
         $this->shippingAddress
-            ->expects($this->once())
-            ->method('getUpdated')
-            ->willReturn($now->modify('-1 minute'));
+            ->expects($this->any())
+            ->method('getAccountUserAddress')
+            ->willReturn($accountUserAddress);
 
         $savedState = [
             'parameter1' => 10,
@@ -145,19 +166,44 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $result);
     }
 
-    public function testIsStateActualFalseId()
+    public function testIsStateActualTrueTextAddress()
     {
         $this->shippingAddress
-            ->expects($this->once())
-            ->method('getId')
-            ->willReturn(123);
-
-        $now = new \DateTimeImmutable();
+            ->expects($this->never())
+            ->method('getAccountUserAddress');
 
         $this->shippingAddress
-            ->expects($this->never())
-            ->method('getUpdated')
-            ->willReturn($now->modify('-1 minute'));
+            ->expects($this->once())
+            ->method('__toString')
+            ->willReturn("First name Last name , Street Street 2 City Kyïvs'ka Oblast' , Ukraine Zip");
+
+        $savedState = [
+            'parameter1' => 10,
+            'shippingAddress' => [
+                'text' => "First name Last name , Street Street 2 City Kyïvs'ka Oblast' , Ukraine Zip",
+            ],
+            'parameter3' => 'green',
+        ];
+
+        $result = $this->mapper->isStateActual(
+            $this->getCheckout($billingAddress = $this->shippingAddress),
+            $savedState
+        );
+
+        $this->assertEquals(true, $result);
+    }
+
+    public function testIsStateActualFalseId()
+    {
+        $now = new \DateTimeImmutable();
+        $accountUserAddress = new AccountUserAddress();
+        $accountUserAddress->setId(123);
+        $accountUserAddress->setUpdated($now->modify('-1 minute'));
+
+        $this->shippingAddress
+            ->expects($this->any())
+            ->method('getAccountUserAddress')
+            ->willReturn($accountUserAddress);
 
         $savedState = [
             'parameter1' => 10,
@@ -178,17 +224,15 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualFalseUpdated()
     {
-        $this->shippingAddress
-            ->expects($this->once())
-            ->method('getId')
-            ->willReturn(123);
-
         $now = new \DateTimeImmutable();
+        $accountUserAddress = new AccountUserAddress();
+        $accountUserAddress->setId(123);
+        $accountUserAddress->setUpdated($now->modify('+1 minute'));
 
         $this->shippingAddress
-            ->expects($this->once())
-            ->method('getUpdated')
-            ->willReturn($now->modify('+1 minute'));
+            ->expects($this->any())
+            ->method('getAccountUserAddress')
+            ->willReturn($accountUserAddress);
 
         $savedState = [
             'parameter1' => 10,
@@ -207,19 +251,44 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $result);
     }
 
-    public function testIsStateActualParameterDoesntExist()
+    public function testIsStateActualFalseText()
     {
         $this->shippingAddress
             ->expects($this->never())
-            ->method('getId')
-            ->willReturn(123);
-
-        $now = new \DateTimeImmutable();
+            ->method('getAccountUserAddress');
 
         $this->shippingAddress
-            ->expects($this->never())
-            ->method('getUpdated')
-            ->willReturn($now->modify('-1 minute'));
+            ->expects($this->once())
+            ->method('__toString')
+            ->willReturn("First name Last name , Street Street 2 City Kyïvs'ka Oblast' , Ukraine Zip");
+
+        $savedState = [
+            'parameter1' => 10,
+            'shippingAddress' => [
+                'text' => "First name Last name , Street Street 2 City Pomorskie , Poland Zip",
+            ],
+            'parameter3' => 'green',
+        ];
+
+        $result = $this->mapper->isStateActual(
+            $this->getCheckout($billingAddress = $this->shippingAddress),
+            $savedState
+        );
+
+        $this->assertEquals(false, $result);
+    }
+
+    public function testIsStateActualParameterDoesntExist()
+    {
+        $now = new \DateTimeImmutable();
+        $accountUserAddress = new AccountUserAddress();
+        $accountUserAddress->setId(123);
+        $accountUserAddress->setUpdated($now->modify('-1 minute'));
+
+        $this->shippingAddress
+            ->expects($this->any())
+            ->method('getAccountUserAddress')
+            ->willReturn($accountUserAddress);
 
         $savedState = [
             'parameter1' => 10,
@@ -231,22 +300,20 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             $savedState
         );
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStateActualParameterOfWrongType()
     {
-        $this->shippingAddress
-            ->expects($this->never())
-            ->method('getId')
-            ->willReturn(123);
-
         $now = new \DateTimeImmutable();
+        $accountUserAddress = new AccountUserAddress();
+        $accountUserAddress->setId(123);
+        $accountUserAddress->setUpdated($now->modify('-1 minute'));
 
         $this->shippingAddress
-            ->expects($this->never())
-            ->method('getUpdated')
-            ->willReturn($now->modify('-1 minute'));
+            ->expects($this->any())
+            ->method('getAccountUserAddress')
+            ->willReturn($accountUserAddress);
 
         $savedState = [
             'parameter1' => 10,
@@ -259,22 +326,20 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             $savedState
         );
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStateActualParameterOfWrongTypeUpdated()
     {
-        $this->shippingAddress
-            ->expects($this->never())
-            ->method('getId')
-            ->willReturn(123);
-
         $now = new \DateTimeImmutable();
+        $accountUserAddress = new AccountUserAddress();
+        $accountUserAddress->setId(123);
+        $accountUserAddress->setUpdated($now->modify('-1 minute'));
 
         $this->shippingAddress
-            ->expects($this->never())
-            ->method('getUpdated')
-            ->willReturn($now->modify('-1 minute'));
+            ->expects($this->any())
+            ->method('getAccountUserAddress')
+            ->willReturn($accountUserAddress);
 
         $savedState = [
             'parameter1' => 10,
@@ -290,22 +355,20 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             $savedState
         );
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStateActualParameterNotSetId()
     {
-        $this->shippingAddress
-            ->expects($this->never())
-            ->method('getId')
-            ->willReturn(123);
-
         $now = new \DateTimeImmutable();
+        $accountUserAddress = new AccountUserAddress();
+        $accountUserAddress->setId(123);
+        $accountUserAddress->setUpdated($now->modify('-1 minute'));
 
         $this->shippingAddress
-            ->expects($this->never())
-            ->method('getUpdated')
-            ->willReturn($now->modify('-1 minute'));
+            ->expects($this->any())
+            ->method('getAccountUserAddress')
+            ->willReturn($accountUserAddress);
 
         $savedState = [
             'parameter1' => 10,
@@ -320,22 +383,20 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             $savedState
         );
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStateActualParameterNotSetUpdated()
     {
-        $this->shippingAddress
-            ->expects($this->never())
-            ->method('getId')
-            ->willReturn(123);
-
         $now = new \DateTimeImmutable();
+        $accountUserAddress = new AccountUserAddress();
+        $accountUserAddress->setId(123);
+        $accountUserAddress->setUpdated($now->modify('-1 minute'));
 
         $this->shippingAddress
-            ->expects($this->never())
-            ->method('getUpdated')
-            ->willReturn($now->modify('-1 minute'));
+            ->expects($this->any())
+            ->method('getAccountUserAddress')
+            ->willReturn($accountUserAddress);
 
         $savedState = [
             'parameter1' => 10,
@@ -350,6 +411,6 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
             $savedState
         );
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 }

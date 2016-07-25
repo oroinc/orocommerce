@@ -60,10 +60,10 @@ class BillingAddressDiffMapper implements CheckoutStateDiffMapperInterface
         }
 
         if (isset($savedState[$this->getName()]['id']) &&
-            isset($savedState[$this->getName()]['updated'])
+            isset($savedState[$this->getName()]['updated']) &&
+            $savedState[$this->getName()]['updated'] instanceof \DateTimeInterface
         ) {
             return
-                $savedState[$this->getName()]['updated'] instanceof \DateTimeInterface &&
                 $savedState[$this->getName()]['id'] ===
                     $checkout->getBillingAddress()->getAccountUserAddress()->getId() &&
                 $savedState[$this->getName()]['updated'] >=

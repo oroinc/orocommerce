@@ -141,7 +141,7 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         $this->checkout
-            ->expects($this->never())
+            ->expects($this->once())
             ->method('getPaymentMethod')
             ->willReturn('payflow_gateway');
 
