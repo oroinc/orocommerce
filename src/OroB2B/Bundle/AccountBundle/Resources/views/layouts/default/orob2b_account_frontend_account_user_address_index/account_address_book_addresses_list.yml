@@ -19,7 +19,7 @@ layout:
                         visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_create")'
                         route_name: orob2b_account_frontend_account_address_create
                         route_parameters:
-                            entityId: '=data["entity"].getAccount()["id"]'
+                            entityId: '=data["entity"].getAccount().getId()'
                         text: 'orob2b.account.frontend.account_user_address_book.create.label'
                 account_address_book_addresses_list:
                     blockType: address_book
