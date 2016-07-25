@@ -1,64 +1,51 @@
 .shopping-list-dropdown {
+    position: relative;
+
     display: none;
 
+    text-align: center;
+
+    border-radius: 0 3px 0 0;
+    border: 1px solid transparent;
+    border-left-color: $theme-lighter-gray-color;
+    border-bottom-color: #d9d9d9;
+    background: #ededed;
+
     &--visible {
-        display: block;
-    }
+        display: table-cell;
 
-    &__helper {
-        &:checked + .shopping-list-dropdown__inner .shopping-list-dropdown__dropdown {
-            visibility: inherit;
-            opacity: 1;
-
-            transition: opacity .2s;
-        }
-
-        &:checked + .shopping-list-dropdown__overlay {
-            display: none;
-        }
-    }
-
-    &__inner {
-        position: absolute;
-        top: 0;
-        right: 0;
-
-        width: 37px;
-        height: 100%;
-
-        text-align: center;
-
-        border-radius: 0 3px 0 0;
-        border-top: 1px solid $theme-lighter-gray-color;
-        border-right: 1px solid $theme-lighter-gray-color;
-        border-bottom: 1px solid $base-font-color-lightest;
-        background: #ededed;
+        vertical-align: middle;
     }
 
     &__handle {
-        height: 100%;
-        margin: 0;
+        width: 40px;
+        padding-top: 16px;
+        padding-bottom: 12px;
+
+        cursor: pointer;
     }
 
     &__icon {
-        margin: 15px 0 0 0;
+        margin: 0;
 
         font-size: 20px;
 
         color: #707070;
+
+        vertical-align: baseline;
     }
 
-    &__dropdown {
-        position: absolute;
+    &__nav {
         top: 100%;
-        right: 50%;
+        right: -10px;
+        left: auto;
         z-index: 9;
 
-        margin: -5px -25px 0;
+        margin: -5px 0 0;
 
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .3);
         border-radius: 2px;
-        border: 1px solid #ebebeb;
+        border: 1px solid $theme-lighter-gray-color;
         background: #fff;
 
         visibility: hidden;
@@ -76,5 +63,15 @@
 
         opacity: 0;
         cursor: default;
+    }
+
+    &.open {
+        border-left-color: #d9d9d9;
+        box-shadow: inset 0 2px 3px rgba(0, 0, 0, .08);
+
+        .shopping-list-dropdown__nav {
+            opacity: 1;
+            visibility: visible;
+        }
     }
 }

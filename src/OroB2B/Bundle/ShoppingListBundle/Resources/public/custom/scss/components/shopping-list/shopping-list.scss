@@ -1,72 +1,71 @@
+$shopping-list-items-count: 6;
+
 .shopping-list {
-    display: flex;
-    width: 100%;
     margin: 0;
 
-    white-space: nowrap;
-
     border-radius: 3px 3px 0 0;
-    border-bottom: 1px solid $base-font-color-lightest;
     box-shadow: inset -1px 0 0 0 $theme-lighter-gray-color;
     background: $theme-lightest-gray-color;
 
-    &__item {
-        display: inline-block;
-        width: 20%;
+    @include clearfix;
 
+    &__item {
+        width: 100% / $shopping-list-items-count;
+        float: left;
 
         border-top: 1px solid $theme-lighter-gray-color;
         background: $theme-lightest-gray-color;
-        box-shadow: inset 1px 0 0 0 $theme-lighter-gray-color,
-                    inset 0 1px 0 0 $theme-lighter-gray-color,
-                    inset -1px 0 0 0 $theme-lighter-gray-color,
-                    0 1px 0 0 $base-font-color-lightest;
+        box-shadow: inset 1px 0 0 0 $theme-lighter-gray-color;
+
+        &:first-child {
+            border-top-left-radius: 3px;
+        }
 
         &--current,
         &:hover {
             background: $base-white-color;
-            box-shadow: inset 1px 0 0 0 $base-font-color-lightest,
-                        inset 0 1px 0 0 $base-font-color-lightest,
-                        inset -1px 0 0 0 $base-font-color-lightest,
-                        0 1px 0 0 $base-white-color;
-        }
-
-        &--hidden {
-            display: none;
+            border-bottom-color: transparent;
         }
     }
 
     &__content {
         padding: 15px;
 
-        border: 1px solid #d9d9d9;
+        border: 1px solid $theme-lighter-gray-color;
         border-top: 0;
     }
 
     &__link {
-        padding: 16px 15px 12px;
+        padding: 0;
 
         text-align: center;
+
+        &:hover {
+            color: $base-font-color;
+        }
     }
 
     &__item-indicator,
     &__name {
-        display: inline-block;;
-
         vertical-align: baseline;;
     }
 
     &__item-indicator {
         position: static;
 
+        display: inline-block;
+        margin-right: 10px;
         min-width: 26px;
     }
 
     &__name {
-        margin-left: 10px;
+        padding: 16px 15px 12px;
     }
 
     &__title {
+        display: inline-block;
+        max-width: 100%;
+
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

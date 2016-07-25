@@ -1,11 +1,11 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
     var BaseComponent = require('oroui/js/app/components/base/component');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
+    var _ = require('underscore');
+    var $ = require('jquery');
 
     return BaseComponent.extend({
         /**
@@ -20,6 +20,7 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
+            this.$shoppingListItems = this.options._sourceElement.find('[data-shopping-list-items]');
 
             mediator.on('shopping-list:created', function() {
                 mediator.execute('redirectTo', {
@@ -37,8 +38,11 @@ define(function(require) {
          * @param updateData
          */
         updateDropdown: function(updateData) {
-            this.options._sourceElement
-                .find('.shopping-list-links__item--' + updateData.id + ' .shopping-list-links__text')
+            this.$shoppingListItems
+                .filter(function() {
+                    return $(this).data('id') === updateData.id;
+                })
+                .children()
                 .text(updateData.label);
         }
     });

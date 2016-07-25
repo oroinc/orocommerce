@@ -453,25 +453,33 @@
 
     <div {{ block('block_attributes') }}>
         <ul class="shopping-list">
-            {% for shoppingList in shoppingLists %}
+            {% set shoppingListsIndex = 6 %}
+            {% for shoppingList in shoppingLists  %}
+            {% if loop.index <= shoppingListsIndex %}
                 <li class="shopping-list__item {% if shoppingList.id == selectedShoppingList.id %} shopping-list__item--current {% endif %}">
                     <a href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}"
+                       title="{{ shoppingList.label }}"
                        class="shopping-list__link"
                     >
-                        <span class='badge badge_sm badge_orange badge_circled-corners shopping-list__item-indicator'>
-                            <i class="cf-basket"></i>
-                        </span>
-                        <span class="shopping-list__name">
-                            <span class="shopping-list__title text-uppercase {% if shoppingList.id == selectedShoppingList.id %}current-title{% endif %}">{{ shoppingList.label }}</span>
+                        <div class="shopping-list__name">
+                            <span class="shopping-list__title text-uppercase">
+                                <span class='badge badge_sm badge_orange badge_circled-corners shopping-list__item-indicator'>
+                                    <i class="cf-basket"></i>
+                                </span>
+                                <span {% if shoppingList.id == selectedShoppingList.id %}data-current-title{% endif %}>
+                                    {{ shoppingList.label }}
+                                </span>
+                            </span>
                             {% set itemsCount = shoppingList.lineItems.count %}
                             {% if itemsCount %}
                                 <div class="shopping-list__desc">
-                                    ><b>{{ shoppingList.lineItems.count }}</b> {{ 'orob2b.shoppinglist.items.label'|transchoice(itemsCount) }}
+                                    <b>{{ shoppingList.lineItems.count }}</b> {{ 'orob2b.shoppinglist.items.label'|transchoice(itemsCount) }}
                                 </div>
                             {% endif %}
-                        </span>
+                        </div>
                     </a>
                 </li>
+            {% endif %}
             {% endfor %}
         </ul>
     </div>

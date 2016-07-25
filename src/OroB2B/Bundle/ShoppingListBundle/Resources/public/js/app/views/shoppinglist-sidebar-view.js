@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -30,8 +28,6 @@ define(function(require) {
             mediator.on('shopping-list-event:' + this.options.eventChannelId + ':update',
                         this.updateCurrentTitle, this);
 
-            this.hideTail(this.options.shoppingListVisible);
-
             this.showAdditionalDropdown(this.options.shoppingListCount);
         },
 
@@ -40,21 +36,7 @@ define(function(require) {
          * @param updateData
          */
         updateCurrentTitle: function(updateData) {
-            this.options._sourceElement.find('.current-title').text(updateData.label);
-        },
-
-        /**
-         *
-         * @param shoppingListVisible
-         */
-        hideTail: function(shoppingListVisible) {
-            var shoppingListHidden = shoppingListVisible + 1;
-
-            if (shoppingListVisible > 0) {
-                this.options._sourceElement
-                    .find('.shopping-list__item:nth-child(n+' + shoppingListHidden + ')')
-                    .addClass('shopping-list__item--hidden');
-            }
+            this.options._sourceElement.find('[data-current-title]').text(updateData.label);
         },
 
         /**
