@@ -71,3 +71,28 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_product.normalizer.normalizer, method: onNormalize }
             - { name: kernel.event_listener, event: orob2b_product.normalizer.denormalizer, method: onDenormalize }
+
+    orob2b_product.importexport.inventory_status_converter:
+        parent: oro_importexport.data_converter.configurable
+        class: OroB2B\Bundle\ProductBundle\ImportExport\DataConverter\InventoryStatusDataConverter
+
+    orob2b_product.importexport.processor.export_inventory_status_only:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+             - [setDataConverter, ["@orob2b_product.importexport.inventory_status_converter"]]
+        tags:
+            - { name: oro_importexport.processor, type: export, entity: %orob2b_product.entity.product.class%, alias: orob2b_product.inventory_status_only }
+
+    orob2b_product.importexport.normalizer.inventory_status:
+        class: OroB2B\Bundle\ProductBundle\ImportExport\Normalizer\InventoryStatusNormalizer
+        tags:
+            - { name: oro_importexport.normalizer }
+
+    # Export template
+    orob2b_product.importexport.processor.export_template.inventory_status_only:
+        public: false
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, ['@orob2b_product.importexport.inventory_status_converter']]
+        tags:
+            - { name: oro_importexport.processor, type: export_template, entity: '%orob2b_product.entity.product.class%', alias: orob2b_product.inventory_status_only_template }

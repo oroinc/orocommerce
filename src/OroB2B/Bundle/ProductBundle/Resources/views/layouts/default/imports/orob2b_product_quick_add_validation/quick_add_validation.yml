@@ -1,0 +1,47 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'quick_add_validation.html.twig'
+        - '@addTree':
+            items:
+                __quick_add_validation:
+                    blockType: container
+                __quick_add_validation_items_table:
+                    blockType: container
+                __quick_add_validation_items_table_title:
+                    blockType: text
+                    options:
+                        text: 'orob2b.product.frontend.quick_add.import_validation.number_of_items'
+                __quick_add_validation_items_table_body:
+                    blockType: container
+                __quick_add_validation_total_items_count:
+                    blockType: import_validation_items_count_text
+                    options:
+                        text: 'orob2b.product.frontend.quick_add.import_validation.total_items'
+                        collection: { '@value': $data.collection }
+                __quick_add_validation_valid_items_count:
+                    blockType: import_validation_items_count_text
+                    options:
+                        text: 'orob2b.product.frontend.quick_add.import_validation.valid_items'
+                        collection: { '@value': $data.collection }
+                __quick_add_validation_invalid_items_count:
+                    blockType: import_validation_items_count_text
+                    options:
+                        text: 'orob2b.product.frontend.quick_add.import_validation.invalid_items'
+                        collection: { '@value': $data.collection }
+                __quick_add_validation_invalid_items:
+                    blockType: import_validation_items
+                    options:
+                        collection: { '@value': $data.collection }
+            tree:
+                __root:
+                    __quick_add_validation:
+                        __quick_add_validation_items_table:
+                            __quick_add_validation_items_table_title: ~
+                            __quick_add_validation_items_table_body:
+                                __quick_add_validation_total_items_count: ~
+                                __quick_add_validation_valid_items_count: ~
+                                __quick_add_validation_invalid_items_count: ~
+                        __quick_add_validation_invalid_items: ~
+    conditions:
+        '@eq': [$context.import_step, 'result']

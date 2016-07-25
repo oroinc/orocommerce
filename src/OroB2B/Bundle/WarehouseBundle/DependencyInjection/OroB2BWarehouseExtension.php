@@ -23,5 +23,6 @@ class OroB2BWarehouseExtension extends Extension
 
         $loader->load('services.yml');
         $loader->load('form_types.yml');
+        $loader->load('importexport.yml');
     }
 }
