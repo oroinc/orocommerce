@@ -7,6 +7,7 @@ layout:
             items:
                 account_address_book_user_addresses_list_head:
                     blockType: container
+                    visible: 'data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
                 account_address_book_user_addresses_list_title:
                     blockType: text
                     options:
@@ -14,13 +15,14 @@ layout:
                 account_address_book_user_addresses_list_create_button:
                     blockType: link
                     options:
-                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_address_create") && data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_address_create")'
                         route_name: orob2b_account_frontend_account_user_address_create
                         route_parameters:
                             entityId: '=data["entity"].getId()'
                         text: 'orob2b.account.address.add'
                 account_address_book_user_addresses_list:
                     blockType: address_book
+                    visible: 'data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
                     options:
                         entity: '=data["entity"]'
                         addressListRouteName: 'orob2b_api_account_frontend_get_accountuser_addresses'
@@ -28,6 +30,7 @@ layout:
                         addressUpdateRouteName: 'orob2b_account_frontend_account_user_address_update'
                 account_address_book_user_addresses_list_template:
                     blockType: container
+                    visibe: 'data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
                 account_address_book_user_addresses_list_template_item:
                     blockType: container
                 account_address_book_user_addresses_list_template_item_address:
