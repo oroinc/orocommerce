@@ -1,5 +1,5 @@
-sku,unitPrecisions.1.unit.code,unitPrecisions.1.precision,status,inventory_status.id
-SKU001,kg,3,,in_stock
-SKU001,kg,3,some_status,in_stock
-SKU002,kg,3,enabled,in_stock
-SKU003,kg,3,disabled,in_stock
+sku,primaryUnitPrecision:unit:code,primaryUnitPrecision:precision,primaryUnitPrecision:conversionRate,primaryUnitPrecision:sell,status,inventory_status.id
+SKU001,kg,3,1,1,,in_stock
+SKU001,kg,3,1,1,some_status,in_stock
+SKU002,kg,3,1,1,enabled,in_stock
+SKU003,kg,3,1,1,disabled,in_stock

@@ -1,0 +1,23 @@
+layout:
+    actions:
+        - @add:
+            id: meta_title
+            parentId: head
+            blockType: meta
+            options:
+                name: 'title'
+                content: { '@value': $data.product.defaultMetaTitle }
+        - @add:
+            id: meta_description
+            parentId: head
+            blockType: meta
+            options:
+                name: 'description'
+                content: { '@value': $data.product.defaultMetaDescription }
+        - @add:
+            id: meta_keywords
+            parentId: head
+            blockType: meta
+            options:
+                name: 'keywords'
+                content: { '@value': $data.product.defaultMetaKeywords }

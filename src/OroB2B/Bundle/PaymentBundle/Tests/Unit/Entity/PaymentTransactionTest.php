@@ -7,6 +7,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class PaymentTransactionTest extends \PHPUnit_Framework_TestCase
 {
@@ -91,5 +92,34 @@ class PaymentTransactionTest extends \PHPUnit_Framework_TestCase
     private function createPaymentTransaction()
     {
         return new PaymentTransaction();
+    }
+
+    public function testNotACloneIfHasNotSourceTransaction()
+    {
+        $this->assertFalse($this->createPaymentTransaction()->isClone());
+    }
+
+    public function testNotACloneIfSourceTransactionIsNotValidateOne()
+    {
+        $sourcePaymentTransaction = $this->createPaymentTransaction();
+        $sourcePaymentTransaction
+            ->setAction(PaymentMethodInterface::AUTHORIZE);
+        $paymentTransaction = $this->createPaymentTransaction();
+        $paymentTransaction
+            ->setSourcePaymentTransaction($sourcePaymentTransaction);
+
+        $this->assertFalse($paymentTransaction->isClone());
+    }
+
+    public function testCloneIfSourceTransactionIsValidateOne()
+    {
+        $sourcePaymentTransaction = $this->createPaymentTransaction();
+        $sourcePaymentTransaction
+            ->setAction(PaymentMethodInterface::VALIDATE);
+        $paymentTransaction = $this->createPaymentTransaction();
+        $paymentTransaction
+            ->setSourcePaymentTransaction($sourcePaymentTransaction);
+
+        $this->assertTrue($paymentTransaction->isClone());
     }
 }

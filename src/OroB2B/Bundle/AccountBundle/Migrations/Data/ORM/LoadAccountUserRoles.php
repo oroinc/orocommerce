@@ -16,6 +16,9 @@ class LoadAccountUserRoles extends AbstractRolesData
     const ADMINISTRATOR = 'ADMINISTRATOR';
     const BUYER = 'BUYER';
 
+    /** @var Website[] */
+    protected $websites = [];
+
     /**
      * {@inheritdoc}
      */
@@ -36,14 +39,16 @@ class LoadAccountUserRoles extends AbstractRolesData
 
         $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
+        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
         foreach ($roleData as $roleName => $roleConfigData) {
             $role = $this->createEntity($roleName, $roleConfigData['label']);
             if (!empty($roleConfigData['website_default_role'])) {
                 $this->setWebsiteDefaultRoles($role);
             }
-            $organization = $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
             $role->setOrganization($organization);
             $manager->persist($role);
+
+            $this->setUpSelfManagedData($role, $roleConfigData);
 
             if (!$aclManager->isAclEnabled()) {
                 continue;
@@ -85,13 +90,35 @@ class LoadAccountUserRoles extends AbstractRolesData
      */
     protected function setWebsiteDefaultRoles(AccountUserRole $role)
     {
-        $websites = $this->container->get('doctrine')
-            ->getManagerForClass('OroB2BWebsiteBundle:Website')
-            ->getRepository('OroB2BWebsiteBundle:Website')
-            ->findAll();
-
-        foreach ($websites as $website) {
+        foreach ($this->getWebsites() as $website) {
             $role->addWebsite($website);
         }
+    }
+
+    /**
+     * @return Website[]
+     */
+    protected function getWebsites()
+    {
+        if (!$this->websites) {
+            $websitesIterator = $this->container->get('doctrine')
+                ->getManagerForClass('OroB2BWebsiteBundle:Website')
+                ->getRepository('OroB2BWebsiteBundle:Website')
+                ->getBatchIterator();
+
+            $this->websites = iterator_to_array($websitesIterator);
+        }
+
+        return $this->websites;
+    }
+
+    /**
+     * @param AccountUserRole $role
+     * @param $roleConfigData
+     */
+    private function setUpSelfManagedData(AccountUserRole $role, $roleConfigData)
+    {
+        $role->setSelfManaged(isset($roleConfigData['self_managed']) ? $roleConfigData['self_managed'] : false);
+        $role->setPublic(isset($roleConfigData['public']) ? $roleConfigData['public'] : true);
     }
 }

@@ -25,7 +25,7 @@ datagrid:
                             join: product.names
                             alias: productNames
                             conditionType: WITH
-                            condition: productNames.locale IS NULL
+                            condition: productNames.localization IS NULL
         columns:
             sku:
                 label:         orob2b.product.sku.label
@@ -145,7 +145,7 @@ datagrid:
                             join: product.names
                             alias: productNames
                             conditionType: WITH
-                            condition: productNames.locale IS NULL
+                            condition: productNames.localization IS NULL
         columns:
             sku:
                 label: orob2b.product.sku.label
@@ -204,7 +204,7 @@ datagrid:
                             join: product.names
                             alias: productNames
                             conditionType: WITH
-                            condition: productNames.locale IS NULL
+                            condition: productNames.localization IS NULL
             bind_parameters:
                 - parentProduct
         sorters:

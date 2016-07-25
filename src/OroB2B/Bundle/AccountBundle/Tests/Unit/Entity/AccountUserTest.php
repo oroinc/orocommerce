@@ -12,7 +12,9 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Traits\AddressEntityTestTrait;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -242,5 +244,18 @@ class AccountUserTest extends AbstractUserTest
             ->setLastName('LastName');
 
         $this->assertSame('FirstName LastName', $user->getFullName());
+    }
+
+    public function testSettingsAccessors()
+    {
+        $user = $this->getUser();
+        $website = new Website();
+
+        $user->setWebsiteSettings(new AccountUserSettings(new Website()))
+            ->setWebsiteSettings(new AccountUserSettings($website))
+            ->setWebsiteSettings((new AccountUserSettings($website))->setCurrency('USD'))
+            ->setWebsiteSettings(new AccountUserSettings(new Website()));
+
+        $this->assertSame('USD', $user->getWebsiteSettings($website)->getCurrency());
     }
 }

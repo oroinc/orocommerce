@@ -1,0 +1,12 @@
+.oro-select {
+  display: inline-block !important;
+
+  min-width: 270px;
+
+  padding: 12px 24px 12px 12px;
+
+  background: url('../images/arrow-down--gray.png') no-repeat right 8px center $base-white-color;
+
+  @include base-ui-element-style();
+  @include appearance();
+}

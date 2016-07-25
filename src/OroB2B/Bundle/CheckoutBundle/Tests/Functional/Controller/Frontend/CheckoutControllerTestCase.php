@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
 use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -21,6 +21,7 @@ abstract class CheckoutControllerTestCase extends WebTestCase
     const FIRST_NAME = 'Jackie';
     const LAST_NAME = 'Chuck';
     const STREET = 'Fake Street';
+    const CITY = 'Fake City';
     const POSTAL_CODE = '123456';
     const COUNTRY = 'UA';
     const REGION = 'UA-65';
@@ -33,7 +34,7 @@ abstract class CheckoutControllerTestCase extends WebTestCase
     const SHIPPING_ADDRESS_SIGN = 'SELECT SHIPPING ADDRESS';
     const BILLING_ADDRESS_SIGN = 'SELECT BILLING ADDRESS';
     const SHIPPING_METHOD_SIGN = 'Select a Shipping Method';
-    const PAYMENT_METHOD_SIGN = 'Payment - Checkout';
+    const PAYMENT_METHOD_SIGN = 'Payment - Open Order';
     const ORDER_REVIEW_SIGN = 'View Options for this Order';
     const FINISH_SIGN = 'Thank You For Your Purchase!';
 
@@ -64,6 +65,7 @@ abstract class CheckoutControllerTestCase extends WebTestCase
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                'OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData',
             ]
         );
         $this->registry = $this->getContainer()->get('doctrine');
@@ -147,6 +149,7 @@ abstract class CheckoutControllerTestCase extends WebTestCase
             'firstName' => CheckoutControllerTestCase::FIRST_NAME,
             'lastName' => CheckoutControllerTestCase::LAST_NAME,
             'street' => CheckoutControllerTestCase::STREET,
+            'city' => CheckoutControllerTestCase::CITY,
             'postalCode' => CheckoutControllerTestCase::POSTAL_CODE,
             'country' => CheckoutControllerTestCase::COUNTRY,
             'region' => CheckoutControllerTestCase::REGION,

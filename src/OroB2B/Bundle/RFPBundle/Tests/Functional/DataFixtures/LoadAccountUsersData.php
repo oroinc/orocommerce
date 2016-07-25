@@ -125,6 +125,7 @@ class LoadAccountUsersData extends AbstractFixture implements DependentFixtureIn
                 ->setLastName($user['last_name'])
                 ->setEmail($user['email'])
                 ->setAccount($account)
+                ->setOwner($account->getOwner())
                 ->setConfirmed($user['confirmed'])
                 ->setEnabled($user['enabled'])
                 ->setSalt('')

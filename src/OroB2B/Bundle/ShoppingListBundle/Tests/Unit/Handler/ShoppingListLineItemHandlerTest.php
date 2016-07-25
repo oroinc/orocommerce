@@ -13,6 +13,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -29,7 +30,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     protected $securityFacade;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager */
-    protected $manager;
+    protected $shoppingListManager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
     protected $managerRegistry;
@@ -40,13 +41,17 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->manager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
+        $this->shoppingListManager = $this->getMockBuilder(ShoppingListManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->managerRegistry = $this->getManagerRegistry();
 
-        $this->handler = new ShoppingListLineItemHandler($this->managerRegistry, $this->manager, $this->securityFacade);
+        $this->handler = new ShoppingListLineItemHandler(
+            $this->managerRegistry,
+            $this->shoppingListManager,
+            $this->securityFacade
+        );
         $this->handler->setProductClass('OroB2B\Bundle\ProductBundle\Entity\Product');
         $this->handler->setShoppingListClass('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
     }
@@ -58,7 +63,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     public function testGetShoppingList($id)
     {
         $shoppingList = new ShoppingList();
-        $this->manager->expects($this->once())->method('getForCurrentUser')->willReturn($shoppingList);
+        $this->shoppingListManager->expects($this->once())->method('getForCurrentUser')->willReturn($shoppingList);
         $this->assertSame($shoppingList, $this->handler->getShoppingList($id));
     }
 
@@ -176,7 +181,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $this->securityFacade->expects($this->any())->method('isGranted')->willReturn(true);
 
-        $this->manager->expects($this->once())->method('bulkAddLineItems')->with(
+        $this->shoppingListManager->expects($this->once())->method('bulkAddLineItems')->with(
             $this->callback(
                 function (array $lineItems) use ($expectedLineItems, $accountUser, $organization) {
                     /** @var LineItem $lineItem */
@@ -216,6 +221,25 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                 [(new LineItem())->setQuantity(5), (new LineItem())->setQuantity(1)],
             ],
         ];
+    }
+
+    public function testPrepareLineItemWithProduct()
+    {
+        /** @var AccountUser $user */
+        $user = $this->getMock(AccountUser::class);
+
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getMock(ShoppingList::class);
+
+        /** @var Product $product */
+        $product = $this->getMock(Product::class);
+
+        $this->shoppingListManager->expects($this->once())->method('getCurrent')->willReturn($shoppingList);
+
+        $item = $this->handler->prepareLineItemWithProduct($user, $product);
+        $this->assertSame($user, $item->getAccountUser());
+        $this->assertSame($shoppingList, $item->getShoppingList());
+        $this->assertSame($product, $item->getProduct());
     }
 
     /**

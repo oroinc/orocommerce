@@ -29,7 +29,7 @@ class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -38,36 +38,15 @@ class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareIn
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BLocaleTable($schema);
         $this->createOrob2BRelatedWebsiteTable($schema);
         $this->createOrob2BWebsiteTable($schema);
-        $this->createOrob2BWebsitesLocalesTable($schema);
+        $this->createOrob2BWebsitesLocalizationsTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BLocaleForeignKeys($schema);
         $this->addOrob2BRelatedWebsiteForeignKeys($schema);
         $this->addOrob2BWebsiteForeignKeys($schema);
-        $this->addOrob2BWebsitesLocalesForeignKeys($schema);
+        $this->addOrob2BWebsitesLocalizationsForeignKeys($schema);
         $this->addNoteAssociations($schema);
-    }
-
-    /**
-     * Create orob2b_locale table
-     *
-     * @param Schema $schema
-     */
-    protected function createOrob2BLocaleTable(Schema $schema)
-    {
-        $table = $schema->createTable('orob2b_locale');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('parent_id', 'integer', ['notnull' => false]);
-        $table->addColumn('code', 'string', ['length' => 64]);
-        $table->addColumn('title', 'string', ['length' => 255]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['code']);
-        $table->addUniqueIndex(['title']);
     }
 
     /**
@@ -108,32 +87,16 @@ class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareIn
     }
 
     /**
-     * Create orob2b_websites_locales table
+     * Create orob2b_websites_localizations table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BWebsitesLocalesTable(Schema $schema)
+    protected function createOrob2BWebsitesLocalizationsTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_websites_locales');
+        $table = $schema->createTable('orob2b_websites_localizations');
         $table->addColumn('website_id', 'integer', []);
-        $table->addColumn('locale_id', 'integer', []);
-        $table->setPrimaryKey(['website_id', 'locale_id']);
-    }
-
-    /**
-     * Add orob2b_locale foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOrob2BLocaleForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_locale');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_locale'),
-            ['parent_id'],
-            ['id'],
-            ['onDelete' => null, 'onUpdate' => null]
-        );
+        $table->addColumn('localization_id', 'integer', []);
+        $table->setPrimaryKey(['website_id', 'localization_id']);
     }
 
     /**
@@ -185,12 +148,12 @@ class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function addOrob2BWebsitesLocalesForeignKeys(Schema $schema)
+    protected function addOrob2BWebsitesLocalizationsForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_websites_locales');
+        $table = $schema->getTable('orob2b_websites_localizations');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_locale'),
-            ['locale_id'],
+            $schema->getTable('oro_localization'),
+            ['localization_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

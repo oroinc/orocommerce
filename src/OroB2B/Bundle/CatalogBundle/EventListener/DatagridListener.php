@@ -69,7 +69,7 @@ class DatagridListener
         $this->addConfigElement($config, '[source][query][join][left]', $joinCategoryTitles);
 
         // conditions - where condition is required to prevent selection of extra joined rows
-        $where = 'categoryTitle.locale IS NULL';
+        $where = 'categoryTitle.localization IS NULL';
         $this->addConfigElement($config, '[source][query][where][and]', $where);
 
         // columns

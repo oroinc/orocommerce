@@ -11,8 +11,9 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
 use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 
-class DiscountSubtotalProviderTest extends \PHPUnit_Framework_TestCase
+class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
 {
     /**
      * @var DiscountSubtotalProvider
@@ -41,6 +42,7 @@ class DiscountSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        parent::setUp();
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
@@ -70,7 +72,8 @@ class DiscountSubtotalProviderTest extends \PHPUnit_Framework_TestCase
             $this->translator,
             $this->roundingService,
             $this->lineItemSubtotal,
-            $this->securityFacade
+            $this->securityFacade,
+            $this->currencyManager
         );
     }
 

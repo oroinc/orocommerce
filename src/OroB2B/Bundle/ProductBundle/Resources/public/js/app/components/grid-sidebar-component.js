@@ -45,7 +45,7 @@ define(function(require) {
         gridCollection: {},
 
         /**
-         * @inheritDoc
+         * {@inheritDoc}
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);

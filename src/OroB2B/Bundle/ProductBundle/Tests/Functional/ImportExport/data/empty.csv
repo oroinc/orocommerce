@@ -1,2 +1,2 @@
-sku,status
-,
+sku,status,primaryUnitPrecision:unit:code,primaryUnitPrecision:precision
+,,kg,3

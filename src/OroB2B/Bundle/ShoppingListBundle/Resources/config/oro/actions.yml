@@ -213,9 +213,9 @@ operations:
             - '@assign_value': [$.lineItem.shoppingList, $.data.shoppingList]
         actions:
             - '@call_service_method':
-                service: orob2b_shopping_list.shopping_list.manager
-                method: recalculateSubtotals
-                method_parameters: [$.data.shoppingList]
+                service: orob2b_shopping_list.manager.shopping_list_total
+                method: recalculateTotals
+                method_parameters: [$.data.shoppingList, true]
             - '@flash_message':
                 message: orob2b.shoppinglist.lineitem.flash.updated
                 type: 'success'
@@ -246,6 +246,22 @@ operations:
             - OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
         exclude_datagrids:
             - shopping-list-grid
+
+    orob2b_shoppinglist_delete_line_item:
+        extends: DELETE
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - preconditions
+        preconditions:
+            '@not_blank': $.data
+        datagrids:
+            - shopping-list-line-items-grid
+        actions:
+            - '@call_service_method':
+                service: orob2b_shopping_list.manager.shopping_list_total
+                method: recalculateTotals
+                method_parameters: [$.data.shoppingList, true]
 
 action_groups:
     orob2b_shoppinglist_frontend_addlineitem:
@@ -278,7 +294,3 @@ action_groups:
                 service: orob2b_shopping_list.shopping_list.manager
                 method: addLineItem
                 method_parameters: [$.line_item, $.data, true, true]
-            - '@call_service_method':
-                service: orob2b_shopping_list.shopping_list.manager
-                method: recalculateSubtotals
-                method_parameters: [$.data]

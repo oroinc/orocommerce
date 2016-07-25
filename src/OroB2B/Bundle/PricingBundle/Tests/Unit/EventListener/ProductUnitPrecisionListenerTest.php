@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Oro\Component\Testing\Unit\EntityTrait;
+
 use OroB2B\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
 use OroB2B\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
 use OroB2B\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener;
@@ -11,6 +13,8 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProductUnitPrecisionListenerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+    
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
@@ -53,10 +57,10 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->postRemove($event);
     }
 
-    public function testPostRemove()
+    public function testPostRemoveWithExistingProduct()
     {
         $entity = new ProductUnitPrecision();
-        $product = new Product();
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
         $unit = new ProductUnit();
         $entity->setProduct($product)
             ->setUnit($unit);
@@ -101,6 +105,42 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit_Framework_TestCase
                 ProductPricesRemoveAfter::NAME,
                 $this->isInstanceOf('OroB2B\Bundle\PricingBundle\Event\ProductPricesRemoveAfter')
             );
+
+        $this->listener->postRemove($event);
+    }
+
+    public function testPostRemoveWithDeletedProduct()
+    {
+        $entity = new ProductUnitPrecision();
+        $product = new Product();
+        $unit = new ProductUnit();
+        $entity->setProduct($product)
+            ->setUnit($unit);
+
+        $event = $this->getMockBuilder('Doctrine\ORM\Event\LifecycleEventArgs')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $event->expects($this->once())
+            ->method('getEntity')
+            ->will($this->returnValue($entity));
+
+        $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->never())
+            ->method('deleteByProductUnit');
+
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $em->expects($this->never())
+            ->method('getRepository');
+
+        $event->expects($this->never())
+            ->method('getEntityManager');
+
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatch');
 
         $this->listener->postRemove($event);
     }

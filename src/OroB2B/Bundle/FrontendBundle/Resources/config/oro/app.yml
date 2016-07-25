@@ -20,7 +20,7 @@ security:
 
         # override pattern
         api_wsse_secured:
-            pattern:                        ^%web_backend_prefix%/api/(?!doc($|/.*))
+            pattern:                        ^%web_backend_prefix%/api/(?!(doc|rest|soap))($|.*)
 
         # override pattern
         login:
@@ -48,3 +48,10 @@ security:
                 target:                     oro_default
 oro_layout:
     active_theme: default
+
+assetic:
+    filters:
+        scssphp:
+            file: %kernel.root_dir%/../vendor/leafo/scssphp/scss.inc.php
+            apply_to: "\.scss$"
+            import_paths: ["%kernel.root_dir%/../web/bundles"]

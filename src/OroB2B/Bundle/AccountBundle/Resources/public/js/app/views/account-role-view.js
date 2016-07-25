@@ -27,12 +27,12 @@ define([
         },
 
         /**
-         * @inheritdoc
+         * @inheritDoc
          */
         getData: function() {
             var data = AccountRoleView.__super__.getData.apply(this, arguments);
 
-            data[this.options.formName + '[account]'] = $(this.options.accountSelector).select2('val');
+            data[this.options.formName + '[account]'] = $(this.options.accountSelector).inputWidget('val');
 
             return data;
         }

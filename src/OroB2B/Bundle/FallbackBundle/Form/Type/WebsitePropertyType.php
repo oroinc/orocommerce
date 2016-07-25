@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use OroB2B\Bundle\FallbackBundle\Form\DataTransformer\MultipleValueTransformer;
+use Oro\Bundle\LocaleBundle\Form\DataTransformer\MultipleValueTransformer;
 
 class WebsitePropertyType extends AbstractType
 {

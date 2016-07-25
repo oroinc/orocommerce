@@ -5,8 +5,7 @@ namespace OroB2B\Bundle\MenuBundle\DependencyInjection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-
-use OroB2B\Bundle\FrontendBundle\DependencyInjection\Loader\PrivateYamlFileLoader;
+use Symfony\Component\DependencyInjection\Loader;
 
 class OroB2BMenuExtension extends Extension
 {
@@ -15,7 +14,7 @@ class OroB2BMenuExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new PrivateYamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }
 }

@@ -11,6 +11,7 @@ use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use OroB2B\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,6 +29,11 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $repository;
+
+    /**
+     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $userCurrencyManager;
 
     /**
      * {@inheritdoc}
@@ -61,7 +67,11 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($manager);
 
-        $this->listener = new CheckoutEntityListener($this->workflowManager, $registry);
+        $this->userCurrencyManager = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new CheckoutEntityListener($this->workflowManager, $registry, $this->userCurrencyManager);
     }
 
     public function testCheckoutType()
@@ -93,12 +103,14 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
      * @param int $id
      * @param CheckoutInterface $found
      * @param CheckoutInterface $expected
+     * @param string $userCurrency
      */
     public function testOnGetCheckoutEntityExistingById(
         $type,
         $id,
         CheckoutInterface $found = null,
-        CheckoutInterface $expected = null
+        CheckoutInterface $expected = null,
+        $userCurrency = 'USD'
     ) {
         $this->listener->setCheckoutClassName('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
 
@@ -112,6 +124,12 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
         $event->setType($type);
         $event->setCheckoutId($id);
 
+        if ($expected instanceof Checkout) {
+            $this->userCurrencyManager->expects($this->once())
+                ->method('getUserCurrency')
+                ->willReturn($userCurrency);
+        }
+
         $this->listener->onGetCheckoutEntity($event);
         $this->assertCheckoutEvent($event, $expected);
     }
@@ -122,24 +140,35 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
     public function existingCheckoutByIdProvider()
     {
         $checkout = new Checkout();
+        $checkout->setCurrency('USD');
         return [
             'find existing by id' => [
                 'type' => '',
                 'id' => 1,
                 'found' => $checkout,
-                'expected' => $checkout
+                'expected' => $checkout,
+                'userCurrency' => 'USD'
+            ],
+            'find existing by id with not actual currency' => [
+                'type' => '',
+                'id' => 1,
+                'found' => $checkout,
+                'expected' => $checkout->setCurrency('EUR'),
+                'userCurrency' => 'EUR'
             ],
             'find existing by id another type' => [
                 'type' => 'unknown',
                 'id' => 1,
                 'found' => $checkout,
-                'expected' => null
+                'expected' => null,
+                'userCurrency' => 'USD'
             ],
             'find existing by id none' => [
                 'type' => '',
                 'id' => 1,
                 'found' => null,
-                'expected' => null
+                'expected' => null,
+                'userCurrency' => 'USD'
             ],
         ];
     }

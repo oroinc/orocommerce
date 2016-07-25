@@ -1,0 +1,108 @@
+* {
+  &:focus {
+    outline: none;
+  }
+}
+
+html {
+  width: 100%;
+  height: 100%;
+
+  font-size: $default-font-size;
+  font-family: $lato-font;
+  -ms-overflow-style: scrollbar;
+}
+
+body {
+  width: 100%;
+  vertical-align: baseline;
+
+  background: $base-white-color;
+  color: $base-font-color;
+  font-family: $lato-font;
+  font-size: $base-font-size;
+  line-height: $base-line-height;
+
+  font-smoothing: antialiased;
+
+  @media (max-width: $screen-md) {
+    &.sales-mode {
+      overflow-x: hidden; 
+    }
+  }
+
+  &.loading {
+    height: 100%;
+
+    .loader-mask {
+      position: fixed;
+    }
+  }
+}
+
+.wrapper {
+  
+  &.sales-mode {
+    padding-top: 11px;
+
+    transition: transform .2s linear;
+
+    @media (max-width: $screen-md) {
+      padding-top: 0;
+
+      transform: translate3d(0, 0, 0);
+    }
+
+    /*&.expanded {
+      transform: translate3d(0, 8.6rem, 0);
+
+      @media (max-width: 991px) {
+        transform: translate3d(0, 0, 0);
+        padding-top: 0;
+      }
+    }*/
+  }
+}
+
+//Bootstrap override
+.container-fluid,
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.main {
+  margin: 0 auto 70px;
+
+  &_home {
+    max-width: 100%;
+  }
+
+  @include clearfix();
+
+  @media (max-width: $screen-sm) {
+    margin-bottom: 0;
+  }
+
+  &.sticky-nav {
+    @media (max-width: $screen-md) {
+      padding-top: 5rem;
+    }
+  }
+}
+
+//Links
+a {
+  color: $base-link-color;
+
+  &.red {
+    &:hover, &:focus, &:active {
+      color: $theme-red-color;
+    }
+  }
+
+  &:hover {
+    color: $base-link-color;
+    text-decoration: underline;
+  }
+}

@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
@@ -189,6 +189,40 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         foreach ($result['data'] as $product) {
             $this->assertContains($product['sku'], $expected);
         }
+    }
+
+    /**
+     * @dataProvider setCurrentCurrencyDataProvider
+     * @param string $currency
+     * @param string $expectedResult
+     */
+    public function testSetCurrentCurrencyAction($currency, $expectedResult)
+    {
+        $params = ['currency' => $currency];
+        $this->client->request('POST', $this->getUrl('orob2b_pricing_frontend_set_current_currency'), $params);
+        $result = $this->client->getResponse();
+
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+        $this->assertSame($expectedResult, $data);
+    }
+
+    /**
+     * @return array
+     */
+    public function setCurrentCurrencyDataProvider()
+    {
+        return [
+            [
+                'currency' => 'USD',
+                'expectedResult' => ['success' => true] ,
+            ],
+            [
+                'currency' => 'USD2',
+                'expectedResult' => ['success' => false] ,
+            ],
+        ];
     }
 
     /**

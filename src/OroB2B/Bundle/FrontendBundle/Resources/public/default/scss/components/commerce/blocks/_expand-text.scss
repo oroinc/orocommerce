@@ -1,0 +1,64 @@
+.expand-text {
+  height: $font-size;
+
+  overflow: hidden;
+
+  &__trigger {
+    display: inline-block;
+
+    margin-right: 3px;
+
+    cursor: pointer;
+
+    transition: all 200ms linear;
+
+    &:hover {
+      color: $base-font-color;
+    }
+  }
+
+  &__container {
+    display: inline-block;
+
+    max-width: 100%;
+
+    text-overflow: ellipsis;
+
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  &__content {
+    &--long {
+      display: none;
+    }
+  }
+
+  &.init {
+    height: auto;
+    overflow: inherit;
+  }
+
+  &.open {
+    .expand-text {
+      &__trigger {
+        transform: rotate(90deg);
+      }
+
+      &__container {
+        overflow: inherit;
+        white-space: normal;
+      }
+
+      &__content {
+        &--short {
+          display: none;
+        }
+
+        &--long {
+          display: inline;
+        }
+      }
+    }
+  }
+}

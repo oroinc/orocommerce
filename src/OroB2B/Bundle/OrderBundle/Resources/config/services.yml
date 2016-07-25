@@ -7,7 +7,6 @@ parameters:
 services:
     orob2b_order.order.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%orob2b_order.entity.order.class%'
@@ -15,9 +14,11 @@ services:
 
     orob2b_order.order.entity.id_generator:
         class: 'OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator'
+        public: false
 
     orob2b_order.order.listener.orm.order_listener:
         class: 'OroB2B\Bundle\OrderBundle\EventListener\ORM\OrderListener'
+        public: false
         arguments:
             - '@orob2b_order.order.entity.id_generator'
         tags:
@@ -25,24 +26,29 @@ services:
 
     orob2b_order.provider.shipping_cost_subtotal:
         class: 'OroB2B\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider'
+        public: false
         arguments:
             - '@translator'
             - '@orob2b_pricing.rounding.price_rounding_service'
+            - '@orob2b_pricing.user_currency_manager'
         tags:
             - { name: orob2b_pricing.subtotal_provider, priority: 20 }
 
     orob2b_order.provider.discount_subtotal:
         class: 'OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider'
+        public: false
         arguments:
             - '@translator'
             - '@orob2b_pricing.rounding.price_rounding_service'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
             - '@oro_security.security_facade'
+            - '@orob2b_pricing.user_currency_manager'
         tags:
             - { name: orob2b_pricing.subtotal_provider, priority: 10 }
 
     orob2b_order.order.provider.order_address:
         class: 'OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider'
+        public: false
         arguments:
             - '@oro_security.security_facade'
             - '@doctrine'
@@ -52,7 +58,6 @@ services:
 
     orob2b_order.order.provider.order_address_security:
         class: 'OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider'
-        public: true
         arguments:
             - '@oro_security.security_facade'
             - '@orob2b_order.order.provider.order_address'
@@ -61,6 +66,7 @@ services:
 
     orob2b_order.manager.order_address:
         class: 'OroB2B\Bundle\OrderBundle\Manager\OrderAddressManager'
+        public: false
         arguments:
             - '@orob2b_order.order.provider.order_address'
             - '@doctrine'
@@ -71,7 +77,6 @@ services:
 
     orob2b_order.request_handler.order_request_handler:
         class: 'OroB2B\Bundle\OrderBundle\RequestHandler\OrderRequestHandler'
-        public: true
         arguments:
             - '@doctrine'
             - '@request_stack'
@@ -80,7 +85,6 @@ services:
 
     orob2b_order.request_handler.frontend_order_data_handler:
         class: 'OroB2B\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler'
-        public: true
         arguments:
             - '@doctrine'
             - '@request_stack'
@@ -89,20 +93,17 @@ services:
 
     orob2b_order.handler.order_currency_handler:
         class: 'OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler'
-        public: true
         arguments:
             - '@oro_locale.settings'
 
     orob2b_order.handler.order_totals_handler:
         class: 'OroB2B\Bundle\OrderBundle\Handler\OrderTotalsHandler'
-        public: true
         arguments:
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
 
     orob2b_order.event_listener.form_view:
         class: 'OroB2B\Bundle\OrderBundle\EventListener\FormViewListener'
-        public: true
         arguments:
             - '@translator'
             - '@oro_entity.doctrine_helper'
@@ -114,7 +115,6 @@ services:
     orob2b_order.event_listener.product_select_db_query:
         class: '%orob2b_product.event_listener.scoped_product_select_db_query.common_class%'
         parent: orob2b_product.event_listener.abstract_product_select_db_query
-        public: true
         calls:
             - [setScope, ['order']]
             - [setFrontendSystemConfigurationPath, ['oro_b2b_order.frontend_product_visibility']]
@@ -124,7 +124,6 @@ services:
 
     orob2b_order.event_listener.order.total:
         class: 'OroB2B\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener'
-        public: true
         arguments:
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
         tags:
@@ -132,7 +131,6 @@ services:
 
     orob2b_order.event_listener.order.address:
         class: 'OroB2B\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener'
-        public: true
         arguments:
             - '@templating'
             - '@form.factory'
@@ -141,7 +139,6 @@ services:
 
     orob2b_order.event_listener.order.payment_term:
         class: 'OroB2B\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener'
-        public: true
         arguments:
             - '@orob2b_payment.provider.payment_term'
         tags:
@@ -149,7 +146,6 @@ services:
 
     orob2b_order.event_listener.order.matching_price:
         class: 'OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener'
-        public: true
         arguments:
             - '@orob2b_order.pricing.price_matcher'
         tags:
@@ -157,7 +153,6 @@ services:
 
     orob2b_order.event_listener.order.tier_prices:
         class: 'OroB2B\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener'
-        public: true
         arguments:
             - '@orob2b_pricing.provider.combined_product_price'
             - '@orob2b_pricing.model.price_list_tree_handler'
@@ -166,49 +161,27 @@ services:
 
     orob2b_order.twig.order:
         class: 'OroB2B\Bundle\OrderBundle\Twig\OrderExtension'
+        public: false
         arguments:
+            - '@doctrine'
             - '@orob2b_order.formatter.source_document'
+            - '@orob2b_payment.provider.payment_status'
         tags:
             - { name: twig.extension }
 
     orob2b_order.formatter.source_document:
         class: 'OroB2B\Bundle\OrderBundle\Formatter\SourceDocumentFormatter'
+        public: false
         arguments:
             - '@oro_entity.entity_class_name_provider'
 
-    orob2b_order.layout.block_type.currency:
-        class: 'OroB2B\Bundle\OrderBundle\Layout\Block\Type\CurrencyType'
-        public: true
-        tags:
-             - { name: layout.block_type, alias: currency }
-
-    orob2b_order.layout.block_type.date:
-        class: 'OroB2B\Bundle\OrderBundle\Layout\Block\Type\DateType'
-        public: true
-        tags:
-             - { name: layout.block_type, alias: date }
-
-    orob2b_order.layout.block_type.address:
-        class: 'OroB2B\Bundle\OrderBundle\Layout\Block\Type\AddressType'
-        public: true
-        tags:
-             - { name: layout.block_type, alias: address }
-
     orob2b_order.layout.block_type_extension.block_prefixes:
         class: 'OroB2B\Bundle\OrderBundle\Layout\Block\Extension\BlockPrefixExtension'
-        public: true
         tags:
             - { name: layout.block_type_extension, alias: block }
 
-    orob2b_order.layout.block_type.order_total:
-        class: 'OroB2B\Bundle\OrderBundle\Layout\Block\Type\OrderTotalType'
-        public: true
-        tags:
-             - { name: layout.block_type, alias: order_total }
-
     orob2b_order.order.listener.total_calculate_listener:
         class: 'OroB2B\Bundle\OrderBundle\EventListener\TotalCalculateListener'
-        public: true
         arguments:
             - '@form.factory'
             - '@oro_action.helper.applications'
@@ -217,7 +190,6 @@ services:
 
     orob2b_order.validator.checkout_address:
         class: 'OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderAddressValidator'
-        public: true
         arguments:
             - '@validator'
         tags:
@@ -225,12 +197,14 @@ services:
 
     orob2b_order.pricing.price_matcher:
         class: 'OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher'
+        public: false
         arguments:
             - '@orob2b_pricing.provider.matching_price'
             - '@orob2b_pricing.model.price_list_tree_handler'
 
     orob2b_order.order.total.total_helper:
         class: 'OroB2B\Bundle\OrderBundle\Total\TotalHelper'
+        public: false
         arguments:
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
@@ -238,8 +212,14 @@ services:
 
     orob2b_order.layout.provider.order_payment_status:
         class: 'OroB2B\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentStatusProvider'
-        public: true
         arguments:
             - '@orob2b_payment.provider.payment_status'
         tags:
             - { name: layout.data_provider, alias: orob2b_order_frontend_payment_status_provider }
+
+    orob2b_order.layout.provider.order_payment_method:
+        class: 'OroB2B\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentMethodProvider'
+        arguments:
+            - '@orob2b_payment.provider.payment_transaction'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_order_frontend_payment_method_provider }

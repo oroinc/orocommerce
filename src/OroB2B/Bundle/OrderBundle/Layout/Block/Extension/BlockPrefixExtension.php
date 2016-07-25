@@ -2,21 +2,18 @@
 
 namespace OroB2B\Bundle\OrderBundle\Layout\Block\Extension;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Oro\Component\Layout\AbstractBlockTypeExtension;
 use Oro\Component\Layout\Block\Type\BaseType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
+use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
 
 class BlockPrefixExtension extends AbstractBlockTypeExtension
 {
     /** {@inheritdoc} */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver
-            ->setDefaults(['block_prefixes' => []])
-            ->setAllowedTypes(['block_prefixes' => 'array']);
+        $resolver->setDefaults(['block_prefixes' => []]);
     }
 
     /** {@inheritdoc} */

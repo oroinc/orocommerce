@@ -31,15 +31,20 @@ class PaymentMethodViewRegistry
     }
 
     /**
+     * @param array $context
      * @return PaymentMethodViewInterface[]
      */
-    public function getPaymentMethodViews()
+    public function getPaymentMethodViews(array $context = [])
     {
         $paymentMethodViews = [];
 
         foreach ($this->paymentMethodViews as $paymentMethodView) {
             $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentMethodView->getPaymentMethodType());
             if (!$paymentMethod->isEnabled()) {
+                continue;
+            }
+
+            if (!$paymentMethod->isApplicable($context)) {
                 continue;
             }
 
@@ -55,5 +60,20 @@ class PaymentMethodViewRegistry
         }
 
         return $orderedPaymentMethodViews;
+    }
+
+    /**
+     * @param string $paymentMethod
+     * @return PaymentMethodViewInterface
+     */
+    public function getPaymentMethodView($paymentMethod)
+    {
+        if (!isset($this->paymentMethodViews[$paymentMethod])) {
+            throw new \InvalidArgumentException(
+                sprintf('There is no payment method view for "%s"', $paymentMethod)
+            );
+        }
+
+        return $this->paymentMethodViews[$paymentMethod];
     }
 }

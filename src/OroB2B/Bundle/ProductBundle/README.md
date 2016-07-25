@@ -8,6 +8,9 @@ Table of Contents
  - [Expected dependencies](#expected-dependencies)
  - Formatting
     - [Product Unit Value Formatting](./Resources/doc/product-unit-value-formatting.md)
+ - Product creation
+    - [Two Step Product Creation](./Resources/doc/two-step-product-creation.md)
+    - [Default Product Unit](./Resources/doc/default-product-unit.md)
 
 Description:
 ------------

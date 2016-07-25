@@ -88,9 +88,6 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
         $shoppingList->setAccount($accountUser->getAccount());
         $shoppingList->setNotes('Some notes for ' . $label);
         $shoppingList->setCurrent($current);
-        $shoppingList->setCurrency('USD');
-        $shoppingList->setSubtotal(0.0);
-        $shoppingList->setTotal(0.0);
         $shoppingList->setLabel($label);
         $shoppingList->setWebsite($website);
 

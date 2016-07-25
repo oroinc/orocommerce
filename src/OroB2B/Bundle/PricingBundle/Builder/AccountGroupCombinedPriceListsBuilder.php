@@ -68,7 +68,10 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
             $repo = $this->getCombinedPriceListToEntityRepository();
             $repo->delete($accountGroup, $website);
 
-            return;
+            if ($this->hasFallbackOnNextLevel($website, $accountGroup)) {
+                //is this case price list would be fetched from next level, and there is no need to store the own
+                return;
+            }
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByAccountGroup($accountGroup, $website);
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
@@ -84,7 +87,7 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
     {
         $accountGroupId = 0;
         if ($accountGroup) {
-            $accountGroupId  = $accountGroup->getId();
+            $accountGroupId = $accountGroup->getId();
         }
         return !empty($this->builtList[$website->getId()][$accountGroupId]);
     }
@@ -97,9 +100,27 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
     {
         $accountGroupId = 0;
         if ($accountGroup) {
-            $accountGroupId  = $accountGroup->getId();
+            $accountGroupId = $accountGroup->getId();
         }
 
         $this->builtList[$website->getId()][$accountGroupId] = true;
+    }
+
+    /**
+     * @param Website $website
+     * @param AccountGroup $accountGroup
+     * @return bool
+     */
+    public function hasFallbackOnNextLevel(Website $website, AccountGroup $accountGroup)
+    {
+        $fallback = $this->getFallbackRepository()->findOneBy(
+            [
+                'accountGroup' => $accountGroup,
+                'website' => $website,
+                'fallback' => PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY
+            ]
+        );
+
+        return $fallback === null;
     }
 }

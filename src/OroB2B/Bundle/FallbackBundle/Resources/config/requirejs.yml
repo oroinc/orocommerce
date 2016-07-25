@@ -1,3 +1,0 @@
-config:
-    paths:
-        'orob2bfallback/js/app/views/fallback-view': 'bundles/orob2bfallback/js/app/views/fallback-view.js'

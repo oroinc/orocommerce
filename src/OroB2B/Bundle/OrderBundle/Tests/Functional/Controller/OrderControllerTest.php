@@ -1,5 +1,4 @@
 <?php
-
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
@@ -18,6 +17,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 
 /**
  * @dbIsolation
+ * @group CommunityEdition
  */
 class OrderControllerTest extends WebTestCase
 {
@@ -53,6 +53,54 @@ class OrderControllerTest extends WebTestCase
         'city',
         'postalCode'
     ];
+
+    /**
+     * @param Form $form
+     * @param Account $orderAccount
+     * @param $lineItems
+     * @param $discountItems
+     * @return array
+     */
+    public function getSubmittedData($form, $orderAccount, $lineItems, $discountItems)
+    {
+        $submittedData = [
+            'input_action' => 'save_and_stay',
+            'orob2b_order_type' => [
+                '_token' => $form['orob2b_order_type[_token]']->getValue(),
+                'owner' => $this->getCurrentUser()->getId(),
+                'account' => $orderAccount->getId(),
+                'poNumber' => self::ORDER_PO_NUMBER,
+                'lineItems' => $lineItems,
+                'discounts' => $discountItems,
+            ]
+        ];
+
+        return $submittedData;
+    }
+
+    /**
+     * @param Form $form
+     * @param Account $orderAccount
+     * @param array $lineItems
+     * @param array $discountItems
+     * @return array
+     */
+    public function getUpdatedData($form, $orderAccount, $lineItems, $discountItems)
+    {
+        $submittedData = [
+            'input_action' => 'save_and_stay',
+            'orob2b_order_type' => [
+                '_token' => $form['orob2b_order_type[_token]']->getValue(),
+                'owner' => $this->getCurrentUser()->getId(),
+                'account' => $orderAccount->getId(),
+                'poNumber' => self::ORDER_PO_NUMBER_UPDATED,
+                'lineItems' => $lineItems,
+                'discounts' => $discountItems,
+            ]
+        ];
+
+        return $submittedData;
+    }
 
     protected function setUp()
     {
@@ -93,7 +141,7 @@ class OrderControllerTest extends WebTestCase
 
         /** @var Account $orderAccount */
         $orderAccount = $this->getReference('account.level_1');
-        $website = $this->client->getContainer()->get('orob2b_website.manager')->getCurrentWebsite();
+        
         /** @var Product $product */
         $product = $this->getReference('product.1');
 
@@ -112,18 +160,7 @@ class OrderControllerTest extends WebTestCase
             ],
         ];
         $discountItems = $this->getDiscountItems();
-        $submittedData = [
-            'input_action' => 'save_and_stay',
-            'orob2b_order_type' => [
-                '_token' => $form['orob2b_order_type[_token]']->getValue(),
-                'owner' => $this->getCurrentUser()->getId(),
-                'account' => $orderAccount->getId(),
-                'poNumber' => self::ORDER_PO_NUMBER,
-                'website' => $website->getId(),
-                'lineItems' => $lineItems,
-                'discounts' => $discountItems,
-            ]
-        ];
+        $submittedData = $this->getSubmittedData($form, $orderAccount, $lineItems, $discountItems);
 
         $this->client->followRedirects(true);
 
@@ -140,12 +177,17 @@ class OrderControllerTest extends WebTestCase
         $this->assertNotEquals('N/A', $crawler->filter('.user-name')->text());
 
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
+
+        usort($actualLineItems, function ($a, $b) {
+            return $a['product'] - $b['product'];
+        });
+
         $expectedLineItems = [
             [
                 'product' => $product->getId(),
                 'freeFormProduct' => '',
                 'quantity' => 10,
-                'productUnit' => 'orob2b.product_unit.liter.label.full',
+                'productUnit' => 'liter',
                 'price' => [
                     'value' => 100,
                     'currency' => 'USD'
@@ -154,6 +196,7 @@ class OrderControllerTest extends WebTestCase
                 'shipBy' => $date
             ]
         ];
+
         $this->assertEquals($expectedLineItems, $actualLineItems);
 
         $actualDiscountItems = $this->getActualDiscountItems($crawler, count($discountItems));
@@ -188,7 +231,6 @@ class OrderControllerTest extends WebTestCase
 
         /** @var Account $orderAccount */
         $orderAccount = $this->getReference('account.level_1');
-        $website = $this->client->getContainer()->get('orob2b_website.manager')->getCurrentWebsite();
 
         $date = (new \DateTime('now'))->format('Y-m-d');
         $lineItems = $this->getLineItemsToUpdate($date);
@@ -210,18 +252,7 @@ class OrderControllerTest extends WebTestCase
             ]
         ];
 
-        $submittedData = [
-            'input_action' => 'save_and_stay',
-            'orob2b_order_type' => [
-                '_token' => $form['orob2b_order_type[_token]']->getValue(),
-                'owner' => $this->getCurrentUser()->getId(),
-                'account' => $orderAccount->getId(),
-                'poNumber' => self::ORDER_PO_NUMBER_UPDATED,
-                'lineItems' => $lineItems,
-                'discounts' => $discountItems,
-                'website' => $website->getId()
-            ]
-        ];
+        $submittedData = $this->getUpdatedData($form, $orderAccount, $lineItems, $discountItems);
 
         $this->client->followRedirects(true);
 
@@ -234,6 +265,11 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
 
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
+
+        usort($actualLineItems, function ($a, $b) {
+            return $a['product'] - $b['product'];
+        });
+
         $expectedLineItems = $this->getExpectedLineItemsAfterUpdate($date);
         $this->assertEquals($expectedLineItems, $actualLineItems);
 
@@ -607,7 +643,7 @@ class OrderControllerTest extends WebTestCase
                 'product' => '',
                 'freeFormProduct' => 'Free form product',
                 'quantity' => 20,
-                'productUnit' => 'orob2b.product_unit.liter.label.full',
+                'productUnit' => 'liter',
                 'price' => [
                     'value' => 200,
                     'currency' => 'USD'
@@ -619,7 +655,7 @@ class OrderControllerTest extends WebTestCase
                 'product' => $product->getId(),
                 'freeFormProduct' => '',
                 'quantity' => 1,
-                'productUnit' => 'orob2b.product_unit.bottle.label.full',
+                'productUnit' => 'bottle',
                 'price' => [
                     'value' => 10,
                     'currency' => 'USD'

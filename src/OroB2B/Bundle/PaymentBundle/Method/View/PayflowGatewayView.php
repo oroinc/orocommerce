@@ -45,13 +45,18 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     {
         $isZeroAmountAuthorizationEnabled = $this->isZeroAmountAuthorizationEnabled();
 
-        $formOptions = ['zeroAmountAuthorizationEnabled' => $isZeroAmountAuthorizationEnabled];
+        $formOptions = [
+            'zeroAmountAuthorizationEnabled' => $isZeroAmountAuthorizationEnabled,
+            'requireCvvEntryEnabled'         => $this->isRequireCvvEntryEnabled(),
+        ];
 
         $formView = $this->formFactory->create(CreditCardType::NAME, null, $formOptions)->createView();
 
         $viewOptions = [
             'formView' => $formView,
-            'allowedCreditCards' => $this->getAllowedCreditCards(),
+            'creditCardComponentOptions' => [
+                'allowedCreditCards' => $this->getAllowedCreditCards(),
+            ],
         ];
 
         if (!$isZeroAmountAuthorizationEnabled) {
@@ -70,10 +75,10 @@ class PayflowGatewayView implements PaymentMethodViewInterface
         $viewOptions['creditCardComponent'] =
             'orob2bpayment/js/app/components/authorized-credit-card-component';
 
-        $viewOptions['creditCardComponentOptions'] = [
+        $viewOptions['creditCardComponentOptions'] = array_merge($viewOptions['creditCardComponentOptions'], [
             'acct' => $this->getLast4($validateTransaction),
-            'saveForLaterUse' => !empty($transactionOptions['saveForLaterUse'])
-        ];
+            'saveForLaterUse' => !empty($transactionOptions['saveForLaterUse']),
+        ]);
 
         return $viewOptions;
     }
@@ -115,6 +120,12 @@ class PayflowGatewayView implements PaymentMethodViewInterface
         return (string)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_LABEL_KEY);
     }
 
+    /** {@inheritdoc} */
+    public function getShortLabel()
+    {
+        return (string)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_SHORT_LABEL_KEY);
+    }
+
     /**
      * @return array
      */
@@ -129,5 +140,13 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     protected function isZeroAmountAuthorizationEnabled()
     {
         return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isRequireCvvEntryEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_REQUIRE_CVV_KEY);
     }
 }

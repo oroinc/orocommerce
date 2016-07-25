@@ -9,7 +9,7 @@ define(function(require) {
 
     ProductAutocompleteComponent = AutocompleteComponent.extend({
         /**
-         * @inheritDoc
+         * {@inheritDoc}
          */
         initialize: function(options) {
             var thisOptions = {

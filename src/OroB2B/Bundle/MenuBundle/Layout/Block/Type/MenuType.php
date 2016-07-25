@@ -5,11 +5,10 @@ namespace OroB2B\Bundle\MenuBundle\Layout\Block\Type;
 use Knp\Menu\Matcher\MatcherInterface;
 use Knp\Menu\Provider\MenuProviderInterface;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\Block\Type\AbstractType;
+use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
 
 class MenuType extends AbstractType
 {
@@ -38,7 +37,7 @@ class MenuType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [

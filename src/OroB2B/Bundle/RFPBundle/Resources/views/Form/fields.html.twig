@@ -251,6 +251,7 @@
         <div class="row-oro">
         {% set prototype_name = form.vars.prototype_name %}
         <div {{ block('widget_container_attributes') }}>
+            <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element>
             <table class="table-hover table table-bordered rfp-lineitem-requested">
                 <thead>
                     <tr>
@@ -289,6 +290,7 @@
     <div class="row-oro">
         {% set prototype_name = form.vars.prototype_name %}
         <div {{ block('widget_container_attributes') }}>
+            <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element>
             <table class="table-hover table table-bordered rfp-lineitem-requested">
                 <thead>
                 <tr>

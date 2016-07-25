@@ -24,7 +24,7 @@ define(function(require) {
         $form: null,
 
         /**
-         * @inheritDoc
+         * {@inheritDoc}
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -52,7 +52,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * {@inheritDoc}
          */
         dispose: function() {
             if (this.disposed) {

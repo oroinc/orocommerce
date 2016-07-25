@@ -12,7 +12,7 @@ layout:
                     options:
                         form: { '@value': $data.orob2b_product_line_item_form }
                 line_item_form_fields:
-                    blockType: form
+                    blockType: form_fields
                     options:
                         preferred_fields: [quantity]
                         form: { '@value': $data.orob2b_product_line_item_form }

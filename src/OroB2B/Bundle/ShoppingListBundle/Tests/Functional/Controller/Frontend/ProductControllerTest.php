@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -33,7 +33,7 @@ class ProductControllerTest extends WebTestCase
     public function testProductAddToShoppingListForm()
     {
         /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $product = $this->getReference(LoadProductData::PRODUCT_2);
 
         $crawler = $this->client->request(
             'GET',

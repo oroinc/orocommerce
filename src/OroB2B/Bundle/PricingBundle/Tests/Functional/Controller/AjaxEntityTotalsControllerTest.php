@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -45,11 +44,11 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $data = json_decode($result->getContent(), true);
 
         $this->assertArrayHasKey('total', $data);
-        $this->assertEquals(282.43, $data['total']['amount']);
-        $this->assertEquals('EUR', $data['total']['currency']);
+        $this->assertEquals(303.265, $data['total']['amount']);
+        $this->assertEquals('USD', $data['total']['currency']);
 
         $this->assertArrayHasKey('subtotals', $data);
-        $this->assertEquals(282.43, $data['total']['amount']);
-        $this->assertEquals('EUR', $data['total']['currency']);
+        $this->assertEquals(303.265, $data['subtotals'][0]['amount']);
+        $this->assertEquals('USD', $data['subtotals'][0]['currency']);
     }
 }

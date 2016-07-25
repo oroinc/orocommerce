@@ -30,9 +30,16 @@ define(function(require) {
             this.initLayout({
                 productModel: this.model
             });
+
+            this.model.on('change:quantity', this.updateQuantity, this);
+        },
+
+        updateQuantity: function() {
+            $(this.elements.quantity, this.$elem).val(this.model.get('quantity'));
         },
 
         initModel: function(options) {
+            this.$elem = options.el;
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
             if (options.productModel) {
                 this.model = options.productModel;
@@ -51,6 +58,7 @@ define(function(require) {
         dispose: function() {
             delete this.modelAttr;
             this.disposeElements();
+            this.model.off('change:quantity', this.updateQuantity, this);
             BaseProductView.__super__.dispose.apply(this, arguments);
         }
     }));

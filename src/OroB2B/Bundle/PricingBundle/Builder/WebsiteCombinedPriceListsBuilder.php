@@ -66,7 +66,10 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
             $repo = $this->getCombinedPriceListToEntityRepository();
             $repo->delete($website);
 
-            return;
+            if ($this->hasFallbackOnNextLevel($website)) {
+                //is this case price list would be fetched from next level, and there is no need to store the own
+                return;
+            }
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByWebsite($website);
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
@@ -93,9 +96,22 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
     {
         $websiteId = 0;
         if ($website) {
-            $websiteId  = $website->getId();
+            $websiteId = $website->getId();
         }
 
         $this->builtList[$websiteId] = true;
+    }
+
+    /**
+     * @param Website $website
+     * @return bool
+     */
+    public function hasFallbackOnNextLevel(Website $website)
+    {
+        $fallback = $this->getFallbackRepository()->findOneBy(
+            ['website' => $website, 'fallback' => PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY]
+        );
+
+        return $fallback === null;
     }
 }

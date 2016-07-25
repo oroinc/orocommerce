@@ -53,7 +53,7 @@
                 </div>
             {% endif %}
             <ul class="{{ class_prefix }}__form__payment-methods__list">
-                {% for cc_name in options.allowedCreditCards %}
+                {% for cc_name in options.creditCardComponentOptions.allowedCreditCards %}
                     <li><i class="credit-card-icon credit-card-icon_{{ cc_name }}"></i></li>
                 {% endfor %}
             </ul>

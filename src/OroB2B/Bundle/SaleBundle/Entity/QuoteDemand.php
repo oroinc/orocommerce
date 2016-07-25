@@ -10,9 +10,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
@@ -22,12 +22,24 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-list-alt"
+ *              "icon"="icon-list-alt",
+ *              "totals_mapping"={
+ *                  "type"="entity_fields",
+ *                  "fields"={
+ *                       "currency"="totalCurrency",
+ *                       "subtotal"="subtotal",
+ *                       "total"="total"
+ *                  }
+ *              }
  *          }
  *      }
  * )
  */
-class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterface, ShippingAwareInterface
+class QuoteDemand implements
+    CheckoutSourceEntityInterface,
+    LineItemsAwareInterface,
+    ShippingAwareInterface,
+    SubtotalAwareInterface
 {
     /**
      * @var int
@@ -57,13 +69,6 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
      * @var float
      *
      * @ORM\Column(name="subtotal", type="money", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "is_subtotal"=true
-     *          }
-     *      }
-     * )
      */
     protected $subtotal;
 
@@ -71,13 +76,6 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
      * @var float
      *
      * @ORM\Column(name="total", type="money", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "is_total"=true
-     *          }
-     *      }
-     * )
      */
     protected $total;
 
@@ -85,13 +83,6 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
      * @var string
      *
      * @ORM\Column(name="total_currency", type="string", length=3, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "is_total_currency"=true
-     *          }
-     *      }
-     * )
      */
     protected $totalCurrency;
 
@@ -255,9 +246,7 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
     }
 
     /**
-     * Get subtotal
-     *
-     * @return float
+     * {@inheritdoc}
      */
     public function getSubtotal()
     {

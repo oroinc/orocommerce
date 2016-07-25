@@ -10,7 +10,9 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class ProductUnitSelectionTypeStub extends StubEntityType
 {
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(array $choices = [], $name = ProductUnitSelectionType::NAME)
     {
         parent::__construct($choices, $name);
@@ -28,6 +30,7 @@ class ProductUnitSelectionTypeStub extends StubEntityType
                 'product' => null,
                 'product_holder' => null,
                 'product_field' => 'product',
+                'sell' => null,
             ]
         );
     }

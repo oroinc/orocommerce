@@ -8,13 +8,14 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
-use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
-use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
+use Oro\Bundle\LocaleBundle\Form\Type\FallbackValueType;
+use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
+use Oro\Bundle\LocaleBundle\Model\FallbackType;
+
 use OroB2B\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsitePropertyTypeTest extends FormIntegrationTestCase
 {

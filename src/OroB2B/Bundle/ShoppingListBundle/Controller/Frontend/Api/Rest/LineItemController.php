@@ -44,7 +44,20 @@ class LineItemController extends RestController implements ClassResourceInterfac
      */
     public function deleteAction($id)
     {
-        return $this->handleDeleteRequest($id);
+        $success = false;
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getDoctrine()
+            ->getManagerForClass('OroB2BShoppingListBundle:LineItem')
+            ->getRepository('OroB2BShoppingListBundle:LineItem')
+            ->find($id);
+
+        $view = $this->view(null, Codes::HTTP_NO_CONTENT);
+        if ($lineItem) {
+            $this->get('orob2b_shopping_list.shopping_list.manager')->removeLineItem($lineItem);
+            $success = true;
+        }
+
+        return $this->buildResponse($view, self::ACTION_DELETE, ['id' => $lineItem->getId(), 'success' => $success]);
     }
 
     /**
@@ -71,8 +84,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
                 $form,
                 $request,
                 $this->getDoctrine(),
-                $this->get('orob2b_shopping_list.shopping_list.manager'),
-                $this->get('orob2b_product.service.quantity_rounding')
+                $this->get('orob2b_shopping_list.shopping_list.manager')
             );
             $isFormHandled = $handler->process($entity);
             if ($isFormHandled) {

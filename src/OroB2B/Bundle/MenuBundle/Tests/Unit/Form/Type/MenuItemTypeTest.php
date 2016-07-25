@@ -8,13 +8,13 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
 
 use OroB2B\Bundle\MenuBundle\Tests\Unit\Form\Extension\Stub\TooltipFormExtensionStub;
 use OroB2B\Bundle\MenuBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
-use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItemStub;
 use OroB2B\Bundle\MenuBundle\Form\Type\MenuItemType;
 

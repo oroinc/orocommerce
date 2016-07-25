@@ -14,6 +14,7 @@ define(function(require) {
          */
         options: {
             paymentMethod: null,
+            allowedCreditCards: [],
             selectors: {
                 month: '[data-expiration-date-month]',
                 year: '[data-expiration-date-year]',
@@ -63,9 +64,10 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.extend({}, this.options, options);
 
-            $.validator.loadMethod('orob2bpayment/js/validator/creditCardNumberLuhnCheck');
-            $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDate');
-            $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDateNotBlank');
+            $.validator.loadMethod('orob2bpayment/js/validator/credit-card-number');
+            $.validator.loadMethod('orob2bpayment/js/validator/credit-card-type');
+            $.validator.loadMethod('orob2bpayment/js/validator/credit-card-expiration-date');
+            $.validator.loadMethod('orob2bpayment/js/validator/credit-card-expiration-date-not-blank');
 
             this.$el = this.options._sourceElement;
 
@@ -123,8 +125,6 @@ define(function(require) {
                 var data = this.$el.find('[data-gateway]').serializeArray();
                 data.push({name: 'SECURETOKENID', value: resolvedEventData.SECURETOKENID});
                 data.push({name: 'SECURETOKEN', value: resolvedEventData.SECURETOKEN});
-                data.push({name: 'RETURNURL', value: resolvedEventData.returnUrl});
-                data.push({name: 'ERRORURL', value: resolvedEventData.errorUrl});
 
                 if (resolvedEventData.formAction && resolvedEventData.SECURETOKEN) {
                     this.postUrl(resolvedEventData.formAction, data);
@@ -161,7 +161,7 @@ define(function(require) {
             this.month = e.target.value;
 
             this.setExpirationDate();
-            this.validate(this.options.selectors.expirationDate);
+            this.validateIfMonthAndYearNotBlank();
         },
 
         /**
@@ -170,7 +170,13 @@ define(function(require) {
         collectYearDate: function(e) {
             this.year = e.target.value;
             this.setExpirationDate();
-            this.validate(this.options.selectors.expirationDate);
+            this.validateIfMonthAndYearNotBlank();
+        },
+
+        validateIfMonthAndYearNotBlank: function () {
+            if (this.year && this.month) {
+                this.validate(this.options.selectors.expirationDate);
+            }
         },
 
         setExpirationDate: function() {
@@ -229,6 +235,23 @@ define(function(require) {
                     }
                 });
 
+            // Add validator to form
+            $.data(virtualForm, 'validator', validator);
+
+            // Emulate that elements are nested into the form
+            $.each(this.options.selectors, function (index, selector) {
+                virtualForm.find(selector).prop('form', virtualForm);
+            });
+
+            // Add CC type validation rule
+            var cardNumberField = clonedForm.find(this.options.selectors.cardNumber);
+            var cardNumberValidation = cardNumberField.data('validation');
+            var creditCardTypeValidator = cardNumberField.data('credit-card-type-validator');
+
+            _.extend(cardNumberValidation[creditCardTypeValidator],
+                {allowedCreditCards: this.options.allowedCreditCards}
+            );
+
             var errors;
 
             if (elementSelector) {
@@ -240,17 +263,12 @@ define(function(require) {
             errors.find(validator.settings.errorElement + '.' + validator.settings.errorClass).remove();
             errors.parent().find('.error').removeClass('error');
 
-            var staticRules = $.validator.staticRules;
-            $.validator.staticRules = function() { return {}; };
-
             var isValid;
             if (elementSelector) {
                 isValid = validator.element(virtualForm.find(elementSelector));
             } else {
                 isValid = validator.form();
             }
-
-            $.validator.staticRules = staticRules;
 
             return isValid;
         },

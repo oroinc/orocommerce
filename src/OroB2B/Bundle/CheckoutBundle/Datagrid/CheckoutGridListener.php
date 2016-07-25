@@ -4,27 +4,28 @@ namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
 
 use Doctrine\Common\Cache\Cache;
 
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\EntityBundle\Exception\IncorrectEntityException;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+
+use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
  * Add total and subtotal fields to grid where root entity is checkout
- * Total field consider to be first non empty field among source entities and marked as is_total in field config
- * Subtotal field consider to be first non empty field among source entities and marked as is_subtotal in field config
  */
 class CheckoutGridListener
 {
-    /**
-     * @var ConfigProvider
-     */
-    protected $configProvider;
-
-    /**
-     * @var EntityFieldProvider
-     */
-    protected $fieldProvider;
+    const USER_CURRENCY_PARAMETER = 'user_currency';
 
     /**
      * @var Cache
@@ -32,40 +33,68 @@ class CheckoutGridListener
     protected $cache;
 
     /**
-     * @param ConfigProvider $configProvider
-     * @param EntityFieldProvider $fieldProvider
+     * @var UserCurrencyManager
      */
-    public function __construct(
-        ConfigProvider $configProvider,
-        EntityFieldProvider $fieldProvider
-    ) {
-        $this->configProvider = $configProvider;
-        $this->fieldProvider = $fieldProvider;
-    }
+    protected $currencyManager;
 
     /**
-     * @param Cache $cache
+     * @var BaseCheckoutRepository
      */
-    public function setCache(Cache $cache)
-    {
-        $this->cache = $cache;
-    }
+    protected $baseCheckoutRepository;
     
+    /**
+     * @var TotalProcessorProvider
+     */
+    protected $totalProcessor;
+
+    /**
+     * @var CheckoutGridHelper
+     */
+    protected $checkoutGridHelper;
+
+    /**
+     * @var EntityNameResolver
+     */
+    private $entityNameResolver;
+
+    /**
+     * @param UserCurrencyManager    $currencyManager
+     * @param BaseCheckoutRepository $baseCheckoutRepository
+     * @param TotalProcessorProvider $totalProcessor
+     * @param EntityNameResolver     $entityNameResolver
+     * @param Cache                  $cache
+     * @param CheckoutGridHelper     $checkoutGridHelper
+     * @internal param Getter $getter
+     */
+    public function __construct(
+        UserCurrencyManager $currencyManager,
+        BaseCheckoutRepository $baseCheckoutRepository,
+        TotalProcessorProvider $totalProcessor,
+        EntityNameResolver $entityNameResolver,
+        Cache $cache,
+        CheckoutGridHelper $checkoutGridHelper
+    ) {
+        $this->currencyManager        = $currencyManager;
+        $this->baseCheckoutRepository = $baseCheckoutRepository;
+        $this->totalProcessor         = $totalProcessor;
+        $this->entityNameResolver     = $entityNameResolver;
+        $this->cache                  = $cache;
+        $this->checkoutGridHelper     = $checkoutGridHelper;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
+        $key    = $config->getName();
 
-        if ($this->cache && $this->cache->contains($config->getName())) {
-            $updates = $this->cache->fetch($config->getName());
+        if ($this->cache->contains($key)) {
+            $updates = $this->cache->fetch($key);
         } else {
-            $updates = $this->getGridUpdates($config);
-
-            if ($this->cache) {
-                $this->cache->save($config->getName(), $updates);
-            }
+            $updates = $this->checkoutGridHelper->getUpdates($config);
+            $this->cache->save($key, $updates);
         }
 
         if ($updates) {
@@ -74,137 +103,117 @@ class CheckoutGridListener
             $config->offsetAddToArrayByPath('[filters][columns]', $updates['filters']);
             $config->offsetAddToArrayByPath('[sorters][columns]', $updates['sorters']);
             $config->offsetAddToArrayByPath('[source][query][join][left]', $updates['joins']);
+            $config->offsetAddToArrayByPath('[source][bind_parameters]', $updates['bindParameters']);
+
+            if (in_array(self::USER_CURRENCY_PARAMETER, $updates['bindParameters'], true)) {
+                $event->getDatagrid()
+                      ->getParameters()
+                      ->set(self::USER_CURRENCY_PARAMETER, $this->currencyManager->getUserCurrency());
+            }
         }
     }
 
     /**
-     * @param DatagridConfiguration $config
-     * @return array
+     * @param OrmResultAfter $event
      */
-    protected function getGridUpdates(DatagridConfiguration $config)
+    public function onResultAfter(OrmResultAfter $event)
     {
-        $totalMetadata = $this->getSourceTotalsMetadata();
+        /** @var ResultRecord[] $records */
+        $records = $event->getRecords();
 
-        $updates = [];
-        if ($totalMetadata) {
-            $from = $config->offsetGetByPath('[source][query][from]');
-            $firstFrom = current($from);
-            $updates['joins'][] = ['join' => $firstFrom['alias'] . '.source', 'alias' => '_source'];
-
-            $totalFields = [];
-            $subtotalFields = [];
-            $currencyFields = [];
-            foreach ($totalMetadata as $field => $metadata) {
-                $totalHolderAlias = '_' . $field;
-                $updates['joins'][] = ['join' => '_source.' . $field, 'alias' => $totalHolderAlias];
-
-                if (!empty($metadata['total'])) {
-                    $totalFields[] = $totalHolderAlias . '.' . $metadata['total'];
-                }
-                if (!empty($metadata['subtotal'])) {
-                    $subtotalFields[] = $totalHolderAlias . '.' . $metadata['subtotal'];
-                }
-                if (!empty($metadata['currency'])) {
-                    $currencyFields[] = $totalHolderAlias . '.' . $metadata['currency'];
-                }
-            }
-
-            if ($totalFields) {
-                $updates['selects'][] = sprintf('COALESCE(%s) as total', implode(',', $totalFields));
-                $updates['columns']['total'] = [
-                    'label' => 'orob2b.checkout.grid.total.label',
-                    'type' => 'twig',
-                    'frontend_type' => 'html',
-                    'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
-                ];
-
-                $updates['filters']['total'] = [
-                    'type' => 'number',
-                    'data_name' => 'total'
-                ];
-                $updates['sorters']['total'] = ['data_name' => 'total'];
-            }
-            if ($subtotalFields) {
-                $updates['selects'][] = sprintf('COALESCE(%s) as subtotal', implode(',', $subtotalFields));
-                $updates['columns']['subtotal'] = [
-                    'label' => 'orob2b.checkout.grid.subtotal.label',
-                    'type' => 'twig',
-                    'frontend_type' => 'html',
-                    'template' => 'OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig',
-                ];
-                $updates['filters']['subtotal'] = [
-                    'type' => 'number',
-                    'data_name' => 'subtotal'
-                ];
-
-                $updates['sorters']['subtotal'] = ['data_name' => 'subtotal'];
-            }
-            if ($currencyFields) {
-                $updates['selects'][] = sprintf('COALESCE(%s) as currency', implode(',', $currencyFields));
-            }
-        }
-
-        return $updates;
+        $this->buildItemsCountColumn($records);
+        $this->buildStartedFromColumn($records);
+        $this->buildTotalColumn($records);
     }
 
     /**
-     * @return array
+     * @param ResultRecord[] $records
      */
-    protected function getSourceTotalsMetadata()
+    protected function buildItemsCountColumn($records)
     {
-        $metadata = [];
-        $relationsMetadata = $this->fieldProvider->getRelations(
-            'OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource',
-            false,
-            false,
-            false
-        );
+        $ids = [];
 
-        if (!$relationsMetadata) {
-            return $metadata;
+        foreach ($records as $record) {
+            $ids[] = $record->getValue('id');
         }
 
-        foreach ($relationsMetadata as $relationMetadata) {
-            if (!empty($relationMetadata['related_entity_name'])) {
-                $relatedEntityName = $relationMetadata['related_entity_name'];
-                $relationField = $relationMetadata['name'];
+        $counts = $this->baseCheckoutRepository->countItemsPerCheckout($ids);
 
-                if ($totalsMetadata = $this->getTotalsMetadata($relatedEntityName)) {
-                    $metadata[$relationField] = $totalsMetadata;
-                }
+        foreach ($records as $record) {
+            if (isset($counts[$record->getValue('id')])) {
+                $record->addData(['itemsCount' => $counts[$record->getValue('id')]]);
             }
         }
-
-        return $metadata;
     }
 
     /**
-     * @param string $entityName
-     * @return array
+     * @param ResultRecord[] $records
      */
-    protected function getTotalsMetadata($entityName)
+    protected function buildStartedFromColumn($records)
     {
-        $metadata = [];
-        $fields = $this->fieldProvider->getFields($entityName);
-        if (!$fields) {
-            return $metadata;
-        }
-        foreach ($fields as $field) {
-            $fieldName = $field['name'];
-            if ($this->configProvider->hasConfig($entityName, $fieldName)) {
-                $fieldConfig = $this->configProvider->getConfig($entityName, $fieldName);
-                if ($fieldConfig->get('is_total')) {
-                    $metadata['total'] = $fieldName;
-                }
-                if ($fieldConfig->get('is_subtotal')) {
-                    $metadata['subtotal'] = $fieldName;
-                }
-                if ($fieldConfig->get('is_total_currency')) {
-                    $metadata['currency'] = $fieldName;
-                }
-            }
+        $ids = [];
+
+        foreach ($records as $record) {
+            $ids[] = $record->getValue('id');
         }
 
-        return $metadata;
+        $sources = $this->baseCheckoutRepository->getSourcePerCheckout($ids);
+
+        foreach ($records as $record) {
+            $id = $record->getValue('id');
+            if (!isset($sources[$id])) {
+                continue;
+            }
+
+            $source = $sources[$id];
+
+            if ($source instanceof QuoteDemand) {
+                $source = $source->getQuote();
+            }
+
+            $type = null;
+            // simplify type checking in twig
+            if ($source instanceof ShoppingList) {
+                $type = 'shopping_list';
+            }
+            if ($source instanceof Quote) {
+                $type = 'quote';
+            }
+
+            $name = $this->entityNameResolver->getName($source);
+            $data = [
+                'entity' => $source,
+                'type'   => $type,
+                'label'  => $name,
+                'id'     => $source->getId()
+            ];
+
+            $record->addData(['startedFrom' => $data]);
+        }
+    }
+
+    /**
+     * @param ResultRecord[] $records
+     */
+    protected function buildTotalColumn($records)
+    {
+        $em = $this->baseCheckoutRepository;
+
+        // todo: Reduce db queries count
+        foreach ($records as $record) {
+            if (!$record->getValue('total')) {
+                $id = $record->getValue('id');
+                $ch = $em->find($id);
+
+                $sourceEntity = $ch->getSourceEntity();
+                $record->addData(
+                    [
+                        'total' => $this->totalProcessor
+                            ->getTotal($sourceEntity)
+                            ->getAmount()
+                    ]
+                );
+            }
+        }
     }
 }

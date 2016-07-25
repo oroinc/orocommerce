@@ -29,11 +29,16 @@ class CreditCardType extends AbstractType
                     'mapped' => false,
                     'attr' => [
                         'data-validation' => [
-                            'creditCardNumberLuhnCheck' => [
-                                'message' => 'orob2b.payment.account.error',
+                            'credit-card-number' => [
+                                'message' => 'orob2b.payment.validation.credit_card',
                                 'payload' => null,
                             ],
+                            'credit-card-type' => [
+                                'message' => 'orob2b.payment.validation.credit_card_type',
+                                'payload' => null,
+                            ]
                         ],
+                        'data-credit-card-type-validator' => 'credit-card-type',
                         'data-card-number' => true,
                         'autocomplete' => 'off',
                         'data-gateway' => true,
@@ -41,7 +46,7 @@ class CreditCardType extends AbstractType
                     'constraints' => [
                         new Integer(),
                         new NotBlank(),
-                        new Length(['min' => '12', 'max' => '19'])
+                        new Length(['min' => '12', 'max' => '19']),
                     ],
                 ]
             )
@@ -57,8 +62,8 @@ class CreditCardType extends AbstractType
                         'month' => 'Month',
                     ],
                     'attr' => [
-                        'data-expiration-date' => true
-                    ]
+                        'data-expiration-date' => true,
+                    ],
                 ]
             )
             ->add(
@@ -69,26 +74,30 @@ class CreditCardType extends AbstractType
                         'data-gateway' => true,
                     ],
                 ]
-            )
-            ->add(
-                'CVV2',
-                'password',
-                [
-                    'required' => true,
-                    'label' => 'orob2b.payment.credit_card.cvv2.label',
-                    'mapped' => false,
-                    'block_name' => 'payment_credit_card_cvv',
-                    'constraints' => [
-                        new Integer(['message' => 'orob2b.payment.number.error']),
-                        new NotBlank(),
-                        new Length(['min' => 3, 'max' => 4]),
-                    ],
-                    'attr' => [
-                        'data-card-cvv' => true,
-                        'data-gateway' => true,
-                    ]
-                ]
             );
+
+        if ($options['requireCvvEntryEnabled']) {
+            $builder
+                ->add(
+                    'CVV2',
+                    'password',
+                    [
+                        'required' => true,
+                        'label' => 'orob2b.payment.credit_card.cvv2.label',
+                        'mapped' => false,
+                        'block_name' => 'payment_credit_card_cvv',
+                        'constraints' => [
+                            new Integer(['message' => 'orob2b.payment.number.error']),
+                            new NotBlank(),
+                            new Length(['min' => 3, 'max' => 4]),
+                        ],
+                        'attr' => [
+                            'data-card-cvv' => true,
+                            'data-gateway' => true,
+                        ],
+                    ]
+                );
+        }
 
         if ($options['zeroAmountAuthorizationEnabled']) {
             $builder->add(
@@ -100,8 +109,8 @@ class CreditCardType extends AbstractType
                     'mapped' => false,
                     'data' => true,
                     'attr' => [
-                        'data-save-for-later' => true
-                    ]
+                        'data-save-for-later' => true,
+                    ],
                 ]
             );
         }
@@ -116,6 +125,7 @@ class CreditCardType extends AbstractType
             'label' => 'orob2b.payment.methods.credit_card.label',
             'csrf_protection' => false,
             'zeroAmountAuthorizationEnabled' => false,
+            'requireCvvEntryEnabled' => true,
         ]);
     }
 

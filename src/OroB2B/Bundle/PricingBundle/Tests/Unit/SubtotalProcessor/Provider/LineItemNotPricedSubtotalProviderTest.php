@@ -20,7 +20,7 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubt
 use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityNotPricedStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemNotPricedStub;
 
-class LineItemNotPricedSubtotalProviderTest extends \PHPUnit_Framework_TestCase
+class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
 {
     use EntityTrait;
 
@@ -56,6 +56,7 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        parent::setUp();
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
@@ -85,7 +86,8 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit_Framework_TestCase
             $this->roundingService,
             $this->productPriceProvider,
             $this->doctrineHelper,
-            $this->priceListTreeHandler
+            $this->priceListTreeHandler,
+            $this->currencyManager
         );
     }
 
@@ -98,6 +100,7 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit_Framework_TestCase
     {
         $value = 142.0;
         $currency = 'USD';
+        $identifier = '1-code-2-USD';
 
         $this->translator->expects($this->once())
             ->method('trans')
@@ -107,7 +110,7 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $product = $this->prepareProduct();
         $productUnit = $this->prepareProductUnit();
         $this->prepareEntityManager($product, $productUnit);
-        $this->preparePrice($value);
+        $this->preparePrice($value, $identifier);
 
         $entity = new EntityNotPricedStub();
         $lineItem = new LineItemNotPricedStub();
@@ -228,8 +231,9 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $value
+     * @param $identifier
      */
-    protected function preparePrice($value)
+    protected function preparePrice($value, $identifier)
     {
         /** @var Price $price */
         $price = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Entity\Price')
@@ -240,6 +244,6 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($value);
         $this->productPriceProvider->expects($this->any())
             ->method('getMatchedPrices')
-            ->willReturn([$price]);
+            ->willReturn([$identifier => $price]);
     }
 }

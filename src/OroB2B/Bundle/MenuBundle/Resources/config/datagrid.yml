@@ -19,7 +19,7 @@ datagrid:
                 where:
                     and:
                         - m.parent IS NULL
-                        - t.locale IS NULL
+                        - t.localization IS NULL
         columns:
             title:
                 label: orob2b.menu.menuitem.titles.label

@@ -1,0 +1,270 @@
+.top-nav {
+  position: relative;
+
+  max-height: 49px;
+  border-bottom: 1px solid $theme-lighter-gray-color;
+
+  @media (max-width: $screen-sm) {
+    display: none;
+  }
+
+  .container-fluid {
+    position: relative;
+  }
+
+  &__list {
+    @include list-normalize();
+
+    display: flex;
+
+    @include clearfix();
+
+    &--nested {
+      display: block;
+      font-size: 0;
+    }
+  }
+
+  &__item {
+    display: block;
+    min-height: 49px;
+    flex-grow: 1;
+
+    &[data-dropdown-trigger] {
+      &:hover {
+        .top-nav__sublist-container {
+          display: block;
+        }
+
+        .order-widget--dropdown-mode {
+          display: block;
+        }
+
+        .messages-widget__dropdown-mode {
+          display: block;
+        }
+      }
+    }
+
+    .messages-widget {
+      &__trigger {
+        margin-top: 9px;
+      }
+
+      &__title {
+        margin-left: 5px;
+
+        @media (max-width: 1069px) {
+          font-size: 13px;
+        }
+
+        @media (max-width: $screen-md) {
+          display: none;
+        }
+      }
+    }
+
+    .cart-widget__content {
+      @media (max-width: 820px) {
+        margin: 9px -5px 0 0;
+      }
+    }
+
+    &--ancestor {
+      .top-nav__link {
+        text-indent: 4px;
+      }
+
+      &:hover {
+        .top-nav__link {
+          background: $theme-lightest-gray-color;
+        }
+      }
+    }
+
+    &--nested {
+      position: relative;
+
+      display: inline-block;
+      vertical-align: middle;
+      min-height: 48px;
+      padding-left: 22px;
+      padding-right: 24px;
+
+      background: $theme-lightest-gray-color;
+      font-size: $base-font-size;
+
+      @media (max-width: 1069px) {
+        padding-left: 13px;
+        padding-right: 15px;
+      }
+
+      @media (max-width: $screen-md) {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      + .top-nav__item--nested {
+        border-left: 1px solid $base-white-color;
+      }
+
+      .order-widget--dropdown-mode {
+        top: 48px;
+
+        display: none;
+
+        .order-widget__item{
+          &:first-child {
+            border-top: 0;
+          }
+        }
+      }
+    }
+  }
+
+  &__link,
+  .top-nav__list__item__link { //todo: find usage in backend
+    display: block;
+    min-height: 49px;
+    padding: 14px 0;
+
+    color: $base-font-color-lighter;
+    line-height: 1.5;
+    text-transform: uppercase;
+    text-align: center;
+
+    @media (max-width: 1069px) {
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    > i {
+      margin: 0;
+    }
+
+    &:hover {
+      color: $base-font-color-lighter;
+      text-decoration: none;
+    }
+  }
+
+  // *** All code below has not implemented yet!!!
+  &__sublist-container {
+    position: absolute;
+    top: 48px;
+    left: 0;
+    z-index: 11;
+
+    display: none;
+    width: 1197px;
+    padding: 0 15px;
+    border-top: 1px solid transparent;
+  }
+
+  &__sublist {
+    @include list-normalize();
+
+    display: flex;
+    padding: 15px 40px 3px 0;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.2);
+
+    background: $base-white-color;
+
+    @media (max-width: 1024px) {
+      padding: 15px 30px 30px 0;
+    }
+
+    @include clearfix();
+
+    &__item {
+      position: relative;
+
+      flex-grow: 1;
+      margin: 10px 0 0;
+      padding: 0 0 0 40px;
+
+      @media (max-width: 1069px) {
+        padding: 0 0 0 25px;
+      }
+
+      &.top-nav__sublist__item_has-sales-block {
+        flex-grow: 0;
+
+        @media (max-width: $screen-md) {
+          order: 1;
+        }
+
+        .sales-block {
+          margin: 2rem 0 0;
+        }
+      }
+
+      &.top-nav__sublist__item_has-2columns {
+        flex-grow: 2;
+      }
+
+      &:last-child {
+        &:after {
+          display: none;
+        }
+      }
+
+      &:after {
+        @include after();
+
+        top: 40px;
+        right: 0;
+
+        height: calc(100% - 38px);
+        width: 1px;
+
+        background: $base-border-color;
+      }
+    }
+
+    &__title {
+      color: $theme-orange-color;
+      text-transform: uppercase;
+    }
+
+    &_nested {
+      @include list-normalize();
+      margin: 15px 0 0;
+
+      &.top-nav__sublist_nested_has-sibling {
+        float: left;
+        width: 50%;
+        margin: 5px 0 0;
+      }
+
+      &__item {
+        margin: 10px 0 0;
+
+        a {
+          color: $base-font-color;
+
+          &:hover {
+            color: $base-font-color;
+          }
+        }
+
+        ul {
+          @include list-normalize();
+          padding: 0 0 0 15px;
+
+          li {
+            margin: 10px 0 0;
+          }
+
+          a {
+            color: $base-font-color-lighter;
+
+            &:hover {
+              color: $base-font-color-lighter;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -21,6 +21,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     const QUOTE5    = 'sale.quote.5';
     const QUOTE6    = 'sale.quote.6';
     const QUOTE7    = 'sale.quote.7';
+    const QUOTE8    = 'sale.quote.8';
+    const QUOTE9    = 'sale.quote.9';
 
     const PRODUCT1  = 'product.1';
     const PRODUCT2  = 'product.2';
@@ -100,11 +102,13 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER2,
             'products'      => [],
+
         ],
         self::QUOTE5 => [
             'qid'           => self::QUOTE5,
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER3,
+            'validUntil'    => 'now',
             'products'      => [],
         ],
         self::QUOTE6 => [
@@ -118,7 +122,33 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'accountUser'   => LoadUserData::ACCOUNT2_USER1,
             'products'      => [],
         ],
+        self::QUOTE8 => [
+            'qid'           => self::QUOTE8,
+            'account'       => LoadUserData::ACCOUNT1,
+            'accountUser'   => LoadUserData::ACCOUNT1_USER3,
+            'expired'       => true,
+            'products'      => [],
+        ],
+        self::QUOTE9 => [
+            'qid'           => self::QUOTE9,
+            'account'       => LoadUserData::ACCOUNT1,
+            'accountUser'   => LoadUserData::ACCOUNT1_USER3,
+            'validUntil'    => null,
+            'products'      => [],
+        ],
     ];
+
+    /**
+     * @param string $quoteFieldName
+     * @param string $quoteFieldValue
+     * @return array
+     */
+    public static function getQuotesFor($quoteFieldName, $quoteFieldValue)
+    {
+        return array_filter(self::$items, function ($item) use ($quoteFieldName, $quoteFieldValue) {
+            return array_key_exists($quoteFieldName, $item) && $item[$quoteFieldName] == $quoteFieldValue;
+        });
+    }
 
     /**
      * {@inheritdoc}
@@ -151,7 +181,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                 ->setOrganization($user->getOrganization())
                 ->setShipUntil(new \DateTime('+10 day'))
                 ->setPoNumber($poNumber)
-            ;
+                ->setValidUntil($this->getValidUntil($item))
+                ->setExpired(array_key_exists('expired', $item) ? $item['expired'] : false);
 
             if (!empty($item['shippingEstimate'])) {
                 $quote->setShippingEstimate(Price::create($item['shippingEstimate'], 'USD'));
@@ -218,5 +249,16 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         $manager->persist($product);
 
         $quote->addQuoteProduct($product);
+    }
+
+    /**
+     * @param array $item
+     * @return \DateTime|null
+     */
+    protected function getValidUntil(array $item)
+    {
+        return array_key_exists('validUntil', $item)
+            ? ($item['validUntil'] ? new \DateTime($item['validUntil']) : null)
+            : new \DateTime('+10 day');
     }
 }

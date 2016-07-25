@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -128,18 +128,6 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertShoppingListItemSaved($currentShoppingList, $product->getSku(), 15);
         $this->assertQuickAddFormSubmitted($crawler, $products, $currentShoppingList->getId());//add to specific
         $this->assertShoppingListItemSaved($currentShoppingList, $product->getSku(), 30);
-    }
-
-    public function testWidget()
-    {
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_shopping_list_frontend_widget')
-        );
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-
-        $this->assertContains('"alias":"shopping_lists_frontend_widget"', $crawler->html());
-        $this->assertContains('"elementFirst":false', $crawler->html());
     }
 
     /**

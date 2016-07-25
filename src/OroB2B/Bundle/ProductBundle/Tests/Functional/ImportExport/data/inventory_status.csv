@@ -1,4 +1,4 @@
-sku,status,unitPrecisions.1.unit.code,unitPrecisions.1.precision,inventory_status.id
+sku,status,primaryUnitPrecision:unit:code,primaryUnitPrecision:precision,inventory_status.id
 SKU001,enabled,kg,3,
 SKU002,enabled,kg,3,invalid_inventory
 SKU003,enabled,kg,3,in_stock

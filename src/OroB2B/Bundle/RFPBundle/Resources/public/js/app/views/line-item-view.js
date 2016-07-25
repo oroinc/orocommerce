@@ -24,7 +24,7 @@ define(function(require) {
         options: {
             ftid: '',
             selectors: {
-                productSelector: '.rfp-lineitem-product input.select2',
+                productSelector: '.rfp-lineitem-product [data-name="field__product"]',
                 quantitySelector: '.rfp-lineitem-requested-quantity input',
                 unitSelector: '.rfp-lineitem-requested-unit select',
                 priceSelector: '.rfp-lineitem-requested-price input',

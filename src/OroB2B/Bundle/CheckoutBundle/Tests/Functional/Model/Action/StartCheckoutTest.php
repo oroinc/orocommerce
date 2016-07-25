@@ -6,7 +6,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -138,7 +138,7 @@ class StartCheckoutTest extends WebTestCase
                 StartCheckout::SOURCE_ENTITY_KEY => $shoppingList,
                 StartCheckout::CHECKOUT_DATA_KEY => [
                     'poNumber' => 'PO#123',
-                    'currency' => 'EUR'
+                    'currency' => 'USD'
                 ],
                 StartCheckout::SETTINGS_KEY => [
                     'allow_manual_source_remove' => true,

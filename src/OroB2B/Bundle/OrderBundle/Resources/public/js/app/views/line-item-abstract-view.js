@@ -19,7 +19,7 @@ define(function(require) {
          */
         options: {
             selectors: {
-                productSelector: '.order-line-item-type-product input.select2',
+                productSelector: '.order-line-item-type-product [data-name="field__product"]',
                 quantitySelector: '.order-line-item-quantity input',
                 unitSelector: '.order-line-item-quantity select',
                 productSku: '.order-line-item-sku .order-line-item-type-product'
@@ -138,7 +138,7 @@ define(function(require) {
                 this.fieldsByName.product.change(_.bind(function() {
                     this.resetData();
 
-                    var data = this.fieldsByName.product.select2('data') || {};
+                    var data = this.fieldsByName.product.inputWidget('data') || {};
                     this.$el.find(this.options.selectors.productSku).html(data.sku || null);
                 }, this));
             }

@@ -1,7 +1,21 @@
 {% block _product_prices_widget %}
+
+
+    {% set minimumQuantities = {} %}
+    {% for price in prices %}
+        {% if minimumQuantities[price.unit.code] is not defined or price.quantity < minimumQuantities[price.unit.code] %}
+            {% set minimumQuantities = minimumQuantities|merge({ (price.unit.code): price.quantity }) %}
+        {% endif %}
+    {% endfor %}
+
     {% set attr = attr|merge({
+        'data-page-component-module': 'orob2bpricing/js/app/components/product-minimum-quantity-component',
+        'data-page-component-options': {
+            quantities: minimumQuantities,
+        },
         class: attr.class|default('') ~ "product__qnty"
     }) %}
+
     <div {{ block('block_attributes') }}>
 
         <table class="table">

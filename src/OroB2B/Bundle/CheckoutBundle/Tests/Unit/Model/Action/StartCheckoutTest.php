@@ -22,7 +22,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
@@ -41,9 +41,9 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
     protected $websiteManager;
 
     /**
-     * @var UserCurrencyProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $currencyProvider;
+    protected $currencyManager;
 
     /**
      * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -75,8 +75,8 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->getMockWithoutConstructor('Symfony\Bridge\Doctrine\ManagerRegistry');
         $this->websiteManager = $this->getMockWithoutConstructor('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager');
         $this->setUpTokenStorage();
-        $this->currencyProvider = $this
-            ->getMockWithoutConstructor('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider');
+        $this->currencyManager = $this
+            ->getMockWithoutConstructor('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager');
         $this->redirect = $this->getMockBuilder('Oro\Component\Action\Action\AbstractAction')
             ->disableOriginalConstructor()
             ->setMethods(['initialize', 'execute'])
@@ -89,7 +89,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             new ContextAccessor(),
             $this->registry,
             $this->websiteManager,
-            $this->currencyProvider,
+            $this->currencyManager,
             $this->tokenStorage,
             $this->propertyAccessor,
             $this->redirect,

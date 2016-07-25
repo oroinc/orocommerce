@@ -1,0 +1,77 @@
+.oro-pagination {
+  white-space: nowrap;
+
+  > span {
+    display: inline-block;
+    vertical-align: middle;
+
+    font-size: $base-font-size;
+
+    + .oro-pagination__pager {
+      margin: 0 0 0 5px;
+    }
+  }
+
+  &__pager {
+    display: inline-block;
+    vertical-align: middle;
+    
+    + span {
+      margin-left: 5px;
+    }
+
+    &__prev,
+    &__next {
+      display: inline-block;
+      width: 23px;
+      vertical-align: middle;
+      padding: 0;
+      border: 1px solid $theme-lighter-gray-color;
+
+      background: $theme-lightest-gray-color;
+      color: $base-font-color;
+      font-size: 16px;
+      line-height: 1.8;
+      text-decoration: none;
+
+      cursor: pointer;
+
+      &.disabled {
+        color: $theme-edit-mode-btn-color;
+
+        cursor: default;
+      }
+
+      i {
+        margin-right: 0;
+      }
+    }
+
+    &__prev {
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+    }
+
+    &__next {
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+
+    &__input {
+      display: inline-block;
+      width: 30px;
+      vertical-align: middle;
+      padding: 0;
+      border-radius: 0;
+      border: 0;
+      border-top: 1px solid $theme-lighter-gray-color;
+      border-bottom: 1px solid $theme-lighter-gray-color;
+
+      font-size: $base-font-size;
+      line-height: 2;
+      text-align: center;
+
+      appearance: none;
+    }
+  }
+}

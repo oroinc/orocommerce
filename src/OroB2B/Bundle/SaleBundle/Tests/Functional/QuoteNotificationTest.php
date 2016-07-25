@@ -16,7 +16,7 @@ class QuoteNotificationTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->markTestIncomplete('Skipped due to issue with DOMDocument https://bugs.php.net/bug.php?id=52012');
+        $this->markTestSkipped('Skipped due to issue with DOMDocument https://bugs.php.net/bug.php?id=52012');
 
         $this->initClient([], $this->generateBasicAuthHeader());
 

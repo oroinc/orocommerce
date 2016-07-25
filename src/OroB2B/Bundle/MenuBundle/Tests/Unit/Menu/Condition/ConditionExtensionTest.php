@@ -32,12 +32,8 @@ class ConditionExtensionTest extends \PHPUnit_Framework_TestCase
             ],
         ];
         $options = $this->conditionExtension->buildOptions($options);
-            $this->assertArrayHasKey(BuilderInterface::IS_ALLOWED_OPTION_KEY, $options['extras']);
-        if ($isAllowed) {
-            $this->assertTrue($options['extras'][BuilderInterface::IS_ALLOWED_OPTION_KEY]);
-        } else {
-            $this->assertFalse($options['extras'][BuilderInterface::IS_ALLOWED_OPTION_KEY]);
-        }
+        $this->assertArrayHasKey(BuilderInterface::IS_ALLOWED_OPTION_KEY, $options['extras']);
+        $this->assertEquals($isAllowed, $options['extras'][BuilderInterface::IS_ALLOWED_OPTION_KEY]);
     }
 
     /**
@@ -54,6 +50,32 @@ class ConditionExtensionTest extends \PHPUnit_Framework_TestCase
                 'condition' => '1 > 2',
                 'expectedData' => false,
             ]
+        ];
+    }
+
+    /**
+     * @dataProvider buildOptionsEmptyConditionDataProvider
+     * @param string $condition
+     */
+    public function testBuildOptionsEmptyCondition($condition)
+    {
+        $options = [
+            'extras' => [
+                ConditionExtension::CONDITION_KEY => $condition,
+            ],
+        ];
+        $options = $this->conditionExtension->buildOptions($options);
+        $this->assertArrayNotHasKey(BuilderInterface::IS_ALLOWED_OPTION_KEY, $options['extras']);
+    }
+
+    /**
+     * @return array
+     */
+    public function buildOptionsEmptyConditionDataProvider()
+    {
+        return [
+            ['condition' => ''],
+            ['condition' => null]
         ];
     }
 

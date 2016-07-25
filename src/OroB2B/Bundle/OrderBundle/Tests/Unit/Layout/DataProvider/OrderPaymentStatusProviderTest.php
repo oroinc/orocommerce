@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Layout\DataProvider;
+namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Component\Layout\ContextDataCollection;
 use Oro\Component\Layout\ContextInterface;

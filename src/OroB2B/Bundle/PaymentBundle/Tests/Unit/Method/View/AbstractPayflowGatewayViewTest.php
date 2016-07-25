@@ -54,6 +54,15 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
      */
     abstract protected function getZeroAmountKey();
 
+    /**
+     * @return string
+     */
+    abstract protected function getRequireCvvEntryKey();
+
+    /**
+     * @return string
+     */
+    abstract protected function getAuthForRequiredAmountKey();
 
     /**
      * @return string
@@ -77,29 +86,43 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 
+        $zeroAmountAuthEnabled = false;
+        $requireCvvEntryEnabled = true;
+        $allowedCCTypes = ['visa', 'mastercard'];
+
+        $formOptions = [
+            'zeroAmountAuthorizationEnabled' => $zeroAmountAuthEnabled,
+            'requireCvvEntryEnabled' => $requireCvvEntryEnabled,
+        ];
+
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(CreditCardType::NAME)
+            ->with(CreditCardType::NAME, null, $formOptions)
             ->willReturn($form);
 
-        $this->configManager->expects($this->exactly(2))
+        $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(
                 [
                     $this->getConfigKey($this->getZeroAmountKey()),
                 ],
                 [
+                    $this->getConfigKey($this->getRequireCvvEntryKey()),
+                ],
+                [
                     $this->getConfigKey($this->getAllowedCCTypesKey()),
                 ]
             )
-            ->willReturnOnConsecutiveCalls(false, ['visa', 'mastercard']);
+            ->willReturnOnConsecutiveCalls($zeroAmountAuthEnabled, $requireCvvEntryEnabled, $allowedCCTypes);
 
         $this->paymentTransactionProvider->expects($this->never())->method('getActiveValidatePaymentTransaction');
 
         $this->assertEquals(
             [
                 'formView' => $formView,
-                'allowedCreditCards' => ['visa', 'mastercard'],
+                'creditCardComponentOptions' => [
+                    'allowedCreditCards' => $allowedCCTypes,
+                ]
             ],
             $this->methodView->getOptions()
         );
@@ -112,22 +135,34 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 
+        $zeroAmountAuthEnabled = true;
+        $requireCvvEntryEnabled = true;
+        $allowedCCTypes = ['visa', 'mastercard'];
+
+        $formOptions = [
+            'zeroAmountAuthorizationEnabled' => $zeroAmountAuthEnabled,
+            'requireCvvEntryEnabled' => $requireCvvEntryEnabled,
+        ];
+
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(CreditCardType::NAME)
+            ->with(CreditCardType::NAME, null, $formOptions)
             ->willReturn($form);
 
-        $this->configManager->expects($this->exactly(2))
+        $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(
                 [
                     $this->getConfigKey($this->getZeroAmountKey()),
                 ],
                 [
+                    $this->getConfigKey($this->getRequireCvvEntryKey()),
+                ],
+                [
                     $this->getConfigKey($this->getAllowedCCTypesKey()),
                 ]
             )
-            ->willReturnOnConsecutiveCalls(true, ['visa', 'mastercard']);
+            ->willReturnOnConsecutiveCalls($zeroAmountAuthEnabled, $requireCvvEntryEnabled, $allowedCCTypes);
 
         $this->paymentTransactionProvider->expects($this->once())->method('getActiveValidatePaymentTransaction')
             ->willReturn(null);
@@ -135,7 +170,9 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
         $this->assertEquals(
             [
                 'formView' => $formView,
-                'allowedCreditCards' => ['visa', 'mastercard'],
+                'creditCardComponentOptions' => [
+                    'allowedCreditCards' => $allowedCCTypes,
+                ]
             ],
             $this->methodView->getOptions()
         );
@@ -148,22 +185,34 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 
+        $zeroAmountAuthEnabled = true;
+        $requireCvvEntryEnabled = true;
+        $allowedCCTypes = ['visa', 'mastercard'];
+
+        $formOptions = [
+            'zeroAmountAuthorizationEnabled' => $zeroAmountAuthEnabled,
+            'requireCvvEntryEnabled' => $requireCvvEntryEnabled,
+        ];
+
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(CreditCardType::NAME)
+            ->with(CreditCardType::NAME, null, $formOptions)
             ->willReturn($form);
 
-        $this->configManager->expects($this->exactly(2))
+        $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(
                 [
                     $this->getConfigKey($this->getZeroAmountKey()),
                 ],
                 [
+                    $this->getConfigKey($this->getRequireCvvEntryKey()),
+                ],
+                [
                     $this->getConfigKey($this->getAllowedCCTypesKey()),
                 ]
             )
-            ->willReturnOnConsecutiveCalls(true, ['visa', 'mastercard']);
+            ->willReturnOnConsecutiveCalls($zeroAmountAuthEnabled, $requireCvvEntryEnabled, $allowedCCTypes);
 
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setResponse(['ACCT' => '1111']);
@@ -174,11 +223,11 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
         $this->assertEquals(
             [
                 'formView' => $formView,
-                'allowedCreditCards' => ['visa', 'mastercard'],
                 'creditCardComponent' => 'orob2bpayment/js/app/components/authorized-credit-card-component',
                 'creditCardComponentOptions' => [
                     'acct' => '1111',
                     'saveForLaterUse' => false,
+                    'allowedCreditCards' => $allowedCCTypes,
                 ],
             ],
             $this->methodView->getOptions()
@@ -192,22 +241,34 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 
+        $zeroAmountAuthEnabled = true;
+        $requireCvvEntryEnabled = true;
+        $allowedCCTypes = ['visa', 'mastercard'];
+
+        $formOptions = [
+            'zeroAmountAuthorizationEnabled' => $zeroAmountAuthEnabled,
+            'requireCvvEntryEnabled' => $requireCvvEntryEnabled,
+        ];
+
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(CreditCardType::NAME)
+            ->with(CreditCardType::NAME, null, $formOptions)
             ->willReturn($form);
 
-        $this->configManager->expects($this->exactly(2))
+        $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(
                 [
                     $this->getConfigKey($this->getZeroAmountKey()),
                 ],
                 [
+                    $this->getConfigKey($this->getRequireCvvEntryKey()),
+                ],
+                [
                     $this->getConfigKey($this->getAllowedCCTypesKey()),
                 ]
             )
-            ->willReturnOnConsecutiveCalls(true, ['visa', 'mastercard']);
+            ->willReturnOnConsecutiveCalls($zeroAmountAuthEnabled, $requireCvvEntryEnabled, $allowedCCTypes);
 
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
@@ -220,11 +281,68 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
         $this->assertEquals(
             [
                 'formView' => $formView,
-                'allowedCreditCards' => ['visa', 'mastercard'],
                 'creditCardComponent' => 'orob2bpayment/js/app/components/authorized-credit-card-component',
                 'creditCardComponentOptions' => [
                     'acct' => '1111',
                     'saveForLaterUse' => true,
+                    'allowedCreditCards' => $allowedCCTypes,
+                ],
+            ],
+            $this->methodView->getOptions()
+        );
+    }
+
+    public function testGetOptionsWithAuthForRequiredAmount()
+    {
+        $formView = $this->getMock('Symfony\Component\Form\FormView');
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $form->expects($this->once())->method('createView')->willReturn($formView);
+
+        $zeroAmountAuthEnabled = true;
+        $requireCvvEntryEnabled = false;
+        $allowedCCTypes = ['visa', 'mastercard'];
+
+        $formOptions = [
+            'zeroAmountAuthorizationEnabled' => $zeroAmountAuthEnabled,
+            'requireCvvEntryEnabled' => $requireCvvEntryEnabled,
+        ];
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(CreditCardType::NAME, null, $formOptions)
+            ->willReturn($form);
+
+        $this->configManager->expects($this->exactly(3))
+            ->method('get')
+            ->withConsecutive(
+                [
+                    $this->getConfigKey($this->getZeroAmountKey()),
+                ],
+                [
+                    $this->getConfigKey($this->getRequireCvvEntryKey()),
+                ],
+                [
+                    $this->getConfigKey($this->getAllowedCCTypesKey()),
+                ]
+            )
+            ->willReturnOnConsecutiveCalls($zeroAmountAuthEnabled, $requireCvvEntryEnabled, $allowedCCTypes);
+
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setResponse(['ACCT' => '1111']);
+
+        $this->paymentTransactionProvider->expects($this->once())->method('getActiveValidatePaymentTransaction')
+            ->willReturn($paymentTransaction);
+
+        $this->assertEquals(
+            [
+                'formView' => $formView,
+                'creditCardComponent' => 'orob2bpayment/js/app/components/authorized-credit-card-component',
+                'creditCardComponentOptions' => [
+                    'acct' => '1111',
+                    'saveForLaterUse' => false,
+                    'allowedCreditCards' => $allowedCCTypes,
                 ],
             ],
             $this->methodView->getOptions()

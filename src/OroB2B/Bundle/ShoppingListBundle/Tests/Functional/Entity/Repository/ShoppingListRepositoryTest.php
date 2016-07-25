@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -132,6 +132,15 @@ class ShoppingListRepositoryTest extends WebTestCase
         $list = $repository->findLatestForAccountUserExceptCurrent($account);
         $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $list);
         $this->assertFalse($list->isCurrent());
+    }
+
+    public function testFindOneByIdWithRelations()
+    {
+        $repository = $this->getRepository();
+        /** @var ShoppingList $shoppingListReference */
+        $expectedList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        $actualList = $repository->findOneByIdWithRelations($expectedList->getId());
+        $this->assertSame($expectedList, $actualList);
     }
 
     /**

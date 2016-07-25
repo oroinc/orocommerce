@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\OrderBundle\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -13,14 +12,15 @@ use OroB2B\Bundle\OrderBundle\Model\DiscountAwareInterface;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 
-class DiscountSubtotalProvider implements SubtotalProviderInterface
+class DiscountSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'discount';
     const NAME = 'orob2b_order.subtotal_discount_cost';
-    const CURRENCY_DEFAULT = 'USD';
 
     /** @var TranslatorInterface */
     protected $translator;
@@ -39,13 +39,17 @@ class DiscountSubtotalProvider implements SubtotalProviderInterface
      * @param RoundingServiceInterface $rounding
      * @param LineItemSubtotalProvider $lineItemSubtotal
      * @param SecurityFacade $securityFacade
+     * @param UserCurrencyManager $currencyManager
      */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
         LineItemSubtotalProvider $lineItemSubtotal,
-        SecurityFacade $securityFacade
+        SecurityFacade $securityFacade,
+        UserCurrencyManager $currencyManager
     ) {
+        parent::__construct($currencyManager);
+
         $this->translator = $translator;
         $this->rounding = $rounding;
         $this->lineItemSubtotal = $lineItemSubtotal;
@@ -98,20 +102,6 @@ class DiscountSubtotalProvider implements SubtotalProviderInterface
     }
 
     /**
-     * @param $entity
-     *
-     * @return string
-     */
-    protected function getBaseCurrency($entity)
-    {
-        if (!$entity instanceof CurrencyAwareInterface) {
-            return self::CURRENCY_DEFAULT;
-        } else {
-            return $entity->getCurrency();
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function isSupported($entity)
@@ -124,11 +114,7 @@ class DiscountSubtotalProvider implements SubtotalProviderInterface
      */
     protected function isFrontendUser()
     {
-        if ($this->securityFacade->getLoggedUser() instanceof AccountUser) {
-            return true;
-        }
-
-        return false;
+        return $this->securityFacade->getLoggedUser() instanceof AccountUser;
     }
 
     /**

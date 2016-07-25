@@ -5,7 +5,6 @@ parameters:
 services:
     orob2b_cms.page_tree_handler:
         class: 'OroB2B\Bundle\CMSBundle\JsTree\PageTreeHandler'
-        public: true
         arguments:
             - '%orob2b_cms.entity.page.class%'
             - "@doctrine"
@@ -13,7 +12,6 @@ services:
 
     orob2b_cms.listener.page_slug_listener:
         class: 'OroB2B\Bundle\CMSBundle\EventListener\PageSlugListener'
-        public: true
         tags:
             - { name: doctrine.event_listener, event: postPersist }
             - { name: doctrine.event_listener, event: postUpdate }
@@ -21,7 +19,6 @@ services:
 
     orob2b_cms.provider.login_page_data_provider:
         class: 'OroB2B\Bundle\CMSBundle\Layout\DataProvider\LoginPageProvider'
-        public: true
         arguments:
             - "@doctrine"
         calls:

@@ -9,7 +9,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 class StubProductAutocompleteType extends AbstractType
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -17,7 +17,7 @@ class StubProductAutocompleteType extends AbstractType
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getParent()
     {

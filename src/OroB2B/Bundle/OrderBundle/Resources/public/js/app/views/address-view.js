@@ -170,13 +170,7 @@ define(function(require) {
 
         _setReadOnlyMode: function(mode) {
             this.$fields.each(function() {
-                var $field = $(this);
-
-                if ($field.data('select2')) {
-                    $field.select2('readonly', mode);
-                } else {
-                    $field.attr('readonly', mode);
-                }
+                $(this).prop('readonly', mode).inputWidget('refresh');
             });
         },
 
@@ -210,8 +204,8 @@ define(function(require) {
             this.setAddress($(address));
 
             $oldAddress.parent().trigger('content:remove');
-            $oldAddress.select2('destroy')
-                .replaceWith(this.$address);
+            $oldAddress.inputWidget('dispose');
+            $oldAddress.replaceWith(this.$address);
 
             if (this.useDefaultAddress) {
                 this.$address.val(this.$address.data('default')).change();

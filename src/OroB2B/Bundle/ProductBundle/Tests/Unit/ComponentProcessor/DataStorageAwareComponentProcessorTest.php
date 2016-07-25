@@ -16,6 +16,7 @@ use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
 {

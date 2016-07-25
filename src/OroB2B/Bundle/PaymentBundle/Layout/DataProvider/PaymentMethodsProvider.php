@@ -6,6 +6,7 @@ use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
 class PaymentMethodsProvider implements DataProviderInterface
 {
@@ -16,17 +17,20 @@ class PaymentMethodsProvider implements DataProviderInterface
      */
     protected $data;
 
-    /**
-     * @var PaymentMethodViewRegistry
-     */
+    /** @var PaymentMethodViewRegistry */
     protected $registry;
+
+    /** @var PaymentContextProvider */
+    protected $paymentContextProvider;
 
     /**
      * @param PaymentMethodViewRegistry $registry
+     * @param PaymentContextProvider $paymentContextProvider
      */
-    public function __construct(PaymentMethodViewRegistry $registry)
+    public function __construct(PaymentMethodViewRegistry $registry, PaymentContextProvider $paymentContextProvider)
     {
         $this->registry = $registry;
+        $this->paymentContextProvider = $paymentContextProvider;
     }
 
     /**
@@ -41,13 +45,15 @@ class PaymentMethodsProvider implements DataProviderInterface
     public function getData(ContextInterface $context)
     {
         if (null === $this->data) {
-            $views = $this->registry->getPaymentMethodViews();
-            $options = ['entity' => $this->getEntity($context)];
+            $entity = $this->getEntity($context);
+            $paymentContext = $this->paymentContextProvider->processContext($context, $entity);
+
+            $views = $this->registry->getPaymentMethodViews($paymentContext);
             foreach ($views as $name => $view) {
                 $this->data[$name] = [
                     'label' => $view->getLabel(),
                     'block' => $view->getBlock(),
-                    'options' => $view->getOptions($options),
+                    'options' => $view->getOptions($paymentContext),
                 ];
             }
         }

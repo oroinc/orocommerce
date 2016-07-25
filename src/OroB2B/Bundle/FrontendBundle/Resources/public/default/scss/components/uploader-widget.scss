@@ -1,0 +1,39 @@
+.uploader {
+  display: flex;
+  align-items: center;
+
+  input {
+    z-index: 2;
+
+    width: 100%;
+  }
+
+  .filename {
+    z-index: 1;
+
+    order: 2;
+  }
+
+  .action {
+    z-index: 1;
+
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0 26px;
+    margin: 0 10px 0 0;
+    order: 1;
+    border-radius: 4px;
+
+    color: $base-white-color;
+    background: $theme-dark-gray-color;
+    font-size: $base-font-size;
+    line-height: 2.85;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    cursor: pointer;
+  }
+}

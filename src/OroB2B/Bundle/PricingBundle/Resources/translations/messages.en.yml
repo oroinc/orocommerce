@@ -1,4 +1,8 @@
 orob2b.pricing:
+    priceAttribute:
+        unit.label: Unit
+        withoutPrice: N/A
+
     pricelist:
         entity_label: Price List
         entity_plural_label: Price Lists
@@ -24,7 +28,6 @@ orob2b.pricing:
         contain_schedule.label: Contain Schedules
         owner.label: 'Owner'
         organization.label: 'Organization'
-
         form:
             pricelist_required: Please select a price list first...
         status:
@@ -39,6 +42,12 @@ orob2b.pricing:
         duplicate:
             label: Duplicate Price List
             message: Price List was Duplicated successfull
+    priceattributepricelist:
+        entity_label: Price Attribute
+        entity_plural_label: Price Attributes
+        name.label: Price Attribute
+        id.label: Id
+        currencies.label: Currencies
 
     quantity.label: Quantity
     fallback:
@@ -82,6 +91,10 @@ orob2b.pricing:
         save.success: Product Price has been added
         applicable_from: 'Price is applicable starting from %amount%'
 
+    priceattributeprice:
+        entity_label: Product Attribute Price
+        entity_plural_label: Product Attributes Prices
+
     price_type:
         bundled: 'bundle'
         unit: 'per unit'
@@ -106,19 +119,23 @@ orob2b.pricing:
     menu:
         price_lists_tab.label: Price lists management
         price_lists_list.description: List of existing price lists
+        price_attribute_price_lists_list.description: List of existing price attributes
         shortcut_new_price_list.label: Create new price list
         shortcut_new_price_list.description: Create new price list item
         shortcut_price_lists.description: Show list of existing price lists
+        shortcut_price_attribute_price_lists.description: Show list of existing price attributes
 
     sections:
         general: General
 
     widgets:
         pricing_information: Price List Information
+        price_attribute_information: Price Attribute Information
 
     controller:
         price_list.saved.message: Price List has been saved
         product_price.saved.message: Product Price has been saved
+        price_attribute_price_list.saved.message: Price Attribute has been saved
 
     form:
         choose_price_list: Choose a Price List...
@@ -135,6 +152,7 @@ orob2b.pricing:
             price_rounding.title: Pricing Rounding
             pricing.title: Pricing
             price_lists_update.title: 'Price List Calculations'
+            display_currencies.title: 'Display Currencies'
         fields:
             price_lists.title: Price Lists
             precision.label: Pricing Precision
@@ -158,6 +176,8 @@ orob2b.pricing:
             offset_of_processing_cpl_prices:
                 label: "Offset of processing CPL prices"
                 tooltip: 'Time before CPL prices calculation starts before activation.'
+            enabled_currencies.label: 'Enabled Currencies'
+            default_currency.label: 'Default Currency'
 
     lineitem:
         subtotal.label: 'Line items subtotal'

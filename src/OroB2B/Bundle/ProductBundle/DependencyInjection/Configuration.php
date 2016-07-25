@@ -25,6 +25,8 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 'unit_rounding_type' => ['value' => RoundingServiceInterface::ROUND_HALF_UP],
+                'default_unit' => ['value' => 'each'],
+                'default_unit_precision' => ['value' => 0],
                 'general_frontend_product_visibility' => [
                     'value' => [
                         Product::INVENTORY_STATUS_IN_STOCK,

@@ -47,10 +47,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => 'open',
                             'scope' => 'app'
                         ],
-                        'default_user_for_notifications' => [
-                            'value' => '',
-                            'scope' => 'app'
-                        ],
                         'backend_product_visibility' => [
                             'value' => [
                                 Product::INVENTORY_STATUS_IN_STOCK,
@@ -64,7 +60,19 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                                 Product::INVENTORY_STATUS_OUT_OF_STOCK
                             ],
                             'scope' => 'app'
-                        ]
+                        ],
+                        'notify_assigned_sales_reps_of_the_account' => [
+                            'value' => 'always',
+                            'scope' => 'app',
+                        ],
+                        'notify_owner_of_account_user_record' => [
+                            'value' => 'always',
+                            'scope' => 'app',
+                        ],
+                        'notify_owner_of_account' => [
+                            'value' => 'always',
+                            'scope' => 'app',
+                        ],
                     ]
                 ]
             ]

@@ -12,16 +12,26 @@ use OroB2B\Component\Tree\Entity\Repository\NestedTreeRepository;
 class CategoryRepository extends NestedTreeRepository
 {
     /**
+     * @var Category
+     */
+    private $masterCatalog;
+
+    /**
      * @return Category
      */
     public function getMasterCatalogRoot()
     {
-        return $this->createQueryBuilder('category')
-            ->andWhere('category.parentCategory IS NULL')
-            ->orderBy('category.id', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
+        if (!$this->masterCatalog) {
+            $this->masterCatalog = $this->createQueryBuilder('category')
+                ->addSelect('titles')
+                ->leftJoin('category.titles', 'titles')
+                ->andWhere('category.parentCategory IS NULL')
+                ->orderBy('category.id', 'ASC')
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getSingleResult();
+        }
+        return $this->masterCatalog;
     }
 
     /**
@@ -59,8 +69,9 @@ class CategoryRepository extends NestedTreeRepository
         $includeNode = false
     ) {
         return $this->getChildrenQueryBuilder($node, $direct, $sortByField, $direction, $includeNode)
-            ->addSelect('title')
+            ->addSelect('title, children')
             ->leftJoin('node.titles', 'title')
+            ->leftJoin('node.childCategories', 'children')
             ->getQuery()
             ->getResult();
     }
@@ -89,7 +100,7 @@ class CategoryRepository extends NestedTreeRepository
 
         return $qb
             ->select('partial category.{id}')
-            ->innerJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.locale'))
+            ->innerJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.localization'))
             ->andWhere('title.string = :title')
             ->setParameter('title', $title)
             ->setMaxResults(1)
@@ -124,7 +135,7 @@ class CategoryRepository extends NestedTreeRepository
 
         if ($includeTitles) {
             $qb->addSelect('title.string');
-            $qb->leftJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.locale'));
+            $qb->leftJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.localization'));
         }
 
         return $qb

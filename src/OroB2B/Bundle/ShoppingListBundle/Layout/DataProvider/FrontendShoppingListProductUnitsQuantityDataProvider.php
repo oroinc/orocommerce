@@ -2,15 +2,15 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
-class FrontendShoppingListProductUnitsQuantityDataProvider implements DataProviderInterface
+class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServerRenderDataProvider
 {
     /**
      * @var ShoppingListManager
@@ -30,14 +30,6 @@ class FrontendShoppingListProductUnitsQuantityDataProvider implements DataProvid
     {
         $this->shoppingListManager = $shoppingListManager;
         $this->lineItemRepository = $lineItemRepository;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        throw new \BadMethodCallException('Not implemented');
     }
 
     /**

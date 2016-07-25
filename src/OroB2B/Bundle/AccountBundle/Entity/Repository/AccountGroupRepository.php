@@ -5,11 +5,15 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
+use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorInterface;
+use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorTrait;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
-class AccountGroupRepository extends EntityRepository
+class AccountGroupRepository extends EntityRepository implements BatchIteratorInterface
 {
+    use BatchIteratorTrait;
+
     /**
      * @param string $name
      *

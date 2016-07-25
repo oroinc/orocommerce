@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Component\Checkout\DataProvider\AbstractCheckoutProvider;
@@ -17,9 +17,9 @@ class CheckoutLineItemDataProvider extends AbstractCheckoutProvider
     protected $frontendProductPricesDataProvider;
 
     /**
-     * @var UserCurrencyProvider
+     * @var UserCurrencyManager
      */
-    protected $currencyProvider;
+    protected $currencyManager;
 
     /**
      * @var ManagerRegistry

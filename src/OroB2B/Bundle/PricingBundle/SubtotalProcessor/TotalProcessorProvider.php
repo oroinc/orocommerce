@@ -6,16 +6,19 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
-
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
-class TotalProcessorProvider
+class TotalProcessorProvider extends AbstractSubtotalProvider
 {
     const NAME = 'orob2b_pricing.subtotal_total';
     const TYPE = 'total';
-    const DEFAULT_CURRENCY = 'USD';
     const SUBTOTALS = 'subtotals';
 
     /** @var SubtotalProviderRegistry */
@@ -30,16 +33,22 @@ class TotalProcessorProvider
     /** @var  [] */
     protected $subtotals = [];
 
+    /** @var bool */
+    protected $recalculationEnabled = false;
+
     /**
      * @param SubtotalProviderRegistry $subtotalProviderRegistry
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
+     * @param UserCurrencyManager $currencyManager
      */
     public function __construct(
         SubtotalProviderRegistry $subtotalProviderRegistry,
         TranslatorInterface $translator,
-        RoundingServiceInterface $rounding
+        RoundingServiceInterface $rounding,
+        UserCurrencyManager $currencyManager
     ) {
+        parent::__construct($currencyManager);
         $this->subtotalProviderRegistry = $subtotalProviderRegistry;
         $this->translator = $translator;
         $this->rounding = $rounding;
@@ -88,18 +97,19 @@ class TotalProcessorProvider
         $total->setType(self::TYPE);
         $translation = sprintf('orob2b.pricing.subtotals.%s.label', $total->getType());
         $total->setLabel($this->translator->trans($translation));
+        $baseCurrency = $this->getBaseCurrency($entity);
+        $total->setCurrency($baseCurrency);
 
         $totalAmount = 0.0;
         foreach ($this->getSubtotals($entity) as $subtotal) {
             $rowTotal = $subtotal->getAmount();
 
-            if ($this->getBaseCurrency($entity) !== $subtotal->getCurrency()) {
-                $rowTotal *= $this->getExchangeRate($subtotal->getCurrency(), $this->getBaseCurrency($entity));
+            if ($baseCurrency !== $subtotal->getCurrency()) {
+                $rowTotal *= $this->getExchangeRate($subtotal->getCurrency(), $baseCurrency);
             }
             $totalAmount = $this->calculateTotal($subtotal->getOperation(), $rowTotal, $totalAmount);
         }
         $total->setAmount($this->rounding->round($totalAmount));
-        $total->setCurrency($this->getBaseCurrency($entity));
 
         return $total;
     }
@@ -121,7 +131,7 @@ class TotalProcessorProvider
 
         if (!array_key_exists($hash, $this->subtotals)) {
             foreach ($this->subtotalProviderRegistry->getSupportedProviders($entity) as $provider) {
-                $subtotals = $provider->getSubtotal($entity);
+                $subtotals = $this->getEntitySubtotal($provider, $entity);
                 $subtotals = is_object($subtotals) ? [$subtotals] : (array) $subtotals;
                 foreach ($subtotals as $subtotal) {
                     $subtotalCollection->add($subtotal);
@@ -134,17 +144,35 @@ class TotalProcessorProvider
     }
 
     /**
-     * @param $entity
-     *
-     * @return string
+     * @param SubtotalProviderInterface $provider
+     * @param object $entity
+     * @return Subtotal
      */
-    protected function getBaseCurrency($entity)
+    protected function getEntitySubtotal(SubtotalProviderInterface $provider, $entity)
     {
-        if (!$entity instanceof CurrencyAwareInterface) {
-            return self::DEFAULT_CURRENCY;
-        } else {
-            return $entity->getCurrency();
+        if ($this->recalculationEnabled) {
+            return $provider->getSubtotal($entity);
         }
+
+        if ($provider instanceof CacheAwareInterface) {
+            return $provider->getCachedSubtotal($entity);
+        }
+
+        if ($provider instanceof SubtotalCacheAwareInterface) {
+            if (!$entity instanceof SubtotalAwareInterface) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        '"%s" expected, but "%s" given',
+                        SubtotalAwareInterface::class,
+                        is_object($entity) ? get_class($entity) : gettype($entity)
+                    )
+                );
+            }
+
+            return $provider->getCachedSubtotal($entity);
+        }
+
+        return $provider->getSubtotal($entity);
     }
 
     /**
@@ -185,5 +213,25 @@ class TotalProcessorProvider
         }
 
         return $totalAmount;
+    }
+
+    /**
+     * @return $this
+     */
+    public function enableRecalculation()
+    {
+        $this->recalculationEnabled = true;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function disableRecalculation()
+    {
+        $this->recalculationEnabled = false;
+
+        return $this;
     }
 }

@@ -53,16 +53,16 @@ class FillMinimalPrices implements MigrationQuery, ConnectionAwareInterface
     {
         //GROUP BY is required in case of same prices for one product
         $query = 'INSERT INTO orob2b_price_product_minimal'
-            . ' (product_id, combined_price_list_id, unit_code, product_sku, quantity, `value`, currency) '
+            . ' (product_id, combined_price_list_id, unit_code, product_sku, quantity, value, currency) '
             . ' SELECT c.product_id, c.combined_price_list_id, MIN(c.unit_code), MIN(c.product_sku), MIN(c.quantity),'
-            . ' MIN(c.`value`), MIN(c.currency)'
+            . ' MIN(c.value), MIN(c.currency)'
             . ' FROM orob2b_price_product_combined c'
             . ' WHERE NOT EXISTS('
             . ' SELECT id'
             . ' FROM orob2b_price_product_combined cc'
             . ' WHERE'
             . ' c.combined_price_list_id = cc.combined_price_list_id AND c.product_id = cc.product_id '
-            . ' AND c.currency = cc.currency AND c.`value` > cc.`value`'
+            . ' AND c.currency = cc.currency AND c.value > cc.value'
             . ' )'
             . ' GROUP BY c.product_id, c.combined_price_list_id, c.currency';
         $logger->info($query);

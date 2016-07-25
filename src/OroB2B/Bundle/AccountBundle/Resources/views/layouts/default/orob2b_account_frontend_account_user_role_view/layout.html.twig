@@ -1,6 +1,6 @@
 {% block _account_user_role_title_widget %}
     <h3 class="nmmt4-md">
-        <span>{{ entity.label }}</span>
+        <span>{{ text }}</span>
     </h3>
 {% endblock %}
 
@@ -19,148 +19,19 @@
 {% endblock %}
 
 {% block _account_user_role_items_view_privileges_widget %}
-    {% set prefix = prefix|default('orob2b.account.frontend.security.access-level.') %}
-    {% set none_ownership = constant('Oro\\Bundle\\OrganizationBundle\\Form\\Type\\OwnershipType::OWNER_TYPE_NONE') %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    {% for privilegeConfigName, privilegeConfig in privileges.privilegesConfig %}
-        {% do block|merge_context({
-            privileges: privileges,
-            privilegeConfigName: privilegeConfigName,
-            privilegeConfig: privilegeConfig,
-            prefix: prefix,
-            none_ownership: none_ownership
-        }) %}
-        {{ block('container_widget') }}
-    {% endfor %}
-{% endblock %}
+    <div {{ UI.renderPageComponentAttributes({
+        module: 'orouser/js/components/role/entity-category-tabs-component',
+        options: options.tabsOptions
+    }) }}></div>
 
-{% block _account_user_role_items_view_privileges_container_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " mb4-md mb4-sm" }) %}
-    <div {{ block('block_attributes') }}>
-        <h3 class="account-navigation-title mb2-md mb2-sm">
-            {{ ('orob2b.account.frontend.privileges.' ~ privilegeConfigName ~ '.label')|trans }}
-        </h3>
-        {{ block_widget(block['account_user_role_items_view_privileges_' ~ privilegeConfigName]) }}
-    </div>
-{% endblock %}
+    {{ block_widget(block) }}
 
-{% block _account_user_role_items_view_privileges_entity_widget %}
-    <table class="oro-grid-table oro-grid-table__access">
-        <thead>
-            <tr>
-                <th class="col-md-5">
-                    <div class="col-md-12">{{ 'orob2b.account.frontend.table.entity.section.label'|trans }}</div>
-                </th>
-                <th class="col-md-3">
-                    <div class="col-md-6">{{ 'orob2b.account.frontend.table.entity.action.label'|trans }}</div>
-                    <div class="col-md-6">{{ 'orob2b.account.frontend.table.entity.permission.label'|trans }}</div>
-                </th>
-                <th class="col-md-1"></th>
-                <th class="col-md-3">
-                    <div class="col-md-6">{{ 'orob2b.account.frontend.table.entity.action.label'|trans }}</div>
-                    <div class="col-md-6">{{ 'orob2b.account.frontend.table.entity.permission.label'|trans }}</div>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for privilege in privileges.data[privilegeConfigName] %}
-                {% do block|merge_context({
-                    privilege: privilege
-                }) %}
-                {{ block('container_widget') }}
-            {% endfor %}
-        </tbody>
-    </table>
-{% endblock %}
-
-{% block _account_user_role_items_view_privileges_entity_privilege_widget %}
-    {% set permissionsCount = (privilege.permissions|length / 2)|round %}
-
-    <tr>
-        <td class="col-md-5 va-t_md">
-            <div class="col-md-12 mt1-md mt1-sm">
-                {{ privilege.identity.name|trans }}
-            </div>
-        </td>
-        <td class="col-md-3 va-t_md">
-            {% for field in privilegeConfig['permissions'] %}
-                {% set index = loop.index %}
-
-                {% for permission in privilege.permissions %}
-                    {% do block|merge_context({
-                        permission: permission,
-                        field: field
-                    }) %}
-
-                    {% if permission.name == field %}
-                        {{ block('container_widget') }}
-
-                        {% if index == permissionsCount %}
-                            </td><td class="col-md-1"></td><td class="col-md-3 va-t_md">
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-            {% endfor %}
-        </td>
-    </tr>
-    <tr>
-        <td colspan="4" class="underlined-row"></td>
-    </tr>
-{% endblock %}
-
-{% block _account_user_role_items_view_privileges_entity_privilege_permission_widget %}
-    <div class="col-md-6 mt1-md mt1-sm mb1-md mb1-sm">
-        {% set aclPermission = acl_permission(permission) %}
-
-        {{ aclPermission.label|default(permission.name)|trans }}
-        {% if aclPermission.description %} ({{ aclPermission.description|trans }}){% endif %}
-    </div>
-    <div class="col-md-6 mt1-md mt1-sm mb1-md mb1-sm">
-        {% set accessLevel = prefix ~ (privileges.accessLevelNames[permission.accessLevel-1])|default(none_ownership) %}
-        {{ accessLevel|trans }}
-    </div>
-{% endblock %}
-
-{% block _account_user_role_items_view_privileges_action_widget %}
-    <table class="oro-grid-table oro-grid-table__capabilities">
-        <tbody>
-            <tr>
-                <td class="underlined-row"></td>
-            </tr>
-            {% for privilege in privileges.data[privilegeConfigName] %}
-                {% do block|merge_context({
-                    privilege: privilege
-                }) %}
-                <tr>
-                    <td>
-                        {{ block('container_widget') }}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="underlined-row"></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% endblock %}
-
-{% block _account_user_role_items_view_privileges_action_privilege_widget %}
-    <div class="col-md-11">
-        {{ privilege.identity.name|trans }}
-    </div>
-    <div class="col-md-1">
-        {% for permission in privilege.permissions %}
-            {% do block|merge_context({
-                permission: permission
-            }) %}
-            {{ block('container_widget') }}
-        {% endfor %}
-    </div>
-{% endblock %}
-
-{% block _account_user_role_items_view_privileges_action_privilege_permission_widget %}
-    {% set accessLevel = prefix ~ (privileges.accessLevelNames[permission.accessLevel-1])|default(none_ownership) %}
-    {{ accessLevel|trans }}
+    <div class="role-capability-set" {{ UI.renderPageComponentAttributes({
+        module: 'orouser/js/components/role/capability-set-component',
+        options: options.capabilitySetOptions|merge({ readonly: true })
+    }) }}></div>
 {% endblock %}
 
 {% block _account_user_role_items_view_users_widget %}

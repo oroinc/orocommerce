@@ -3,13 +3,14 @@
 namespace OroB2B\Bundle\AccountBundle\Layout\Block\Type;
 
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
 use Oro\Component\Layout\Block\Type\AbstractType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class AddressBookType extends AbstractType
@@ -39,7 +40,7 @@ class AddressBookType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [
@@ -67,7 +68,7 @@ class AddressBookType extends AbstractType
     {
         $entity = $options['entity'];
 
-        if (!$entity instanceof AccountUser) {
+        if (!$entity instanceof AccountUser && !$entity instanceof Account) {
             throw new \RuntimeException(
                 sprintf(
                     'Expected instance of type "%s", "%s" given',
@@ -84,11 +85,11 @@ class AddressBookType extends AbstractType
     }
 
     /**
-     * @param AccountUser $entity
+     * @param Account|AccountUser $entity
      * @param array $options
      * @return array
      */
-    protected function getAddressBookOptions(AccountUser $entity, array $options)
+    protected function getAddressBookOptions($entity, array $options)
     {
         $addressListUrl = $this->router->generate($options['addressListRouteName'], ['entityId' => $entity->getId()]);
         $addressCreateUrl = $this->router->generate(

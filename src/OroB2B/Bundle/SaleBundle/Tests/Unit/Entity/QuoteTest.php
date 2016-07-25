@@ -182,6 +182,37 @@ class QuoteTest extends AbstractTest
     }
 
     /**
+     * @dataProvider isAcceptableDataProvider
+     *
+     * @param bool $expired
+     * @param \DateTime|null $validUntil
+     * @param bool $expected
+     */
+    public function testIsAcceptable($expired, $validUntil, $expected)
+    {
+        $quote = new Quote();
+        $quote
+            ->setExpired($expired)
+            ->setValidUntil($validUntil);
+        $this->assertEquals($expected, $quote->isAcceptable());
+    }
+
+    /**
+     * @return array
+     */
+    public function isAcceptableDataProvider()
+    {
+        return [
+            [false, null, true],
+            [false, new \DateTime('+1 day'), true],
+            [false, new \DateTime('-1 day'), false],
+            [true, null, false],
+            [true, new \DateTime('+1 day'), false],
+            [true, new \DateTime('-1 day'), false],
+        ];
+    }
+
+    /**
      * @param int $quoteProductCount
      * @param int $quoteProductOfferCount
      * @param bool|false $allowIncrements

@@ -104,7 +104,9 @@ class OrderController extends AbstractOrderController
      */
     public function createAction(Request $request)
     {
-        return $this->update(new Order(), $request);
+        $order = new Order();
+        $order->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
+        return $this->update($order, $request);
     }
 
     /**

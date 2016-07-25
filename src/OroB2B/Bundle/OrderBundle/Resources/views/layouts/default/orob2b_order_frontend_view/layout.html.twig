@@ -108,6 +108,14 @@
     {{ text|default('oro.ui.empty'|trans) }}
 {% endblock %}
 
+{% block _order_payment_method_widget %}
+    {% if text is not empty %}
+        {{ get_payment_method_label(text) }}
+    {% else %}
+        {{ 'oro.ui.empty'|trans }}
+    {% endif %}
+{% endblock %}
+
 {% block _order_payment_status_widget %}
     {% if text is not empty %}
         {{ 'orob2b.payment.status.%s'|format(text)|trans }}

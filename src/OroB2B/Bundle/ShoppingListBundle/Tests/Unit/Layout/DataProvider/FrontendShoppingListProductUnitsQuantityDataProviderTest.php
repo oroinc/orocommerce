@@ -49,14 +49,6 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
     }
 
     /**
-     * @expectedException \BadMethodCallException
-     */
-    public function testGetIdentifier()
-    {
-        $this->provider->getIdentifier();
-    }
-
-    /**
      * @dataProvider getDataDataProvider
      *
      * @param Product|null $product

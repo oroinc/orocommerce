@@ -2,23 +2,29 @@
 
 namespace OroB2B\Bundle\ProductBundle\ImportExport\Strategy;
 
+use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\FallbackBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
 class ProductStrategy extends LocalizedFallbackValueAwareStrategy
 {
-    /** @var SecurityFacade */
+    /**
+     * @var SecurityFacade
+     */
     protected $securityFacade;
 
-    /** @var BusinessUnit */
+    /**
+     * @var BusinessUnit
+     */
     protected $owner;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $variantLinkClass;
 
     /**
@@ -43,6 +49,14 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
      */
     protected function beforeProcessEntity($entity)
     {
+        $data = $this->context->getValue('itemData');
+
+        if (array_key_exists('additionalUnitPrecisions', $data)) {
+            $data['unitPrecisions'] = $data['additionalUnitPrecisions'];
+            unset($data['additionalUnitPrecisions']);
+        }
+
+        $this->context->setValue('itemData', $data);
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
         $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_BEFORE, $event);
 

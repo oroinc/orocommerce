@@ -10,7 +10,7 @@
 %}
 
 {% block navButtons %}
-    {% if resource_granted('DELETE', entity) %}
+    {% if entityId and resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
             'dataUrl': path('orob2b_api_delete_paymentterm', {'id': entityId}),
             'dataRedirect': path('orob2b_payment_term_index'),

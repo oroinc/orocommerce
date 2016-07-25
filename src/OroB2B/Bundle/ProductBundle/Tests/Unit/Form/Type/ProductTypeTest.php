@@ -5,35 +5,42 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
-use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductImageType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType;
+use OroB2B\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
+use OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomFieldsChoiceTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
-use OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomFieldsChoiceTypeStub;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
@@ -49,6 +56,9 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected $roundingService;
 
+    /** @var  ChainDefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $defaultProductUnitProvider;
+
     /**
      * @var array
      */
@@ -58,14 +68,36 @@ class ProductTypeTest extends FormIntegrationTestCase
     ];
 
     /**
+     * @var array
+     */
+    protected $images = [];
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
         $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
+        $this->defaultProductUnitProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->type = new ProductType($this->roundingService);
+        $this->defaultProductUnitProvider
+            ->expects($this->any())
+            ->method('getDefaultProductUnitPrecision')
+            ->will($this->returnValue($this->getDefaultProductUnitPrecision()));
+
+        $this->type = new ProductType($this->defaultProductUnitProvider, $this->roundingService);
         $this->type->setDataClass(self::DATA_CLASS);
+
+        $image1 = new StubProductImage();
+        $image1->setImage(new File());
+
+        $image2 = new StubProductImage();
+        $image2->setImage(new File());
+
+        $this->images = [$image1, $image2];
 
         parent::setUp();
     }
@@ -83,6 +115,9 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $productPrimaryUnitPrecision = new ProductPrimaryUnitPrecisionType();
+        $productPrimaryUnitPrecision->setDataClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision');
+
         $productUnitPrecision = new ProductUnitPrecisionType();
         $productUnitPrecision->setDataClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision');
 
@@ -96,6 +131,13 @@ class ProductTypeTest extends FormIntegrationTestCase
         $translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
             ->disableOriginalConstructor()
             ->getMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ImageTypeProvider $imageTypeProvider*/
+        $imageTypeProvider = $this->getMockBuilder('Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $imageTypeProvider->expects($this->any())
+            ->method('getImageTypes')
+            ->willReturn([]);
 
         return [
             new PreloadedExtension(
@@ -103,6 +145,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     $stubEnumSelectType->getName() => $stubEnumSelectType,
                     ImageType::NAME => new ImageTypeStub(),
                     OroCollectionType::NAME => new OroCollectionType(),
+                    ProductPrimaryUnitPrecisionType::NAME => $productPrimaryUnitPrecision,
                     ProductUnitPrecisionType::NAME => $productUnitPrecision,
                     ProductUnitPrecisionCollectionType::NAME => new ProductUnitPrecisionCollectionType(),
                     ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
@@ -119,6 +162,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                     EntityIdentifierType::NAME => new StubEntityIdentifierType([]),
                     ProductVariantLinksType::NAME => new ProductVariantLinksType(),
                     ProductStatusType::NAME => new ProductStatusType(new ProductStatusProvider()),
+                    ProductImageCollectionType::NAME => new ProductImageCollectionType($imageTypeProvider),
+                    ProductImageType::NAME => new ProductImageType()
                 ],
                 [
                     'form' => [
@@ -172,7 +217,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
-                    'unitPrecisions' => [],
+                    'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
@@ -181,15 +226,19 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'expectedData'  => $this->createExpectedProductEntity(),
                 'rounding' => false
             ],
-            'product with unitPrecisions' => [
+            'product with additionalUnitPrecisions' => [
                 'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
-                    'unitPrecisions' => [
+                    'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
+                    'additionalUnitPrecisions' => [
                         [
                             'unit' => 'kg',
-                            'precision' => 3
-                        ]
+                            'precision' => 3,
+                            'conversionRate' => 5,
+                            'sell' => true,
+
+                        ],
                     ],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
@@ -203,7 +252,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
-                    'unitPrecisions' => [],
+                    'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
@@ -228,10 +277,23 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'defaultData'   => $this->createDefaultProductEntity(false),
                 'submittedData' => [
                     'sku' => 'test sku',
-                    'unitPrecisions' => [],
+                    'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
+                ],
+                'expectedData'  => $this->createExpectedProductEntity(false, false, false),
+                'rounding' => false
+            ],
+            'simple product with images' => [
+                'defaultData'   => $this->createDefaultProductEntity(false),
+                'submittedData' => [
+                    'sku' => 'test sku',
+                    'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
+                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'visible' => 1,
+                    'status' => Product::STATUS_DISABLED,
+                    'images' => $this->images
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, false, false),
                 'rounding' => false
@@ -243,12 +305,14 @@ class ProductTypeTest extends FormIntegrationTestCase
      * @param bool|false $withProductUnitPrecision
      * @param bool|false $withNamesAndDescriptions
      * @param bool|true $hasVariants
+     * @param bool|true hasImages
      * @return StubProduct
      */
     protected function createExpectedProductEntity(
         $withProductUnitPrecision = false,
         $withNamesAndDescriptions = false,
-        $hasVariants = true
+        $hasVariants = true,
+        $hasImages = false
     ) {
         $expectedProduct = new StubProduct();
 
@@ -257,18 +321,22 @@ class ProductTypeTest extends FormIntegrationTestCase
         if ($hasVariants) {
             $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
         }
-
-        $productUnit = new ProductUnit();
-        $productUnit->setCode('kg');
+        
+        $expectedProduct->setPrimaryUnitPrecision($this->getDefaultProductUnitPrecision());
 
         if ($withProductUnitPrecision) {
+            $productUnit = new ProductUnit();
+            $productUnit->setCode('kg');
+
             $productUnitPrecision = new ProductUnitPrecision();
             $productUnitPrecision
                 ->setProduct($expectedProduct)
                 ->setUnit($productUnit)
-                ->setPrecision(3);
+                ->setPrecision(3)
+                ->setConversionRate(5)
+                ->setSell(true);
 
-            $expectedProduct->addUnitPrecision($productUnitPrecision);
+            $expectedProduct->addAdditionalUnitPrecision($productUnitPrecision);
         }
 
         if ($withNamesAndDescriptions) {
@@ -281,15 +349,22 @@ class ProductTypeTest extends FormIntegrationTestCase
                 ->addShortDescription($this->createLocalizedValue(null, 'second short description'));
         }
 
+        if ($hasImages) {
+            foreach ($this->images as $image) {
+                $expectedProduct->addImage($image);
+            }
+        }
+
         return $expectedProduct->setSku('test sku');
     }
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create($this->type, $this->createDefaultProductEntity());
 
         $this->assertTrue($form->has('sku'));
-        $this->assertTrue($form->has('unitPrecisions'));
+        $this->assertTrue($form->has('primaryUnitPrecision'));
+        $this->assertTrue($form->has('additionalUnitPrecisions'));
         $this->assertFalse($form->has('hasVariants'));
     }
 
@@ -326,5 +401,18 @@ class ProductTypeTest extends FormIntegrationTestCase
         }
 
         return $defaultProduct;
+    }
+
+    /**
+     * @return ProductUnitPrecision
+     */
+    protected function getDefaultProductUnitPrecision()
+    {
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('each');
+        $productUnitPrecision = new ProductUnitPrecision();
+        $productUnitPrecision->setUnit($productUnit)->setPrecision('0');
+
+        return $productUnitPrecision;
     }
 }

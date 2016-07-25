@@ -42,7 +42,7 @@ class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
                     $this->assertEquals('orob2b_account_parent', $options['autocomplete_alias']);
                     $this->assertEquals(
                         [
-                            'component' => 'autocomplete-account-parent',
+                            'component' => 'autocomplete-entity-parent',
                             'placeholder' => 'orob2b.account.form.choose_parent'
                         ],
                         $options['configs']
@@ -75,8 +75,8 @@ class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->type->buildView($formView, $form, []);
 
         $this->assertArrayHasKey('configs', $formView->vars);
-        $this->assertArrayHasKey('accountId', $formView->vars['configs']);
-        $this->assertEquals($expectedParentId, $formView->vars['configs']['accountId']);
+        $this->assertArrayHasKey('entityId', $formView->vars['configs']);
+        $this->assertEquals($expectedParentId, $formView->vars['configs']['entityId']);
     }
 
     /**

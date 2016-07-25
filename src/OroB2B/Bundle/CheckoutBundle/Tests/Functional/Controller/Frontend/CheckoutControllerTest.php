@@ -205,6 +205,8 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
         $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
+        $this->assertArrayHasKey('successUrl', $data['responseData']);
+        $this->assertNotEmpty($data['responseData']['successUrl']);
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
         $this->assertContains(self::FINISH_SIGN, $crawler->html());
@@ -263,7 +265,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected function getRequiredFields($type)
     {
-        $requiredFields = ['firstName', 'lastName', 'street', 'postalCode', 'country', 'state'];
+        $requiredFields = ['firstName', 'lastName', 'street', 'postalCode', 'country', 'state', 'city'];
         $resultRequiredFields = [];
         foreach ($requiredFields as $requiredField) {
             $requiredFields[] = sprintf('%s[%s][%s]', self::ORO_WORKFLOW_TRANSITION, $type, $requiredField);

@@ -1,17 +1,47 @@
 services:
     orob2b_pricing.layout.data_provider.frontend_product_prices:
         class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider'
-        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@orob2b_pricing.model.price_list_request_handler'
+            - '@orob2b_pricing.user_currency_manager'
         tags:
             - { name: layout.data_provider, alias: frontend_product_prices }
 
     orob2b_pricing.layout.data_provider.product_units_without_prices:
         class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\ProductUnitsWithoutPricesProvider'
-        public: true
         arguments:
             - '@orob2b_pricing.layout.data_provider.frontend_product_prices'
         tags:
             - { name: layout.data_provider, alias: product_units_without_prices }
+
+    orob2b_pricing.layout.data_provider.default_currency:
+        class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\DefaultCurrencyProvider'
+        public: true
+        arguments:
+            - '@orob2b_pricing.user_currency_manager'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_pricing_default_currency }
+
+    orob2b_pricing.layout.data_provider.enabled_currencies:
+        class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\EnabledCurrenciesProvider'
+        public: true
+        arguments:
+            - '@orob2b_pricing.user_currency_manager'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_pricing_enabled_currencies }
+
+    orob2b_pricing.provider.fronted_account_user_currency:
+        class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendAccountUserCurrencyProvider'
+        public: true
+        arguments:
+            - '@orob2b_pricing.user_currency_manager'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_currency }
+
+    orob2b_pricing.layout.block_type.currency_switcher:
+        class: 'OroB2B\Bundle\PricingBundle\Layout\Block\Type\CurrencySwitcherType'
+        public: true
+        tags:
+             - { name: layout.block_type, alias: currency_switcher }
+

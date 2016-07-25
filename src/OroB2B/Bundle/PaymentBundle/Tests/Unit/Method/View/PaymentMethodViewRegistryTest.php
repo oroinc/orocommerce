@@ -25,8 +25,10 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testRegistry()
     {
+        $testPaymentType = 'test_method_view';
+
         /** @var PaymentMethodViewInterface $testView */
-        $testView = $this->getTypeMock('test_method_view', 10);
+        $testView = $this->getTypeMock($testPaymentType, 10);
 
         /** @var PaymentMethodViewInterface $testView2 */
         $testView2 = $this->getTypeMock('test_method_view2', 5);
@@ -43,13 +45,40 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
         $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->exactly(3))->method('isEnabled')
             ->willReturnOnConsecutiveCalls(true, true, false);
+        $paymentMethod->expects($this->exactly(2))->method('isApplicable')->willReturnOnConsecutiveCalls(true, false);
         $this->paymentMethodRegistry->expects($this->exactly(3))->method('getPaymentMethod')
             ->willReturn($paymentMethod);
 
         $views = $this->registry->getPaymentMethodViews();
-        $this->assertCount(2, $views);
+        $this->assertCount(1, $views);
         $this->assertEquals($testView2, reset($views));
         $this->assertEquals($testView, end($views));
+    }
+
+    /**
+     * @depends testRegistry
+     */
+    public function testGetPaymentMethodViews()
+    {
+        $testPaymentType = 'test_method_view';
+
+        /** @var PaymentMethodViewInterface $testView */
+        $testView = $this->getTypeMock($testPaymentType, 10);
+
+        $this->registry->addPaymentMethodView($testView);
+
+        $paymentMethodView = $this->registry->getPaymentMethodView($testView->getPaymentMethodType());
+
+        $this->assertEquals($paymentMethodView, $testView);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessageRegExp  /There is no payment method view for "\w+"/
+     */
+    public function testGetPaymentMethodViewExceptionTriggered()
+    {
+        $this->registry->getPaymentMethodView('not_exists_payment_method');
     }
 
     /**

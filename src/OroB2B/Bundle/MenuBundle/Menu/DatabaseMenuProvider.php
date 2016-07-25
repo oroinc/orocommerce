@@ -8,10 +8,11 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Knp\Menu\ItemInterface;
 use Knp\Menu\Provider\MenuProviderInterface;
 
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
-use OroB2B\Bundle\WebsiteBundle\Locale\LocaleHelper;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -36,9 +37,9 @@ class DatabaseMenuProvider implements MenuProviderInterface
     protected $cache;
 
     /**
-     * @var LocaleHelper
+     * @var LocalizationHelper
      */
-    protected $localeHelper;
+    protected $localizationHelper;
 
     /**
      * @var MenuSerializer
@@ -57,18 +58,18 @@ class DatabaseMenuProvider implements MenuProviderInterface
 
     /**
      * @param BuilderInterface $builder
-     * @param LocaleHelper $localeHelper
+     * @param LocalizationHelper $localizationHelper
      * @param MenuSerializer $serializer
      * @param ManagerRegistry $registry
      */
     public function __construct(
         BuilderInterface $builder,
-        LocaleHelper $localeHelper,
+        LocalizationHelper $localizationHelper,
         MenuSerializer $serializer,
         ManagerRegistry $registry
     ) {
         $this->builder = $builder;
-        $this->localeHelper = $localeHelper;
+        $this->localizationHelper = $localizationHelper;
         $this->serializer = $serializer;
         $this->registry = $registry;
     }
@@ -134,9 +135,9 @@ class DatabaseMenuProvider implements MenuProviderInterface
         if (!$this->cache) {
             return;
         }
-        $locales = $this->localeHelper->getAll();
-        foreach ($locales as $locale) {
-            $this->buildMenu($alias, ['extras' => [MenuItem::LOCALE_OPTION => $locale]]);
+        $localizations = $this->localizationHelper->getAll();
+        foreach ($localizations as $localization) {
+            $this->buildMenu($alias, ['extras' => [MenuItem::LOCALE_OPTION => $localization]]);
         }
     }
 
@@ -171,16 +172,16 @@ class DatabaseMenuProvider implements MenuProviderInterface
         if (!$this->cache) {
             return;
         }
-        $locales = $this->localeHelper->getAll();
-        foreach ($locales as $locale) {
-            $this->clearMenuCache($alias, ['extras' => [MenuItem::LOCALE_OPTION => $locale]]);
+        $localizations = $this->localizationHelper->getAll();
+        foreach ($localizations as $localization) {
+            $this->clearMenuCache($alias, ['extras' => [MenuItem::LOCALE_OPTION => $localization]]);
         }
     }
 
     /**
-     * @param Locale $locale
+     * @param Localization $localization
      */
-    public function rebuildCacheByLocale(Locale $locale)
+    public function rebuildCacheByLocalization(Localization $localization)
     {
         if (!$this->cache) {
             return;
@@ -188,14 +189,14 @@ class DatabaseMenuProvider implements MenuProviderInterface
         $menus = $this->getRoots();
         foreach ($menus as $menu) {
             $alias = $menu->getDefaultTitle()->getString();
-            $this->buildMenu($alias, ['extras' => [MenuItem::LOCALE_OPTION => $locale]]);
+            $this->buildMenu($alias, ['extras' => [MenuItem::LOCALE_OPTION => $localization]]);
         }
     }
 
     /**
-     * @param Locale $locale
+     * @param Localization $localization
      */
-    public function clearCacheByLocale(Locale $locale)
+    public function clearCacheByLocalization(Localization $localization)
     {
         if (!$this->cache) {
             return;
@@ -203,7 +204,7 @@ class DatabaseMenuProvider implements MenuProviderInterface
         $menus = $this->getRoots();
         foreach ($menus as $menu) {
             $alias = $menu->getDefaultTitle()->getString();
-            $this->clearMenuCache($alias, ['extras' => [MenuItem::LOCALE_OPTION => $locale]]);
+            $this->clearMenuCache($alias, ['extras' => [MenuItem::LOCALE_OPTION => $localization]]);
         }
     }
 
@@ -214,7 +215,7 @@ class DatabaseMenuProvider implements MenuProviderInterface
      */
     protected function buildMenu($alias, array $options = [])
     {
-        $this->setDefaultLocaleIfNotExists($options);
+        $this->setDefaultLocalizationIfNotExists($options);
         $menu = $this->builder->build($alias, $options);
         if ($this->cache) {
             $menuIdentifier = $this->getMenuIdentifier($alias, $options);
@@ -241,20 +242,20 @@ class DatabaseMenuProvider implements MenuProviderInterface
      */
     protected function getMenuIdentifier($alias, array $options = [])
     {
-        $this->setDefaultLocaleIfNotExists($options);
-        /** @var Locale $locale */
-        $locale = $options['extras'][MenuItem::LOCALE_OPTION];
+        $this->setDefaultLocalizationIfNotExists($options);
+        /* @var $localization Localization */
+        $localization = $options['extras'][MenuItem::LOCALE_OPTION];
 
-        return sprintf("%s:%s", $alias, $locale->getId());
+        return sprintf("%s:%s", $alias, $localization->getId());
     }
 
     /**
      * @param $options
      */
-    protected function setDefaultLocaleIfNotExists(&$options)
+    protected function setDefaultLocalizationIfNotExists(&$options)
     {
         if (!array_key_exists('extras', $options) || !array_key_exists(MenuItem::LOCALE_OPTION, $options['extras'])) {
-            $options['extras'][MenuItem::LOCALE_OPTION] = $this->localeHelper->getCurrentLocale();
+            $options['extras'][MenuItem::LOCALE_OPTION] = $this->localizationHelper->getCurrentLocalization();
         }
     }
 

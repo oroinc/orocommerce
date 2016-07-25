@@ -1,0 +1,12 @@
+.ui-dialog {
+  .ui-dialog-content {
+    overflow: auto;
+    height: calc(100% - 177px) !important;
+  }
+
+  &.ui-dialog-no-scroll {
+    .ui-dialog-content {
+      overflow: visible;
+    }
+  }
+}

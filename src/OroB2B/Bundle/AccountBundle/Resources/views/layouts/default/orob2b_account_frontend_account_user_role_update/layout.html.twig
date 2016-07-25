@@ -7,7 +7,7 @@
 
 {% block _account_user_role_edit_form_users_widget %}
     {% set grid_parameters = grid_parameters|merge({
-        _parameters: {data_in: form.appendUsers.vars.value|split(',')|default([])}
+        _parameters: {data_in: form.view.appendUsers.vars.value|split(',')|default([])}
     }) %}
 
     <h3 class="account-navigation-title mb2-md mb2-sm">
@@ -21,4 +21,20 @@
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block _account_user_role_edit_form_privileges_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    <div {{ UI.renderPageComponentAttributes({
+        module: 'orouser/js/components/role/entity-category-tabs-component',
+        options: options.tabsOptions
+    }) }}></div>
+
+    {{ block_widget(block) }}
+
+    <div class="role-capability-set" {{ UI.renderPageComponentAttributes({
+        module: 'orouser/js/components/role/capability-set-component',
+        options: options.capabilitySetOptions
+    }) }}></div>
 {% endblock %}

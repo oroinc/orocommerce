@@ -75,6 +75,7 @@ class CaptureActionTest extends AbstractActionTest
 
         $capturePaymentTransaction = new PaymentTransaction();
         $capturePaymentTransaction
+            ->setAction(PaymentMethodInterface::CAPTURE)
             ->setPaymentMethod($options['paymentMethod'])
             ->setEntityIdentifier($data['testEntityIdentifier']);
 
@@ -82,7 +83,7 @@ class CaptureActionTest extends AbstractActionTest
         $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
-            ->with($capturePaymentTransaction)
+            ->with(PaymentMethodInterface::CAPTURE, $capturePaymentTransaction)
             ->will($responseValue);
 
         $this->paymentTransactionProvider
@@ -143,6 +144,7 @@ class CaptureActionTest extends AbstractActionTest
                     'successful' => false,
                     'message' => null,
                     'testResponse' => 'testResponse',
+                    'testOption' => 'testOption',
                 ]
             ],
             'throw exception' => [
@@ -165,6 +167,7 @@ class CaptureActionTest extends AbstractActionTest
                     'transaction' => 10,
                     'successful' => false,
                     'message' => null,
+                    'testOption' => 'testOption',
                 ]
             ],
         ];

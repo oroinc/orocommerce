@@ -33,6 +33,7 @@ class PayflowGatewayTest extends AbstractPayflowGatewayTest
                 Configuration::PAYFLOW_GATEWAY_PASSWORD_KEY => 'test_password',
                 Configuration::PAYFLOW_GATEWAY_PARTNER_KEY => 'test_partner',
                 Configuration::PAYFLOW_GATEWAY_TEST_MODE_KEY => true,
+                Configuration::PAYFLOW_GATEWAY_ALLOWED_CURRENCIES => ['USD'],
             ],
             $configs
         );

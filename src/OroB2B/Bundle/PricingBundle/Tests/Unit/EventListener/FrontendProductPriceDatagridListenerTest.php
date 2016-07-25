@@ -23,7 +23,7 @@ use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 
 class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
@@ -61,9 +61,9 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
     protected $unitValueFormatter;
 
     /**
-     * @var UserCurrencyProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $currencyProvider;
+    protected $currencyManager;
 
     /**
      * @var Registry|\PHPUnit_Framework_MockObject_MockObject
@@ -100,7 +100,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
             $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $this->currencyProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
+        $this->currencyManager = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -110,7 +110,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
             $this->numberFormatter,
             $this->unitLabelFormatter,
             $this->unitValueFormatter,
-            $this->currencyProvider
+            $this->currencyManager
         );
     }
 
@@ -126,7 +126,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
                 $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList', ['id' => $priceListId])
             );
 
-        $this->currencyProvider
+        $this->currencyManager
             ->expects($this->any())
             ->method('getUserCurrency')
             ->willReturn(reset($priceCurrencies));
@@ -216,7 +216,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
 
     public function testOnResultAfterNoRecords()
     {
-        $this->currencyProvider->expects($this->never())
+        $this->currencyManager->expects($this->never())
             ->method($this->anything());
 
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
@@ -230,7 +230,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
 
     public function testOnResultAfterNoPriceList()
     {
-        $this->currencyProvider->expects($this->never())
+        $this->currencyManager->expects($this->never())
             ->method($this->anything());
         $this->priceListRequestHandler->expects($this->once())
             ->method('getPriceListByAccount');

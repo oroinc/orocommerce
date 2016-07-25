@@ -11,16 +11,13 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -29,12 +26,14 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 {
+    const CURRENCY_EUR = 'EUR';
     use EntityTrait;
 
     /** @var ShoppingList */
@@ -74,10 +73,9 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $tokenStorage,
             $this->getTranslator(),
             $this->getRoundingService(),
-            $this->getTotalProcessorProvider(),
-            $this->getLineItemNotPricedSubtotalProvider(),
-            $this->getLocaleSettings(),
-            $this->getWebsiteManager()
+            $this->getUserCurrencyManager(),
+            $this->getWebsiteManager(),
+            $this->getShoppingListTotalManager()
         );
     }
 
@@ -263,65 +261,6 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testRecalculateSubtotals()
-    {
-        $user = new AccountUser();
-        $subtotal = new Subtotal();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemNotPricedSubtotalProvider $lineItemSubtotalProvider */
-        $lineItemSubtotalProvider =
-            $this->getMockBuilder(
-                'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
-            )
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $lineItemSubtotalProvider
-            ->expects($this->once())
-            ->method('getSubtotal')
-            ->willReturn($subtotal);
-
-        $total = new Subtotal();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider $totalProcessorProvider */
-        $totalProcessorProvider =
-            $this->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
-                ->disableOriginalConstructor()
-                ->getMock();
-        $totalProcessorProvider
-            ->expects($this->once())
-            ->method('getTotal')
-            ->willReturn($total);
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManager $entityManager */
-        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $managerRegistry */
-        $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $managerRegistry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($entityManager);
-        $entityManager
-            ->expects($this->once())
-            ->method('persist');
-        $entityManager
-            ->expects($this->once())
-            ->method('flush');
-
-        $manager = new ShoppingListManager(
-            $managerRegistry,
-            $this->getTokenStorage($user),
-            $this->getTranslator(),
-            $this->getRoundingService(),
-            $totalProcessorProvider,
-            $lineItemSubtotalProvider,
-            $this->getLocaleSettings(),
-            $this->getWebsiteManager()
-        );
-
-        $shoppingList = new ShoppingList();
-        $manager->recalculateSubtotals($shoppingList);
-    }
-
     public function testGetForCurrentUser()
     {
         $shoppingList = $this->manager->getForCurrentUser();
@@ -377,10 +316,9 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getTokenStorage($user),
             $this->getTranslator(),
             $this->getRoundingService(),
-            $this->getTotalProcessorProvider(),
-            $this->getLineItemNotPricedSubtotalProvider(),
-            $this->getLocaleSettings(),
-            $this->getWebsiteManager()
+            $this->getUserCurrencyManager(),
+            $this->getWebsiteManager(),
+            $this->getShoppingListTotalManager()
         );
 
         $this->assertEquals(
@@ -433,7 +371,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->method('roundQuantity')
             ->will(
                 $this->returnCallback(
-                    function ($value, $unit, $product) {
+                    function ($value) {
                         return round($value, 0, PHP_ROUND_HALF_UP);
                     }
                 )
@@ -518,46 +456,29 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider
+     * @return \PHPUnit_Framework_MockObject_MockObject|ShoppingListTotalManager
      */
-    protected function getTotalProcessorProvider()
+    protected function getShoppingListTotalManager()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider $totalProcessorProvider */
-        $totalProcessorProvider =
-            $this->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        return $totalProcessorProvider;
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|LineItemNotPricedSubtotalProvider
-     */
-    protected function getLineItemNotPricedSubtotalProvider()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemNotPricedSubtotalProvider $lineItemSubtotalProvider */
-        $lineItemSubtotalProvider =
-            $this->getMockBuilder(
-                'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
-            )
+        return $this->getMockBuilder(ShoppingListTotalManager::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-
-        return $lineItemSubtotalProvider;
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|LocaleSettings
+     * @return \PHPUnit_Framework_MockObject_MockObject|UserCurrencyManager
      */
-    protected function getLocaleSettings()
+    protected function getUserCurrencyManager()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localSettings */
-        $localSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
+        $userCurrencyManager = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        return $localSettings;
+        $userCurrencyManager->expects($this->any())
+            ->method('getUserCurrency')
+            ->willReturn(self::CURRENCY_EUR);
+
+        return $userCurrencyManager;
     }
 
     /**
@@ -565,7 +486,6 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getWebsiteManager()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|WebsiteManager $websiteManager */
         $websiteManager = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager')
             ->disableOriginalConstructor()
             ->getMock();

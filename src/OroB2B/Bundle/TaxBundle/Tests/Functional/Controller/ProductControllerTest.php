@@ -23,6 +23,8 @@ class ProductControllerTest extends WebTestCase
     const FIRST_UNIT_CODE = 'item';
     const FIRST_UNIT_PRECISION = '0';
 
+    const CATEGORY_ID = 1;
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -41,6 +43,13 @@ class ProductControllerTest extends WebTestCase
         );
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_create'));
+        $form = $crawler->selectButton('Continue')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['input_action'] = 'orob2b_product_create';
+        $formValues['orob2b_product_step_one']['category'] = self::CATEGORY_ID;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request('POST', $this->getUrl('orob2b_product_create'), $formValues);
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
@@ -53,7 +62,7 @@ class ProductControllerTest extends WebTestCase
         $formValues['orob2b_product']['names']['values']['default'] = self::DEFAULT_NAME;
         $formValues['orob2b_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
         $formValues['orob2b_product']['taxCode'] = $productTaxCode->getId();
-        $formValues['orob2b_product']['unitPrecisions'][] = [
+        $formValues['orob2b_product']['primaryUnitPrecision'] = [
             'unit' => self::FIRST_UNIT_CODE,
             'precision' => self::FIRST_UNIT_PRECISION,
         ];

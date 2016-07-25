@@ -24,7 +24,9 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 'default_request_status' => ['value' => 'open'],
-                'default_user_for_notifications' => null,
+                'notify_owner_of_account_user_record' => ['value' => 'always'],
+                'notify_assigned_sales_reps_of_the_account' => ['value' => 'always'],
+                'notify_owner_of_account' => ['value' => 'always'],
                 'backend_product_visibility' => [
                     'value' => [
                         Product::INVENTORY_STATUS_IN_STOCK,

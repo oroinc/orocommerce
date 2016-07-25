@@ -9,8 +9,9 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 
-class ShippingCostSubtotalProviderTest extends \PHPUnit_Framework_TestCase
+class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
 {
     /**
      * @var ShippingCostSubtotalProvider
@@ -29,6 +30,7 @@ class ShippingCostSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        parent::setUp();
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
@@ -42,7 +44,11 @@ class ShippingCostSubtotalProviderTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $this->provider = new ShippingCostSubtotalProvider($this->translator, $this->roundingService);
+        $this->provider = new ShippingCostSubtotalProvider(
+            $this->translator,
+            $this->roundingService,
+            $this->currencyManager
+        );
     }
 
     protected function tearDown()

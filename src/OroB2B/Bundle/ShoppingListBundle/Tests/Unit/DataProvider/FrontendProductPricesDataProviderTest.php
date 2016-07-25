@@ -11,7 +11,7 @@ use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
@@ -39,9 +39,9 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
     protected $securityFacade;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UserCurrencyProvider
+     * @var \PHPUnit_Framework_MockObject_MockObject|UserCurrencyManager
      */
-    protected $userCurrencyProvider;
+    protected $userCurrencyManager;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
@@ -58,7 +58,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->userCurrencyProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
+        $this->userCurrencyManager = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -69,7 +69,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new FrontendProductPricesDataProvider(
             $this->productPriceProvider,
             $this->securityFacade,
-            $this->userCurrencyProvider,
+            $this->userCurrencyManager,
             $this->priceListRequestHandler
         );
     }
@@ -93,7 +93,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($accountUser);
 
         if ($accountUser) {
-            $this->userCurrencyProvider->expects($this->once())
+            $this->userCurrencyManager->expects($this->once())
                 ->method('getUserCurrency')
                 ->willReturn(self::TEST_CURRENCY);
 

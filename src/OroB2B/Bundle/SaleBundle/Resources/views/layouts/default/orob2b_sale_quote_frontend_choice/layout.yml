@@ -37,26 +37,24 @@ layout:
         - '@addTree':
             items:
                 quote_view_information:
-                    blockType: container
+                    blockType: quote_view_information
                     options:
-                        vars:
-                            quote: { '@value': $data.quote }
+                        quote: { '@value': $data.quote }
                 quote_choice_page:
                     blockType: container
-                quot_choice_form:
-                    blockType: container
+                quote_choice_form:
+                    blockType: quote_choice_form_container
                     options:
-                        vars:
-                            form: { '@value': $data.form }
-                            quoteDemand: { '@value': $data.data }
+                        form: { '@value': $data.form }
+                        quoteDemand: { '@value': $data.data }
                 quote_choice_back_button:
-                    blockType: block
+                    blockType: back_link
                     options:
-                        vars:
-                            quote: { '@value': $data.quote }
+                        route_name: orob2b_sale_quote_frontend_view
+                        route_parameters: { id: { '@value': $data.quote.id } }
+                        text: 'orob2b.frontend.sale.quote.sections.back.label'
                 quote_choice_submit_button:
                     blockType: block
-
                 quote_choice_subtotals:
                     blockType: order_total
                     options:
@@ -73,7 +71,7 @@ layout:
                     quote_choice_page:
                         quote_view_information:
                             quote_shipping_address: ~
-                        quot_choice_form:
+                        quote_choice_form:
                             quote_choice_back_button: ~
                             quote_choice_subtotals: ~
                             quote_choice_submit_button: ~

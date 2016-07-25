@@ -9,8 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
-
-use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
 class CategoryType extends AbstractType
 {
@@ -44,6 +43,8 @@ class CategoryType extends AbstractType
 
     /**
      * {@inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -137,6 +138,13 @@ class CategoryType extends AbstractType
                 'oro_image',
                 [
                     'label'    => 'orob2b.catalog.category.large_image.label',
+                    'required' => false
+                ]
+            )
+            ->add(
+                'defaultProductOptions',
+                CategoryDefaultProductOptionsType::NAME,
+                [
                     'required' => false
                 ]
             );

@@ -47,11 +47,11 @@ layout:
                     options:
                         form: { '@value': $data.orob2b_rfp_request_form }
                 rfp_form_fields:
-                    blockType: form
+                    blockType: form_fields
                     options:
                         form: { '@value': $data.orob2b_rfp_request_form }
                 rfp_form_lineitems:
-                    blockType: form
+                    blockType: form_fields
                     options:
                         form: { '@value': $data.orob2b_rfp_request_form }
                 rfp_form_end:
@@ -66,15 +66,12 @@ layout:
                         path: { '@value': $data.backToUrl }
                         text: orob2b.frontend.rfp.request.create_form.back.label
                         icon: cf-left-open-mini
-                        vars:
-                            style: gray
                 rfp_form_actions_create:
                     blockType: button
                     options:
                         action: submit
                         text: orob2b.frontend.rfp.request.create_form.submit.label
-                        vars:
-                            style: auto
+                        style: auto
                         attr:
                             class: btn_xlg
             tree:

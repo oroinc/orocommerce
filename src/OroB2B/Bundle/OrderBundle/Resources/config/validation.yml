@@ -35,7 +35,7 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
         website:
             - NotBlank: ~
         lineItems:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Count:
+            - Count:
                 min: 1
                 minMessage: 'orob2b.order.orderlineitem.count'
             - Valid: ~
@@ -71,6 +71,9 @@ OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
 OroB2B\Bundle\OrderBundle\Entity\OrderAddress:
     properties:
         street:
+            - NotBlank:
+                groups: [ Frontend ]
+        city:
             - NotBlank:
                 groups: [ Frontend ]
         postalCode:
