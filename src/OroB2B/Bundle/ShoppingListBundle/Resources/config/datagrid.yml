@@ -115,7 +115,6 @@ datagrid:
                 select:
                     - product.id as productId
                     - product.sku as productSku
-                    - productNames.string as productName
                     - lineItem.id
                     - lineItem.quantity
                     - lineItem.notes
@@ -125,11 +124,6 @@ datagrid:
                 join:
                     inner:
                         - { join: lineItem.product, alias: product }
-                        -
-                            join: product.names
-                            alias: productNames
-                            conditionType: WITH
-                            condition: productNames.localization IS NULL
                 where:
                     and:
                         - IDENTITY(lineItem.shoppingList) = :shopping_list_id
@@ -180,6 +174,9 @@ datagrid:
         properties:
             id: ~
             productId: ~
+            productName:
+                type: fallback
+                data_name: product.names
             view_product_link:
                 type:  url
                 route: orob2b_product_view

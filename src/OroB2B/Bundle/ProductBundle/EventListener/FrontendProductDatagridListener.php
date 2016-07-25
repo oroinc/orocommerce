@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Doctrine\ORM\Query\Expr;
-
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
@@ -122,20 +120,15 @@ class FrontendProductDatagridListener
     protected function addShortDescriptionToConfig(DatagridConfiguration $config)
     {
         $updates = [
-            '[source][query][select]' => [
-                'productShortDescriptions.text as shortDescription'
-            ],
-            '[source][query][join][inner]' => [
-                [
-                    'join' => 'product.shortDescriptions',
-                    'alias' => 'productShortDescriptions',
-                    'conditionType' => 'WITH',
-                    'condition' => 'productShortDescriptions.localization IS NULL'
-                ]
-            ],
             '[columns]' => [
                 'shortDescription' => [
                     'label' => 'orob2b.product.short_descriptions.label',
+                ]
+            ],
+            '[properties]' => [
+                'shortDescription' => [
+                    'type' => 'fallback',
+                    'data_name' => 'shortDescriptions',
                 ]
             ],
         ];

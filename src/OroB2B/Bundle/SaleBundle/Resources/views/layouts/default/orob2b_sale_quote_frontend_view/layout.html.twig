@@ -102,7 +102,7 @@
                                             {% if (quoteProduct.product.id is defined) %}
                                                 {{ UI.link({
                                                     path: path('orob2b_product_frontend_product_view', {'id': quoteProduct.product.id}),
-                                                    label : quoteProduct.productName,
+                                                    label : quoteProduct.product.names|oro_fallback_value,
                                                 }) }}
                                             {% else %}
                                                 {{ quoteProduct.productName }}
@@ -195,7 +195,7 @@
                                     {% if (quoteProduct.product.id is defined) %}
                                         {{ UI.link({
                                             path: path('orob2b_product_frontend_product_view', {'id': quoteProduct.product.id}),
-                                            label : quoteProduct.productName,
+                                            label : quoteProduct.product.names|oro_fallback_value,
                                         }) }}
                                     {% else %}
                                         {{ quoteProduct.productName }}

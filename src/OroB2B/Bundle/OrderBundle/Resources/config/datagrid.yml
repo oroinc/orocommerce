@@ -467,7 +467,6 @@ datagrid:
             query:
                 select:
                     - partial order_item.{ id, currency, value }
-                    - productNames.string as productName
                     - order_item.productSku
                     - order_item.freeFormProduct
                     - order_item.quantity
@@ -478,16 +477,15 @@ datagrid:
                 join:
                     left:
                         - { join: order_item.product, alias: product }
-                        -
-                            join: product.names
-                            alias: productNames
-                            conditionType: WITH
-                            condition: productNames.localization IS NULL
                 where:
                     and:
                         - order_item.order = :order_id
             bind_parameters:
                 - order_id
+        properties:
+            productName:
+                type: fallback
+                data_name: product.names
 
     order-line-items-grid:
         extends: base-order-line-items-grid

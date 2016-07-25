@@ -10,21 +10,19 @@ datagrid:
             query:
                 select:
                     - m.id
-                    - t.string as title
                 from:
                     - { table: %orob2b_menu.entity.menu_item.class%, alias: m }
-                join:
-                    left:
-                        - { join: m.titles, alias: t}
                 where:
                     and:
                         - m.parent IS NULL
-                        - t.localization IS NULL
         columns:
             title:
                 label: orob2b.menu.menuitem.titles.label
         properties:
             id: ~
+            title:
+                type: fallback
+                data_name: titles
             view_link:
                 type: url
                 route: orob2b_menu_item_view

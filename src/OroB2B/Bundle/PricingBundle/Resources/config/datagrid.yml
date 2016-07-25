@@ -372,7 +372,6 @@ datagrid:
                     - IDENTITY(productPrice.product) as productId
                     - productPrice.id
                     - productPrice.productSku
-                    - productNames.string as productName
                     - productPrice.quantity
                     - IDENTITY(productPrice.unit) as unitCode
                     - productPrice.value
@@ -382,11 +381,6 @@ datagrid:
                 join:
                     inner:
                         - { join: productPrice.product, alias: product }
-                        -
-                            join: product.names
-                            alias: productNames
-                            conditionType: WITH
-                            condition: productNames.localization IS NULL
                 where:
                     and:
                         - IDENTITY(productPrice.priceList) = :price_list_id
@@ -452,6 +446,9 @@ datagrid:
         properties:
             id: ~
             productId: ~
+            productName:
+                type: fallback
+                data_name: product.names
             view_product_link:
                 type:  url
                 route: orob2b_product_view

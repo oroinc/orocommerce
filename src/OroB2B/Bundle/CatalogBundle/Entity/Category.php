@@ -279,22 +279,6 @@ class Category extends ExtendCategory
     }
 
     /**
-     * @return LocalizedFallbackValue
-     */
-    public function getDefaultTitle()
-    {
-        $titles = $this->titles->filter(function (LocalizedFallbackValue $title) {
-            return null === $title->getLocalization();
-        });
-
-        if ($titles->count() != 1) {
-            throw new \LogicException('There must be only one default title');
-        }
-
-        return $titles->first();
-    }
-
-    /**
      * @return Category
      */
     public function getParentCategory()
@@ -440,7 +424,7 @@ class Category extends ExtendCategory
      */
     public function __toString()
     {
-        return (string) $this->getDefaultTitle()->getString();
+        return (string)$this->getTitle();
     }
 
     /**

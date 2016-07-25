@@ -73,6 +73,18 @@ class UserLocalizationManager
     }
 
     /**
+     * @return Localization|null
+     */
+    public function getDefaultLocalization()
+    {
+        $localization = $this->localizationProvider->getLocalization(
+            $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION))
+        );
+
+        return $localization ?: $this->localizationProvider->getDefaultLocalization();
+    }
+
+    /**
      * @param Website|null $website
      * @return Localization
      */
@@ -103,7 +115,7 @@ class UserLocalizationManager
 
         $allowedLocalizations = $this->getEnabledLocalizations();
         if (!$localization || !in_array($localization, $allowedLocalizations, true)) {
-            $localization = $this->localizationProvider->getDefaultLocalization();
+            $localization = $this->getDefaultLocalization();
         }
 
         return $localization;

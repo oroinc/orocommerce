@@ -2,14 +2,20 @@
 
 namespace OroB2B\Bundle\ProductBundle\Model;
 
-use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @method AbstractEnumValue getInventoryStatus()
  * @method Product setInventoryStatus(AbstractEnumValue $enumId)
+ * @method LocalizedFallbackValue getName()
+ * @method LocalizedFallbackValue getDefaultName()
+ * @method LocalizedFallbackValue getDescription()
+ * @method LocalizedFallbackValue getDefaultDescription()
+ * @method LocalizedFallbackValue getShortDescription()
+ * @method LocalizedFallbackValue getDefaultShortDescription()
  */
 class ExtendProduct
 {

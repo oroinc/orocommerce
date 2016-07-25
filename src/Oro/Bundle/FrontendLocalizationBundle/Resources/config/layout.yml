@@ -3,7 +3,7 @@ services:
         class: 'Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider\LocalizationsProvider'
         public: true
         arguments:
-            - '@oro_frontend_localization.user_localization_manager'
+            - '@oro_frontend_localization.manager.user_localization'
         tags:
             - { name: layout.data_provider, alias: orob2b_website_localizations }
 

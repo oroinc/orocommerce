@@ -9,7 +9,6 @@ datagrid:
                 select:
                     - product.id
                     - product.sku
-                    - productNames.string as productName
                     - product.createdAt
                     - product.updatedAt
                     - productInventoryStatus.id as inventoryStatusId
@@ -20,12 +19,6 @@ datagrid:
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
-                    inner:
-                        -
-                            join: product.names
-                            alias: productNames
-                            conditionType: WITH
-                            condition: productNames.localization IS NULL
         columns:
             sku:
                 label:         orob2b.product.sku.label
@@ -48,6 +41,9 @@ datagrid:
                 frontend_type: datetime
         properties:
             id: ~
+            productName:
+                type: fallback
+                data_name: names
         sorters:
             columns:
                 sku:
@@ -134,18 +130,11 @@ datagrid:
                     - product.sku
                     - productInventoryStatus.id as inventoryStatusId
                     - productInventoryStatus.name as inventoryStatusName
-                    - productNames.string as name
                 from:
                     - { table: %orob2b_product.entity.product.class%, alias: product }
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
-                    inner:
-                        -
-                            join: product.names
-                            alias: productNames
-                            conditionType: WITH
-                            condition: productNames.localization IS NULL
         columns:
             sku:
                 label: orob2b.product.sku.label
@@ -153,6 +142,9 @@ datagrid:
                 label: orob2b.product.names.label
         properties:
             id: ~
+            name:
+                type: fallback
+                data_name: names
             view_link:
                 type:  url
                 route: orob2b_product_frontend_product_view
@@ -192,21 +184,18 @@ datagrid:
                 select:
                     - product.id
                     - product.sku
-                    - productNames.string as productName
                     - productInventoryStatus.id as inventoryStatusId
                     - productInventoryStatus.name as inventoryStatusName
                     - product.status
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
-                    inner:
-                        -
-                            join: product.names
-                            alias: productNames
-                            conditionType: WITH
-                            condition: productNames.localization IS NULL
             bind_parameters:
                 - parentProduct
+        properties:
+            productName:
+                type: fallback
+                data_name: names
         sorters:
             columns:
                 id:
