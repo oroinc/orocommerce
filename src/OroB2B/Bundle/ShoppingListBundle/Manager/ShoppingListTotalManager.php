@@ -51,8 +51,9 @@ class ShoppingListTotalManager
      * Sets Shopping Lists Subtotal for user current currency
      *
      * @param array $shoppingLists
+     * @param bool $doFlush
      */
-    public function setSubtotals(array $shoppingLists)
+    public function setSubtotals(array $shoppingLists, $doFlush = true)
     {
         $currency = $this->currencyManager->getUserCurrency();
         /** @var ShoppingListTotal|null $shoppingListTotal */
@@ -81,7 +82,10 @@ class ShoppingListTotalManager
             }
             $shoppingList->setSubtotal($shoppingListTotal->getSubtotal());
         }
-        $this->getEntityManager()->flush();
+
+        if ($doFlush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     /**
