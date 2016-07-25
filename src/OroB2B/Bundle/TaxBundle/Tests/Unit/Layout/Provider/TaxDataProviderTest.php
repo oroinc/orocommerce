@@ -30,7 +30,7 @@ class TaxDataProviderTest extends \PHPUnit_Framework_TestCase
     {
         $context = new LayoutContext();
         $value = new Order();
-        $context->data()->set('order', null, $value);
+        $context->data()->set('order', $value);
         $result = new Result();
         $this->taxManager->expects($this->once())->method('loadTax')->with($value)->willReturn($result);
 

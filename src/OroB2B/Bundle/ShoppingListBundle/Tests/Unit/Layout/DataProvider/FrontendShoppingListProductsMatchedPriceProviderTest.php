@@ -59,7 +59,7 @@ class FrontendShoppingListProductsMatchedPriceProviderTest extends \PHPUnit_Fram
     public function testGetData($shoppingList)
     {
         $context = new LayoutContext();
-        $context->data()->set('entity', null, $shoppingList);
+        $context->data()->set('entity', $shoppingList);
         $expected = null;
 
         if ($shoppingList) {

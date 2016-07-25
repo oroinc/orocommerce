@@ -45,7 +45,7 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
         $product = $this->getProduct($product);
 
         $context = new LayoutContext();
-        $context->data()->set('product', null, $product);
+        $context->data()->set('product', $product);
 
         $this->frontendProductPricesProvider->expects($this->once())
             ->method('getData')

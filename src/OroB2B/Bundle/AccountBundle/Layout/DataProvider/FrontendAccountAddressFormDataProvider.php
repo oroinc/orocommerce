@@ -9,14 +9,13 @@ use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessorInterface;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType;
 
-class FrontendAccountAddressFormDataProvider extends AbstractServerRenderDataProvider
+class FrontendAccountAddressFormDataProvider
 {
     /**
      * @var FormFactoryInterface

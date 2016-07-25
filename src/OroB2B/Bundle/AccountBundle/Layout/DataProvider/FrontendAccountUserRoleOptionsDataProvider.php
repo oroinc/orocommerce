@@ -8,10 +8,9 @@ use Oro\Bundle\UserBundle\Model\PrivilegeCategory;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCapabilityProvider;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCategoryProvider;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 
-class FrontendAccountUserRoleOptionsDataProvider extends AbstractServerRenderDataProvider
+class FrontendAccountUserRoleOptionsDataProvider
 {
     /** @var RolePrivilegeCapabilityProvider */
     protected $capabilityProvider;

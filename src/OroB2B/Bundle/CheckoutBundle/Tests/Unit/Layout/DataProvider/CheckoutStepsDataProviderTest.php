@@ -84,7 +84,7 @@ class CheckoutStepsDataProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($workflow);
 
         $context = new LayoutContext();
-        $context->data()->set('checkout', null, $checkout);
+        $context->data()->set('checkout', $checkout);
 
         $result = $this->provider->getData($context);
         $this->assertEquals($expected, $result);

@@ -93,7 +93,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
         
         $priceSorting = ['unit' => 'ASC', 'currency' => 'DESC', 'quantity' => 'ASC'];
         $context = new LayoutContext();
-        $context->data()->set('product', null, $product);
+        $context->data()->set('product', $product);
 
         $repo = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
             ->disableOriginalConstructor()

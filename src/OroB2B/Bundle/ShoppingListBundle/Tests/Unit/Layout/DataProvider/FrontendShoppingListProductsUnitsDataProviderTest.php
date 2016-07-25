@@ -80,7 +80,7 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
     public function testGetData($shoppingList, $expected)
     {
         $context = new LayoutContext();
-        $context->data()->set('entity', null, $shoppingList);
+        $context->data()->set('entity', $shoppingList);
 
         if ($shoppingList) {
             $repository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')

@@ -112,7 +112,7 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
         }
 
         $context = new LayoutContext();
-        $context->data()->set('checkout', null, $checkout);
+        $context->data()->set('checkout', $checkout);
 
         $result = $this->provider->getData($context);
         $this->assertEquals($expected, $result);

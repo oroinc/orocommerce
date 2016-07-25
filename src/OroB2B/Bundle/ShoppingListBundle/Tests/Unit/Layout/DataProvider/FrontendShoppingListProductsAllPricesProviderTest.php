@@ -73,7 +73,7 @@ class FrontendShoppingListProductsAllPricesProviderTest extends \PHPUnit_Framewo
         $shoppingList = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', ['id' => 2]);
 
         $context = new LayoutContext();
-        $context->data()->set('entity', null, $shoppingList);
+        $context->data()->set('entity', $shoppingList);
         /** @var LineItem[] $lineItems */
         $lineItems = [
             $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 1]),

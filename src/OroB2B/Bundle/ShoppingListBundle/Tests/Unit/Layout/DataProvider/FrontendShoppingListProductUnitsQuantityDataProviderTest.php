@@ -63,7 +63,7 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
         array $expected = null
     ) {
         $context = new LayoutContext();
-        $context->data()->set('product', null, $product);
+        $context->data()->set('product', $product);
 
         $this->shoppingListManager->expects($product ? $this->once() : $this->never())
             ->method('getCurrent')

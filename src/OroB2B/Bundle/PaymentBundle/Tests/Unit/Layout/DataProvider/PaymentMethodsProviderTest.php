@@ -89,7 +89,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $entity = new \stdClass();
 
         $context = new LayoutContext();
-        $context->data()->set('entity', 'entity', $entity);
+        $context->data()->set('entity', $entity);
 
         $contextData = ['entity' => $entity];
         $this->paymentContextProvider->expects($this->once())
@@ -110,7 +110,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $checkout = new \stdClass();
 
         $context = new LayoutContext();
-        $context->data()->set('checkout', 'checkout', $checkout);
+        $context->data()->set('checkout', $checkout);
 
         $contextData = ['entity' => $checkout];
         $this->paymentContextProvider->expects($this->once())
@@ -132,8 +132,8 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $checkout = new \stdClass();
 
         $context = new LayoutContext();
-        $context->data()->set('entity', 'entity', $entity);
-        $context->data()->set('checkout', 'checkout', $checkout);
+        $context->data()->set('entity', $entity);
+        $context->data()->set('checkout', $checkout);
 
         $contextData = ['entity' => $entity];
         $this->paymentContextProvider->expects($this->once())
