@@ -1,0 +1,65 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'address_book_list.html.twig'
+
+        - '@addTree':
+            items:
+                account_address_book_addresses_list_head:
+                    blockType: container
+                account_address_book_addresses_list_title:
+                    blockType: text
+                    options:
+                        text: 'orob2b.account.frontend.account_user_address_book.account_addresses'
+                account_address_book_addresses_list_create_button:
+                    blockType: link
+                    options:
+                        visible: { '@acl': orob2b_account_frontend_account_address_create }
+                        route_name: orob2b_account_frontend_account_address_create
+                        route_parameters: { entityId: {'@value': $data.entity.account.id }}
+                        text: 'orob2b.account.frontend.account_user_address_book.create.label'
+                account_address_book_addresses_list:
+                    blockType: address_book
+                    options:
+                        entity: { '@value': $data.entity.account }
+                        addressListRouteName: 'orob2b_api_account_frontend_get_account_addresses'
+                        addressCreateRouteName: 'orob2b_account_frontend_account_address_create'
+                        addressUpdateRouteName: 'orob2b_account_frontend_account_address_update'
+                account_address_book_addresses_list_template:
+                    blockType: container
+                account_address_book_addresses_list_template_item:
+                    blockType: container
+                account_address_book_addresses_list_template_item_address:
+                    blockType: block
+                account_address_book_addresses_list_template_item_label:
+                    blockType: block
+                account_address_book_addresses_list_template_item_type:
+                    blockType: block
+                account_address_book_addresses_list_template_item_actions:
+                    blockType: container
+                account_address_book_addresses_list_template_item_actions_edit:
+                    blockType: block
+                    options:
+                        visible: { '@acl': orob2b_account_frontend_account_address_update }
+                account_address_book_addresses_list_template_item_actions_remove:
+                    blockType: block
+                    options:
+                        visible: { '@acl': orob2b_account_frontend_account_address_remove }
+            tree:
+                account_address_book_addresses:
+                    account_address_book_addresses_list_head:
+                        account_address_book_addresses_list_title: ~
+                        account_address_book_addresses_list_create_button: ~
+                    account_address_book_addresses_list_template:
+                        account_address_book_addresses_list_template_item:
+                            account_address_book_addresses_list_template_item_address: ~
+                            account_address_book_addresses_list_template_item_label: ~
+                            account_address_book_addresses_list_template_item_type: ~
+                            account_address_book_addresses_list_template_item_actions:
+                                account_address_book_addresses_list_template_item_actions_edit: ~
+                                account_address_book_addresses_list_template_item_actions_remove: ~
+                    account_address_book_addresses_list: ~
+    conditions:
+        '@and':
+            - '@acl': orob2b_account_frontend_account_address_view
+            - '@lt': [$context.account_address_count, 8]
